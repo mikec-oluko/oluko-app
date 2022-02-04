@@ -58,7 +58,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: Padding(
           padding: const EdgeInsets.only(top: 80),
           child: Wrap(

@@ -19,7 +19,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
       body: Container(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: Center(
           child: Container(
             width: ScreenUtils.width(context),

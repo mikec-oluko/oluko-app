@@ -20,7 +20,6 @@ class _UploadingModalLoaderState extends State<UploadingModalLoader> {
     } else if (widget.toUpload == UploadFrom.profileImage) {
       return LoaderAndUploadingText();
     }
-    return Container();
   }
 }
 
@@ -29,13 +28,13 @@ class LoaderAndUploadingText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: OlukoColors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         width: MediaQuery.of(context).size.width,
         height: 300,
         child: Row(children: [
           Expanded(
             child: Container(
-              color: OlukoColors.black,
+              color: OlukoNeumorphismColors.appBackgroundColor,
               width: MediaQuery.of(context).size.width,
               height: 200,
               child: Column(

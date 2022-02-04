@@ -4,6 +4,7 @@ import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'submodels/course_timeline_submodel.dart';
 
@@ -18,6 +19,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
   CourseTimelineSubmodel course;
   Movement movementForNavigation;
   Course courseForNavigation;
+  RecommendationMedia recommendationMedia;
   List<Annotation> mentoredVideosForNavigation;
   List<SegmentSubmission> sentVideosForNavigation;
 

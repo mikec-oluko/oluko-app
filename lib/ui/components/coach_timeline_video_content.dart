@@ -20,7 +20,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(

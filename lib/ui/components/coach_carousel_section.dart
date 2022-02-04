@@ -36,7 +36,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
           }
         }
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           width: MediaQuery.of(context).size.width,
           height: 250,
           child: Stack(
@@ -69,13 +69,27 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => setState(() {
-              _controller = chewieController;
-            }),
-        onVideoFinished: widget.onVideoFinished));
+    widgets.add(OlukoNeumorphism.isNeumorphismDesign
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: OlukoVideoPlayer(
+                  videoUrl: videoUrl,
+                  autoPlay: false,
+                  whenInitialized: (ChewieController chewieController) => setState(() {
+                        _controller = chewieController;
+                      }),
+                  onVideoFinished: widget.onVideoFinished),
+            ),
+          )
+        : OlukoVideoPlayer(
+            videoUrl: videoUrl,
+            autoPlay: false,
+            whenInitialized: (ChewieController chewieController) => setState(() {
+                  _controller = chewieController;
+                }),
+            onVideoFinished: widget.onVideoFinished));
 
     return ConstrainedBox(
         constraints: BoxConstraints(

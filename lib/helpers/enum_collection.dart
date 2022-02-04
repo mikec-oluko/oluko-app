@@ -35,15 +35,10 @@ enum CoachFileTypeEnum {
   recommendedMovement,
   recommendedSegment,
   faqVideo,
+  recommendedVideo
 }
 
-enum StoriesItemFrom {
-  friends,
-  friendsModal,
-  home,
-  neumorphicHome,
-  longPressHome
-}
+enum StoriesItemFrom { friends, friendsModal, home, neumorphicHome, longPressHome }
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
 
@@ -55,4 +50,12 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
 };
 
 //TODO: Check and use that
-enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo }
+enum TimelineInteractionType {
+  course,
+  classes,
+  segment,
+  movement,
+  mentoredVideo,
+  recommendedVideo,
+  sentVideo,
+}

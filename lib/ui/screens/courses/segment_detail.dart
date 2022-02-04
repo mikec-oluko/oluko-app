@@ -198,7 +198,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         isDraggable: false,
         header: const SizedBox(),
         padding: EdgeInsets.zero,
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         minHeight: 0.0,
         maxHeight: MediaQuery.of(context).size.height / 1.5, //TODO: dynamic size, for content
         collapsed: const SizedBox(),
@@ -355,7 +355,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget _viewBody() {
     return Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       child: Column(
         children: [
           () {

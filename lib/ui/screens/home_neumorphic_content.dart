@@ -21,6 +21,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -191,7 +192,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
           builder: (context, classState) {
             if (classState is ClassSubscriptionSuccess) {
-              return CourseMarketing().buildClassEnrolledCards(
+              return EnrolledCourse().buildClassEnrolledCards(
                 context,
                 classState.classes,
                 outsideCourse: widget.courses[index],

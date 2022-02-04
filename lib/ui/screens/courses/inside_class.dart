@@ -347,24 +347,9 @@ class _InsideClassesState extends State<InsideClass> {
         if (OlukoNeumorphism.isNeumorphismDesign)
           Padding(
             padding: const EdgeInsets.only(bottom: 3),
-            child: OverlayVideoPreview(
-            randomImages: _class.randomImages,
-              video: _class.video,
-              showBackButton: true,
-              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
-              bottomWidgets: [_getCourseInfoSection(_classImage)],
-              onBackPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'index': widget.courseIndex,
-                    'classIndex': widget.classIndex,
-                  },
-                );
-              },
-            ), /*OlukoVideoPreview(
+            child:
+            OlukoVideoPreview(
+              randomImages: _class.randomImages,
               video: _class.video,
               showBackButton: true,
               audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
@@ -382,7 +367,7 @@ class _InsideClassesState extends State<InsideClass> {
               },
               onPlay: () => isVideoPlaying(),
               videoVisibilty: _isVideoPlaying,
-            ),*/
+            ),
           )
         else
           Padding(

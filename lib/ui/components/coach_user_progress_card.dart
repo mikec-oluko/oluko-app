@@ -102,10 +102,12 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Wrap(
         children: [
-          Text(
-            OlukoLocalizations.get(context, 'activityStats'),
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-          ),
+          OlukoNeumorphism.isNeumorphismDesign
+              ? SizedBox.shrink()
+              : Text(
+                  OlukoLocalizations.get(context, 'activityStats'),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                ),
           AnimatedContainer(
               onEnd: () {
                 setState(() {
