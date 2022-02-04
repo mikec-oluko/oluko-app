@@ -101,7 +101,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               )
             ],
             elevation: 0.0,
-            backgroundColor: OlukoColors.black,
+            backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios,
@@ -114,7 +114,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
           ),
           body: Container(
             width: MediaQuery.of(context).size.width,
-            color: OlukoColors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: ListView(children: segmentCard(coachAnnotation: filteredContent)),
           ),
         );

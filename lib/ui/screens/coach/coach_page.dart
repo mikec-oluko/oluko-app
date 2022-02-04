@@ -41,11 +41,13 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart';
+import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -654,35 +656,51 @@ class _CoachPageState extends State<CoachPage> {
                 .isNotEmpty)
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.recomendedVideos,
-            titleForSection: OlukoLocalizations.get(context, 'recomendedVideos'),
+            titleForSection: OlukoLocalizations.get(context, 'recommendedVideos'),
             recommendedVideoContent: getRecommendedVideosContent(),
             onNavigation: () => !widget.coachAssignment.introductionCompleted
                 ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                 : () {})
-        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos'));
+        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recommendedVideos'));
   }
 
   Widget recommendedCoursesSection({bool isForCarousel}) {
-    Widget widgetToReturn = const CoachContentSectionCard(title: 'Recommened Courses');
+    Widget widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedCourses'));
     List<CoachRecommendationDefault> coursesRecommended = [];
     if (_coachRecommendations != null && _coachRecommendations.isNotEmpty) {
       coursesRecommended =
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.course, coursesRecommended);
       if (coursesRecommended.isNotEmpty) {
-        widgetToReturn = CoachContentSectionCard(title: 'Recommened Courses');
+        widgetToReturn = GestureDetector(
+            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                  'recommendedContent': coursesRecommended,
+                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
+                }),
+            child: CoachRecommendedContentPreviewStack(
+              recommendationsList: coursesRecommended,
+              titleForSection: OlukoLocalizations.of(context).find('recommendedCourses'),
+            ));
       }
     }
     return widgetToReturn;
   }
 
   Widget recommendedMovementsSection({bool isForCarousel}) {
-    Widget widgetToReturn = CoachContentSectionCard(title: 'Recommened Movements');
+    Widget widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedMovements'));
     List<CoachRecommendationDefault> movementsRecommended = [];
     if (_coachRecommendations != null && _coachRecommendations.isNotEmpty) {
       movementsRecommended =
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
       if (movementsRecommended.isNotEmpty) {
-        widgetToReturn = CoachContentSectionCard(title: 'Recommened Movements');
+        widgetToReturn = GestureDetector(
+            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                  'recommendedContent': movementsRecommended,
+                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
+                }),
+            child: CoachRecommendedContentPreviewStack(
+              recommendationsList: movementsRecommended,
+              titleForSection: OlukoLocalizations.of(context).find('recommendedMovements'),
+            ));
       }
     }
     return widgetToReturn;
