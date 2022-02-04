@@ -306,7 +306,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                 child: Text(
                                                   //TODO: change weeks number
                                                   TimeConverter.toCourseDuration(
-                                                      widget.course.duration is int ? widget.course.duration as int : 0,
+                                                      int.tryParse(widget.course.duration)??0,
                                                       widget.course.classes != null ? widget.course.classes.length : 0,
                                                       context),
                                                   style: OlukoFonts.olukoBigFont(
