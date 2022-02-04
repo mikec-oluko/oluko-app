@@ -67,8 +67,11 @@ UserResponse _coachUser;
 UserStatistics _userStatistics;
 Assessment _assessment;
 List<CoachRequest> _coachRequestList;
-List<CoachRequest> _coachRequestUpdateList = [];
 Annotation _introductionVideo;
+const String _defaultIdForAllContentTimeline = '0';
+const String _defaultIntroductionVideoId = 'introVideo';
+const bool hideAssessmentsTab = true;
+List<CoachRequest> _coachRequestUpdateList = [];
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<Annotation> _annotationVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
@@ -85,9 +88,6 @@ List<CoachTimelineItem> _allContent = [];
 List<CoachTimelineGroup> _timelinePanelContent = [];
 List<CoachSegmentContent> _allSegmentsForUser = [];
 List<SegmentSubmission> segmentsWithReview = [];
-String _defaultIdForAllContentTimeline = '0';
-const String _defaultIntroductionVideoId = 'introVideo';
-bool hideAssessmentsTab = true;
 
 class _CoachPageState extends State<CoachPage> {
   @override
