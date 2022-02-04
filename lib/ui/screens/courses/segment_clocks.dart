@@ -89,6 +89,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Duration timeLeft;
   Timer countdownTimer;
 
+  //Alert timer
+  Duration alertTimeLeft;
+  Timer alertTimer;
+
   //Stopwatch
   Duration stopwatchDuration = Duration();
   Timer stopwatchTimer;
@@ -859,6 +863,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void _goToNextStep() {
+    if (alertTimer != null) {
+      alertTimer.cancel();
+    }
+
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
       if (timerTaskIndex == timerEntries.length - 1 || timerEntries[timerTaskIndex + 1].round == 1) {
         _saveSegmentRound(timerEntries[timerTaskIndex]);
@@ -976,8 +984,30 @@ class _SegmentClocksState extends State<SegmentClocks> {
     List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
     if (alerts != null && !alerts.isEmpty) {
       Alert alert = alerts[timerEntries[timerTaskIndex].round];
-      _roundAlert = alert != null ? alert.text : null;
+      if (alert != null) {
+        if (alert.time > 0) {
+          alertTimeLeft = Duration(seconds: alert.time);
+          _playAlertTimer(alert.text);
+        } else {
+          _roundAlert = alert.text;
+        }
+      } else {
+        _roundAlert = null;
+      }
     }
+  }
+
+  void _playAlertTimer(String text) {
+    alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (alertTimeLeft.inSeconds == 0) {
+        alertTimer.cancel();
+        _roundAlert = text;
+        return;
+      }
+      setState(() {
+        alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
+      });
+    });
   }
 
   _startMovement() {
