@@ -99,6 +99,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Duration alertTimeLeft;
   Timer alertTimer;
 
+  //Alert timer
+  Duration alertDurationTimeLeft;
+  Timer alertDurationTimer;
+
   //Stopwatch
   Duration stopwatchDuration = Duration();
   Timer stopwatchTimer;
@@ -1402,10 +1406,25 @@ class _SegmentClocksState extends State<SegmentClocks> {
       if (alertTimeLeft.inSeconds == 0) {
         alertTimer.cancel();
         _roundAlert = text;
+        alertDurationTimeLeft = Duration(seconds: 5);
+        _playAlertDurationTimer();
         return;
       }
       setState(() {
         alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
+      });
+    });
+  }
+
+  void _playAlertDurationTimer() {
+    alertDurationTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (alertDurationTimeLeft.inSeconds == 0) {
+        alertDurationTimer.cancel();
+        _roundAlert = null;
+        return;
+      }
+      setState(() {
+        alertDurationTimeLeft = Duration(seconds: alertDurationTimeLeft.inSeconds - 1);
       });
     });
   }
