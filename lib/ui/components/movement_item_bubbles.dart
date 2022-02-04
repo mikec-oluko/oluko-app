@@ -40,7 +40,8 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
 
   List<Widget> buildMovementItems() {
     List<Widget> movements = widget.content
-        .map((movement) => _imageItem(context, movement.image, movement.name, onPressed: (context) => widget.onPressed(context, movement)))
+        .map(
+            (movement) => _imageItem(context, movement?.image, movement?.name, onPressed: (context) => widget.onPressed(context, movement)))
         .toList();
     if (movements != null && movements.isNotEmpty) {
       movements.add(
