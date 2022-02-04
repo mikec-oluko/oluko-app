@@ -5,7 +5,6 @@ import 'package:oluko_app/constants/theme.dart';
 class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final Function() onPressed;
   final String title;
-  // final Color color;
   final Color textColor;
   final TextAlign textAlign;
   final Widget icon;
@@ -19,7 +18,6 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   const OlukoNeumorphicPrimaryButton(
       {@required this.title,
       @required this.onPressed,
-      // this.color,
       this.textColor = Colors.black,
       this.textAlign = TextAlign.center,
       this.icon,
@@ -41,12 +39,6 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.color != null && !widget.isPrimary) {
-    //   buttonColor = widget.color;
-    // }
-    // if (widget.isDisabled) {
-    //   buttonColor = OlukoColors.disabled;
-    // }
     return widget.isExpanded
         ? Expanded(
             child: primaryButton(),

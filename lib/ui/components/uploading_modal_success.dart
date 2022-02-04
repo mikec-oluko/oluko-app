@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
@@ -10,6 +11,8 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalSuccess extends StatefulWidget {
@@ -27,7 +30,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     final _successText = OlukoLocalizations.get(context, 'uploadedSuccessfully');
     final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
-      color: OlukoColors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       width: MediaQuery.of(context).size.width,
       height: 300,
       child: Row(
@@ -39,11 +42,11 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 50.0),
-                  child: CircleAvatar(
-                    backgroundColor: OlukoColors.primary,
-                    radius: 40.0,
-                    child: IconButton(icon: Icon(Icons.check, color: OlukoColors.black), onPressed: () {}),
-                  ),
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Neumorphic(
+                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElement().copyWith(shape: NeumorphicShape.convex),
+                          child: UploadSuccess())
+                      : UploadSuccess(),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -57,26 +60,48 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                   child: Container(
                       width: MediaQuery.of(context).size.width,
                       child: Row(
+                        mainAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? MainAxisAlignment.end : MainAxisAlignment.center,
                         children: [
-                          OlukoOutlinedButton(
-                              title: _doneButtonText,
-                              onPressed: () {
-                                if (widget.goToPage == UploadFrom.transformationJourney) {
-                                  BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
-                                  BlocProvider.of<TransformationJourneyBloc>(context)
-                                    ..emitTransformationJourneyDefault();
-                                  Navigator.popAndPushNamed(
-                                      context, routeLabels[RouteEnum.profileTransformationJourney],
-                                      arguments: {'profileInfo': widget.userRequested});
-                                } else {
-                                  BlocProvider.of<ProfileAvatarBloc>(context)..emitDefaultState();
-                                  BlocProvider.of<ProfileCoverImageBloc>(context)..emitDefaultState();
-                                  BlocProvider.of<AuthBloc>(context)..checkCurrentUser();
+                          if (!OlukoNeumorphism.isNeumorphismDesign)
+                            OlukoOutlinedButton(
+                                title: _doneButtonText,
+                                onPressed: () {
+                                  if (widget.goToPage == UploadFrom.transformationJourney) {
+                                    BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
+                                    BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
+                                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
+                                        arguments: {'profileInfo': widget.userRequested});
+                                  } else {
+                                    BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+                                    BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
+                                    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
 
-                                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
-                                      arguments: {'userRequested': widget.userRequested});
-                                }
-                              }),
+                                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                                        arguments: {'userRequested': widget.userRequested});
+                                  }
+                                })
+                          else
+                            Container(
+                              width: 100,
+                              child: OlukoNeumorphicPrimaryButton(
+                                  isExpanded: false,
+                                  title: _doneButtonText,
+                                  onPressed: () {
+                                    if (widget.goToPage == UploadFrom.transformationJourney) {
+                                      BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
+                                      BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
+                                      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
+                                          arguments: {'profileInfo': widget.userRequested});
+                                    } else {
+                                      BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+                                      BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
+                                      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+
+                                      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                                          arguments: {'userRequested': widget.userRequested});
+                                    }
+                                  }),
+                            ),
                         ],
                       )),
                 )
@@ -85,6 +110,15 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
           ),
         ],
       ),
+    );
+  }
+
+  CircleAvatar UploadSuccess() {
+    return CircleAvatar(
+      backgroundColor: OlukoColors.primary,
+      radius: 40.0,
+      child: IconButton(
+          icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black), onPressed: () {}),
     );
   }
 }

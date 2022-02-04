@@ -42,7 +42,7 @@ class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVide
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                color: OlukoNeumorphismColors.appBackgroundColor,
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                     child: Container(

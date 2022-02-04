@@ -92,6 +92,7 @@ import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
@@ -179,6 +180,7 @@ enum RouteEnum {
   movementIntro,
   segmentClocks,
   courseMarketing,
+  enrolledCourse,
   assessmentVideos,
   taskDetails,
   choosePlanPayment,
@@ -234,6 +236,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.movementIntro: '/movement-intro',
   RouteEnum.segmentClocks: '/segment-clocks',
   RouteEnum.courseMarketing: '/course-marketing',
+  RouteEnum.enrolledCourse: '/enrolled-course',
   RouteEnum.assessmentVideos: '/assessment-videos',
   RouteEnum.taskDetails: '/task-details',
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
@@ -679,6 +682,25 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
+          course: argumentsToAdd['course'] as Course,
+          fromCoach: argumentsToAdd['fromCoach'] as bool,
+          isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
+        break;
+      case RouteEnum.enrolledCourse:
+        providers = [
+          BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
+          BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = EnrolledCourse(
           course: argumentsToAdd['course'] as Course,
           fromCoach: argumentsToAdd['fromCoach'] as bool,
           isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,

@@ -31,7 +31,7 @@ class _ViewAllState extends State<ViewAll> {
           showTitle: true,
           showBackButton: true,
         ),
-        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
         body: CourseUtils.searchResults(context, SearchResults(searchResults: widget.courses), 0.69333, 3, 5));
   }
 }

@@ -205,7 +205,7 @@
     "minutes": "minutes",
     "forNextRound": "for next round",
     "activityStats": "Activity Stats",
-    "recomendedVideos": "Recomended Videos",
+    "recommendedVideos": "Recommended Videos",
     "voiceMessages": "Voice Messages",
     "addYourSelfie": "Add Your Selfie...",
     "timelineMentoredVideo": "Mentored Video: ",
@@ -283,5 +283,9 @@
     "lbs": "lbs",
     "cancelSession": "Cancel the session?",
     "cancelMessage": "This action stopped the recording. You will have to restart the session from beginning if you want to record the segment.",
-    "restart": "Re-Start"
+    "restart": "Re-Start",
+    "reps": "Reps",
+    "reviewsPending": "reviews pending",
+    "workoutBadFeedback": "Aargh! not really",
+    "workoutGoodFeedback": "It was amazing"
 }
