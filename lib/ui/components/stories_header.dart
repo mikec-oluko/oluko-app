@@ -54,7 +54,7 @@ class _State extends State<StoriesHeader> {
           ],
         );
       } else {
-        return nil;
+        return const SizedBox();
       }
     });
   }
