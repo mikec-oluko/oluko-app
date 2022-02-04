@@ -19,6 +19,7 @@ class Course extends Base {
   List<ObjectSubmodel> classes;
   List<ObjectSubmodel> tags;
   String image;
+  String posterImage;
   DocumentReference statisticsReference;
 
   Course(
@@ -37,6 +38,7 @@ class Course extends Base {
       this.classes,
       this.tags,
       this.image,
+      this.posterImage,
       this.video,
       this.description,
       String id,
@@ -80,7 +82,8 @@ class Course extends Base {
         tags: json['tags'] != null
             ? List<ObjectSubmodel>.from((json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
             : null,
-        image: json['image']?.toString());
+        image: json['image']?.toString(),
+        posterImage: json['poster_image']?.toString(),);
     course.setBase(json);
     return course;
   }
