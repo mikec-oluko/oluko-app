@@ -26,6 +26,7 @@ import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -972,9 +973,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   setAlert() {
-    List<String> alerts = widget.segments[widget.segmentIndex].alerts;
+    List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
     if (alerts != null && !alerts.isEmpty) {
-      _roundAlert = alerts[timerEntries[timerTaskIndex].round + 1];
+      Alert alert = alerts[timerEntries[timerTaskIndex].round];
+      _roundAlert = alert != null ? alert.text : null;
     }
   }
 
