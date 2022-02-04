@@ -117,8 +117,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       if (_controller != null) {
                         _controller.pause();
                       }
-                      Navigator.pop(context);
-                      AppNavigator().returnToHome(context);
+                      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                        'tab': 1,
+                      });
                     }
                   : () {
                       if (_controller != null) {
@@ -126,17 +127,14 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       }
                       Navigator.pop(context);
                       //TODO: fix for case in which there is no more screen in navigation stack
-                      if (!Navigator.canPop(context)) {
+                      /*if (!Navigator.canPop(context)) {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                           'tab': 1,
                         });
-                      }
-                      if (_controller != null) {
-                        _controller.pause();
-                      }
+                      }*/
                     },
               showTitle: true,
-              showBackButton: !widget.isFirstTime,
+              showBackButton: widget.isFirstTime != true,
               title: widget.isForCoachPage ? OlukoLocalizations.get(context, 'coach') : OlukoLocalizations.get(context, 'assessment'),
               actions: [skipButton()],
             ),

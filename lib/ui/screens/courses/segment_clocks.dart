@@ -176,7 +176,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 if (_segmentSubmission == null) {
                                   _segmentSubmission = state.segmentSubmission;
                                   BlocProvider.of<VideoBloc>(context).createVideo(
-                                      context, File(_segmentSubmission.videoState.stateInfo), 3.0 / 4.0, _segmentSubmission.id);
+                                      context, File(_segmentSubmission.videoState.stateInfo), 3.0 / 4.0, _segmentSubmission.id,);
                                 }
                               } else if (state is UpdateSegmentSubmissionSuccess) {
                                 waitingForSegSubCreation = false;
@@ -189,16 +189,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 }
                               }
                             },
-                            child: form())));
+                            child: form(),),),);
               } else {
                 return const SizedBox();
               }
-            });
-          });
+            },);
+          },);
         } else {
           return const SizedBox();
         }
-      }),
+      },),
     );
   }
 
@@ -263,8 +263,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             segment: widget.segments[widget.segmentIndex],
                             movements: _movements,
                             onPressedMovement: (BuildContext context, Movement movement) =>
-                                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
-                        body: _body(keyboardVisibilty))
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),),
+                        body: _body(keyboardVisibilty),)
                     : _body(keyboardVisibilty);
               },
             )
@@ -337,7 +337,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   side: const BorderSide(color: Colors.white),
                 ),
                 child: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
-              ));
+              ),);
   }
 
   Widget _body(bool keyboardVisibilty) {
@@ -410,7 +410,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   } else {
                     DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
                   }
-                }),
+                },),
             const SizedBox(
               width: 15,
             ),
@@ -467,7 +467,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           height: 100,
           decoration: const BoxDecoration(
               color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
+              border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop)),),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Center(
@@ -486,7 +486,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           } else {
                             DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
                           }
-                        }),
+                        },),
                     const SizedBox(
                       width: 15,
                     ),
@@ -521,19 +521,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
             'courseEnrollment': widget.courseEnrollment,
             'courseIndex': widget.courseIndex,
             'fromChallenge': _isFromChallenge
-          })
+          },)
         : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
             'courseIndex': widget.courseIndex,
-          });
+          },);
   }
 
   void goToClassAction() {
     _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
 
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
+        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex},);
   }
 
   ///Countdown & movements information
@@ -543,20 +543,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
       color: OlukoNeumorphismColors.appBackgroundColor,
       child: Column(
         children: [
-          OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
+          if (OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else getSegmentLabel(),
           Padding(
               padding: EdgeInsets.only(
                 top: getWatchPadding(),
               ),
               child: Stack(alignment: Alignment.center, children: [
-                usePulseAnimation() ? roundTimerWithPulse(keyboardVisibilty) : getRoundsTimer(keyboardVisibilty),
+                if (usePulseAnimation()) roundTimerWithPulse(keyboardVisibilty) else getRoundsTimer(keyboardVisibilty),
                 _countdownSection()
-              ])),
+              ],),),
           //getAlert(),
           if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
         ],
       ),
-    ));
+    ),);
   }
 
   Widget getAlert() {
@@ -588,7 +588,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget roundTimerWithPulse(bool keyboardVisibilty) {
     return AvatarGlow(
-        glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor, endRadius: 190.0, child: getRoundsTimer(keyboardVisibilty));
+        glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor, endRadius: 190.0, child: getRoundsTimer(keyboardVisibilty),);
   }
   //TODO: QUITAR ANIMACION  Y CIRCULAR
 
@@ -624,7 +624,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else if (isWorkStateFinished()) {
       return TimerUtils.roundsTimer(
-          widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds, keyboardVisibilty);
+          widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds, keyboardVisibilty,);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
       return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else {
@@ -637,11 +637,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return isSegmentWithoutRecording()
         ? taskSectionWithoutRecording(keyboardVisibilty)
         : Column(children: [
-            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 10),
+            if (OlukoNeumorphism.isNeumorphismDesign) SizedBox.shrink() else SizedBox(height: 10),
             recordingTaskSection(keyboardVisibilty),
             ...counterTextField(keyboardVisibilty),
-            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 20),
-          ]);
+            if (OlukoNeumorphism.isNeumorphismDesign) SizedBox.shrink() else SizedBox(height: 20),
+          ],);
   }
 
   Widget taskSectionWithoutRecording(bool keyboardVisibilty) {
@@ -685,13 +685,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.weight)) {
       final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
       return [
-        OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : getTextField(keyboardVisibilty),
+        if (OlukoNeumorphism.isNeumorphismDesign) SizedBox.shrink() else getTextField(keyboardVisibilty),
         getKeyboard(keyboardVisibilty),
-        !keyboardVisibilty && !isSegmentWithRecording()
-            ? SizedBox(
+        if (!keyboardVisibilty && !isSegmentWithRecording()) SizedBox(
                 height: ScreenUtils.height(context) / 4,
-              )
-            : SizedBox()
+              ) else SizedBox()
       ];
     } else {
       return [const SizedBox()];
@@ -751,7 +749,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         }(),
                       );
                     },
-                  )),
+                  ),),
               // const SizedBox(width: 25),
               if (isCounterByReps)
                 Expanded(
@@ -760,19 +758,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           ? OlukoLocalizations.get(context, 'reps')
                           : timerEntries[timerTaskIndex - 1].movement.name,
                       style:
-                          TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300)),
+                          TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300),),
                 )
               else
                 textController.value != null && textController.value.text != ""
                     ? Expanded(
                         child: Text(OlukoLocalizations.get(context, 'meters'),
-                            style: TextStyle(fontSize: 24, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+                            style: TextStyle(fontSize: 24, color: OlukoColors.white, fontWeight: FontWeight.w300),),
                       )
                     : SizedBox.shrink(),
-            ]),
-            textController.value != null && textController.value.text != ""
-                ? const SizedBox.shrink()
-                : Align(
+            ],),
+            if (textController.value != null && textController.value.text != "") const SizedBox.shrink() else Align(
                     alignment: Alignment.center,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -780,12 +776,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         // SizedBox(height: 30),
                         Text('Tap here to type the score',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: OlukoColors.primary))
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: OlukoColors.primary),)
                       ],
                     ),
                   )
           ],
-        ));
+        ),);
   }
 
   Widget getTextField(bool keyboardVisibilty) {
@@ -797,7 +793,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             image: DecorationImage(
           image: AssetImage('assets/courses/gray_background.png'),
           fit: BoxFit.cover,
-        )),
+        ),),
         height: 50,
         child: Column(
           children: [
@@ -842,12 +838,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         }(),
                       );
                     },
-                  )),
+                  ),),
               const SizedBox(width: 25),
               Text(counterTxt[1], style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
-            ]),
+            ],),
           ],
-        ));
+        ),);
   }
 
   List<String> counterText(CounterEnum counter) {
@@ -876,12 +872,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [Color(0xff2b2f35), Color(0xff16171b)],
-    ));
+    ),);
     return Visibility(
         visible: keyboardVisibilty,
         child: CustomKeyboard(
           boxDecoration: boxDecoration,
-        ));
+        ),);
     ;
   }
 
@@ -890,7 +886,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
       return SizedBox(
-          height: 45, child: ListView(children: [Padding(padding: const EdgeInsets.only(top: 10), child: Column(children: items))]));
+          height: 45, child: ListView(children: [Padding(padding: const EdgeInsets.only(top: 10), child: Column(children: items))]),);
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
@@ -907,9 +903,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       child: Text(
                         nextTask,
                         style: const TextStyle(fontSize: 20, color: OlukoColors.grayColorSemiTransparent, fontWeight: FontWeight.bold),
-                      )),
+                      ),),
                 ],
-              )));
+              ),),);
     }
   }
 
@@ -928,7 +924,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     _goToNextStep();
                   }),
               context,
-              timerEntries[timerTaskIndex].movement.isBothSide);
+              timerEntries[timerTaskIndex].movement.isBothSide,);
         },
       );
     }
@@ -960,9 +956,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
       final bool needInput = useInput();
       return needInput && OlukoNeumorphism.isNeumorphismDesign
           ? TimerUtils.restTimer(needInput ? neumorphicTextfieldForScore(true) : null, circularProgressIndicatorValue,
-              TimeConverter.durationToString(timeLeft), context)
+              TimeConverter.durationToString(timeLeft), context,)
           : TimerUtils.restTimer(
-              needInput ? getTextField(true) : null, circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context);
+              needInput ? getTextField(true) : null, circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context,);
     }
 
     if (timerEntries[timerTaskIndex].round == null) {
@@ -974,11 +970,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
         if (AMRAPRound == 1) {
           _saveSegmentRound(timerEntries[timerTaskIndex]);
         }
-      }, AMRAPRound);
+      }, AMRAPRound,);
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
     return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter,
-        timerEntries[timerTaskIndex].movement.isBothSide);
+        timerEntries[timerTaskIndex].movement.isBothSide,);
   }
 
   bool useInput() => (isCurrentMovementRest() &&
@@ -1024,7 +1020,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Lower half of the view
   Widget _lowerSection() {
     if (workState != WorkState.finished) {
-      return Container(color: Colors.black, child: isSegmentWithRecording() ? _cameraSection() : SizedBox());
+      return Container(color: Colors.black, child: isSegmentWithRecording() ? _cameraSection() : const SizedBox());
     } else {
       return _segmentInfoSection();
     }
@@ -1047,11 +1043,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           image: DecorationImage(
                         image: AssetImage('assets/courses/camera_background.png'),
                         fit: BoxFit.cover,
-                      )),
-                      child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)))),
+                      ),),
+                      child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController))),),
                 Align(alignment: Alignment.bottomCenter, child: Padding(padding: const EdgeInsets.all(20.0), child: pauseButton())),
               ],
-            ));
+            ),);
   }
 
   bool isCurrentTaskTimed() {
@@ -1082,7 +1078,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           });
           if (isSegmentWithRecording()) {
             await cameraController.stopVideoRecording();
-            BottomDialogUtils.showBottomDialog(context: context, content: PauseDialogContent(restartAction: _goToSegmentDetail));
+            BottomDialogUtils.showBottomDialog(
+                context: context, content: PauseDialogContent(resumeAction: _resume, restartAction: _goToSegmentDetail),);
           }
           setState(() {
             workoutType = WorkoutType.segment;
@@ -1099,12 +1096,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
               child: Image.asset(
                 'assets/courses/center_oval.png',
                 scale: 4,
-              )),
+              ),),
           Image.asset(
             'assets/courses/pause_button.png',
             scale: 4,
           ),
-        ]));
+        ],),);
   }
 
   Widget _cameraButton(IconData iconData, {Function() onPressed}) {
@@ -1151,7 +1148,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 Navigator.pop(context);
               },
             )
-          ])),
+          ],),),
     ];
   }
 
@@ -1196,7 +1193,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           widget.classIndex,
           widget.segments[widget.segmentIndex].rounds,
           timerEntries[timerTaskIndex].round,
-          currentDuration);
+          currentDuration,);
     }
   }
 
@@ -1219,7 +1216,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           timerEntries[timerTaskIndex - 1].movement,
           widget.segments[widget.segmentIndex].rounds,
           timerEntries[timerTaskIndex - 1].round,
-          int.parse(textController.text));
+          int.parse(textController.text),);
     }
     textController.clear();
   }
@@ -1341,7 +1338,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             scale: 4,
           ),
           const Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 12, color: OlukoColors.primary))
-        ]));
+        ],),);
   }
 
   Widget uploadingIcon() {
@@ -1359,7 +1356,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               ),
               const SizedBox(width: 4),
               const Icon(Icons.upload, color: Colors.white)
-            ])));
+            ],),),);
   }
 
   Widget audioIcon() {
@@ -1368,7 +1365,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         child: Image.asset(
           'assets/courses/audio_icon.png',
           scale: 4,
-        ));
+        ),);
   }
 
   ///Section with information about segment and workout movements.
@@ -1385,21 +1382,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
               children: [
                 MovementUtils.movementTitle(widget.segments[widget.segmentIndex].isChallenge
                     ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
-                    : widget.segments[widget.segmentIndex].name),
+                    : widget.segments[widget.segmentIndex].name,),
               ],
             ),
           ),
           const SizedBox(height: 5),
-          counter
-              ? Column(crossAxisAlignment: CrossAxisAlignment.center, children: getScoresByRound())
-              : OlukoNeumorphism.isNeumorphismDesign
+          if (counter) Column(crossAxisAlignment: CrossAxisAlignment.center, children: getScoresByRound()) else OlukoNeumorphism.isNeumorphismDesign
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Container(
                         width: ScreenUtils.width(context),
                         child: Column(
                             crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-                            children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
+                            children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor),),
                       ),
                     )
                   : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
@@ -1409,7 +1404,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: widget.workoutType == WorkoutType.segment || shareDone
                   ? FeedbackCard()
-                  : ShareCard(createStory: _createStory, whistleAction: coachAction)),
+                  : ShareCard(createStory: _createStory, whistleAction: coachAction),),
         ],
       ),
     );
@@ -1450,7 +1445,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     widgets.add(Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(totalText, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.primary)),
-    ]));
+    ],),);
 
     widgets.add(const SizedBox(height: 15));
     for (int i = 0; i < scores.length; i++) {
@@ -1458,14 +1453,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
           padding: const EdgeInsets.only(bottom: 10),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text('${OlukoLocalizations.get(context, 'round')} ${i + 1}',
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white),),
             Container(width: 60),
             SizedBox(
                 width: 50,
                 child: Text(scores[i],
                     textAlign: TextAlign.end,
-                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white)))
-          ])));
+                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white),),)
+          ],),),);
     }
     return widgets;
   }
@@ -1543,7 +1538,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
                     : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
                 // OlukoLocalizations.get(context, 'exitConfirmationBody'),
-                style: OlukoFonts.olukoBigFont()),
+                style: OlukoFonts.olukoBigFont(),),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -1578,16 +1573,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
               image: DecorationImage(
             image: AssetImage('assets/courses/dialog_background.png'),
             fit: BoxFit.cover,
-          )),
+          ),),
           child: Column(children: [
             const SizedBox(height: 20),
             const SizedBox(height: 10),
             Padding(padding: const EdgeInsets.all(40.0), child: ProgressBar(processPhase: processPhase, progress: progress)),
-          ])),
+          ],),),
       Align(
           alignment: Alignment.topRight,
-          child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
-    ]);
+          child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)),)
+    ],);
   }
 
   List<Widget> stopProcessConfirmationContent(function) {
@@ -1617,7 +1612,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 },
               ),
             ],
-          ))
+          ),)
     ];
   }
 
@@ -1638,6 +1633,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
     setState(() {
       stopwatchTimer.cancel();
       stopwatchDuration = Duration();
+    });
+  }
+
+  _resume() {
+    setState(() {
+      workState = WorkState.exercising;
+      _playCountdown();
+      isPlaying = true;
     });
   }
 }
