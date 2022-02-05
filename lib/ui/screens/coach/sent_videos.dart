@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -94,20 +95,33 @@ class _SentVideosPageState extends State<SentVideosPage> {
               )
             ],
             elevation: 0.0,
-            backgroundColor: OlukoColors.black,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
+            backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+            leading: OlukoNeumorphism.isNeumorphismDesign
+                ? Neumorphic(
+                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  )
+                : IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
           ),
           body: Container(
             width: MediaQuery.of(context).size.width,
-            color: OlukoColors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: ListView(children: segmentCard(segmentSubmissions: filteredContent)),
           ),
         );

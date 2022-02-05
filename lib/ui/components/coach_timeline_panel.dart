@@ -29,6 +29,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   List<Widget> contentList = [];
   List<List<Widget>> contentWithListNodes = [];
   List<CoachTimelineGroup> _timelineContentItems;
+  List<CoachTimelineItem> timelineItems = [];
 
   @override
   void initState() {
@@ -79,13 +80,13 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                     ? TabBarView(
                         controller: _tabController,
                         children: passContentToWidgets()
-                            .map((e) => Container(
+                            .map((widgetCollection) => Container(
                                   color: OlukoNeumorphism.isNeumorphismDesign
                                       ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
                                       : Colors.black,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: TabContentList(contentToDisplay: e),
+                                    child: TabContentList(contentToDisplay: widgetCollection),
                                   ),
                                 ))
                             .toList(),
@@ -104,32 +105,25 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   }
 
   List<List<Widget>> passContentToWidgets() {
-    Widget widgetTypeToUse;
-    List<Widget> listOfWidgets = [];
     List<List<Widget>> finalListOfWidgetContent = [];
-    _timelineContentItems.forEach((content) {
-      content.timelineElements.forEach((element) {
-        widgetTypeToUse = getWidgedToUse(element);
-        listOfWidgets.add(widgetTypeToUse);
+    _timelineContentItems.forEach((CoachTimelineGroup timelineTabContent) {
+      List<Widget> listOfWidgets = [];
+      Map<String, List<CoachTimelineItem>> tabDateAndContentList =
+          groupBy(timelineTabContent.timelineElements, (CoachTimelineItem obj) => DateFormat.yMMMd().format(obj.createdAt.toDate()));
+
+      List<MapEntry<String, List<CoachTimelineItem>>> entries = tabDateAndContentList.entries.toList();
+      entries.forEach((entry) {
+        String date = entry.key;
+        List<CoachTimelineItem> items = entry.value;
+
+        listOfWidgets.add(widgetToUse(date, items));
       });
-      finalListOfWidgetContent.insert(_timelineContentItems.indexOf(content), listOfWidgets);
-      listOfWidgets = [];
+      finalListOfWidgetContent.insert(_timelineContentItems.indexOf(timelineTabContent), listOfWidgets);
     });
     return finalListOfWidgetContent;
   }
 
-  Widget getWidgedToUse(CoachTimelineItem content) {
-    DateTime now = DateTime.now();
-
-    final dateForContent = Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Text(
-          now.difference(content.createdAt.toDate().toUtc()).inHours <= now.hour
-              ? OlukoLocalizations.get(context, 'today')
-              : DateFormat.yMMMd().format(content.createdAt.toDate()),
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-    );
-
+  StatelessWidget switchTypeWidget(CoachTimelineItem content) {
     switch (TimelineContentOption.getTimelineOption(content.contentType as int)) {
       case TimelineInteractionType.course:
         return GestureDetector(
@@ -145,7 +139,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                dateForContent,
                 CoachTimelineCardContent(
                   cardImage: content.contentThumbnail,
                   cardTitle: content.contentName,
@@ -163,7 +156,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineCardContent(
                 cardImage: content.contentThumbnail,
                 cardTitle: content.contentName,
@@ -180,7 +172,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineCircleContent(
                   circleImage: content.contentThumbnail,
                   circleTitle: content.contentName,
@@ -202,7 +193,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                dateForContent,
                 CoachTimelineCircleContent(
                     circleImage: content.contentThumbnail,
                     circleTitle: content.contentName,
@@ -218,7 +208,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
                   videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'mentoredVideo'),
@@ -232,7 +221,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
                   videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'sentVideo'),
@@ -246,7 +234,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
                   videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recommendedVideos'),
@@ -259,5 +246,19 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
       default:
         return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
     }
+  }
+
+  Widget widgetToUse(String date, List<CoachTimelineItem> contentList) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 5),
+          child: Text(date == DateFormat.yMMMd().format(DateTime.now()) ? OlukoLocalizations.get(context, 'today') : date,
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+        ),
+        Column(children: contentList.map((content) => switchTypeWidget(content)).toList()),
+      ],
+    );
   }
 }

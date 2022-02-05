@@ -133,7 +133,6 @@ class _CoachPageState extends State<CoachPage> {
                       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                       : () {},
                 ),
-                //CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamState>
                 body: BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
                   builder: (context, courseEnrollmentState) {
                     if (courseEnrollmentState is CourseEnrollmentsByUserStreamSuccess) {
@@ -344,7 +343,7 @@ class _CoachPageState extends State<CoachPage> {
                       padding: paddingTopForElements,
                       child: carouselToDoSection(context),
                     ),
-                    if (!hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
+                    if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
                     SizedBox(
                       height: hideAssessmentsTab ? 220 : 200,
                     )
@@ -419,7 +418,8 @@ class _CoachPageState extends State<CoachPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView(
-                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                      physics: const NeverScrollableScrollPhysics(),
+                      // physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -453,7 +453,8 @@ class _CoachPageState extends State<CoachPage> {
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        physics: const NeverScrollableScrollPhysics(),
+                        // physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                         children: [
                           Wrap(
                               alignment: WrapAlignment.center,

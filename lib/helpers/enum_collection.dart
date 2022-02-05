@@ -56,6 +56,6 @@ enum TimelineInteractionType {
   segment,
   movement,
   mentoredVideo,
-  recommendedVideo,
   sentVideo,
+  recommendedVideo,
 }
