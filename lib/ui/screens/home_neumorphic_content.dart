@@ -62,7 +62,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               return notEnrolled();
             }
           } else {
-            return notEnrolled();
+            return OlukoCircularProgressIndicator();
           }
         },
       );

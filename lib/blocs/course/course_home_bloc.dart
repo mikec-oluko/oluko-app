@@ -7,7 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseHomeState {}
 
-class CourseLoading extends CourseHomeState {}
+class CourseHomeLoading extends CourseHomeState {}
 
 class GetByCourseEnrollmentsSuccess extends CourseHomeState {
   final List<Course> courses;
@@ -21,9 +21,10 @@ class CourseFailure extends CourseHomeState {
 }
 
 class CourseHomeBloc extends Cubit<CourseHomeState> {
-  CourseHomeBloc() : super(CourseLoading());
+  CourseHomeBloc() : super(CourseHomeLoading());
 
   void getByCourseEnrollments(List<CourseEnrollment> courseEnrollments) async {
+    emit(CourseHomeLoading());
     try {
       List<Course> courses = await CourseRepository.getByCourseEnrollments(courseEnrollments);
       emit(GetByCourseEnrollmentsSuccess(courses: courses));
