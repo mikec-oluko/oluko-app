@@ -1070,6 +1070,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
         child: Text(
           currentTask,
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -1093,6 +1094,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
             nextTask,
+            textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
           ),
         ),
