@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/utils/oluko_bottom_navigation_bar_item.dart';
+import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -9,8 +12,9 @@ class OlukoBottomNavigationBar extends StatefulWidget {
   final Function(num) onPressed;
   final List<Widget> actions;
   final int selectedIndex;
+  final UserInformationBottomBar userInformation;
 
-  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex});
+  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex, this.userInformation});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -70,12 +74,31 @@ class _State extends State<OlukoBottomNavigationBar> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
-                          color: olukoBottomNavigationBarItem.disabled
-                              ? Colors.grey.shade800
-                              : olukoBottomNavigationBarItem.selected
-                                  ? OlukoColors.primary
-                                  : Colors.grey),
+                      if (olukoBottomNavigationBarItem.route == '/profile')
+                        if (widget.userInformation.avatarThumbnail != null)
+                          CircleAvatar(
+                            radius: 15,
+                            backgroundImage: Image(
+                              image: CachedNetworkImageProvider(widget.userInformation.avatarThumbnail),
+                              fit: BoxFit.contain,
+                            ).image,
+                          )
+                        else
+                          CircleAvatar(
+                            backgroundColor: widget.userInformation.profileDefaultPicContent != null
+                                ? OlukoColors.userColor(widget.userInformation.firstName, widget.userInformation.lastName)
+                                : OlukoColors.black,
+                            radius: 15.0,
+                            child: Text(widget.userInformation.profileDefaultPicContent ?? '',
+                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                          )
+                      else
+                        ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
+                            color: olukoBottomNavigationBarItem.disabled
+                                ? Colors.grey.shade800
+                                : olukoBottomNavigationBarItem.selected
+                                    ? OlukoColors.primary
+                                    : Colors.grey),
                       Padding(
                         padding: const EdgeInsets.only(top: 5.0),
                         child: Text(
