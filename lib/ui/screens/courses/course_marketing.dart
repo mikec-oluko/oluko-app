@@ -123,7 +123,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
             if ((enrollmentState is GetEnrollmentSuccess) &&
                 classState is ClassSubscriptionSuccess &&
-                enrollmentState.courseEnrollment.course.id == widget.course.id) {
+                (enrollmentState.courseEnrollment==null||enrollmentState.courseEnrollment.course.id == widget.course.id)) {
               _classes = classState.classes;
               return Form(
                   key: _formKey,
@@ -407,8 +407,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {
         if (widget.closeVideo != null) {
-            widget.closeVideo();
-            }
+          widget.closeVideo();
+        }
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
       },
     );
