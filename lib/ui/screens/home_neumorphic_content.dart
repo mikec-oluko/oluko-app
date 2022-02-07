@@ -169,7 +169,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 3),
           child: OverlayVideoPreview(
-            image: widget.courses[index].image,
+            image: widget.courses[index].posterImage??widget.courses[index].image,
             video: widget.courses[index].video,
             onBackPressed: () => Navigator.pop(context),
           ),

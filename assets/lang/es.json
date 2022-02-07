@@ -290,5 +290,8 @@
     "workoutGoodFeedback": "Fue increíble",
     "errorRetrieving": "Hubo un error al recuperar",
     "myFriends":"Mis Amigos",
-    "otherUsers":"Otros Usuarios"
+    "otherUsers":"Otros Usuarios",
+    "recommendedMovements": "Movimiento Recomendados",
+    "recommendedCourses": "Curso Recomendados",
+    "timeline": " Cronología"
 }

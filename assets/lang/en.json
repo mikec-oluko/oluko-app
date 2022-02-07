@@ -291,5 +291,8 @@
     "workoutGoodFeedback": "It was amazing",
     "errorRetrieving": "There was an error retrieving",
     "myFriends":"My Friends",
-    "otherUsers":"Other Users"
+    "otherUsers":"Other Users",
+    "recommendedMovements": "Recommended Movements",
+    "recommendedCourses": "Recommended Courses",
+    "timeline": " Timeline"
 }
