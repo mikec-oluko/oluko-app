@@ -70,7 +70,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
                 child: Container(
                   width: 150,
                   height: 120,
-                  color: Colors.black,
+                  color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.segmentSubmissionContent.isNotEmpty
                       ? CoachVideoContent(videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent), isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
@@ -167,7 +167,8 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
         return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
             arguments: {'sentVideosContent': widget.segmentSubmissionContent});
       case CoachContentSection.recomendedVideos:
-        return OlukoLocalizations.get(context, 'recomendedVideos');
+        return Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+            arguments: {'recommendedVideoContent': widget.recommendedVideoContent, 'titleForAppBar': widget.titleForSection});
       case CoachContentSection.voiceMessages:
         return OlukoLocalizations.get(context, 'voiceMessages');
 

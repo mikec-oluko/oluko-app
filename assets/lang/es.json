@@ -286,5 +286,8 @@
     "reps": "Reps",
     "reviewsPending": "revisión pendiente",
     "workoutBadFeedback": "Aargh! realmente no",
-    "workoutGoodFeedback": "Fue increíble"
+    "workoutGoodFeedback": "Fue increíble",
+    "recommendedMovements": "Movimiento Recomendados",
+    "recommendedCourses": "Curso Recomendados",
+    "timeline": " Cronología"
 }
