@@ -1,23 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
-import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/submodels/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
-import 'package:oluko_app/utils/user_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class FriendRequestCard extends StatefulWidget {
   // final UserResponse userToDisplay;
@@ -46,156 +40,165 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: OlukoNeumorphismColors.appBackgroundColor,
-          border: OlukoNeumorphism.isNeumorphismDesign ? null : Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
-      height: OlukoNeumorphism.isNeumorphismDesign ? 150 : 120,
+      decoration: const BoxDecoration(color: OlukoNeumorphismColors.appBackgroundColor),
+      height: OlukoNeumorphism.isNeumorphismDesign ? 130 : 120,
       child: Padding(
-          padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 15 : 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                      child: OlukoNeumorphism.isNeumorphismDesign
-                          ? Neumorphic(
-                              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                              child: CircleAvatar(
-                                  backgroundImage: getUserImg(widget.friendUser.avatar),
-                                  onBackgroundImageError: _loadImageError
-                                      ? null
-                                      : (dynamic exception, StackTrace stackTrace) {
-                                          print("Error loading image! " + exception.toString());
-                                          setBackgroundImageAsError();
-                                        },
-                                  backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
-                                  radius: 30,
-                                  child: _loadImageError
-                                      ? Text(
-                                          widget.friendUser.firstName.characters.first.toString().toUpperCase(),
-                                          style: OlukoFonts.olukoBigFont(
-                                            customColor: OlukoColors.white,
-                                            custoFontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        )
-                                      : const Text(' ')),
-                            )
-                          : CircleAvatar(
-                              backgroundImage: getUserImg(widget.friendUser.avatar),
-                              onBackgroundImageError: _loadImageError
-                                  ? null
-                                  : (dynamic exception, StackTrace stackTrace) {
-                                      print("Error loading image! " + exception.toString());
-                                      setBackgroundImageAsError();
-                                    },
-                              backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
-                              radius: 30,
-                              child: _loadImageError
-                                  ? Text(
-                                      widget.friendUser.firstName.characters.first.toString().toUpperCase(),
-                                      style: OlukoFonts.olukoBigFont(
-                                        customColor: OlukoColors.white,
-                                        custoFontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  : const Text(' ')),
-                      onTap: () {
-                        BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
-                        BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
-                        //BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
-                            arguments: {'userRequested': widget.friendUser});
-                      }),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              // widget.userToDisplay.firstName,
-                              widget.friendUser.firstName,
+        padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 15 : 5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                GestureDetector(
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Neumorphic(
+                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                          child: CircleAvatar(
+                            backgroundImage: getUserImg(widget.friendUser.avatar),
+                            onBackgroundImageError: _loadImageError
+                                ? null
+                                : (dynamic exception, StackTrace stackTrace) {
+                                    print('Error loading image! $exception');
+                                    setBackgroundImageAsError();
+                                  },
+                            backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
+                            radius: 30,
+                            child: _loadImageError
+                                ? Text(
+                                    widget.friendUser.firstName.characters.first.toString().toUpperCase(),
+                                    style: OlukoFonts.olukoBigFont(
+                                      customColor: OlukoColors.white,
+                                      custoFontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  )
+                                : const Text(' '),
+                          ),
+                        )
+                      : CircleAvatar(
+                          backgroundImage: getUserImg(widget.friendUser.avatar),
+                          onBackgroundImageError: _loadImageError
+                              ? null
+                              : (dynamic exception, StackTrace stackTrace) {
+                                  print('Error loading image! $exception');
+                                  setBackgroundImageAsError();
+                                },
+                          backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
+                          radius: 30,
+                          child: _loadImageError
+                              ? Text(
+                                  widget.friendUser.firstName.characters.first.toString().toUpperCase(),
+                                  style: OlukoFonts.olukoBigFont(
+                                    customColor: OlukoColors.white,
+                                    custoFontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                              : const Text(' '),
+                        ),
+                  onTap: () {
+                    BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
+                    BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
+                    //BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
+                    Navigator.pushNamed(
+                      context,
+                      routeLabels[RouteEnum.profileViewOwnProfile],
+                      arguments: {'userRequested': widget.friendUser},
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            // widget.userToDisplay.firstName,
+                            widget.friendUser.firstName,
+                            style: OlukoFonts.olukoMediumFont(),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              // widget.userToDisplay.lastName,
+                              widget.friendUser.lastName,
                               style: OlukoFonts.olukoMediumFont(),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: Text(
-                                  // widget.userToDisplay.lastName,
-                                  widget.friendUser.lastName,
-                                  style: OlukoFonts.olukoMediumFont()),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        UserHelper.printUsername(widget.friendUser.username, widget.friendUser.id) ?? '',
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: OlukoNeumorphism.isNeumorphismDesign ? 115 : 120,
+                    height: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
+                    child: OlukoNeumorphism.isNeumorphismDesign
+                        ? OlukoNeumorphicPrimaryButton(
+                            isExpanded: false,
+                            title: OlukoLocalizations.get(context, 'confirm'),
+                            thinPadding: true,
+                            onPressed: () => widget.onFriendConfirmation(widget.friendUser),
+                          )
+                        : TextButton(
+                            onPressed: () => widget.onFriendConfirmation(widget.friendUser),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(OlukoColors.primary),
                             ),
-                          ],
-                        ),
-                        Text(UserHelper.printUsername(widget.friendUser.username, widget.friendUser.id) ?? '',
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: OlukoNeumorphism.isNeumorphismDesign ? 140 : 120,
+                            child: Text(
+                              OlukoLocalizations.get(context, 'confirm'),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black),
+                            ),
+                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: SizedBox(
+                      width: OlukoNeumorphism.isNeumorphismDesign ? 115 : 120,
                       height: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
                       child: OlukoNeumorphism.isNeumorphismDesign
-                          ? OlukoNeumorphicPrimaryButton(
-                              title: "Confirm",
+                          ? OlukoNeumorphicSecondaryButton(
+                              isExpanded: false,
+                              title: OlukoLocalizations.get(context, 'ignore'),
                               thinPadding: true,
-                              onPressed: () => widget.onFriendConfirmation(widget.friendUser),
+                              textColor: OlukoColors.primary,
+                              onPressed: () => widget.onFriendRequestIgnore(widget.friendUser),
                             )
-                          : TextButton(
-                              onPressed: () => widget.onFriendConfirmation(widget.friendUser),
+                          : OutlinedButton(
+                              style: OutlinedButton.styleFrom(side: const BorderSide(color: OlukoColors.grayColor)),
+                              onPressed: () => widget.onFriendRequestIgnore(widget.friendUser),
                               child: Text(
-                                "Confirm",
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(OlukoColors.primary),
+                                OlukoLocalizations.get(context, 'ignore'),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
                               ),
                             ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: Container(
-                        width: OlukoNeumorphism.isNeumorphismDesign ? 150 : 120,
-                        height: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
-                        child: OlukoNeumorphism.isNeumorphismDesign
-                            ? OlukoNeumorphicSecondaryButton(
-                                title: "Ignore",
-                                thinPadding: true,
-                                textColor: OlukoColors.primary,
-                                onPressed: () => widget.onFriendRequestIgnore(widget.friendUser),
-                              )
-                            : OutlinedButton(
-                                style: OutlinedButton.styleFrom(side: BorderSide(color: OlukoColors.grayColor)),
-                                onPressed: () => widget.onFriendRequestIgnore(widget.friendUser),
-                                child: Text("Ignore", style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: OlukoNeumorphicDivider(
-                  isForList: true,
-                ),
-              )
-            ],
-          )),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 15),
+              child: OlukoNeumorphicDivider(
+                isForList: true,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 

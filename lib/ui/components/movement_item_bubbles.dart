@@ -43,17 +43,21 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         .map(
             (movement) => _imageItem(context, movement?.image, movement?.name, onPressed: (context) => widget.onPressed(context, movement)))
         .toList();
+    if (movements != null && movements.isNotEmpty) {
+      movements.add(
+        SizedBox(
+          width: !widget.showAsGrid ? 180 : 0,
+        ),
+      );
+    }
     return movements;
   }
 
   Widget buildBubbles() {
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: buildMovementItems()
-          //Prevent the last item to be overlayed by the carousel gradient
-          ..add(SizedBox(
-            width: !widget.showAsGrid ? 180 : 0,
-          )));
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: buildMovementItems(),
+    );
   }
 
   Widget buildBubbleGrid() {
