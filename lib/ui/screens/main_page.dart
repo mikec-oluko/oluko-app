@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
@@ -75,33 +76,43 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    UserInformationBottomBar userInformation;
     if (widget.tab != null) {
       this.tabController.index = widget.tab;
       tabController.animateTo(widget.tab);
       widget.tab = null;
     }
-    return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
         if (authState is AuthSuccess) {
           BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
+          userInformation = UserInformationBottomBar(
+            firstName: authState.user.firstName,
+            lastName: authState.user.lastName,
+              avatarThumbnail: authState.user.avatarThumbnail,
+              profileDefaultPicContent:
+                  '${authState.user.firstName.characters.first.toUpperCase()}${authState.user.lastName.characters.first.toUpperCase()}');
         }
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 75),
-          child: TabBarView(
-            //physics this is setup to stop swiping from tab to tab
-            physics: const NeverScrollableScrollPhysics(),
-            controller: this.tabController,
-            children: tabs,
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.only(bottom: 75),
+            child: TabBarView(
+              //physics this is setup to stop swiping from tab to tab
+              physics: const NeverScrollableScrollPhysics(),
+              controller: this.tabController,
+              children: tabs,
+            ),
+          ),
+          extendBody: true,
+          bottomNavigationBar: OlukoBottomNavigationBar(
+            userInformation: userInformation,
+            selectedIndex: this.tabController.index,
+            onPressed: (index) => this.setState(() {
+              this.tabController.animateTo(index as int);
+            }),
           ),
         );
-      }),
-      extendBody: true,
-      bottomNavigationBar: OlukoBottomNavigationBar(
-        selectedIndex: this.tabController.index,
-        onPressed: (index) => this.setState(() {
-          this.tabController.animateTo(index as int);
-        }),
-      ),
+      },
     );
   }
 }

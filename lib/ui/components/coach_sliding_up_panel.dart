@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'coach_timeline_panel.dart';
 import 'dart:math' as math;
@@ -27,69 +28,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
   @override
   Widget build(BuildContext context) {
     return SlidingUpPanel(
-      header: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Text(
-              OlukoLocalizations.get(context, 'myTimeline'),
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
-            ),
-          ),
-          const SizedBox(width: 250),
-          IconButton(
-              onPressed: () {
-                if (_panelController.isPanelOpen) {
-                  _panelController.close();
-                  setState(() {
-                    isPanelOpen = true;
-                  });
-                } else {
-                  _panelController.open();
-                  setState(() {
-                    isPanelOpen = false;
-                  });
-                }
-              },
-              icon: isPanelOpen
-                  ? Stack(
-                      children: [
-                        Image.asset(
-                          'assets/courses/white_arrow_up.png',
-                          scale: 3,
-                        ),
-                        Positioned(
-                          top: 4,
-                          child: Image.asset(
-                            'assets/courses/grey_arrow_up.png',
-                            scale: 3,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Stack(
-                      children: [
-                        Transform.rotate(
-                            angle: 180 * math.pi / 180,
-                            child: Image.asset(
-                              'assets/courses/white_arrow_up.png',
-                              scale: 3,
-                            )),
-                        Positioned(
-                          top: -4,
-                          child: Transform.rotate(
-                            angle: 180 * math.pi / 180,
-                            child: Image.asset(
-                              'assets/courses/grey_arrow_up.png',
-                              scale: 3,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ))
-        ],
-      ),
+      header: OlukoNeumorphism.isNeumorphismDesign ? neumorphicTimelineHeader(context) : timelineHeader(context),
       borderRadius: radius,
       backdropEnabled: true,
       padding: EdgeInsets.zero,
@@ -115,6 +54,113 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       body: Container(
         color: OlukoNeumorphismColors.appBackgroundColor,
         child: widget.content,
+      ),
+    );
+  }
+
+  Row timelineHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text(
+            OlukoLocalizations.get(context, 'myTimeline'),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          ),
+        ),
+        const SizedBox(width: 250),
+        IconButton(
+            onPressed: () {
+              if (_panelController.isPanelOpen) {
+                _panelController.close();
+                setState(() {
+                  isPanelOpen = true;
+                });
+              } else {
+                _panelController.open();
+                setState(() {
+                  isPanelOpen = false;
+                });
+              }
+            },
+            icon: isPanelOpen
+                ? Stack(
+                    children: [
+                      Image.asset(
+                        'assets/courses/white_arrow_up.png',
+                        scale: 3,
+                      ),
+                      Positioned(
+                        top: 4,
+                        child: Image.asset(
+                          'assets/courses/grey_arrow_up.png',
+                          scale: 3,
+                        ),
+                      ),
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      Transform.rotate(
+                          angle: 180 * math.pi / 180,
+                          child: Image.asset(
+                            'assets/courses/white_arrow_up.png',
+                            scale: 3,
+                          )),
+                      Positioned(
+                        top: -4,
+                        child: Transform.rotate(
+                          angle: 180 * math.pi / 180,
+                          child: Image.asset(
+                            'assets/courses/grey_arrow_up.png',
+                            scale: 3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ))
+      ],
+    );
+  }
+
+  Widget neumorphicTimelineHeader(BuildContext context) {
+    return Container(
+      width: ScreenUtils.width(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (_panelController.isPanelOpen) {
+                _panelController.close();
+                setState(() {
+                  isPanelOpen = true;
+                });
+              } else {
+                _panelController.open();
+                setState(() {
+                  isPanelOpen = false;
+                });
+              }
+            },
+            child: Center(
+              child: Container(
+                width: 50,
+                height: 10,
+                child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 10),
+            child: Text(
+              OlukoLocalizations.get(context, 'timeline'),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
       ),
     );
   }

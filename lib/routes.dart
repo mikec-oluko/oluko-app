@@ -58,6 +58,7 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
+import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -85,6 +86,7 @@ import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_profile.dart';
+import 'package:oluko_app/ui/screens/coach/coach_recommended_content_list.dart';
 import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
 import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
 import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
@@ -134,6 +136,7 @@ import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
 import 'models/dto/login_request.dart';
+import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
@@ -205,7 +208,8 @@ enum RouteEnum {
   hiFivePage,
   userChallengeDetail,
   homeLongPress,
-  assessmentNeumorphicDone
+  assessmentNeumorphicDone,
+  coachRecommendedContentGallery
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -261,7 +265,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.hiFivePage: '/hi-five-page',
   RouteEnum.userChallengeDetail: '/user-challenge-detail',
   RouteEnum.homeLongPress: 'home_long_press',
-  RouteEnum.assessmentNeumorphicDone: 'assessment_neumorphic_done'
+  RouteEnum.assessmentNeumorphicDone: '/assessment_neumorphic_done',
+  RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -960,7 +965,15 @@ class Routes {
         );
         break;
       case RouteEnum.assessmentNeumorphicDone:
-        newRouteView = AssessmentNeumorphicDoneScreen();
+        newRouteView = const AssessmentNeumorphicDoneScreen();
+        break;
+      case RouteEnum.coachRecommendedContentGallery:
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = CoachRecommendedContentList(
+          recommendedVideoContent: argumentsToAdd['recommendedVideoContent'] as List<RecommendationMedia>,
+          recommendedContent: argumentsToAdd['recommendedContent'] as List<CoachRecommendationDefault>,
+          titleForAppBar: argumentsToAdd['titleForAppBar'] as String,
+        );
         break;
       default:
         newRouteView = MainPage();

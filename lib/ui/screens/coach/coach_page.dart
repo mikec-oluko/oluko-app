@@ -41,11 +41,13 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart';
+import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -67,8 +69,11 @@ UserResponse _coachUser;
 UserStatistics _userStatistics;
 Assessment _assessment;
 List<CoachRequest> _coachRequestList;
-List<CoachRequest> _coachRequestUpdateList = [];
 Annotation _introductionVideo;
+const String _defaultIdForAllContentTimeline = '0';
+const String _defaultIntroductionVideoId = 'introVideo';
+const bool hideAssessmentsTab = true;
+List<CoachRequest> _coachRequestUpdateList = [];
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<Annotation> _annotationVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
@@ -85,9 +90,6 @@ List<CoachTimelineItem> _allContent = [];
 List<CoachTimelineGroup> _timelinePanelContent = [];
 List<CoachSegmentContent> _allSegmentsForUser = [];
 List<SegmentSubmission> segmentsWithReview = [];
-String _defaultIdForAllContentTimeline = '0';
-const String _defaultIntroductionVideoId = 'introVideo';
-bool hideAssessmentsTab = true;
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -131,7 +133,6 @@ class _CoachPageState extends State<CoachPage> {
                       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                       : () {},
                 ),
-                //CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamState>
                 body: BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
                   builder: (context, courseEnrollmentState) {
                     if (courseEnrollmentState is CourseEnrollmentsByUserStreamSuccess) {
@@ -342,7 +343,7 @@ class _CoachPageState extends State<CoachPage> {
                       padding: paddingTopForElements,
                       child: carouselToDoSection(context),
                     ),
-                    if (!hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
+                    if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
                     SizedBox(
                       height: hideAssessmentsTab ? 220 : 200,
                     )
@@ -417,7 +418,8 @@ class _CoachPageState extends State<CoachPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView(
-                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                      physics: const NeverScrollableScrollPhysics(),
+                      // physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -451,7 +453,8 @@ class _CoachPageState extends State<CoachPage> {
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        physics: const NeverScrollableScrollPhysics(),
+                        // physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                         children: [
                           Wrap(
                               alignment: WrapAlignment.center,
@@ -654,35 +657,51 @@ class _CoachPageState extends State<CoachPage> {
                 .isNotEmpty)
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.recomendedVideos,
-            titleForSection: OlukoLocalizations.get(context, 'recomendedVideos'),
+            titleForSection: OlukoLocalizations.get(context, 'recommendedVideos'),
             recommendedVideoContent: getRecommendedVideosContent(),
             onNavigation: () => !widget.coachAssignment.introductionCompleted
                 ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                 : () {})
-        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos'));
+        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recommendedVideos'));
   }
 
   Widget recommendedCoursesSection({bool isForCarousel}) {
-    Widget widgetToReturn = const CoachContentSectionCard(title: 'Recommened Courses');
+    Widget widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedCourses'));
     List<CoachRecommendationDefault> coursesRecommended = [];
     if (_coachRecommendations != null && _coachRecommendations.isNotEmpty) {
       coursesRecommended =
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.course, coursesRecommended);
       if (coursesRecommended.isNotEmpty) {
-        widgetToReturn = CoachContentSectionCard(title: 'Recommened Courses');
+        widgetToReturn = GestureDetector(
+            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                  'recommendedContent': coursesRecommended,
+                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
+                }),
+            child: CoachRecommendedContentPreviewStack(
+              recommendationsList: coursesRecommended,
+              titleForSection: OlukoLocalizations.of(context).find('recommendedCourses'),
+            ));
       }
     }
     return widgetToReturn;
   }
 
   Widget recommendedMovementsSection({bool isForCarousel}) {
-    Widget widgetToReturn = CoachContentSectionCard(title: 'Recommened Movements');
+    Widget widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedMovements'));
     List<CoachRecommendationDefault> movementsRecommended = [];
     if (_coachRecommendations != null && _coachRecommendations.isNotEmpty) {
       movementsRecommended =
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
       if (movementsRecommended.isNotEmpty) {
-        widgetToReturn = CoachContentSectionCard(title: 'Recommened Movements');
+        widgetToReturn = GestureDetector(
+            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                  'recommendedContent': movementsRecommended,
+                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
+                }),
+            child: CoachRecommendedContentPreviewStack(
+              recommendationsList: movementsRecommended,
+              titleForSection: OlukoLocalizations.of(context).find('recommendedMovements'),
+            ));
       }
     }
     return widgetToReturn;

@@ -34,7 +34,7 @@ class HomeNeumorphicContent extends StatefulWidget {
   List<Course> courses;
   final AuthSuccess authState;
 
-  ScrollController scrollController = ScrollController();
+  ScrollController scrollController;
   CarouselController carouselController = CarouselController();
 
   @override
@@ -44,6 +44,8 @@ class HomeNeumorphicContent extends StatefulWidget {
 class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   @override
   Widget build(BuildContext context) {
+    widget.scrollController =
+        ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
     BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
     return homeContainer();
   }
@@ -167,7 +169,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 3),
           child: OverlayVideoPreview(
-            image: widget.courses[index].image,
+            image: widget.courses[index].posterImage??widget.courses[index].image,
             video: widget.courses[index].video,
             onBackPressed: () => Navigator.pop(context),
           ),
