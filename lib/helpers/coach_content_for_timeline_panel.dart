@@ -84,7 +84,7 @@ class CoachTimelineFunctions {
             contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
             contentName: element.segmentId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: 5,
+            contentType: 6,
             sentVideosForNavigation: segmentSubmittedContent,
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))

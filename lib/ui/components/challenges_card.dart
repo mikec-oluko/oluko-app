@@ -62,7 +62,7 @@ class _State extends State<ChallengesCard> {
 
   Widget lockedCard(BuildContext context) {
     return GestureDetector(
-      onTap: !widget.useAudio  && widget.navigateToSegment
+      onTap: !widget.useAudio && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                 'segmentIndex': widget.segmentChallenge.segmentIndex,
                 'classIndex': widget.segmentChallenge.classIndex,
@@ -116,7 +116,7 @@ class _State extends State<ChallengesCard> {
 
   Widget unlockedCard(BuildContext context) {
     return GestureDetector(
-      onTap: !widget.useAudio  && widget.navigateToSegment
+      onTap: !widget.useAudio && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                 'segmentIndex': widget.segmentChallenge.segmentIndex,
                 'classIndex': widget.segmentChallenge.classIndex,

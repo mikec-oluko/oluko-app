@@ -18,8 +18,6 @@ class _TabContentListState extends State<TabContentList> {
     );
   }
 
-  //TODO: UPDATE GROUP OF CONTENT BY DATE
-
   List<Widget> buildContentToShow() {
     List<Widget> contentToShow = [];
     setState(() {

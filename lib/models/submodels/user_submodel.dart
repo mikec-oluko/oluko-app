@@ -17,7 +17,7 @@ class UserSubmodel {
           id: json['id'].toString(),
           firstName: json['first_name'].toString(),
           lastName: json['last_name'].toString(),
-          username: json['username'].toString(),
+          username: json['username']?.toString(),
           avatar: json['avatar'].toString(),
           avatarThumbnail: json['avatar_thumbnail'].toString());
     }
