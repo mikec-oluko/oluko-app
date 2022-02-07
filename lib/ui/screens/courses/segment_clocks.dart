@@ -1273,7 +1273,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     setState(() {
       timerTaskIndex++;
-      setAlert();
+      if (timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
+        setAlert();
+      }
       _playTask();
     });
 

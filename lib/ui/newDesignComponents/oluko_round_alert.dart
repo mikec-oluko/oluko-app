@@ -18,15 +18,19 @@ class _OlukoRoundAlertState extends State<OlukoRoundAlert> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
+    return Stack(alignment: AlignmentDirectional.center, children: [
       Image.asset(
         'assets/neumorphic/alert.png',
         scale: 3,
         fit: BoxFit.cover,
       ),
-      Text(widget.text, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))
+      Container(
+          width: 160,
+          child: Center(
+              child:
+                  Text(widget.text, 
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))))
     ]);
   }
 }
