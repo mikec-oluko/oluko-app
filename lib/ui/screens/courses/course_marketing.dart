@@ -46,6 +46,7 @@ class CourseMarketing extends StatefulWidget {
   final int courseIndex;
   final bool fromHome;
   Function isVideoPlaying;
+  Function closeVideo;
 
   CourseMarketing(
       {Key key,
@@ -78,6 +79,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
     widget.isVideoPlaying = () => setState(() {
           _isVideoPlaying = !_isVideoPlaying;
+        });
+    widget.closeVideo = () => setState(() {
+          if (_isVideoPlaying) {
+            _isVideoPlaying = !_isVideoPlaying;
+          }
         });
   }
 
@@ -115,7 +121,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
         _movements = movementState.movements;
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
           return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess) && classState is ClassSubscriptionSuccess) {
+            if ((enrollmentState is GetEnrollmentSuccess) &&
+                classState is ClassSubscriptionSuccess &&
+                enrollmentState.courseEnrollment.course.id == widget.course.id) {
               _classes = classState.classes;
               return Form(
                   key: _formKey,
@@ -260,9 +268,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               ),
             ])),
             SliverVisibility(
-              visible:
-                  (courseEnrollment != null && courseEnrollment.isUnenrolled == true && courseEnrollment.course.id == widget.course.id) ||
-                      courseEnrollment == null,
+              visible: (courseEnrollment != null && courseEnrollment.isUnenrolled == true) || courseEnrollment == null,
               sliver: SliverPersistentHeader(
                   pinned: true,
                   delegate: SliverAppBarDelegate(
@@ -400,7 +406,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {
-        widget.isVideoPlaying();
+        if (widget.closeVideo != null) {
+            widget.closeVideo();
+            }
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
       },
     );

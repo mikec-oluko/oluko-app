@@ -200,6 +200,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
           _movementInfoSuccess = movementInfoState;
           movementInfoState.movementVariants.forEach((element) {
             tabs.add(element.name);
+            _videoKeys.add(GlobalKey());
+            _videoControllers.add(null);
           });
           tabController = TabController(length: tabs.length, vsync: this);
         }
