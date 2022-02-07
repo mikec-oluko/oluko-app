@@ -292,6 +292,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
         }
         challengesCard.add(ChallengesCard(
+          useAudio: false,
           segmentChallenge: segmentChallenge,
           navigateToSegment: true,
           audioIcon: false,
@@ -354,17 +355,9 @@ class _InsideClassesState extends State<InsideClass> {
               showBackButton: true,
               audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
               bottomWidgets: [_getCourseInfoSection(_classImage)],
-              onBackPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'index': widget.courseIndex,
-                    'classIndex': widget.classIndex,
-                  },
-                );
-              },
+              onBackPressed: () =>
+                Navigator.pop(context)
+              ,
               onPlay: () => isVideoPlaying(),
               videoVisibilty: _isVideoPlaying,
             ),
