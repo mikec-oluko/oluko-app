@@ -188,7 +188,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 5),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Visibility(
                         visible:
@@ -225,9 +225,6 @@ class _FriendModalContentState extends State<FriendModalContent> {
                         ),
                       ),
                       _getButtons(connectionRequested, friendState, userIsFriend),
-                      SizedBox(
-                        width: widget.user.privacy == 0 ? 10 : 0,
-                      ),
                       _getViewProfileButton(userIsFriend),
                     ],
                   ),
@@ -397,7 +394,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Widget _getButtons(bool connectionRequested, FriendState friendState, bool userIsFriend) {
     if (connectionRequested) {
       return Container(
-        width: 150,
+        width: 115,
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
@@ -411,19 +408,23 @@ class _FriendModalContentState extends State<FriendModalContent> {
         ),
       );
     } else if (userIsFriend) {
-      return OlukoNeumorphicSecondaryButton(
-        thinPadding: true,
-        textColor: Colors.grey,
-        title: OlukoLocalizations.of(context).find('remove'),
-        onPressed: () {
-          if (friendState is GetFriendsSuccess) {
-            _showRemoveConfirmationPopup(friendState.friendData);
-          }
-        },
+      return SizedBox(
+        width: 115,
+        child: OlukoNeumorphicSecondaryButton(
+          thinPadding: true,
+          isExpanded: false,
+          textColor: Colors.grey,
+          title: OlukoLocalizations.of(context).find('remove'),
+          onPressed: () {
+            if (friendState is GetFriendsSuccess) {
+              _showRemoveConfirmationPopup(friendState.friendData);
+            }
+          },
+        ),
       );
     } else {
       return Container(
-        width: 150,
+        width: 115,
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
@@ -442,7 +443,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Widget _getViewProfileButton(bool userIsFriend) {
     if (widget.user.privacy == 0) {
       return SizedBox(
-        width: 150,
+        width: 115,
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
           thinPadding: true,
