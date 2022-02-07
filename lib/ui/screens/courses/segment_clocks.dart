@@ -1395,6 +1395,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         _playAlertTimer(alert.text);
       } else {
         _roundAlert = alert.text;
+        setAlertDuration(5);
       }
     } else {
       _roundAlert = null;
@@ -1406,14 +1407,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
       if (alertTimeLeft.inSeconds == 0) {
         alertTimer.cancel();
         _roundAlert = text;
-        alertDurationTimeLeft = Duration(seconds: 5);
-        _playAlertDurationTimer();
+        setAlertDuration(5);
         return;
       }
       setState(() {
         alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
       });
     });
+  }
+
+  setAlertDuration(int seconds) {
+    alertDurationTimeLeft = Duration(seconds: seconds);
+    _playAlertDurationTimer();
   }
 
   void _playAlertDurationTimer() {
