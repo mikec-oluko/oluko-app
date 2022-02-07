@@ -20,7 +20,6 @@ import 'package:oluko_app/ui/components/video_overlay.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
-import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -166,12 +165,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   SliverList getClassView(int index, BuildContext context) {
     return SliverList(
       delegate: SliverChildListDelegate([
-        Padding(
-          padding: const EdgeInsets.only(bottom: 3),
-          child: OverlayVideoPreview(
-            image: widget.courses[index].posterImage??widget.courses[index].image,
-            video: widget.courses[index].video,
-            onBackPressed: () => Navigator.pop(context),
+        GestureDetector(
+          onLongPress: () => Navigator.pushNamed(context, routeLabels[RouteEnum.homeLongPress], arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index}),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: OverlayVideoPreview(
+              image: widget.courses[index].posterImage??widget.courses[index].image,
+              video: widget.courses[index].video,
+              onBackPressed: () => Navigator.pop(context),
+            ),
           ),
         ),
         Padding(

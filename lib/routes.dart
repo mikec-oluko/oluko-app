@@ -960,8 +960,8 @@ class Routes {
         providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeLongPress(
-          courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
-          index: argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
+          argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
+          argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
         );
         break;
       case RouteEnum.assessmentNeumorphicDone:
