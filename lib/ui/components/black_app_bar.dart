@@ -28,6 +28,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final bool showTitle;
   final bool showActions;
   final bool reduceHeight;
+  final Function showBottomTab;
 
   OlukoAppBar(
       {this.title,
@@ -47,7 +48,8 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.actionButton,
       this.searchKey,
       this.showActions = false,
-      this.reduceHeight = false});
+      this.reduceHeight = false,
+      this.showBottomTab});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -231,6 +233,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                                   //Close keyboard
                                                   FocusScope.of(context).unfocus();
                                                   widget.actionButton();
+                                                  widget.showBottomTab();
                                                 } else {
                                                   setState(() {
                                                     isSearchVisible = !isSearchVisible;

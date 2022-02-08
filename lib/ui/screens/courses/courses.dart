@@ -39,7 +39,8 @@ import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   bool homeEnrollTocourse;
-  Courses({this.homeEnrollTocourse, Key key}) : super(key: key);
+  Function showBottomTab;
+  Courses({this.homeEnrollTocourse, this.showBottomTab, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -129,6 +130,7 @@ class _State extends State<Courses> {
                     onClosed: () => this.setState(() {
                       showFilterSelector = false;
                     }),
+                    showBottomTab: widget.showBottomTab
                   )
                 : searchResults.query.isEmpty && selectedTags.isEmpty
                     ? _mainPage(context)
@@ -147,6 +149,7 @@ class _State extends State<Courses> {
 
   PreferredSizeWidget _appBar(bool goBack) {
     return OlukoAppBar<Course>(
+      showBottomTab: widget.showBottomTab,
       showTitle: true,
       searchKey: searchKey,
       showBackButton: goBack,
@@ -224,12 +227,16 @@ class _State extends State<Courses> {
         if (showFilterSelector == true) {
           //Clear all filters
           CourseUtils.onClearFilters(context).then((value) => value
-              ? this.setState(() {
-                  selectedTags.clear();
-                  showFilterSelector = false;
-                })
+              ? {
+                widget.showBottomTab(),
+                  this.setState(() {
+                    selectedTags.clear();
+                    showFilterSelector = false;
+                  })
+                }
               : null);
         } else {
+          widget.showBottomTab();
           //Toggle filter view
           showFilterSelector = !showFilterSelector;
         }
@@ -265,6 +272,7 @@ class _State extends State<Courses> {
                       } else {
                         //Toggle filter view
                         showFilterSelector = !showFilterSelector;
+                        widget.showBottomTab();
                       }
                     }),
                   )

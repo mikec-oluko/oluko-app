@@ -137,7 +137,7 @@ class CourseUtils {
         false;
   }
 
-  static Widget filterSelector(TagSuccess state, {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const []}) {
+  static Widget filterSelector(TagSuccess state, {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const [],Function showBottomTab}) {
     return Padding(
         padding: EdgeInsets.only(top: 15.0, left: 0, right: 0),
         child: FilterSelector<Tag>(
@@ -146,6 +146,7 @@ class CourseUtils {
                 value: (entry) => Map.fromIterable(entry.value as Iterable, key: (tag) => tag as Tag, value: (tag) => tag.name.toString())),
             selectedTags: selectedTags,
             onSubmit: onSubmit,
-            onClosed: onClosed));
+            onClosed: onClosed,
+            showBottonTab: showBottomTab,));
   }
 }
