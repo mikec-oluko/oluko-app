@@ -113,7 +113,7 @@ class _InsideClassesState extends State<InsideClass> {
               BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
               return form();
             } else {
-              return const SizedBox();
+              return OlukoCircularProgressIndicator();
             }
           });
         });
