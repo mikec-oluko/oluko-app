@@ -121,9 +121,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         _movements = movementState.movements;
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
           return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess) &&
-                classState is ClassSubscriptionSuccess &&
-                (enrollmentState.courseEnrollment==null||enrollmentState.courseEnrollment.course.id == widget.course.id)) {
+            if ((enrollmentState is GetEnrollmentSuccess) && classState is ClassSubscriptionSuccess) {
               _classes = classState.classes;
               return Form(
                   key: _formKey,

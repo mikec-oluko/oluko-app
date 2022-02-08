@@ -63,6 +63,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   }
 
   Future<CourseEnrollment> get(User user, Course course) async {
+    emit(Loading());
     try {
       CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
