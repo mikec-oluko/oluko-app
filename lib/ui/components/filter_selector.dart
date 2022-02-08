@@ -187,6 +187,7 @@ class _State<T extends Base> extends State<FilterSelector> {
   void submit() {
     //Submit a list of selected items on the provided callback.
     if (widget.onSubmit != null) {
+      widget.showBottonTab();
       print('${_getSelectedItemList().length} items selected.');
       widget.onSubmit(_getSelectedItemList());
     }
