@@ -231,7 +231,10 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                     child: GestureDetector(
                                       onTap: () => Navigator.pop(context),
                                       child: OlukoBlurredButton(
-                                        childContent: Image.asset('assets/courses/left_back_arrow.png',scale: 3.5,),
+                                        childContent: Image.asset(
+                                          'assets/courses/left_back_arrow.png',
+                                          scale: 3.5,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -500,7 +503,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           children: _movementInfoSuccess.relatedCourses
                               .map((Course course) => Padding(
                                     padding: const EdgeInsets.only(right: 20.0),
-                                    child: neumorphicCourseRow(course),
+                                    child: course != null ? neumorphicCourseRow(course) : SizedBox(),
                                   ))
                               .toList()),
                     )
