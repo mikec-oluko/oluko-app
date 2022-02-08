@@ -90,6 +90,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Imported from Timer POC Models
   WorkState workState;
   WorkState lastWorkStateBeforePause;
+
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
   Duration timeLeft;
@@ -98,6 +99,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Alert timer
   Duration alertTimeLeft;
   Timer alertTimer;
+  bool alertTimerPlaying = false;
 
   //Alert timer
   Duration alertDurationTimeLeft;
@@ -322,11 +324,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       } else {
                         setPaused();
                       }
+                      if (alertTimerPlaying) {
+                        alertTimer.cancel();
+                      }
                     } else {
                       panelController.close();
                       workState = lastWorkStateBeforePause;
                       if (isCurrentTaskTimed) {
                         _playCountdown();
+                      } else {
+                        if (alertTimerPlaying) {
+                          _playAlertTimer();
+                        }
                       }
                     }
                     isPlaying = !isPlaying;
@@ -1395,8 +1404,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   playAlert(Alert alert) {
     if (alert != null) {
       if (alert.time > 0) {
+        alertTimerPlaying = true;
         alertTimeLeft = Duration(seconds: alert.time);
-        _playAlertTimer(alert.text);
+        _playAlertTimer();
       } else {
         _roundAlert = alert.text;
         setAlertDuration(5);
@@ -1406,11 +1416,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
-  void _playAlertTimer(String text) {
+  void _playAlertTimer() {
     alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (alertTimeLeft.inSeconds == 0) {
+        alertTimerPlaying = false;
         alertTimer.cancel();
-        _roundAlert = text;
+        if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
+          _roundAlert = widget.segments[widget.segmentIndex].alerts[0].text;
+        } else {
+          _roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round].text;
+        }
         setAlertDuration(5);
         return;
       }
@@ -1464,6 +1479,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
         timeLeft = Duration(seconds: timeLeft.inSeconds - 1);
       });
     });
+    if (alertTimerPlaying) {
+      _playAlertTimer();
+    }
   }
 
   void setPaused() {
