@@ -47,7 +47,9 @@ class _State extends State<ClassMovementSection> {
       Row(children: [
         Text(
           OlukoLocalizations.get(context, 'movesInThisClass'),
-          style: OlukoNeumorphism.isNeumorphismDesign?OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white):OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+          style: OlukoNeumorphism.isNeumorphismDesign
+              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white)
+              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
         ),
         Expanded(child: SizedBox()),
         GestureDetector(
