@@ -132,11 +132,13 @@ class CoachHelperFunctions {
   static List<Widget> notificationsWidget(
       List<CoachNotificationContent> contentForNotificationPanel, List<Widget> carouselContent, String coachId, String userId) {
     contentForNotificationPanel.forEach((notificationContent) {
-      carouselContent.add(CoachNotificationPanelContentCard(
-        content: notificationContent,
-        coachId: coachId,
-        userId: userId,
-      ));
+      if (TimelineContentOption.getTimelineOption(notificationContent.contentTypeIndex as int) != TimelineInteractionType.segment) {
+        carouselContent.add(CoachNotificationPanelContentCard(
+          content: notificationContent,
+          coachId: coachId,
+          userId: userId,
+        ));
+      }
     });
     return carouselContent;
   }

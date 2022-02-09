@@ -120,11 +120,12 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (_controller != null) {
                 _controller.pause();
               }
-              Navigator.pop(context);
               if (!Navigator.canPop(context)) {
                 Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                   'tab': 1,
                 });
+              }else{
+                Navigator.pop(context);
               }
             }),
         body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
@@ -193,11 +194,12 @@ class _TaskDetailsState extends State<TaskDetails> {
                   if (_controller != null) {
                     _controller.pause();
                   }
-                  Navigator.pop(context);
                   if (!Navigator.canPop(context)) {
                     Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                       'tab': 1,
                     });
+                  }else{
+                    Navigator.pop(context);
                   }
                 }),
             body: Container(

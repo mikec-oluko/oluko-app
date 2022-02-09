@@ -55,6 +55,7 @@ class _SettingsModalNeumorphicState extends State<SettingsModalNeumorphic> {
                 height: 50,
                 child: OlukoNeumorphicPrimaryButton(
                   thinPadding: true,
+                  isExpanded: false,
                   title: OlukoLocalizations.get(context, 'settings'),
                   onPressed: () {
                     Navigator.pop(context);
