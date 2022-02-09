@@ -5,47 +5,27 @@
     
     
       
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000208">
-=======
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000243">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000228">
         
       </testcase>
     
       
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="1: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh increment_build" time="0.024888">
-=======
-      <testcase classname="fastlane.lanes" name="1: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh increment_build" time="0.026822">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="1: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh increment_build" time="0.023605">
         
       </testcase>
     
       
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="2: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh appbundle" time="163.953768">
-=======
-      <testcase classname="fastlane.lanes" name="2: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh appbundle" time="281.090927">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="2: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh appbundle" time="129.976788">
         
       </testcase>
     
       
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="3: upload_to_play_store" time="125.491315">
-=======
-      <testcase classname="fastlane.lanes" name="3: upload_to_play_store" time="97.64834">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="3: upload_to_play_store" time="109.953125">
         
       </testcase>
     
       
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="4: upload_to_play_store" time="69.471922">
-=======
-      <testcase classname="fastlane.lanes" name="4: upload_to_play_store" time="52.816455">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="4: upload_to_play_store" time="55.20593">
         
       </testcase>
     
