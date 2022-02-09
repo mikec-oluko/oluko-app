@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui' show Color;
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class OlukoNeumorphism {
@@ -88,7 +87,7 @@ class OlukoNeumorphism {
         shape: NeumorphicShape.flat,
         lightSource: LightSource.topLeft,
         boxShape: NeumorphicBoxShape.circle(),
-        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.initialGradientColorPrimary,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
         shadowLightColor: OlukoColors.grayColor,
@@ -169,7 +168,7 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
-  static LinearGradient OlukoNeumorphicGradientPrimary() {
+  static LinearGradient olukoNeumorphicGradientPrimary() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],
         stops: [0.0, 1],
@@ -177,12 +176,22 @@ class OlukoNeumorphism {
         end: Alignment.bottomCenter);
   }
 
-  static LinearGradient OlukoNeumorphicGradientDark() {
+  static LinearGradient olukoNeumorphicGradientDark() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
         stops: [0.0, 1],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter);
+  }
+
+  static LinearGradient olukoNeumorphicGradientBlueAccent() {
+    return const LinearGradient(colors: [
+      OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+      OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
+    ], stops: [
+      0.0,
+      1
+    ], begin: Alignment.topCenter, end: Alignment.bottomCenter);
   }
 }
 
@@ -198,6 +207,10 @@ class OlukoNeumorphismColors {
   static const Color olukoNeumorphicSearchBarFirstColor = Color.fromRGBO(29, 35, 40, 1);
   static const Color olukoNeumorphicSearchBarSecondColor = Color.fromRGBO(19, 19, 20, 1);
   static const Color olukoNeumorphicBlueBackgroundColor = Color(0XFF1976D2);
+  static const List<Color> homeGradientColorList = [Color(0xFF3e3737), Color(0xFFbfbaba), Color(0xFF3e3737)];
+  static const Color olukoNeumorphicGreenWatchColor = Color.fromRGBO(51, 188, 132, 1);
+  static const Color appBackgroundColor =
+      OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black;
 }
 
 class OlukoColors {

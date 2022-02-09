@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 
 class CoachSegmentContent {
   String segmentId;
@@ -7,6 +8,8 @@ class CoachSegmentContent {
   String classImage;
   String segmentName;
   bool isChallenge;
+  int indexClass, indexSegment, indexCourse;
+  CourseEnrollment courseEnrollment;
   Timestamp completedAt;
   Timestamp createdAt;
   DocumentReference segmentReference;
@@ -20,5 +23,9 @@ class CoachSegmentContent {
       this.createdAt,
       this.segmentReference,
       this.coachRequest,
-      this.isChallenge});
+      this.isChallenge,
+      this.indexClass,
+      this.indexCourse,
+      this.indexSegment,
+      this.courseEnrollment});
 }

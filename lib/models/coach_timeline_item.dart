@@ -4,6 +4,7 @@ import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'submodels/course_timeline_submodel.dart';
 
@@ -18,6 +19,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
   CourseTimelineSubmodel course;
   Movement movementForNavigation;
   Course courseForNavigation;
+  RecommendationMedia recommendationMedia;
   List<Annotation> mentoredVideosForNavigation;
   List<SegmentSubmission> sentVideosForNavigation;
 
@@ -53,9 +55,9 @@ class CoachTimelineItem extends Base with EquatableMixin {
   factory CoachTimelineItem.fromJson(Map<String, dynamic> json) {
     CoachTimelineItem coachTimelineItem = CoachTimelineItem(
       coachId: json['coach_id'].toString(),
-      coachReference: json['coach_reference'] as DocumentReference,
-      contentReference: json['content_reference'] as DocumentReference,
-      contentDescription: json['content_description'].toString(),
+      coachReference: json['coach_reference'] is DocumentReference ? json['coach_reference'] as DocumentReference : null,
+      contentReference: json['content_reference'] is DocumentReference ? json['content_reference'] as DocumentReference : null,
+      contentDescription: json['content_description'] != null ? json['content_description'].toString() : null,
       contentName: json['content_name'] != null ? json['content_name'].toString() : null,
       contentThumbnail: json['content_thumbnail'] != null ? json['content_thumbnail'].toString() : null,
       contentType: json['content_type'] as num,

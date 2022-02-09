@@ -5,8 +5,9 @@ class CourseProgressBar extends StatefulWidget {
   final Image imageCover;
   final double value;
   final bool isStartedClass;
+  final Color color;
 
-  CourseProgressBar({this.imageCover, this.value, this.isStartedClass = false});
+  CourseProgressBar({this.imageCover, this.value, this.isStartedClass = false, this.color});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -19,8 +20,12 @@ class _State extends State<CourseProgressBar> {
         borderRadius: BorderRadius.all(Radius.circular(15)),
         child: LinearProgressIndicator(
           value: widget.value,
-          valueColor: AlwaysStoppedAnimation<Color>(OlukoNeumorphism.isNeumorphismDesign? OlukoColors.yellow:OlukoColors.primary),
-          backgroundColor: OlukoNeumorphism.isNeumorphismDesign? widget.isStartedClass ? OlukoColors.taskCardBackground : Colors.grey[200]:Colors.white24,
+          valueColor: AlwaysStoppedAnimation<Color>(OlukoNeumorphism.isNeumorphismDesign ? widget.color??OlukoColors.yellow : OlukoColors.primary),
+          backgroundColor: OlukoNeumorphism.isNeumorphismDesign
+              ? widget.isStartedClass
+                  ? OlukoColors.taskCardBackground
+                  : Colors.grey[200]
+              : Colors.white24,
         ));
   }
 }

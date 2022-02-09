@@ -40,19 +40,24 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
 
   List<Widget> buildMovementItems() {
     List<Widget> movements = widget.content
-        .map((movement) => _imageItem(context, movement.image, movement.name, onPressed: (context) => widget.onPressed(context, movement)))
+        .map(
+            (movement) => _imageItem(context, movement?.image, movement?.name, onPressed: (context) => widget.onPressed(context, movement)))
         .toList();
+    if (movements != null && movements.isNotEmpty) {
+      movements.add(
+        SizedBox(
+          width: !widget.showAsGrid ? 180 : 0,
+        ),
+      );
+    }
     return movements;
   }
 
   Widget buildBubbles() {
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: buildMovementItems()
-          //Prevent the last item to be overlayed by the carousel gradient
-          ..add(SizedBox(
-            width: !widget.showAsGrid ? 180 : 0,
-          )));
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: buildMovementItems(),
+    );
   }
 
   Widget buildBubbleGrid() {
@@ -68,19 +73,19 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if(OlukoNeumorphism.isNeumorphismDesign)
-            StoriesItem(
-              maxRadius: widget.isSegmentSection ? 30 : 23,
-              imageUrl: imageUrl,
-              bloc: StoryListBloc(),
-              isSegmentSection: widget.isSegmentSection,
-            )
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              StoriesItem(
+                maxRadius: widget.isSegmentSection ? 30 : 23,
+                imageUrl: imageUrl,
+                bloc: StoryListBloc(),
+                isSegmentSection: widget.isSegmentSection,
+              )
             else
-            StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
+              StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                name,
+                name ?? '',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),

@@ -15,6 +15,7 @@ import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'coach_timeline_card_content.dart';
 import 'oluko_circular_progress_indicator.dart';
+import "package:collection/collection.dart";
 
 class CoachTimelinePanel extends StatefulWidget {
   final bool isIntroductionVideoComplete;
@@ -28,6 +29,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   List<Widget> contentList = [];
   List<List<Widget>> contentWithListNodes = [];
   List<CoachTimelineGroup> _timelineContentItems;
+  List<CoachTimelineItem> timelineItems = [];
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         }
         return Scaffold(
             appBar: AppBar(
-              backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
               flexibleSpace: Container(
                 decoration: UserInformationBackground.getContainerGradientDecoration(
                     customBorder: false, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
@@ -73,26 +75,24 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                       .toList()),
             ),
             body: _timelineContentItems == null
-                ? Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
-                    child: OlukoCircularProgressIndicator())
+                ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
                 : _timelineContentItems.isNotEmpty
                     ? TabBarView(
                         controller: _tabController,
                         children: passContentToWidgets()
-                            .map((e) => Container(
+                            .map((widgetCollection) => Container(
                                   color: OlukoNeumorphism.isNeumorphismDesign
                                       ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
                                       : Colors.black,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: TabContentList(contentToDisplay: e),
+                                    child: TabContentList(contentToDisplay: widgetCollection),
                                   ),
                                 ))
                             .toList(),
                       )
                     : Container(
-                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                        color: OlukoNeumorphismColors.appBackgroundColor,
                         child: Center(
                           child: Text(
                             OlukoLocalizations.get(context, 'noContent'),
@@ -105,32 +105,25 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   }
 
   List<List<Widget>> passContentToWidgets() {
-    Widget widgetTypeToUse;
-    List<Widget> listOfWidgets = [];
     List<List<Widget>> finalListOfWidgetContent = [];
-    _timelineContentItems.forEach((content) {
-      content.timelineElements.forEach((element) {
-        widgetTypeToUse = getWidgedToUse(element);
-        listOfWidgets.add(widgetTypeToUse);
+    _timelineContentItems.forEach((CoachTimelineGroup timelineTabContent) {
+      List<Widget> listOfWidgets = [];
+      Map<String, List<CoachTimelineItem>> tabDateAndContentList =
+          groupBy(timelineTabContent.timelineElements, (CoachTimelineItem obj) => DateFormat.yMMMd().format(obj.createdAt.toDate()));
+
+      List<MapEntry<String, List<CoachTimelineItem>>> entries = tabDateAndContentList.entries.toList();
+      entries.forEach((entry) {
+        String date = entry.key;
+        List<CoachTimelineItem> items = entry.value;
+
+        listOfWidgets.add(widgetToUse(date, items));
       });
-      finalListOfWidgetContent.insert(_timelineContentItems.indexOf(content), listOfWidgets);
-      listOfWidgets = [];
+      finalListOfWidgetContent.insert(_timelineContentItems.indexOf(timelineTabContent), listOfWidgets);
     });
     return finalListOfWidgetContent;
   }
 
-  Widget getWidgedToUse(CoachTimelineItem content) {
-    DateTime now = DateTime.now();
-
-    final dateForContent = Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Text(
-          now.difference(content.createdAt.toDate().toUtc()).inHours <= now.hour
-              ? OlukoLocalizations.get(context, 'today')
-              : DateFormat.yMMMd().format(content.createdAt.toDate()),
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-    );
-
+  StatelessWidget switchTypeWidget(CoachTimelineItem content) {
     switch (TimelineContentOption.getTimelineOption(content.contentType as int)) {
       case TimelineInteractionType.course:
         return GestureDetector(
@@ -142,11 +135,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 arguments: {'course': content.courseForNavigation, 'fromCoach': true, 'isCoachRecommendation': false});
           },
           child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                dateForContent,
                 CoachTimelineCardContent(
                   cardImage: content.contentThumbnail,
                   cardTitle: content.contentName,
@@ -160,11 +152,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.classes:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineCardContent(
                 cardImage: content.contentThumbnail,
                 cardTitle: content.contentName,
@@ -177,11 +168,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.segment:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineCircleContent(
                   circleImage: content.contentThumbnail,
                   circleTitle: content.contentName,
@@ -199,11 +189,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementForNavigation});
           },
           child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                dateForContent,
                 CoachTimelineCircleContent(
                     circleImage: content.contentThumbnail,
                     circleTitle: content.contentName,
@@ -215,14 +204,13 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.mentoredVideo:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'mentoredVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'mentoredVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.mentoredVideo),
             ],
@@ -233,12 +221,24 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'sentVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.sentVideo),
+            ],
+          ),
+        );
+      case TimelineInteractionType.recommendedVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recommendedVideos'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.recommendedVideo),
             ],
           ),
         );
@@ -246,5 +246,19 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
       default:
         return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
     }
+  }
+
+  Widget widgetToUse(String date, List<CoachTimelineItem> contentList) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 5),
+          child: Text(date == DateFormat.yMMMd().format(DateTime.now()) ? OlukoLocalizations.get(context, 'today') : date,
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+        ),
+        Column(children: contentList.map((content) => switchTypeWidget(content)).toList()),
+      ],
+    );
   }
 }

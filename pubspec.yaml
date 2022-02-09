@@ -81,6 +81,7 @@ dependencies:
   flutter_neumorphic: ^3.2.0
   numberpicker: ^2.1.1
   step_progress_indicator: ^1.0.2
+  avatar_glow: ^2.0.2
   sliver_tools: ^0.2.5
   cached_network_image: ^3.2.0
 

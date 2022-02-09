@@ -149,7 +149,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
             ))
           else
             Container(
-              width: 60,
+              width: 70,
               child: Text(
                 OlukoLocalizations.get(context, achievementTitleKey),
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),

@@ -24,6 +24,7 @@
     "favourites": "Favoritos",
     "everyoneElse": "Todos los demás",
     "noUsers": "Sin Usuarios",
+    "noFriends": "Sin Amigos",
     "noClasses": "Sin Clases",
     "referenceMovements": "Movimientos de referencia",
     "referenceCourses": "Cursos de referencia",
@@ -204,7 +205,7 @@
     "minutes": "minutos",
     "forNextRound": "para la siguente ronda",
     "activityStats": "Estadísticas de actividad",
-    "recomendedVideos": "Videos Recomendados",
+    "recommendedVideos": "Videos Recomendados",
     "voiceMessages": "Mensajes de voz",
     "addYourSelfie": "Agrega Tu Selfie...",
     "timelineMentoredVideo": "Video de Mentor: ",
@@ -282,5 +283,15 @@
     "lbs": "lbs",
     "cancelSession": "Cancelar la sesión?",
     "cancelMessage": "Esta acción paró la grabación. Deberas reiniciar la sesión desde el principio si quieres grabar el segmento.",
-    "restart": "Reiniciar"
+    "restart": "Reiniciar",
+    "reps": "Reps",
+    "reviewsPending": "revisión pendiente",
+    "workoutBadFeedback": "Aargh! realmente no",
+    "workoutGoodFeedback": "Fue increíble",
+    "errorRetrieving": "Hubo un error al recuperar",
+    "myFriends":"Mis Amigos",
+    "otherUsers":"Otros Usuarios",
+    "recommendedMovements": "Movimiento Recomendados",
+    "recommendedCourses": "Curso Recomendados",
+    "timeline": " Cronología"
 }

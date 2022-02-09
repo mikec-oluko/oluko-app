@@ -17,14 +17,14 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
     Widget contentToReturn;
     if (widget.isForVideoContent) {
       contentToReturn = Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         width: MediaQuery.of(context).size.width,
         height: 150,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -46,7 +46,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
           ]));
     } else {
       contentToReturn = Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           width: MediaQuery.of(context).size.width,
           height: 120,
           child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [

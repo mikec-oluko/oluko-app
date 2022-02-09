@@ -63,7 +63,7 @@ class CoachTimelineFunctions {
             coachId: element.coachId,
             coachReference: element.coachReference,
             contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
-            contentName: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentName: element.id == 'introVideo' ? 'Introduction Video' : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
             contentType: 4,
             mentoredVideosForNavigation: annotationContent,
@@ -82,9 +82,9 @@ class CoachTimelineFunctions {
             coachId: element.coachId,
             coachReference: element.coachReference,
             contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
-            contentName: OlukoLocalizations.get(context, 'sentVideo'),
+            contentName: element.segmentId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: 5,
+            contentType: 6,
             sentVideosForNavigation: segmentSubmittedContent,
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
@@ -189,6 +189,7 @@ class CoachTimelineFunctions {
             movementContent: recommendation.movementContent ?? recommendation.movementContent,
             mentoredContent: recommendation.mentoredContent ?? recommendation.mentoredContent,
             courseContent: recommendation.courseContent ?? recommendation.courseContent,
+            recommendationMediaContent: recommendation.recommendationMedia,
           );
 
           if (recommendationsAsNotification

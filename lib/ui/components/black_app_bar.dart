@@ -28,6 +28,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final bool showTitle;
   final bool showActions;
   final bool reduceHeight;
+  final Function showBottomTab;
 
   OlukoAppBar(
       {this.title,
@@ -47,7 +48,8 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.actionButton,
       this.searchKey,
       this.showActions = false,
-      this.reduceHeight = false});
+      this.reduceHeight = false,
+      this.showBottomTab});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -149,16 +151,18 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           bottom:
               widget.showDivider ? PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)) : null,
           flexibleSpace: widget.showLogo
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Image.asset(
-                      'assets/home/mvt.png',
-                      scale: 4,
-                    ),
-                  ),
-                )
+              ? widget.showBackButton
+                  ? Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: OlukoNeumorphicCircleButton(
+                              onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
+                        ),
+                        getLogo(),
+                      ],
+                    )
+                  : getLogo()
               : widget.showTitle
                   ? widget.showBackButton
                       ? Padding(
@@ -231,6 +235,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                                   //Close keyboard
                                                   FocusScope.of(context).unfocus();
                                                   widget.actionButton();
+                                                  widget.showBottomTab();
                                                 } else {
                                                   setState(() {
                                                     isSearchVisible = !isSearchVisible;
@@ -299,6 +304,19 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                             )
                   ////TODO: NO SEARCH BAR
                   : SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
+
+  Align getLogo() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Image.asset(
+          'assets/home/mvt.png',
+          scale: 4,
         ),
       ),
     );

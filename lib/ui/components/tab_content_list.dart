@@ -18,8 +18,6 @@ class _TabContentListState extends State<TabContentList> {
     );
   }
 
-  //TODO: UPDATE GROUP OF CONTENT BY DATE
-
   List<Widget> buildContentToShow() {
     List<Widget> contentToShow = [];
     setState(() {
@@ -34,7 +32,7 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
   contentToDisplay.forEach((content) {
     if (contentToDisplay.indexOf(content) == 0 && contentToDisplay.length > 1) {
       contentForTimelineTile.add(Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: TimelineTile(
             lineXY: 0.0,
             indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0),
@@ -45,7 +43,7 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
       ));
     } else if (contentToDisplay.indexOf(content) == contentToDisplay.length - 1) {
       contentForTimelineTile.add(Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: TimelineTile(
             lineXY: 0.0,
             isLast: true,
@@ -56,7 +54,7 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
       ));
     } else {
       contentForTimelineTile.add(Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: TimelineTile(
             lineXY: 0.0,
             indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0),

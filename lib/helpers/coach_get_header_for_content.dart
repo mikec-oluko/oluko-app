@@ -19,6 +19,8 @@ class CoachHeders {
         return OlukoLocalizations.of(context).find('notificationSegment');
       case CoachFileTypeEnum.faqVideo:
         return OlukoLocalizations.of(context).find('timelineFaqVideo');
+      case CoachFileTypeEnum.recommendedVideo:
+        return OlukoLocalizations.of(context).find('recommendedVideos');
     }
     return '';
   }
