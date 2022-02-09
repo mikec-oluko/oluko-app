@@ -201,7 +201,7 @@ class TransformListOfItemsToWidget {
         coachSegmentContent.add(
           CoachSegmentContent(
               segmentId: actualSegment.id,
-              classImage: segment.classImage,
+              classImage: actualSegment.challengeImage,
               className: segment.className,
               segmentName: actualSegment.name,
               completedAt: actualSegment.completedAt,
