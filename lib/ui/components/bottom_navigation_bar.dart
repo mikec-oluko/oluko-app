@@ -92,13 +92,16 @@ class _State extends State<OlukoBottomNavigationBar> {
                             child: Text(widget.userInformation.profileDefaultPicContent ?? '',
                                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                           )
+                      else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
+                        ImageIcon(
+                          AssetImage(olukoBottomNavigationBarItem.selectedAssetImageUrl),
+                          color: OlukoColors.primary,
+                        )
                       else
-                        ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
-                            color: olukoBottomNavigationBarItem.disabled
-                                ? Colors.grey.shade800
-                                : olukoBottomNavigationBarItem.selected
-                                    ? OlukoColors.primary
-                                    : Colors.grey),
+                        ImageIcon(
+                          AssetImage(olukoBottomNavigationBarItem.disabledAssetImageUrl),
+                          color: Colors.grey,
+                        ),
                       Padding(
                         padding: const EdgeInsets.only(top: 5.0),
                         child: Text(
@@ -127,7 +130,7 @@ class _State extends State<OlukoBottomNavigationBar> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
+                ImageIcon(AssetImage(olukoBottomNavigationBarItem.selectedAssetImageUrl),
                     color: olukoBottomNavigationBarItem.disabled ? Colors.grey.shade800 : null),
                 Padding(
                   padding: const EdgeInsets.only(top: 5.0),
@@ -149,9 +152,17 @@ class _State extends State<OlukoBottomNavigationBar> {
   List<OlukoBottomNavigationBarItem> getBottomNavigationBarItems() {
     List<OlukoBottomNavigationBarItem> items = [
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.get(context, 'home'), assetImageUrl: 'assets/bottom_navigation_bar/home.png', route: '/'),
+          title: OlukoLocalizations.get(context, 'home'),
+          disabledAssetImageUrl: 'assets/bottom_navigation_bar/home.png',
+          route: '/',
+          selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_home.png'),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.get(context, 'coach'), assetImageUrl: 'assets/bottom_navigation_bar/coach.png', route: '/coach'),
+          title: OlukoLocalizations.get(context, 'coach'),
+          disabledAssetImageUrl: OlukoNeumorphism.isNeumorphismDesign
+              ? 'assets/bottom_navigation_bar/coach_neumorphic.png'
+              : 'assets/bottom_navigation_bar/coach.png',
+          selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_coach.png',
+          route: '/coach'),
       //TODO: Item for testing (remove it later)
       /*OlukoBottomNavigationBarItem(
           title: "TEST",
@@ -159,13 +170,23 @@ class _State extends State<OlukoBottomNavigationBar> {
           route: '/segment-progress'),*/
       OlukoBottomNavigationBarItem(
         title: OlukoLocalizations.get(context, 'friends'),
-        assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
+        disabledAssetImageUrl: OlukoNeumorphism.isNeumorphismDesign
+            ? 'assets/bottom_navigation_bar/friends_neumorphic.png'
+            : 'assets/bottom_navigation_bar/friends.png',
+        selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
         route: '/friends',
       ),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.get(context, 'courses'), assetImageUrl: 'assets/bottom_navigation_bar/course.png', route: '/courses'),
+          title: OlukoLocalizations.get(context, 'courses'),
+          disabledAssetImageUrl: OlukoNeumorphism.isNeumorphismDesign
+              ? 'assets/bottom_navigation_bar/course_neumorphic.png'
+              : 'assets/bottom_navigation_bar/course.png',
+          selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_courses.png',
+          route: '/courses'),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.get(context, 'profile'), assetImageUrl: 'assets/bottom_navigation_bar/profile.png', route: '/profile'),
+          title: OlukoLocalizations.get(context, 'profile'),
+          selectedAssetImageUrl: 'assets/bottom_navigation_bar/profile.png',
+          route: '/profile'),
     ];
     return items;
   }

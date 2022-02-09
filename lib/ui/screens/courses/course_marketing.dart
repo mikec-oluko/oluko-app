@@ -46,6 +46,7 @@ class CourseMarketing extends StatefulWidget {
   final int courseIndex;
   final bool fromHome;
   Function isVideoPlaying;
+  Function closeVideo;
 
   CourseMarketing(
       {Key key,
@@ -78,6 +79,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
     widget.isVideoPlaying = () => setState(() {
           _isVideoPlaying = !_isVideoPlaying;
+        });
+    widget.closeVideo = () => setState(() {
+          if (_isVideoPlaying) {
+            _isVideoPlaying = !_isVideoPlaying;
+          }
         });
   }
 
@@ -151,7 +157,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(
                                                   //TODO: change weeks number
-                                                  TimeConverter.toCourseDuration(int.tryParse(widget.course.duration)??0,
+                                                  TimeConverter.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                                                       widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
@@ -254,13 +260,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 padding: EdgeInsets.only(right: 15, left: 15, top: 10),
                 child: Text(
                   TimeConverter.toCourseDuration(
-                      int.tryParse(widget.course.duration)??0, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                      int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
               ),
             ])),
             SliverVisibility(
-              visible: ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) || courseEnrollment == null),
+              visible: (courseEnrollment != null && courseEnrollment.isUnenrolled == true) || courseEnrollment == null,
               sliver: SliverPersistentHeader(
                   pinned: true,
                   delegate: SliverAppBarDelegate(
@@ -398,7 +404,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {
-        widget.isVideoPlaying();
+        if (widget.closeVideo != null) {
+          widget.closeVideo();
+        }
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
       },
     );

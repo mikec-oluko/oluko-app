@@ -18,8 +18,9 @@ class FilterSelector<T extends Base> extends StatefulWidget {
   final Function(List<T>) onSubmit;
   final Function() onClosed;
   List<Base> selectedTags;
+  final Function showBottonTab;
 
-  FilterSelector({this.textInput, this.itemList, this.onPressed, this.onSubmit, this.onClosed, this.selectedTags});
+  FilterSelector({this.textInput, this.itemList, this.onPressed, this.onSubmit, this.onClosed, this.selectedTags, this.showBottonTab});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -71,7 +72,7 @@ class _State<T extends Base> extends State<FilterSelector> {
                 SizedBox(
                   width: 15,
                 ),
-                OlukoOutlinedButton(title: 'Close', onPressed: () => widget.onClosed())
+                OlukoOutlinedButton(title: 'Close', onPressed: () => {widget.onClosed()})
               ],
             )));
   }
@@ -102,7 +103,7 @@ class _State<T extends Base> extends State<FilterSelector> {
                       textColor: OlukoColors.grayColor,
                       thinPadding: true,
                       title: 'Close',
-                      onPressed: () => widget.onClosed()),
+                      onPressed: () => {widget.onClosed(), widget.showBottonTab()}),
                 ),
                 // SizedBox(
                 //   width: 15,
@@ -186,6 +187,7 @@ class _State<T extends Base> extends State<FilterSelector> {
   void submit() {
     //Submit a list of selected items on the provided callback.
     if (widget.onSubmit != null) {
+      widget.showBottonTab();
       print('${_getSelectedItemList().length} items selected.');
       widget.onSubmit(_getSelectedItemList());
     }

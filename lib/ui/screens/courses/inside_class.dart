@@ -195,6 +195,14 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
+  void closeVideo() {
+    setState(() {
+      if (_isVideoPlaying) {
+        _isVideoPlaying = !_isVideoPlaying;
+      }
+    });
+  }
+
   Widget _startButton() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Row(
@@ -292,6 +300,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
         }
         challengesCard.add(ChallengesCard(
+          useAudio: false,
           segmentChallenge: segmentChallenge,
           navigateToSegment: true,
           audioIcon: false,
@@ -309,7 +318,7 @@ class _InsideClassesState extends State<InsideClass> {
       movements: _classMovements,
       classObj: _class,
       onPressedMovement: (BuildContext context, Movement movement) {
-        isVideoPlaying();
+        closeVideo();
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
       },
     );
@@ -347,24 +356,13 @@ class _InsideClassesState extends State<InsideClass> {
         if (OlukoNeumorphism.isNeumorphismDesign)
           Padding(
             padding: const EdgeInsets.only(bottom: 3),
-            child:
-            OlukoVideoPreview(
+            child: OlukoVideoPreview(
               randomImages: _class.randomImages,
               video: _class.video,
               showBackButton: true,
               audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
               bottomWidgets: [_getCourseInfoSection(_classImage)],
-              onBackPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'index': widget.courseIndex,
-                    'classIndex': widget.classIndex,
-                  },
-                );
-              },
+              onBackPressed: () => Navigator.pop(context),
               onPlay: () => isVideoPlaying(),
               videoVisibilty: _isVideoPlaying,
             ),

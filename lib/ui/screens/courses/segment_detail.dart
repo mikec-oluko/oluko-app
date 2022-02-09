@@ -329,7 +329,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           body: SegmentImageSection(
               onPressed: () => widget.fromChallenge
                   ? (() {})
-                  : Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                  : Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                       'courseEnrollment': widget.courseEnrollment,
                       'classIndex': widget.classIndex,
                       'courseIndex': widget.courseIndex

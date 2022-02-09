@@ -123,12 +123,12 @@ class _State extends State<CourseCard> {
             flex: 1,
             child: Align(
               alignment: Alignment.center,
-              child: FractionallySizedBox(
-                heightFactor: OlukoNeumorphism.isNeumorphismDesign ? 0.8 : 1,
-                widthFactor: 0.6,
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0), child: CourseProgressBar(value: widget.progress)),
-              ),
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                  child: CourseProgressBar(
+                    value: widget.progress,
+                    color: OlukoColors.primary,
+                  )),
             ),
           )
         else
