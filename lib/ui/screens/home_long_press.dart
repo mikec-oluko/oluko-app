@@ -9,7 +9,7 @@ import 'package:oluko_app/ui/components/user_item_bubbles.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class HomeLongPress extends StatefulWidget {
-  HomeLongPress({Key key, this.courseEnrollments, this.index}) : super(key: key);
+  HomeLongPress(this.courseEnrollments, this.index, {Key key}) : super(key: key);
 
   final List<CourseEnrollment> courseEnrollments;
   int index;
@@ -19,7 +19,6 @@ class HomeLongPress extends StatefulWidget {
 }
 
 class _HomeLongPressState extends State<HomeLongPress> {
-
   @override
   Widget build(BuildContext context) {
     if (widget.index != null &&
@@ -33,8 +32,12 @@ class _HomeLongPressState extends State<HomeLongPress> {
 
     return Scaffold(
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      appBar: OlukoAppBar(showLogo: true, showBackButton: false, showDivider: false, showTitle: false),
-      body: body(),
+      appBar: OlukoAppBar(showLogo: true, showBackButton: true, showDivider: false, showTitle: false),
+      body: ListView(
+        children: [
+          body(),
+        ],
+      ),
     );
   }
 
@@ -74,7 +77,7 @@ class _HomeLongPressState extends State<HomeLongPress> {
                   children: [
                     Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont()),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 15),
                       child: Center(child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'), style: OlukoFonts.olukoMediumFont())),
                     ),
                   ],
@@ -84,9 +87,12 @@ class _HomeLongPressState extends State<HomeLongPress> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${OlukoLocalizations.get(context, 'activeNow')} (${state.users.length})', style: OlukoFonts.olukoBigFont()),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     UserItemBubbles(
                       content: state.users,
-                      currentUserId: widget.courseEnrollments[0].createdBy,
+                      currentUserId: widget.courseEnrollments[widget.index].createdBy,
                     )
                   ],
                 );
@@ -110,15 +116,13 @@ class _HomeLongPressState extends State<HomeLongPress> {
     if (widget.courseEnrollments.length <= 1) {
       Navigator.pop(context);
     } else {
-      int newPosition;
-      if (index > 0) {
+      int newPosition = index;
+      if (index == widget.courseEnrollments.length - 1) {
         newPosition = index - 1;
-      } else {
-        newPosition = index + 1;
       }
       setState(() {
-        widget.index = newPosition;
         widget.courseEnrollments.removeAt(index);
+        widget.index = newPosition;
       });
     }
   }

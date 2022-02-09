@@ -151,16 +151,18 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           bottom:
               widget.showDivider ? PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)) : null,
           flexibleSpace: widget.showLogo
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Image.asset(
-                      'assets/home/mvt.png',
-                      scale: 4,
-                    ),
-                  ),
-                )
+              ? widget.showBackButton
+                  ? Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: OlukoNeumorphicCircleButton(
+                              onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
+                        ),
+                        getLogo(),
+                      ],
+                    )
+                  : getLogo()
               : widget.showTitle
                   ? widget.showBackButton
                       ? Padding(
@@ -302,6 +304,19 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                             )
                   ////TODO: NO SEARCH BAR
                   : SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
+
+  Align getLogo() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Image.asset(
+          'assets/home/mvt.png',
+          scale: 4,
         ),
       ),
     );

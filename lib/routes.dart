@@ -957,11 +957,14 @@ class Routes {
         newRouteView = const HiFivePage();
         break;
       case RouteEnum.homeLongPress:
-        providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
+        providers = [
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc)
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeLongPress(
-          courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
-          index: argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
+          argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
+          argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
         );
         break;
       case RouteEnum.assessmentNeumorphicDone:

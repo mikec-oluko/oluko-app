@@ -44,7 +44,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   void initState() {
     _userLocation = getUserLocation(widget.userToDisplayInformation);
     _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
-
     super.initState();
   }
 
@@ -93,6 +92,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   }
 
   String getUserLocation(UserResponse user) {
+    if (user.city == null || user.state == null || user.country == null) {
+      return null;
+    }
     return "${user.city ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
   }
 
@@ -444,7 +446,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 3),
                   ),
-                  if (_userLocation != null && _userLocation != "null, null null")
+                  if (_userLocation != null)
                     Text(
                       location,
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
