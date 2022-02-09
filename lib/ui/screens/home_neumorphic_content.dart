@@ -13,6 +13,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
@@ -119,12 +120,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Padding(
           padding: const EdgeInsets.only(left: 20, top: 40),
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Image.asset(
-              'assets/home/mvt.png',
-              scale: 4,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image.asset(
+                'assets/home/mvt.png',
+                scale: 4,
+              ),
+              HandWidget(authState: widget.authState),
+            ],
           ),
         ),
       ),
@@ -166,11 +170,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return SliverList(
       delegate: SliverChildListDelegate([
         GestureDetector(
-          onLongPress: () => Navigator.pushNamed(context, routeLabels[RouteEnum.homeLongPress], arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index}),
+          onLongPress: () => Navigator.pushNamed(context, routeLabels[RouteEnum.homeLongPress],
+              arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index}),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
             child: OverlayVideoPreview(
-              image: widget.courses[index].posterImage??widget.courses[index].image,
+              image: widget.courses[index].posterImage ?? widget.courses[index].image,
               video: widget.courses[index].video,
               onBackPressed: () => Navigator.pop(context),
             ),
