@@ -966,7 +966,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              currentTaskWidget(keyboardVisibilty, currentTask, true),
+              SizedBox(width: ScreenUtils.width(context) * 0.7, child: currentTaskWidget(keyboardVisibilty, currentTask, true)),
               Positioned(
                 left: ScreenUtils.width(context) - 70,
                 child: Text(
@@ -1080,7 +1080,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
         child: Text(
           currentTask,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: smaller ? 20 : 25,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
