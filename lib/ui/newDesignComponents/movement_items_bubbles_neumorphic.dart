@@ -63,16 +63,43 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
 
   List<Widget> buildMovementItems({bool bubbleName = true, bool viewDetailsScreen = false, bool referenceMovementsSection}) {
     if (referenceMovementsSection) {
-      List<Widget> movements = widget.content
-          .map((movement) => _imageItem(context, movement.image, movement.name,
-              onPressed: (context) => widget.onPressed(context, movement), referenceMovementsSection: referenceMovementsSection))
+      final List<Widget> movements = widget.content
+          .map(
+            (movement) => movement != null
+                ? _imageItem(
+                    context,
+                    movement.image,
+                    movement.name,
+                    onPressed: (context) => widget.onPressed(context, movement),
+                    referenceMovementsSection: referenceMovementsSection,
+                  )
+                : const SizedBox(),
+          )
           .toList();
+      if (movements != null && movements.isNotEmpty) {
+        movements.add(
+          !viewDetailsScreen
+              ? SizedBox(
+                  width: !widget.showAsGrid ? 180 : 0,
+                )
+              : const SizedBox(),
+        );
+      }
       return movements;
     }
     if (!viewDetailsScreen) {
       List<Widget> movements = widget.content
-          .map((movement) => _imageItem(context, movement.image, movement.name,
-              onPressed: (context) => widget.onPressed(context, movement), bubbleName: bubbleName))
+          .map(
+            (movement) => movement != null
+                ? _imageItem(
+                    context,
+                    movement.image,
+                    movement.name,
+                    onPressed: (context) => widget.onPressed(context, movement),
+                    bubbleName: bubbleName,
+                  )
+                : const SizedBox(),
+          )
           .toList();
       return movements;
     } else {
@@ -85,20 +112,13 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
         )
       ];
     }
-    
   }
 
   Widget buildBubbles({bool bubbleName = true, bool viewDetailsScreen, bool referenceMovementsSection = false}) {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: buildMovementItems(
-            bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection)
-          //Prevent the last item to be overlayed by the carousel gradient
-          ..add(!viewDetailsScreen
-              ? SizedBox(
-                  width: !widget.showAsGrid ? 180 : 0,
-                )
-              : SizedBox()));
+            bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection));
   }
 
   Widget buildBubbleGrid({bool bubbleName}) {
