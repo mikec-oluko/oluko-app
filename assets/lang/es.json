@@ -24,6 +24,7 @@
     "favourites": "Favoritos",
     "everyoneElse": "Todos los demás",
     "noUsers": "Sin Usuarios",
+    "noFriends": "Sin Amigos",
     "noClasses": "Sin Clases",
     "referenceMovements": "Movimientos de referencia",
     "referenceCourses": "Cursos de referencia",
@@ -287,6 +288,9 @@
     "reviewsPending": "revisión pendiente",
     "workoutBadFeedback": "Aargh! realmente no",
     "workoutGoodFeedback": "Fue increíble",
+    "errorRetrieving": "Hubo un error al recuperar",
+    "myFriends":"Mis Amigos",
+    "otherUsers":"Otros Usuarios",
     "recommendedMovements": "Movimiento Recomendados",
     "recommendedCourses": "Curso Recomendados",
     "timeline": " Cronología"

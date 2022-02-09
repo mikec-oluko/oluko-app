@@ -45,20 +45,25 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
   }
 
   List<Widget> buildUserItems() {
-    final List<Widget> users = widget.content
-        .map((user) => _imageItem(context, user.avatarThumbnail, user.username, itemUser: user, currentUserId: widget.currentUserId))
+    List<Widget> users = widget.content
+        .map((user) => _imageItem(context, user?.avatarThumbnail, user?.username, itemUser: user, currentUserId: widget.currentUserId))
         .toList();
+
+    if (users != null && users.isNotEmpty) {
+      users.add(
+        const SizedBox(
+          width: 180,
+        ),
+      );
+    }
     return users;
   }
 
   Widget buildBubbles() {
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: buildUserItems()
-          //Prevent the last item to be overlayed by the carousel gradient
-          ..add(const SizedBox(
-            width: 180,
-          )));
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: buildUserItems(),
+    );
   }
 
   Widget buildBubbleGrid() {
@@ -92,11 +97,11 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
               bloc: StoryListBloc(),
               getStories: true,
               currentUserId: currentUserId,
-              itemUserId: itemUser.id,
-              name: itemUser.firstName,
+              itemUserId: itemUser?.id,
+              name: itemUser?.firstName,
             ),
             Text(
-              username,
+              username ?? itemUser?.username ?? '',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
