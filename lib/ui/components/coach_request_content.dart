@@ -36,9 +36,7 @@ class _CoachRequestContentState extends State<CoachRequestContent> {
             const SizedBox(height: 25),
             Stack(alignment: Alignment.center, children: [
               StoriesItem(maxRadius: 65, imageUrl: widget.image),
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? Padding(padding: EdgeInsets.only(top: 11), child: Image.asset('assets/neumorphic/black_ellipse.png', scale: 2.5))
-                  : SizedBox()
+              OlukoNeumorphism.isNeumorphismDesign ? Image.asset('assets/neumorphic/black_ellipse.png', scale: 2.5) : SizedBox()
             ]),
             const SizedBox(height: 15),
             Text(OlukoLocalizations.get(context, 'coach') + " " + widget.name,
