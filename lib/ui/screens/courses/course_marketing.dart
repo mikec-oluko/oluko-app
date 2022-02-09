@@ -7,7 +7,7 @@ import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart'as CourseEnrollmentBlocLoading show Loading;
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart' as CourseEnrollmentBlocLoading show Loading;
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
@@ -122,7 +122,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         _movements = movementState.movements;
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
           return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess ||enrollmentState is CourseEnrollmentBlocLoading.Loading ) && classState is ClassSubscriptionSuccess) {
+            if ((enrollmentState is GetEnrollmentSuccess || enrollmentState is CourseEnrollmentBlocLoading.Loading) &&
+                classState is ClassSubscriptionSuccess) {
               _classes = classState.classes;
               return Form(
                   key: _formKey,
@@ -144,7 +145,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                           showShareButton: true,
                                           onBackPressed: () => Navigator.pop(context)),
                                     ),
-                                    showEnrollButton(enrollmentState is GetEnrollmentSuccess?enrollmentState.courseEnrollment:null, context),
+                                    showEnrollButton(
+                                        enrollmentState is GetEnrollmentSuccess ? enrollmentState.courseEnrollment : null, context),
                                     Padding(
                                         padding: EdgeInsets.only(right: 15, left: 15, top: 0),
                                         child: Container(
@@ -266,19 +268,24 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 ),
               ),
             ])),
-            if (courseEnrollmentState is GetEnrollmentSuccess) 
-            SliverVisibility(
-              visible: (courseEnrollmentState.courseEnrollment != null && courseEnrollmentState.courseEnrollment.isUnenrolled == true) || courseEnrollmentState.courseEnrollment == null,
-              sliver: SliverPersistentHeader(
-                  pinned: true,
-                  delegate: SliverAppBarDelegate(
-                    ScreenUtils.height(context) * 0.12,
-                    ScreenUtils.height(context) * 0.12,
-                    child:
-                        Container(color: OlukoNeumorphismColors.finalGradientColorDark, child: showEnrollButton(courseEnrollmentState.courseEnrollment, context)),
-                  )),
-            )
-            else SliverToBoxAdapter(),
+            if (courseEnrollmentState is GetEnrollmentSuccess)
+              SliverVisibility(
+                visible: (courseEnrollmentState.courseEnrollment != null && courseEnrollmentState.courseEnrollment.isUnenrolled == true) ||
+                    courseEnrollmentState.courseEnrollment == null,
+                sliver: SliverPersistentHeader(
+                    pinned: true,
+                    delegate: SliverAppBarDelegate(
+                      ScreenUtils.height(context) * 0.12,
+                      ScreenUtils.height(context) * 0.12,
+                      child: Container(
+                          color: OlukoNeumorphismColors.finalGradientColorDark,
+                          child: showEnrollButton(courseEnrollmentState.courseEnrollment, context)),
+                    )),
+              )
+            else
+              SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
+              ),
             SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
