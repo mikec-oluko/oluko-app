@@ -164,6 +164,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                             OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                                     if (widget.fileType == CoachFileTypeEnum.recommendedCourse)
                                       Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                               widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null
