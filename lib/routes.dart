@@ -957,7 +957,10 @@ class Routes {
         newRouteView = const HiFivePage();
         break;
       case RouteEnum.homeLongPress:
-        providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
+        providers = [
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc)
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeLongPress(
           argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
