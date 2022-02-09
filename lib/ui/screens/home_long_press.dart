@@ -19,7 +19,6 @@ class HomeLongPress extends StatefulWidget {
 }
 
 class _HomeLongPressState extends State<HomeLongPress> {
-
   @override
   Widget build(BuildContext context) {
     if (widget.index != null &&
@@ -88,7 +87,9 @@ class _HomeLongPressState extends State<HomeLongPress> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${OlukoLocalizations.get(context, 'activeNow')} (${state.users.length})', style: OlukoFonts.olukoBigFont()),
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     UserItemBubbles(
                       content: state.users,
                       currentUserId: widget.courseEnrollments[widget.index].createdBy,
@@ -115,15 +116,13 @@ class _HomeLongPressState extends State<HomeLongPress> {
     if (widget.courseEnrollments.length <= 1) {
       Navigator.pop(context);
     } else {
-      int newPosition;
-      if (index > 0) {
+      int newPosition = index;
+      if (index == widget.courseEnrollments.length - 1) {
         newPosition = index - 1;
-      } else {
-        newPosition = index + 1;
       }
       setState(() {
-        widget.index = newPosition;
         widget.courseEnrollments.removeAt(index);
+        widget.index = newPosition;
       });
     }
   }

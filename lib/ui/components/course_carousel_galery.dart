@@ -41,7 +41,7 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
   }
 
   List<Widget> buildCourseCards(int selected) {
-    List<Widget> classCards = [];
+    final List<Widget> classCards = [];
     for (var i = 0; i < widget.courseEnrollments.length; i++) {
       classCards.add(SizedBox(
         child: Padding(
@@ -49,8 +49,7 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              widget.courseEnrollments[i].course.image != null
-                  ? Container(
+              if (widget.courseEnrollments[i].course.image != null) Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
@@ -58,8 +57,7 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
                         ),
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                       ),
-                    )
-                  : SizedBox(),
+                    ) else const SizedBox(),
               Positioned(
                 top: 0,
                 right: 0,
