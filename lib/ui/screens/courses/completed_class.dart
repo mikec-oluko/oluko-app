@@ -138,7 +138,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       width: 153,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
                         ),
                       ),
@@ -153,18 +153,20 @@ class _CompletedClassState extends State<CompletedClass> {
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(-0.01),
                   child: Row(children: [
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(
-                        DateFormat('MM/dd/yyyy').format(_date).toString(),
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: OlukoColors.black),
-                        textAlign: TextAlign.start,
-                      ),
-                      Text(
-                        DateFormat('hh:mm a').format(_date).toString(),
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: OlukoColors.black),
-                        textAlign: TextAlign.start,
-                      )
-                    ]),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(
+                            DateFormat('MM/dd/yyyy').format(_date).toString(),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: OlukoColors.black),
+                            textAlign: TextAlign.start,
+                          ),
+                          Text(
+                            DateFormat('hh:mm a').format(_date).toString(),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: OlukoColors.black),
+                            textAlign: TextAlign.start,
+                          )
+                        ])),
                     SizedBox(width: 50),
                     getCameraIcon()
                   ]))),
