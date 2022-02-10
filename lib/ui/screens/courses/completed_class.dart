@@ -98,6 +98,7 @@ class _CompletedClassState extends State<CompletedClass> {
     return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
       if (newSelfieUploaded) {
         if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+          newSelfieUploaded = false;
           _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
         }
         _date = DateTime.now();
@@ -132,17 +133,28 @@ class _CompletedClassState extends State<CompletedClass> {
             Padding(
                 padding: const EdgeInsets.only(bottom: 30, left: 10),
                 child: RotationTransition(
-                    turns: AlwaysStoppedAnimation(-0.01),
-                    child: Container(
-                      height: 153,
-                      width: 153,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
-                        ),
-                      ),
-                    ))),
+                  turns: AlwaysStoppedAnimation(-0.01),
+                  child: (() {
+                    if (newSelfieUploaded) {
+                      return Container(
+                          height: 153,
+                          width: 153,
+                          child: Center(
+                            child: CircularProgressIndicator(value: null),
+                          ));
+                    } else {
+                      return Container(
+                          height: 153,
+                          width: 153,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
+                            ),
+                          ));
+                    }
+                  })(),
+                )),
             Image.asset(
               'assets/courses/empty_frame.png',
               scale: 3,
