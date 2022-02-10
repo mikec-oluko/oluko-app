@@ -1264,13 +1264,38 @@ class _SegmentClocksState extends State<SegmentClocks> {
     ];
   }
 
+  bool isLastOne() {
+    return timerTaskIndex == timerEntries.length - 1;
+  }
+
+  bool nextIsFirstRound() {
+    return timerEntries[timerTaskIndex + 1].round == 1;
+  }
+
+  bool nextIsLastOne() {
+    return timerTaskIndex + 1 == timerEntries.length - 1;
+  }
+
+  bool nextIsRestTime() {
+    return timerEntries[timerTaskIndex + 1].movement.isRestTime;
+  }
+
+  bool thereAreTwoMorePos() {
+    return timerTaskIndex + 2 <= timerEntries.length - 1;
+  }
+
+  bool twoPosLaterIsFirstRound() {
+    return timerEntries[timerTaskIndex + 2].round == 1;
+  }
+
   void _goToNextStep() {
     if (alertTimer != null) {
       alertTimer.cancel();
     }
 
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
-      if (timerTaskIndex == timerEntries.length - 1 || timerEntries[timerTaskIndex + 1].round == 1) {
+      if ((isLastOne() || nextIsFirstRound()) ||
+          ((nextIsLastOne() && nextIsRestTime()) || (thereAreTwoMorePos() && nextIsRestTime() && twoPosLaterIsFirstRound()))) {
         _saveSegmentRound(timerEntries[timerTaskIndex]);
       }
     }
