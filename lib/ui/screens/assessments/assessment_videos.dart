@@ -214,15 +214,22 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null &&
-                                    !OlukoNeumorphism.isNeumorphismDesign)
+                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
                                   Row(children: [
-                                    OlukoPrimaryButton(
-                                      title: OlukoLocalizations.get(context, 'done'),
-                                      onPressed: () {
-                                        DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
-                                      },
-                                    )
+                                    if (OlukoNeumorphism.isNeumorphismDesign)
+                                      OlukoNeumorphicPrimaryButton(
+                                        title: OlukoLocalizations.get(context, 'done'),
+                                        onPressed: () {
+                                          DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
+                                        },
+                                      )
+                                    else
+                                      OlukoPrimaryButton(
+                                        title: OlukoLocalizations.get(context, 'done'),
+                                        onPressed: () {
+                                          DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
+                                        },
+                                      )
                                   ])
                                 else
                                   const SizedBox.shrink()

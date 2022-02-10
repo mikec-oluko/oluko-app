@@ -105,29 +105,42 @@ class _FriendModalContentState extends State<FriendModalContent> {
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      widget.blocHifiveSend.set(context, widget.user.id, widget.currentUserId);
-                      AppMessages().showHiFiveSentDialog(context);
-                    },
-                    child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                      bloc: widget.blocHifiveSend,
-                      listener: (hiFiveSendContext, hiFiveSendState) {
-                        if (hiFiveSendState is HiFiveSendSuccess) {
-                          AppMessages.clearAndShowSnackbar(
-                            context,
-                            hiFiveSendState.hiFive
-                                ? OlukoLocalizations.get(context, 'hiFiveSent')
-                                : OlukoLocalizations.get(context, 'hiFiveRemoved'),
-                          );
-                          widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
-                        }
-                      },
-                      child: SizedBox(width: 90, height: 90, child: Image.asset('assets/profile/hiFive.png')),
-                    ),
-                  ),
+                BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
+                  bloc: widget.blocHifiveReceived,
+                  builder: (hiFiveReceivedContext, hiFiveReceivedState) {
+                    return widget.user.privacy == 0
+                        ? Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    widget.blocHifiveSend.set(context, widget.currentUserId, widget.user.id);
+                                    AppMessages().showHiFiveSentDialog(context);
+                                  },
+                                  child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                                    bloc: widget.blocHifiveSend,
+                                    listener: (hiFiveSendContext, hiFiveSendState) {
+                                      if (hiFiveSendState is HiFiveSendSuccess) {
+                                        AppMessages.clearAndShowSnackbar(
+                                          context,
+                                          hiFiveSendState.hiFive
+                                              ? OlukoLocalizations.get(context, 'hiFiveSent')
+                                              : OlukoLocalizations.get(context, 'hiFiveRemoved'),
+                                        );
+                                      }
+                                      if (hiFiveSendState is HiFiveSendSuccess) {
+                                        widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
+                                      }
+                                    },
+                                    child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox();
+                  },
                 ),
               ],
             ),
@@ -328,63 +341,67 @@ class _FriendModalContentState extends State<FriendModalContent> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  OlukoLocalizations.get(context, 'removeThisPerson'),
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  OlukoLocalizations.get(context, 'removeThisPersonBody1') +
-                      widget.user.username +
-                      OlukoLocalizations.get(context, 'removeThisPersonBody2'),
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300, color: Colors.grey),
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 80,
-                      child: OlukoNeumorphicSecondaryButton(
-                        isExpanded: false,
-                        thinPadding: true,
-                        textColor: Colors.grey,
-                        onPressed: () => Navigator.pop(context),
-                        title: OlukoLocalizations.get(context, 'no'),
-                      ),
+        child: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      OlukoLocalizations.get(context, 'removeThisPerson'),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
                     ),
-                    const SizedBox(width: 25),
-                    SizedBox(
-                      width: 80,
-                      child: OlukoNeumorphicPrimaryButton(
-                        isExpanded: false,
-                        thinPadding: true,
-                        onPressed: () {
-                          widget.blocFriends.removeFriend(widget.currentUserId, friend, widget.user.id);
-                          Navigator.pop(context);
-                        },
-                        title: OlukoLocalizations.get(context, 'yes'),
-                      ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      OlukoLocalizations.get(context, 'removeThisPersonBody1') +
+                          widget.user.username +
+                          OlukoLocalizations.get(context, 'removeThisPersonBody2'),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300, color: Colors.grey),
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 80,
+                          child: OlukoNeumorphicSecondaryButton(
+                            isExpanded: false,
+                            thinPadding: true,
+                            textColor: Colors.grey,
+                            onPressed: () => Navigator.pop(context),
+                            title: OlukoLocalizations.get(context, 'no'),
+                          ),
+                        ),
+                        const SizedBox(width: 25),
+                        SizedBox(
+                          width: 80,
+                          child: OlukoNeumorphicPrimaryButton(
+                            isExpanded: false,
+                            thinPadding: true,
+                            onPressed: () {
+                              widget.blocFriends.removeFriend(widget.currentUserId, friend, widget.user.id);
+                              Navigator.pop(context);
+                            },
+                            title: OlukoLocalizations.get(context, 'yes'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
       ),
       context: context,

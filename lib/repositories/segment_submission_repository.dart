@@ -72,6 +72,17 @@ class SegmentSubmissionRepository {
     });
   }
 
+  static Future<void> setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('segmentSubmissions')
+        .doc(segmentSubmission.id);
+    reference.update({
+      'isDeleted': deleted,
+    });
+  }
+
   static Future<void> updateStateToEncoded(SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')

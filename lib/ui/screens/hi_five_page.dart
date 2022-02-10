@@ -117,6 +117,8 @@ class _HiFivePageState extends State<HiFivePage> {
                 StoriesItem(
                   progressValue: 0.6,
                   imageUrl: targetUser.avatar,
+                  name: targetUser.firstName,
+                  lastname: targetUser.lastName,
                   maxRadius: 30,
                 ),
                 Padding(
@@ -165,6 +167,8 @@ class _HiFivePageState extends State<HiFivePage> {
       title: 'Hi Five',
       showLogo: false,
       showBackButton: true,
+      showTitle: OlukoNeumorphism.isNeumorphismDesign,
+      showActions: OlukoNeumorphism.isNeumorphismDesign,
       actions: [
         Visibility(
           visible: _hiFiveState != null && _hiFiveState.users.length > 1,
