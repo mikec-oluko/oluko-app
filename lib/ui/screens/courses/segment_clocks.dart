@@ -1231,6 +1231,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _saveSegmentRound(TimerEntry timerEntry) async {
     if (isSegmentWithRecording()) {
       videoRecorded = await cameraController.stopVideoRecording();
+      coachAction();
       setState(() {
         workoutType = WorkoutType.segment;
       });
@@ -1617,11 +1618,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: widget.workoutType == WorkoutType.segment || shareDone
                 ? FeedbackCard()
-                : ShareCard(createStory: _createStory, whistleAction: coachAction),
+                : ShareCard(createStory: _createStory, whistleAction: whistleAction),
           ),
         ],
       ),
     );
+  }
+
+  whistleAction(bool delete) {
+    BlocProvider.of<SegmentSubmissionBloc>(context).setIsDeleted(_segmentSubmission, delete);
   }
 
   _createStory() {

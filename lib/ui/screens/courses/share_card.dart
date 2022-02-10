@@ -7,7 +7,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ShareCard extends StatefulWidget {
   final Function() createStory;
-  final Function() whistleAction;
+  final Function(bool) whistleAction;
 
   ShareCard({this.createStory, this.whistleAction});
 
@@ -18,7 +18,7 @@ class ShareCard extends StatefulWidget {
 class _State extends State<ShareCard> {
   List<Movement> segmentMovements;
   bool _storyEnabled = GlobalConfiguration().getValue('showStories') == 'true';
-  bool _whistleEnabled = true;
+  bool _whistleEnabled = false;
 
   @override
   void initState() {
@@ -28,12 +28,9 @@ class _State extends State<ShareCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.listGrayColor),
+      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
       child: Padding(
-        padding: const EdgeInsets.only(
-            right: 15.0, left: 15.0, top: 18, bottom: 12.0),
+        padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 18, bottom: 12.0),
         child: Column(
           children: [
             Container(
@@ -43,8 +40,7 @@ class _State extends State<ShareCard> {
                   Expanded(
                       flex: 2,
                       child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(5)),
+                        borderRadius: const BorderRadius.all(Radius.circular(5)),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -66,8 +62,7 @@ class _State extends State<ShareCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              OlukoLocalizations.of(context)
-                                  .find('shareYourVideo'),
+                              OlukoLocalizations.of(context).find('shareYourVideo'),
                               style: OlukoFonts.olukoBigFont(),
                               textAlign: TextAlign.start,
                             ),
@@ -102,11 +97,13 @@ class _State extends State<ShareCard> {
   Widget whistleButton() {
     return GestureDetector(
         onTap: () {
-          if (_whistleEnabled) {
-            widget.whistleAction();
+          if (!_whistleEnabled) {
+            widget.whistleAction(true);
+          } else {
+            widget.whistleAction(false);
           }
 
-          setState(() => _whistleEnabled = false);
+          setState(() => _whistleEnabled = !_whistleEnabled);
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -123,10 +120,7 @@ class _State extends State<ShareCard> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(children: [
                   Text('Coach',
-                      style: _whistleEnabled
-                          ? OlukoFonts.olukoMediumFont()
-                          : OlukoFonts.olukoMediumFont(
-                              customColor: Colors.grey)),
+                      style: _whistleEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
                   if (!_whistleEnabled) doubleCheck()
                 ]),
               )
@@ -151,11 +145,7 @@ class _State extends State<ShareCard> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text('Story',
-                      style: _storyEnabled
-                          ? OlukoFonts.olukoMediumFont()
-                          : OlukoFonts.olukoMediumFont(
-                              customColor: Colors.grey)),
+                  Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
                   if (!_storyEnabled) doubleCheck(),
                 ],
               ),
@@ -170,9 +160,7 @@ class _State extends State<ShareCard> {
     return Stack(
       children: [
         Image.asset('assets/assessment/check.png', scale: 5),
-        Positioned(
-            left: 4,
-            child: Image.asset('assets/assessment/check.png', scale: 5))
+        Positioned(left: 4, child: Image.asset('assets/assessment/check.png', scale: 5))
       ],
     );
   }
