@@ -281,7 +281,7 @@ class CourseEnrollmentRepository {
         .doc(courseEnrollment.id);
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
     final thumbnailUrl = _uploadFile(thumbnail, '${reference.path}/class' + classIndex.toString());
-    final downloadUrl = _uploadFile(file.path, reference.path);
+    //final downloadUrl = _uploadFile(file.path, reference.path);
     await Future.wait([thumbnailUrl]); //, downloadUrl]);
     courseEnrollment.classes[classIndex].selfieDownloadUrl = null;
     courseEnrollment.classes[classIndex].selfieThumbnailUrl = await thumbnailUrl;

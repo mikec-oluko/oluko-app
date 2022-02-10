@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
@@ -143,21 +144,38 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
                     BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
-                    BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
-                        userId: _user.id,
-                        coachId: _coachAssignment?.coachId,
-                        courseEnrollmentId: widget.courseEnrollment.id,
-                        classId: widget.courseEnrollment.classes[widget.classIndex].id);
+                    // BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
+                    //     userId: _user.id,
+                    //     coachId: _coachAssignment?.coachId,
+                    //     courseEnrollmentId: widget.courseEnrollment.id,
+                    //     classId: widget.courseEnrollment.classes[widget.classIndex].id);
+                    BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
                   }
                   return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
-                    return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
-                      if (coachUserState is CoachUserSuccess && coachRequestState is ClassCoachRequestsSuccess) {
+                    return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
+                      // return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
+                      if (coachUserState is CoachUserSuccess &&
+                          (coachRequestStreamState is CoachRequestStreamSuccess ||
+                              coachRequestStreamState is GetCoachRequestStreamUpdate)) {
+                        List<CoachRequest> coachRequests;
+                        if (coachRequestStreamState is CoachRequestStreamSuccess) {
+                          coachRequests = coachRequestStreamState.values;
+                        }
+                        if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
+                          coachRequests = coachRequestStreamState.values;
+                        }
                         _coach = coachUserState.coach;
-                        _coachRequests = coachRequestState.coachRequests;
+                        _coachRequests = coachRequests
+                            .where((coachRequest) =>
+                                coachRequest.coachId == _coach.id &&
+                                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id)
+                            .toList();
                         return form();
                       } else {
-                        return SizedBox();
+                        return OlukoCircularProgressIndicator();
                       }
+                      // });
                     });
                   });
                 },
