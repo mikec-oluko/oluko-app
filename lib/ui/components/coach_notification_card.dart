@@ -174,9 +174,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                                   customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                                           Text(
                                               widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null
-                                                  ? widget.cardDescription.contains(',')
-                                                      ? widget.cardDescription.split(',')[0]
-                                                      : widget.cardDescription
+                                                  ? widget.cardDescription + " " + OlukoLocalizations.of(context).find('weeks')
                                                   : '',
                                               overflow: TextOverflow.ellipsis,
                                               style: OlukoFonts.olukoMediumFont(
