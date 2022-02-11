@@ -315,12 +315,10 @@ class _CoachPageState extends State<CoachPage> {
                       )
                     else
                       const SizedBox.shrink(),
-                 Padding(
-                            padding: paddingTopForElements,
-                            child:
-                                userProgressSection(true),
-                          ),
-
+                    Padding(
+                      padding: paddingTopForElements,
+                      child: userProgressSection(true),
+                    ),
                     Padding(
                       padding: paddingTopForElements,
                       child: CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
@@ -689,10 +687,13 @@ class _CoachPageState extends State<CoachPage> {
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
       if (movementsRecommended.isNotEmpty) {
         widgetToReturn = GestureDetector(
-            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
-                  'recommendedContent': movementsRecommended,
-                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
-                }),
+            onTap: () {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                'recommendedContent': movementsRecommended,
+                'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
+              });
+            },
             child: CoachRecommendedContentPreviewStack(
               recommendationsList: movementsRecommended,
               titleForSection: OlukoLocalizations.of(context).find('recommendedMovements'),
