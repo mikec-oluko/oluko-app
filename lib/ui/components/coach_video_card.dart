@@ -6,7 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_blue_title_header.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachVideoCard extends StatefulWidget {
   const CoachVideoCard({this.videoUrl, this.onVideoFinished, this.onCloseCard, this.onOpenCard});
@@ -14,7 +14,7 @@ class CoachVideoCard extends StatefulWidget {
   final String videoUrl;
   final Function() onCloseCard;
   final Function() onOpenCard;
-    final Function() onVideoFinished;
+  final Function() onVideoFinished;
 
   @override
   _CoachVideoCardState createState() => _CoachVideoCardState();
@@ -44,7 +44,6 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
         return Visibility(
           visible: isVisible,
           child: SizedBox(
-            // height: 200,
             child: GestureDetector(
               onTap: widget.onOpenCard ?? () {},
               child: Column(
@@ -53,8 +52,9 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 5),
                     child: OlukoNeumorphism.isNeumorphismDesign
-                        ? OlukoBlueHeader(textContent: "Welcome video")
-                        : Text("Welcome video",
+                        ? OlukoBlueHeader(
+                            textContent: OlukoLocalizations.get(context, 'welcomeVideo'))
+                        : Text(OlukoLocalizations.get(context, 'welcomeVideo'),
                             overflow: TextOverflow.ellipsis,
                             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                   ),
@@ -66,9 +66,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                              //height: 180,
-                              child: showVideoPlayer(widget.videoUrl)),
+                          showVideoPlayer(widget.videoUrl),
                         ],
                       ),
                     ),
@@ -82,7 +80,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
     );
   }
 
-    Widget showVideoPlayer(String videoUrl) {
+  Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -110,16 +108,6 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                 }),
             onVideoFinished: widget.onVideoFinished));
 
-    return Container(
-        /*constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),*/
-        child: SizedBox(height: 180, child: Stack(children: widgets)));
+    return Container(child: SizedBox(height: 180, child: Stack(children: widgets)));
   }
-
-
 }

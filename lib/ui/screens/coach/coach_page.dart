@@ -7,15 +7,12 @@ import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
-// import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -312,32 +309,19 @@ class _CoachPageState extends State<CoachPage> {
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 child: ListView(
                   children: [
-                    if (carouselNotificationWidgetList.isNotEmpty /*&& widget.coachAssignment.introductionCompleted*/)
+                    if (carouselNotificationWidgetList.isNotEmpty)
                       Padding(
                         padding: paddingTopForElements,
                         child: coachCarouselSliderSection,
                       )
-                    /* else if (!widget.coachAssignment.introductionCompleted)
-                      Padding(
-                        padding: paddingTopForElements,
-                        child: coachCarouselSliderSection,
-                      )*/
                     else
                       const SizedBox.shrink(),
-
-                    ///if (widget.coachAssignment.introductionCompleted)
-                    /*carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
-                        ? Padding(
-                            padding: paddingTopForElements,
-                            child: userProgressSection(false),
-                          )
-                        :*/ Padding(
+                 Padding(
                             padding: paddingTopForElements,
                             child:
-                                userProgressSection(true /*carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted*/),
+                                userProgressSection(true),
                           ),
-                    //else
-                    //const SizedBox.shrink(),
+
                     Padding(
                       padding: paddingTopForElements,
                       child: CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
