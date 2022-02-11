@@ -97,7 +97,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                   whenInitialized: (ChewieController chewieController) => setState(() {
                         _controller = chewieController;
                       }),
-                  onVideoFinished: widget.onVideoFinished),
+                  onVideoFinished: () => finishVideo()),
             ),
           )
         : OlukoVideoPlayer(
@@ -106,8 +106,13 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
             whenInitialized: (ChewieController chewieController) => setState(() {
                   _controller = chewieController;
                 }),
-            onVideoFinished: widget.onVideoFinished));
+            onVideoFinished: () => finishVideo()));
 
     return Container(child: SizedBox(height: 180, child: Stack(children: widgets)));
+  }
+
+  finishVideo(){
+    _controller.exitFullScreen();
+    widget.onVideoFinished();
   }
 }

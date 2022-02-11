@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 
 class CoachCarouselSliderSection extends StatefulWidget {
-  const CoachCarouselSliderSection({this.contentForCarousel, this.introductionCompleted, this.introductionVideo, this.onVideoFinished});
+  const CoachCarouselSliderSection({this.contentForCarousel, this.introductionCompleted, this.introductionVideo});
   final List<Widget> contentForCarousel;
   final String introductionVideo;
   final bool introductionCompleted;
-  final Function() onVideoFinished;
 
   @override
   _CoachCarouselSliderSectionState createState() => _CoachCarouselSliderSectionState();

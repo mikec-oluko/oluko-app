@@ -302,7 +302,6 @@ class _CoachPageState extends State<CoachPage> {
                 contentForCarousel: carouselNotificationWidgetList,
                 introductionCompleted: widget.coachAssignment.introductionCompleted,
                 introductionVideo: _assessment.video,
-                onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
               );
 
               return Container(
