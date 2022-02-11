@@ -280,11 +280,11 @@ class CourseEnrollmentRepository {
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
-    final thumbnailUrl = await _uploadFile(thumbnail, '${reference.path}/class' + classIndex.toString());
-    final downloadUrl = await _uploadFile(file.path, reference.path);
-
-    courseEnrollment.classes[classIndex].selfieDownloadUrl = downloadUrl;
-    courseEnrollment.classes[classIndex].selfieThumbnailUrl = thumbnailUrl;
+    final thumbnailUrl = _uploadFile(thumbnail, '${reference.path}/class' + classIndex.toString());
+    //final downloadUrl = _uploadFile(file.path, reference.path);
+    await Future.wait([thumbnailUrl]); //, downloadUrl]);
+    courseEnrollment.classes[classIndex].selfieDownloadUrl = null;
+    courseEnrollment.classes[classIndex].selfieThumbnailUrl = await thumbnailUrl;
 
     reference.update({
       'classes': List<dynamic>.from(courseEnrollment.classes.map((c) => c.toJson())),
