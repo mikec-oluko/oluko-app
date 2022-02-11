@@ -50,6 +50,7 @@ import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart
 import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
+import 'package:oluko_app/ui/components/coach_video_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -310,31 +311,32 @@ class _CoachPageState extends State<CoachPage> {
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 child: ListView(
                   children: [
-                    if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
+                    if (carouselNotificationWidgetList.isNotEmpty /*&& widget.coachAssignment.introductionCompleted*/)
                       Padding(
                         padding: paddingTopForElements,
                         child: coachCarouselSliderSection,
                       )
-                    else if (!widget.coachAssignment.introductionCompleted)
+                    /* else if (!widget.coachAssignment.introductionCompleted)
                       Padding(
                         padding: paddingTopForElements,
                         child: coachCarouselSliderSection,
-                      )
+                      )*/
                     else
                       const SizedBox.shrink(),
-                    if (widget.coachAssignment.introductionCompleted)
-                      carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
-                          ? Padding(
-                              padding: paddingTopForElements,
-                              child: userProgressSection(false),
-                            )
-                          : Padding(
-                              padding: paddingTopForElements,
-                              child: userProgressSection(
-                                  carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted),
-                            )
-                    else
-                      const SizedBox.shrink(),
+
+                    ///if (widget.coachAssignment.introductionCompleted)
+                    /*carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
+                        ? Padding(
+                            padding: paddingTopForElements,
+                            child: userProgressSection(false),
+                          )
+                        :*/ Padding(
+                            padding: paddingTopForElements,
+                            child:
+                                userProgressSection(true /*carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted*/),
+                          ),
+                    //else
+                    //const SizedBox.shrink(),
                     Padding(
                       padding: paddingTopForElements,
                       child: CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
@@ -480,6 +482,12 @@ class _CoachPageState extends State<CoachPage> {
   List<Widget> carouselNotificationWidget(BuildContext context) {
     List<Widget> carouselContent = [];
     List<CoachNotificationContent> contentForNotificationPanel = [];
+
+    if (!widget.coachAssignment.introductionCompleted) {
+      carouselContent.add(CoachVideoCard(
+          videoUrl: _assessment.video,
+          onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
+    }
 
     if (_coachRecommendations.isNotEmpty) {
       contentForNotificationPanel =
@@ -673,10 +681,13 @@ class _CoachPageState extends State<CoachPage> {
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.course, coursesRecommended);
       if (coursesRecommended.isNotEmpty) {
         widgetToReturn = GestureDetector(
-            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
-                  'recommendedContent': coursesRecommended,
-                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
-                }),
+            onTap: () {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                'recommendedContent': coursesRecommended,
+                'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
+              });
+            },
             child: CoachRecommendedContentPreviewStack(
               recommendationsList: coursesRecommended,
               titleForSection: OlukoLocalizations.of(context).find('recommendedCourses'),
