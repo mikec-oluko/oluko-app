@@ -293,5 +293,7 @@
     "otherUsers":"Otros Usuarios",
     "recommendedMovements": "Movimiento Recomendados",
     "recommendedCourses": "Curso Recomendados",
-    "timeline": " Cronología"
+    "timeline": " Cronología",
+    "reDoCourseTitle": "¿Estás seguro de que quieres volver a hacer esta clase?",
+    "reDoCourseBody": "Su progreso anterior será eliminado."
 }
