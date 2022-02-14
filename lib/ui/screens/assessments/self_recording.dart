@@ -179,13 +179,16 @@ class _State extends State<SelfRecording> {
                           Positioned(
                             top: 40,
                             left: 15,
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: OlukoBlurredButton(
-                                childContent: Image.asset(
-                                  'assets/self_recording/white_flash.png',
-                                  scale: 3.5,
+                            child: GestureDetector(
+                              onTap: () => flashOn(),
+                              child: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: OlukoBlurredButton(
+                                  childContent: Image.asset(
+                                    'assets/self_recording/white_flash.png',
+                                    scale: 3.5,
+                                  ),
                                 ),
                               ),
                             ),
@@ -244,7 +247,7 @@ class _State extends State<SelfRecording> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
                   child: _task.stepsTitle != null
                       ? Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10),
@@ -428,15 +431,15 @@ class _State extends State<SelfRecording> {
   Widget recordIcon() {
     return Stack(alignment: Alignment.center, children: [
       Image.asset(
-        'assets/self_recording/green_elipse_cam_1.png',
+        'assets/self_recording/green_elipse_cam.png',
         scale: 4,
       ),
       Image.asset(
-        'assets/self_recording/outlined_circle_cam_2.png',
+        'assets/self_recording/outlined_circle_cam.png',
         scale: 4,
       ),
       Image.asset(
-        'assets/self_recording/white_circle_cam_3.png',
+        'assets/self_recording/white_circle_cam.png',
         scale: 4,
       ),
     ]);
