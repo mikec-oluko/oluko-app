@@ -683,7 +683,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
               frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                   ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
             ),
-            progress: courseInfo.completion,
+            progress: courseInfo.completion ?? getCourseProgress(
+                courseEnrollments: _courseEnrollmentList,
+                course: _coursesToUse.isNotEmpty
+                    ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
+                        ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
+                        : null
+                    : null),
             canUnenrollCourse: _isCurrentUser,
             unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)));
   }
