@@ -69,12 +69,13 @@ class TimeConverter {
   }
 
   static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat, BuildContext context, String separator}) {
-    //date doc: https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
-    //7/10/1996 5:08 PM
     final String ymdLocalized = DateFormat.yMd(Localizations.localeOf(context).languageCode).add_jm().format(dateToFormat.toDate());
     if (separator != null) ymdLocalized.replaceAll('/', '.');
     final dateSplitted = ymdLocalized.split(' ');
     dateSplitted[0] = '${dateSplitted[0]} |';
+    if (MediaQuery.of(context).alwaysUse24HourFormat) {
+      dateSplitted[1] = DateFormat.Hm(Localizations.localeOf(context).languageCode).format(dateToFormat.toDate());
+    }
     return dateSplitted.join(' ');
   }
 
