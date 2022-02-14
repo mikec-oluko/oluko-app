@@ -34,6 +34,11 @@ class TaskSubmissionDefault extends TaskSubmissionState {
   TaskSubmissionDefault({this.taskSubmissions});
 }
 
+class PrivacyUpdatedSuccess extends TaskSubmissionState {
+  bool isPublic;
+  PrivacyUpdatedSuccess({this.isPublic});
+}
+
 class UpdateSuccess extends TaskSubmissionState {}
 
 class Failure extends TaskSubmissionState {
@@ -80,6 +85,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String taskSubmissionId, bool isPublic) async {
     try {
       await TaskSubmissionRepository.updateTaskSubmissionPrivacity(assessmentA, taskSubmissionId, isPublic);
+      emit(PrivacyUpdatedSuccess(isPublic: isPublic));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
