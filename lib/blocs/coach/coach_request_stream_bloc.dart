@@ -47,7 +47,6 @@ class CoachRequestStreamFailure extends CoachRequestStreamState {
 class CoachRequestStreamBloc extends Cubit<CoachRequestStreamState> {
   final CoachRequestRepository _coachRequestRepository = CoachRequestRepository();
   CoachRequestStreamBloc() : super(CoachRequestStreamLoading());
-
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
   void dispose() {
@@ -60,9 +59,9 @@ class CoachRequestStreamBloc extends Cubit<CoachRequestStreamState> {
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
     subscription ??= _coachRequestRepository.getCoachRequestSubscription(userId, coachId).listen((snapshot) async {
-      List<CoachRequest> coachRequests = [];
-      List<CoachRequest> coachRequestsUpdated = [];
-      List<CoachRequest> coachRequestsUpdateContent = [];
+      Set<CoachRequest> coachRequests = Set();
+      Set<CoachRequest> coachRequestsUpdated = Set();
+      Set<CoachRequest> coachRequestsUpdateContent = Set();
 
       if (snapshot.docChanges.isNotEmpty) {
         snapshot.docChanges.forEach((doc) {
@@ -77,12 +76,13 @@ class CoachRequestStreamBloc extends Cubit<CoachRequestStreamState> {
         });
       }
 
-      if (coachRequestsUpdated.length >= coachRequests.length) {
+      if (coachRequestsUpdated.length > 0) {
+        coachRequestsUpdateContent.addAll(coachRequests);
         coachRequestsUpdated.forEach((requestUpdatedItem) {
-          coachRequests.forEach((requestItem) {
+          coachRequestsUpdateContent.forEach((requestItem) {
             requestUpdatedItem.id == requestItem.id
                 ? requestUpdatedItem != requestItem
-                    ? coachRequestsUpdateContent.add(requestUpdatedItem)
+                    ? requestItem = requestUpdatedItem
                     : null
                 : null;
           });
@@ -92,8 +92,8 @@ class CoachRequestStreamBloc extends Cubit<CoachRequestStreamState> {
       }
 
       coachRequestsUpdateContent.isNotEmpty
-          ? emit(GetCoachRequestStreamUpdate(values: coachRequestsUpdateContent))
-          : emit(CoachRequestStreamSuccess(values: coachRequests));
+          ? emit(GetCoachRequestStreamUpdate(values: coachRequestsUpdateContent.toList()))
+          : emit(CoachRequestStreamSuccess(values: coachRequests.toList()));
     });
     return subscription;
   }
