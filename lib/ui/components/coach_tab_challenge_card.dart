@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
@@ -61,20 +61,28 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: CachedNetworkImageProvider(widget.challenge.classImage),
-                          fit: BoxFit.cover,
-                          onError: (exception, stackTrace) {
-                            return Text('Your error widget...');
-                          },
+                  child: widget.challenge.classImage == null
+                      ? Container(
+                          child: CircularProgressIndicator(),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                          width: 60,
+                          height: 90,
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: CachedNetworkImageProvider(widget.challenge.classImage),
+                                fit: BoxFit.cover,
+                                onError: (exception, stackTrace) {
+                                  return Text('Your error widget...');
+                                },
+                              ),
+                              color: OlukoColors.warning,
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                          width: 60,
+                          height: 90,
                         ),
-                        color: OlukoColors.warning,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
-                    width: 60,
-                    height: 90,
-                  ),
                 ),
                 OlukoNeumorphism.isNeumorphismDesign
                     ? SizedBox(

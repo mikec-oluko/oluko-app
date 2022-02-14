@@ -208,7 +208,16 @@ class CourseEnrollmentRepository {
     final Course curso = await CourseRepository.get(courseId);
     return curso;
   }
-
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserChallengesByUserIdSubscription(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> challengesStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('challenges')
+        .where('user.id', isEqualTo: userId).where('is_active',isEqualTo: true).where('completed_at',isEqualTo: null)
+        .snapshots();
+    
+    return challengesStream;
+  }
   Future<List<Challenge>> getUserChallengesByUserId(String userId) async {
     final List<Challenge> challengeList = [];
     final List<CourseEnrollment> courseEnrollments = await getUserCourseEnrollments(userId);

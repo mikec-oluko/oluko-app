@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -239,6 +240,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
       BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
       BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
+      BlocProvider.of<ChallengeStreamBloc>(context).dispose();
       BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
       if (OlukoNeumorphism.isNeumorphismDesign) {
