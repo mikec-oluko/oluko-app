@@ -124,6 +124,7 @@ import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_recommendations_bloc.dart';
+import 'blocs/coach/coach_request_stream_bloc.dart';
 import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
@@ -326,6 +327,7 @@ class Routes {
   final HiFiveSendBloc _hiFiveSendBloc = HiFiveSendBloc();
   final HiFiveBloc _hiFiveBloc = HiFiveBloc();
   final CoachRequestBloc _coachRequestBloc = CoachRequestBloc();
+  final CoachRequestStreamBloc _coachRequestStreamBloc = CoachRequestStreamBloc();
   final CoachUserBloc _coachUserBloc = CoachUserBloc();
   final SegmentDetailContentBloc _segmentDetailContentBloc = SegmentDetailContentBloc();
   final DoneChallengeUsersBloc _doneChallengeUsersBloc = DoneChallengeUsersBloc();
@@ -401,6 +403,7 @@ class Routes {
             value: _hiFiveSendBloc,
           ),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
@@ -604,6 +607,7 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
@@ -640,6 +644,7 @@ class Routes {
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
         ];
@@ -895,6 +900,7 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
         ];
         newRouteView = CoachMainPage();
@@ -916,6 +922,7 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc)

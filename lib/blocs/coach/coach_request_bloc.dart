@@ -58,46 +58,6 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
-    subscription ??= _coachRequestRepository.getCoachRequestSubscription(userId, coachId).listen((snapshot) async {
-      List<CoachRequest> coachRequests = [];
-      List<CoachRequest> coachRequestsUpdated = [];
-      List<CoachRequest> coachRequestsUpdateContent = [];
-
-      if (snapshot.docChanges.isNotEmpty) {
-        snapshot.docChanges.forEach((doc) {
-          final Map<String, dynamic> content = doc.doc.data();
-          coachRequestsUpdated.add(CoachRequest.fromJson(content));
-        });
-      }
-      if (snapshot.docs.isNotEmpty) {
-        snapshot.docs.forEach((doc) {
-          final Map<String, dynamic> content = doc.data();
-          coachRequests.add(CoachRequest.fromJson(content));
-        });
-      }
-
-      if (coachRequestsUpdated.length >= coachRequests.length) {
-        coachRequestsUpdated.forEach((requestUpdatedItem) {
-          coachRequests.forEach((requestItem) {
-            requestUpdatedItem.id == requestItem.id
-                ? requestUpdatedItem != requestItem
-                    ? coachRequestsUpdateContent.add(requestUpdatedItem)
-                    : null
-                : null;
-          });
-        });
-      } else {
-        coachRequestsUpdateContent.addAll(coachRequestsUpdated);
-      }
-
-      coachRequestsUpdateContent.isNotEmpty
-          ? emit(GetCoachRequestUpdate(values: coachRequestsUpdateContent))
-          : emit(CoachRequestSuccess(values: coachRequests));
-    });
-    return subscription;
-  }
-
   void get(String userId) async {
     if (!(state is CoachRequestSuccess)) {
       emit(CoachRequestLoading());
@@ -173,7 +133,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-    void emitCoachRequestDispose() async {
+  void emitCoachRequestDispose() async {
     try {
       emit(GetCoachRequestDispose(coachRequestDisposeValue: []));
     } catch (exception, stackTrace) {

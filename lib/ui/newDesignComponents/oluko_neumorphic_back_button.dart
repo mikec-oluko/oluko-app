@@ -29,7 +29,7 @@ class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButto
           shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           shadowDarkColor: Colors.black),
       child: IconButton(
-          padding: EdgeInsets.zero,
+          padding: widget.customIcon != null ? EdgeInsets.zero : const EdgeInsets.only(left: 10),
           icon: widget.customIcon != null ? widget.customIcon : Icon(Icons.arrow_back_ios, size: 24, color: OlukoColors.grayColor),
           onPressed: () => {
                 if (this.widget.onPressed == null) {Navigator.pop(context)} else {this.widget.onPressed()}

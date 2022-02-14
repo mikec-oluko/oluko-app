@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
@@ -172,11 +172,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
             _user = authState.firebaseUser;
             return BlocBuilder<MovementBloc, MovementState>(
               builder: (context, movementState) {
-                return BlocBuilder<CoachRequestBloc, CoachRequestState>(
-                  builder: (context, coachRequestState) {
-                    if (movementState is GetAllSuccess && coachRequestState is ClassCoachRequestsSuccess) {
+                return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
+                  builder: (context, coachRequestStreamState) {
+                    if (movementState is GetAllSuccess &&
+                        (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
+                      List<CoachRequest> coachRequests;
+                      if (coachRequestStreamState is CoachRequestStreamSuccess) {
+                        coachRequests = coachRequestStreamState.values;
+                      }
+                      if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
+                        coachRequests = coachRequestStreamState.values;
+                      }
                       _movements = movementState.movements;
-                      _coachRequest = getSegmentCoachRequest(coachRequestState.coachRequests, widget.segments[widget.segmentIndex].id);
+                      _coachRequest = getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id);
                       return GestureDetector(
                         onTap: () {
                           FocusScope.of(context).unfocus();
@@ -199,7 +207,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 }
                               } else if (state is UpdateSegmentSubmissionSuccess) {
                                 waitingForSegSubCreation = false;
-                                BlocProvider.of<CoachRequestBloc>(context).resolve(_coachRequest, _user.uid);
+                                BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
                                 if (_wantsToCreateStory) {
                                   callBlocToCreateStory(context, state.segmentSubmission);
                                 } else {
@@ -213,7 +221,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         ),
                       );
                     } else {
-                      return const SizedBox();
+                      return Center(child: CircularProgressIndicator());
                     }
                   },
                 );

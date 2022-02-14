@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
@@ -278,7 +279,7 @@ class _CoachPageState extends State<CoachPage> {
   void requestCurrentUserData(BuildContext context) {
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
-    BlocProvider.of<CoachRequestBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
+    BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(_currentAuthUser.id);
@@ -288,20 +289,20 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget coachViewPageContent(BuildContext context) {
-    return BlocConsumer<CoachRequestBloc, CoachRequestState>(
-      listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
+    return BlocConsumer<CoachRequestStreamBloc, CoachRequestStreamState>(
+      listenWhen: (CoachRequestStreamState previous, CoachRequestStreamState current) => current is GetCoachRequestStreamUpdate,
       listener: (context, state) {
-        if (state is GetCoachRequestDispose) {
+        if (state is GetCoachRequestStreamDispose) {
           _coachRequestUpdateList = state.coachRequestDisposeValue;
         }
-        if (state is GetCoachRequestUpdate) {
+        if (state is GetCoachRequestStreamUpdate) {
           _coachRequestUpdateList = state.values;
           _coachRequestList = CoachHelperFunctions.checkCoachRequestUpdate(_coachRequestUpdateList, _coachRequestList);
           getCoachRequiredSegments(_allSegmentsForUser);
         }
       },
       builder: (context, state) {
-        if (state is CoachRequestSuccess) {
+        if (state is CoachRequestStreamSuccess) {
           _coachRequestList = state.values;
           getCoachRequiredSegments(_allSegmentsForUser);
         }

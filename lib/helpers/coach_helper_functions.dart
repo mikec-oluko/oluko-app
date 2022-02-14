@@ -37,6 +37,7 @@ class CoachHelperFunctions {
             )
           : null;
     }
+    return null;
   }
 
   static List<Annotation> checkAnnotationUpdate(List<Annotation> annotationUpdateListofContent, List<Annotation> annotationVideosContent) {
