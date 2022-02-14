@@ -353,14 +353,6 @@ class _InsideClassesState extends State<InsideClass> {
               bottomWidgets: [_getCourseInfoSection(_classImage)],
               onBackPressed: () {
                 Navigator.pop(context);
-                Navigator.pushReplacementNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'index': widget.courseIndex,
-                    'classIndex': widget.classIndex,
-                  },
-                );
               },
             ),
           ),
