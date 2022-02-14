@@ -7,14 +7,12 @@ import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
-// import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -50,6 +48,7 @@ import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart
 import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
+import 'package:oluko_app/ui/components/coach_video_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -267,7 +266,7 @@ class _CoachPageState extends State<CoachPage> {
   void requestCurrentUserData(BuildContext context) {
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
-    BlocProvider.of<CoachRequestBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
+    BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(_currentAuthUser.id);
@@ -276,20 +275,20 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget coachViewPageContent(BuildContext context) {
-    return BlocConsumer<CoachRequestBloc, CoachRequestState>(
-      listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
+    return BlocConsumer<CoachRequestStreamBloc, CoachRequestStreamState>(
+      listenWhen: (CoachRequestStreamState previous, CoachRequestStreamState current) => current is GetCoachRequestStreamUpdate,
       listener: (context, state) {
-        if (state is GetCoachRequestDispose) {
+        if (state is GetCoachRequestStreamDispose) {
           _coachRequestUpdateList = state.coachRequestDisposeValue;
         }
-        if (state is GetCoachRequestUpdate) {
+        if (state is GetCoachRequestStreamUpdate) {
           _coachRequestUpdateList = state.values;
           _coachRequestList = CoachHelperFunctions.checkCoachRequestUpdate(_coachRequestUpdateList, _coachRequestList);
           getCoachRequiredSegments(_allSegmentsForUser);
         }
       },
       builder: (context, state) {
-        if (state is CoachRequestSuccess) {
+        if (state is CoachRequestStreamSuccess) {
           _coachRequestList = state.values;
           getCoachRequiredSegments(_allSegmentsForUser);
         }
@@ -303,38 +302,23 @@ class _CoachPageState extends State<CoachPage> {
                 contentForCarousel: carouselNotificationWidgetList,
                 introductionCompleted: widget.coachAssignment.introductionCompleted,
                 introductionVideo: _assessment.video,
-                onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
               );
 
               return Container(
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 child: ListView(
                   children: [
-                    if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
-                      Padding(
-                        padding: paddingTopForElements,
-                        child: coachCarouselSliderSection,
-                      )
-                    else if (!widget.coachAssignment.introductionCompleted)
+                    if (carouselNotificationWidgetList.isNotEmpty)
                       Padding(
                         padding: paddingTopForElements,
                         child: coachCarouselSliderSection,
                       )
                     else
                       const SizedBox.shrink(),
-                    if (widget.coachAssignment.introductionCompleted)
-                      carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
-                          ? Padding(
-                              padding: paddingTopForElements,
-                              child: userProgressSection(false),
-                            )
-                          : Padding(
-                              padding: paddingTopForElements,
-                              child: userProgressSection(
-                                  carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted),
-                            )
-                    else
-                      const SizedBox.shrink(),
+                    Padding(
+                      padding: paddingTopForElements,
+                      child: userProgressSection(true),
+                    ),
                     Padding(
                       padding: paddingTopForElements,
                       child: CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
@@ -480,6 +464,12 @@ class _CoachPageState extends State<CoachPage> {
   List<Widget> carouselNotificationWidget(BuildContext context) {
     List<Widget> carouselContent = [];
     List<CoachNotificationContent> contentForNotificationPanel = [];
+
+    if (!widget.coachAssignment.introductionCompleted) {
+      carouselContent.add(CoachVideoCard(
+          videoUrl: _assessment.video,
+          onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
+    }
 
     if (_coachRecommendations.isNotEmpty) {
       contentForNotificationPanel =
@@ -673,10 +663,13 @@ class _CoachPageState extends State<CoachPage> {
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.course, coursesRecommended);
       if (coursesRecommended.isNotEmpty) {
         widgetToReturn = GestureDetector(
-            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
-                  'recommendedContent': coursesRecommended,
-                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
-                }),
+            onTap: () {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                'recommendedContent': coursesRecommended,
+                'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
+              });
+            },
             child: CoachRecommendedContentPreviewStack(
               recommendationsList: coursesRecommended,
               titleForSection: OlukoLocalizations.of(context).find('recommendedCourses'),
@@ -694,10 +687,13 @@ class _CoachPageState extends State<CoachPage> {
           CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
       if (movementsRecommended.isNotEmpty) {
         widgetToReturn = GestureDetector(
-            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
-                  'recommendedContent': movementsRecommended,
-                  'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
-                }),
+            onTap: () {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
+                'recommendedContent': movementsRecommended,
+                'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
+              });
+            },
             child: CoachRecommendedContentPreviewStack(
               recommendationsList: movementsRecommended,
               titleForSection: OlukoLocalizations.of(context).find('recommendedMovements'),

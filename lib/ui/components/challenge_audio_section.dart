@@ -22,10 +22,10 @@ class ChallengeAudioSection extends StatefulWidget {
   final UserResponse user;
   final String challengeId;
   final SoundRecorder recorder;
-  final String userName;
+  final String userFirstName;
   final PanelController panelController;
 
-  ChallengeAudioSection({this.challengeId, this.user, this.recorder, this.userName, this.panelController});
+  ChallengeAudioSection({this.challengeId, this.user, this.recorder, this.userFirstName, this.panelController});
 
   @override
   _State createState() => _State();
@@ -129,7 +129,7 @@ class _State extends State<ChallengeAudioSection> {
               children: [
                 !OlukoNeumorphism.isNeumorphismDesign
                     ? OlukoPrimaryButton(
-                        title: OlukoLocalizations.get(context, 'saveFor') + widget.userName,
+                        title: OlukoLocalizations.get(context, 'saveFor') + widget.userFirstName,
                         onPressed: () {
                           _saveAudio();
                         },
@@ -137,7 +137,7 @@ class _State extends State<ChallengeAudioSection> {
                     : OlukoNeumorphicPrimaryButton(
                         isExpanded: true,
                         thinPadding: true,
-                        title: OlukoLocalizations.of(context).find('saveFor') + widget.userName,
+                        title: OlukoLocalizations.of(context).find('saveFor') + widget.userFirstName,
                         onPressed: () {
                           _saveAudio();
                         },
@@ -179,7 +179,7 @@ class _State extends State<ChallengeAudioSection> {
           child: Row(children: [
             Expanded(child: SizedBox()),
             Text(
-              OlukoLocalizations.get(context, 'recordAMessage') + widget.userName,
+              OlukoLocalizations.get(context, 'recordAMessage') + widget.userFirstName,
               textAlign: TextAlign.left,
               style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
             ),
