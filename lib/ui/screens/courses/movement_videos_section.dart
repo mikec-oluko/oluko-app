@@ -94,6 +94,9 @@ class _State extends State<MovementVideosSection> {
         }
       });
     });
+    
+    movementIds = movementIds.toSet().toList(); //remove duplicates
+
     List<Movement> movements = List<Movement>.filled(movementIds.length, null);
     widget.movements.forEach((movement) {
       int index = movementIds.indexOf(movement.id);

@@ -20,6 +20,7 @@ class _UploadingModalLoaderState extends State<UploadingModalLoader> {
     } else if (widget.toUpload == UploadFrom.profileImage) {
       return LoaderAndUploadingText();
     }
+    return SizedBox();
   }
 }
 

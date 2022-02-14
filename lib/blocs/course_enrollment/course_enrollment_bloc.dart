@@ -63,7 +63,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   }
 
   Future<CourseEnrollment> get(User user, Course course) async {
-    //emit(Loading()); Solve the problem of showing the enroll button but increase the loading time of every course
+    emit(Loading());
     try {
       CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));

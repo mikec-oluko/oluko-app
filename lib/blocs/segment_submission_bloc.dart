@@ -56,6 +56,19 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
     }
   }
 
+  void setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {
+    try {
+      await SegmentSubmissionRepository.setIsDeleted(segmentSubmission, deleted);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
   void updateVideo(SegmentSubmission segmentSubmission) async {
     try {
       await SegmentSubmissionRepository.updateVideo(segmentSubmission);

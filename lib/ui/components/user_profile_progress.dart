@@ -36,9 +36,11 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   profileNeumorphicAccomplishments(
-                      achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.white),
+                      achievementTitleKey: ['challenges', 'completed'],
+                      achievementValue: widget.challengesCompleted,
+                      color: OlukoColors.white),
                   profileNeumorphicAccomplishments(
-                      achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
+                      achievementTitleKey: ['classes', 'completed'], achievementValue: widget.classesCompleted, color: OlukoColors.white),
                 ],
               ),
             ),
@@ -51,7 +53,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   profileNeumorphicAccomplishments(
-                      achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.white),
+                      achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
                   const SizedBox(
                     height: 40,
                   )
@@ -128,7 +130,11 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     );
   }
 
-  Widget profileNeumorphicAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
+  Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color}) {
+    final textElem = Text(
+      '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
+      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
+    );
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -141,20 +147,9 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           const SizedBox(
             width: 5,
           ),
-          if (ScreenUtils.height(context) < 700)
-            Expanded(
-                child: Text(
-              OlukoLocalizations.get(context, achievementTitleKey),
-              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
-            ))
-          else
-            Container(
-              width: 70,
-              child: Text(
-                OlukoLocalizations.get(context, achievementTitleKey),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
-              ),
-            )
+          Expanded(
+            child: textElem,
+          ),
         ],
       ),
     );

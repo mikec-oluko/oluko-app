@@ -35,17 +35,19 @@ import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
-import 'package:oluko_app/ui/components/video_overlay.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
-import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -208,26 +210,13 @@ class _InsideClassesState extends State<InsideClass> {
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 width: ScreenUtils.width(context) - 40,
                 child: OlukoNeumorphicPrimaryButton(
                   isExpanded: false,
                   thinPadding: true,
                   title: OlukoLocalizations.get(context, 'start'),
-                  onPressed: () {
-                    int segmentIndex =
-                        CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
-                    if (segmentIndex == -1) {
-                      segmentIndex = 0;
-                    }
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                      'segmentIndex': segmentIndex,
-                      'classIndex': widget.classIndex,
-                      'courseEnrollment': widget.courseEnrollment,
-                      'courseIndex': widget.courseIndex,
-                      'fromChallenge': false
-                    });
-                  },
+                  onPressed: () => goToSegmentDetail(),
                 ),
               )
             ],
@@ -236,20 +225,7 @@ class _InsideClassesState extends State<InsideClass> {
             children: [
               OlukoPrimaryButton(
                 title: OlukoLocalizations.get(context, 'start'),
-                onPressed: () {
-                  int segmentIndex =
-                      CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
-                  if (segmentIndex == -1) {
-                    segmentIndex = 0;
-                  }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                    'segmentIndex': segmentIndex,
-                    'classIndex': widget.classIndex,
-                    'courseEnrollment': widget.courseEnrollment,
-                    'courseIndex': widget.courseIndex,
-                    'fromChallenge': false
-                  });
-                },
+                onPressed: () => goToSegmentDetail(),
               ),
             ],
           );
@@ -377,14 +353,6 @@ class _InsideClassesState extends State<InsideClass> {
               bottomWidgets: [_getCourseInfoSection(_classImage)],
               onBackPressed: () {
                 Navigator.pop(context);
-                Navigator.pushReplacementNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'index': widget.courseIndex,
-                    'classIndex': widget.classIndex,
-                  },
-                );
               },
             ),
           ),
@@ -690,5 +658,132 @@ class _InsideClassesState extends State<InsideClass> {
         ],
       ),
     );
+  }
+
+  goToSegmentDetail() {
+    int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
+    if (segmentIndex == -1 || widget.courseEnrollment.classes[widget.classIndex].completedAt != null) {
+      segmentIndex = 0;
+      if (OlukoNeumorphism.isNeumorphismDesign) {
+        BottomDialogUtils.showBottomDialog(
+          content: Container(
+            height: ScreenUtils.height(context) * 0.35,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
+              image: DecorationImage(
+                image: AssetImage('assets/courses/dialog_background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: confirmationContent(),
+          ),
+          context: context,
+        );
+      } else {
+        DialogUtils.getDialog(context, [confirmationContent()]);
+      }
+    } else {
+      pushNamed(segmentIndex);
+    }
+  }
+
+  void pushNamed(int segmentIndex) {
+    Navigator.pushNamed(
+      context,
+      routeLabels[RouteEnum.segmentDetail],
+      arguments: {
+        'segmentIndex': segmentIndex,
+        'classIndex': widget.classIndex,
+        'courseEnrollment': widget.courseEnrollment,
+        'courseIndex': widget.courseIndex,
+        'fromChallenge': false
+      },
+    );
+  }
+
+  Widget confirmationContent() {
+    return Padding(
+      padding: OlukoNeumorphism.isNeumorphismDesign
+          ? const EdgeInsets.symmetric(horizontal: 30, vertical: 25)
+          : const EdgeInsets.only(left: 5, right: 5, top: 20, bottom: 5),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              OlukoLocalizations.get(context, 'reDoCourseTitle'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              OlukoLocalizations.get(context, 'reDoCourseBody'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300, color: Colors.grey),
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: getBottomButtons(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  List<Widget> getBottomButtons() {
+    return [
+      if (OlukoNeumorphism.isNeumorphismDesign)
+        SizedBox(
+          width: 80,
+          child: OlukoNeumorphicSecondaryButton(
+            isExpanded: false,
+            thinPadding: true,
+            textColor: Colors.grey,
+            onPressed: () => Navigator.pop(context),
+            title: OlukoLocalizations.get(context, 'no'),
+          ),
+        )
+      else
+        OlukoOutlinedButton(
+          title: OlukoLocalizations.get(context, 'no'),
+          thinPadding: true,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      const SizedBox(width: 25),
+      if (OlukoNeumorphism.isNeumorphismDesign)
+        SizedBox(
+          width: 80,
+          child: OlukoNeumorphicPrimaryButton(
+            isExpanded: false,
+            thinPadding: true,
+            onPressed: () {
+              Navigator.pop(context);
+              pushNamed(0);
+            },
+            title: OlukoLocalizations.get(context, 'yes'),
+          ),
+        )
+      else
+        OlukoPrimaryButton(
+          title: OlukoLocalizations.get(context, 'yes'),
+          onPressed: () {
+            Navigator.pop(context);
+            pushNamed(0);
+          },
+        ),
+    ];
   }
 }

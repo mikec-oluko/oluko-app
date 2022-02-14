@@ -25,6 +25,7 @@ import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
 import 'coach/coach_recommendations_bloc.dart';
 import 'coach/coach_request_bloc.dart';
+import 'coach/coach_request_stream_bloc.dart';
 import 'coach/coach_review_pending_bloc.dart';
 import 'coach/coach_sent_videos_bloc.dart';
 import 'course/course_subscrption_bloc.dart';
@@ -241,6 +242,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
       BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
+      BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUpNeumorphic], (route) => false);
       } else {
