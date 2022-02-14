@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'base.dart';
 
 enum RecommendationEntityType { course, movement }
@@ -37,7 +38,7 @@ class Recommendation extends Base with EquatableMixin {
   DocumentReference destinationUserReference;
   String entityId;
   DocumentReference entityReference;
-  num entityType;
+  TimelineInteractionType entityType;
   bool notificationViewed;
 
   factory Recommendation.fromJson(Map<String, dynamic> json) {
@@ -48,7 +49,8 @@ class Recommendation extends Base with EquatableMixin {
         destinationUserReference: json['destination_user_reference'] as DocumentReference,
         entityId: json['entity_id']?.toString(),
         entityReference: json['entity_reference'] as DocumentReference,
-        entityType: json['entity_type'] as num,
+        //entityType: json['entity_type'] as num,
+        entityType: json['entity_type'] is int ? TimelineInteractionType.values[json['entity_type'] as int] : null,
         notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
     recommendation.setBase(json);
     return recommendation;
@@ -63,7 +65,8 @@ class Recommendation extends Base with EquatableMixin {
       'destination_user_reference': destinationUserReference,
       'entity_id': entityId,
       'entity_reference': entityReference,
-      'entity_type': entityType,
+      //'entity_type': entityType,
+      'entity_type': entityType.index,
       'notification_viewed': notificationViewed
     };
     recommendationJson.addEntries(super.toJson().entries);
