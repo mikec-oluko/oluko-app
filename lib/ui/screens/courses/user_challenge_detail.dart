@@ -232,7 +232,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
               user: _user,
               challengeId: widget.challenge.id,
               recorder: recorder,
-              userName: widget.userRequested.firstName, //TODO: fristname == username???
+              userFirstName: widget.userRequested.firstName,
               panelController: panelController,
             )
           ])),
