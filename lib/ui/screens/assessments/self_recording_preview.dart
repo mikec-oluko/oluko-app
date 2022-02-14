@@ -191,7 +191,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                             child: OlukoNeumorphicPrimaryButton(
                               isExpanded: false,
                               customHeight: 60,
-                              title: OlukoLocalizations.get(context, 'done'),
+                              title: OlukoLocalizations.get(context, 'submit'),
                               onPressed: () async {
                                 _controller.pause();
                                 if (_taskSubmission == null) {
@@ -234,6 +234,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+      isOlukoControls: true,
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;

@@ -1,9 +1,11 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
@@ -12,10 +14,14 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/settings_dialog.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/exception_codes.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class SelfRecording extends StatefulWidget {
   const SelfRecording({this.taskIndex, this.isPublic, this.isLastTask = false, Key key}) : super(key: key);
@@ -39,12 +45,14 @@ class _State extends State<SelfRecording> {
   bool isCameraFront = false;
 
   bool _buttonBlocked = false;
-
+  Uint8List galleryImage;
   Task _task;
   List<Task> _tasks;
 
+  bool flashActivated = false;
   @override
   void initState() {
+    firstGalleryImage();
     super.initState();
     _setupCameras();
   }
@@ -144,20 +152,16 @@ class _State extends State<SelfRecording> {
                   constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
                   child: (!_isReady)
                       ? Container()
-                      : Stack(alignment: Alignment.topRight, children: [
+                      : Stack(children: [
                           Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height / 1.1,
                               child: CameraPreview(cameraController)),
-                          Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  size: 30,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
+                          Positioned(
+                            right: 15,
+                            top: 40,
+                            child: GestureDetector(
+                                onTap: () {
                                   Navigator.pop(context);
                                   Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                                     'taskIndex': widget.taskIndex,
@@ -165,7 +169,27 @@ class _State extends State<SelfRecording> {
                                     'taskCompleted': true /**TODO: */
                                   });
                                 },
-                              )),
+                                child: SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: OlukoBlurredButton(
+                                        childContent: Center(
+                                            child: Text(OlukoLocalizations.get(context, 'close'), style: OlukoFonts.olukoSmallFont()))))),
+                          ),
+                          Positioned(
+                            top: 40,
+                            left: 15,
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: OlukoBlurredButton(
+                                childContent: Image.asset(
+                                  'assets/self_recording/white_flash.png',
+                                  scale: 3.5,
+                                ),
+                              ),
+                            ),
+                          ),
                         ])),
               OlukoNeumorphism.isNeumorphismDesign
                   ? Positioned(
@@ -268,6 +292,40 @@ class _State extends State<SelfRecording> {
     });
   }
 
+  void firstGalleryImage() async {
+    bool firstVideo = false;
+    Uint8List galleryVideo;
+    List<AssetPathEntity> albums = await PhotoManager.getAssetPathList();
+    for (var assetPathEntity in albums) {
+      List<AssetEntity> photo = await assetPathEntity.getAssetListPaged(0, 1);
+      if (!firstVideo) {
+        if (photo[0].duration > 1) {
+          galleryVideo = await photo[0].thumbDataWithSize(30, 30);
+          setState(() => galleryImage = galleryVideo);
+          firstVideo = true;
+        }
+      }
+    }
+  }
+
+  Widget _ImageWrapper() {
+    if (galleryImage != null) {
+      return Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6.0)),
+          image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(galleryImage)),
+        ),
+      );
+    }
+    return const Icon(
+      Icons.file_upload,
+      size: 30,
+      color: OlukoColors.grayColor,
+    );
+  }
+
   Widget bottomBar() {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -327,13 +385,17 @@ class _State extends State<SelfRecording> {
                   listener: (context, state) {
                     if (state is Success && state.pickedFile != null) {
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                        'taskIndex': widget.taskIndex,
-                        'filePath': state.pickedFile.path,
-                        'isPublic': widget.isPublic,
-                        'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                      },);
-                    }else if(state is PermissionsRequired){
+                      Navigator.pushNamed(
+                        context,
+                        routeLabels[RouteEnum.selfRecordingPreview],
+                        arguments: {
+                          'taskIndex': widget.taskIndex,
+                          'filePath': state.pickedFile.path,
+                          'isPublic': widget.isPublic,
+                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                        },
+                      );
+                    } else if (state is PermissionsRequired) {
                       PermissionsUtils.showSettingsMessage(context);
                     }
                   },
@@ -341,11 +403,7 @@ class _State extends State<SelfRecording> {
                     onTap: () {
                       BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                     },
-                    child: const Icon(
-                      Icons.file_upload,
-                      size: 30,
-                      color: OlukoColors.grayColor,
-                    ),
+                    child: _ImageWrapper(),
                   )),
             ],
           ),
@@ -357,7 +415,7 @@ class _State extends State<SelfRecording> {
   Widget recordingIcon() {
     return Stack(alignment: Alignment.center, children: [
       Image.asset(
-        'assets/self_recording/red_ellipse.png',
+        'assets/self_recording/green_elipse_recording.png',
         scale: 4,
       ),
       Image.asset(
@@ -370,13 +428,29 @@ class _State extends State<SelfRecording> {
   Widget recordIcon() {
     return Stack(alignment: Alignment.center, children: [
       Image.asset(
-        'assets/self_recording/white_ellipse.png',
+        'assets/self_recording/green_elipse_cam_1.png',
         scale: 4,
       ),
       Image.asset(
-        'assets/self_recording/white_filled_ellipse.png',
+        'assets/self_recording/outlined_circle_cam_2.png',
+        scale: 4,
+      ),
+      Image.asset(
+        'assets/self_recording/white_circle_cam_3.png',
         scale: 4,
       ),
     ]);
+  }
+
+  void flashOn() {
+    setState(() {
+      if (flashActivated) {
+        cameraController.setFlashMode(FlashMode.off);
+        flashActivated = false;
+      } else {
+        cameraController.setFlashMode(FlashMode.torch);
+        flashActivated = true;
+      }
+    });
   }
 }
