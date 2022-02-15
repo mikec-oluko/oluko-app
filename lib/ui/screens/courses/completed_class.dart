@@ -98,6 +98,7 @@ class _CompletedClassState extends State<CompletedClass> {
     return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
       if (newSelfieUploaded) {
         if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+          newSelfieUploaded = false;
           _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
         }
         _date = DateTime.now();
@@ -132,17 +133,28 @@ class _CompletedClassState extends State<CompletedClass> {
             Padding(
                 padding: const EdgeInsets.only(bottom: 30, left: 10),
                 child: RotationTransition(
-                    turns: AlwaysStoppedAnimation(-0.01),
-                    child: Container(
-                      height: 153,
-                      width: 153,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
-                        ),
-                      ),
-                    ))),
+                  turns: AlwaysStoppedAnimation(-0.01),
+                  child: (() {
+                    if (newSelfieUploaded) {
+                      return Container(
+                          height: 153,
+                          width: 153,
+                          child: Center(
+                            child: CircularProgressIndicator(value: null),
+                          ));
+                    } else {
+                      return Container(
+                          height: 153,
+                          width: 153,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
+                            ),
+                          ));
+                    }
+                  })(),
+                )),
             Image.asset(
               'assets/courses/empty_frame.png',
               scale: 3,
@@ -153,18 +165,20 @@ class _CompletedClassState extends State<CompletedClass> {
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(-0.01),
                   child: Row(children: [
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(
-                        DateFormat('MM/dd/yyyy').format(_date).toString(),
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: OlukoColors.black),
-                        textAlign: TextAlign.start,
-                      ),
-                      Text(
-                        DateFormat('hh:mm a').format(_date).toString(),
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: OlukoColors.black),
-                        textAlign: TextAlign.start,
-                      )
-                    ]),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(
+                            DateFormat('MM/dd/yyyy').format(_date).toString(),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: OlukoColors.black),
+                            textAlign: TextAlign.start,
+                          ),
+                          Text(
+                            DateFormat('hh:mm a').format(_date).toString(),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: OlukoColors.black),
+                            textAlign: TextAlign.start,
+                          )
+                        ])),
                     SizedBox(width: 50),
                     getCameraIcon()
                   ]))),

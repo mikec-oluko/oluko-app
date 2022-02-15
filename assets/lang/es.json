@@ -295,5 +295,6 @@
     "recommendedCourses": "Curso Recomendados",
     "timeline": " Cronología",
     "reDoCourseTitle": "¿Estás seguro de que quieres volver a hacer esta clase?",
-    "reDoCourseBody": "Su progreso anterior será eliminado."
+    "reDoCourseBody": "Su progreso anterior será eliminado.",
+    "welcomeVideo": "Video de bienvenida"
 }

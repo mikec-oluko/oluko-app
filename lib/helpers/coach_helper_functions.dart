@@ -151,7 +151,7 @@ class CoachHelperFunctions {
             contentFor: CoachContentSection.sentVideos,
             titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
             segmentSubmissionContent: sentVideosContent,
-            onNavigation: () => !introductionCompleted ? onNavigation : () {},
+            onNavigation: () => !introductionCompleted ? onNavigation() : () {},
           )
         : CoachContentSectionCard(
             title: OlukoLocalizations.get(context, 'sentVideos'),
@@ -165,7 +165,7 @@ class CoachHelperFunctions {
             contentFor: CoachContentSection.mentoredVideos,
             titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
             coachAnnotationContent: annotation,
-            onNavigation: () => !introFinished ? onNavigation : () {})
+            onNavigation: () => !introFinished ? onNavigation() : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
   }
 }
