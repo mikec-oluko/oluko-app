@@ -48,6 +48,18 @@ class _State extends State<SelfRecording> {
   Uint8List galleryImage;
   Task _task;
   List<Task> _tasks;
+  //TODO: take the taskDescriptionBullets from bloc
+  List<String> _taskDescriptionBullets = [
+    'Your name',
+    'Your age',
+    'Your fitness goal?',
+    'Your name',
+    'Your age',
+    'Your fitness goal?',
+    'Your name',
+    'Your age',
+    'Your fitness goal?',
+  ];
 
   bool flashActivated = false;
   @override
@@ -242,35 +254,87 @@ class _State extends State<SelfRecording> {
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0),
+                child: _task.stepsTitle != null
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          _task.stepsTitle,
+                          style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
+                        ))
+                    : const SizedBox(),
+              ),
+              if (_task.stepsDescription != null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: _task.stepsTitle != null
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            _task.stepsTitle,
-                            style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
-                          ))
-                      : const SizedBox(),
-                ),
-                if (_task.stepsDescription != null)
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        _task.stepsDescription.replaceAll('\\n', '\n'),
-                        style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
-                      ))
-                else
-                  const SizedBox(),
-                const SizedBox(height: 50)
-              ],
-            ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      _task.stepsDescription.replaceAll('\\n', '\n'),
+                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
+                    ))
+              else
+                const SizedBox(),
+              getDescriptionBullets()
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget getDescriptionBullets() {
+    if (_taskDescriptionBullets.length > 1) {
+      return Expanded(
+        child: GridView.count(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          childAspectRatio: 5,
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          children: _taskDescriptionBullets
+              .map((e) => Row(children: [
+                    bulletItem(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        e,
+                        maxLines: 1,
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                      ),
+                    )
+                  ]))
+              .toList(),
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            bulletItem(),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                _taskDescriptionBullets[0],
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget bulletItem() {
+    return Container(
+      width: 5,
+      height: 5,
+      decoration: new BoxDecoration(
+        color: OlukoColors.yellow,
+        shape: BoxShape.circle,
       ),
     );
   }
