@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -96,42 +103,45 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           children: users
-              .map((user) => Column(
-                    children: [
-                      if (areFriends)
-                        StoriesItem(
-                          maxRadius: 30,
-                          imageUrl: user.avatarThumbnail,
-                          bloc: StoryListBloc(),
-                          getStories: true,
-                          itemUserId: user.id,
-                          currentUserId: loggedUser.user.id,
-                          name: user.firstName,
-                          from: StoriesItemFrom.friends,
-                        )
-                      else
-                        StoriesItem(
-                          maxRadius: 30,
-                          imageUrl: user.avatarThumbnail,
-                          name: user.firstName,
+              .map((user) => GestureDetector(
+                onTap: () => showFriendModal(user),
+                child: Column(
+                      children: [
+                        if (areFriends)
+                          StoriesItem(
+                            maxRadius: 30,
+                            imageUrl: user.avatarThumbnail,
+                            bloc: StoryListBloc(),
+                            getStories: true,
+                            itemUserId: user.id,
+                            currentUserId: loggedUser.user.id,
+                            name: user.firstName,
+                            from: StoriesItemFrom.friends,
+                          )
+                        else
+                          StoriesItem(
+                            maxRadius: 30,
+                            imageUrl: user.avatarThumbnail,
+                            name: user.firstName,
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                          child: Text(
+                            user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
+                                ? '${user.firstName} ${user.lastName}'
+                                : '',
+                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
-                        child: Text(
-                          user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
-                              ? '${user.firstName} ${user.lastName}'
-                              : '',
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                        Text(
+                          user.username != null && user.username.isNotEmpty ? UserHelper.printUsername(user.username, user.id) : '',
+                          style: const TextStyle(color: Colors.grey, fontSize: 10),
                           textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Text(
-                        user.username != null && user.username.isNotEmpty ? UserHelper.printUsername(user.username, user.id) : '',
-                        style: const TextStyle(color: Colors.grey, fontSize: 10),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                  ))
+                        )
+                      ],
+                    ),
+              ))
               .toList());
     } else {
       return Padding(
@@ -139,5 +149,20 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
         child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
       );
     }
+  }
+
+  showFriendModal(UserResponse friendUser) {
+      BottomDialogUtils.showBottomDialog(
+        content: FriendModalContent(
+          friendUser,
+          loggedUser.user.id,
+          FriendBloc(),
+          HiFiveSendBloc(),
+          HiFiveReceivedBloc(),
+          UserStatisticsBloc(),
+          FavoriteFriendBloc(),
+        ),
+        context: context,
+      );
   }
 }
