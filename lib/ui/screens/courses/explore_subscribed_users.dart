@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -41,9 +42,9 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
         BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseId, loggedUser.user.id);
       }
       return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: _appBar(),
-        body: Container(
+        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        appBar: OlukoAppBar(),
+        body: SizedBox(
           height: ScreenUtils.height(context),
           width: ScreenUtils.width(context),
           child: ListView(children: [
@@ -87,14 +88,6 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     });
   }
 
-  PreferredSizeWidget _appBar() {
-    return OlukoAppBar(
-      showBackButton: true,
-      title: ' ',
-      showSearchBar: false,
-    );
-  }
-
   Widget usersGrid(List<UserResponse> users, bool areFriends) {
     if (users.isNotEmpty) {
       return GridView.count(
@@ -104,8 +97,8 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
           shrinkWrap: true,
           children: users
               .map((user) => GestureDetector(
-                onTap: () => showFriendModal(user),
-                child: Column(
+                    onTap: () => showFriendModal(user),
+                    child: Column(
                       children: [
                         if (areFriends)
                           StoriesItem(
@@ -141,7 +134,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         )
                       ],
                     ),
-              ))
+                  ))
               .toList());
     } else {
       return Padding(
@@ -152,17 +145,17 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   }
 
   showFriendModal(UserResponse friendUser) {
-      BottomDialogUtils.showBottomDialog(
-        content: FriendModalContent(
-          friendUser,
-          loggedUser.user.id,
-          FriendBloc(),
-          HiFiveSendBloc(),
-          HiFiveReceivedBloc(),
-          UserStatisticsBloc(),
-          FavoriteFriendBloc(),
-        ),
-        context: context,
-      );
+    BottomDialogUtils.showBottomDialog(
+      content: FriendModalContent(
+        friendUser,
+        loggedUser.user.id,
+        FriendBloc(),
+        HiFiveSendBloc(),
+        HiFiveReceivedBloc(),
+        UserStatisticsBloc(),
+        FavoriteFriendBloc(),
+      ),
+      context: context,
+    );
   }
 }
