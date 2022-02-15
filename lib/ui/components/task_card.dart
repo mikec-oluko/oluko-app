@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -97,12 +98,7 @@ class _State extends State<TaskCard> {
                       Padding(
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(children: [
-                            Text(
-                              widget.isPublic
-                                  ? OlukoLocalizations.get(context, 'public').toUpperCase()
-                                  : OlukoLocalizations.get(context, 'private').toUpperCase(),
-                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColorFadeTop, custoFontWeight: FontWeight.bold),
-                            ),
+                            getPrivacy(context),
                             Expanded(child: SizedBox()),
                             !widget.isDisabled
                                 ? Stack(alignment: Alignment.center, children: [
@@ -122,6 +118,26 @@ class _State extends State<TaskCard> {
             ),
           ),
         ));
+  }
+
+  Widget getPrivacy(BuildContext context) {
+    bool public = widget.isPublic;
+    return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
+      listenWhen: (previous, current) {
+        return current is PrivacyUpdatedSuccess;
+      },
+      listener: (context, state) {
+        if (state is PrivacyUpdatedSuccess) {
+          public = state.isPublic;
+        }
+      },
+      child: Text(
+        public ? OlukoLocalizations.get(context, 'public').toUpperCase() : OlukoLocalizations.get(context, 'private').toUpperCase(),
+        style: OlukoFonts.olukoSmallFont(
+            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.grayColorFadeTop,
+            custoFontWeight: FontWeight.bold),
+      ),
+    );
   }
 
   GestureDetector neumorphicTaskCard(BuildContext context) {
@@ -222,13 +238,7 @@ class _State extends State<TaskCard> {
                                             ? Container(
                                                 color: OlukoNeumorphismColors.olukoNeumorphicBlueBackgroundColor,
                                                 child: Center(
-                                                  child: Text(
-                                                    widget.isPublic
-                                                        ? OlukoLocalizations.get(context, 'public').toUpperCase()
-                                                        : OlukoLocalizations.get(context, 'private').toUpperCase(),
-                                                    style: OlukoFonts.olukoSmallFont(
-                                                        customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
-                                                  ),
+                                                  child: getPrivacy(context),
                                                 ),
                                               )
                                             : SizedBox.shrink(),

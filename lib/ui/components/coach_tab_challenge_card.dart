@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
@@ -36,17 +39,20 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
 
   Widget coachChallengeCard(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        routeLabels[RouteEnum.segmentDetail],
-        arguments: {
-          'segmentIndex': widget.challenge.indexSegment,
-          'classIndex': widget.challenge.indexClass,
-          'courseEnrollment': widget.challenge.courseEnrollment,
-          'courseIndex': widget.challenge.indexCourse,
-          'fromChallenge': true
-        },
-      ),
+      onTap: () {
+        BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+        Navigator.pushNamed(
+          context,
+          routeLabels[RouteEnum.segmentDetail],
+          arguments: {
+            'segmentIndex': widget.challenge.indexSegment,
+            'classIndex': widget.challenge.indexClass,
+            'courseEnrollment': widget.challenge.courseEnrollment,
+            'courseIndex': widget.challenge.indexCourse,
+            'fromChallenge': true
+          },
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
             color: OlukoNeumorphism.isNeumorphismDesign

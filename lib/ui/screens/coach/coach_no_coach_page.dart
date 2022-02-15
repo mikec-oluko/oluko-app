@@ -60,7 +60,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 100,
+                      height: 80,
                     ),
                     Text(
                       OlukoLocalizations.get(context, 'tapHere'),
