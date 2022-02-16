@@ -116,6 +116,7 @@
     "completed": "Completed",
     "uploadedWithErrors": "The segment was uploaded with errors",
     "segmentUploadedSuccessfully": "The segment was uploaded successfully",
+    "taskUploadedSuccessfully": "The task was uploaded successfully",
     "uploadedSuccessfully": "Uploaded Successfully",
     "challengesCompleted": "Challenges Completed",
     "coursesCompleted": "Courses Completed",

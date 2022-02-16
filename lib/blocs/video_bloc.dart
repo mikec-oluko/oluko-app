@@ -4,9 +4,12 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/enums/file_extension_enum.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/file_processing.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -23,7 +26,10 @@ class Loading extends VideoState {}
 class VideoSuccess extends VideoState {
   Video video;
   SegmentSubmission segmentSubmission;
-  VideoSuccess({this.video, this.segmentSubmission});
+  AssessmentAssignment assessmentAssignment;
+  Assessment assessment;
+  TaskSubmission taskSubmission;
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission});
 }
 
 class VideoProcessing extends VideoState {
@@ -53,7 +59,10 @@ class VideoBloc extends Cubit<VideoState> {
   double _progress = 0.0;
 
   Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id,
-      [SegmentSubmission segmentSubmission]) async {
+      [SegmentSubmission segmentSubmission,
+      AssessmentAssignment assessmentAssignment,
+      Assessment assessment,
+      TaskSubmission taskSubmission]) async {
     try {
       Video video;
       if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
@@ -62,13 +71,18 @@ class VideoBloc extends Cubit<VideoState> {
         //video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
         video = await _processVideo264Encoding(context, videoFile, aspectRatio, id);
       }
-      emit(VideoSuccess(video: video, segmentSubmission: segmentSubmission != null ? segmentSubmission : null));
+      emit(VideoSuccess(
+          video: video,
+          segmentSubmission: segmentSubmission,
+          taskSubmission: taskSubmission,
+          assessment: assessment,
+          assessmentAssignment: assessmentAssignment));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission != null ? segmentSubmission : null));
+      emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission));
       rethrow;
     }
   }

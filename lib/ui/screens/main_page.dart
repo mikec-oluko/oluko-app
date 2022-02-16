@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -114,15 +120,23 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     ));
   }
 
+  taskSubmissionActions(VideoSuccess state) {
+    BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
+    BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
+    BlocProvider.of<TaskSubmissionListBloc>(context).get(state.assessmentAssignment);
+  }
+
   void updateSegment(VideoState state) {
     if (state is VideoSuccess && state.segmentSubmission != null) {
       saveUploadedState(state);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'segmentUploadedSuccessfully'));
+    }else if (state is VideoSuccess && state.assessment != null) {
+      taskSubmissionActions(state);
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'tasktUploadedSuccessfully'));
     } else if (state is VideoFailure) {
       saveErrorState(state);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadedWithErrors'));
     }
-    //}
   }
 
   void saveUploadedState(VideoSuccess state) {
