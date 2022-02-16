@@ -49,53 +49,61 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
 
 //TODO: GET STREAM
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
-    subscription ??= _coachRepository.getAnnotationSubscription(userId, coachId).listen((snapshot) {
-      List<Annotation> coachAnnotations = [];
-      List<Annotation> coachAnnotationsUpdated = [];
+    return subscription ??= _coachRepository.getAnnotationSubscription(userId, coachId).listen((snapshot) {
+      final Set<Annotation> coachAnnotations = {};
+      final Set<Annotation> coachAnnotationsUpdated = {};
 
-      if (snapshot.docChanges.isNotEmpty) {
-        for (DocumentChange<Map<String, dynamic>> doc in snapshot.docChanges) {
-          final Map<String, dynamic> content = doc.doc.data() as Map<String, dynamic>;
-          coachAnnotationsUpdated.add(Annotation.fromJson(content));
-        }
-      }
+      handleDocumentChanges(snapshot, coachAnnotationsUpdated);
+      handleDocuments(snapshot, coachAnnotations);
 
-      if (snapshot.docs.isNotEmpty) {
-        for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
-          final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
-          coachAnnotations.add(Annotation.fromJson(content));
-        }
-      }
-      List<Annotation> coachAnnotationsChangedItems = [];
+      final Set<Annotation> coachAnnotationsChangedItems = {};
 
-      if (coachAnnotationsUpdated.length == coachAnnotations.length) {
-        coachAnnotationsUpdated.forEach((updateItem) {
-          coachAnnotations.forEach((annotationItem) {
+      if (coachAnnotationsUpdated.isNotEmpty && coachAnnotations.isNotEmpty) {
+        for (final updateItem in coachAnnotationsUpdated) {
+          for (final annotationItem in coachAnnotations) {
             if (annotationItem.id == updateItem.id) {
               if (updateItem != annotationItem) {
                 coachAnnotationsChangedItems.add(updateItem);
               }
             }
-          });
-        });
+          }
+        }
       } else {
         coachAnnotationsChangedItems.addAll(coachAnnotationsUpdated);
       }
 
       if (coachAnnotationsChangedItems.isNotEmpty) {
-        emit(CoachMentoredVideosUpdate(mentoredVideos: coachAnnotationsChangedItems));
+        // emit(CoachMentoredVideosUpdate(mentoredVideos: coachAnnotationsChangedItems.toList())); //TODO: check if this is needed to control builds
+        emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsChangedItems.toList()));
       } else {
-        emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
+        emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations.toList()));
       }
     });
-    return subscription;
   }
 
-  void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
+  void handleDocuments(QuerySnapshot<Map<String, dynamic>> snapshot, Set<Annotation> coachAnnotations) {
+    if (snapshot.docs.isNotEmpty) {
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+        final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+        coachAnnotations.add(Annotation.fromJson(content));
+      }
+    }
+  }
+
+  void handleDocumentChanges(QuerySnapshot<Map<String, dynamic>> snapshot, Set<Annotation> coachAnnotationsUpdated) {
+    if (snapshot.docChanges.isNotEmpty) {
+      for (final DocumentChange<Map<String, dynamic>> doc in snapshot.docChanges) {
+        final Map<String, dynamic> content = doc.doc.data() as Map<String, dynamic>;
+        coachAnnotationsUpdated.add(Annotation.fromJson(content));
+      }
+    }
+  }
+
+  void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation, Set<Annotation> currentMentoredVideosContent}) async {
     try {
-      final List<Annotation> coachAnnotationsUpdated =
+      final Set<Annotation> coachAnnotationsUpdated =
           await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
-      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated));
+      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated.toList()));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
