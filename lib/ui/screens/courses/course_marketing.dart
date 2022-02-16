@@ -34,6 +34,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -160,7 +161,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(
                                                   //TODO: change weeks number
-                                                  TimeConverter.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
+                                                  CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                                                       widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
@@ -262,7 +263,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               Padding(
                 padding: EdgeInsets.only(right: 15, left: 15, top: 10),
                 child: Text(
-                  TimeConverter.toCourseDuration(
+                  CourseUtils.toCourseDuration(
                       int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),

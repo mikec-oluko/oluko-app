@@ -13,6 +13,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseUtils {
@@ -148,5 +149,9 @@ class CourseUtils {
             onSubmit: onSubmit,
             onClosed: onClosed,
             showBottonTab: showBottomTab,));
+  }
+
+  static String toCourseDuration(int weeks, int classes, BuildContext context) {
+    return "$weeks ${OlukoLocalizations.get(context, 'weeks')}, $classes ${OlukoLocalizations.get(context, 'classes')}";
   }
 }
