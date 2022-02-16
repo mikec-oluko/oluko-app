@@ -84,8 +84,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                         }
                         if (taskSubmissionState is CreateSuccess) {
                           _taskSubmission = taskSubmissionState.taskSubmission;
-                          BlocProvider.of<VideoBloc>(context)
-                              .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmissionState.taskSubmission.id);
+                          createVideo(_taskSubmission);
                         }
                         return form();
                       } else {
@@ -102,6 +101,10 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         }));
   }
 
+  createVideo(TaskSubmission taskSubmission) {
+    BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id);
+  }
+
   Widget form() {
     return Form(
         key: _formKey,
@@ -112,12 +115,11 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
             var route = routeLabels[RouteEnum.assessmentVideos];
-            //TODO: issue here if route isn't in the stack example: coming from coach tab
             Navigator.popUntil(context, ModalRoute.withName(route));
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
               'taskIndex': widget.taskIndex,
               'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-              'taskCompleted': true /**TODO: */
+              'taskCompleted': true
             });
           }
         }, builder: (context, state) {
@@ -198,14 +200,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                   BlocProvider.of<TaskSubmissionBloc>(context)
                                       .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                                 } else {
-                                  BlocProvider.of<VideoBloc>(context)
-                                      .createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                                  createVideo(_taskSubmission);
                                 }
                                 /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                    arguments: {
-                      'taskIndex': widget.taskIndex,
-                      'isLastTask': widget.isLastTask
-                    });*/
+                                arguments: {
+                                  'taskIndex': widget.taskIndex,
+                                  'isLastTask': widget.isLastTask
+                                });*/
                               },
                             ),
                           ),
@@ -280,7 +281,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   BlocProvider.of<TaskSubmissionBloc>(context)
                       .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                 } else {
-                  BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                  createVideo(_taskSubmission);
                 }
                 /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                     arguments: {

@@ -189,36 +189,38 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         onTap: () {
                           FocusScope.of(context).unfocus();
                         },
-                        child: BlocListener<VideoBloc, VideoState>(
+                        child: /*BlocListener<VideoBloc, VideoState>(
                           listener: (context, state) {
                             updateSegment(state);
                           },
-                          child: BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
-                            listener: (context, state) {
-                              if (state is CreateSuccess) {
-                                if (_segmentSubmission == null) {
-                                  _segmentSubmission = state.segmentSubmission;
-                                  BlocProvider.of<VideoBloc>(context).createVideo(
-                                    context,
-                                    File(_segmentSubmission.videoState.stateInfo),
-                                    3.0 / 4.0,
-                                    _segmentSubmission.id,
-                                  );
-                                }
-                              } else if (state is UpdateSegmentSubmissionSuccess) {
-                                waitingForSegSubCreation = false;
-                                BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
-                                if (_wantsToCreateStory) {
-                                  callBlocToCreateStory(context, state.segmentSubmission);
-                                } else {
-                                  _isVideoUploaded = true;
-                                  _segmentSubmission = state?.segmentSubmission;
-                                }
+                          child:*/
+                            BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
+                          listener: (context, state) {
+                            if (state is CreateSuccess) {
+                              if (_segmentSubmission == null) {
+                                _segmentSubmission = state.segmentSubmission;
+                                BlocProvider.of<VideoBloc>(context).createVideo(
+                                  context,
+                                  File(_segmentSubmission.videoState.stateInfo),
+                                  3.0 / 4.0,
+                                  _segmentSubmission.id,
+                                  _segmentSubmission,
+                                );
                               }
-                            },
-                            child: form(),
-                          ),
+                            } else if (state is UpdateSegmentSubmissionSuccess) {
+                              waitingForSegSubCreation = false;
+                              BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
+                              if (_wantsToCreateStory) {
+                                callBlocToCreateStory(context, state.segmentSubmission);
+                              } else {
+                                _isVideoUploaded = true;
+                                _segmentSubmission = state?.segmentSubmission;
+                              }
+                            }
+                          },
+                          child: form(),
                         ),
+                        //),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());
@@ -448,11 +450,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
               title: OlukoLocalizations.get(context, 'goToClass'),
               thinPadding: true,
               onPressed: () {
-                if (!waitingForSegSubCreation) {
+                //if (!waitingForSegSubCreation) {
                   goToClassAction();
-                } else {
+                /*} else {
                   DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
-                }
+                }*/
               },
             ),
             const SizedBox(
@@ -464,11 +466,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
-                if (!waitingForSegSubCreation) {
+                //if (!waitingForSegSubCreation) {
                   nextSegmentAction();
-                } else {
+                /*} else {
                   DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
-                }
+                }*/
               },
             ),
           ],
@@ -526,11 +528,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                       thinPadding: true,
                       onPressed: () {
-                        if (!waitingForSegSubCreation) {
+                        //if (!waitingForSegSubCreation) {
                           goToClassAction();
-                        } else {
+                       /* } else {
                           DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
-                        }
+                        }*/
                       },
                     ),
                     const SizedBox(
@@ -542,11 +544,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           : OlukoLocalizations.get(context, 'nextSegment'),
                       thinPadding: true,
                       onPressed: () {
-                        if (!waitingForSegSubCreation) {
+                        //if (!waitingForSegSubCreation) {
                           nextSegmentAction();
-                        } else {
+                        /*} else {
                           DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
-                        }
+                        }*/
                       },
                     ),
                   ],
@@ -1540,6 +1542,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
       stopwatchTimer.cancel();
+    }
+    if (alertDurationTimer != null && alertDurationTimer.isActive) {
+      alertDurationTimer.cancel();
+    }
+    if (alertTimer != null && alertTimer.isActive) {
+      alertTimer.cancel();
     }
     cameraController?.dispose();
     super.dispose();

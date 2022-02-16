@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/models/enums/file_extension_enum.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/file_processing.dart';
@@ -21,7 +22,8 @@ class Loading extends VideoState {}
 
 class VideoSuccess extends VideoState {
   Video video;
-  VideoSuccess({this.video});
+  SegmentSubmission segmentSubmission;
+  VideoSuccess({this.video, this.segmentSubmission});
 }
 
 class VideoProcessing extends VideoState {
@@ -39,8 +41,8 @@ class VideoEncoded extends VideoState {
 
 class VideoFailure extends VideoState {
   final String exceptionMessage;
-
-  VideoFailure({this.exceptionMessage});
+  SegmentSubmission segmentSubmission;
+  VideoFailure({this.exceptionMessage, this.segmentSubmission});
 }
 
 class VideoBloc extends Cubit<VideoState> {
@@ -50,7 +52,8 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
+  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id,
+      [SegmentSubmission segmentSubmission]) async {
     try {
       Video video;
       if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
@@ -59,13 +62,13 @@ class VideoBloc extends Cubit<VideoState> {
         //video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
         video = await _processVideo264Encoding(context, videoFile, aspectRatio, id);
       }
-      emit(VideoSuccess(video: video));
+      emit(VideoSuccess(video: video, segmentSubmission: segmentSubmission != null ? segmentSubmission : null));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      emit(VideoFailure(exceptionMessage: e.toString()));
+      emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission != null ? segmentSubmission : null));
       rethrow;
     }
   }

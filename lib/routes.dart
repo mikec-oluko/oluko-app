@@ -33,6 +33,7 @@ import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
@@ -65,6 +66,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -75,6 +77,7 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
+import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/authentication/login_password.dart';
@@ -196,6 +199,7 @@ enum RouteEnum {
   selfRecordingPreview,
   enrolledClass,
   taskSubmissionVideo,
+  taskSubmissionReviewPreview,
   exploreSubscribedUsers,
   segmentCameraPreview,
   coach,
@@ -253,6 +257,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.selfRecordingPreview: '/self-recording-preview',
   RouteEnum.enrolledClass: '/enrolled-class',
   RouteEnum.taskSubmissionVideo: '/task-submission-video',
+  RouteEnum.taskSubmissionReviewPreview: "/task-submission-review-preview",
   RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
   RouteEnum.segmentCameraPreview: '/segment-camera-preview',
   RouteEnum.coach: '/coach',
@@ -351,6 +356,7 @@ class Routes {
   final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
   final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
   final PanelAudioBloc _panelAudioBloc = PanelAudioBloc();
+  final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -364,6 +370,8 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
@@ -831,6 +839,18 @@ class Routes {
         newRouteView = TaskSubmissionRecordedVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
           task: argumentsToAdd['task'] as Task,
+        );
+        break;
+      case RouteEnum.taskSubmissionReviewPreview:
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        providers = [
+          BlocProvider<TaskReviewBloc>.value(value: _taskReviewBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
+        ];
+        newRouteView = TaskSubmissionReviewPreview(
+          taskSubmission: argumentsToAdd['taskSubmission'] as TaskSubmission,
+          filePath: argumentsToAdd['filePath'].toString(),
+          videoEvents: argumentsToAdd['videoEvents'] as List<Event>,
         );
         break;
       case RouteEnum.choosePlanPayment:
