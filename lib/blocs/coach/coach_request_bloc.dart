@@ -48,15 +48,8 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
   final CoachRequestRepository _coachRequestRepository = CoachRequestRepository();
   CoachRequestBloc() : super(CoachRequestLoading());
 
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
-  void dispose() {
-    if (subscription != null) {
-      subscription.cancel();
-      subscription = null;
-      emitCoachRequestDispose();
-    }
-  }
+  void dispose() {}
 
   void get(String userId) async {
     if (!(state is CoachRequestSuccess)) {
