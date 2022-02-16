@@ -234,7 +234,6 @@ class AuthBloc extends Cubit<AuthState> {
     if (success == true) {
       BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
       BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
-      BlocProvider.of<CoachRequestBloc>(context).dispose();
       BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
       BlocProvider.of<StoryListBloc>(context).dispose();
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
