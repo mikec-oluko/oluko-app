@@ -37,7 +37,7 @@ class CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamSta
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
-    subscription ??= CourseEnrollmentRepository.getUserCourseEnrollmentsSubscription(userId).listen((snapshot) async {
+    return subscription ??= CourseEnrollmentRepository.getUserCourseEnrollmentsSubscription(userId).listen((snapshot) async {
       List<CourseEnrollment> courseEnrollments = [];
       snapshot.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
@@ -47,6 +47,5 @@ class CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamSta
           courseEnrollments:
               courseEnrollments.where((element) => element.completion < 1).where((element) => element.isUnenrolled != true).toList()));
     });
-    return subscription;
   }
 }
