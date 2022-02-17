@@ -124,7 +124,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                   'tab': 1,
                 });
-              }else{
+              } else {
                 Navigator.pop(context);
               }
             }),
@@ -198,7 +198,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                       'tab': 1,
                     });
-                  }else{
+                  } else {
                     Navigator.pop(context);
                   }
                 }),
@@ -339,36 +339,37 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget startRecordingButton() {
     return Row(
       children: [
-        OlukoNeumorphism.isNeumorphismDesign
-            ? OlukoNeumorphicPrimaryButton(
-                thinPadding: true,
-                title: OlukoLocalizations.get(context, 'startRecording'),
-                onPressed: () {
-                  if (_controller != null) {
-                    _controller.pause();
-                  }
-                  Navigator.pop(context);
-                  return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                    'taskIndex': widget.taskIndex,
-                    'isPublic': _makePublic ?? false,
-                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                  });
-                },
-              )
-            : OlukoPrimaryButton(
-                title: OlukoLocalizations.get(context, 'startRecording'),
-                onPressed: () {
-                  if (_controller != null) {
-                    _controller.pause();
-                  }
-                  Navigator.pop(context);
-                  return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                    'taskIndex': widget.taskIndex,
-                    'isPublic': _makePublic ?? false,
-                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                  });
-                },
-              ),
+        if (OlukoNeumorphism.isNeumorphismDesign)
+          OlukoNeumorphicPrimaryButton(
+            thinPadding: true,
+            title: OlukoLocalizations.get(context, 'startRecording'),
+            onPressed: () {
+              if (_controller != null) {
+                _controller.pause();
+              }
+              Navigator.pop(context);
+              return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                'taskIndex': widget.taskIndex,
+                'isPublic': _makePublic ?? false,
+                'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+              });
+            },
+          )
+        else
+          OlukoPrimaryButton(
+            title: OlukoLocalizations.get(context, 'startRecording'),
+            onPressed: () {
+              if (_controller != null) {
+                _controller.pause();
+              }
+              Navigator.pop(context);
+              return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                'taskIndex': widget.taskIndex,
+                'isPublic': _makePublic ?? false,
+                'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+              });
+            },
+          ),
         const SizedBox(width: 15),
         BlocListener<GalleryVideoBloc, GalleryVideoState>(
             listener: (context, state) {
