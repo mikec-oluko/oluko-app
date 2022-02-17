@@ -101,7 +101,9 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) {
     BlocProvider.of<VideoBloc>(context)
         .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id, null, assessmentAssignment, assessment, taskSubmission);
-    navigateToTaskDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navigateToTaskDetails();
+    });
   }
 
   Widget form() {
