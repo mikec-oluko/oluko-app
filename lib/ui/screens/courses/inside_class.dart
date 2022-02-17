@@ -47,6 +47,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/class_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -424,7 +425,7 @@ class _InsideClassesState extends State<InsideClass> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                         child: Text(
-                          TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                          ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
                           style: OlukoFonts.olukoMediumFont(
                             custoFontWeight: FontWeight.normal,
                             customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary,
@@ -469,7 +470,7 @@ class _InsideClassesState extends State<InsideClass> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                         child: Text(
-                          TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                          ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
                           style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                         ),
                       ),
