@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -78,7 +79,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       widget.tab = null;
     }
     return BlocListener<VideoBloc, VideoState>(listener: (context, state) {
-      updateSegment(state);
+      updateVideo(state);
     }, child: BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         if (authState is AuthSuccess) {
@@ -121,7 +122,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     BlocProvider.of<TaskSubmissionListBloc>(context).get(state.assessmentAssignment);
   }
 
-  void updateSegment(VideoState state) {
+  void updateVideo(VideoState state) {
     if (state is VideoSuccess && state.segmentSubmission != null) {
       saveUploadedState(state);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'segmentUploadedSuccessfully'));

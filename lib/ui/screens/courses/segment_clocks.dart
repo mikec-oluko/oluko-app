@@ -31,6 +31,7 @@ import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -86,6 +87,8 @@ class SegmentClocks extends StatefulWidget {
 }
 
 class _SegmentClocksState extends State<SegmentClocks> {
+  GlobalService _globalService = GlobalService();
+
   final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
   WorkState workState;
@@ -206,6 +209,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                   _segmentSubmission.id,
                                   _segmentSubmission,
                                 );
+                                _globalService.videoProcessing = true;
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
@@ -451,7 +455,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               thinPadding: true,
               onPressed: () {
                 //if (!waitingForSegSubCreation) {
-                  goToClassAction();
+                goToClassAction();
                 /*} else {
                   DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
                 }*/
@@ -467,7 +471,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               thinPadding: true,
               onPressed: () {
                 //if (!waitingForSegSubCreation) {
-                  nextSegmentAction();
+                nextSegmentAction();
                 /*} else {
                   DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
                 }*/
@@ -529,8 +533,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       thinPadding: true,
                       onPressed: () {
                         //if (!waitingForSegSubCreation) {
-                          goToClassAction();
-                       /* } else {
+                        goToClassAction();
+                        /* } else {
                           DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
                         }*/
                       },
@@ -545,7 +549,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       thinPadding: true,
                       onPressed: () {
                         //if (!waitingForSegSubCreation) {
-                          nextSegmentAction();
+                        nextSegmentAction();
                         /*} else {
                           DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
                         }*/
