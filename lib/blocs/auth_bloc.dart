@@ -132,6 +132,7 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
+    emit(AuthLoading());
     UserCredential result;
     try {
       try {
@@ -165,6 +166,7 @@ class AuthBloc extends Cubit<AuthState> {
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
         navigateToNextScreen(context, firebaseUser.uid);
+        return firebaseUser;
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {

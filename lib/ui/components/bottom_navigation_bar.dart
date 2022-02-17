@@ -75,7 +75,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (olukoBottomNavigationBarItem.route == '/profile')
-                        if (widget.userInformation.avatarThumbnail != null)
+                        if (widget.userInformation?.avatarThumbnail != null)
                           CircleAvatar(
                             radius: 15,
                             backgroundImage: Image(
@@ -85,11 +85,11 @@ class _State extends State<OlukoBottomNavigationBar> {
                           )
                         else
                           CircleAvatar(
-                            backgroundColor: widget.userInformation.profileDefaultPicContent != null
+                            backgroundColor: widget.userInformation?.profileDefaultPicContent != null
                                 ? OlukoColors.userColor(widget.userInformation.firstName, widget.userInformation.lastName)
                                 : OlukoColors.black,
                             radius: 15.0,
-                            child: Text(widget.userInformation.profileDefaultPicContent ?? '',
+                            child: Text(widget.userInformation?.profileDefaultPicContent ?? '',
                                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                           )
                       else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
