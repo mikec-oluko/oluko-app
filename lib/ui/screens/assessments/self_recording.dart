@@ -43,6 +43,9 @@ class _State extends State<SelfRecording> {
   Task _task;
   List<Task> _tasks;
 
+  double scale;
+  CameraValue camera;
+
   @override
   void initState() {
     super.initState();
@@ -149,18 +152,6 @@ class _State extends State<SelfRecording> {
 
   Container neumorphicCameraContent() {
     final size = MediaQuery.of(context).size;
-    final deviceRatio = size.width / size.height;
-
-    var camera = cameraController.value;
-    // calculate scale depending on screen and camera ratios
-    // this is actually size.aspectRatio / (1 / camera.aspectRatio)
-    // because camera preview size is received as landscape
-    // but we're calculating for portrait orientation
-    var scale = size.aspectRatio * camera.aspectRatio;
-
-    // to prevent scaling down, invert the value
-    if (scale < 1) scale = 1 / scale;
-
     return Container(
       color: Colors.black,
       child: Container(
@@ -179,7 +170,7 @@ class _State extends State<SelfRecording> {
                           width: size.width,
                           height: size.height / 1.1,
                           child: Transform.scale(
-                            scale: scale,
+                            scale: scale ?? 1.0,
                             child: Center(
                               child: CameraPreview(cameraController),
                             ),
@@ -315,6 +306,16 @@ class _State extends State<SelfRecording> {
     if (!mounted) return;
     setState(() {
       _isReady = true;
+      final size = MediaQuery.of(context).size;
+      camera = cameraController.value;
+      // calculate scale depending on screen and camera ratios
+      // this is actually size.aspectRatio / (1 / camera.aspectRatio)
+      // because camera preview size is received as landscape
+      // but we're calculating for portrait orientation
+      scale = size.aspectRatio * camera.aspectRatio;
+
+      // to prevent scaling down, invert the value
+      if (scale < 1) scale = 1 / scale;
     });
   }
 

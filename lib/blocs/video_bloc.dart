@@ -156,9 +156,9 @@ class VideoBloc extends Cubit<VideoState> {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
     }
 
-    emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
+    //emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
     final videoUrl = await VideoProcess.uploadFile(filePath, video.name);
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     video.url = videoUrl;
     video.thumbUrl = thumbUrl;
@@ -249,9 +249,9 @@ class VideoBloc extends Cubit<VideoState> {
 
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
 
-    _processPhase = '';
-    _progress = 0.0;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = '';
+    // _progress = 0.0;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Videos/$videoName';
@@ -265,9 +265,9 @@ class VideoBloc extends Cubit<VideoState> {
 
     video.duration = durationInMilliseconds;
 
-    _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
+    // _progress += _unitOfProgress;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     String thumbFilePath = null;
     try {
       thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
@@ -278,9 +278,9 @@ class VideoBloc extends Cubit<VideoState> {
       );
       // rethrow;
     }
-    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
+    // _progress += _unitOfProgress;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     final encodedFile = await EncodingProvider.encode264(videoPath, outDirPath);
     if (videosDir.exists() != null) {
       video = await uploadVideoWithoutProcessing(video, thumbFilePath, encodedFile, context);
