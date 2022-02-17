@@ -29,6 +29,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+  GlobalService _globalService = GlobalService();
+
   SegmentSubmission _segmentSubmission;
 
   bool _isBottomTabActive = true;
@@ -117,19 +119,26 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   taskSubmissionActions(VideoSuccess state) {
-    BlocProvider.of<TaskSubmissionListBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
+    BlocProvider.of<TaskSubmissionListBloc>(context)
+        .updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
     BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
     BlocProvider.of<TaskSubmissionListBloc>(context).get(state.assessmentAssignment);
   }
 
   void updateVideo(VideoState state) {
     if (state is VideoSuccess && state.segmentSubmission != null) {
+      _globalService.videoProcessing = false;
+
       saveUploadedState(state);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'segmentUploadedSuccessfully'));
-    }else if (state is VideoSuccess && state.assessment != null) {
+    } else if (state is VideoSuccess && state.assessment != null) {
+      _globalService.videoProcessing = false;
+
       taskSubmissionActions(state);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'tasktUploadedSuccessfully'));
     } else if (state is VideoFailure) {
+      _globalService.videoProcessing = false;
+
       saveErrorState(state);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadedWithErrors'));
     }

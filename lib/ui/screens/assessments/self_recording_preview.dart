@@ -14,6 +14,7 @@ import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
@@ -35,6 +36,8 @@ class SelfRecordingPreview extends StatefulWidget {
 }
 
 class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
+  GlobalService _globalService = GlobalService();
+
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
 
@@ -101,7 +104,11 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) {
     BlocProvider.of<VideoBloc>(context)
         .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id, null, assessmentAssignment, assessment, taskSubmission);
-    navigateToTaskDetails();
+    _globalService.videoProcessing = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navigateToTaskDetails();
+    });
   }
 
   Widget form() {
@@ -126,11 +133,11 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   navigateToTaskDetails() {
     Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
-    /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
       'taskIndex': widget.taskIndex,
       'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
       'taskCompleted': true
-    });*/
+    });
   }
 
   Widget contentScaffold() {
