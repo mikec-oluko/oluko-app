@@ -109,8 +109,8 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
-      AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
       if (firebaseUser != null) {
+        AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         navigateToNextScreen(context, firebaseUser.uid);
         final sharedPref = await SharedPreferences.getInstance();
@@ -165,8 +165,14 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(userResponse);
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        AppMessages.clearAndShowSnackbar(
+            context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
         navigateToNextScreen(context, firebaseUser.uid);
-        return firebaseUser;
+        final sharedPref = await SharedPreferences.getInstance();
+        if (sharedPref.getBool('first_time') == true) {
+          sharedPref.setBool('first_time', false);
+          await Permissions.askForPermissions();
+        }
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
