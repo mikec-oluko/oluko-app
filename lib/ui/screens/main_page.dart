@@ -78,11 +78,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   void initState() {
+    super.initState();
     tabs = getTabs();
     tabController = TabController(length: this.tabs.length, vsync: this);
-    super.initState();
     tabController.addListener(() {
-      this.setState(() {});
+      setState(() {});
     });
   }
 
