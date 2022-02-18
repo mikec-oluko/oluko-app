@@ -70,6 +70,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
   }
 
   void sendHiFive(BuildContext context, String userId, String targetUserId) async {
+    ChatRepository().removeNotification(userId, targetUserId);
     Message hiFiveMessage = await ChatRepository().sendHiFive(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
@@ -82,6 +83,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
 
   void sendHiFiveToAll(BuildContext context, String userId, List<String> targetUserIds) async {
     List<Message> results = await Future.wait(targetUserIds.map((String targetUserId) {
+      ChatRepository().removeNotification(userId, targetUserId);
       return ChatRepository().sendHiFive(userId, targetUserId);
     }));
 
@@ -94,6 +96,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
   }
 
   void ignoreHiFive(BuildContext context, String userId, String targetUserId) async {
+    ChatRepository().removeNotification(userId, targetUserId);
     ChatRepository().removeAllHiFives(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);

@@ -53,7 +53,6 @@ class ChatRepository {
         .collection('users')
         .doc(userId)
         .collection('chat')
-        .orderBy('created_at')
         .get();
 
     //Chat List
@@ -118,6 +117,7 @@ class ChatRepository {
     final DocumentReference createdMessageDocument = await userChatCollection.doc(targetUserId).collection('messages').add({});
     messageToSend.id = createdMessageDocument.id;
     final Map<String, dynamic> messageToSendJson = messageToSend.toJson();
+    messageToSendJson['created_at'] = FieldValue.serverTimestamp();
     await createdMessageDocument.set(messageToSendJson);
 
     //Get message to return
@@ -174,6 +174,26 @@ class ChatRepository {
     if (messages?.docs != null) {
       for (final message in messages.docs) {
         message.reference.delete();
+      }
+    }
+  }
+
+  Future<void> removeNotification(String userId, String targetUserId) async {
+    final QuerySnapshot<Map<String, dynamic>> notifications = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('notifications')
+        .where('user.id', isEqualTo: targetUserId)
+        .where('message', isEqualTo: Message().hifiveMessageCode)
+        .get();
+
+    if (notifications?.docs != null) {
+      for (final notification in notifications.docs) {
+        if (notification.data()['is_deleted'] != true) {
+          notification.reference.update({'is_deleted': true});
+        }
       }
     }
   }

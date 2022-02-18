@@ -303,18 +303,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Image.asset(
-                        'assets/home/mvt.png',
-                        scale: 4,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Image.asset(
+                            'assets/home/mvt.png',
+                            scale: 4,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    HandWidget(authState: widget.authState),
+                  ],
                 ),
                 notEnrolledStoriesHeader(showStories),
               ],
