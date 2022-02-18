@@ -54,11 +54,6 @@ class _State extends State<SelfRecording> {
     'Your age',
     'Your fitness goal?',
     'Your name',
-    'Your age',
-    'Your fitness goal?',
-    'Your name',
-    'Your age',
-    'Your fitness goal?',
   ];
 
   bool flashActivated = false;
