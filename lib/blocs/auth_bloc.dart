@@ -225,15 +225,23 @@ class AuthBloc extends Cubit<AuthState> {
     return AuthRepository().retrieveLoginData();
   }
 
+  static Future<User> checkCurrentUserStatic() async {
+    final loggedUser = AuthRepository.getLoggedUser();
+    final userData = await AuthRepository().retrieveLoginData();
+    if (loggedUser != null && userData != null) {
+      return loggedUser;
+    } else {
+      return null;
+    }
+  }
+
   Future<User> checkCurrentUser() async {
     final loggedUser = AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
       emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
-      return loggedUser;
     } else {
       emit(AuthGuest());
-      return null;
     }
   }
 

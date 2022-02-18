@@ -18,7 +18,7 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  final User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final bool firstTime = await isFirstTime();
   final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
