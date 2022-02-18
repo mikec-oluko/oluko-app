@@ -155,12 +155,12 @@ class OlukoNeumorphism {
     return NeumorphicStyle(
         border:
             isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
-        depth: -5,
+        depth: 0,
         intensity: 0.8,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shape: NeumorphicShape.flat,
         lightSource: LightSource.bottomRight,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(10))),
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(22))),
         shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
