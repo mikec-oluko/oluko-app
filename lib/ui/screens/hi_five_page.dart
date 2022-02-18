@@ -165,10 +165,9 @@ class _HiFivePageState extends State<HiFivePage> {
   OlukoAppBar _appBar() {
     return OlukoAppBar(
       title: 'Hi Five',
-      showLogo: false,
       showBackButton: true,
       showTitle: OlukoNeumorphism.isNeumorphismDesign,
-      showActions: OlukoNeumorphism.isNeumorphismDesign,
+      showActions: true,
       actions: [
         Visibility(
           visible: _hiFiveState != null && _hiFiveState.users.length > 1,

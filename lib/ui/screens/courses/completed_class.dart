@@ -13,6 +13,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/utils/class_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -270,7 +271,7 @@ class _CompletedClassState extends State<CompletedClass> {
                           ),
                           SizedBox(height: 11),
                           Text(
-                            TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                            ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
                             style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
                           ),
                           Image.asset(
