@@ -998,7 +998,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Clock countdown label
   Widget _countdownSection() {
     if (isWorkStateFinished()) {
-      return TimerUtils.completedTimer(context);
+      return TimerUtils.completedTimer(
+          context, !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound);
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {

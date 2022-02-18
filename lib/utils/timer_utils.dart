@@ -171,7 +171,7 @@ class TimerUtils {
     ]);
   }
 
-  static Widget completedTimer(BuildContext context) {
+  static Widget completedTimer(BuildContext context, int rounds) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
             child: SizedBox(
@@ -203,6 +203,10 @@ class TimerUtils {
                               color: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                   : Colors.white)),
+                      const SizedBox(height: 8),
+                      if (rounds != null)
+                        Text(rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
+                            textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
                     ],
                   )
                 ])))
