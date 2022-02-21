@@ -48,26 +48,6 @@ class TimeConverter {
     return "$twoDigitMinutes:$twoDigitSeconds";
   }
 
-  static String toCourseDuration(int weeks, int classes, BuildContext context) {
-    return weeks.toString() +
-        " " +
-        OlukoLocalizations.get(context, 'weeks') +
-        ", " +
-        classes.toString() +
-        " " +
-        OlukoLocalizations.get(context, 'classes');
-  }
-
-  static String toClassProgress(int currentClass, int totalClasses, BuildContext context) {
-    return OlukoLocalizations.get(context, 'class') +
-        " " +
-        (currentClass + 1).toString() +
-        " " +
-        OlukoLocalizations.get(context, 'of') +
-        " " +
-        totalClasses.toString();
-  }
-
   static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat, BuildContext context, String separator}) {
     //date doc: https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
     //7/10/1996 5:08 PM
