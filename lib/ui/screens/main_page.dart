@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
@@ -97,7 +98,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         if (authState is AuthSuccess) {
-          BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
+          BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           userInformation = UserInformationBottomBar(
               firstName: authState.user.firstName,
               lastName: authState.user.lastName,
