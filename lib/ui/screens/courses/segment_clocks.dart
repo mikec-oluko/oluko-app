@@ -1042,19 +1042,24 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     if (workState == WorkState.resting) {
       final bool needInput = useInput();
-      return needInput && OlukoNeumorphism.isNeumorphismDesign
-          ? TimerUtils.restTimer(
-              needInput ? neumorphicTextfieldForScore(true) : null,
-              circularProgressIndicatorValue,
-              TimeConverter.durationToString(timeLeft),
-              context,
-            )
-          : TimerUtils.restTimer(
-              needInput ? getTextField(true) : null,
-              circularProgressIndicatorValue,
-              TimeConverter.durationToString(timeLeft),
-              context,
-            );
+      if (timeLeft.inSeconds <= 5) {
+        return TimerUtils.finalTimer(
+            InitialTimerType.End, 5, timeLeft.inSeconds, context, isLastEntryOfTheRound() ? timerEntries[timerTaskIndex].round : null);
+      } else {
+        return needInput && OlukoNeumorphism.isNeumorphismDesign
+            ? TimerUtils.restTimer(
+                needInput ? neumorphicTextfieldForScore(true) : null,
+                circularProgressIndicatorValue,
+                TimeConverter.durationToString(timeLeft),
+                context,
+              )
+            : TimerUtils.restTimer(
+                needInput ? getTextField(true) : null,
+                circularProgressIndicatorValue,
+                TimeConverter.durationToString(timeLeft),
+                context,
+              );
+      }
     }
 
     if (timerEntries[timerTaskIndex].round == null) {
@@ -1075,13 +1080,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
       );
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
-    return TimerUtils.timeTimer(
-      circularProgressIndicatorValue,
-      TimeConverter.durationToString(timeLeft),
-      context,
-      counter,
-      timerEntries[timerTaskIndex].movement.isBothSide,
-    );
+
+    if (timeLeft.inSeconds <= 5) {
+      return TimerUtils.finalTimer(InitialTimerType.End, 5, timeLeft.inSeconds, context,
+          isLastEntryOfTheRound() ? timerEntries[timerTaskIndex].round : null);
+    } else {
+      return TimerUtils.timeTimer(
+        circularProgressIndicatorValue,
+        TimeConverter.durationToString(timeLeft),
+        context,
+        counter,
+        timerEntries[timerTaskIndex].movement.isBothSide,
+      );
+    }
   }
 
   bool useInput() => (isCurrentMovementRest() &&
@@ -1128,6 +1139,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ),
       ),
     );
+  }
+
+  bool isLastEntryOfTheRound() {
+    if (timerTaskIndex == timerEntries.length - 1) {
+      return true;
+    } else if (timerEntries[timerTaskIndex + 1].round != timerEntries[timerTaskIndex].round) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   ///Lower half of the view

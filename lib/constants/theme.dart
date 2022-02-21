@@ -292,6 +292,8 @@ class OlukoColors {
 
   static const Color disabled = Color.fromRGBO(30, 30, 30, 0.8);
 
+  static const Color lightOrange = Color.fromRGBO(254, 159, 31, 1);
+
   static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
 
   static const Color statisticsChartColor = Color.fromRGBO(254, 159, 31, 1);

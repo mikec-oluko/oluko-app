@@ -417,4 +417,44 @@ class TimerUtils {
               color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
     );
   }
+
+  static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
+    return Stack(alignment: Alignment.center, children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 98.0),
+        child: AspectRatio(
+            aspectRatio: 1,
+            child: CircularProgressIndicator(
+                strokeWidth: _progressIndicatorStroke,
+                value: getProgress(totalTime, countDown),
+                color: OlukoColors.lightOrange,
+                backgroundColor: backgroundColor)),
+      ),
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(countDown.toString(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 80,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.lightOrange,
+            )),
+        if(round!=null) Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(OlukoLocalizations.get(context, 'round') + "  ",
+              textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: OlukoColors.primary)),
+          Text((round + 1).toString(),
+              textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
+        ]),
+        SizedBox(height: 2),
+        if(round!=null) Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Text(getRepsTimerText(type, context),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
+      ])
+    ]);
+  }
 }
