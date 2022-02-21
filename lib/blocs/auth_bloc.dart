@@ -110,8 +110,8 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
-      AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
       if (firebaseUser != null) {
+        AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         navigateToNextScreen(context, firebaseUser.uid);
         final sharedPref = await SharedPreferences.getInstance();
@@ -133,6 +133,7 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
+    emit(AuthLoading());
     UserCredential result;
     try {
       try {
@@ -165,7 +166,14 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(userResponse);
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        AppMessages.clearAndShowSnackbar(
+            context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
         navigateToNextScreen(context, firebaseUser.uid);
+        final sharedPref = await SharedPreferences.getInstance();
+        if (sharedPref.getBool('first_time') == true) {
+          sharedPref.setBool('first_time', false);
+          await Permissions.askForPermissions();
+        }
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
@@ -218,15 +226,23 @@ class AuthBloc extends Cubit<AuthState> {
     return AuthRepository().retrieveLoginData();
   }
 
+  static Future<User> checkCurrentUserStatic() async {
+    final loggedUser = AuthRepository.getLoggedUser();
+    final userData = await AuthRepository().retrieveLoginData();
+    if (loggedUser != null && userData != null) {
+      return loggedUser;
+    } else {
+      return null;
+    }
+  }
+
   Future<User> checkCurrentUser() async {
     final loggedUser = AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
       emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
-      return loggedUser;
     } else {
       emit(AuthGuest());
-      return null;
     }
   }
 
@@ -235,7 +251,6 @@ class AuthBloc extends Cubit<AuthState> {
     if (success == true) {
       BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
       BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
-      BlocProvider.of<CoachRequestBloc>(context).dispose();
       BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
       BlocProvider.of<StoryListBloc>(context).dispose();
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();

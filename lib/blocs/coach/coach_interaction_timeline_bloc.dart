@@ -45,7 +45,7 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
   final CoachRepository _coachRepository = CoachRepository();
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
-    subscription ??= _coachRepository.getTimelineItemsSubscription(userId).listen((snapshot) async {
+    return subscription ??= _coachRepository.getTimelineItemsSubscription(userId).listen((snapshot) async {
       List<CoachTimelineItem> _timelineItems = [];
       List<CoachTimelineItem> _timelineItemsUpdated = [];
       List<CoachTimelineItem> _timelineItemsUpdatedContent = [];
@@ -78,7 +78,6 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
               timelineItems: await _coachRepository.getTimelineItemsReferenceContent(_timelineItemsUpdatedContent)))
           : emit(CoachTimelineItemsSuccess(timelineItems: await _coachRepository.getTimelineItemsReferenceContent(_timelineItems)));
     });
-    return subscription;
   }
 
   void getTimelineItemsForUser(String userId) async {
