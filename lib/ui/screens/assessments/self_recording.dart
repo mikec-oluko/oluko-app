@@ -48,13 +48,7 @@ class _State extends State<SelfRecording> {
   Uint8List galleryImage;
   Task _task;
   List<Task> _tasks;
-  //TODO: take the taskDescriptionBullets from bloc
-  List<String> _taskDescriptionBullets = [
-    'Your name',
-    'Your age',
-    'Your fitness goal?',
-    'Your name',
-  ];
+ 
 
   bool flashActivated = false;
   @override
@@ -272,7 +266,6 @@ class _State extends State<SelfRecording> {
                     ))
               else
                 const SizedBox(),
-              getDescriptionBullets()
             ],
           ),
         ),
@@ -280,48 +273,7 @@ class _State extends State<SelfRecording> {
     );
   }
 
-  Widget getDescriptionBullets() {
-    if (_taskDescriptionBullets.length > 1) {
-      return Expanded(
-        child: GridView.count(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          childAspectRatio: 5,
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          children: _taskDescriptionBullets
-              .map((e) => Row(children: [
-                    bulletItem(),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        e,
-                        maxLines: 1,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-                      ),
-                    )
-                  ]))
-              .toList(),
-        ),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            bulletItem(),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                _taskDescriptionBullets[0],
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-              ),
-            )
-          ],
-        ),
-      );
-    }
-  }
+ 
 
   Widget bulletItem() {
     return Container(

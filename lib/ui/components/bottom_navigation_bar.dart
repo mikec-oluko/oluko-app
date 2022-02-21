@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/utils/oluko_bottom_navigation_bar_item.dart';
@@ -12,27 +14,36 @@ class OlukoBottomNavigationBar extends StatefulWidget {
   final Function(num) onPressed;
   final List<Widget> actions;
   final int selectedIndex;
-  final UserInformationBottomBar userInformation;
 
-  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex, this.userInformation});
+
+  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
-
 class _State extends State<OlukoBottomNavigationBar> {
+  UserInformationBottomBar userInformation;
   @override
   Widget build(BuildContext context) {
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: OlukoNeumorphism.radiusValue,
-              topRight: OlukoNeumorphism.radiusValue,
-            ),
-            child: Container(
-                decoration: const BoxDecoration(border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
-                child: getBottomNavigationBar()))
-        : getBottomNavigationBar();
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        userInformation = UserInformationBottomBar(
+              firstName: state.user.firstName,
+              lastName: state.user.lastName,
+              avatarThumbnail: state.user.avatarThumbnail,
+              );
+      }
+        return OlukoNeumorphism.isNeumorphismDesign
+            ? ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: OlukoNeumorphism.radiusValue,
+                  topRight: OlukoNeumorphism.radiusValue,
+                ),
+                child: Container(
+                    decoration: const BoxDecoration(border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
+                    child: getBottomNavigationBar()))
+            : getBottomNavigationBar();
+    },);
   }
 
   BottomNavigationBar getBottomNavigationBar() {
@@ -74,22 +85,22 @@ class _State extends State<OlukoBottomNavigationBar> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (olukoBottomNavigationBarItem.route == '/profile')
-                        if (widget.userInformation.avatarThumbnail != null)
+                      if (olukoBottomNavigationBarItem.route == '/profile')                   
+                        if (userInformation?.avatarThumbnail != null)
                           CircleAvatar(
                             radius: 15,
                             backgroundImage: Image(
-                              image: CachedNetworkImageProvider(widget.userInformation.avatarThumbnail),
+                              image: CachedNetworkImageProvider(userInformation.avatarThumbnail),
                               fit: BoxFit.contain,
                             ).image,
                           )
                         else
                           CircleAvatar(
-                            backgroundColor: widget.userInformation.profileDefaultPicContent != null
-                                ? OlukoColors.userColor(widget.userInformation.firstName, widget.userInformation.lastName)
+                            backgroundColor: userInformation != null
+                                ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName)
                                 : OlukoColors.black,
                             radius: 15.0,
-                            child: Text(widget.userInformation.profileDefaultPicContent ?? '',
+                            child: Text(userInformation.loadProfileDefaultPicContent(),
                                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                           )
                       else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
