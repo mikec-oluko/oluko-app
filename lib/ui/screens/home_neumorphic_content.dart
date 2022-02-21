@@ -182,14 +182,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             widget.courses[index].name,
             style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 10.0, right: 15),
+          padding: const EdgeInsets.only(top: 10.0, right: 15, left: 15),
           child: Text(
             widget.courses[index].description ?? '',
             style: OlukoFonts.olukoBigFont(
@@ -201,12 +201,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
           builder: (context, classState) {
             if (classState is ClassSubscriptionSuccess) {
-              return EnrolledCourse().buildClassEnrolledCards(
-                context,
-                classState.classes,
-                outsideCourse: widget.courses[index],
-                outsideCourseEnrollment: widget.courseEnrollments[index],
-                outsideCourseIndex: index,
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: EnrolledCourse().buildClassEnrolledCards(
+                  context,
+                  classState.classes,
+                  outsideCourse: widget.courses[index],
+                  outsideCourseEnrollment: widget.courseEnrollments[index],
+                  outsideCourseIndex: index,
+                ),
               );
             } else {
               return const SizedBox();
