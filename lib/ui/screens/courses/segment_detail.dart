@@ -349,7 +349,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 if (widget.fromChallenge) {
                   return;
                 } else {
-                  Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+                  Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
                   final arguments = {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': widget.classIndex,

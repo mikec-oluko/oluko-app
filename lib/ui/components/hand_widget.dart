@@ -25,10 +25,10 @@ class HandWidget extends StatelessWidget {
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(right: 20.0, top: 5),
-                  child: notificationState.unseenNotis > 0
+                  child: notificationState.unseenNotifications > 0
                       ? Badge(
                           position: const BadgePosition(top: 0, start: 10),
-                          badgeContent: Text(notificationState.unseenNotis.toString()),
+                          badgeContent: Text(notificationState.unseenNotifications.toString()),
                           child: getHandIcon(),
                         )
                       : getHandIcon(),

@@ -159,7 +159,7 @@ class ChatRepository {
     }
   }
 
-  void removeAllHiFives(String userId, String targetUserId) async {
+  static void removeAllHiFives(String userId, String targetUserId) async {
     final QuerySnapshot messages = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -178,7 +178,7 @@ class ChatRepository {
     }
   }
 
-  Future<void> removeNotification(String userId, String targetUserId) async {
+  static Future<void> removeNotification(String userId, String targetUserId) async {
     final QuerySnapshot<Map<String, dynamic>> notifications = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))

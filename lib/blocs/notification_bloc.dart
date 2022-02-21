@@ -13,8 +13,8 @@ class NotificationLoading extends NotificationState {}
 
 class NotificationSuccess extends NotificationState {
   final List<Notification> notifications;
-  final int unseenNotis;
-  NotificationSuccess({this.notifications, this.unseenNotis});
+  final int unseenNotifications;
+  NotificationSuccess({this.notifications, this.unseenNotifications});
 }
 
 class NotificationFailure extends NotificationState {
@@ -37,18 +37,18 @@ class NotificationBloc extends Cubit<NotificationState> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
     return subscription ??= NotificationRepository.getNotificationSubscription(userId).listen((snapshot) async {
       final List<Notification> notifications = [];
-      int unseenNotis = 0;
+      int unseenNotifications = 0;
       for (final doc in snapshot.docs) {
         final Map<String, dynamic> content = doc.data();
         final notification = Notification.fromJson(content);
         if (notification.message == Message().hifiveMessageCode && notification.isDeleted != true) {
           notifications.add(notification);
           if (notification.seenAt == null) {
-            unseenNotis++;
+            unseenNotifications++;
           }
         }
       }
-      emit(NotificationSuccess(notifications: notifications, unseenNotis: unseenNotis));
+      emit(NotificationSuccess(notifications: notifications, unseenNotifications: unseenNotifications));
     });
   }
 
