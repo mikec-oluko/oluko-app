@@ -345,13 +345,31 @@ class _SegmentDetailState extends State<SegmentDetail> {
             return const SizedBox();
           }(),
           body: SegmentImageSection(
-              onPressed: () => widget.fromChallenge
-                  ? (() {})
-                  : Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
-                      'courseEnrollment': widget.courseEnrollment,
-                      'classIndex': widget.classIndex,
-                      'courseIndex': widget.courseIndex
-                    }),
+              onPressed: () {
+                if (widget.fromChallenge) {
+                  return;
+                } else {
+                  Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+                  final arguments = {
+                    'courseEnrollment': widget.courseEnrollment,
+                    'classIndex': widget.classIndex,
+                    'courseIndex': widget.courseIndex
+                  };
+                  if (Navigator.canPop(context)) {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      routeLabels[RouteEnum.insideClass],
+                      arguments: arguments,
+                    );
+                  } else {
+                    Navigator.pushNamed(
+                      context,
+                      routeLabels[RouteEnum.insideClass],
+                      arguments: arguments,
+                    );
+                  }
+                }
+              },
               segment: _segments[i],
               challenge: challenge,
               currentSegmentStep: i + 1,
