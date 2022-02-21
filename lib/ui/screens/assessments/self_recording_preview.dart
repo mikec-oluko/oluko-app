@@ -6,7 +6,9 @@ import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment.dart';
@@ -105,7 +107,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     BlocProvider.of<VideoBloc>(context)
         .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id, null, assessmentAssignment, assessment, taskSubmission);
     _globalService.videoProcessing = true;
-
+    BlocProvider.of<TaskCardBloc>(context).taskLoading(widget.taskIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       navigateToTaskDetails();
     });
