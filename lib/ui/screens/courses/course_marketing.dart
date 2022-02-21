@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/course_helper.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -243,8 +244,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverPersistentHeader(
               pinned: true,
               delegate: SliverAppBarDelegate(
-                ScreenUtils.height(context) * 0.08,
-                ScreenUtils.height(context) * 0.08,
+                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length,20,context),
+                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length,20,context),
                 child: Container(
                   alignment: Alignment.centerLeft,
                   color: OlukoNeumorphismColors.finalGradientColorDark,
