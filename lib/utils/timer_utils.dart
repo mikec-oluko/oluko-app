@@ -5,6 +5,7 @@ import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progre
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 enum InitialTimerType { Start, End }
 
@@ -174,38 +175,34 @@ class TimerUtils {
   static Widget completedTimer(BuildContext context) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
-            child: SizedBox(
-                height: _olukoNeumorphicWatchProgressSize,
-                width: _olukoNeumorphicWatchProgressSize,
-                child: Stack(alignment: Alignment.center, children: [
-                  const AspectRatio(
-                    aspectRatio: 1,
-                    child: CircularProgressIndicator(
-                      strokeWidth: _progressIndicatorStroke,
-                      value: 1,
-                      color: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('assets/self_recording/completed_tick.png'),
-                        width: 30,
-                        height: 30,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(OlukoLocalizations.get(context, 'completed'),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: OlukoNeumorphism.isNeumorphismDesign
-                                  ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
-                                  : Colors.white)),
-                    ],
-                  )
-                ])))
+            child: Stack(alignment: Alignment.center, children: [
+            const AspectRatio(
+              aspectRatio: 1,
+              child: CircularProgressIndicator(
+                strokeWidth: _progressIndicatorStroke,
+                value: 1,
+                color: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Image(
+                  image: AssetImage('assets/self_recording/completed_tick.png'),
+                  width: 30,
+                  height: 30,
+                ),
+                const SizedBox(height: 8),
+                Text(OlukoLocalizations.get(context, 'completed'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : Colors.white)),
+              ],
+            )
+          ]))
         : Container(
             child: SizedBox(
                 height: _olukoWatchProgressSize,
@@ -231,79 +228,80 @@ class TimerUtils {
 
   static Widget pausedTimer(BuildContext context, [String duration]) {
     return Container(
-        child: SizedBox(
-            height: _watchHeight,
-            width: _watchWidth,
-            child: Stack(alignment: Alignment.center, children: [
-              const AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      strokeWidth: _progressIndicatorStroke,
-                      value: OlukoNeumorphism.isNeumorphismDesign ? 1 : 0,
-                      color: getGreenOrSkyBlue,
-                      backgroundColor: backgroundColor)),
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? OlukoLocalizations.get(context, 'paused')
-                        : OlukoLocalizations.get(context, 'paused').toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
-                duration != null ? SizedBox(height: 12) : SizedBox(),
-                duration != null
-                    ? Text(duration,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 30 : 20, fontWeight: FontWeight.bold, color: Colors.white))
-                    : SizedBox()
-              ])
-            ])));
+        child: Stack(alignment: Alignment.center, children: [
+      SizedBox(
+        width: ScreenUtils.smallScreen(context) ? 190 : 220,
+        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        child: const AspectRatio(
+            aspectRatio: 1,
+            child: CircularProgressIndicator(
+                strokeWidth: _progressIndicatorStroke,
+                value: OlukoNeumorphism.isNeumorphismDesign ? 1 : 0,
+                color: getGreenOrSkyBlue,
+                backgroundColor: backgroundColor)),
+      ),
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+            OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoLocalizations.get(context, 'paused')
+                : OlukoLocalizations.get(context, 'paused').toUpperCase(),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
+        duration != null ? SizedBox(height: 12) : SizedBox(),
+        duration != null
+            ? Text(duration,
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(fontSize: OlukoNeumorphism.isNeumorphismDesign ? 30 : 20, fontWeight: FontWeight.bold, color: Colors.white))
+            : SizedBox()
+      ])
+    ]));
   }
 
   static Widget restTimer(Widget addCounterValue, double progressValue, String duration, BuildContext context) {
     //double ellipseScale = 4.5;
     return Container(
-        child: SizedBox(
-            height: _watchHeight,
-            width: _watchWidth,
-            child: Stack(alignment: Alignment.center, children: [
-              /*Image.asset(
-                'assets/courses/ellipse_1.png',
-                scale: ellipseScale,
-              ),
-              Image.asset(
-                'assets/courses/ellipse_2.png',
-                scale: ellipseScale,
-              ),
-              Image.asset(
-                'assets/courses/ellipse_3.png',
-                scale: ellipseScale,
-              ),*/
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      strokeWidth: _progressIndicatorStroke,
-                      value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
-                      color: getGreenOrSkyBlue,
-                      backgroundColor: backgroundColor)),
-              if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
-                Align(
-                  alignment: Alignment.center,
-                  child: addCounterValue,
-                )
-              else
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(
-                      OlukoNeumorphism.isNeumorphismDesign
-                          ? OlukoLocalizations.get(context, 'rest')
-                          : OlukoLocalizations.get(context, 'rest').toUpperCase(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
-                  SizedBox(height: 12),
-                  Text(duration,
-                      textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
-                ])
-            ])));
+        child: Stack(alignment: Alignment.center, children: [
+      /*Image.asset(
+            'assets/courses/ellipse_1.png',
+            scale: ellipseScale,
+          ),
+          Image.asset(
+            'assets/courses/ellipse_2.png',
+            scale: ellipseScale,
+          ),
+          Image.asset(
+            'assets/courses/ellipse_3.png',
+            scale: ellipseScale,
+          ),*/
+      SizedBox(
+        width: ScreenUtils.smallScreen(context) ? 190 : 220,
+        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        child: AspectRatio(
+            aspectRatio: 1,
+            child: CircularProgressIndicator(
+                strokeWidth: _progressIndicatorStroke,
+                value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
+                color: getGreenOrSkyBlue,
+                backgroundColor: backgroundColor)),
+      ),
+      if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
+        Align(
+          alignment: Alignment.center,
+          child: addCounterValue,
+        )
+      else
+        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+              OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoLocalizations.get(context, 'rest')
+                  : OlukoLocalizations.get(context, 'rest').toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
+          SizedBox(height: 12),
+          Text(duration, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
+        ])
+    ]));
   }
 
   static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide]) {
@@ -314,15 +312,19 @@ class TimerUtils {
             child: GestureDetector(
                 onTap: onTap,
                 child: Stack(alignment: Alignment.center, children: [
-                  AspectRatio(
-                      aspectRatio: 1,
-                      child: CircularProgressIndicator(
-                          strokeWidth: _progressIndicatorStroke, value: 0, color: OlukoColors.skyblue, backgroundColor: backgroundColor)),
+                  SizedBox(
+                    width: ScreenUtils.smallScreen(context) ? 190 : 220,
+                    height: ScreenUtils.smallScreen(context) ? 190 : 220,
+                    child: AspectRatio(
+                        aspectRatio: 1,
+                        child: CircularProgressIndicator(
+                            strokeWidth: _progressIndicatorStroke, value: 0, color: OlukoColors.skyblue, backgroundColor: backgroundColor)),
+                  ),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 42 : 32,
+                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 36 : 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor

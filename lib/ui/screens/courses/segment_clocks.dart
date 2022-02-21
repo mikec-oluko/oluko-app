@@ -625,15 +625,24 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     padding: EdgeInsets.only(
                       top: getWatchPadding(),
                     ),
-                    child: Stack(alignment: Alignment.center, children: [
-                      if (usePulseAnimation())
-                        roundTimerWithPulse(keyboardVisibilty)
-                      else
-                        isWorkStateFinished()
-                            ? SizedBox(height: 250, width: 250, child: getRoundsTimer(keyboardVisibilty))
-                            : getRoundsTimer(keyboardVisibilty),
-                      _countdownSection(),
-                    ])),
+                    child: ScreenUtils.height(context) < 700
+                        ? SizedBox(
+                            height: isWorkStateFinished() ? 215 : 250,
+                            width: isWorkStateFinished() ? 215 : 250,
+                            child: Stack(alignment: Alignment.center, children: [
+                              if (usePulseAnimation()) roundTimerWithPulse(keyboardVisibilty) else getRoundsTimer(keyboardVisibilty),
+                              _countdownSection(),
+                            ]),
+                          )
+                        : Stack(alignment: Alignment.center, children: [
+                            if (usePulseAnimation())
+                              roundTimerWithPulse(keyboardVisibilty)
+                            else
+                              isWorkStateFinished()
+                                  ? SizedBox(height: 250, width: 250, child: getRoundsTimer(keyboardVisibilty))
+                                  : getRoundsTimer(keyboardVisibilty),
+                            _countdownSection(),
+                          ])),
               ],
             ),
           ),
@@ -799,51 +808,54 @@ class _SegmentClocksState extends State<SegmentClocks> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: isCounterByReps ? ScreenUtils.width(context) / 3.5 : ScreenUtils.width(context) / 3.0,
-                child: BlocBuilder<KeyboardBloc, KeyboardState>(
-                  builder: (context, state) {
-                    return Scrollbar(
-                      controller: state.textScrollController,
-                      child: () {
-                        final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                        TextSelection textSelection = state.textEditingController.selection;
-                        textSelection = state.textEditingController.selection.copyWith(
-                          baseOffset: state.textEditingController.text.length,
-                          extentOffset: state.textEditingController.text.length,
-                        );
-                        textController = state.textEditingController;
-                        textController.selection = textSelection;
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: SizedBox(
+                  width: isCounterByReps ? ScreenUtils.width(context) / 3.5 : ScreenUtils.width(context) / 3.0,
+                  child: BlocBuilder<KeyboardBloc, KeyboardState>(
+                    builder: (context, state) {
+                      return Scrollbar(
+                        controller: state.textScrollController,
+                        child: () {
+                          final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+                          TextSelection textSelection = state.textEditingController.selection;
+                          textSelection = state.textEditingController.selection.copyWith(
+                            baseOffset: state.textEditingController.text.length,
+                            extentOffset: state.textEditingController.text.length,
+                          );
+                          textController = state.textEditingController;
+                          textController.selection = textSelection;
 
-                        return TextField(
-                          textAlign: TextAlign.center,
-                          scrollController: state.textScrollController,
-                          controller: textController,
-                          onTap: () {
-                            !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
-                          },
-                          style: const TextStyle(
-                            fontSize: 32,
-                            color: OlukoColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          focusNode: state.focus,
-                          readOnly: true,
-                          showCursor: true,
-                          decoration: const InputDecoration(
-                            isDense: false,
-                            contentPadding: EdgeInsets.zero,
-                            focusColor: Colors.transparent,
-                            fillColor: Colors.transparent,
-                            hintText: 'enter score',
-                            hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 24),
-                            hintMaxLines: 1,
-                            border: InputBorder.none,
-                          ),
-                        );
-                      }(),
-                    );
-                  },
+                          return TextField(
+                            textAlign: TextAlign.center,
+                            scrollController: state.textScrollController,
+                            controller: textController,
+                            onTap: () {
+                              !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                            },
+                            style: const TextStyle(
+                              fontSize: 32,
+                              color: OlukoColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            focusNode: state.focus,
+                            readOnly: true,
+                            showCursor: true,
+                            decoration: const InputDecoration(
+                              isDense: false,
+                              contentPadding: EdgeInsets.zero,
+                              focusColor: Colors.transparent,
+                              fillColor: Colors.transparent,
+                              hintText: 'enter score',
+                              hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 24),
+                              hintMaxLines: 1,
+                              border: InputBorder.none,
+                            ),
+                          );
+                        }(),
+                      );
+                    },
+                  ),
                 ),
               ),
               // const SizedBox(width: 25),
@@ -1045,7 +1057,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Clock countdown label
   Widget _countdownSection() {
     if (isWorkStateFinished()) {
-      return SizedBox(height: 180, width: 180, child: TimerUtils.completedTimer(context));
+      if (ScreenUtils.smallScreen(context)) {
+        return SizedBox(height: 150, width: 150, child: TimerUtils.completedTimer(context));
+      } else {
+        return SizedBox(height: 180, width: 180, child: TimerUtils.completedTimer(context));
+      }
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -1665,7 +1681,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Section with information about segment and workout movements.
   Widget _segmentInfoSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
@@ -1674,10 +1690,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MovementUtils.movementTitle(
-                  widget.segments[widget.segmentIndex].isChallenge
-                      ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
-                      : widget.segments[widget.segmentIndex].name,
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: MovementUtils.movementTitle(
+                    widget.segments[widget.segmentIndex].isChallenge
+                        ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                        : widget.segments[widget.segmentIndex].name,
+                  ),
                 ),
               ],
             ),
@@ -1700,14 +1719,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         )),
                   )
                 : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
-          SizedBox(height: 10),
-          if (OlukoNeumorphism.isNeumorphismDesign) const OlukoNeumorphicDivider() else const SizedBox.shrink(),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: widget.workoutType == WorkoutType.segment || shareDone
-                ? FeedbackCard()
-                : ShareCard(createStory: _createStory, whistleAction: whistleAction),
-          ),
+          widget.workoutType == WorkoutType.segment || shareDone
+              ? FeedbackCard()
+              : ShareCard(createStory: _createStory, whistleAction: whistleAction),
         ],
       ),
     );
