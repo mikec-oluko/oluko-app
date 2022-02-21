@@ -28,6 +28,7 @@ import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -351,6 +352,7 @@ class Routes {
   final PanelAudioBloc _panelAudioBloc = PanelAudioBloc();
   final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
+  final NotificationBloc _notificationBloc = NotificationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -358,7 +360,7 @@ class Routes {
     //Providers used for the new route.
     List<BlocProvider> providers = [];
     //Providers used across the whole app.
-    List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
+    final List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
@@ -411,6 +413,7 @@ class Routes {
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
+          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1009,7 +1012,7 @@ class Routes {
     }
 
     //Merge common providers & route-specific ones into one List
-    List<BlocProvider> selectedProviders = providers..addAll(commonProviders);
+    final List<BlocProvider> selectedProviders = providers..addAll(commonProviders);
 
     //Generate route with selected BLoCs
     return MaterialPageRoute(

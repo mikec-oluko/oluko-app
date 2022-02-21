@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -64,11 +67,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   void initState() {
+    super.initState();
     tabs = getTabs();
     tabController = TabController(length: this.tabs.length, vsync: this);
-    super.initState();
     tabController.addListener(() {
-      this.setState(() {});
+      setState(() {});
     });
   }
 
@@ -85,7 +88,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     }, child: BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         if (authState is AuthSuccess) {
-          BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
+          BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           userInformation = UserInformationBottomBar(
               firstName: authState.user.firstName,
               lastName: authState.user.lastName,
@@ -112,7 +115,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     this.tabController.animateTo(index as int);
                   }),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         );
       },
     ));

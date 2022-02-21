@@ -104,3 +104,24 @@ this will deploy to both ios for dev env
 ```
 
 this will deploy to both android for dev env
+
+
+## Setup Google Sign In for Debug
+
+To get the debug certificate fingerprint:
+
+Mac/Linux
+```unix
+    keytool -list -v \
+    -alias androiddebugkey -keystore ~/.android/debug.keystore
+```
+
+Windows
+```unix
+    keytool -list -v \
+    -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
+```
+
+The keytool utility prompts you to enter a password for the keystore. The default password for the debug keystore is android. The keytool then prints the fingerprint to the terminal.
+
+Add the SHA-1 to Firease: ![Screenshot for Firebase section to add SHA-1](./README/Screen%20Shot%202022-02-18%20at%2011.26.25%20AM.png?raw=true)

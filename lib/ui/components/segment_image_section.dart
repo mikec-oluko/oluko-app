@@ -104,7 +104,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+        Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
         return Future(() => false);
       },
       child: imageWithButtons(),

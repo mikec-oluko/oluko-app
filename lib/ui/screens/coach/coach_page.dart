@@ -206,6 +206,7 @@ class _CoachPageState extends State<CoachPage> {
                                   listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
                                       current is CoachRecommendationsUpdate,
                                   listener: (context, state) {
+                                    //TODO: Se ejecuta?
                                     if (state is CoachRecommendationsDispose) {
                                       _coachRecommendations = state.coachRecommendationListDisposeValue;
                                     }
