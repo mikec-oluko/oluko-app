@@ -23,6 +23,7 @@
         "appbundle",
         "fastlane",
         "oluko",
-        "testflight"
+        "testflight",
+        "Wakelock"
     ]
 }

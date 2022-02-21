@@ -77,7 +77,7 @@ dependencies:
   uuid: ^3.0.5
   flutter_sound_lite: ^8.3.9
   equatable: ^2.0.3
-  wakelock: ^0.5.6
+  wakelock: ^0.6.1+1
   flutter_neumorphic: ^3.2.0
   numberpicker: ^2.1.1
   step_progress_indicator: ^1.0.2
