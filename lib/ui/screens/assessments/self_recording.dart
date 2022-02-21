@@ -53,7 +53,7 @@ class _State extends State<SelfRecording> {
   bool flashActivated = false;
   @override
   void initState() {
-    firstGalleryImage();
+    firstGalleryVideo();
     super.initState();
     _setupCameras();
   }
@@ -305,14 +305,14 @@ class _State extends State<SelfRecording> {
       _isReady = true;
     });
   }
-
-  void firstGalleryImage() async {
+//TODO Make service and bloc for the function
+  void firstGalleryVideo() async {
     bool firstVideo = false;
     Uint8List galleryVideo;
     List<AssetPathEntity> albums = await PhotoManager.getAssetPathList();
     for (var assetPathEntity in albums) {
-      List<AssetEntity> photo = await assetPathEntity.getAssetListPaged(0, 1);
       if (!firstVideo) {
+        List<AssetEntity> photo = await assetPathEntity.getAssetListPaged(0, 1);
         if (photo[0].duration > 1) {
           galleryVideo = await photo[0].thumbDataWithSize(30, 30);
           setState(() => galleryImage = galleryVideo);

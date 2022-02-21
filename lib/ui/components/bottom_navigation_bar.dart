@@ -100,7 +100,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                                 ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName)
                                 : OlukoColors.black,
                             radius: 15.0,
-                            child: Text(userInformation.loadProfileDefaultPicContent(),
+                            child: Text(userInformation!=null?userInformation.loadProfileDefaultPicContent():'',
                                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                           )
                       else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
