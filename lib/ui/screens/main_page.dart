@@ -26,7 +26,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  bool _isBottomTabActive=true;
+  bool _isBottomTabActive = true;
   Function showBottomTab;
   List<Widget> tabs = [
     /*
@@ -53,9 +53,17 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   TabController tabController;
 
   List<Widget> getTabs() {
-    return [getHomeTab(), CoachMainPage(), FriendsPage(), Courses(showBottomTab:() => setState(() {
+    return [
+      getHomeTab(),
+      CoachMainPage(),
+      FriendsPage(),
+      Courses(
+        showBottomTab: () => setState(() {
           _isBottomTabActive = !_isBottomTabActive;
-        }),), ProfilePage()];
+        }),
+      ),
+      ProfilePage()
+    ];
   }
 
   Widget getHomeTab() {
@@ -70,11 +78,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   void initState() {
+    super.initState();
     tabs = getTabs();
     tabController = TabController(length: this.tabs.length, vsync: this);
-    super.initState();
     tabController.addListener(() {
-      this.setState(() {});
+      setState(() {});
     });
   }
 
@@ -99,7 +107,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         }
         return Scaffold(
           body: Padding(
-            padding: _isBottomTabActive? const EdgeInsets.only(bottom: 75):const EdgeInsets.only(bottom: 0),
+            padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
             child: TabBarView(
               //physics this is setup to stop swiping from tab to tab
               physics: const NeverScrollableScrollPhysics(),
@@ -108,13 +116,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             ),
           ),
           extendBody: true,
-          bottomNavigationBar: _isBottomTabActive?OlukoBottomNavigationBar(
-            userInformation: userInformation,
-            selectedIndex: this.tabController.index,
-            onPressed: (index) => this.setState(() {
-              this.tabController.animateTo(index as int);
-            }),
-          ):SizedBox(),
+          bottomNavigationBar: _isBottomTabActive
+              ? OlukoBottomNavigationBar(
+                  userInformation: userInformation,
+                  selectedIndex: this.tabController.index,
+                  onPressed: (index) => this.setState(() {
+                    this.tabController.animateTo(index as int);
+                  }),
+                )
+              : const SizedBox(),
         );
       },
     );
