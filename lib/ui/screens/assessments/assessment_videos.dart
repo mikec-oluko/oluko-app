@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
@@ -345,27 +346,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: TaskCard(
                         task: task,
+                        index: index,
                         isCompleted: taskSubmission != null,
                         isPublic: isPublic(taskSubmission),
                         isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, index),
                         onPressed: () {
-                          if (_controller != null) {
-                            _controller.pause();
-                          }
-                          if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.clearAndShowSnackbar(
-                                context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
-                          } else {
-                            if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
-                              setState(() {
-                                isLastTask = true;
-                              });
-                            }
-                            BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
-                            return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                                    arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null})
-                                .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
-                          }
+                          taskCardOnPressed(index, taskSubmission);
                         },
                       ));
                 });
@@ -382,6 +368,26 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         }),
       ],
     );
+  }
+
+  taskCardOnPressed(int index, TaskSubmission taskSubmission) {
+    if (_controller != null) {
+      _controller.pause();
+    }
+    if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+    } else {
+      if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
+        setState(() {
+          isLastTask = true;
+        });
+      }
+      BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
+      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+              arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null})
+          .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
+    }
+    ;
   }
 
   bool isPublic(TaskSubmission taskSubmission) {

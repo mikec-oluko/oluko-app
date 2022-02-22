@@ -31,6 +31,7 @@ import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -86,6 +87,8 @@ class SegmentClocks extends StatefulWidget {
 }
 
 class _SegmentClocksState extends State<SegmentClocks> {
+  GlobalService _globalService = GlobalService();
+
   final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
   WorkState workState;
@@ -190,36 +193,39 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         onTap: () {
                           FocusScope.of(context).unfocus();
                         },
-                        child: BlocListener<VideoBloc, VideoState>(
+                        child: /*BlocListener<VideoBloc, VideoState>(
                           listener: (context, state) {
                             updateSegment(state);
                           },
-                          child: BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
-                            listener: (context, state) {
-                              if (state is CreateSuccess) {
-                                if (_segmentSubmission == null) {
-                                  _segmentSubmission = state.segmentSubmission;
-                                  BlocProvider.of<VideoBloc>(context).createVideo(
-                                    context,
-                                    File(_segmentSubmission.videoState.stateInfo),
-                                    3.0 / 4.0,
-                                    _segmentSubmission.id,
-                                  );
-                                }
-                              } else if (state is UpdateSegmentSubmissionSuccess) {
-                                waitingForSegSubCreation = false;
-                                BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
-                                if (_wantsToCreateStory) {
-                                  callBlocToCreateStory(context, state.segmentSubmission);
-                                } else {
-                                  _isVideoUploaded = true;
-                                  _segmentSubmission = state?.segmentSubmission;
-                                }
+                          child:*/
+                            BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
+                          listener: (context, state) {
+                            if (state is CreateSuccess) {
+                              if (_segmentSubmission == null) {
+                                _segmentSubmission = state.segmentSubmission;
+                                BlocProvider.of<VideoBloc>(context).createVideo(
+                                  context,
+                                  File(_segmentSubmission.videoState.stateInfo),
+                                  3.0 / 4.0,
+                                  _segmentSubmission.id,
+                                  _segmentSubmission,
+                                );
+                                _globalService.videoProcessing = true;
                               }
-                            },
-                            child: form(),
-                          ),
+                            } else if (state is UpdateSegmentSubmissionSuccess) {
+                              waitingForSegSubCreation = false;
+                              BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
+                              if (_wantsToCreateStory) {
+                                callBlocToCreateStory(context, state.segmentSubmission);
+                              } else {
+                                _isVideoUploaded = true;
+                                _segmentSubmission = state?.segmentSubmission;
+                              }
+                            }
+                          },
+                          child: form(),
                         ),
+                        //),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());
@@ -449,11 +455,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
               title: OlukoLocalizations.get(context, 'goToClass'),
               thinPadding: true,
               onPressed: () {
-                if (!waitingForSegSubCreation) {
-                  goToClassAction();
-                } else {
+                //if (!waitingForSegSubCreation) {
+                goToClassAction();
+                /*} else {
                   DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
-                }
+                }*/
               },
             ),
             const SizedBox(
@@ -465,11 +471,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
-                if (!waitingForSegSubCreation) {
-                  nextSegmentAction();
-                } else {
+                //if (!waitingForSegSubCreation) {
+                nextSegmentAction();
+                /*} else {
                   DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
-                }
+                }*/
               },
             ),
           ],
@@ -528,11 +534,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                       thinPadding: true,
                       onPressed: () {
-                        if (!waitingForSegSubCreation) {
-                          goToClassAction();
-                        } else {
+                        //if (!waitingForSegSubCreation) {
+                        goToClassAction();
+                        /* } else {
                           DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
-                        }
+                        }*/
                       },
                     ),
                     const SizedBox(
@@ -544,11 +550,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           : OlukoLocalizations.get(context, 'nextSegment'),
                       thinPadding: true,
                       onPressed: () {
-                        if (!waitingForSegSubCreation) {
-                          nextSegmentAction();
-                        } else {
+                        //if (!waitingForSegSubCreation) {
+                        nextSegmentAction();
+                        /*} else {
                           DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
-                        }
+                        }*/
                       },
                     ),
                   ],
@@ -994,7 +1000,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Clock countdown label
   Widget _countdownSection() {
     if (isWorkStateFinished()) {
-      return TimerUtils.completedTimer(context);
+      return TimerUtils.completedTimer(
+          context, !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound);
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -1037,19 +1044,24 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     if (workState == WorkState.resting) {
       final bool needInput = useInput();
-      return needInput && OlukoNeumorphism.isNeumorphismDesign
-          ? TimerUtils.restTimer(
-              needInput ? neumorphicTextfieldForScore(true) : null,
-              circularProgressIndicatorValue,
-              TimeConverter.durationToString(timeLeft),
-              context,
-            )
-          : TimerUtils.restTimer(
-              needInput ? getTextField(true) : null,
-              circularProgressIndicatorValue,
-              TimeConverter.durationToString(timeLeft),
-              context,
-            );
+      if (timeLeft.inSeconds <= 5) {
+        return TimerUtils.finalTimer(
+            InitialTimerType.End, 5, timeLeft.inSeconds, context, isLastEntryOfTheRound() ? timerEntries[timerTaskIndex].round : null);
+      } else {
+        return needInput && OlukoNeumorphism.isNeumorphismDesign
+            ? TimerUtils.restTimer(
+                needInput ? neumorphicTextfieldForScore(true) : null,
+                circularProgressIndicatorValue,
+                TimeConverter.durationToString(timeLeft),
+                context,
+              )
+            : TimerUtils.restTimer(
+                needInput ? getTextField(true) : null,
+                circularProgressIndicatorValue,
+                TimeConverter.durationToString(timeLeft),
+                context,
+              );
+      }
     }
 
     if (timerEntries[timerTaskIndex].round == null) {
@@ -1070,13 +1082,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
       );
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
-    return TimerUtils.timeTimer(
-      circularProgressIndicatorValue,
-      TimeConverter.durationToString(timeLeft),
-      context,
-      counter,
-      timerEntries[timerTaskIndex].movement.isBothSide,
-    );
+
+    if (timeLeft.inSeconds <= 5) {
+      return TimerUtils.finalTimer(InitialTimerType.End, 5, timeLeft.inSeconds, context,
+          isLastEntryOfTheRound() ? timerEntries[timerTaskIndex].round : null);
+    } else {
+      return TimerUtils.timeTimer(
+        circularProgressIndicatorValue,
+        TimeConverter.durationToString(timeLeft),
+        context,
+        counter,
+        timerEntries[timerTaskIndex].movement.isBothSide,
+      );
+    }
   }
 
   bool useInput() => (isCurrentMovementRest() &&
@@ -1123,6 +1141,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ),
       ),
     );
+  }
+
+  bool isLastEntryOfTheRound() {
+    if (timerTaskIndex == timerEntries.length - 1) {
+      return true;
+    } else if (timerEntries[timerTaskIndex + 1].round != timerEntries[timerTaskIndex].round) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   ///Lower half of the view
@@ -1544,6 +1572,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
       stopwatchTimer.cancel();
+    }
+    if (alertDurationTimer != null && alertDurationTimer.isActive) {
+      alertDurationTimer.cancel();
+    }
+    if (alertTimer != null && alertTimer.isActive) {
+      alertTimer.cancel();
     }
     cameraController?.dispose();
     super.dispose();

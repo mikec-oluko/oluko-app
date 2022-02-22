@@ -124,7 +124,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   }
 
   StatelessWidget switchTypeWidget(CoachTimelineItem content) {
-    switch (TimelineContentOption.getTimelineOption(content.contentType as int)) {
+    switch (content.contentType) {
       case TimelineInteractionType.course:
         return GestureDetector(
           onTap: () {

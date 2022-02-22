@@ -28,11 +28,14 @@ import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
+import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
@@ -48,7 +51,6 @@ import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
-import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -62,12 +64,11 @@ import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_neumorphic_done_screen.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
@@ -75,6 +76,7 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
+import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/authentication/login_password.dart';
@@ -83,7 +85,6 @@ import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
-import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_profile.dart';
 import 'package:oluko_app/ui/screens/coach/coach_recommended_content_list.dart';
@@ -118,7 +119,6 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_content_deta
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/story/story_page.dart';
-import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/audio_bloc.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
@@ -132,11 +132,9 @@ import 'blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
-import 'blocs/movement_info_bloc.dart';
 import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
-import 'models/dto/login_request.dart';
 import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
@@ -153,7 +151,6 @@ import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
 import 'models/dto/story_dto.dart';
-import 'models/task.dart';
 import 'models/transformation_journey_uploads.dart';
 
 enum RouteEnum {
@@ -196,6 +193,7 @@ enum RouteEnum {
   selfRecordingPreview,
   enrolledClass,
   taskSubmissionVideo,
+  taskSubmissionReviewPreview,
   exploreSubscribedUsers,
   segmentCameraPreview,
   coach,
@@ -253,6 +251,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.selfRecordingPreview: '/self-recording-preview',
   RouteEnum.enrolledClass: '/enrolled-class',
   RouteEnum.taskSubmissionVideo: '/task-submission-video',
+  RouteEnum.taskSubmissionReviewPreview: "/task-submission-review-preview",
   RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
   RouteEnum.segmentCameraPreview: '/segment-camera-preview',
   RouteEnum.coach: '/coach',
@@ -351,6 +350,9 @@ class Routes {
   final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
   final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
   final PanelAudioBloc _panelAudioBloc = PanelAudioBloc();
+  final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
+  final TaskCardBloc _taskCardBloc = TaskCardBloc();
+  final NotificationBloc _notificationBloc = NotificationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -364,6 +366,9 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
@@ -408,6 +413,7 @@ class Routes {
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
+          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -766,6 +772,7 @@ class Routes {
         break;
       case RouteEnum.assessmentVideos:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
@@ -811,6 +818,8 @@ class Routes {
         //TODO: Pass flag for last assessments
 
         providers = [
+          BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
@@ -831,6 +840,18 @@ class Routes {
         newRouteView = TaskSubmissionRecordedVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
           task: argumentsToAdd['task'] as Task,
+        );
+        break;
+      case RouteEnum.taskSubmissionReviewPreview:
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        providers = [
+          BlocProvider<TaskReviewBloc>.value(value: _taskReviewBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
+        ];
+        newRouteView = TaskSubmissionReviewPreview(
+          taskSubmission: argumentsToAdd['taskSubmission'] as TaskSubmission,
+          filePath: argumentsToAdd['filePath'].toString(),
+          videoEvents: argumentsToAdd['videoEvents'] as List<Event>,
         );
         break;
       case RouteEnum.choosePlanPayment:

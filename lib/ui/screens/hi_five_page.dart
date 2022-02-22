@@ -34,31 +34,33 @@ class _HiFivePageState extends State<HiFivePage> {
             if (_hiFiveState == null) {
               BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
             }
-            return BlocListener<HiFiveBloc, HiFiveState>(
-              listener: (context, hiFiveState) {
-                if (hiFiveState is HiFiveSuccess && hiFiveState.alertMessage != null) {
+            return BlocConsumer<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
+              if (hiFiveState is HiFiveSuccess && hiFiveState.users != null && hiFiveState.users.isNotEmpty) {
+                _hiFiveState = hiFiveState;
+                return ListView(
+                  children: hiFiveState.users
+                      .map(
+                        (targetUser) => _listItem(
+                          authState.user,
+                          targetUser,
+                          hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                        ),
+                      )
+                      .toList(),
+                );
+              }else{
+                return const SizedBox();
+              }
+            }, listener: (context, hiFiveState) {
+              if (hiFiveState is HiFiveSuccess) {
+                if(hiFiveState.alertMessage != null){
                   AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
                 }
-              },
-              child: BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
-                if (hiFiveState is HiFiveSuccess) {
-                  _hiFiveState = hiFiveState;
-                  return ListView(
-                    children: hiFiveState.users
-                        .map(
-                          (targetUser) => _listItem(
-                            authState.user,
-                            targetUser,
-                            hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
-                          ),
-                        )
-                        .toList(),
-                  );
-                } else {
-                  return SizedBox();
+                if(hiFiveState.users == null || hiFiveState.users.isEmpty){
+                  Navigator.pop(context);
                 }
-              }),
-            );
+              }
+            });
           } else {
             return const SizedBox();
           }

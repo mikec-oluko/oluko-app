@@ -8,7 +8,6 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -46,8 +45,6 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
 
   int index = 0;
 
-  VideoBloc _videoBloc;
-  TaskReviewBloc _taskReviewBloc;
   String _taskReviewId;
 
   String assessmentAssignmentId = "8dWwPNggqruMQr0OSV9f";
@@ -65,8 +62,6 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
     super.initState();
     initializeVideos();
     _videoRecordedController.addListener(listen);
-    _videoBloc = VideoBloc();
-    _taskReviewBloc = TaskReviewBloc();
   }
 
   @override
@@ -78,25 +73,16 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<VideoBloc>(
-            create: (context) => _videoBloc,
-          ),
-          BlocProvider<TaskReviewBloc>(
-            create: (context) => _taskReviewBloc,
-          ),
-        ],
-        child: BlocListener<TaskReviewBloc, TaskReviewState>(
+    return BlocListener<TaskReviewBloc, TaskReviewState>(
             listener: (context, state) {
               if (state is CreateSuccess) {
                 setState(() {
                   _taskReviewId = state.taskReviewId;
                 });
-                _videoBloc..createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskReviewId);
+                BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskReviewId);
               }
             },
-            child: form()));
+            child: form());
   }
 
   Widget form() {
@@ -115,7 +101,7 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
                       title: OlukoLocalizations.get(context, 'done'),
                       onPressed: () async {
                         _videoController.pause();
-                        _taskReviewBloc..createTaskReview(reference, widget.taskSubmission, assessmentAssignmentId);
+                        BlocProvider.of<TaskReviewBloc>(context).createTaskReview(reference, widget.taskSubmission, assessmentAssignmentId);
                       },
                     ),
                   ],
@@ -125,7 +111,7 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
             body: BlocListener<VideoBloc, VideoState>(listener: (context, state) {
               if (state is VideoSuccess) {
                 VideoInfo videoInfo = VideoInfo(video: state.video, events: widget.videoEvents, markers: [], drawing: []);
-                _taskReviewBloc..updateTaskReviewVideoInfo(reference.doc(_taskReviewId), videoInfo);
+                BlocProvider.of<TaskReviewBloc>(context).updateTaskReviewVideoInfo(reference.doc(_taskReviewId), videoInfo);
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               }
             }, child: BlocBuilder<VideoBloc, VideoState>(builder: (context, state) {
