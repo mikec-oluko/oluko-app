@@ -129,7 +129,7 @@ class CoachRepository {
     }
   }
 
-  Future<List<Annotation>> setAnnotationAsFavorite(Annotation coachAnnotation, List<Annotation> actualMentoredVideosContent) async {
+  Future<Set<Annotation>> setAnnotationAsFavorite(Annotation coachAnnotation, Set<Annotation> actualMentoredVideosContent) async {
     try {
       coachAnnotation.favorite = !coachAnnotation.favorite;
 
@@ -146,11 +146,11 @@ class CoachRepository {
             .set(coachAnnotation.toJson());
       }
 
-      actualMentoredVideosContent.forEach((mentoredVideo) {
+      for (var mentoredVideo in actualMentoredVideosContent) {
         if (mentoredVideo.id == coachAnnotation.id) {
           mentoredVideo = coachAnnotation;
         }
-      });
+      }
       return actualMentoredVideosContent;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(
@@ -180,6 +180,7 @@ class CoachRepository {
         .collection('recommendations')
         .where('destination_user_id', isEqualTo: userId)
         .where('origin_user_id', isEqualTo: coachId)
+        .where('is_deleted', isEqualTo: false)
         .snapshots();
     return recommendationStream;
   }
@@ -235,7 +236,7 @@ class CoachRepository {
     for (CoachTimelineItem timelineItem in timelineItemList) {
       final DocumentSnapshot ds = await timelineItem.contentReference.get();
 
-      switch (TimelineContentOption.getTimelineOption(timelineItem.contentType as int)) {
+      switch (timelineItem.contentType) {
         case TimelineInteractionType.course:
           Course courseForItem = Course.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.courseForNavigation = courseForItem;
@@ -298,7 +299,7 @@ class CoachRepository {
     for (Recommendation recommendation in coachRecommendationContent) {
       DocumentSnapshot ds = await recommendation.entityReference.get();
 
-      switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
+      switch (recommendation.entityType) {
         case TimelineInteractionType.course:
           Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
 
@@ -308,7 +309,7 @@ class CoachRepository {
               contentSubtitle: courseRecommended.classes.length.toString(),
               contentDescription: courseRecommended.duration,
               contentImage: courseRecommended.image,
-              contentTypeIndex: recommendation.entityType,
+              contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               courseContent: courseRecommended);
           coachRecommendations.add(recommendationItem);
@@ -325,7 +326,7 @@ class CoachRepository {
               contentSubtitle: '',
               contentDescription: movementRecommended.description,
               contentImage: movementRecommended.image,
-              contentTypeIndex: recommendation.entityType,
+              contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               movementContent: movementRecommended);
           coachRecommendations.add(recommendationItem);
@@ -342,7 +343,7 @@ class CoachRepository {
               contentSubtitle: '',
               contentDescription: mediaContentRecommended.description,
               contentImage: mediaContentRecommended.video.thumbUrl,
-              contentTypeIndex: recommendation.entityType,
+              contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               recommendationMedia: mediaContentRecommended);
           coachRecommendations.add(recommendationItem);

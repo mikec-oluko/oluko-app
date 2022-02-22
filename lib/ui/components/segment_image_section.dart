@@ -16,6 +16,7 @@ import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/audio_service.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/audio_section.dart';
 import 'package:oluko_app/ui/components/coach_request_content.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -26,6 +27,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
@@ -76,6 +78,8 @@ class SegmentImageSection extends StatefulWidget {
 }
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
+  GlobalService _globalService = GlobalService();
+
   CoachRequest _coachRequest;
   bool _canStartSegment = true;
   List<Audio> _challengeAudios;
@@ -100,7 +104,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+        Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
         return Future(() => false);
       },
       child: imageWithButtons(),
@@ -268,17 +272,32 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   navigateToSegmentWithRecording() {
-    Navigator.pushNamed(
-      context,
-      routeLabels[RouteEnum.segmentCameraPreview],
-      arguments: {
-        'segmentIndex': widget.currentSegmentStep - 1,
-        'classIndex': widget.classIndex,
-        'courseEnrollment': widget.courseEnrollment,
-        'courseIndex': widget.courseIndex,
-        'segments': widget.segments,
-      },
-    );
+    if (_globalService.videoProcessing) {
+      DialogUtils.getDialog(
+          context,
+          [
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                ))
+          ],
+          showExitButton: true);
+    } else {
+      Navigator.pushNamed(
+        context,
+        routeLabels[RouteEnum.segmentCameraPreview],
+        arguments: {
+          'segmentIndex': widget.currentSegmentStep - 1,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+          'segments': widget.segments,
+        },
+      );
+    }
   }
 
   navigateToSegmentWithoutRecording() {

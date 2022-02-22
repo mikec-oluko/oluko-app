@@ -5,7 +5,6 @@ import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
-import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../routes.dart';
@@ -30,7 +29,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
   }
 
   Widget getWidgedToUse(CoachNotificationContent content) {
-    switch (TimelineContentOption.getTimelineOption(content.contentTypeIndex as int)) {
+    switch (content.contentType) {
       case TimelineInteractionType.course:
         return CoachNotificationCard(
             cardImage: content.contentImage,

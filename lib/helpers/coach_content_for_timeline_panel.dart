@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -65,7 +66,7 @@ class CoachTimelineFunctions {
             contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
             contentName: element.id == 'introVideo' ? 'Introduction Video' : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: 4,
+            contentType: TimelineInteractionType.values[4],
             mentoredVideosForNavigation: annotationContent,
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
@@ -84,7 +85,7 @@ class CoachTimelineFunctions {
             contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
             contentName: element.segmentId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: 6,
+            contentType: TimelineInteractionType.values[6],
             sentVideosForNavigation: segmentSubmittedContent,
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
@@ -112,7 +113,7 @@ class CoachTimelineFunctions {
         contentDescription: recommendationItem.contentSubtitle,
         contentName: recommendationItem.contentTitle,
         contentThumbnail: recommendationItem.contentImage,
-        contentType: recommendationItem.contentTypeIndex,
+        contentType: recommendationItem.contentType,
         course: CourseTimelineSubmodel(),
         courseForNavigation: recommendationItem.courseContent ?? recommendationItem.courseContent,
         movementForNavigation: recommendationItem.movementContent ?? recommendationItem.movementContent,
@@ -132,7 +133,7 @@ class CoachTimelineFunctions {
               contentDescription: '',
               contentImage: annotation.video.thumbUrl,
               videoUrl: annotation.videoHLS ?? annotation.video.url,
-              contentTypeIndex: 4,
+              contentType: TimelineInteractionType.values[4],
               createdAt: annotation.createdAt,
               mentoredContent: annotation);
 
@@ -156,7 +157,7 @@ class CoachTimelineFunctions {
               contentSubtitle: segment.className,
               contentDescription: '',
               contentImage: segment.classImage,
-              contentTypeIndex: 2,
+              contentType: TimelineInteractionType.values[2],
               coachRequest: segment.coachRequest);
 
           if (requiredSegmentAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
@@ -180,7 +181,7 @@ class CoachTimelineFunctions {
             contentSubtitle: recommendation.contentSubtitle,
             contentDescription: recommendation.contentDescription,
             contentImage: recommendation.contentImage,
-            contentTypeIndex: recommendation.contentTypeIndex,
+            contentType: recommendation.contentType,
             createdAt: recommendation.createdAt,
             classContent: recommendation.classContent ?? recommendation.classContent,
             segmentContent: recommendation.segmentContent ?? recommendation.segmentContent,

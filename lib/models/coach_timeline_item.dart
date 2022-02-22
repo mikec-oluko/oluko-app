@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
@@ -15,7 +16,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
   String contentDescription;
   String contentName;
   String contentThumbnail;
-  num contentType;
+  TimelineInteractionType contentType;
   CourseTimelineSubmodel course;
   Movement movementForNavigation;
   Course courseForNavigation;
@@ -60,7 +61,8 @@ class CoachTimelineItem extends Base with EquatableMixin {
       contentDescription: json['content_description'] != null ? json['content_description'].toString() : null,
       contentName: json['content_name'] != null ? json['content_name'].toString() : null,
       contentThumbnail: json['content_thumbnail'] != null ? json['content_thumbnail'].toString() : null,
-      contentType: json['content_type'] as num,
+      //contentType: json['content_type'] as num,
+      contentType: json['content_type'] is int ? TimelineInteractionType.values[json['content_type'] as int] : null,
       course: json['course'] == null ? CourseTimelineSubmodel() : CourseTimelineSubmodel.fromJson(json['course'] as Map<String, dynamic>),
     );
     coachTimelineItem.setBase(json);
@@ -75,7 +77,8 @@ class CoachTimelineItem extends Base with EquatableMixin {
       'content_description': contentDescription,
       'content_name': contentName,
       'content_thumbnail': contentThumbnail,
-      'content_type': contentType,
+      //'content_type': contentType,
+      'content_type': contentType.index,
       'course': course == null ? CourseTimelineSubmodel() : course.toJson(),
     };
     coachTimelineItemJson.addEntries(super.toJson().entries);

@@ -4,8 +4,12 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/enums/file_extension_enum.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/file_processing.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -21,7 +25,11 @@ class Loading extends VideoState {}
 
 class VideoSuccess extends VideoState {
   Video video;
-  VideoSuccess({this.video});
+  SegmentSubmission segmentSubmission;
+  AssessmentAssignment assessmentAssignment;
+  Assessment assessment;
+  TaskSubmission taskSubmission;
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission});
 }
 
 class VideoProcessing extends VideoState {
@@ -39,8 +47,8 @@ class VideoEncoded extends VideoState {
 
 class VideoFailure extends VideoState {
   final String exceptionMessage;
-
-  VideoFailure({this.exceptionMessage});
+  SegmentSubmission segmentSubmission;
+  VideoFailure({this.exceptionMessage, this.segmentSubmission});
 }
 
 class VideoBloc extends Cubit<VideoState> {
@@ -50,7 +58,11 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
+  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id,
+      [SegmentSubmission segmentSubmission,
+      AssessmentAssignment assessmentAssignment,
+      Assessment assessment,
+      TaskSubmission taskSubmission]) async {
     try {
       Video video;
       if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
@@ -59,13 +71,18 @@ class VideoBloc extends Cubit<VideoState> {
         //video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
         video = await _processVideo264Encoding(context, videoFile, aspectRatio, id);
       }
-      emit(VideoSuccess(video: video));
+      emit(VideoSuccess(
+          video: video,
+          segmentSubmission: segmentSubmission,
+          taskSubmission: taskSubmission,
+          assessment: assessment,
+          assessmentAssignment: assessmentAssignment));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      emit(VideoFailure(exceptionMessage: e.toString()));
+      emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission));
       rethrow;
     }
   }
@@ -139,9 +156,9 @@ class VideoBloc extends Cubit<VideoState> {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
     }
 
-    emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
+    //emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
     final videoUrl = await VideoProcess.uploadFile(filePath, video.name);
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     video.url = videoUrl;
     video.thumbUrl = thumbUrl;
@@ -232,9 +249,9 @@ class VideoBloc extends Cubit<VideoState> {
 
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
 
-    _processPhase = '';
-    _progress = 0.0;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = '';
+    // _progress = 0.0;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Videos/$videoName';
@@ -248,9 +265,9 @@ class VideoBloc extends Cubit<VideoState> {
 
     video.duration = durationInMilliseconds;
 
-    _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
+    // _progress += _unitOfProgress;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     String thumbFilePath = null;
     try {
       thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
@@ -261,9 +278,9 @@ class VideoBloc extends Cubit<VideoState> {
       );
       // rethrow;
     }
-    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
+    // _progress += _unitOfProgress;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     final encodedFile = await EncodingProvider.encode264(videoPath, outDirPath);
     if (videosDir.exists() != null) {
       video = await uploadVideoWithoutProcessing(video, thumbFilePath, encodedFile, context);

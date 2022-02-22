@@ -18,7 +18,7 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  final User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final bool firstTime = await isFirstTime();
   final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
@@ -87,25 +87,25 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '${OLUKO}',
-      theme: ThemeData(
-        canvasColor: Colors.transparent,
-        primarySwatch: Colors.grey,
-      ),
-      initialRoute: widget.initialRoute,
-      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-      localizationsDelegates: [
-        const OlukoLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale('es', ''),
-      ],
-    );
+          debugShowCheckedModeBanner: false,
+          title: '${OLUKO}',
+          theme: ThemeData(
+            canvasColor: Colors.transparent,
+            primarySwatch: Colors.grey,
+          ),
+          initialRoute: widget.initialRoute,
+          onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+          localizationsDelegates: [
+            const OlukoLocalizationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en', ''),
+            const Locale('es', ''),
+          ],
+        );
   }
 
   @override
