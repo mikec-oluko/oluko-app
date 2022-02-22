@@ -244,8 +244,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverPersistentHeader(
               pinned: true,
               delegate: SliverAppBarDelegate(
-                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length,20,context),
-                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length,20,context),
+                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
+                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
                 child: Container(
                   alignment: Alignment.centerLeft,
                   color: OlukoNeumorphismColors.finalGradientColorDark,
