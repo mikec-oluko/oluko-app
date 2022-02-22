@@ -332,7 +332,7 @@ class Routes {
   final DoneChallengeUsersBloc _doneChallengeUsersBloc = DoneChallengeUsersBloc();
   final PersonalRecordBloc _personalRecordBloc = PersonalRecordBloc();
   final CoachAudioBloc _coachAudioBloc = CoachAudioBloc();
-  final ChallengeBloc _challengeBloc = ChallengeBloc();
+  final ChallengeStreamBloc _challengeBloc = ChallengeStreamBloc();
   final CoachRecommendationsBloc _coachRecommendationsBloc = CoachRecommendationsBloc();
   final CoachTimelineBloc _coachTimelineBloc = CoachTimelineBloc();
   final AudioBloc _audioBloc = AudioBloc();
@@ -374,7 +374,7 @@ class Routes {
           ),
           BlocProvider(create: (_) => KeyboardBloc()),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
-          BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
@@ -524,7 +524,7 @@ class Routes {
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -550,7 +550,7 @@ class Routes {
             UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
-        providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
+        providers = [BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
           challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
@@ -887,13 +887,14 @@ class Routes {
           title: title,
         );
         break;
-      case RouteEnum.videos:
-        newRouteView = VideosHome(
-          title: "Videos",
-          parentVideoInfo: null,
-          parentVideoReference: FirebaseFirestore.instance.collection("videosInfo"),
-        );
-        break;
+      //TODO: obsolete - first version of drawings and pointers
+      // case RouteEnum.videos:
+      //   newRouteView = VideosHome(
+      //     title: "Videos",
+      //     parentVideoInfo: null,
+      //     parentVideoReference: FirebaseFirestore.instance.collection("videosInfo"),
+      //   );
+      //   break;
       case RouteEnum.exploreSubscribedUsers:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
@@ -944,7 +945,7 @@ class Routes {
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
-          BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc)
         ];

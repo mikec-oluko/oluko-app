@@ -209,8 +209,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       BottomDialogUtils.showBottomDialog(
                         context: context,
                         content: CoachRequestContent(
-                          name: widget.coach.firstName,
-                          image: widget.coach.avatar,
+                          name: widget.coach?.firstName ?? '',
+                          image: widget.coach?.avatar,
                           onNotRecordingAction: navigateToSegmentWithoutRecording,
                           onRecordingAction: navigateToSegmentWithRecording,
                         ),
