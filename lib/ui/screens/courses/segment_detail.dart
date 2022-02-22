@@ -167,9 +167,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
                         _coach = coachUserState.coach;
                         _coachRequests = coachRequests
                             .where((coachRequest) =>
-                                coachRequest.coachId == _coach.id &&
-                                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
-                                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id)
+                                (_coach == null &&
+                                    coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                                    coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
+                                (coachRequest.coachId == _coach.id &&
+                                    coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                                    coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
                             .toList();
                         return form();
                       } else {

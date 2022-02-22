@@ -378,7 +378,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
       selectedTextStyle: TextStyle(color: Colors.white, fontSize: 36),
       onChanged: (int value) {
         setState(() {
-          valueToUse = value;
+          valueToUse = value; //TODO: setting param valueToUse value? in state?
         });
       },
       value: int.parse(valueToUse.toString().padLeft(10, "0")),
