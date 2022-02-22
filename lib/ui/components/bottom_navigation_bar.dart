@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/utils/oluko_bottom_navigation_bar_item.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -85,7 +86,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (olukoBottomNavigationBarItem.route == '/profile')                   
+                      if (olukoBottomNavigationBarItem.route == RouteEnum.profile)                   
                         if (userInformation?.avatarThumbnail != null)
                           CircleAvatar(
                             radius: 15,
@@ -165,7 +166,7 @@ class _State extends State<OlukoBottomNavigationBar> {
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'home'),
           disabledAssetImageUrl: 'assets/bottom_navigation_bar/home.png',
-          route: '/',
+          route: RouteEnum.root,
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_home.png'),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'coach'),
@@ -173,7 +174,7 @@ class _State extends State<OlukoBottomNavigationBar> {
               ? 'assets/bottom_navigation_bar/coach_neumorphic.png'
               : 'assets/bottom_navigation_bar/coach.png',
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_coach.png',
-          route: '/coach'),
+          route: RouteEnum.coach),
       //TODO: Item for testing (remove it later)
       /*OlukoBottomNavigationBarItem(
           title: "TEST",
@@ -185,7 +186,7 @@ class _State extends State<OlukoBottomNavigationBar> {
             ? 'assets/bottom_navigation_bar/friends_neumorphic.png'
             : 'assets/bottom_navigation_bar/friends.png',
         selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
-        route: '/friends',
+        route: RouteEnum.friends,
       ),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'courses'),
@@ -193,11 +194,11 @@ class _State extends State<OlukoBottomNavigationBar> {
               ? 'assets/bottom_navigation_bar/course_neumorphic.png'
               : 'assets/bottom_navigation_bar/course.png',
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_courses.png',
-          route: '/courses'),
+          route: RouteEnum.courses),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'profile'),
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/profile.png',
-          route: '/profile'),
+          route: RouteEnum.profile),
     ];
     return items;
   }
