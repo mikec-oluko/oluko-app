@@ -238,7 +238,9 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   }
 
   Widget gridSection() {
-    return GridView.count(mainAxisSpacing: 2, crossAxisCount: 7, children: getGridItems()); //70 items
+    return GridView.count(
+      physics: NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 1, crossAxisCount: 7, children: getGridItems()); //70 items
   }
 
   List<Widget> getGridItems() {
