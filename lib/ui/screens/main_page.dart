@@ -89,7 +89,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       builder: (context, authState) {
         if (authState is AuthSuccess) {
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
-         }
+        }
         return Scaffold(
           body: Padding(
             padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
