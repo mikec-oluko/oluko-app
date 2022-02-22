@@ -1668,8 +1668,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
       if (_isVideoUploaded) {
         callBlocToCreateStory(context, _segmentSubmission);
       }
-    } else if (_segmentSubmission == null) {
-      createSegmentSubmission();
+    } else {
+      if (_segmentSubmission == null) {
+        createSegmentSubmission();
+      } else if (_isVideoUploaded) {
+        callBlocToCreateStory(context, _segmentSubmission);
+      }
     }
   }
 
