@@ -358,7 +358,7 @@ class Routes {
     //Providers used for the new route.
     List<BlocProvider> providers = [];
     //Providers used across the whole app.
-    List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
+    final List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
@@ -992,7 +992,7 @@ class Routes {
     }
 
     //Merge common providers & route-specific ones into one List
-    List<BlocProvider> selectedProviders = providers..addAll(commonProviders);
+    final List<BlocProvider> selectedProviders = providers..addAll(commonProviders);
 
     //Generate route with selected BLoCs
     return MaterialPageRoute(

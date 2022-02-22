@@ -46,52 +46,66 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
-    subscription ??= _coachRepository.getRecommendationSubscription(userId, coachId).listen((snapshot) async {
-      List<Recommendation> _recommendations = [];
-      List<Recommendation> _recommendationsUpdated = [];
-      List<Recommendation> _recommendationsUpdatedContent = [];
+    return subscription ??= _coachRepository.getRecommendationSubscription(userId, coachId).listen((snapshot) async {
+      final Set<Recommendation> _recommendations = {};
+      final Set<Recommendation> _recommendationsUpdated = {};
+      final Set<Recommendation> _recommendationsUpdatedContent = {};
 
-      if (snapshot.docChanges.isNotEmpty) {
-        snapshot.docChanges.forEach((doc) {
-          final Map<String, dynamic> content = doc.doc.data();
-          _recommendationsUpdated.add(Recommendation.fromJson(content));
-        });
-      }
-      if (snapshot.docs.isNotEmpty) {
-        snapshot.docs.forEach((doc) {
-          final Map<String, dynamic> content = doc.data();
-          _recommendations.add(Recommendation.fromJson(content));
-        });
-      }
+      handleDocumentChanges(snapshot, _recommendationsUpdated);
+      handleDocuments(snapshot, _recommendations);
 
       if (_recommendationsUpdated.length >= _recommendations.length) {
-        _recommendationsUpdated.forEach((updatedItem) {
-          _recommendations.forEach((recommendationItem) {
+        for (final updatedItem in _recommendationsUpdated) {
+          for (final recommendationItem in _recommendations) {
             updatedItem.id == recommendationItem.id
                 ? updatedItem != recommendationItem
                     ? _recommendationsUpdatedContent.add(updatedItem)
                     : null
                 : null;
-          });
-        });
+          }
+        }
       } else {
         _recommendationsUpdatedContent.addAll(_recommendationsUpdated);
       }
 
       _recommendationsUpdatedContent.isNotEmpty
-          ? emit(CoachRecommendationsUpdate(
-              coachRecommendationContent: await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent)))
-          : emit(CoachRecommendationsSuccess(
-              coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations)));
+          ? emit(
+              CoachRecommendationsUpdate(
+                coachRecommendationContent:
+                    await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
+              ),
+            )
+          : emit(
+              CoachRecommendationsSuccess(
+                coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations.toList()),
+              ),
+            );
     });
-    return subscription;
+  }
+
+  void handleDocuments(QuerySnapshot<Map<String, dynamic>> snapshot, Set<Recommendation> _recommendations) {
+    if (snapshot.docs.isNotEmpty) {
+      for (final doc in snapshot.docs) {
+        final Map<String, dynamic> content = doc.data();
+        _recommendations.add(Recommendation.fromJson(content));
+      }
+    }
+  }
+
+  void handleDocumentChanges(QuerySnapshot<Map<String, dynamic>> snapshot, Set<Recommendation> _recommendationsUpdated) {
+    if (snapshot.docChanges.isNotEmpty) {
+      for (final doc in snapshot.docChanges) {
+        final Map<String, dynamic> content = doc.doc.data();
+        _recommendationsUpdated.add(Recommendation.fromJson(content));
+      }
+    }
   }
 
   void getCoachRecommendations(String userId, String coachId) async {
     try {
       emit(LoadingCoachRecommendations());
       final List<Recommendation> coachRecommendations = await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
-      List<CoachRecommendationDefault> recommendationsFormatted =
+      final List<CoachRecommendationDefault> recommendationsFormatted =
           await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
       emit(CoachRecommendationsSuccess(coachRecommendationList: recommendationsFormatted));
     } catch (exception, stackTrace) {
