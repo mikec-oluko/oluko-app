@@ -145,7 +145,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
   CoachRequest _coachRequest;
   XFile videoRecorded;
   bool _isFromChallenge = false;
-
   @override
   void initState() {
     Wakelock.enable();
@@ -814,66 +813,61 @@ class _SegmentClocksState extends State<SegmentClocks> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: SizedBox(
-                  width: isCounterByReps ? ScreenUtils.width(context) / 3.5 : ScreenUtils.width(context) / 3.0,
-                  child: BlocBuilder<KeyboardBloc, KeyboardState>(
-                    builder: (context, state) {
-                      return Scrollbar(
-                        controller: state.textScrollController,
-                        child: () {
-                          final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                          TextSelection textSelection = state.textEditingController.selection;
-                          textSelection = state.textEditingController.selection.copyWith(
-                            baseOffset: state.textEditingController.text.length,
-                            extentOffset: state.textEditingController.text.length,
-                          );
-                          textController = state.textEditingController;
-                          textController.selection = textSelection;
+              SizedBox(
+                width: isCounterByReps ? ScreenUtils.width(context) / 6 : ScreenUtils.width(context) / 3.0,
+                child: BlocBuilder<KeyboardBloc, KeyboardState>(
+                  builder: (context, state) {
+                    return Scrollbar(
+                      controller: state.textScrollController,
+                      child: () {
+                        final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+                        TextSelection textSelection = state.textEditingController.selection;
+                        textSelection = state.textEditingController.selection.copyWith(
+                          baseOffset: state.textEditingController.text.length,
+                          extentOffset: state.textEditingController.text.length,
+                        );
+                        textController = state.textEditingController;
+                        textController.selection = textSelection;
 
-                          return TextField(
-                            textAlign: TextAlign.center,
-                            scrollController: state.textScrollController,
-                            controller: textController,
-                            onTap: () {
-                              !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
-                            },
-                            style: const TextStyle(
-                              fontSize: 32,
-                              color: OlukoColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            focusNode: state.focus,
-                            readOnly: true,
-                            showCursor: true,
-                            decoration: const InputDecoration(
-                              isDense: false,
-                              contentPadding: EdgeInsets.zero,
-                              focusColor: Colors.transparent,
-                              fillColor: Colors.transparent,
-                              hintText: 'enter score',
-                              hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 24),
-                              hintMaxLines: 1,
-                              border: InputBorder.none,
-                            ),
-                          );
-                        }(),
-                      );
-                    },
-                  ),
+                        return TextField(
+                          textAlign: TextAlign.center,
+                          scrollController: state.textScrollController,
+                          controller: textController,
+                          onTap: () {
+                            !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                          },
+                          style: const TextStyle(
+                            fontSize: 32,
+                            color: OlukoColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          focusNode: state.focus,
+                          readOnly: true,
+                          showCursor: true,
+                          decoration: InputDecoration(
+                            isDense: false,
+                            contentPadding: EdgeInsets.zero,
+                            focusColor: Colors.transparent,
+                            fillColor: Colors.transparent,
+                            hintText: OlukoLocalizations.get(context, "enterScore"),
+                            hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 22),
+                            hintMaxLines: 1,
+                            border: InputBorder.none,
+                          ),
+                        );
+                      }(),
+                    );
+                  },
                 ),
               ),
               // const SizedBox(width: 25),
               if (isCounterByReps)
-                Expanded(
-                  child: Text(
-                    OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                        ? OlukoLocalizations.get(context, 'reps')
-                        : timerEntries[timerTaskIndex - 1].movement.name,
-                    style: const TextStyle(
-                        fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300),
-                  ),
+                Text(
+                  OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                      ? OlukoLocalizations.get(context, 'reps')
+                      : timerEntries[timerTaskIndex - 1].movement.name,
+                  style:
+                      const TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300),
                 )
               else
                 textController.value != null && textController.value.text != ""
@@ -1064,11 +1058,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget _countdownSection() {
     if (isWorkStateFinished()) {
       if (ScreenUtils.smallScreen(context)) {
-        return SizedBox(height: 150, width: 150, child:TimerUtils.completedTimer(
-          context, !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
+        return SizedBox(
+            height: 150,
+            width: 150,
+            child: TimerUtils.completedTimer(context,
+                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
       } else {
-        return SizedBox(height: 180, width: 180, child: TimerUtils.completedTimer(
-          context, !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
+        return SizedBox(
+            height: 180,
+            width: 180,
+            child: TimerUtils.completedTimer(context,
+                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
       }
     }
 
@@ -1152,8 +1152,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
 
     if (timeLeft.inSeconds <= 5) {
-      return TimerUtils.finalTimer(InitialTimerType.End, 5, timeLeft.inSeconds, context,
-          isLastEntryOfTheRound() ? timerEntries[timerTaskIndex].round : null);
+      return TimerUtils.finalTimer(
+          InitialTimerType.End, 5, timeLeft.inSeconds, context, isLastEntryOfTheRound() ? timerEntries[timerTaskIndex].round : null);
     } else {
       return TimerUtils.timeTimer(
         circularProgressIndicatorValue,
