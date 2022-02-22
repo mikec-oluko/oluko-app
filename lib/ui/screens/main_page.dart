@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
@@ -79,11 +80,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   void initState() {
+    super.initState();
     tabs = getTabs();
     tabController = TabController(length: this.tabs.length, vsync: this);
-    super.initState();
     tabController.addListener(() {
-      this.setState(() {});
+      setState(() {});
     });
   }
 

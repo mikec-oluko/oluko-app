@@ -186,13 +186,18 @@ class _CoachPageState extends State<CoachPage> {
                                   });
                                   updateReviewPendingOnCoachAppBar(context);
                                 }
-                                return BlocConsumer<CoachTimelineItemsBloc, CoachTimelineItemsState>(
-                                  listenWhen: (CoachTimelineItemsState previous, CoachTimelineItemsState current) =>
-                                      current is CoachTimelineItemsUpdate,
-                                  listener: (context, timelineItemsUpdateListener) {
-                                    if (timelineItemsUpdateListener is CoachTimelineItemsUpdate) {
-                                      _timelineItemsContent = CoachHelperFunctions.checkTimelineItemsUpdate(
-                                          timelineItemsUpdateListener.timelineItems, _timelineItemsContent);
+                                return BlocConsumer<CoachRecommendationsBloc, CoachRecommendationsState>(
+                                  listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
+                                      current is CoachRecommendationsUpdate,
+                                  listener: (context, state) {
+                                    //TODO: Se ejecuta?
+                                    if (state is CoachRecommendationsDispose) {
+                                      _coachRecommendations = state.coachRecommendationListDisposeValue;
+                                    }
+                                    if (state is CoachRecommendationsUpdate) {
+                                      _coachRecommendations = CoachHelperFunctions.checkRecommendationUpdate(
+                                          state.coachRecommendationContent, _coachRecommendations);
+                                      coachRecommendationsTimelineItems();
                                     }
                                   },
                                   builder: (context, timelineState) {

@@ -244,7 +244,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                                 : Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
                             onPressed: () {
                               BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
-                                  coachAnnotation: coachAnnotation, currentMentoredVideosContent: content);
+                                coachAnnotation: coachAnnotation,
+                                currentMentoredVideosContent: Set.from(content),
+                              );
                             })
                       ],
                     ),

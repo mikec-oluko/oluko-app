@@ -57,7 +57,8 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    subscription ??= CourseCategoryRepository().getCategoriesSubscription().listen((snapshot) async {
+    return subscription ??= CourseCategoryRepository().getCategoriesSubscription().listen((snapshot) async {
+      emit(CourseCategoryLoading());
       List<CourseCategory> courseCategories = [];
       snapshot.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
@@ -65,6 +66,5 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
       });
       emit(CourseCategorySubscriptionSuccess(values: courseCategories));
     });
-    return subscription;
   }
 }
