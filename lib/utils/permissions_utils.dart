@@ -18,7 +18,7 @@ class PermissionsUtils {
   }
 
   static Future<bool> permissionsEnabled(DeviceContentFrom uploadedFrom, {bool checkMicrophone = true}) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: checkMicrophone)) {
       return false;
     }
     return true;

@@ -12,7 +12,7 @@ class Permissions {
       await Permission.camera.request();
       if (await Permission.camera.status.isDenied ||
           await Permission.camera.status.isPermanentlyDenied ||
-          checkMicrophone && (await Permission.microphone.status.isDenied || await Permission.microphone.status.isPermanentlyDenied)) {
+          (checkMicrophone && (await Permission.microphone.status.isDenied || await Permission.microphone.status.isPermanentlyDenied))) {
         return false;
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
