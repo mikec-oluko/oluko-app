@@ -12,7 +12,7 @@ class Loading extends GalleryVideoState {}
 
 class Success extends GalleryVideoState {
   Uint8List firstVideo;
-  PickedFile pickedFile;
+  XFile pickedFile;
   Success({this.pickedFile, this.firstVideo});
 }
 
@@ -26,17 +26,17 @@ class Failure extends GalleryVideoState {
 
 class GalleryVideoBloc extends Cubit<GalleryVideoState> {
   GalleryVideoBloc() : super(Loading());
-
+  Success currentState;
   void getVideoFromGallery() async {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.gallery, checkMicrophone: false)) {
         emit(PermissionsRequired());
         return;
       }
-
       final imagePicker = ImagePicker();
-      PickedFile video = await imagePicker.getVideo(source: ImageSource.gallery);
-      emit(Success(pickedFile: video));
+      XFile video = await imagePicker.pickVideo(source: ImageSource.gallery);
+      currentState.pickedFile = video;
+      emit(currentState);
     } catch (e) {
       emit(Failure(exception: e));
     }
@@ -49,9 +49,10 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
         return;
       }
       Uint8List pickedVideo = await AssesmentService.getFirstVideoGallery();
-      emit(Success(firstVideo: pickedVideo));
+      currentState.firstVideo = pickedVideo;
+      emit(currentState);
     } catch (e) {
-       emit(Failure(exception: e));
+      emit(Failure(exception: e));
     }
   }
 }
