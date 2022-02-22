@@ -43,17 +43,13 @@ class _State extends State<SelfRecording> {
   bool _isReady = false;
   bool _recording = false;
   bool isCameraFront = false;
-
   bool _buttonBlocked = false;
-  Uint8List galleryImage;
   Task _task;
   List<Task> _tasks;
- 
 
   bool flashActivated = false;
   @override
   void initState() {
-    firstGalleryVideo();
     super.initState();
     _setupCameras();
   }
@@ -68,6 +64,7 @@ class _State extends State<SelfRecording> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        BlocProvider.of<GalleryVideoBloc>(context).getFirstVideoFromGalley();
         return BlocBuilder<TaskBloc, TaskState>(
           builder: (context, taskState) {
             if (taskState is TaskSuccess) {
@@ -273,8 +270,6 @@ class _State extends State<SelfRecording> {
     );
   }
 
- 
-
   Widget bulletItem() {
     return Container(
       width: 5,
@@ -305,39 +300,28 @@ class _State extends State<SelfRecording> {
       _isReady = true;
     });
   }
-//TODO Make service and bloc for the function
-  void firstGalleryVideo() async {
-    bool firstVideo = false;
-    Uint8List galleryVideo;
-    List<AssetPathEntity> albums = await PhotoManager.getAssetPathList();
-    for (var assetPathEntity in albums) {
-      if (!firstVideo) {
-        List<AssetEntity> photo = await assetPathEntity.getAssetListPaged(0, 1);
-        if (photo[0].duration > 1) {
-          galleryVideo = await photo[0].thumbDataWithSize(30, 30);
-          setState(() => galleryImage = galleryVideo);
-          firstVideo = true;
-        }
-      }
-    }
-  }
 
-  Widget _ImageWrapper() {
-    if (galleryImage != null) {
-      return Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6.0)),
-          image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(galleryImage)),
-        ),
-      );
-    }
-    return const Icon(
+  Widget imageWrapper() {
+    return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
+      builder: (context, state) {
+        if (state is Success) {
+          return Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(state.firstVideo)),
+            ),
+          );
+        }
+        else{return const Icon(
       Icons.file_upload,
       size: 30,
       color: OlukoColors.grayColor,
+    );}
+      },
     );
+    
   }
 
   Widget bottomBar() {
@@ -417,7 +401,7 @@ class _State extends State<SelfRecording> {
                     onTap: () {
                       BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                     },
-                    child: _ImageWrapper(),
+                    child: imageWrapper(),
                   )),
             ],
           ),
