@@ -24,6 +24,7 @@
         "fastlane",
         "Neumorphism",
         "oluko",
-        "testflight"
+        "testflight",
+        "Wakelock"
     ]
 }

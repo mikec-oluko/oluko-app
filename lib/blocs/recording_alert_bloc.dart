@@ -25,8 +25,8 @@ class RecordingAlertBloc extends Cubit<RecordingAlertState> {
 
   void updateRecordingAlert(UserResponse user) async {
     try {
-        user = await UserRepository().updateRecordingAlert(user);
-      emit(UpdateRecordingAlertSuccess(userResponse: user));
+      final userUpdated = await UserRepository().updateRecordingAlert(user);
+      emit(UpdateRecordingAlertSuccess(userResponse: userUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

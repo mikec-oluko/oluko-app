@@ -168,6 +168,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
+        Wakelock.disable();
         return onWillPop(context, isSegmentWithRecording());
       },
       child: BlocBuilder<AuthBloc, AuthState>(
@@ -500,6 +501,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget neumorphicFinishedButtons() {
+    Wakelock.disable();
     if (widget.workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
@@ -1516,6 +1518,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
+    Wakelock.disable();
     setState(() {
       if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
         topBarIcon = uploadingIcon();
@@ -1599,6 +1602,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
     if (timerEntries[0].stopwatch) {
       _startStopwatch();
+      Wakelock.enable();
     }
     _playTask();
     setAlert();

@@ -245,6 +245,7 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       emit(AuthGuest());
     }
+    return loggedUser;
   }
 
   Future<void> logout(BuildContext context) async {
