@@ -89,7 +89,7 @@ class EnrolledCourse extends StatefulWidget {
         ..._classItemsToUse.map((item) => enrollment.classes[_classItemsToUse.indexOf(item)].completedAt == null
             ? CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)) == 0
                 ? Neumorphic(
-                    margin: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(15),
                     style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                         CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)) > 0),
                     child: GestureDetector(
@@ -104,7 +104,7 @@ class EnrolledCourse extends StatefulWidget {
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(5),
                         child: ClassSection(
                           classProgress: CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)),
                           isCourseEnrolled: true,

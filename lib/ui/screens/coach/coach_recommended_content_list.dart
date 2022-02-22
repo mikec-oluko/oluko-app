@@ -86,7 +86,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
         recommendedContent
             .where(
               (contentRecommended) =>
-                  TimelineContentOption.getTimelineOption(contentRecommended.contentTypeIndex as int) == TimelineInteractionType.movement,
+                  contentRecommended.contentType == TimelineInteractionType.movement,
             )
             .length) {
       recommendedContent.forEach((movementRecommended) {
@@ -100,7 +100,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
         recommendedContent
             .where(
               (contentRecommended) =>
-                  TimelineContentOption.getTimelineOption(contentRecommended.contentTypeIndex as int) == TimelineInteractionType.course,
+                  contentRecommended.contentType == TimelineInteractionType.course,
             )
             .length) {
       recommendedContent.forEach((recommendedCourses) {

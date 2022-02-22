@@ -155,12 +155,12 @@ class OlukoNeumorphism {
     return NeumorphicStyle(
         border:
             isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
-        depth: -5,
+        depth: 0,
         intensity: 0.8,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shape: NeumorphicShape.flat,
         lightSource: LightSource.bottomRight,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(10))),
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(22))),
         shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
@@ -291,6 +291,8 @@ class OlukoColors {
   static const Color taskCardBackgroundDisabled = Color.fromRGBO(30, 30, 30, 0.8);
 
   static const Color disabled = Color.fromRGBO(30, 30, 30, 0.8);
+
+  static const Color lightOrange = Color.fromRGBO(254, 159, 31, 1);
 
   static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
 

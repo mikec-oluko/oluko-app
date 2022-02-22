@@ -45,6 +45,7 @@ import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart';
+import 'package:oluko_app/ui/components/coach_notification_video_card.dart';
 import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
@@ -466,10 +467,26 @@ class _CoachPageState extends State<CoachPage> {
     List<Widget> carouselContent = [];
     List<CoachNotificationContent> contentForNotificationPanel = [];
 
-    if (!widget.coachAssignment.introductionCompleted) {
+    /*if (!widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachVideoCard(
           videoUrl: _assessment.video,
           onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
+    }*/
+
+    if (!widget.coachAssignment.introductionCompleted) {
+      carouselContent.add(CoachNotificationVideoCard(
+          cardImage: _assessment.thumbnailImage,
+          fileType: CoachFileTypeEnum.recommendedVideo,
+          onCloseCard: () {
+            BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment);
+          },
+          onOpenCard: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': _assessment.video,
+              'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')
+            });
+            BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment);
+          }));
     }
 
     if (_coachRecommendations.isNotEmpty) {
@@ -642,9 +659,7 @@ class _CoachPageState extends State<CoachPage> {
   Widget recommendedVideosSection({bool isForCarousel}) {
     return ((_coachRecommendations != null && _coachRecommendations.isNotEmpty) &&
             _coachRecommendations
-                .where((coachRecommendation) =>
-                    TimelineContentOption.getTimelineOption(coachRecommendation.contentTypeIndex as int) ==
-                    TimelineInteractionType.recommendedVideo)
+                .where((coachRecommendation) => coachRecommendation.contentType == TimelineInteractionType.recommendedVideo)
                 .isNotEmpty)
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.recomendedVideos,
@@ -707,7 +722,7 @@ class _CoachPageState extends State<CoachPage> {
   List<RecommendationMedia> getRecommendedVideosContent() {
     List<RecommendationMedia> recommendationVideos = [];
     for (CoachRecommendationDefault recommendation in _coachRecommendations) {
-      if (TimelineContentOption.getTimelineOption(recommendation.contentTypeIndex as int) == TimelineInteractionType.recommendedVideo) {
+      if (recommendation.contentType == TimelineInteractionType.recommendedVideo) {
         recommendationVideos.add(recommendation.recommendationMedia);
       }
     }
