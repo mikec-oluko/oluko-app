@@ -850,7 +850,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             focusColor: Colors.transparent,
                             fillColor: Colors.transparent,
                             hintText: OlukoLocalizations.get(context, "enterScore"),
-                            hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 22),
+                            hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 18),
                             hintMaxLines: 1,
                             border: InputBorder.none,
                           ),
