@@ -866,13 +866,14 @@ class Routes {
           title: title,
         );
         break;
-      case RouteEnum.videos:
-        newRouteView = VideosHome(
-          title: "Videos",
-          parentVideoInfo: null,
-          parentVideoReference: FirebaseFirestore.instance.collection("videosInfo"),
-        );
-        break;
+      //TODO: obsolete - first version of drawings and pointers
+      // case RouteEnum.videos:
+      //   newRouteView = VideosHome(
+      //     title: "Videos",
+      //     parentVideoInfo: null,
+      //     parentVideoReference: FirebaseFirestore.instance.collection("videosInfo"),
+      //   );
+      //   break;
       case RouteEnum.exploreSubscribedUsers:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
