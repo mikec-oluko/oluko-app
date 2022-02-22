@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -77,7 +78,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    UserInformationBottomBar userInformation;
     if (widget.tab != null) {
       this.tabController.index = widget.tab;
       tabController.animateTo(widget.tab);
@@ -89,12 +89,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       builder: (context, authState) {
         if (authState is AuthSuccess) {
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
-          userInformation = UserInformationBottomBar(
-              firstName: authState.user.firstName,
-              lastName: authState.user.lastName,
-              avatarThumbnail: authState.user.avatarThumbnail,
-              profileDefaultPicContent:
-                  '${authState.user.firstName.characters.first.toUpperCase()}${authState.user.lastName.characters.first.toUpperCase()}');
         }
         return Scaffold(
           body: Padding(
@@ -109,7 +103,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           extendBody: true,
           bottomNavigationBar: _isBottomTabActive
               ? OlukoBottomNavigationBar(
-                  userInformation: userInformation,
                   selectedIndex: this.tabController.index,
                   onPressed: (index) => this.setState(() {
                     this.tabController.animateTo(index as int);

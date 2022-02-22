@@ -6,6 +6,6 @@ class InfoForSegments {
   String className;
   String classImage;
   int classIndex, courseIndex;
-  List<EnrollmentSegment> segments;
-  InfoForSegments({this.courseEnrollment, this.classImage, this.classIndex, this.courseIndex, this.className, this.segments});
+  List<EnrollmentSegment> enrollmentSegments;
+  InfoForSegments({this.courseEnrollment, this.classImage, this.classIndex, this.courseIndex, this.className, this.enrollmentSegments});
 }

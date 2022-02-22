@@ -182,10 +182,10 @@ class TransformListOfItemsToWidget {
           classIndex: classIndex,
           courseIndex: courseIndex,
           className: className,
-          segments: [],
+          enrollmentSegments: [],
         );
         for (final segment in classToCheck.segments) {
-          infoForSegmentElement.segments.add(segment);
+          infoForSegmentElement.enrollmentSegments.add(segment);
         }
         listOfSegments.add(infoForSegmentElement);
       }
@@ -193,27 +193,29 @@ class TransformListOfItemsToWidget {
     return listOfSegments;
   }
 
-  static List<CoachSegmentContent> createSegmentContentInforamtion(List<InfoForSegments> segments) {
-    final List<CoachSegmentContent> coachSegmentContent = [];
-
-    for (final segment in segments) {
-      for (final actualSegment in segment.segments) {
-        coachSegmentContent.add(
-          CoachSegmentContent(
-              segmentId: actualSegment.id,
-              classImage: actualSegment.challengeImage,
-              className: segment.className,
-              segmentName: actualSegment.name,
-              completedAt: actualSegment.completedAt,
-              segmentReference: actualSegment.reference,
-              isChallenge: actualSegment.isChallenge,
-              indexClass: segment.classIndex,
-              indexCourse: segment.courseIndex,
-              indexSegment: segment.segments.indexOf(actualSegment),
-              courseEnrollment: segment.courseEnrollment),
-        );
+  static List<CoachSegmentContent> createSegmentContentInforamtion(List<InfoForSegments> segments, List<Challenge> challenges) {
+    final List<CoachSegmentContent> coachSegmentContentList = [];
+    for (var challenge in challenges) {
+      CoachSegmentContent coachSegmentContent = CoachSegmentContent(
+          segmentName: challenge.challengeName,
+          segmentId: challenge.segmentId,
+          classImage: challenge.image,
+          completedAt: challenge.completedAt,
+          segmentReference: challenge.segmentReference,
+          isChallenge: true,
+          indexClass: challenge.indexClass,
+          indexCourse: challenge.indexSegment);
+      for (final segment in segments) {
+        for (final actualSegment in segment.enrollmentSegments) {
+          if (challenge.segmentId == actualSegment.id) {
+            coachSegmentContent.segmentName = actualSegment.name;
+            coachSegmentContent.indexSegment = segment.enrollmentSegments.indexOf(actualSegment);
+            coachSegmentContent.courseEnrollment = segment.courseEnrollment;
+          }
+        }
       }
+      coachSegmentContentList.add(coachSegmentContent);
     }
-    return coachSegmentContent;
+    return coachSegmentContentList;
   }
 }

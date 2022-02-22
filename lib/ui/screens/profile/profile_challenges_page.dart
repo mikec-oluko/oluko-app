@@ -21,9 +21,9 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChallengeBloc, ChallengeState>(
+    return BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(
       builder: (context, state) {
-        if (state is GetChallengeSuccess) {
+        if (state is GetChallengeStreamSuccess) {
           challenges = state.challenges;
         }
         return Scaffold(

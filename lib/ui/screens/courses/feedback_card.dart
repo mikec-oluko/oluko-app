@@ -103,11 +103,10 @@ class _State extends State<FeedbackCard> {
 
   Container neumorphicFeedBackCard(BuildContext context) {
     return Container(
-      height: 155,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -121,7 +120,6 @@ class _State extends State<FeedbackCard> {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -142,11 +140,11 @@ class _State extends State<FeedbackCard> {
                                 like
                                     ? Image.asset(
                                         'assets/courses/like-painted.png',
-                                        scale: 4,
+                                        scale: 5,
                                       )
                                     : Image.asset(
                                         'assets/courses/like.png',
-                                        scale: 5,
+                                        scale: 6,
                                       ),
                               ],
                             ),
@@ -179,11 +177,11 @@ class _State extends State<FeedbackCard> {
                                 like
                                     ? Image.asset(
                                         'assets/courses/dislike.png',
-                                        scale: 5,
+                                        scale: 6,
                                       )
                                     : Image.asset(
                                         'assets/courses/dislike-painted.png',
-                                        scale: 4,
+                                        scale: 5,
                                       ),
                               ],
                             ),
