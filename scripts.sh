@@ -56,8 +56,10 @@ fi
 if [ "$1" = "increment_build" ]
     then perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
 fi
-if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]]
-    then echo "Arguments allowed qa / dev / prod / appbundle / increment_build / deploy"
+if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]] && [[ "$1" != "deepclean" ]]
+    then
+        echo "Invalid argument supplied"
+        echo "Arguments allowed qa / dev / prod / appbundle / increment_build / deploy / deepclean"
 fi
 if [ "$1" = "deploy" ]
     then
@@ -93,4 +95,18 @@ if [ "$1" = "deploy" ]
                 cd android && bundle exec fastlane beta
         fi
     fi
+fi
+if [ "$1" = "deepclean" ]
+  then
+    echo "🤖" && \
+    echo "Deep cleaning bot started working" && \
+    flutter clean && \
+    echo "Flutter is clean" && \
+    rm ios/Podfile.lock || true && \
+    echo "Podfile.lock has been terminated" && \
+    rm pubspec.lock || true&& \
+    echo "pubspec.lock has been exterminated" && \
+    flutter pub get && cd ios && pod install && cd .. && \
+    echo "Many pods were installed" && \
+    echo "🤖 Deep cleaning bot finished"
 fi
