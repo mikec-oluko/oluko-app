@@ -2,6 +2,7 @@ import 'package:drag_and_drop_gridview/devdrag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -50,6 +51,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
+        BlocProvider.of<GalleryVideoBloc>(context).getFirstMediaFromGalley();
         _profileInfo = state.user;
         if (widget.userRequested.id == _profileInfo.id) {
           isCurrenUser = true;
@@ -121,62 +123,58 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     );
   }
 
-  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(BuildContext context) {
-    return BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState>(
+  Widget slidingUpPanelComponent(BuildContext context) {
+    Widget _contentForPanel = const SizedBox();
+    return BlocConsumer<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
           _statePanelMaxHeight = 100;
         } else {
           _statePanelMaxHeight = 300;
         }
+        if (state is TransformationJourneyContentOpen) {
+          _panelController.open();
+          _contentForPanel = ModalUploadOptions(
+            contentFrom: UploadFrom.transformationJourney,
+            indexValue: _transformationJourneyContent.length,
+          );
+        }
+        if (state is TransformationJourneyContentDefault) {
+          _panelController.isPanelOpen ? _panelController.close() : null;
+          _contentForPanel = const SizedBox();
+        }
+        if (state is TransformationJourneyContentLoading) {
+          _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
+        }
+        if (state is TransformationJourneyContentSuccess) {
+          
+          _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
+        }
+        if (state is TransformationJourneyContentFailure) {
+          _panelController.close();
+        }
+        if (state is TransformationJourneyRequirePermissions) {
+          _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
+        }
       },
-      child: SlidingUpPanel(
-        onPanelOpened: () {
-          setState(() {
-            _panelMaxHeight = _statePanelMaxHeight;
-          });
-        },
-        onPanelClosed: () {
-          BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
-        },
-        backdropEnabled: true,
-        isDraggable: false,
-        margin: EdgeInsets.all(0),
-        header: const SizedBox(),
-        padding: EdgeInsets.zero,
-        color: OlukoColors.black,
-        minHeight: 0.0,
-        maxHeight: _panelMaxHeight,
-        collapsed: const SizedBox(),
-        controller: _panelController,
-        panel: BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
-          Widget _contentForPanel = const SizedBox();
-          if (state is TransformationJourneyContentOpen) {
-            _panelController.open();
-            _contentForPanel = ModalUploadOptions(
-              contentFrom: UploadFrom.transformationJourney,
-              indexValue: _transformationJourneyContent.length,
-            );
-          }
-          if (state is TransformationJourneyContentDefault) {
-            _panelController.isPanelOpen ? _panelController.close() : null;
-            _contentForPanel = const SizedBox();
-          }
-          if (state is TransformationJourneyContentLoading) {
-            _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
-          }
-          if (state is TransformationJourneyContentSuccess) {
-            _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
-          }
-          if (state is TransformationJourneyContentFailure) {
-            _panelController.close();
-          }
-          if (state is TransformationJourneyRequirePermissions) {
-            _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
-          }
-          return _contentForPanel;
-        }),
-      ),
+      builder: (context, state) {
+        return SlidingUpPanel(
+          onPanelClosed: () {
+            BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
+          },
+          backdropEnabled: true,
+          isDraggable: false,
+          margin: EdgeInsets.all(0),
+          header: const SizedBox(),
+          padding: EdgeInsets.zero,
+          color: OlukoColors.black,
+          minHeight: 0.0,
+          maxHeight: _statePanelMaxHeight,
+          collapsed: const SizedBox(),
+          controller: _panelController,
+          panel: _contentForPanel,
+        );
+      },
     );
   }
 
@@ -218,10 +216,11 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                       _transformationJourneyContent[oldIndex] = _transformationJourneyContent[newIndex];
 
                       _transformationJourneyContent[newIndex] = elementMoved;
-
-                      setState(() {
-                        _position = null;
-                      });
+                      if (_position != null) {
+                        setState(() {
+                          _position = null;
+                        });
+                      }
                     }
                   },
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
