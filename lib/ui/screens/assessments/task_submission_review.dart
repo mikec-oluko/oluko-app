@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -111,8 +112,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                     GestureDetector(
                       onTap: () async {
                         if (_recording) {
-                          XFile videopath =
-                              await cameraController.stopVideoRecording();
+                          XFile videopath = await cameraController.stopVideoRecording();
                           if (videoEvents.length > 0) {
                             addTimerLapToEvents();
                           }
@@ -122,15 +122,8 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                             playing = false;
                           });
                           String path = videopath.path;
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      TaskSubmissionReviewPreview(
-                                          taskSubmission: widget.taskSubmission,
-                                          filePath: path,
-                                          videoEvents: videoEvents)));
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionReviewPreview],
+                              arguments: {'taskSubmission': widget.taskSubmission, 'filePath': path, 'videoEvents': videoEvents});
                         } else {
                           if (playing) {
                             await _videoController.pause();
@@ -145,9 +138,8 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                           _recording = !_recording;
                         });
                       },
-                      child: _recording
-                          ? Image.asset('assets/self_recording/recording.png')
-                          : Image.asset('assets/self_recording/record.png'),
+                      child:
+                          _recording ? Image.asset('assets/self_recording/recording.png') : Image.asset('assets/self_recording/record.png'),
                     ),
                     Image.asset('assets/self_recording/gallery.png'),
                   ],
@@ -168,18 +160,13 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                           child: FutureBuilder(
                             future: _initializeVideoPlayerFuture,
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
+                              if (snapshot.connectionState == ConnectionState.done) {
                                 return AspectRatio(
-                                  aspectRatio:
-                                      _videoController.value.aspectRatio,
+                                  aspectRatio: _videoController.value.aspectRatio,
                                   child: VideoPlayer(_videoController),
                                 );
                               } else {
-                                return Container(
-                                    color: Colors.black,
-                                    child: Center(
-                                        child: CircularProgressIndicator()));
+                                return Container(color: Colors.black, child: Center(child: CircularProgressIndicator()));
                               }
                             },
                           ),
@@ -192,10 +179,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                           width: MediaQuery.of(context).size.width / 3.3,
                           child: (!isReady)
                               ? Container()
-                              : AspectRatio(
-                                  aspectRatio:
-                                      cameraController.value.aspectRatio,
-                                  child: CameraPreview(cameraController)),
+                              : AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController)),
                         )),
                   ])),
               Positioned(
@@ -206,39 +190,31 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                       child: Padding(
                           padding: EdgeInsets.all(2.0),
                           child: Container(
-                              padding:
-                                  const EdgeInsets.only(left: 8.0, right: 8.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: Colors.black87),
+                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.black87),
                               child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 8.0),
-                                  child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Container(
-                                            height: 40,
-                                            child: Row(children: <Widget>[
-                                              IconButton(
-                                                  color: Colors.white,
-                                                  icon: Icon(
-                                                    playing
-                                                        ? Icons.pause
-                                                        : Icons.play_arrow,
-                                                  ),
-                                                  onPressed: () async {
-                                                    await playPauseVideo();
-                                                    if (_recording) {
-                                                      addTimerLapToEvents();
-                                                    }
-                                                  }),
-                                              Expanded(
-                                                  child: SizedBox(
-                                                child: sliderAdaptive(),
-                                              ))
-                                            ]))
-                                      ]))))))
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                                  child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                                    Container(
+                                        height: 40,
+                                        child: Row(children: <Widget>[
+                                          IconButton(
+                                              color: Colors.white,
+                                              icon: Icon(
+                                                playing ? Icons.pause : Icons.play_arrow,
+                                              ),
+                                              onPressed: () async {
+                                                await playPauseVideo();
+                                                if (_recording) {
+                                                  addTimerLapToEvents();
+                                                }
+                                              }),
+                                          Expanded(
+                                              child: SizedBox(
+                                            child: sliderAdaptive(),
+                                          ))
+                                        ]))
+                                  ]))))))
             ])));
   }
 
@@ -275,10 +251,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
   addEvent(int recordingPos) {
     EventType eventType;
     playing ? eventType = EventType.play : eventType = EventType.pause;
-    Event event = Event(
-        eventType: eventType,
-        videoPosition: actualPos,
-        recordingPosition: recordingPos);
+    Event event = Event(eventType: eventType, videoPosition: actualPos, recordingPosition: recordingPos);
     videoEvents.add(event);
   }
 
@@ -312,8 +285,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
     int cameraPos = iscamerafront ? 0 : 1;
     try {
       cameras = await availableCameras();
-      cameraController =
-          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = new CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
     } on CameraException catch (_) {}
     if (!mounted) return;

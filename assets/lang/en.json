@@ -30,7 +30,7 @@
     "referenceCourses": "Reference Courses",
     "segmentAndRecordingStartsIn": "Segment and recording starts in",
     "segmentStartsIn": "Segment starts in",
-    "rounds": "Rounds",
+    "rounds": "rounds",
     "friends": "Friends",
     "logout": "Log out",
     "filters": "Filters",
@@ -69,7 +69,7 @@
     "encodingVideo": "Encoding video",
     "uploadingThumbnail": "Uploading thumbnail to cloud storage",
     "uploadingVideoFile": " Uploading video file ",
-    "videoIsStillProcessing": "Video is still processing",
+    "videoIsStillProcessing": "There is a video still processing",
     "outOf": " out of ",
     "yetToUnlock": "Yet to 'Unlock'",
     "tapToUpload": "Tap to Upload",
@@ -116,6 +116,7 @@
     "completed": "Completed",
     "uploadedWithErrors": "The segment was uploaded with errors",
     "segmentUploadedSuccessfully": "The segment was uploaded successfully",
+    "taskUploadedSuccessfully": "The task was uploaded successfully",
     "uploadedSuccessfully": "Uploaded Successfully",
     "challengesCompleted": "Challenges Completed",
     "coursesCompleted": "Courses Completed",
@@ -295,7 +296,9 @@
     "recommendedMovements": "Recommended Movements",
     "recommendedCourses": "Recommended Courses",
     "timeline": " Timeline",
+    "close":"Close",
     "reDoCourseTitle": "Are you sure you want to do this class again?",
     "reDoCourseBody": "Your previous progress will be deleted.",
-    "welcomeVideo": "Welcome video"
+    "welcomeVideo": "Welcome video",
+    "movements":"Movements"
 }

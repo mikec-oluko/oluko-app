@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/coach_request.dart';
@@ -17,7 +18,7 @@ class CoachNotificationContent extends CoachRecommendationDefault {
       String contentSubtitle,
       String contentImage,
       String contentDescription,
-      num contentTypeIndex,
+      TimelineInteractionType contentType,
       Timestamp createdAt,
       Class classContent,
       Segment segmentContent,
@@ -33,7 +34,7 @@ class CoachNotificationContent extends CoachRecommendationDefault {
             contentSubtitle: contentSubtitle,
             contentImage: contentImage,
             contentDescription: contentDescription,
-            contentTypeIndex: contentTypeIndex,
+            contentType: contentType,
             createdAt: createdAt,
             classContent: classContent,
             segmentContent: segmentContent,

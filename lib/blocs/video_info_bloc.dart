@@ -15,6 +15,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/repositories/video_info_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:video_player/video_player.dart';
+
+import '../helpers/video_thumbnail.dart';
 
 abstract class VideoInfoState {
   final List<VideoInfo> videoInfoList;
@@ -189,40 +192,58 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     videosDir.createSync(recursive: true);
 
     final rawVideoPath = rawVideoFile.path;
-    final info = await EncodingProvider.getMediaInformation(rawVideoPath);
+    //TODO: old code
+    //final info = await EncodingProvider.getMediaInformation(rawVideoPath);
+    //TODO: new code
+
+    VideoPlayerController controller = new VideoPlayerController.file(rawVideoFile);
+    var controllerAspectRatio = controller.value.aspectRatio;
 
     double aspectRatio;
 
     if (givenAspectRatio != null) {
       aspectRatio = givenAspectRatio;
     } else {
-      aspectRatio = EncodingProvider.getAspectRatio(info.getAllProperties());
+      //aspectRatio = EncodingProvider.getAspectRatio(info.getAllProperties());
+      aspectRatio = controllerAspectRatio;
     }
 
-    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+    //double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+    double durationInSeconds = controller.value.duration.inSeconds.roundToDouble();
     int durationInMilliseconds = (durationInSeconds * 1000).toInt();
 
     _processPhase = 'Generating thumbnail';
     _progress += _unitOfProgress;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
-    final thumbFilePath = await EncodingProvider.getThumb(rawVideoPath, 100, 150);
+    var imagePath = rawVideoPath;
+    if (rawVideoPath.contains('.mp4')) {
+      imagePath = rawVideoPath.substring(0, (rawVideoPath.toString().length) - 4);
+    }
+    final String outPath = '$imagePath.jpeg';
+    await genThumbnail(ThumbnailRequest(
+      video: rawVideoPath,
+      maxWidth: 100,
+      maxHeight: 150,
+      thumbnailPath: outPath,
+    ));
+    final thumbFilePath = outPath;
 
     _processPhase = 'Encoding video';
     _progress += _unitOfProgress;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
-    final encodedFilesDir = await EncodingProvider.encodeHLS(rawVideoPath, outDirPath);
+    // final encodedFilesDir = await EncodingProvider.encodeHLS(rawVideoPath, outDirPath);
 
     _processPhase = 'Uploading thumbnail to cloud storage';
     _progress += _unitOfProgress;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
     final thumbUrl = await _uploadFile(thumbFilePath, videoName);
-    final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
+    // final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
     final video = Video(
-      url: videoUrl,
+      // url: videoUrl,
       thumbUrl: thumbUrl,
       aspectRatio: aspectRatio,
       name: videoName,

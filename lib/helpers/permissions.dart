@@ -31,21 +31,22 @@ class Permissions {
     return true;
   }
 
-  static Future<void> askForPermissions({bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true, bool checkContacts = true}) async {
-    if(checkCamera){
+  static Future<void> askForPermissions(
+      {bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true, bool checkContacts = true}) async {
+    if (checkCamera) {
       await Permission.camera.request();
     }
-    if(checkPhotos){
+    if (checkPhotos) {
       if (Platform.isAndroid) {
         await Permission.storage.request();
       } else {
         await Permission.photos.request();
       }
     }
-    if(checkMicrophone){
+    if (checkMicrophone) {
       await Permission.microphone.request();
     }
-    if(checkContacts){
+    if (checkContacts) {
       await Permission.contacts.request();
     }
   }

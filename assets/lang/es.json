@@ -30,7 +30,7 @@
     "referenceCourses": "Cursos de referencia",
     "segmentAndRecordingStartsIn": "Segmento y grabación comienza en",
     "segmentStartsIn": "Segmento comienza en",
-    "rounds": "Rounds",
+    "rounds": "rondas",
     "friends": "Amigos",
     "logout": "Cerrar sesión",
     "filters": "Filtros",
@@ -69,7 +69,7 @@
     "encodingVideo": "Codificando el video",
     "uploadingThumbnail": "Subiendo vista previa al almacenamiento en la nube",
     "uploadingVideoFile": "Subiendo archivo de video ",
-    "videoIsStillProcessing": "El video se está procesando",
+    "videoIsStillProcessing": "Hay un video que todavia esta procesandose",
     "outOf": " de ",
     "yetToUnlock": "Por 'Desbloquear'",
     "tapToUpload": "Toca para Subir",
@@ -116,6 +116,7 @@
     "completed": "Completo",
     "uploadedWithErrors": "El segmento fue subido con errores",
     "segmentUploadedSuccessfully": "El segmento fue subido con éxito",
+    "taskUploadedSuccessfully": "La tarea fue subida con éxito",
     "challengesCompleted": "Desafios Completados",
     "coursesCompleted": "Cursos Completados",
     "classesCompleted": "Clases Completadas",
@@ -294,7 +295,9 @@
     "recommendedMovements": "Movimiento Recomendados",
     "recommendedCourses": "Curso Recomendados",
     "timeline": " Cronología",
+    "close": "Cerrar",
     "reDoCourseTitle": "¿Estás seguro de que quieres volver a hacer esta clase?",
     "reDoCourseBody": "Su progreso anterior será eliminado.",
-    "welcomeVideo": "Video de bienvenida"
+    "welcomeVideo": "Video de bienvenida",
+    "movements": "Movimientos"
 }

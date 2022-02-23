@@ -146,7 +146,7 @@ class _State extends State<ShareCard> {
               child: Row(
                 children: [
                   Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
-                  if (!_storyEnabled) doubleCheck(),
+                  if (!_storyEnabled && GlobalConfiguration().getValue('showStories') == 'true') doubleCheck(),
                 ],
               ),
             )

@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'package:chewie/chewie.dart';
 import 'package:chewie/src/center_play_button.dart';
 import 'package:chewie/src/chewie_player.dart';
 import 'package:chewie/src/chewie_progress_colors.dart';
 import 'package:chewie/src/material/material_progress_bar.dart';
 import 'package:chewie/src/helpers/utils.dart';
-import 'package:chewie/src/material/models/option_item.dart';
 import 'package:chewie/src/material/widgets/options_dialog.dart';
 import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +12,6 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_center_play_button.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/src/models/subtitle_model.dart';
-
-
 
 class OlukoCupertinoControls extends StatefulWidget {
   const OlukoCupertinoControls({Key key}) : super(key: key);
@@ -25,11 +23,11 @@ class OlukoCupertinoControls extends StatefulWidget {
 }
 
 class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with SingleTickerProviderStateMixin {
-   PlayerNotifier notifier;
-   VideoPlayerValue _latestValue;
+  PlayerNotifier notifier;
+  VideoPlayerValue _latestValue;
   Timer _hideTimer;
   Timer _initTimer;
-   var _subtitlesPosition = const Duration();
+  var _subtitlesPosition = const Duration();
   bool _subtitleOn = false;
   Timer _showAfterExpandCollapseTimer;
   bool _dragging = false;
@@ -38,7 +36,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
   final barHeight = 48.0 * 1.5;
   final marginSize = 5.0;
 
-   VideoPlayerController controller;
+  VideoPlayerController controller;
   ChewieController _chewieController;
   // We know that _chewieController is set in didChangeDependencies
   ChewieController get chewieController => _chewieController;
@@ -79,7 +77,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
                 const Center(
                   child: CircularProgressIndicator(),
                 )
-             else
+              else
                 _buildHitArea(),
               _buildActionBar(),
               Column(
@@ -90,7 +88,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
                       offset: Offset(0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
                       child: _buildSubtitles(context, chewieController.subtitle),
                     ),
-                 // _buildBottomBar(context),
+                  // _buildBottomBar(context),
                 ],
               ),
             ],
@@ -147,8 +145,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
   }
 
   Widget _buildOptionsButton() {
-    final options = <OptionItem>[ 
-    ];
+    final options = <OptionItem>[];
 
     if (chewieController.subtitle != null && chewieController.subtitle.isNotEmpty) {
       options.add(
@@ -225,7 +222,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Text(
-          currentSubtitle.first.text,
+          currentSubtitle.first.text.toString(), //TODO: test me
           style: const TextStyle(
             fontSize: 18,
           ),
@@ -323,8 +320,6 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
             _cancelAndRestartTimer();
           }
         } else {
-          
-
           setState(() {
             notifier.hideStuff = true;
           });
@@ -340,8 +335,6 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
       ),
     );
   }
-
- 
 
   Widget _buildPosition(Color iconColor) {
     final position = _latestValue.position;

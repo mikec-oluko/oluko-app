@@ -86,9 +86,9 @@ class _State extends State<ImageAndVideoPreviewCard> {
                     height: 30,
                     child: Center(
                       child: Text(
-                        titleForPreviewImage != null ? titleForPreviewImage : '',
-                        style: OlukoFonts.olukoSmallFont(),
-                      ),
+                              titleForPreviewImage != null ? titleForPreviewImage : '',
+                              style: OlukoFonts.olukoSmallFont(),
+                            ),
                     ),
                   )
                 : SizedBox()),
@@ -172,12 +172,14 @@ class _State extends State<ImageAndVideoPreviewCard> {
   }
 
   void definePreviewTitleByTypeOfContent(BuildContext context) {
-    if (widget.originalContent is TransformationJourneyUpload) {
-      transformationJourneyContent = widget.originalContent as TransformationJourneyUpload;
-      titleForPreviewImage = transformationJourneyContent.createdAt != null
-          ? TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: transformationJourneyContent.createdAt, context: context)
-          : '';
-    }
+    setState(() {
+      if (widget.originalContent is TransformationJourneyUpload) {
+        transformationJourneyContent = widget.originalContent as TransformationJourneyUpload;
+        titleForPreviewImage = transformationJourneyContent.createdAt != null
+            ? TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: transformationJourneyContent.createdAt, context: context)
+            : '';
+      }
+    });
   }
 
   void definePreviewTittleOfTaskSubmission() {

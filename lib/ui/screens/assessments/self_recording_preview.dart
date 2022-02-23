@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
@@ -15,16 +16,14 @@ import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
-
-import '../../../utils/app_messages.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key}) : super(key: key);
@@ -39,6 +38,8 @@ class SelfRecordingPreview extends StatefulWidget {
 }
 
 class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
+  GlobalService _globalService = GlobalService();
+
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
 
@@ -56,7 +57,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return /*WillPopScope(
         onWillPop: () => () async {
               if (videoState is VideoSuccess) {
                 return true;
@@ -64,46 +65,56 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('videoIsStillProcessing'));
               return false;
             }(),
-        child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-          if (authState is AuthSuccess) {
-            return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
-              return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-                builder: (context, assessmentAssignmentState) {
-                  return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
-                    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
-                      if (assessmentState is AssessmentSuccess &&
-                          assessmentAssignmentState is AssessmentAssignmentSuccess &&
-                          taskState is TaskSuccess &&
-                          (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
-                        _assessment = assessmentState.assessment;
-                        _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                        _tasks = taskState.values;
-                        _task = _tasks[widget.taskIndex];
-                        if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null) {
-                          _taskSubmission = taskSubmissionState.taskSubmission;
-                        }
-                        if (taskSubmissionState is CreateSuccess) {
-                          _taskSubmission = taskSubmissionState.taskSubmission;
-                          BlocProvider.of<VideoBloc>(context)
-                              .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmissionState.taskSubmission.id);
-                        }
-                        return form();
-                      } else {
-                        return const SizedBox();
-                      }
-                    });
-                  });
-                },
-              );
-            });
-          } else {
-            return const SizedBox();
-          }
-        }));
+        child:*/
+        BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
+          return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+            builder: (context, assessmentAssignmentState) {
+              return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
+                return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
+                  if (assessmentState is AssessmentSuccess &&
+                      assessmentAssignmentState is AssessmentAssignmentSuccess &&
+                      taskState is TaskSuccess &&
+                      (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
+                    _assessment = assessmentState.assessment;
+                    _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                    _tasks = taskState.values;
+                    _task = _tasks[widget.taskIndex];
+                    if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null) {
+                      _taskSubmission = taskSubmissionState.taskSubmission;
+                    }
+                    if (taskSubmissionState is CreateSuccess) {
+                      _taskSubmission = taskSubmissionState.taskSubmission;
+                      createVideo(_taskSubmission, _assessmentAssignment, _assessment);
+                    }
+                    return form();
+                  } else {
+                    return const SizedBox();
+                  }
+                });
+              });
+            },
+          );
+        });
+      } else {
+        return const SizedBox();
+      }
+    }) /*)*/;
+  }
+
+  createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) {
+    BlocProvider.of<VideoBloc>(context)
+        .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id, null, assessmentAssignment, assessment, taskSubmission);
+    _globalService.videoProcessing = true;
+    BlocProvider.of<TaskCardBloc>(context).taskLoading(widget.taskIndex);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navigateToTaskDetails();
+    });
   }
 
   Widget form() {
-    return Form(
+    /*return Form(
         key: _formKey,
         child: BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
           videoState = state;
@@ -111,22 +122,24 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionVideo(_assessmentAssignment, _taskSubmission.id, state.video);
             BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
-            var route = routeLabels[RouteEnum.assessmentVideos];
-            //TODO: issue here if route isn't in the stack example: coming from coach tab
-            Navigator.popUntil(context, ModalRoute.withName(route));
-            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-              'taskIndex': widget.taskIndex,
-              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-              'taskCompleted': true /**TODO: */
-            });
+            //navigateToTaskDetails();
           }
         }, builder: (context, state) {
           if (state is VideoProcessing) {
             return progressScaffold(state);
-          } else {
-            return OlukoNeumorphism.isNeumorphismDesign ? neumorphicContentScaffold() : contentScaffold();
-          }
-        }));
+          } else {*/
+    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicContentScaffold() : contentScaffold();
+    // }
+    // }));
+  }
+
+  navigateToTaskDetails() {
+    Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
+    /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+      'taskIndex': widget.taskIndex,
+      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+      'taskCompleted': true
+    });*/
   }
 
   Widget contentScaffold() {
@@ -191,21 +204,20 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                             child: OlukoNeumorphicPrimaryButton(
                               isExpanded: false,
                               customHeight: 60,
-                              title: OlukoLocalizations.get(context, 'done'),
+                              title: OlukoLocalizations.get(context, 'submit'),
                               onPressed: () async {
                                 _controller.pause();
                                 if (_taskSubmission == null) {
                                   BlocProvider.of<TaskSubmissionBloc>(context)
                                       .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                                 } else {
-                                  BlocProvider.of<VideoBloc>(context)
-                                      .createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                                  createVideo(_taskSubmission, _assessmentAssignment, _assessment);
                                 }
                                 /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                    arguments: {
-                      'taskIndex': widget.taskIndex,
-                      'isLastTask': widget.isLastTask
-                    });*/
+                                arguments: {
+                                  'taskIndex': widget.taskIndex,
+                                  'isLastTask': widget.isLastTask
+                                });*/
                               },
                             ),
                           ),
@@ -234,6 +246,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+      isOlukoControls: true,
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
@@ -280,13 +293,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   BlocProvider.of<TaskSubmissionBloc>(context)
                       .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                 } else {
-                  BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                  createVideo(_taskSubmission, _assessmentAssignment, _assessment);
                 }
-                /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                    arguments: {
-                      'taskIndex': widget.taskIndex,
-                      'isLastTask': widget.isLastTask
-                    });*/
               },
             )
           ]))
