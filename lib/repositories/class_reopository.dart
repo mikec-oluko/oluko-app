@@ -61,7 +61,21 @@ class ClassRepository {
     return Class.fromJson(ds.data() as Map<String, dynamic>);
   }
 
-    static Stream<QuerySnapshot<Map<String, dynamic>>> getClassesSubscription() {
+  static Future<void> addSelfie(String classId, String image) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('classes')
+        .doc(classId);
+    DocumentSnapshot ds = await reference.get();
+        Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
+        List<String> images = classObj.randomImages;
+        images.add(image);
+    reference.update({'random_images': images});
+
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getClassesSubscription() {
     Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))

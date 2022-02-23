@@ -282,35 +282,19 @@ class CourseEnrollmentRepository {
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 
-  static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex, XFile file) async {
+  static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex, String thumbnailUrl) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
-    final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
-    final thumbnailUrl = _uploadFile(thumbnail, '${reference.path}/class' + classIndex.toString());
-    //final downloadUrl = _uploadFile(file.path, reference.path);
-    await Future.wait([thumbnailUrl]); //, downloadUrl]);
-    courseEnrollment.classes[classIndex].selfieDownloadUrl = null;
-    courseEnrollment.classes[classIndex].selfieThumbnailUrl = await thumbnailUrl;
+    courseEnrollment.classes[classIndex].selfieThumbnailUrl = thumbnailUrl;
 
     reference.update({
       'classes': List<dynamic>.from(courseEnrollment.classes.map((c) => c.toJson())),
     });
 
     return courseEnrollment;
-  }
-
-  static Future<String> _uploadFile(String filePath, String folderName) async {
-    final file = File(filePath);
-
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    final String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
   }
 
   static Future<CourseEnrollment> markCourseEnrollmentAsUnenrolled(CourseEnrollment courseEnrollment, bool isUnenrolled) async {
