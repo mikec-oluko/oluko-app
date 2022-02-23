@@ -24,7 +24,7 @@ class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CoachAppBarState extends State<CoachAppBar> {
   String defaultCoachPic = '';
   num numberOfReviewPendingItems = 0;
-  bool showCoachProfle = false;
+  bool showCoachProfle = true;
 
   @override
   void initState() {
