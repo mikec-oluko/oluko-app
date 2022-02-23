@@ -11,5 +11,6 @@ class CourseHelper {
       return ScreenUtils.height(context) * (0.08 + ((textLength ~/ charactersPerLine) - 1) * 0.08) * MediaQuery.of(context).textScaleFactor;
     }
     //0.08 is the minimun size for one line of title
+    //25 are the characters that fit in 355 px
   }
 }
