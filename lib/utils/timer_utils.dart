@@ -426,8 +426,9 @@ class TimerUtils {
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
     return Stack(alignment: Alignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
+      SizedBox(
+        width: ScreenUtils.smallScreen(context) ? 190 : 220,
+        height: ScreenUtils.smallScreen(context) ? 190 : 220,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
