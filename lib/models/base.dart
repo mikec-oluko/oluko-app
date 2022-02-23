@@ -13,9 +13,9 @@ class Base {
   String id;
   FieldValue createdAtSentinel;
   Timestamp createdAt;
+  Timestamp updatedAt;
   String createdBy;
   FieldValue updatedAtSentinel;
-  Timestamp updatedAt;
   String updatedBy;
   bool isDeleted = false;
   bool isHidden = false;
