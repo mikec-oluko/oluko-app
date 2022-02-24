@@ -775,6 +775,7 @@ class Routes {
         break;
       case RouteEnum.assessmentVideos:
         providers = [
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
