@@ -5,11 +5,8 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/video_overlay.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 
 class OlukoVideoPreview extends StatefulWidget {
   final String video;
@@ -145,20 +142,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
           aspectRatio: 480 / 600,
-          child: widget.image != null
-              ? Image(
-                  image: CachedNetworkImageProvider(widget.image),
-                  fit: BoxFit.cover,
-                )
-              : widget.randomImages == null
-                  ? Image.asset(
-                      'assets/courses/profile_photos.png',
-                      fit: BoxFit.cover,
-                    )
-                  : Image(
-                      image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
-                      fit: BoxFit.cover,
-                    )),
+          child: Container(color: OlukoColors.white, child: widget.randomImages != null ? gridSection() : imageSection())),
       if (widget.video != null)
         AspectRatio(
           aspectRatio: 480 / 600,
@@ -170,13 +154,6 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                     child: Stack(children: [
                   if (widget.videoVisibilty)
                     showVideoPlayer(widget.video)
-                  /*VideoOverlay(
-                      customController: widget.chewieController,
-                      isOlukoControls: true,
-                      autoPlay: true,
-                      videoUrl: widget.video,
-                      onPlay: widget.onPlay,
-                    )*/
                   else
                     SizedBox(
                       height: 52,
@@ -241,5 +218,46 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   int random(int min, int max) {
     var rn = new Random();
     return min + rn.nextInt(max - min);
+  }
+
+  Widget imageSection() {
+    return widget.image != null
+        ? Image(
+            image: CachedNetworkImageProvider(widget.image),
+            fit: BoxFit.cover,
+          )
+        : widget.randomImages == null
+            ? Image.asset(
+                'assets/courses/profile_photos.png',
+                fit: BoxFit.cover,
+              )
+            : Image(
+                image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
+                fit: BoxFit.cover,
+              );
+  }
+
+  Widget gridSection() {
+    return GridView.count(
+      physics: NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 1, crossAxisCount: 7, children: getGridItems()); //70 items
+  }
+
+  List<Widget> getGridItems() {
+    List<Widget> gridImages = [];
+    for (int i = 0; i < widget.randomImages.length; i++) {
+      if (i < 69) {
+        gridImages.add(Image(
+          image: CachedNetworkImageProvider(widget.randomImages[i]),
+          fit: BoxFit.cover,
+        ));
+      } else {
+        break;
+      }
+    }
+    while (gridImages.length < 70) {
+      gridImages += gridImages;
+    }
+    return gridImages;
   }
 }
