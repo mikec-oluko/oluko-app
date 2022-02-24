@@ -30,7 +30,7 @@ class ImageUtils {
       //The operator '~/' get the closest int to the operation
       calculatedHeight = (width ~/ aspectRatio);
     }
-    var thumbnailPath = p.withoutExtension(image.path) + '_thumbnail.' + p.extension(image.path);
+    var thumbnailPath = p.withoutExtension(image.path) + '_thumbnail' + p.extension(image.path);
     var thumbnail = await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: calculatedHeight);
     return thumbnail.path;
   }
