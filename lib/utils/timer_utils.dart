@@ -97,8 +97,8 @@ class TimerUtils {
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter, bool bothSide]) {
     return Container(
         child: SizedBox(
-            height: _watchHeight,
-            width: _watchWidth,
+            width: ScreenUtils.smallScreen(context) ? 190 : 220,
+            height: ScreenUtils.smallScreen(context) ? 190 : 220,
             child: Stack(alignment: Alignment.center, children: [
               AspectRatio(
                   aspectRatio: 1,
@@ -446,21 +446,23 @@ class TimerUtils {
               fontStyle: FontStyle.italic,
               color: OlukoColors.lightOrange,
             )),
-        if(round!=null) Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(OlukoLocalizations.get(context, 'round') + "  ",
-              textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: OlukoColors.primary)),
-          Text((round + 1).toString(),
-              textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
-        ]),
+        if (round != null)
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(OlukoLocalizations.get(context, 'round') + "  ",
+                textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: OlukoColors.primary)),
+            Text((round + 1).toString(),
+                textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
+          ]),
         SizedBox(height: 2),
-        if(round!=null) Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Text(getRepsTimerText(type, context),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
+        if (round != null)
+          Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Text(getRepsTimerText(type, context),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
       ])
     ]);
   }
