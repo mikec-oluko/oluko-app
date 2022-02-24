@@ -205,7 +205,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       avatarThumbnail: widget.avatarThumbnail,
                       name: widget.name,
                       userId: widget.userId,
-                      hour: widget.stories[_currentIndex].createdAt?.toDate(),
+                      hoursFromCreation: widget.stories[_currentIndex].hoursFromCreation,
                     ),
                   ),
                 ],
@@ -324,29 +324,53 @@ class AnimatedBar extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Stack(
-              children: <Widget>[
-                _buildContainer(
-                  double.infinity,
-                  position < currentIndex ? OlukoColors.primary : Colors.white.withOpacity(0.5),
-                ),
-                if (position == currentIndex)
-                  AnimatedBuilder(
-                    animation: animController,
-                    builder: (context, child) {
-                      return _buildContainer(
-                        constraints.maxWidth * animController.value,
-                        OlukoColors.primary,
-                      );
-                    },
-                  )
-                else
-                  const SizedBox.shrink(),
-              ],
+              children: getTopBars(constraints),
             );
           },
         ),
       ),
     );
+  }
+
+  List<Widget> getTopBars(BoxConstraints constraints) {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return [
+      _buildContainer(
+        double.infinity,
+        position == currentIndex ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : position < currentIndex ? OlukoColors.white : Colors.grey.withOpacity(0.5),
+      ),
+      if (position == currentIndex)
+        AnimatedBuilder(
+          animation: animController,
+          builder: (context, child) {
+            return _buildContainer(
+              constraints.maxWidth * animController.value,
+              OlukoColors.white,
+            );
+          },
+        )
+      else
+        const SizedBox.shrink(),
+    ];
+    }
+    return [
+      _buildContainer(
+        double.infinity,
+        position < currentIndex ? OlukoColors.primary : Colors.white.withOpacity(0.5),
+      ),
+      if (position == currentIndex)
+        AnimatedBuilder(
+          animation: animController,
+          builder: (context, child) {
+            return _buildContainer(
+              constraints.maxWidth * animController.value,
+              OlukoColors.primary,
+            );
+          },
+        )
+      else
+        const SizedBox.shrink(),
+    ];
   }
 }
 
@@ -354,24 +378,18 @@ class UserInfo extends StatelessWidget {
   final String avatarThumbnail;
   final String name;
   final String userId;
-  final DateTime hour;
+  final int hoursFromCreation;
 
   const UserInfo({
     Key key,
     @required this.avatarThumbnail,
     @required this.name,
     @required this.userId,
-    @required this.hour,
+    @required this.hoursFromCreation,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String _hoursSinceCreation;
-    if (hour != null) {
-      _hoursSinceCreation = hour?.difference(DateTime.now())?.inHours?.toString();
-    } else {
-      _hoursSinceCreation = '1';
-    }
     return Row(
       children: <Widget>[
         CircleAvatar(
@@ -395,7 +413,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                '${_hoursSinceCreation}h',
+                '${hoursFromCreation.toString()}h ${OlukoNeumorphism.isNeumorphismDesign ? 'r' : ''}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,

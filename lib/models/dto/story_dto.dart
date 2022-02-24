@@ -7,10 +7,30 @@ class Story extends Base {
   String description;
   bool seen;
   int duration;
+  int hoursFromCreation;
 
   Story(
-      {this.content_type, this.url, this.description, this.seen, this.duration, String id, Timestamp createdAt, String createdBy, Timestamp updatedAt, String updatedBy, bool isHidden, bool isDeleted})
-      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
+      {this.content_type,
+      this.url,
+      this.description,
+      this.seen,
+      this.duration,
+      this.hoursFromCreation,
+      String id,
+      Timestamp createdAt,
+      String createdBy,
+      Timestamp updatedAt,
+      String updatedBy,
+      bool isHidden,
+      bool isDeleted})
+      : super(
+            id: id,
+            createdBy: createdBy,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            updatedBy: updatedBy,
+            isDeleted: isDeleted,
+            isHidden: isHidden);
 
   factory Story.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -23,11 +43,28 @@ class Story extends Base {
         seen: json['seen'] != null ? json['seen'] as bool : false,
         duration: (json['duration'] is int) ? (json['duration'] as int) : 5);
     story.setBase(json);
+
+    if (story.createdAt != null) {
+      final now = DateTime.now();
+      final createdAt = story.createdAt.toDate();
+      final differenceInHours = now.difference(createdAt).inHours;
+      story.hoursFromCreation = differenceInHours;
+    } else {
+      story.hoursFromCreation = 25;
+    }
+
     return story;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> storyJson = {'id': id, 'content_type': content_type, 'url': url, 'description': description, 'seen': seen, 'duration': duration};
+    final Map<String, dynamic> storyJson = {
+      'id': id,
+      'content_type': content_type,
+      'url': url,
+      'description': description,
+      'seen': seen,
+      'duration': duration
+    };
     storyJson.addEntries(super.toJson().entries);
     return storyJson;
   }
