@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path/path.dart' as path;
 
 abstract class VideoState {}
 
@@ -241,18 +243,16 @@ class VideoBloc extends Cubit<VideoState> {
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     String thumbFilePath = null;
     try {
-      var imagePath = videoPath;
-      if (videoPath.contains('.mp4')) {
-        imagePath = videoPath.substring(0, (videoPath.length) - 4);
-      }
-      final String outPath = '$imagePath.jpeg';
-      await genThumbnail(ThumbnailRequest(
+      final String outDirPath = path.dirname(videoPath);
+
+      ThumbnailResult thumbnail = await genThumbnail(ThumbnailRequest(
         video: videoPath,
         maxWidth: 100,
         maxHeight: 150,
-        thumbnailPath: outPath,
+        thumbnailPath: outDirPath,
       ));
-      thumbFilePath = outPath;
+
+      thumbFilePath = thumbnail.path;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
