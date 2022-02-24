@@ -53,7 +53,12 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       }
       Uint8List pickedVideo = await ContentFromGalleyService.getFirstVideoGallery();
       currentState.firstVideo = pickedVideo;
-      emit(currentState);
+       if (pickedVideo != null) {
+        currentState.firstMediaItem = pickedVideo;
+        emit(currentState);
+      } else {
+        emit(NoContent());
+      }
     } catch (e) {
       emit(Failure(exception: e));
     }
