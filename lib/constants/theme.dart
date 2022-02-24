@@ -305,7 +305,7 @@ class OlukoColors {
   }
 
   static Color userColor(String firstName, String lastName) {
-    var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
+    var list = [grayColorSemiTransparent, skyblue, coral,  inputError, purple, orange];
     if (firstName == null) {
       var rndm = Random();
       var position = rndm.nextInt(list.length);
