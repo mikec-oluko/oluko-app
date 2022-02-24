@@ -109,8 +109,21 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     _globalService.videoProcessing = true;
     BlocProvider.of<TaskCardBloc>(context).taskLoading(widget.taskIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      navigateToTaskDetails();
+      if (_globalService.comesFromCoach) {
+        Navigator.pop(context);
+      } else {
+        Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
+      }
     });
+  }
+
+  navigateToTaskDetails() {
+    Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
+    /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+      'taskIndex': widget.taskIndex,
+      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+      'taskCompleted': true
+    });*/
   }
 
   Widget form() {
@@ -131,15 +144,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     return OlukoNeumorphism.isNeumorphismDesign ? neumorphicContentScaffold() : contentScaffold();
     // }
     // }));
-  }
-
-  navigateToTaskDetails() {
-    Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
-    /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-      'taskIndex': widget.taskIndex,
-      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-      'taskCompleted': true
-    });*/
   }
 
   Widget contentScaffold() {
@@ -246,7 +250,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
-      isOlukoControls: true,
+        isOlukoControls: true,
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
