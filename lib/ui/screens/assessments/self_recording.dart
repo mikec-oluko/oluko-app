@@ -169,9 +169,9 @@ class _State extends State<SelfRecording> {
                       ? Container()
                       : Stack(children: [
                           Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height / 1.1,
-                              child: CameraPreview(cameraController)),
+                              width: size.width,
+                              height: size.height / 1.1,
+                              child: Transform.scale(scale: scale ?? 1.0, child: Center(child: CameraPreview(cameraController)))),
                           Positioned(
                             right: 15,
                             top: 40,
@@ -342,15 +342,15 @@ class _State extends State<SelfRecording> {
               image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(state.firstVideo)),
             ),
           );
+        } else {
+          return const Icon(
+            Icons.file_upload,
+            size: 30,
+            color: OlukoColors.grayColor,
+          );
         }
-        else{return const Icon(
-      Icons.file_upload,
-      size: 30,
-      color: OlukoColors.grayColor,
-    );}
       },
     );
-    
   }
 
   Widget bottomBar() {
