@@ -909,6 +909,7 @@ class Routes {
         break;
       case RouteEnum.coach:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
@@ -932,6 +933,7 @@ class Routes {
         break;
       case RouteEnum.coach2:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),

@@ -347,7 +347,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       child: TaskCard(
                         task: task,
                         index: index,
-                        isCompleted: taskSubmission != null,
+                        isCompleted: taskSubmission != null && taskSubmission.video != null,
                         isPublic: isPublic(taskSubmission),
                         isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, index),
                         onPressed: () {
@@ -383,9 +383,11 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         });
       }
       BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
-      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-              arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null})
-          .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
+      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+        'taskIndex': index,
+        'isLastTask': isLastTask,
+        'taskCompleted': taskSubmission != null && taskSubmission.video != null
+      }).then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
     }
     ;
   }
