@@ -14,7 +14,7 @@ class NoContent extends GalleryVideoState {}
 
 class Success extends GalleryVideoState {
   Uint8List firstVideo;
-  Uint8List firstMediaItem;
+  Uint8List firstImage;
   XFile pickedFile;
   Success({this.pickedFile, this.firstVideo});
 }
@@ -54,7 +54,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       Uint8List pickedVideo = await ContentFromGalleyService.getFirstVideoGallery();
       currentState.firstVideo = pickedVideo;
        if (pickedVideo != null) {
-        currentState.firstMediaItem = pickedVideo;
+        currentState.firstImage = pickedVideo;
         emit(currentState);
       } else {
         emit(NoContent());
@@ -64,15 +64,15 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
     }
   }
 
-  void getFirstMediaFromGalley() async {
+  void getFirstImageFromGalley() async {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.gallery, checkMicrophone: false)) {
         emit(PermissionsRequired());
         return;
       }
-      Uint8List pickedImage = await ContentFromGalleyService.getFirstMediaGallery();
+      Uint8List pickedImage = await ContentFromGalleyService.getFirstImageGallery();
       if (pickedImage != null) {
-        currentState.firstMediaItem = pickedImage;
+        currentState.firstImage = pickedImage;
         emit(currentState);
       } else {
         emit(NoContent());

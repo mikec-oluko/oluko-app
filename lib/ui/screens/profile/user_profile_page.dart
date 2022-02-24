@@ -101,7 +101,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
       if (state is AuthSuccess) {
         _currentAuthUser = state.user;
-        BlocProvider.of<GalleryVideoBloc>(context).getFirstMediaFromGalley();
+        BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
         if (_isOwnerProfile(authUser: _currentAuthUser, userRequested: widget.userRequested)) {
           _userProfileToDisplay = _currentAuthUser;
           _isCurrentUser = true;

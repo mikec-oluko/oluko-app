@@ -86,7 +86,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
             height: 25,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
-              image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(state.firstMediaItem)),
+              image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(state.firstImage)),
             ),
           );
         } else {

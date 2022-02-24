@@ -319,9 +319,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             showVideoPlayer(_task.video),
             formSection(state.taskSubmission),
             if (OlukoNeumorphism.isNeumorphismDesign)
-              SizedBox(
-                height: ScreenUtils.height(context) * 0.4,
-              )
+              SizedBox(height: ScreenUtils.height(context) * 0.4)
             else
               recordAgainButtons(state.taskSubmission)
           ],

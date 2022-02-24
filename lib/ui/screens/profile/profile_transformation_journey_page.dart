@@ -51,7 +51,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
-        BlocProvider.of<GalleryVideoBloc>(context).getFirstMediaFromGalley();
+        BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
         _profileInfo = state.user;
         if (widget.userRequested.id == _profileInfo.id) {
           isCurrenUser = true;
