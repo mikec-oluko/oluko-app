@@ -255,7 +255,7 @@ class _State extends State<TaskCard> {
           padding: const EdgeInsets.only(top: 30).copyWith(bottom: 20),
           child: !widget.isDisabled
               ? SizedBox(
-                  width: widget.isCompleted ? 45 : 80,
+                  width: widget.isCompleted ? 60 : 80,
                   height: widget.isCompleted ? 15 : 40,
                   child: widget.useStartButton
                       ? OlukoNeumorphicSecondaryButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
@@ -64,14 +65,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
               }
             },
             leading: OlukoNeumorphism.isNeumorphismDesign
-                ? Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Image.asset(
-                      'assets/self_recording/gallery.png',
-                      width: 25,
-                      height: 25,
-                    ),
-                  )
+                ? imageWrapper()
                 : const Icon(
                     Icons.image,
                     color: Colors.white,
@@ -80,6 +74,29 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget imageWrapper() {
+    return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
+      builder: (context, state) {
+        if (state is Success) {
+          return Container(
+            width: 25,
+            height: 25,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(state.firstImage)),
+            ),
+          );
+        } else {
+          return const Icon(
+            Icons.file_upload,
+            size: 20,
+            color: OlukoColors.grayColor,
+          );
+        }
+      },
     );
   }
 
