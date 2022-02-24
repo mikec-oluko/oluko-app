@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachUserProgressComponent extends StatefulWidget {
   final int progressValue;
@@ -49,8 +50,8 @@ class _CoachUserProgressComponentState extends State<CoachUserProgressComponent>
     return Row(
       children: [
         Container(
-            width: 50,
-            height: 50,
+            width: ScreenUtils.height(context) * 0.065,
+            height: ScreenUtils.height(context) * 0.065,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
               color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -58,7 +59,9 @@ class _CoachUserProgressComponentState extends State<CoachUserProgressComponent>
             child: Center(
                 child: Text(
               widget.needPercentage ? widget.progressValue.toString() + "%" : widget.progressValue.toString(),
-              style: OlukoFonts.olukoSubtitleFont(customColor: Colors.orange[400], custoFontWeight: FontWeight.w800),
+              style: ScreenUtils.smallScreen(context)
+                  ? OlukoFonts.olukoBigFont(customColor: Colors.orange[400], custoFontWeight: FontWeight.w800)
+                  : OlukoFonts.olukoSubtitleFont(customColor: Colors.orange[400], custoFontWeight: FontWeight.w800),
             ))),
         Padding(
           padding: const EdgeInsets.only(left: 10),
