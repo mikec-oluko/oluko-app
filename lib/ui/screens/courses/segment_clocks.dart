@@ -40,7 +40,6 @@ import 'package:oluko_app/ui/components/pause_dialog_content.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/modal_segment_movements.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_watch_app_bar.dart';
@@ -50,9 +49,7 @@ import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -145,6 +142,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   CoachRequest _coachRequest;
   XFile videoRecorded;
   bool _isFromChallenge = false;
+
   @override
   void initState() {
     Wakelock.enable();
@@ -189,17 +187,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         coachRequests = coachRequestStreamState.values;
                       }
                       _movements = movementState.movements;
-                      _coachRequest = getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id);
+                      _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id);
                       return GestureDetector(
                         onTap: () {
                           FocusScope.of(context).unfocus();
                         },
-                        child: /*BlocListener<VideoBloc, VideoState>(
-                          listener: (context, state) {
-                            updateSegment(state);
-                          },
-                          child:*/
-                            BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
+                        child: BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
                           listener: (context, state) {
                             if (state is CreateSuccess) {
                               if (_segmentSubmission == null) {
@@ -226,7 +219,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           },
                           child: form(),
                         ),
-                        //),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());
@@ -241,15 +233,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
         },
       ),
     );
-  }
-
-  CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
-    for (var i = 0; i < coachRequests.length; i++) {
-      if (coachRequests[i].segmentId == segmentId) {
-        return coachRequests[i];
-      }
-    }
-    return null;
   }
 
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
@@ -471,11 +454,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               title: OlukoLocalizations.get(context, 'goToClass'),
               thinPadding: true,
               onPressed: () {
-                //if (!waitingForSegSubCreation) {
                 goToClassAction();
-                /*} else {
-                  DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
-                }*/
               },
             ),
             const SizedBox(
@@ -487,11 +466,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
-                //if (!waitingForSegSubCreation) {
                 nextSegmentAction();
-                /*} else {
-                  DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
-                }*/
               },
             ),
           ],
@@ -550,11 +525,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                       thinPadding: true,
                       onPressed: () {
-                        //if (!waitingForSegSubCreation) {
                         goToClassAction();
-                        /* } else {
-                          DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
-                        }*/
                       },
                     ),
                     const SizedBox(
@@ -566,11 +537,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           : OlukoLocalizations.get(context, 'nextSegment'),
                       thinPadding: true,
                       onPressed: () {
-                        //if (!waitingForSegSubCreation) {
                         nextSegmentAction();
-                        /*} else {
-                          DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
-                        }*/
                       },
                     ),
                   ],
@@ -609,7 +576,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void goToClassAction() {
     _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
-
     Navigator.pushReplacementNamed(
       context,
       routeLabels[RouteEnum.insideClass],
@@ -687,6 +653,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       child: getRoundsTimer(keyboardVisibilty),
     );
   }
+
   //TODO: QUITAR ANIMACION  Y CIRCULAR
 
   bool usePulseAnimation() =>
@@ -1689,9 +1656,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Padding(
       padding: const EdgeInsets.only(right: 2),
       child: GestureDetector(
-        onTap: () {} /*=> BottomDialogUtils.showBottomDialog(
-                context: context, content: dialogContainer())*/
-        ,
+        onTap: () {},
         child: Row(
           children: [
             Text(
@@ -1844,68 +1809,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return widgets;
   }
 
-  void updateSegment(VideoState state) {
-    if (state is VideoProcessing) {
-      updateProgress(state);
-    } else if (state is VideoEncoded) {
-      saveEncodedState(state);
-    } else if (state is VideoSuccess || state is VideoFailure) {
-      if (state is VideoSuccess) {
-        saveUploadedState(state);
-        showSegmentMessage();
-        setState(() {
-          topBarIcon = const SizedBox();
-        });
-      } else if (state is VideoFailure) {
-        saveErrorState(state);
-      }
-    }
-  }
-
-  void saveEncodedState(VideoEncoded state) {
-    setState(() {
-      _segmentSubmission.videoState.state = SubmissionStateEnum.encoded;
-      _segmentSubmission.videoState.stateInfo = state.encodedFilesDir;
-      _segmentSubmission.video = state.video;
-      _segmentSubmission.videoState.stateExtraInfo = state.thumbFilePath;
-    });
-    BlocProvider.of<SegmentSubmissionBloc>(context).updateStateToEncoded(_segmentSubmission);
-  }
-
-  void saveUploadedState(VideoSuccess state) {
-    setState(() {
-      processPhase = OlukoLocalizations.get(context, 'completed');
-      progress = 1.0;
-      _segmentSubmission.video = state.video;
-    });
-    BlocProvider.of<SegmentSubmissionBloc>(context).updateVideo(_segmentSubmission);
-  }
-
-  void saveErrorState(VideoFailure state) {
-    setState(() {
-      isThereError = true;
-      _segmentSubmission.videoState.error = state.exceptionMessage;
-    });
-    BlocProvider.of<SegmentSubmissionBloc>(context).updateStateToError(_segmentSubmission);
-  }
-
-  void showSegmentMessage() {
-    String message;
-    if (isThereError) {
-      message = OlukoLocalizations.get(context, 'uploadedWithErrors');
-    } else {
-      message = OlukoLocalizations.get(context, 'segmentUploadedSuccessfully');
-    }
-    AppMessages.clearAndShowSnackbar(context, message);
-  }
-
-  void updateProgress(VideoProcessing state) {
-    setState(() {
-      processPhase = state.processPhase;
-      progress = state.progress;
-    });
-  }
-
   static Future<bool> onWillPop(BuildContext contextWBloc, bool isRecording) async {
     return (await showDialog(
           context: contextWBloc,
@@ -1916,7 +1819,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
               isRecording
                   ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
                   : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
-              // OlukoLocalizations.get(context, 'exitConfirmationBody'),
               style: OlukoFonts.olukoBigFont(),
             ),
             actions: <Widget>[
@@ -1944,64 +1846,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
         )) ??
         false;
-  }
-
-  Widget dialogContainer() {
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/dialog_background.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              const SizedBox(height: 10),
-              Padding(padding: const EdgeInsets.all(40.0), child: ProgressBar(processPhase: processPhase, progress: progress)),
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)),
-        )
-      ],
-    );
-  }
-
-  List<Widget> stopProcessConfirmationContent(function) {
-    return [
-      Text(
-        OlukoLocalizations.get(context, 'stopProcessConfirmation'),
-        textAlign: TextAlign.center,
-        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: 25.0),
-        child: Row(
-          children: [
-            OlukoOutlinedButton(
-              title: OlukoLocalizations.get(context, 'no'),
-              thinPadding: true,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            const SizedBox(width: 20),
-            OlukoPrimaryButton(
-              title: OlukoLocalizations.get(context, 'yes'),
-              onPressed: () {
-                Navigator.pop(context);
-                function();
-              },
-            ),
-          ],
-        ),
-      )
-    ];
   }
 
 //STOPWATCH FUNCTIONS

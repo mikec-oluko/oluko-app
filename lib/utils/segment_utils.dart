@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
@@ -247,9 +248,8 @@ class SegmentUtils {
   static List<Widget> getJoinedLabel(List<String> labels) {
     List<Widget> labelWidgets = [];
     labels.forEach((label) {
-      labelWidgets.add(Text(label, 
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
+      labelWidgets.add(
+          Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
       labelWidgets.add(OlukoNeumorphism.isNeumorphismDesign
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
@@ -275,5 +275,14 @@ class SegmentUtils {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [getRoundTitle(segment, context, OlukoColors.white)] + workoutWidgets,
     );
+  }
+
+  static CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
+    for (var i = 0; i < coachRequests.length; i++) {
+      if (coachRequests[i].segmentId == segmentId) {
+        return coachRequests[i];
+      }
+    }
+    return null;
   }
 }
