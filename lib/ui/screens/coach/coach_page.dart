@@ -35,6 +35,7 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
@@ -69,7 +70,7 @@ class CoachPage extends StatefulWidget {
 }
 
 UserResponse _currentAuthUser;
-UserResponse _coachUser;
+CoachUser _coachUser;
 UserStatistics _userStatistics;
 Assessment _assessment;
 List<CoachRequest> _coachRequestList;
@@ -95,6 +96,7 @@ List<CoachTimelineGroup> _timelinePanelContent = [];
 List<CoachSegmentContent> _allSegmentsForUser = [];
 List<Challenge> _activeChallenges = [];
 List<SegmentSubmission> segmentsWithReview = [];
+num numberOfReviewPendingItems = 0;
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -147,8 +149,8 @@ class _CoachPageState extends State<CoachPage> {
                           _activeChallenges = challengeState.challenges;
                           _courseEnrollmentList = courseEnrollmentState.courseEnrollments;
                           _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-                          _allSegmentsForUser =
-                              TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses,_activeChallenges);                  
+                          _allSegmentsForUser = TransformListOfItemsToWidget.createSegmentContentInforamtion(
+                              _segmentsFromCourseEnrollmentClasses, _activeChallenges);
                         }
                         return BlocConsumer<CoachMentoredVideosBloc, CoachMentoredVideosState>(
                           listenWhen: (CoachMentoredVideosState previous, CoachMentoredVideosState current) =>
@@ -169,11 +171,13 @@ class _CoachPageState extends State<CoachPage> {
                               _annotationVideosContent = mentoredVideosListenerBuilderState.mentoredVideosDisposeValue;
                               segmentsWithReview.clear();
                             }
-                            return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
-                              builder: (context, sentVideosState) {
-                                if (sentVideosState is CoachSentVideosDispose) {
-                                  _sentVideosContent = sentVideosState.sentVideosDisposeValue;
+                            return BlocConsumer<CoachSentVideosBloc, CoachSentVideosState>(
+                              listener: (context, sentVideosListenerState) {
+                                if (sentVideosListenerState is CoachSentVideosDispose) {
+                                  _sentVideosContent = sentVideosListenerState.sentVideosDisposeValue;
                                 }
+                              },
+                              builder: (context, sentVideosState) {
                                 if (sentVideosState is CoachSentVideosSuccess) {
                                   _sentVideosContent = sentVideosState.sentVideos
                                       .where((sentVideo) => sentVideo.video != null && sentVideo.coachId == _coachUser.id)
@@ -195,19 +199,18 @@ class _CoachPageState extends State<CoachPage> {
                                       _timelineItemsContent = CoachHelperFunctions.checkTimelineItemsUpdate(
                                           timelineItemsUpdateListener.timelineItems, _timelineItemsContent);
                                     }
-                                  },
-                                  builder: (context, timelineState) {
-                                    if (timelineState is CoachTimelineItemsDispose) {
-                                      _timelineItemsContent = timelineState.timelineItemsDisposeValue;
+                                    if (timelineItemsUpdateListener is CoachTimelineItemsDispose) {
+                                      _timelineItemsContent = timelineItemsUpdateListener.timelineItemsDisposeValue;
                                       _allContent.clear();
                                       _coachRecommendationTimelineContent.clear();
                                       _mentoredVideoTimelineContent.clear();
                                       _coachRecommendationTimelineContent.clear();
                                       _timelinePanelContent.clear();
-                                      _introductionVideo ??
-                                          CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
-                                              coachAssignment: widget.coachAssignment, userId: widget.userId);
+                                      _introductionVideo ??= CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
+                                          coachAssignment: widget.coachAssignment, userId: widget.userId);
                                     }
+                                  },
+                                  builder: (context, timelineState) {
                                     if (timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
                                     }
@@ -322,6 +325,34 @@ class _CoachPageState extends State<CoachPage> {
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 child: ListView(
                   children: [
+                    BlocConsumer<CoachReviewPendingBloc, CoachReviewPendingState>(
+                      listener: (context, state) {
+                        if (state is CoachReviewPendingDispose) {
+                          numberOfReviewPendingItems = state.reviewsPendingDisposeValue;
+                        }
+                        if (state is CoachReviewPendingSuccess) {
+                          numberOfReviewPendingItems = state.reviewsPending;
+                        }
+                      },
+                      builder: (context, state) {
+                        return Container(
+                          width: ScreenUtils.width(context),
+                          height: 40,
+                          color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: Text(
+                                  '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                     if (carouselNotificationWidgetList.isNotEmpty)
                       Padding(
                         padding: paddingTopForElements,
@@ -493,10 +524,8 @@ class _CoachPageState extends State<CoachPage> {
             BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment);
           },
           onOpenCard: () {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-              'videoUrl': _assessment.video,
-              'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')
-            });
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
+                arguments: {'videoUrl': _assessment.video, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
             BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment);
           }));
     }
@@ -570,32 +599,7 @@ class _CoachPageState extends State<CoachPage> {
     CoachTimelineGroup allTabContent = CoachTimelineGroup(
         courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: _allContent);
 
-    timelinePanelUpdateTabsAndContent(allTabContent);
-  }
-
-  void timelinePanelUpdateTabsAndContent(CoachTimelineGroup allTabContent) {
-    if (_timelinePanelContent != null && _timelinePanelContent.isNotEmpty) {
-      final indexForAllTab = _timelinePanelContent.indexWhere((panelItem) => panelItem.courseId == allTabContent.courseId);
-      if (indexForAllTab != -1) {
-        allTabContent.timelineElements.forEach((allTabNewContent) {
-          addContentToTimeline(timelineGroup: _timelinePanelContent[indexForAllTab], newContent: allTabNewContent);
-        });
-        _timelinePanelContent.insert(0, _timelinePanelContent[indexForAllTab]);
-        _timelinePanelContent.removeAt(indexForAllTab + 1);
-      } else {
-        if (_timelinePanelContent[0] != null && _timelinePanelContent[0].courseId == allTabContent.courseId) {
-          allTabContent.timelineElements.forEach((allTabNewContent) {
-            addContentToTimeline(timelineGroup: _timelinePanelContent[0], newContent: allTabNewContent);
-          });
-        } else {
-          allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-          _timelinePanelContent.insert(0, allTabContent);
-        }
-      }
-    } else {
-      allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-      _timelinePanelContent.insert(0, allTabContent);
-    }
+    _timelinePanelContent = CoachTimelineFunctions.timelinePanelUpdateTabsAndContent(allTabContent, _timelinePanelContent);
   }
 
   void sentVideosTimeline() {
@@ -634,13 +638,6 @@ class _CoachPageState extends State<CoachPage> {
             }
           })
         : null;
-  }
-
-  void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {
-    if (timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).isEmpty) {
-      timelineGroup.timelineElements.add(newContent);
-      timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-    }
   }
 
   void getCoachRequiredSegments(List<CoachSegmentContent> allSegments) {
@@ -740,6 +737,4 @@ class _CoachPageState extends State<CoachPage> {
     }
     return recommendationVideos;
   }
-
-
 }

@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachProfile extends StatefulWidget {
-  final UserResponse coachUser;
+  final CoachUser coachUser;
   const CoachProfile({this.coachUser});
 
   @override
@@ -17,6 +21,7 @@ class CoachProfile extends StatefulWidget {
 class _CoachProfileState extends State<CoachProfile> {
   String _userLocation;
   String defaultCoachPic = '';
+  bool _isVideoPlaying = false;
 
   @override
   void initState() {
@@ -27,7 +32,8 @@ class _CoachProfileState extends State<CoachProfile> {
             '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
       }
     });
-    // TODO: implement initState
+    BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
+
     super.initState();
   }
 
@@ -40,20 +46,20 @@ class _CoachProfileState extends State<CoachProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      // extendBodyBehindAppBar: true,
+      // appBar: AppBar(
+      //   elevation: 0.0,
+      //   backgroundColor: Colors.transparent,
+      //   leading: IconButton(
+      //     icon: Icon(
+      //       Icons.arrow_back_ios,
+      //       color: Colors.white,
+      //     ),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      // ),
       body: Container(
         color: OlukoColors.black,
         constraints: BoxConstraints.expand(),
@@ -68,7 +74,7 @@ class _CoachProfileState extends State<CoachProfile> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  coachCover(context),
+                  widget.coachUser.bannerVideo != null ? coachBannerVideo(context) : coachCover(context),
                   coachInformationComponent(context),
                   uploadCoverButton(context),
                   coachGallery(context),
@@ -96,6 +102,20 @@ class _CoachProfileState extends State<CoachProfile> {
               height: MediaQuery.of(context).size.height,
             ),
     );
+  }
+
+  Container coachBannerVideo(BuildContext context) {
+    return Container(
+        //VIDEO LIKE COVER IMAGE
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height / 3,
+        child: OlukoVideoPreview(
+          video: widget.coachUser.bannerVideo,
+          showBackButton: true,
+          onBackPressed: () => Navigator.pop(context),
+          onPlay: () => false,
+          videoVisibilty: false,
+        ));
   }
 
   Widget askCoachComponent(BuildContext context) {

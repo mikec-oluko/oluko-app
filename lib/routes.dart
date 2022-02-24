@@ -62,6 +62,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -122,6 +123,7 @@ import 'package:oluko_app/ui/screens/story/story_page.dart';
 import 'blocs/audio_bloc.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
+import 'blocs/coach/coach_media_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_request_stream_bloc.dart';
@@ -353,6 +355,7 @@ class Routes {
   final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
   final NotificationBloc _notificationBloc = NotificationBloc();
+  final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -975,7 +978,10 @@ class Routes {
         );
         break;
       case RouteEnum.coachProfile:
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        providers = [
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+        ];
+        final Map<String, CoachUser> argumentsToAdd = arguments as Map<String, CoachUser>;
         newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
         break;
       case RouteEnum.hiFivePage:
