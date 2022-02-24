@@ -36,7 +36,6 @@ class StoryRepository {
         .doc();
     final Story story =
         Story(content_type: 'image', url: enrollmentSegment.challengeImage, description: enrollmentSegment.name, createdBy: userId);
-    story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
     return story;
