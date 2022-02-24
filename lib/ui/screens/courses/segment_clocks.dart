@@ -53,6 +53,7 @@ import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
@@ -759,7 +760,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
       return [
         if (OlukoNeumorphism.isNeumorphismDesign) SizedBox.shrink() else getTextField(keyboardVisibilty),
-        getKeyboard(keyboardVisibilty),
+        SegmentClocksUtils.getKeyboard(context, keyboardVisibilty),
         if (!keyboardVisibilty && !isSegmentWithRecording())
           SizedBox(
             height: ScreenUtils.height(context) / 4,
@@ -874,7 +875,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget getTextField(bool keyboardVisibilty) {
     CounterEnum currentCounter = timerEntries[timerTaskIndex - 1].counter;
     final bool isCounterByReps = currentCounter == CounterEnum.reps;
-    List<String> counterTxt = counterText(currentCounter);
+    List<String> counterTxt = SegmentClocksUtils.counterText(context, currentCounter, timerEntries[timerTaskIndex - 1].movement.name);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -936,46 +937,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ],
       ),
     );
-  }
-
-  List<String> counterText(CounterEnum counter) {
-    List<String> counterText = [];
-    switch (counter) {
-      case CounterEnum.reps:
-        counterText.add(OlukoLocalizations.get(context, 'enterScore'));
-        counterText.add(timerEntries[timerTaskIndex - 1].movement.name);
-        break;
-      case CounterEnum.distance:
-        counterText.add(OlukoLocalizations.get(context, 'enterScore'));
-        counterText.add(OlukoLocalizations.get(context, 'meters'));
-        break;
-      case CounterEnum.weight:
-        counterText.add(OlukoLocalizations.get(context, 'enterWeight'));
-        counterText.add(OlukoLocalizations.get(context, 'lbs'));
-        break;
-      default:
-    }
-    return counterText;
-  }
-
-  Widget getKeyboard(bool keyboardVisibilty) {
-    const boxDecoration = BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xff2b2f35), Color(0xff16171b)],
-      ),
-    );
-    return SizedBox(
-      width: ScreenUtils.width(context),
-      child: Visibility(
-        visible: keyboardVisibilty,
-        child: CustomKeyboard(
-          boxDecoration: boxDecoration,
-        ),
-      ),
-    );
-    ;
   }
 
   Widget recordingTaskSection(bool keyboardVisibilty) {
@@ -1709,7 +1670,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
           if (counter)
             SizedBox(
                 height: ScreenUtils.height(context) * 0.15,
-                child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, children: getScoresByRound()))
+                child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    children: SegmentClocksUtils.getScoresByRound(context, timerEntries, timerTaskIndex, totalScore, scores)))
           else
             OlukoNeumorphism.isNeumorphismDesign
                 ? Padding(
@@ -1760,53 +1724,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
     waitingForSegSubCreation = true;
     BlocProvider.of<SegmentSubmissionBloc>(context)
         .create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, _coachRequest);
-  }
-
-  List<Widget> getScoresByRound() {
-    List<String> lbls =
-        counterText(timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter);
-    final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
-    final List<Widget> widgets = [];
-    String totalText = '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
-    if (!lbls.isEmpty) {
-      totalText += lbls[1];
-    }
-
-    widgets.add(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(totalText, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.primary)),
-        ],
-      ),
-    );
-
-    widgets.add(const SizedBox(height: 15));
-    for (int i = 0; i < scores.length; i++) {
-      widgets.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${OlukoLocalizations.get(context, 'round')} ${i + 1}',
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white),
-              ),
-              SizedBox(
-                width: ScreenUtils.width(context) * 0.5,
-                child: Text(
-                  scores[i],
-                  textAlign: TextAlign.end,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-    }
-    return widgets;
   }
 
   static Future<bool> onWillPop(BuildContext contextWBloc, bool isRecording) async {
