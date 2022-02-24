@@ -173,7 +173,7 @@ class ChatRepository {
 
     if (messages?.docs != null) {
       for (final message in messages.docs) {
-        message.reference.delete();
+        await message.reference.delete();
       }
     }
   }
@@ -192,7 +192,7 @@ class ChatRepository {
     if (notifications?.docs != null) {
       for (final notification in notifications.docs) {
         if (notification.data()['is_deleted'] != true) {
-          notification.reference.update({'is_deleted': true});
+          await notification.reference.delete();
         }
       }
     }
