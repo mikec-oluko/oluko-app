@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
@@ -100,7 +101,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
       if (state is AuthSuccess) {
         _currentAuthUser = state.user;
-
+        BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
         if (_isOwnerProfile(authUser: _currentAuthUser, userRequested: widget.userRequested)) {
           _userProfileToDisplay = _currentAuthUser;
           _isCurrentUser = true;

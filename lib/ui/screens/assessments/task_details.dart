@@ -318,7 +318,10 @@ class _TaskDetailsState extends State<TaskDetails> {
             const SizedBox(height: 20),
             showVideoPlayer(_task.video),
             formSection(state.taskSubmission),
-            if (OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else recordAgainButtons(state.taskSubmission)
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              SizedBox(height: ScreenUtils.height(context) * 0.4)
+            else
+              recordAgainButtons(state.taskSubmission)
           ],
         );
       } else {

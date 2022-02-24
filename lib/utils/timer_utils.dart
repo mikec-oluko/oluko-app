@@ -88,8 +88,8 @@ class TimerUtils {
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter, bool bothSide]) {
     return Container(
         child: SizedBox(
-            height: _watchHeight,
-            width: _watchWidth,
+            width: ScreenUtils.smallScreen(context) ? 190 : 220,
+            height: ScreenUtils.smallScreen(context) ? 190 : 220,
             child: Stack(alignment: Alignment.center, children: [
               AspectRatio(
                   aspectRatio: 1,
@@ -350,8 +350,9 @@ class TimerUtils {
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
     return Stack(alignment: Alignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
+      SizedBox(
+        width: ScreenUtils.smallScreen(context) ? 190 : 220,
+        height: ScreenUtils.smallScreen(context) ? 190 : 220,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
