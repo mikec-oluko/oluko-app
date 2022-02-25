@@ -16,7 +16,7 @@ class Success extends GalleryVideoState {
   Uint8List firstVideo;
   Uint8List firstImage;
   XFile pickedFile;
-  Success({this.pickedFile, this.firstVideo});
+  Success({this.pickedFile, this.firstVideo,this.firstImage});
 }
 
 class PermissionsRequired extends GalleryVideoState {}
@@ -29,7 +29,6 @@ class Failure extends GalleryVideoState {
 
 class GalleryVideoBloc extends Cubit<GalleryVideoState> {
   GalleryVideoBloc() : super(Loading());
-  Success currentState = Success();
   void getVideoFromGallery() async {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.gallery, checkMicrophone: false)) {
@@ -38,8 +37,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       }
       final imagePicker = ImagePicker();
       XFile video = await imagePicker.pickVideo(source: ImageSource.gallery);
-      currentState.pickedFile = video;
-      emit(currentState);
+      emit(Success(pickedFile: video));
     } catch (e) {
       emit(Failure(exception: e));
     }
@@ -52,10 +50,8 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
         return;
       }
       Uint8List pickedVideo = await ContentFromGalleyService.getFirstVideoGallery();
-      currentState.firstVideo = pickedVideo;
        if (pickedVideo != null) {
-        currentState.firstImage = pickedVideo;
-        emit(currentState);
+        emit(Success(firstVideo:pickedVideo ));
       } else {
         emit(NoContent());
       }
@@ -72,8 +68,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       }
       Uint8List pickedImage = await ContentFromGalleyService.getFirstImageGallery();
       if (pickedImage != null) {
-        currentState.firstImage = pickedImage;
-        emit(currentState);
+        emit(Success(firstImage: pickedImage));
       } else {
         emit(NoContent());
       }
