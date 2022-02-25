@@ -74,10 +74,10 @@ class _CompletedClassState extends State<CompletedClass> {
                   child: Row(mainAxisSize: MainAxisSize.max, children: [
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.get(context, 'done'),
-                        onPressed: () async {
+                        onPressed: () {
+                          BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+                              .saveSelfieInClass(widget.courseEnrollment, widget.classIndex);
                           if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
-                            await BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
-                                .saveSelfieInClass(widget.courseEnrollment, widget.classIndex);
                             Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                               'index': widget.courseIndex,
                               'classIndex': widget.classIndex + 1,
