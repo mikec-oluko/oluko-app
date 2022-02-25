@@ -193,15 +193,42 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 left: 0,
                 child: Column(
                   children: [
-                    Text(
-                      widget.stories[_currentIndex].description,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
+                    if (widget.stories[_currentIndex].result != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          widget.stories[_currentIndex].result,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
+                    if (widget.stories[_currentIndex].segmentTitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          widget.stories[_currentIndex].segmentTitle,
+                          style: const TextStyle(
+                            color: OlukoColors.primary,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    if (widget.stories[_currentIndex].description != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          widget.stories[_currentIndex].description,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
                     Center(
                       child: GestureDetector(
                           onTap: () {
@@ -426,7 +453,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                '${hoursFromCreation.toString()}h ${OlukoNeumorphism.isNeumorphismDesign ? 'r' : ''}',
+                '${hoursFromCreation.toString()}h${OlukoNeumorphism.isNeumorphismDesign ? 'r' : ''}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,

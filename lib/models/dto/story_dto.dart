@@ -4,6 +4,8 @@ import 'package:oluko_app/models/base.dart';
 class Story extends Base {
   String content_type;
   String url;
+  String result;
+  String segmentTitle;
   String description;
   bool seen;
   int duration;
@@ -12,6 +14,8 @@ class Story extends Base {
   Story(
       {this.content_type,
       this.url,
+      this.result,
+      this.segmentTitle,
       this.description,
       this.seen,
       this.duration,
@@ -39,6 +43,8 @@ class Story extends Base {
     Story story = Story(
         content_type: json['content_type'].toString(),
         url: json['url'].toString(),
+        result: json['result'].toString(),
+        segmentTitle: json['segmentTitle'].toString(),
         description: json['description'].toString(),
         seen: json['seen'] != null ? json['seen'] as bool : false,
         duration: (json['duration'] is int) ? (json['duration'] as int) : 5);
@@ -61,6 +67,8 @@ class Story extends Base {
       'id': id,
       'content_type': content_type,
       'url': url,
+      'result': result,
+      'segmentTitle': segmentTitle,
       'description': description,
       'seen': seen,
       'duration': duration

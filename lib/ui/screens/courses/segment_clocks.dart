@@ -253,7 +253,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
-    BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
+    String segmentTitle = widget.segments[widget.segmentIndex].name ?? '';
+    if (widget.segments[widget.segmentIndex].isChallenge) {
+      segmentTitle += ' ${OlukoLocalizations.get(context, 'challenge')}';
+    }
+    const result = 'this is a result';
+    const description = 'this is a description';
+    BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission, segmentTitle, result, description);
     AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
   }
 

@@ -10,7 +10,7 @@ import 'package:oluko_app/models/submodels/event.dart';
 class StoryRepository {
   StoryRepository();
 
-  static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission) async {
+  static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission, String segmentTitle, String result, String description) async {
     final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -19,7 +19,7 @@ class StoryRepository {
         .collection('stories')
         .doc();
     final Story story =
-        Story(content_type: 'video', url: segmentSubmission.video.url, description: 'description', createdBy: segmentSubmission.userId);
+        Story(content_type: 'video', url: segmentSubmission.video.url, description: description, createdBy: segmentSubmission.userId, segmentTitle: segmentTitle, result: result);
     story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
