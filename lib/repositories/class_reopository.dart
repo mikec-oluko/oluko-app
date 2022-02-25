@@ -68,11 +68,10 @@ class ClassRepository {
         .collection('classes')
         .doc(classId);
     DocumentSnapshot ds = await reference.get();
-        Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
-        List<String> images = classObj.randomImages;
-        images.add(image);
-    reference.update({'random_images': images});
-
+    Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
+    List<String> images = classObj.userSelfies ?? [];
+    images.add(image);
+    await reference.update({'user_selfies': images});
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getClassesSubscription() {

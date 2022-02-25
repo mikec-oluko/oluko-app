@@ -71,9 +71,11 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
     emit(Loading());
     try {
       final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
-      final thumbnailUrl = await _uploadFile(thumbnail, '/class' + classIndex.toString());
-      CourseEnrollment courseUpdated = await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl);
-      await ClassRepository.addSelfie(courseEnrollment.classes[classIndex].id, thumbnailUrl);
+      final thumbnailUrl = await _uploadFile(thumbnail, 'classes/' + courseEnrollment.classes[classIndex].id);
+      final miniThumbnail = await ImageUtils().getThumbnailForImage(file, 50);
+      final miniThumbnailUrl = await _uploadFile(miniThumbnail, 'classes/' + courseEnrollment.classes[classIndex].id + '/mini');
+      final CourseEnrollment courseUpdated =
+          await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl, miniThumbnailUrl);
       emit(SaveSelfieSuccess(courseEnrollment: courseUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -82,6 +84,11 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
       );
       emit(Failure(exception: exception));
     }
+  }
+
+  Future<void> saveSelfieInClass(CourseEnrollment courseEnrollment, int classIndex) async {
+    var miniThumbnailUrl = courseEnrollment.classes[classIndex].miniSelfieThumbnailUrl;
+    await ClassRepository.addSelfie(courseEnrollment.classes[classIndex].id, miniThumbnailUrl);
   }
 
   static Future<String> _uploadFile(String filePath, String folderName) async {

@@ -8,7 +8,7 @@ class Class extends Base {
   String name;
   String description;
   List<SegmentSubmodel> segments;
-  List<String> randomImages;
+  List<String> userSelfies;
 
   Class(
       {this.video,
@@ -16,7 +16,7 @@ class Class extends Base {
       this.segments,
       this.description,
       this.image,
-      this.randomImages,
+      this.userSelfies,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -38,11 +38,11 @@ class Class extends Base {
       video: json['video']?.toString(),
       name: json['name']?.toString(),
       image: json['image']?.toString(),
-      randomImages: json['random_images'] == null || json['random_images'].runtimeType == String
+      userSelfies: json['user_selfies'] == null || json['user_selfies'].runtimeType == String
           ? null
-          : json['random_images'] is String
-              ? [json['random_images'] as String]
-              : List<String>.from((json['random_images'] as Iterable).map((randomImage) => randomImage as String)),
+          : json['user_selfies'] is String
+              ? [json['user_selfies'] as String]
+              : List<String>.from((json['user_selfies'] as Iterable).map((userSelfie) => userSelfie as String)),
       description: json['description']?.toString(),
       segments: json['segments'] == null
           ? null
@@ -59,7 +59,7 @@ class Class extends Base {
       'name': name,
       'description': description,
       'image': image,
-      'random_images': randomImages == null ? null : randomImages,
+      'user_selfies': userSelfies == null ? null : userSelfies,
       'segments': segments == null ? null : List<SegmentSubmodel>.from(segments.map((segment) => segment.toJson()))
     };
     classJson.addEntries(super.toJson().entries);
