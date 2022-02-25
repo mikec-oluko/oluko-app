@@ -60,12 +60,6 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget form() {
     return Scaffold(
-        appBar: OlukoAppBar(
-          showBackButton: false,
-          showDivider: false,
-          title: ' ',
-          actions: [],
-        ),
         backgroundColor: Colors.black,
         body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -80,8 +74,10 @@ class _CompletedClassState extends State<CompletedClass> {
                   child: Row(mainAxisSize: MainAxisSize.max, children: [
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.get(context, 'done'),
-                        onPressed: () {
+                        onPressed: () async {
                           if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
+                            await BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+                                .saveSelfieInClass(widget.courseEnrollment, widget.classIndex);
                             Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                               'index': widget.courseIndex,
                               'classIndex': widget.classIndex + 1,
