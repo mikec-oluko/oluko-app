@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
-import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/carousel_small_section.dart';
+import 'package:oluko_app/ui/components/coach_information_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/ui/components/image_and_video_container.dart';
 
 class CoachProfile extends StatefulWidget {
   final CoachUser coachUser;
@@ -22,30 +26,19 @@ class _CoachProfileState extends State<CoachProfile> {
   String _userLocation;
   String defaultCoachPic = '';
   bool _isVideoPlaying = false;
+  List<CoachMedia> coachUploadedContent = [];
 
   @override
   void initState() {
-    _userLocation = getUserLocation(widget.coachUser);
-    setState(() {
-      if (widget.coachUser != null) {
-        defaultCoachPic =
-            '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
-      }
-    });
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
 
     super.initState();
   }
 
-  // @override
-  // void initState() {
-  //   _userLocation = getUserLocation(widget.coachUser);
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // TODO: CHECK APP BAR WHEN USE DEFAULT APP THEME, NEED APPBAR (DONE: X)
       // extendBodyBehindAppBar: true,
       // appBar: AppBar(
       //   elevation: 0.0,
@@ -61,7 +54,7 @@ class _CoachProfileState extends State<CoachProfile> {
       //   ),
       // ),
       body: Container(
-        color: OlukoColors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         constraints: BoxConstraints.expand(),
         child: ListView(
           clipBehavior: Clip.none,
@@ -114,7 +107,8 @@ class _CoachProfileState extends State<CoachProfile> {
           showBackButton: true,
           onBackPressed: () => Navigator.pop(context),
           onPlay: () => false,
-          videoVisibilty: false,
+          videoVisibilty: true,
+          bannerVideo: true,
         ));
   }
 
@@ -223,82 +217,43 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   Widget coachGallery(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 100),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                child: Text(
-                  "View All",
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                ),
-              ),
-              GridView.count(
-                shrinkWrap: true,
-                primary: false,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 3,
-                children: [
-                  Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      )),
-                  Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      )),
-                  Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      )),
-                  Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      )),
-                  Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      )),
-                  Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      )),
-                ],
-              ),
-            ],
+    return BlocBuilder<CoachMediaBloc, CoachMediaState>(
+      builder: (context, state) {
+        if (state is CoachMediaContentUpdate) {
+          coachUploadedContent = state.coachMediaContent;
+        }
+        if (state is CoachMediaContentSuccess) {
+          coachUploadedContent = state.coachMediaContent;
+        }
+        return Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 100),
+            child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 300,
+                child: CarouselSmallSection(
+                  title: '',
+                  children: coachUploadedContent
+                      .map((mediaContent) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: ImageAndVideoContainer(
+                                backgroundImage: null,
+                                isContentVideo: true,
+                                videoUrl: mediaContent.video.url,
+                                displayOnViewNamed: ActualProfileRoute.transformationJourney,
+                                originalContent: mediaContent,
+                                isCoachMediaContent: true),
+                          ))
+                      .toList(),
+                )),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
+
+//
 
   Positioned uploadCoverButton(BuildContext context) {
     return Positioned(
@@ -316,106 +271,9 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
-  Positioned coachInformationComponent(BuildContext context) {
-    return Positioned(
-      //COACH INFORMATION
-      top: MediaQuery.of(context).size.height / 4,
-      child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Container(
-                decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
-                child: Row(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: widget.coachUser.coverImage == null
-                              ? Stack(children: [
-                                  CircleAvatar(
-                                    backgroundColor: widget.coachUser != null
-                                        ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName)
-                                        : OlukoColors.black,
-                                    radius: 24.0,
-                                    child: Text(
-                                        widget.coachUser != null
-                                            ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
-                                            : defaultCoachPic,
-                                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
-                                  ),
-                                ])
-                              : CircleAvatar(
-                                  backgroundColor: OlukoColors.black,
-                                  backgroundImage: Image(
-                                    image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
-                                    fit: BoxFit.contain,
-                                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
-                                    height: 30,
-                                    width: 30,
-                                  ).image,
-                                  radius: 30.0,
-                                ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                OlukoLocalizations.get(context, 'coach'),
-                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              widget.coachUser != null
-                                  ? Text(
-                                      // widget.coachUser.lastName,
-                                      widget.coachUser.firstName,
-                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        ),
-                        _userLocation != null
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  _userLocation,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-                                ),
-                              )
-                            : Container()
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )),
+  Widget coachInformationComponent(BuildContext context) {
+    return CoachInformationComponent(
+      coachUser: widget.coachUser,
     );
-  }
-
-  String getUserLocation(UserResponse user) {
-    String userLocationContent = '';
-    if ((user.city != null && user.city != 'null') &&
-        ((user.state != null && user.state != 'null') && (user.country != null && user.country != 'null'))) {
-      userLocationContent = "${user.city}, ${user.state} ${user.country}";
-    }
-    return userLocationContent;
   }
 }

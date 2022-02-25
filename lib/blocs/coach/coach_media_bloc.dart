@@ -18,8 +18,8 @@ class CoachMediaDispose extends CoachMediaState {
   final List<CoachMedia> coachMediaDisposeValue;
 }
 
-class CoachMediaContent extends CoachMediaState {
-  CoachMediaContent({this.coachMediaContent});
+class CoachMediaContentUpdate extends CoachMediaState {
+  CoachMediaContentUpdate({this.coachMediaContent});
   final List<CoachMedia> coachMediaContent;
 }
 

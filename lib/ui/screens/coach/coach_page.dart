@@ -73,7 +73,7 @@ UserResponse _currentAuthUser;
 CoachUser _coachUser;
 UserStatistics _userStatistics;
 Assessment _assessment;
-List<CoachRequest> _coachRequestList;
+List<CoachRequest> _coachRequestList = [];
 Annotation _introductionVideo;
 const String _defaultIdForAllContentTimeline = '0';
 const String _defaultIntroductionVideoId = 'introVideo';
