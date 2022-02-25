@@ -76,6 +76,7 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
       final miniThumbnailUrl = await _uploadFile(miniThumbnail, 'classes/' + courseEnrollment.classes[classIndex].id + '/mini');
       final CourseEnrollment courseUpdated =
           await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl, miniThumbnailUrl);
+      saveSelfieInClass(courseEnrollment, classIndex);
       emit(SaveSelfieSuccess(courseEnrollment: courseUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
