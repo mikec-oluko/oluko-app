@@ -15,12 +15,14 @@ import 'package:oluko_app/ui/newDesignComponents/class_section_expansion_panel.d
 import 'package:oluko_app/ui/screens/courses/custom_expansion_panel_list.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
+import '../screens/courses/custom_expansion_panel_list_radio.dart';
+
 class ClassExpansionPanel extends StatefulWidget {
   final List<Class> classes;
   final List<Movement> movements;
   final Function(BuildContext, Movement) onPressedMovement;
 
-  ClassExpansionPanel({
+  const ClassExpansionPanel({
     this.classes,
     this.onPressedMovement,
     this.movements,
@@ -43,14 +45,15 @@ class _State extends State<ClassExpansionPanel> {
 
   @override
   Widget build(BuildContext context) {
-    if (OlukoNeumorphism.isNeumorphismDesign)
+    if (OlukoNeumorphism.isNeumorphismDesign) {
       return expansionPanelNeumorphic();
-    else
+    } else {
       return expansionPanel();
+    }
   }
 
   Widget expansionPanel() {
-    return _classItems.length > 0
+    return _classItems.isNotEmpty
         ? ExpansionPanelList(
             expansionCallback: (int index, bool isExpanded) {
               setState(() {
@@ -64,7 +67,7 @@ class _State extends State<ClassExpansionPanel> {
                 headerBuilder: (BuildContext context, bool isExpanded) {
                   return ListTile(
                     horizontalTitleGap: 0,
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     title: ClassSection(
                       index: _classItems.indexOf(item),
                       total: _classItems.length,
@@ -80,28 +83,29 @@ class _State extends State<ClassExpansionPanel> {
           )
         : Center(
             child: Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: TitleBody(OlukoLocalizations.get(context, "noClasses")),
+              padding: const EdgeInsets.only(top: 10),
+              child: TitleBody(OlukoLocalizations.get(context, 'noClasses')),
             ),
           );
   }
 
   Widget expansionPanelNeumorphic() {
     if (_classItems.isNotEmpty) {
-      return CustomExpansionPanelList(
+      return CustomExpansionPanelListRadio(
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
+            // _classItems[index].expanded = isExpanded; //TODO: new
             _classItems[index].expanded = !_classItems[index].expanded;
           });
         },
-        children: _classItems.map<ExpansionPanel>((ClassItem item) {
-          return ExpansionPanel(
+        children: _classItems.map<ExpansionPanelRadio>((ClassItem item) {
+          return ExpansionPanelRadio(
             canTapOnHeader: true,
             backgroundColor:
                 OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return Padding(
-                padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(left: 15.0) : const EdgeInsets.only(left: 0),
+                padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(left: 15.0) : const EdgeInsets.only(),
                 child: ClassSectionExpansionPanel(
                   index: _classItems.indexOf(item),
                   total: _classItems.length,
@@ -111,15 +115,17 @@ class _State extends State<ClassExpansionPanel> {
               );
             },
             body: _subClassItems[_classItems.indexOf(item)],
-            isExpanded: item.expanded,
+            // isExpanded: item.expanded,
+
+            value: _classItems.indexOf(item),
           );
         }).toList(),
       );
     } else {
       return Center(
         child: Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: TitleBody(OlukoLocalizations.get(context, "noClasses")),
+          padding: const EdgeInsets.only(top: 10),
+          child: TitleBody(OlukoLocalizations.get(context, 'noClasses')),
         ),
       );
     }

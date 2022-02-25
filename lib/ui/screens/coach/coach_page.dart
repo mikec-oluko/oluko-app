@@ -147,8 +147,8 @@ class _CoachPageState extends State<CoachPage> {
                           _activeChallenges = challengeState.challenges;
                           _courseEnrollmentList = courseEnrollmentState.courseEnrollments;
                           _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-                          _allSegmentsForUser =
-                              TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses,_activeChallenges);                  
+                          _allSegmentsForUser = TransformListOfItemsToWidget.createSegmentContentInforamtion(
+                              _segmentsFromCourseEnrollmentClasses, _activeChallenges);
                         }
                         return BlocConsumer<CoachMentoredVideosBloc, CoachMentoredVideosState>(
                           listenWhen: (CoachMentoredVideosState previous, CoachMentoredVideosState current) =>
@@ -493,10 +493,8 @@ class _CoachPageState extends State<CoachPage> {
             BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment);
           },
           onOpenCard: () {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-              'videoUrl': _assessment.video,
-              'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')
-            });
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
+                arguments: {'videoUrl': _assessment.video, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
             BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment);
           }));
     }
@@ -740,6 +738,4 @@ class _CoachPageState extends State<CoachPage> {
     }
     return recommendationVideos;
   }
-
-
 }

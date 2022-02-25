@@ -3,10 +3,20 @@ import 'package:oluko_app/constants/theme.dart';
 
 const double _kPanelHeaderCollapsedHeight = 48.0;
 const double _kPanelHeaderExpandedHeight = 64.0;
+const EdgeInsets _kPanelHeaderExpandedDefaultPadding = EdgeInsets.symmetric(
+  vertical: 64.0 - _kPanelHeaderCollapsedHeight,
+);
 
-class CustomExpansionPanelList extends StatelessWidget {
-  CustomExpansionPanelList(
-      {Key key, this.children = const <ExpansionPanelRadio>[], this.expansionCallback, this.animationDuration = kThemeAnimationDuration})
+class CustomExpansionPanelListRadio extends StatelessWidget {
+  CustomExpansionPanelListRadio(
+      {Key key,
+      this.children = const <ExpansionPanelRadio>[],
+      this.expansionCallback,
+      this.animationDuration = kThemeAnimationDuration,
+      this.initialOpenPanelValue,
+      this.expandedHeaderPadding = _kPanelHeaderExpandedDefaultPadding,
+      this.dividerColor,
+      this.elevation = 2})
       : assert(children != null),
         assert(animationDuration != null),
         super(key: key);
@@ -14,6 +24,28 @@ class CustomExpansionPanelList extends StatelessWidget {
   final List<ExpansionPanelRadio> children;
   final ExpansionPanelCallback expansionCallback;
   final Duration animationDuration;
+
+  /// The value of the panel that initially begins open. (This value is
+  /// only used when initializing with the [ExpansionPanelList.radio]
+  /// constructor.)
+  final Object initialOpenPanelValue;
+
+  /// The padding that surrounds the panel header when expanded.
+  ///
+  /// By default, 16px of space is added to the header vertically (above and below)
+  /// during expansion.
+  final EdgeInsets expandedHeaderPadding;
+
+  /// Defines color for the divider when [ExpansionPanel.isExpanded] is false.
+  ///
+  /// If `dividerColor` is null, then [DividerThemeData.color] is used. If that
+  /// is null, then [ThemeData.dividerColor] is used.
+  final Color dividerColor;
+
+  /// Defines elevation for the [ExpansionPanel] while it's expanded.
+  ///
+  /// By default, the value of elevation is 2.
+  final double elevation;
 
   bool _isChildExpanded(int index) {
     return children[index].isExpanded;
