@@ -369,6 +369,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
@@ -535,6 +536,7 @@ class Routes {
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<ChatBloc>.value(
             value: _chatBloc,
           ),
@@ -569,6 +571,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<TransformationJourneyContentBloc>.value(value: _transformationJourneyContentBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo']);
@@ -775,6 +778,7 @@ class Routes {
         break;
       case RouteEnum.assessmentVideos:
         providers = [
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -909,6 +913,7 @@ class Routes {
         break;
       case RouteEnum.coach:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
@@ -932,6 +937,7 @@ class Routes {
         break;
       case RouteEnum.coach2:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),

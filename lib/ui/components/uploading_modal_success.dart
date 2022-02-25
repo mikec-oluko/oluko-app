@@ -86,6 +86,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                               child: OlukoNeumorphicPrimaryButton(
                                   isExpanded: false,
                                   title: _doneButtonText,
+                                  thinPadding: true,
                                   onPressed: () {
                                     if (widget.goToPage == UploadFrom.transformationJourney) {
                                       BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();

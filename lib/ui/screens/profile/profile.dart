@@ -9,6 +9,7 @@ import 'package:oluko_app/helpers/profile_options.dart';
 import 'package:oluko_app/helpers/profile_routes.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -33,8 +34,12 @@ class _ProfilePageState extends State<ProfilePage> {
   UserResponse profileInfo;
   UserStatistics userStats;
   final String profileTitle = ProfileViewConstants.profileTitle;
+  GlobalService _globalService = GlobalService();
+
   @override
   Widget build(BuildContext context) {
+    _globalService.comesFromCoach = false;
+
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         profileInfo = state.user;
