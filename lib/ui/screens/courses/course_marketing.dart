@@ -412,7 +412,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildClassExpansionPanels() {
-    return ClassExpansionPanel(
+    return ClassExpansionPanels(
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {

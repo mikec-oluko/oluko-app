@@ -17,12 +17,12 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 import '../screens/courses/custom_expansion_panel_list_radio.dart';
 
-class ClassExpansionPanel extends StatefulWidget {
+class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
   final List<Movement> movements;
   final Function(BuildContext, Movement) onPressedMovement;
 
-  const ClassExpansionPanel({
+  const ClassExpansionPanels({
     this.classes,
     this.onPressedMovement,
     this.movements,
@@ -32,7 +32,7 @@ class ClassExpansionPanel extends StatefulWidget {
   _State createState() => _State();
 }
 
-class _State extends State<ClassExpansionPanel> {
+class _State extends State<ClassExpansionPanels> {
   List<ClassItem> _classItems = [];
   List<Widget> _subClassItems = [];
 
@@ -91,7 +91,7 @@ class _State extends State<ClassExpansionPanel> {
 
   Widget expansionPanelNeumorphic() {
     if (_classItems.isNotEmpty) {
-      return CustomExpansionPanelListRadio(
+      return CustomExpansionPanelList.radio(
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
             // _classItems[index].expanded = isExpanded; //TODO: new
