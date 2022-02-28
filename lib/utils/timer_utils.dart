@@ -29,8 +29,9 @@ class TimerUtils {
 
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
+      SizedBox(
+        width: ScreenUtils.smallScreen(context) ? 200 : 220,
+        height: ScreenUtils.smallScreen(context) ? 200 : 220,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
