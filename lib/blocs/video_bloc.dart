@@ -235,6 +235,7 @@ class VideoBloc extends Cubit<VideoState> {
     final videoPath = videoFile.path;
     // final info = await EncodingProvider.getMediaInformation(videoPath);
     VideoPlayerController controller = new VideoPlayerController.file(videoFile);
+    await controller.initialize();
     double durationInSeconds = controller.value.duration.inSeconds.toDouble(); //EncodingProvider.getDuration(info.getMediaProperties());
     int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
     video.duration = durationInMilliseconds;
