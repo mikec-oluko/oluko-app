@@ -18,6 +18,7 @@ import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
@@ -58,6 +59,7 @@ class AuthBloc extends Cubit<AuthState> {
 
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
+  GlobalService _globalService = GlobalService();
 
   Color snackBarBackgroud = const Color.fromRGBO(248, 248, 248, 1);
 
@@ -249,6 +251,8 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> logout(BuildContext context) async {
+    _globalService.videoProcessing = false;
+
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
       BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();

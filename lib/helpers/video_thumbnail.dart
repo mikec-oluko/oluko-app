@@ -23,22 +23,25 @@ class ThumbnailResult {
   final int dataSize;
   final int height;
   final int width;
-  const ThumbnailResult({this.image, this.dataSize, this.height, this.width});
+  final String path;
+  const ThumbnailResult({this.image, this.dataSize, this.height, this.width, this.path});
 }
 
 Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
   //WidgetsFlutterBinding.ensureInitialized();
   Uint8List bytes;
   final Completer<ThumbnailResult> completer = Completer();
+  String thumbnailPath;
   if (r.thumbnailPath != null) {
-    final thumbnailPath = await VideoThumbnail.thumbnailFile(
-        video: r.video,
-        thumbnailPath: r.thumbnailPath,
-        imageFormat: r.imageFormat,
-        maxHeight: r.maxHeight,
-        maxWidth: r.maxWidth,
-        timeMs: r.timeMs,
-        quality: r.quality);
+    thumbnailPath = await VideoThumbnail.thumbnailFile(
+      video: r.video,
+      thumbnailPath: r.thumbnailPath,
+      imageFormat: ImageFormat.JPEG,
+      // maxHeight: r.maxHeight,
+      // maxWidth: r.maxWidth,
+      // timeMs: r.timeMs,
+      // quality: r.quality
+    );
 
     if (kDebugMode) {
       print('thumbnail file is located: $thumbnailPath');
@@ -63,6 +66,7 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
       dataSize: _imageDataSize,
       height: info.image.height,
       width: info.image.width,
+      path: thumbnailPath,
     ));
   }));
   return completer.future;

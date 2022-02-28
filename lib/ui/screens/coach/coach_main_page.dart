@@ -9,6 +9,7 @@ import 'package:oluko_app/helpers/coach_assignment_status.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'coach_no_assigned_timer_page.dart';
@@ -25,6 +26,7 @@ class CoachMainPage extends StatefulWidget {
 class _CoachMainPageState extends State<CoachMainPage> {
   UserResponse _currentUser;
   CoachAssignment _coachAssignment;
+  GlobalService _globalService = GlobalService();
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
 
   @override
   Widget build(BuildContext context) {
+    _globalService.comesFromCoach = true;
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccess) {

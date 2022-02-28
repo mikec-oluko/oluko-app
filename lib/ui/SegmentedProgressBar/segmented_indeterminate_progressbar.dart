@@ -84,7 +84,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
             selectedColor: OlukoColors.primary,
             unselectedColor: Colors.transparent,
             width: 100,
-            selectedStepSize: 20,
+            selectedStepSize: 10,
             unselectedStepSize: 20,
             currentStep: progress.toInt(),
             child: Padding(
