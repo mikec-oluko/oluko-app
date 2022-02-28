@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_user.dart';
@@ -77,8 +78,14 @@ class _CoachAppBarState extends State<CoachAppBar> {
                   child: Row(
                     children: [
                       goToCoachProfile(context),
-                      SizedBox(width: 5),
-                      widget.coachUser != null && widget.coachUser.avatarThumbnail != null ? coachAvatarImage() : coachDefaultAvatar(),
+                      SizedBox(width: 10),
+                      widget.coachUser != null && widget.coachUser.avatarThumbnail != null
+                          ? OlukoNeumorphism.isNeumorphismDesign
+                              ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
+                              : coachAvatarImage()
+                          : OlukoNeumorphism.isNeumorphismDesign
+                              ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
+                              : coachDefaultAvatar(),
                     ],
                   ),
                 )
@@ -136,7 +143,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
             widget.coachUser != null
                 ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
                 : defaultCoachPic,
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, custoFontWeight: FontWeight.w500)),
       ),
     ]);
   }

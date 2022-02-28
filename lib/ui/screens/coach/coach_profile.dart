@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/coach_information_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -13,6 +16,7 @@ import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachProfile extends StatefulWidget {
   final CoachUser coachUser;
@@ -106,8 +110,8 @@ class _CoachProfileState extends State<CoachProfile> {
           video: widget.coachUser.bannerVideo,
           showBackButton: true,
           onBackPressed: () => Navigator.pop(context),
-          onPlay: () => false,
-          videoVisibilty: true,
+          onPlay: () => isVideoPlaying(),
+          videoVisibilty: _isVideoPlaying,
           bannerVideo: true,
         ));
   }
@@ -116,103 +120,149 @@ class _CoachProfileState extends State<CoachProfile> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-          //VIDEO LIKE COVER IMAGE
           width: MediaQuery.of(context).size.width,
-          height: 100,
-          child: Container(
-            height: 100,
-            width: MediaQuery.of(context).size.width,
-            // color: Colors.blue,
-            child: Column(
-              children: [
-                Column(
+          height: ScreenUtils.height(context) / 2.5,
+          // color: Colors.red,
+          child: Stack(
+            children: [
+              //TODO: CHECK NEUMORPHIC, CHECK EMPTY FOR SIZE, ADD STYLE TO AUDIO
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: ScreenUtils.height(context) / 3.5,
+                child: ListView(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 50,
+                    audioSentComponent(context),
+                    audioSentComponent(context),
+                    audioSentComponent(context),
+                  ],
+                ),
+              ),
+              Align(alignment: Alignment.bottomCenter, child: askCoachMicComponent())
+            ],
+          )),
+    );
+  }
+
+  Widget askCoachMicComponent() {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            ),
+            width: ScreenUtils.width(context),
+            height: 100,
+            child: askCoachMicContent())
+        : askCoachMicContent();
+  }
+
+  Padding askCoachMicContent() {
+    final askCoachText = Text(
+      "Ask your coach",
+      style: OlukoFonts.olukoMediumFont(
+          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
+          custoFontWeight: FontWeight.w500),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          OlukoNeumorphism.isNeumorphismDesign
+              ? Expanded(
+                  child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                      ),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Visibility(
-                              visible: false,
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/assessment/play.png',
-                                          scale: 5,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                                          child: Image.asset(
-                                            'assets/courses/coach_audio.png',
-                                            width: 150,
-                                            fit: BoxFit.fill,
-                                            scale: 5,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    VerticalDivider(color: OlukoColors.grayColor),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Image.asset(
-                                            'assets/courses/coach_delete.png',
-                                            scale: 5,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Image.asset(
-                                            'assets/courses/coach_tick.png',
-                                            scale: 5,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                            padding: const EdgeInsets.only(left: 20),
+                            child: askCoachText,
+                          ))))
+              : askCoachText,
+          SizedBox(
+            width: 20,
+          ),
+          Container(
+            clipBehavior: Clip.none,
+            width: 40,
+            height: 40,
+            child: OlukoNeumorphism.isNeumorphismDesign
+                ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(), child: microphoneIconButtonContent())
+                : microphoneIconButtonContent(),
+          )
+        ],
+      ),
+    );
+  }
+
+  TextButton microphoneIconButtonContent() {
+    return TextButton(
+        onPressed: () {},
+        child: Icon(
+          Icons.mic_rounded,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
+        ));
+  }
+
+  Container audioSentComponent(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Visibility(
+          visible: true,
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Image.asset(
+                      'assets/assessment/play.png',
+                      scale: 5,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Ask your coach",
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                          ),
-                          Container(
-                            clipBehavior: Clip.none,
-                            width: 40,
-                            height: 40,
-                            child: TextButton(
-                                onPressed: () {},
-                                child: Icon(
-                                  Icons.mic_rounded,
-                                  color: OlukoColors.primary,
-                                )),
-                          )
-                        ],
+                      child: Image.asset(
+                        'assets/courses/coach_audio.png',
+                        width: 150,
+                        fit: BoxFit.fill,
+                        scale: 5,
                       ),
-                    )
+                    ),
                   ],
+                ),
+                VerticalDivider(color: OlukoColors.grayColor),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        'assets/courses/coach_delete.png',
+                        scale: 5,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Image.asset(
+                        'assets/courses/coach_tick.png',
+                        scale: 5,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -233,12 +283,14 @@ class _CoachProfileState extends State<CoachProfile> {
                 width: MediaQuery.of(context).size.width,
                 height: 300,
                 child: CarouselSmallSection(
+                  userToGetData: widget.coachUser as UserResponse,
+                  routeToGo: RouteEnum.aboutCoach,
                   title: '',
                   children: coachUploadedContent
                       .map((mediaContent) => Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ImageAndVideoContainer(
-                                backgroundImage: null,
+                                backgroundImage: mediaContent.video.thumbUrl,
                                 isContentVideo: true,
                                 videoUrl: mediaContent.video.url,
                                 displayOnViewNamed: ActualProfileRoute.transformationJourney,
@@ -275,5 +327,11 @@ class _CoachProfileState extends State<CoachProfile> {
     return CoachInformationComponent(
       coachUser: widget.coachUser,
     );
+  }
+
+  void isVideoPlaying() {
+    return setState(() {
+      _isVideoPlaying = !_isVideoPlaying;
+    });
   }
 }

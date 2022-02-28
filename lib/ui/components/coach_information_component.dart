@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -38,14 +40,21 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
       top: MediaQuery.of(context).size.height / 4,
       child: Container(
           width: MediaQuery.of(context).size.width,
-          height: 100,
+          height: 110,
           child: Container(
             width: MediaQuery.of(context).size.width,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Container(
-                decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
-                child: coachInformationContent(context),
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    decoration: OlukoNeumorphism.isNeumorphismDesign
+                        ? BoxDecoration(color: Colors.white.withOpacity(0.01), borderRadius: BorderRadius.all(Radius.circular(10.0)))
+                        : UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
+                    child: coachInformationContent(context),
+                  ),
+                ),
               ),
             ),
           )),
@@ -60,33 +69,15 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: widget.coachUser.coverImage == null
+              child: widget.coachUser.avatarThumbnail == null
                   ? Stack(children: [
-                      CircleAvatar(
-                        backgroundColor: widget.coachUser != null
-                            ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName)
-                            : OlukoColors.black,
-                        radius: 24.0,
-                        child: Text(
-                            widget.coachUser != null
-                                ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
-                                : defaultCoachPic,
-                            style: OlukoFonts.olukoBigFont(
-                                customColor: OlukoNeumorphismColors.appBackgroundColor, custoFontWeight: FontWeight.w500)),
-                      ),
+                      OlukoNeumorphism.isNeumorphismDesign
+                          ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: avatarName())
+                          : avatarName(),
                     ])
-                  : CircleAvatar(
-                      backgroundColor: OlukoColors.black,
-                      backgroundImage: Image(
-                        image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
-                        fit: BoxFit.contain,
-                        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
-                        height: 30,
-                        width: 30,
-                      ).image,
-                      radius: 30.0,
-                    ),
+                  : OlukoNeumorphism.isNeumorphismDesign
+                      ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: avatarName())
+                      : avatarImage(),
             ),
           ],
         ),
@@ -133,6 +124,34 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
           ],
         )
       ],
+    );
+  }
+
+  CircleAvatar avatarImage() {
+    return CircleAvatar(
+      backgroundColor: OlukoColors.black,
+      backgroundImage: Image(
+        image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
+        fit: BoxFit.contain,
+        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
+        height: 30,
+        width: 30,
+      ).image,
+      radius: 30.0,
+    );
+  }
+
+  CircleAvatar avatarName() {
+    return CircleAvatar(
+      backgroundColor:
+          widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
+      radius: 24.0,
+      child: Text(
+          widget.coachUser != null
+              ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
+              : defaultCoachPic,
+          style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, custoFontWeight: FontWeight.w500)),
     );
   }
 

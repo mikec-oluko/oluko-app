@@ -229,7 +229,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
           )
         : widget.randomImages == null
             ? Image.asset(
-                'assets/courses/profile_photos.png',
+                widget.bannerVideo ? 'assets/home/mvtthumbnail.png' : 'assets/courses/profile_photos.png',
                 fit: BoxFit.cover,
               )
             : Image(

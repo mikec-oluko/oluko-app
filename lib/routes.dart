@@ -86,6 +86,7 @@ import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/coach/about_coach_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_profile.dart';
 import 'package:oluko_app/ui/screens/coach/coach_recommended_content_list.dart';
@@ -210,7 +211,8 @@ enum RouteEnum {
   userChallengeDetail,
   homeLongPress,
   assessmentNeumorphicDone,
-  coachRecommendedContentGallery
+  coachRecommendedContentGallery,
+  aboutCoach
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -268,7 +270,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.userChallengeDetail: '/user-challenge-detail',
   RouteEnum.homeLongPress: 'home_long_press',
   RouteEnum.assessmentNeumorphicDone: '/assessment_neumorphic_done',
-  RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery'
+  RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery',
+  RouteEnum.aboutCoach: '/coach-about-coach-view'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -1018,6 +1021,14 @@ class Routes {
           recommendedContent: argumentsToAdd['recommendedContent'] as List<CoachRecommendationDefault>,
           titleForAppBar: argumentsToAdd['titleForAppBar'] as String,
         );
+        break;
+      case RouteEnum.aboutCoach:
+        providers = [
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+        ];
+        // final Map<String, CoachUser> argumentsToAdd = arguments as Map<String, CoachUser>;
+        // coachUser: argumentsToAdd['coachUser']
+        newRouteView = AboutCoachPage();
         break;
       default:
         newRouteView = MainPage();

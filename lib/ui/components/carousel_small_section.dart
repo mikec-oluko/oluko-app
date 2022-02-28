@@ -88,6 +88,9 @@ class _State extends State<CarouselSmallSection> {
       case RouteEnum.profileAssessmentVideos:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos], arguments: {'profileInfo': widget.userToGetData});
         break;
+      case RouteEnum.aboutCoach:
+        Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach], arguments: {'coachUser': widget.userToGetData});
+        break;
       case RouteEnum.profileChallenges:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges]);
         break;
