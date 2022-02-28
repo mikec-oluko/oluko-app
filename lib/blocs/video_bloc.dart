@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -68,22 +69,41 @@ class VideoBloc extends Cubit<VideoState> {
       Assessment assessment,
       TaskSubmission taskSubmission]) async {
     try {
-      Video video;
-      // if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
-      // video = await _processVideo(context, videoFile, aspectRatio, id);
-      // } else {
-      video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
-      //   video = null; //TODO: await _processVideo264Encoding(context, videoFile, aspectRatio, id);
-      // }
-      emit(
-        VideoSuccess(
-          video: video,
-          segmentSubmission: segmentSubmission,
-          taskSubmission: taskSubmission,
-          assessment: assessment,
-          assessmentAssignment: assessmentAssignment,
-        ),
-      );
+      // A Stream that handles communication between isolates
+      final p = ReceivePort();
+
+      final data = {
+        'port': p.sendPort,
+        'data': {context, videoFile, aspectRatio, id}
+      };
+
+      // you can also manage the isolate outside
+      // isolate.kill / pause / addListener.. .
+      final isolate = await Isolate.spawn(_processVideoOnBackground, data);
+
+      // you can get only the first element like this
+      final String message = await p.first as String;
+      if (message == 'success') {
+// you can get only the first element like this
+        final Video video = await p.elementAt(1) as Video;
+        // if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
+        // video = await _processVideo(context, videoFile, aspectRatio, id);
+        // } else {
+        // video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
+        //   video = null; //TODO: await _processVideo264Encoding(context, videoFile, aspectRatio, id);
+        // }
+        emit(
+          VideoSuccess(
+            video: video,
+            segmentSubmission: segmentSubmission,
+            taskSubmission: taskSubmission,
+            assessment: assessment,
+            assessmentAssignment: assessmentAssignment,
+          ),
+        );
+      } else {
+        emit(VideoFailure());
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -92,6 +112,25 @@ class VideoBloc extends Cubit<VideoState> {
       emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission));
       rethrow;
     }
+  }
+
+  Future<void> _processVideoOnBackground(Map<String, dynamic> map) async {
+    final SendPort port = map['port'] as SendPort;
+    final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
+    var video;
+    try {
+      // Heavy computing process
+      video = await _processVideoWithoutEncoding(
+          data['context'] as BuildContext, data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String);
+      ;
+
+      port.send('success');
+      port.send(video);
+    } catch (e) {
+      port.send('failure');
+      rethrow;
+    }
+    Isolate.exit(port, video);
   }
 
   Future<Video> _processVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
