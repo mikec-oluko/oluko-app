@@ -74,7 +74,7 @@ class VideoBloc extends Cubit<VideoState> {
 
       final data = {
         'port': p.sendPort,
-        'data': {context, videoFile, aspectRatio, id}
+        'data': {'context': context.toString(), 'videoFile': videoFile.toString(), 'aspectRatio': aspectRatio.toString(), 'id': id}
       };
 
       // you can also manage the isolate outside

@@ -15,8 +15,6 @@ import 'package:oluko_app/ui/newDesignComponents/class_section_expansion_panel.d
 import 'package:oluko_app/ui/screens/courses/custom_expansion_panel_list.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
-import '../screens/courses/custom_expansion_panel_list_radio.dart';
-
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
   final List<Movement> movements;

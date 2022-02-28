@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:isolate';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +15,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config/project_settings.dart';
+import 'services/video_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,29 +91,47 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: '${OLUKO}',
-          theme: ThemeData(
-            canvasColor: Colors.transparent,
-            primarySwatch: Colors.grey,
-          ),
-          initialRoute: widget.initialRoute,
-          onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-          localizationsDelegates: [
-            const OlukoLocalizationsDelegate(),
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: [
-            const Locale('en', ''),
-            const Locale('es', ''),
-          ],
-        );
+      debugShowCheckedModeBanner: false,
+      title: '${OLUKO}',
+      theme: ThemeData(
+        canvasColor: Colors.transparent,
+        primarySwatch: Colors.grey,
+      ),
+      initialRoute: widget.initialRoute,
+      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+      localizationsDelegates: [
+        const OlukoLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale('es', ''),
+      ],
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
   }
+}
+
+Future<void> _processVideoOnBackground(Map<String, dynamic> map) async {
+  final SendPort port = map['port'] as SendPort;
+  final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
+  var video;
+  try {
+    // Heavy computing process
+    video = await VideoService.processVideoWithoutEncoding(
+        data['context'] as BuildContext, data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String);
+
+    port.send('success');
+    port.send(video);
+  } catch (e) {
+    port.send('failure');
+    rethrow;
+  }
+  Isolate.exit(port, video);
 }
