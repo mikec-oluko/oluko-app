@@ -87,25 +87,25 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: '${OLUKO}',
-          theme: ThemeData(
-            canvasColor: Colors.transparent,
-            primarySwatch: Colors.grey,
-          ),
-          initialRoute: widget.initialRoute,
-          onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-          localizationsDelegates: [
-            const OlukoLocalizationsDelegate(),
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: [
-            const Locale('en', ''),
-            const Locale('es', ''),
-          ],
-        );
+      debugShowCheckedModeBanner: false,
+      title: '${OLUKO}',
+      theme: ThemeData(
+        canvasColor: Colors.transparent,
+        primarySwatch: Colors.grey,
+      ),
+      initialRoute: widget.initialRoute,
+      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+      localizationsDelegates: [
+        const OlukoLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale('es', ''),
+      ],
+    );
   }
 
   @override
