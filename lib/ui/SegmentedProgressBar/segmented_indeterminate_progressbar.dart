@@ -50,7 +50,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
               padding: math.pi / 15,
               totalSteps: max.toInt(),
               width: 100,
-              selectedStepSize: 20,
+              selectedStepSize: 10,
               unselectedStepSize: 20,
               gradientColor: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
                 OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
