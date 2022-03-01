@@ -634,8 +634,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     ),
                     child: ScreenUtils.height(context) < 700
                         ? SizedBox(
-                            height: isWorkStateFinished() ? 215 : 250,
-                            width: isWorkStateFinished() ? 215 : 250,
+                            height: isWorkStateFinished() ? 205 : 270,
+                            width: isWorkStateFinished() ? 205 : 270,
                             child: Stack(alignment: Alignment.center, children: [
                               if (usePulseAnimation()) roundTimerWithPulse(keyboardVisibilty) else getRoundsTimer(keyboardVisibilty),
                               _countdownSection(),
@@ -684,7 +684,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return AvatarGlow(
       glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
       endRadius: 190,
-      child: getRoundsTimer(keyboardVisibilty),
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtils.smallScreen(context) ? 20 : 0),
+        child: getRoundsTimer(keyboardVisibilty),
+      ),
     );
   }
   //TODO: QUITAR ANIMACION  Y CIRCULAR

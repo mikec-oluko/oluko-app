@@ -200,7 +200,7 @@ class TimerUtils {
                       Text(OlukoLocalizations.get(context, 'completed'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
@@ -284,8 +284,8 @@ class TimerUtils {
             scale: ellipseScale,
           ),*/
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 220,
-        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        width: ScreenUtils.smallScreen(context) ? 170 : 220,
+        height: ScreenUtils.smallScreen(context) ? 170 : 220,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
