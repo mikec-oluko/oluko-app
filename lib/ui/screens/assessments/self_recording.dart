@@ -438,7 +438,7 @@ class _State extends State<SelfRecording> {
                     onTap: () {
                       BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                     },
-                    child: imageWrapper(),
+                    child: _recording ? SizedBox() : imageWrapper(),
                   )),
             ],
           ),
