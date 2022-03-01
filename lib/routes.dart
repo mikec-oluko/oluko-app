@@ -655,7 +655,8 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
+          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
+          BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(

@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
@@ -200,7 +201,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           },
                           child:*/
                             BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
-                          listener: (context, state) {
+                          listener: (context, state) async {
                             if (state is CreateSuccess) {
                               if (_segmentSubmission == null) {
                                 _segmentSubmission = state.segmentSubmission;
@@ -211,7 +212,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                   _segmentSubmission.id,
                                   _segmentSubmission,
                                 );
+
                                 _globalService.videoProcessing = true;
+                                await createNewPRChallengeStory(context, state);
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
@@ -243,6 +246,26 @@ class _SegmentClocksState extends State<SegmentClocks> {
     );
   }
 
+  Future<void> createNewPRChallengeStory(BuildContext context, CreateSuccess state) async {
+    if (segmentIsChallenge()) {
+      final int result = totalScore ?? 0;
+      final bool isNewPersonalRecord =
+          await BlocProvider.of<ChallengeSegmentBloc>(context).isNewPersonalRecord(state.segmentSubmission.segmentId, _user.uid, result);
+      if (isNewPersonalRecord) {
+        final String segmentTitle = '${widget.segments[widget.segmentIndex].name} ${OlukoLocalizations.get(context, 'challenge')}';
+        BlocProvider.of<storyBloc.StoryBloc>(context).createChallengeStory(
+          widget.segments[widget.segmentIndex],
+          _user.uid,
+          segmentTitle,
+          result.toString(),
+          context,
+        );
+      }
+    }
+  }
+
+  bool segmentIsChallenge() => widget.segments[widget.segmentIndex].isChallenge;
+
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
     for (var i = 0; i < coachRequests.length; i++) {
       if (coachRequests[i].segmentId == segmentId) {
@@ -254,12 +277,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
     String segmentTitle = widget.segments[widget.segmentIndex].name ?? '';
-    if (widget.segments[widget.segmentIndex].isChallenge) {
+    if (segmentIsChallenge()) {
       segmentTitle += ' ${OlukoLocalizations.get(context, 'challenge')}';
     }
-    const result = 'this is a result';
-    const description = 'this is a description';
-    BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission, segmentTitle, result, description);
+    final int result = totalScore ?? 0;
+    final segment = widget.segments[widget.segmentIndex];
+    BlocProvider.of<storyBloc.StoryBloc>(context).createStoryWithVideo(segmentSubmission, segmentTitle, result.toString(), segment, context);
     AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
   }
 
@@ -911,9 +934,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget getTextField(bool keyboardVisibilty) {
-    CounterEnum currentCounter = timerEntries[timerTaskIndex - 1].counter;
+    final CounterEnum currentCounter = timerEntries[timerTaskIndex - 1].counter;
     final bool isCounterByReps = currentCounter == CounterEnum.reps;
-    List<String> counterTxt = counterText(currentCounter);
+    final List<String> counterTxt = counterText(currentCounter);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -978,7 +1001,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   List<String> counterText(CounterEnum counter) {
-    List<String> counterText = [];
+    final List<String> counterText = [];
     switch (counter) {
       case CounterEnum.reps:
         counterText.add(OlukoLocalizations.get(context, 'enterScore'));
@@ -1444,7 +1467,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         (timerTaskIndex == timerEntries.length - 1 ||
             timerEntries[timerTaskIndex].sectionIndex < timerEntries[timerTaskIndex + 1].sectionIndex ||
             timerEntries[timerTaskIndex].round < timerEntries[timerTaskIndex + 1].round)) {
-      int currentDuration = stopwatchDuration.inSeconds;
+      final int currentDuration = stopwatchDuration.inSeconds;
       print("STOPWATCH: " + currentDuration.toString());
       _stopAndResetStopwatch();
       print("STOPWATCH POST RESET: " + stopwatchDuration.inSeconds.toString());
@@ -1534,7 +1557,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   setAlert() {
     _roundAlert = null;
-    List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
+    final List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
     if (alerts != null && !alerts.isEmpty) {
       Alert alert;
       if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
@@ -1760,10 +1783,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         width: ScreenUtils.width(context),
                         child: ListView(
                           padding: EdgeInsets.zero,
-                          children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor),
+                          children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                              .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                              ?.toList(),
                         )),
                   )
-                : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
+                : Column(
+                    children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                        .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                        ?.toList(),
+                  ),
           widget.workoutType == WorkoutType.segment || shareDone
               ? FeedbackCard()
               : ShareCard(createStory: _createStory, whistleAction: whistleAction),
@@ -1804,7 +1833,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   List<Widget> getScoresByRound() {
-    List<String> lbls =
+    final List<String> lbls =
         counterText(timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter);
     final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     final List<Widget> widgets = [];

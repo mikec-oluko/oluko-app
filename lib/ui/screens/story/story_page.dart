@@ -193,7 +193,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 left: 0,
                 child: Column(
                   children: [
-                    if (widget.stories[_currentIndex].result != null)
+                    if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Text(
@@ -205,7 +205,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                           ),
                         ),
                       ),
-                    if (widget.stories[_currentIndex].segmentTitle != null)
+                    if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Text(
@@ -217,11 +217,12 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                           ),
                         ),
                       ),
-                    if (widget.stories[_currentIndex].description != null)
+                    if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.only(bottom: 20, left: 25, right: 25),
                         child: Text(
                           widget.stories[_currentIndex].description,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 12.0,

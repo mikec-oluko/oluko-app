@@ -16,20 +16,37 @@ import 'oluko_localizations.dart';
 
 class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
-    List<Widget> workoutWidgets = getWorkouts(segment, color);
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets
-        : [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    List<String> workoutWidgets = getWorkouts(segment);
+    return <Widget>[
+          Text(
+            getRoundTitle(segment, context),
+            style: OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
+                : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 12.0)
+        ] +
+        workoutWidgets.map((e) => getTextWidget(e, color))?.toList();
   }
 
   static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
       {bool roundTitle = true, bool restTime = true, List<Movement> movements = const [], bool viewDetailsScreen = false}) {
     List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
         restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
-    if (roundTitle)
-      return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
-    else
+    if (roundTitle) {
+      return [
+            Text(
+              getRoundTitle(segment, context),
+              style: OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12.0)
+          ] +
+          workoutWidgets;
+    } else {
       return workoutWidgets;
+    }
   }
 
   static bool isEMOM(Segment segment) {
@@ -40,51 +57,27 @@ class SegmentUtils {
     return segment.type == SegmentTypeEnum.Duration;
   }
 
-  static Widget getRoundTitle(Segment segment, BuildContext context, Color color) {
+  static String getRoundTitle(Segment segment, BuildContext context) {
     if (isEMOM(segment)) {
-      return getEMOMTitle(segment, context, color);
+      return getEMOMTitle(segment, context);
     } else if (isAMRAP(segment)) {
-      return Text(
-        segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-        style: OlukoNeumorphism.isNeumorphismDesign
-            ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-            : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-      );
+      return '${segment.totalTime} ${OlukoLocalizations.get(context, 'seconds').toLowerCase()} AMRAP';
     } else {
-      return segment.rounds > 1
-          ? Text(
-              segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-            )
-          : SizedBox();
+      return segment.rounds > 1 ? '${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')}' : '';
     }
   }
 
-  static Widget getEMOMTitle(Segment segment, BuildContext context, Color color) {
-    return Text(
-      "EMOM: " +
-          segment.rounds.toString() +
-          " " +
-          OlukoLocalizations.get(context, 'rounds') +
-          " " +
-          OlukoLocalizations.get(context, 'in') +
-          " " +
-          (segment.totalTime).toString() +
-          " " +
-          OlukoLocalizations.get(context, 'seconds'),
-      style: OlukoNeumorphism.isNeumorphismDesign
-          ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-          : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-    );
+  static String getEMOMTitle(Segment segment, BuildContext context) {
+    return 'EMOM: ${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${segment.totalTime} ${OlukoLocalizations.get(context, 'seconds')}';
   }
 
-  static List<Widget> getWorkouts(Segment segment, Color color) {
-    List<Widget> workouts = [];
+  static List<String> getWorkouts(Segment segment) {
+    List<String> workouts = [];
     if (segment.sections != null) {
       for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
         for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
           MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
-          workouts.add(getTextWidget(getLabel(movement), color));
+          workouts.add(getLabel(movement));
         }
       }
     }
@@ -106,7 +99,7 @@ class SegmentUtils {
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != "Rest time" && movement.name != "Rest") {
+          else if (movement.name != 'Rest time' && movement.name != 'Rest') {
             workouts.add(Row(
               children: [
                 MovementItemBubblesNeumorphic(
@@ -205,32 +198,32 @@ class SegmentUtils {
   }
 
   static String getLabel(MovementSubmodel movement) {
-    String label = movement.value == null ? "5" : movement.value.toString();
+    String label = movement.value == null ? '5' : movement.value.toString();
     String parameter;
     if (movement.parameter != null) {
       switch (movement.parameter) {
         case ParameterEnum.duration:
-          label += "s";
-          parameter = "s";
+          label += 's';
+          parameter = 's';
           break;
         case ParameterEnum.reps:
-          label += "x";
-          parameter = "x";
+          label += 'x';
+          parameter = 'x';
           break;
         case ParameterEnum.distance:
-          label += "m";
-          parameter = "m";
+          label += 'm';
+          parameter = 'm';
           break;
       }
     } else {
-      label += "x";
+      label += 'x';
     }
 
-    label += " " + movement.name;
+    label += ' ${movement.name}';
     if (movement.isBothSide) {
       int qty = (movement.value / 2).toInt();
-      String text = qty.toString() + parameter + " " + movement.name;
-      label += " (" + text + " / " + text + ")";
+      String text = '$qty$parameter ${movement.name}';
+      label += ' ($text / $text)';
     }
     return label;
   }
@@ -247,9 +240,8 @@ class SegmentUtils {
   static List<Widget> getJoinedLabel(List<String> labels) {
     List<Widget> labelWidgets = [];
     labels.forEach((label) {
-      labelWidgets.add(Text(label, 
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
+      labelWidgets.add(
+          Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
       labelWidgets.add(OlukoNeumorphism.isNeumorphismDesign
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
@@ -270,10 +262,18 @@ class SegmentUtils {
   }
 
   static Column workouts(Segment segment, BuildContext context, Color color) {
-    List<Widget> workoutWidgets = getWorkouts(segment, color);
+    final List<String> workoutWidgets = getWorkouts(segment);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [getRoundTitle(segment, context, OlukoColors.white)] + workoutWidgets,
+      children: <Widget>[
+            Text(
+              getRoundTitle(segment, context),
+              style: OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+            )
+          ] +
+          workoutWidgets.map((e) => getTextWidget(e, color))?.toList()
     );
   }
 }

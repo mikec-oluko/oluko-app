@@ -3,14 +3,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/models/submodels/enrollment_segment.dart';
-import 'package:oluko_app/models/submodels/event.dart';
 
 class StoryRepository {
   StoryRepository();
 
-  static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission, String segmentTitle, String result, String description) async {
+  static Future<Story> createStoryWithVideo(
+      SegmentSubmission segmentSubmission, String segmentTitle, String result, String description) async {
     final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -18,15 +18,21 @@ class StoryRepository {
         .doc(segmentSubmission.userId)
         .collection('stories')
         .doc();
-    final Story story =
-        Story(content_type: 'video', url: segmentSubmission.video.url, description: description, createdBy: segmentSubmission.userId, segmentTitle: segmentTitle, result: result);
+    final Story story = Story(
+        content_type: 'video',
+        url: segmentSubmission.video.url,
+        description: description,
+        createdBy: segmentSubmission.userId,
+        segmentTitle: segmentTitle,
+        result: result);
     story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
     return story;
   }
 
-  static Future<Story> createStoryForChallenge(EnrollmentSegment enrollmentSegment, String userId) async {
+  static Future<Story> createStoryForChallenge(
+      Segment segment, String userId, String segmentTitle, String result, String description) async {
     final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -34,8 +40,13 @@ class StoryRepository {
         .doc(userId)
         .collection('stories')
         .doc();
-    final Story story =
-        Story(content_type: 'image', url: enrollmentSegment.challengeImage, description: enrollmentSegment.name, createdBy: userId);
+    final Story story = Story(
+        content_type: 'image',
+        url: segment.challengeImage ?? segment.image,
+        description: description,
+        createdBy: userId,
+        segmentTitle: segmentTitle,
+        result: result);
     story.id = docRef.id;
     docRef.set(story.toJson());
     return story;
