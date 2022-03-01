@@ -130,6 +130,7 @@ class _CoachProfileState extends State<CoachProfile> {
                 width: MediaQuery.of(context).size.width,
                 height: ScreenUtils.height(context) / 3.5,
                 child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
                     audioSentComponent(context),
                     audioSentComponent(context),
@@ -209,7 +210,94 @@ class _CoachProfileState extends State<CoachProfile> {
         ));
   }
 
-  Container audioSentComponent(BuildContext context) {
+  Widget audioSentComponent(BuildContext context) {
+    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAudioComponent(context) : defaultAudioSent(context);
+  }
+
+  Padding neumorphicCoachAudioComponent(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      child: Neumorphic(
+        style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
+            .copyWith(boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(10)))),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 100,
+          // color: Colors.black,
+          decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: OlukoColors.black),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/assessment/play.png',
+                          scale: 3.5,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Image.asset(
+                            'assets/courses/coach_audio.png',
+                            width: 150,
+                            fit: BoxFit.fill,
+                            scale: 5,
+                            color: OlukoColors.grayColor,
+                          ),
+                        ),
+                        VerticalDivider(color: OlukoColors.grayColor),
+                        Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(),
+                    Text(
+                      '0:50',
+                      style: OlukoFonts.olukoSmallFont(
+                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
+                          custoFontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(),
+                    Row(
+                      children: [
+                        Text(
+                          '10:00AM 22jul, 2022',
+                          style: OlukoFonts.olukoSmallFont(
+                              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
+                              custoFontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(width: 10),
+                        Image.asset(
+                          'assets/courses/coach_tick.png',
+                          scale: 5,
+                          color: OlukoColors.grayColor,
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container defaultAudioSent(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 50,
