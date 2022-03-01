@@ -23,6 +23,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -212,10 +213,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                   _segmentSubmission,
                                 );
                                 _globalService.videoProcessing = true;
+                                BlocProvider.of<CoachRequestStreamBloc>(context)
+                                    .resolve(_coachRequest, _user.uid, RequestStatusEnum.ignored);
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
-                              BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
+                              BlocProvider.of<CoachRequestStreamBloc>(context)
+                                  .resolve(_coachRequest, _user.uid, RequestStatusEnum.resolved);
                               if (_wantsToCreateStory) {
                                 callBlocToCreateStory(context, state.segmentSubmission);
                               } else {
