@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
 
-class TaskSubmission extends Base {
+class TaskSubmission extends Base with EquatableMixin {
   Video video;
   DocumentReference reviewReference;
   ObjectSubmodel task;
@@ -39,19 +40,13 @@ class TaskSubmission extends Base {
 
   factory TaskSubmission.fromJson(Map<String, dynamic> json) {
     TaskSubmission taskSubmission = TaskSubmission(
-        video: json['video'] == null
-            ? null
-            : Video.fromJson(json['video'] as Map<String, dynamic>),
+        video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
         reviewReference: json['review_reference'] as DocumentReference,
-        task: json['task'] == null
-            ? null
-            : ObjectSubmodel.fromJson(json['task'] as Map<String, dynamic>),
+        task: json['task'] == null ? null : ObjectSubmodel.fromJson(json['task'] as Map<String, dynamic>),
         isPublic: json['is_public'] == null ? false : json['is_public'] as bool,
         coachId: json['coach_id']?.toString(),
         coachReference: json['coach_reference'] as DocumentReference,
-        videoState: json['video_state'] == null
-            ? null
-            : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
+        videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
     taskSubmission.setBase(json);
     return taskSubmission;
   }
@@ -69,4 +64,22 @@ class TaskSubmission extends Base {
     taskSubmissionJson.addEntries(super.toJson().entries);
     return taskSubmissionJson;
   }
+
+  @override
+  List<Object> get props => [
+        video,
+        reviewReference,
+        task,
+        isPublic,
+        videoState,
+        coachId,
+        coachReference,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden
+      ];
 }

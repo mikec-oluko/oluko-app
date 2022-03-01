@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
@@ -81,9 +83,9 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     }
   }
 
-  void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, Task task) async {
+  void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, String taskId) async {
     try {
-      TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, task);
+      TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, taskId);
       if (taskSubmission == null || taskSubmission.video == null || taskSubmission.video.url == null) {
         taskSubmission = null;
       }
