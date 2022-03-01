@@ -123,7 +123,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           children: [
             Stack(
               children: [
-                imageSection(),
+                SizedBox(
+                  height: ScreenUtils.height(context) / 1.3,
+                  child: imageSection(),
+                ),
                 if (widget.segment.isChallenge) challengeButtons(),
                 //TODO: SEGMENT INFO
                 Padding(
@@ -321,9 +324,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Widget topButtons() {
+    EdgeInsetsGeometry padding;
+    if (_coachRequest != null) {
+      padding =
+          const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+    } else {
+      padding = const EdgeInsets.only(
+          top: OlukoNeumorphism.isNeumorphismDesign ? 60 : 15,
+          left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
+          right: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+    }
     return Padding(
-      padding:
-          const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
+      padding: padding,
       child: Row(
         children: [
           if (widget.showBackButton)
@@ -432,24 +444,28 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   Stack imageContainer() {
     return Stack(
+      fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
         if (OlukoNeumorphism.isNeumorphismDesign)
           SizedBox(
-            height: MediaQuery.of(context).size.height / 1.3,
-            child: imageAspecRatio(),
+            height: MediaQuery.of(context).size.height / 1,
+            child: imageAspectRatio(),
           )
         else
-          imageAspecRatio(),
-        Image.asset(
-          'assets/courses/degraded.png',
-          scale: 4,
+          imageAspectRatio(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 50, 10, 0),
+          child: Image.asset(
+            'assets/courses/degraded.png',
+            fit: BoxFit.fitHeight,
+          ),
         ),
       ],
     );
   }
 
-  AspectRatio imageAspecRatio() {
+  AspectRatio imageAspectRatio() {
     return AspectRatio(
       aspectRatio: 3 / 4,
       child: () {
