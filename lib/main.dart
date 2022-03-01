@@ -121,7 +121,6 @@ class _MyAppState extends State<MyApp> {
 }
 
 Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
-  print('Started processing video on background');
   final SendPort port = map['port'] as SendPort;
   final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
   Video video;
@@ -135,6 +134,5 @@ Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
     port.send(OlukoIsolateMessage(IsolateStatusEnum.failure));
     rethrow;
   }
-  print('Finished processing video on background');
   Isolate.exit(port, video);
 }
