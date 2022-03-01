@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -118,14 +119,14 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-Future<void> _processVideoOnBackground(Map<String, dynamic> map) async {
+Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
   final SendPort port = map['port'] as SendPort;
   final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
-  var video;
+  Video video;
   try {
     // Heavy computing process
     video = await VideoService.processVideoWithoutEncoding(
-        data['context'] as BuildContext, data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String);
+        data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String, port);
 
     port.send('success');
     port.send(video);

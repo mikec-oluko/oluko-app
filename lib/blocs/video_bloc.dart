@@ -24,6 +24,8 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
 
+import '../main.dart';
+
 abstract class VideoState {}
 
 class Loading extends VideoState {}
@@ -79,7 +81,7 @@ class VideoBloc extends Cubit<VideoState> {
 
       // you can also manage the isolate outside
       // isolate.kill / pause / addListener.. .
-      final isolate = await Isolate.spawn(_processVideoOnBackground, data);
+      final isolate = await Isolate.spawn(processVideoOnBackground, data);
 
       // you can get only the first element like this
       final String message = await p.first as String;
@@ -114,24 +116,23 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  Future<void> _processVideoOnBackground(Map<String, dynamic> map) async {
-    final SendPort port = map['port'] as SendPort;
-    final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
-    var video;
-    try {
-      // Heavy computing process
-      video = await _processVideoWithoutEncoding(
-          data['context'] as BuildContext, data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String);
-      ;
+  // Future<void> _processVideoOnBackground(Map<String, dynamic> map) async {
+  //   final SendPort port = map['port'] as SendPort;
+  //   final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
+  //   var video;
+  //   try {
+  //     // Heavy computing process
+  //     video = await processVideoOnBackground(data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String);
+  //     ;
 
-      port.send('success');
-      port.send(video);
-    } catch (e) {
-      port.send('failure');
-      rethrow;
-    }
-    Isolate.exit(port, video);
-  }
+  //     port.send('success');
+  //     port.send(video);
+  //   } catch (e) {
+  //     port.send('failure');
+  //     rethrow;
+  //   }
+  //   Isolate.exit(port, video);
+  // }
 
   Future<Video> _processVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
     String videoName = id;
