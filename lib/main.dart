@@ -16,6 +16,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config/project_settings.dart';
+import 'isolate/isolate_manager.dart';
 import 'services/video_service.dart';
 
 Future<void> main() async {
@@ -120,19 +121,20 @@ class _MyAppState extends State<MyApp> {
 }
 
 Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
+  print('Started processing video on background');
   final SendPort port = map['port'] as SendPort;
   final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
   Video video;
   try {
     // Heavy computing process
-    video = await VideoService.processVideoWithoutEncoding(
-        data['videoFile'] as File, data['aspectRatio'] as double, data['id)'] as String, port);
+    video = await VideoService.processVideoWithoutEncoding(data['videoFilePath'] as String, data['aspectRatio'] as double,
+        data['id'] as String, port, data['directory'] as String, data['duration'] as int, data['thumbnailPath'] as String);
 
-    port.send('success');
-    port.send(video);
+    port.send(OlukoIsolateMessage(IsolateStatusEnum.success, video: video.toJson()));
   } catch (e) {
-    port.send('failure');
+    port.send(OlukoIsolateMessage(IsolateStatusEnum.failure));
     rethrow;
   }
+  print('Finished processing video on background');
   Isolate.exit(port, video);
 }

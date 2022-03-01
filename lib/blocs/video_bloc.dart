@@ -23,8 +23,10 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
+import '../isolate/isolate_manager.dart';
 
 import '../main.dart';
+import '../services/video_service.dart';
 
 abstract class VideoState {}
 
@@ -71,41 +73,46 @@ class VideoBloc extends Cubit<VideoState> {
       Assessment assessment,
       TaskSubmission taskSubmission]) async {
     try {
+      final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
+      final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
       // A Stream that handles communication between isolates
       final p = ReceivePort();
 
       final data = {
         'port': p.sendPort,
-        'data': {'context': context.toString(), 'videoFile': videoFile.toString(), 'aspectRatio': aspectRatio.toString(), 'id': id}
+        'data': {
+          'context': context.toString(),
+          'videoFilePath': videoFile.path,
+          'aspectRatio': aspectRatio,
+          'id': id,
+          'directory': (await getApplicationDocumentsDirectory()).path,
+          'duration': durationInMilliseconds,
+          'thumbnailPath': thumbnailFilePath,
+        }
       };
 
       // you can also manage the isolate outside
       // isolate.kill / pause / addListener.. .
       final isolate = await Isolate.spawn(processVideoOnBackground, data);
 
-      // you can get only the first element like this
-      final String message = await p.first as String;
-      if (message == 'success') {
-// you can get only the first element like this
-        final Video video = await p.elementAt(1) as Video;
-        // if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
-        // video = await _processVideo(context, videoFile, aspectRatio, id);
-        // } else {
-        // video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
-        //   video = null; //TODO: await _processVideo264Encoding(context, videoFile, aspectRatio, id);
-        // }
-        emit(
-          VideoSuccess(
-            video: video,
-            segmentSubmission: segmentSubmission,
-            taskSubmission: taskSubmission,
-            assessment: assessment,
-            assessmentAssignment: assessmentAssignment,
-          ),
-        );
-      } else {
-        emit(VideoFailure());
-      }
+      p.listen(
+        (onData) {
+          OlukoIsolateMessage isolateMessage = onData as OlukoIsolateMessage;
+          if (isolateMessage.status == IsolateStatusEnum.success) {
+            emit(
+              VideoSuccess(
+                video: Video.fromJson(isolateMessage.video),
+                segmentSubmission: segmentSubmission,
+                taskSubmission: taskSubmission,
+                assessment: assessment,
+                assessmentAssignment: assessmentAssignment,
+              ),
+            );
+          } else {
+            emit(VideoFailure());
+          }
+        },
+      );
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
