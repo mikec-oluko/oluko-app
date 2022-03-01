@@ -197,6 +197,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     //TODO: new code
 
     VideoPlayerController controller = new VideoPlayerController.file(rawVideoFile);
+    await controller.initialize();
     var controllerAspectRatio = controller.value.aspectRatio;
 
     double aspectRatio;
@@ -209,6 +210,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     }
 
     //double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+
     double durationInSeconds = controller.value.duration.inSeconds.roundToDouble();
     int durationInMilliseconds = (durationInSeconds * 1000).toInt();
 
