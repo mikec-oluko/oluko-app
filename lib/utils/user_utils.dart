@@ -21,7 +21,10 @@ class UserUtils {
               ),
               textAlign: TextAlign.center,
             )
-          : const SizedBox(),
+          : Image.asset(
+          'assets/home/mvt.png',
+          scale: 3,
+        ),
     );
   }
 
