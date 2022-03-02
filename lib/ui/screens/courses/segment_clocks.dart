@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
@@ -56,6 +57,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -204,13 +206,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                   _segmentSubmission.id,
                                   _segmentSubmission,
                                 );
+
                                 _globalService.videoProcessing = true;
+                                if(widget.segments[widget.segmentIndex].isChallenge) {
+                                  StoryUtils.createNewPRChallengeStory(context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+                                }
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
                               BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
                               if (_wantsToCreateStory) {
-                                callBlocToCreateStory(context, state.segmentSubmission);
+                                StoryUtils.callBlocToCreateStory(context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
                                 _segmentSubmission = state?.segmentSubmission;
@@ -235,9 +241,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     );
   }
 
-  Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
-    BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
-    AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
+  CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
+    for (var i = 0; i < coachRequests.length; i++) {
+      if (coachRequests[i].segmentId == segmentId) {
+        return coachRequests[i];
+      }
+    }
+    return null;
   }
 
   bool isSegmentWithRecording() {
@@ -858,7 +868,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget getTextField(bool keyboardVisibilty) {
-    CounterEnum currentCounter = timerEntries[timerTaskIndex - 1].counter;
+    final CounterEnum currentCounter = timerEntries[timerTaskIndex - 1].counter;
     final bool isCounterByReps = currentCounter == CounterEnum.reps;
     List<String> counterTxt = SegmentClocksUtils.counterText(context, currentCounter, timerEntries[timerTaskIndex - 1].movement.name);
     return Container(
@@ -1294,7 +1304,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   setAlert() {
     _roundAlert = null;
-    List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
+    final List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
     if (alerts != null && !alerts.isEmpty) {
       Alert alert;
       if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
@@ -1474,10 +1484,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         width: ScreenUtils.width(context),
                         child: ListView(
                           padding: EdgeInsets.zero,
-                          children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor),
+                          children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                              .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                              ?.toList(),
                         )),
                   )
-                : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
+                : Column(
+                    children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                        .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                        ?.toList(),
+                  ),
           widget.workoutType == WorkoutType.segment || shareDone
               ? FeedbackCard()
               : ShareCard(createStory: _createStory, whistleAction: whistleAction),
@@ -1494,13 +1510,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     _wantsToCreateStory = true;
     if (waitingForSegSubCreation) {
       if (_isVideoUploaded) {
-        callBlocToCreateStory(context, _segmentSubmission);
+        StoryUtils.callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
       }
     } else {
       if (_segmentSubmission == null) {
         createSegmentSubmission();
       } else if (_isVideoUploaded) {
-        callBlocToCreateStory(context, _segmentSubmission);
+        StoryUtils.callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
       }
     }
   }

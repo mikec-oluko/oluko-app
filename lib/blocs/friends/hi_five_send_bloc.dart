@@ -30,7 +30,7 @@ class HiFiveSendBloc extends Cubit<HiFiveSendState> {
       Message messageCreated;
       if (hiFive == true) {
         messageCreated =
-            await ChatRepository().sendHiFive(userId, targetUserId);
+            await ChatRepository.sendHiFive(userId, targetUserId);
       } else {
         await ChatRepository().removeHiFive(userId, targetUserId);
       }
