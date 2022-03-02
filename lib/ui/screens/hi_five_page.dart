@@ -24,48 +24,51 @@ class _HiFivePageState extends State<HiFivePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(),
-      backgroundColor: Colors.black,
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, authState) {
-          if (authState is AuthSuccess) {
-            _authState = authState;
-            if (_hiFiveState == null) {
-              BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
-            }
-            return BlocConsumer<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        if (authState is AuthSuccess) {
+          _authState = authState;
+          if (_hiFiveState == null) {
+            BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
+          }
+          return BlocConsumer<HiFiveBloc, HiFiveState>(
+            builder: (context, hiFiveState) {
               if (hiFiveState is HiFiveSuccess && hiFiveState.users != null && hiFiveState.users.isNotEmpty) {
                 _hiFiveState = hiFiveState;
-                return ListView(
-                  children: hiFiveState.users
-                      .map(
-                        (targetUser) => _listItem(
-                          authState.user,
-                          targetUser,
-                          hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
-                        ),
-                      )
-                      .toList(),
+                return Scaffold(
+                  appBar: _appBar(),
+                  backgroundColor: Colors.black,
+                  body: ListView(
+                    children: hiFiveState.users
+                        .map(
+                          (targetUser) => _listItem(
+                            authState.user,
+                            targetUser,
+                            hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                          ),
+                        )
+                        .toList(),
+                  ),
                 );
-              }else{
+              } else {
                 return const SizedBox();
               }
-            }, listener: (context, hiFiveState) {
+            },
+            listener: (context, hiFiveState) {
               if (hiFiveState is HiFiveSuccess) {
-                if(hiFiveState.alertMessage != null){
+                if (hiFiveState.alertMessage != null) {
                   AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
                 }
-                if(hiFiveState.users == null || hiFiveState.users.isEmpty){
+                if (hiFiveState.users == null || hiFiveState.users.isEmpty) {
                   Navigator.pop(context);
                 }
               }
-            });
-          } else {
-            return const SizedBox();
-          }
-        },
-      ),
+            },
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 
@@ -178,29 +181,37 @@ class _HiFivePageState extends State<HiFivePage> {
               BlocProvider.of<HiFiveBloc>(context)
                   .sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
             },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/profile/hiFive.png',
-                      fit: BoxFit.cover,
-                      colorBlendMode: BlendMode.lighten,
-                      height: 40,
-                      width: 40,
+            child: OlukoNeumorphism.isNeumorphismDesign
+                ? const Padding(
+                    padding: EdgeInsets.only(right: 16.0),
+                    child: Text(
+                      'Hi Five all',
+                      style: TextStyle(color: OlukoColors.primary),
                     ),
-                    const Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Text(
-                        'Hi Five all',
-                        style: TextStyle(color: OlukoColors.primary),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/profile/hiFive.png',
+                            fit: BoxFit.cover,
+                            colorBlendMode: BlendMode.lighten,
+                            height: 40,
+                            width: 40,
+                          ),
+                          const Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: Text(
+                              'Hi Five all',
+                              style: TextStyle(color: OlukoColors.primary),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                    ],
+                  ),
           ),
         )
       ],
