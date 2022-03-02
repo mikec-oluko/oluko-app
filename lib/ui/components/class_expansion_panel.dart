@@ -15,6 +15,9 @@ import 'package:oluko_app/ui/newDesignComponents/class_section_expansion_panel.d
 import 'package:oluko_app/ui/screens/courses/custom_expansion_panel_list.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
+const SCROLL_DELAY_DURATION = 200;
+const SCROLL_DURATION = 600;
+
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
   final List<Movement> movements;
@@ -94,6 +97,10 @@ class _State extends State<ClassExpansionPanels> {
           setState(() {
             // _classItems[index].expanded = isExpanded; //TODO: new
             _classItems[index].expanded = !_classItems[index].expanded;
+            if (_classItems[index].expanded) {
+              _scrollToSelectedContent(expansionTileKey: _classItems[index].globalKey);
+              //_scrollToSelectedContent(expansionTileKey: index);
+            }
           });
         },
         children: _classItems.map<ExpansionPanelRadio>((ClassItem item) {
@@ -103,6 +110,7 @@ class _State extends State<ClassExpansionPanels> {
                 OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return Padding(
+                key: item.globalKey,
                 padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(left: 15.0) : const EdgeInsets.only(),
                 child: ClassSectionExpansionPanel(
                   index: _classItems.indexOf(item),
@@ -115,6 +123,7 @@ class _State extends State<ClassExpansionPanels> {
             body: _subClassItems[_classItems.indexOf(item)],
             // isExpanded: item.expanded,
 
+            // value: _classItems[_classItems.indexOf(item)].globalKey = GlobalKey(),
             value: _classItems.indexOf(item),
           );
         }).toList(),
@@ -129,6 +138,15 @@ class _State extends State<ClassExpansionPanels> {
     }
   }
 
+  void _scrollToSelectedContent({GlobalKey expansionTileKey}) {
+    final keyContext = expansionTileKey.currentContext;
+    if (keyContext != null) {
+      Future.delayed(Duration(milliseconds: SCROLL_DELAY_DURATION)).then((value) {
+        Scrollable.ensureVisible(keyContext, duration: Duration(milliseconds: SCROLL_DURATION), alignment: 0);
+      });
+    }
+  }
+
   List<Widget> generateSubClassItems() {
     List<Widget> subClassItems = [];
     _classItems.forEach((element) {
@@ -140,7 +158,7 @@ class _State extends State<ClassExpansionPanels> {
   List<ClassItem> generateClassItems() {
     List<ClassItem> classItems = [];
     widget.classes.forEach((element) {
-      ClassItem classItem = ClassItem(classObj: element, expanded: false);
+      ClassItem classItem = ClassItem(classObj: element, expanded: false, globalKey: GlobalKey());
       classItems.add(classItem);
     });
     return classItems;
