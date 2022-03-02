@@ -8,6 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -186,7 +187,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               ),
             ),
             Positioned(
-                bottom: 50,
+                bottom: ScreenUtils.height(context) * 0.05,
                 right: 0,
                 left: 0,
                 child: Column(
