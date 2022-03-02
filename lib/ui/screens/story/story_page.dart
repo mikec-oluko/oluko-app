@@ -1,16 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
-import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
-import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryPage extends StatefulWidget {
@@ -433,13 +431,7 @@ class UserInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        CircleAvatar(
-          radius: 22.0,
-          backgroundColor: Colors.grey[300],
-          backgroundImage: Image(
-            image: CachedNetworkImageProvider(avatarThumbnail),
-          ).image,
-        ),
+        getCircularAvatar(),
         const SizedBox(width: 16.0),
         Expanded(
           child: Row(
@@ -476,5 +468,19 @@ class UserInfo extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  CircleAvatar getCircularAvatar() {
+    if (avatarThumbnail != null && avatarThumbnail != 'null') {
+      return CircleAvatar(
+        radius: 22.0,
+        backgroundColor: Colors.grey[300],
+        backgroundImage: Image(
+          image: CachedNetworkImageProvider(avatarThumbnail),
+        ).image,
+      );
+    } else {
+      return UserUtils().avatarImageDefault(maxRadius: 22, name: name);
+    }
   }
 }

@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 import '../../routes.dart';
 
@@ -199,29 +200,10 @@ class _State extends State<StoriesItem> {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: avatarImageDefault(),
+              child: UserUtils().avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname),
             )
-          : avatarImageDefault();
+          : UserUtils().avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
     }
-  }
-
-  CircleAvatar avatarImageDefault() {
-    return CircleAvatar(
-      maxRadius: widget.maxRadius ?? 30,
-      backgroundColor: widget.name == null || widget.lastname == null
-          ? OlukoColors.userColor(null, null)
-          : OlukoColors.userColor(widget.name, widget.lastname),
-      child: widget.name != null && widget.name.isNotEmpty
-          ? Text(
-              widget.name.characters?.first?.toString()?.toUpperCase() ?? '',
-              style: OlukoFonts.olukoBigFont(
-                customColor: OlukoColors.white,
-                custoFontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            )
-          : nil,
-    );
   }
 
   double getScale() {
