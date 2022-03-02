@@ -69,9 +69,8 @@ class _State<T extends Base> extends State<SearchFilters> {
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
         child: Text(
           courseName.value,
-          style: TextStyle(
-              color: selected[courseName.key.id] ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColor,
-              fontSize: 15),
+          style: OlukoFonts.olukoMediumFont(
+              customColor: selected[courseName.key.id] ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColor),
         ),
       ),
     );

@@ -591,7 +591,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                       ? TextButton(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(OlukoLocalizations.get(context, 'yes')),
+                            child: Text(
+                              OlukoLocalizations.get(context, 'yes'),
+                              style: OlukoFonts.olukoBigFont(),
+                            ),
                           ),
                           onPressed: () {
                             if (_controller != null) {

@@ -601,8 +601,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     ),
                     child: ScreenUtils.height(context) < 700
                         ? SizedBox(
-                            height: isWorkStateFinished() ? 215 : 250,
-                            width: isWorkStateFinished() ? 215 : 250,
+                            height: isWorkStateFinished() ? 205 : 270,
+                            width: isWorkStateFinished() ? 205 : 270,
                             child: Stack(alignment: Alignment.center, children: [
                               if (usePulseAnimation()) roundTimerWithPulse(keyboardVisibilty) else getRoundsTimer(keyboardVisibilty),
                               _countdownSection(),
@@ -635,7 +635,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return AvatarGlow(
       glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
       endRadius: 190,
-      child: getRoundsTimer(keyboardVisibilty),
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtils.smallScreen(context) ? 20 : 0),
+        child: getRoundsTimer(keyboardVisibilty),
+      ),
     );
   }
 
@@ -767,7 +770,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: isCounterByReps ? ScreenUtils.width(context) / 6 : ScreenUtils.width(context) / 3.0,
+                width: isCounterByReps ? ScreenUtils.width(context) / 3.7 : ScreenUtils.width(context) / 3.0,
                 child: BlocBuilder<KeyboardBloc, KeyboardState>(
                   builder: (context, state) {
                     return Scrollbar(
@@ -790,7 +793,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
                           },
                           style: const TextStyle(
-                            fontSize: 32,
+                            fontSize: 20,
                             color: OlukoColors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -803,7 +806,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             focusColor: Colors.transparent,
                             fillColor: Colors.transparent,
                             hintText: OlukoLocalizations.get(context, "enterScore"),
-                            hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 18),
+                            hintStyle: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColorSemiTransparent),
                             hintMaxLines: 1,
                             border: InputBorder.none,
                           ),
@@ -813,14 +816,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   },
                 ),
               ),
-              // const SizedBox(width: 25),
               if (isCounterByReps)
                 Text(
                   OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
                       ? OlukoLocalizations.get(context, 'reps')
                       : timerEntries[timerTaskIndex - 1].movement.name,
-                  style:
-                      const TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                  overflow: TextOverflow.ellipsis,
                 )
               else
                 textController.value != null && textController.value.text != ""
@@ -845,7 +847,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   Text(
                     'Tap here to type the score',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: OlukoColors.primary),
+                    style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.primary),
                   )
                 ],
               ),
@@ -1025,6 +1027,45 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   bool useInput() => (isCurrentMovementRest() &&
       (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps || timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance));
+
+  Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
+    return Visibility(
+      visible: !keyboardVisibilty,
+      child: Padding(
+        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
+        child: Text(currentTask,
+            textAlign: TextAlign.center,
+            style: smaller
+                ? OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)
+                : OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold)),
+      ),
+    );
+    ;
+  }
+
+  Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
+    return Visibility(
+      visible: !keyboardVisibilty,
+      child: ShaderMask(
+        shaderCallback: (rect) {
+          return const LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            nextTask,
+            textAlign: TextAlign.center,
+            style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.grayColorSemiTransparent, custoFontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
+  }
 
   bool isLastEntryOfTheRound() {
     if (timerTaskIndex == timerEntries.length - 1) {

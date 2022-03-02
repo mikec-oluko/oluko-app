@@ -226,7 +226,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
     return Text(
       UserHelper.printUsername(friendUser.username, friendUser.id) ?? '',
       overflow: TextOverflow.ellipsis,
-      style: const TextStyle(color: Colors.grey, fontSize: 10),
+      style: OlukoFonts.olukoSmallFont(customColor: Colors.grey),
       textAlign: TextAlign.center,
     );
   }
@@ -298,7 +298,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
       child: Text(
         '${user.firstName} ${user.lastName}',
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(color: Colors.white, fontSize: 13),
+        style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
         textAlign: TextAlign.center,
       ),
     );
