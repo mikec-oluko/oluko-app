@@ -37,4 +37,15 @@ class MovementSubmodel {
         'is_rest_time': isRestTime,
         'is_both_side': isBothSide,
       };
+
+  String getLabel() {
+    switch (counter) {
+      case CounterEnum.distance:
+        return 'm';
+      case CounterEnum.weight:
+        return 'lbs';
+      default:
+        return name;
+    }
+  }
 }

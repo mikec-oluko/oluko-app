@@ -4,6 +4,8 @@ import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 
@@ -118,6 +120,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     BlocProvider.of<TaskSubmissionListBloc>(context)
         .updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
     BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
+    BlocProvider.of<TaskCardBloc>(context).taskFinished(state.taskSubmission.task.id);
+    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(state.assessmentAssignment, state.taskSubmission.task.id);
     BlocProvider.of<TaskSubmissionListBloc>(context).get(state.assessmentAssignment);
   }
 
@@ -149,10 +153,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   void saveErrorState(VideoFailure state) {
-    setState(() {
-      _segmentSubmission = state.segmentSubmission;
-      _segmentSubmission.videoState.error = state.exceptionMessage;
-    });
-    BlocProvider.of<SegmentSubmissionBloc>(context).updateStateToError(_segmentSubmission);
+    if (state.segmentSubmission != null) {
+      setState(() {
+        _segmentSubmission = state.segmentSubmission;
+        _segmentSubmission.videoState.error = state.exceptionMessage;
+      });
+      BlocProvider.of<SegmentSubmissionBloc>(context).updateStateToError(_segmentSubmission);
+    }
   }
 }
