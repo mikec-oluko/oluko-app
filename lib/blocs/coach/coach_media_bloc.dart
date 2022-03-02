@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/repositories/coach_media_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CoachMediaState {}
 
@@ -39,20 +40,43 @@ class CoachMediaBloc extends Cubit<CoachMediaState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
+      emitCoachMediaDispose();
     }
   }
 
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String coachId) {
-    return subscription ??= _coachMediaRepository.getCoachUploadedMediaStream(coachId).listen((snapshot) {
-      final Set<CoachMedia> coachMediaContent = {};
+  Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStream(String coachId) async {
+    try {
+      return subscription ??= _coachMediaRepository.getCoachUploadedMediaStream(coachId).listen((snapshot) {
+        final Set<CoachMedia> coachMediaContent = {};
 
-      if (snapshot.docs.isNotEmpty) {
-        for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
-          final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
-          coachMediaContent.add(CoachMedia.fromJson(content));
+        if (snapshot.docs.isNotEmpty) {
+          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+            final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+            coachMediaContent.add(CoachMedia.fromJson(content));
+          }
         }
         emit(CoachMediaContentSuccess(coachMediaContent: coachMediaContent.toList()));
-      }
-    });
+      });
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachMediaFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitCoachMediaDispose() async {
+    try {
+      emit(CoachMediaDispose(coachMediaDisposeValue: []));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachMediaFailure(exception: exception));
+      rethrow;
+    }
   }
 }

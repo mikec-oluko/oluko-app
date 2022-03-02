@@ -290,8 +290,8 @@
     "workoutBadFeedback": "Aargh! realmente no",
     "workoutGoodFeedback": "Fue increíble",
     "errorRetrieving": "Hubo un error al recuperar",
-    "myFriends":"Mis Amigos",
-    "otherUsers":"Otros Usuarios",
+    "myFriends": "Mis Amigos",
+    "otherUsers": "Otros Usuarios",
     "recommendedMovements": "Movimiento Recomendados",
     "recommendedCourses": "Curso Recomendados",
     "timeline": " Cronología",
@@ -299,5 +299,7 @@
     "reDoCourseTitle": "¿Estás seguro de que quieres volver a hacer esta clase?",
     "reDoCourseBody": "Su progreso anterior será eliminado.",
     "welcomeVideo": "Video de bienvenida",
-    "movements": "Movimientos"
+    "movements": "Movimientos",
+    "askYourCoach": "Pregunta al entrenador",
+    "aboutCoach": "Sobre el entrenador"
 }

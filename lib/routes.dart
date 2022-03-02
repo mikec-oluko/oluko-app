@@ -421,6 +421,7 @@ class Routes {
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<NotificationBloc>.value(value: _notificationBloc),
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -492,7 +493,8 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
-          )
+          ),
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
         ];
         newRouteView = ProfilePage();
         break;
@@ -1026,9 +1028,8 @@ class Routes {
         providers = [
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
         ];
-        // final Map<String, CoachUser> argumentsToAdd = arguments as Map<String, CoachUser>;
-        // coachUser: argumentsToAdd['coachUser']
-        newRouteView = AboutCoachPage();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = AboutCoachPage(coachBannerVideo: argumentsToAdd['coachBannerVideo'] as String);
         break;
       default:
         newRouteView = MainPage();

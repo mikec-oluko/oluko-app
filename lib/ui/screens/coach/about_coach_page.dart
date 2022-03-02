@@ -3,21 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_media.dart';
-import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/carousel_small_section.dart';
-import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/coach_media_grid_gallery.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-import '../../../routes.dart';
-
 class AboutCoachPage extends StatefulWidget {
-  // final CoachUser coachUser;
-  // const AboutCoachPage({this.coachUser});
-  const AboutCoachPage();
+  final String coachBannerVideo;
+  const AboutCoachPage({this.coachBannerVideo});
 
   @override
   _AboutCoachPageState createState() => _AboutCoachPageState();
@@ -33,8 +28,7 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
       appBar: OlukoAppBar(
         showTitle: true,
         showBackButton: true,
-        title: 'About Coach',
-        actions: [],
+        title: OlukoLocalizations.get(context, 'aboutCoach'),
       ),
       body: coachMediaGalleryComponent(),
     );
@@ -54,45 +48,27 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
           return ListView(
             padding: EdgeInsets.zero,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Container(
-                  width: ScreenUtils.width(context),
-                  height: ScreenUtils.height(context) / 4,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.appBackgroundColor),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Align(child: showVideoPlayer(coachUploadedContent[1].video.url)),
-                    ],
+              if (widget.coachBannerVideo != null)
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    width: ScreenUtils.width(context),
+                    height: ScreenUtils.height(context) / 4,
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.appBackgroundColor),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      clipBehavior: Clip.none,
+                      children: [
+                        Align(child: showVideoPlayer(widget.coachBannerVideo)),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                width: ScreenUtils.width(context),
-                height: ScreenUtils.height(context),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                      ),
-                      itemCount: coachUploadedContent.length,
-                      itemBuilder: (context, index) => Card(
-                            color: Colors.transparent,
-                            child: ImageAndVideoContainer(
-                                backgroundImage: coachUploadedContent[index].video.thumbUrl,
-                                isContentVideo: true,
-                                videoUrl: coachUploadedContent[index].video.url,
-                                displayOnViewNamed: ActualProfileRoute.transformationJourney,
-                                originalContent: coachUploadedContent[index],
-                                isCoachMediaContent: true),
-                          )),
-                ),
+                )
+              else
+                const SizedBox.shrink(),
+              CoachMediaGridGallery(
+                coachMedia: coachUploadedContent,
               )
             ],
           );

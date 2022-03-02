@@ -1,35 +1,31 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
-import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/carousel_small_section.dart';
+import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
+import 'package:oluko_app/ui/components/coach_cover_image.dart';
 import 'package:oluko_app/ui/components/coach_information_component.dart';
+import 'package:oluko_app/ui/components/coach_media_carousel_gallery.dart';
+import 'package:oluko_app/ui/components/coach_media_grid_gallery.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
-import 'package:oluko_app/utils/container_grediant.dart';
-import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachProfile extends StatefulWidget {
   final CoachUser coachUser;
   const CoachProfile({this.coachUser});
-
   @override
   _CoachProfileState createState() => _CoachProfileState();
 }
 
 class _CoachProfileState extends State<CoachProfile> {
-  String _userLocation;
   String defaultCoachPic = '';
   bool _isVideoPlaying = false;
+  List<Audio> coachAudioList = [];
   List<CoachMedia> coachUploadedContent = [];
 
   @override
@@ -42,27 +38,12 @@ class _CoachProfileState extends State<CoachProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: CHECK APP BAR WHEN USE DEFAULT APP THEME, NEED APPBAR (DONE: X)
-      // extendBodyBehindAppBar: true,
-      // appBar: AppBar(
-      //   elevation: 0.0,
-      //   backgroundColor: Colors.transparent,
-      //   leading: IconButton(
-      //     icon: Icon(
-      //       Icons.arrow_back_ios,
-      //       color: Colors.white,
-      //     ),
-      //     onPressed: () {
-      //       Navigator.pop(context);
-      //     },
-      //   ),
-      // ),
       body: Container(
         color: OlukoNeumorphismColors.appBackgroundColor,
-        constraints: BoxConstraints.expand(),
+        constraints: const BoxConstraints.expand(),
         child: ListView(
           clipBehavior: Clip.none,
-          padding: EdgeInsets.all(0),
+          padding: EdgeInsets.zero,
           shrinkWrap: true,
           children: [
             Container(
@@ -71,7 +52,12 @@ class _CoachProfileState extends State<CoachProfile> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  widget.coachUser.bannerVideo != null ? coachBannerVideo(context) : coachCover(context),
+                  if (widget.coachUser.bannerVideo != null)
+                    coachBannerVideo(context)
+                  else
+                    CoachCoverImage(
+                      coachUser: widget.coachUser,
+                    ),
                   coachInformationComponent(context),
                   uploadCoverButton(context),
                   coachGallery(context),
@@ -82,22 +68,6 @@ class _CoachProfileState extends State<CoachProfile> {
           ],
         ),
       ),
-    );
-  }
-
-  Container coachCover(BuildContext context) {
-    return Container(
-      //VIDEO LIKE COVER IMAGE
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 3,
-      child: widget.coachUser.coverImage == null
-          ? SizedBox()
-          : Image(
-              image: CachedNetworkImageProvider(widget.coachUser.coverImage),
-              fit: BoxFit.cover,
-              colorBlendMode: BlendMode.colorBurn,
-              height: MediaQuery.of(context).size.height,
-            ),
     );
   }
 
@@ -125,19 +95,21 @@ class _CoachProfileState extends State<CoachProfile> {
           // color: Colors.red,
           child: Stack(
             children: [
-              //TODO: CHECK NEUMORPHIC, CHECK EMPTY FOR SIZE, ADD STYLE TO AUDIO
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: ScreenUtils.height(context) / 3.5,
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    audioSentComponent(context),
-                    audioSentComponent(context),
-                    audioSentComponent(context),
-                  ],
-                ),
-              ),
+              if (coachAudioList.isNotEmpty)
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: ScreenUtils.height(context) / 3.5,
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      audioSentComponent(context),
+                      audioSentComponent(context),
+                      audioSentComponent(context),
+                    ],
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
               Align(alignment: Alignment.bottomCenter, child: askCoachMicComponent())
             ],
           )),
@@ -147,8 +119,8 @@ class _CoachProfileState extends State<CoachProfile> {
   Widget askCoachMicComponent() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
             ),
             width: ScreenUtils.width(context),
@@ -159,7 +131,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
   Padding askCoachMicContent() {
     final askCoachText = Text(
-      "Ask your coach",
+      OlukoLocalizations.get(context, 'askYourCoach'),
       style: OlukoFonts.olukoMediumFont(
           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
           custoFontWeight: FontWeight.w500),
@@ -167,25 +139,25 @@ class _CoachProfileState extends State<CoachProfile> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          OlukoNeumorphism.isNeumorphismDesign
-              ? Expanded(
-                  child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                      ),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: askCoachText,
-                          ))))
-              : askCoachText,
-          SizedBox(
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            Expanded(
+                child: Container(
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                    ),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: askCoachText,
+                        ))))
+          else
+            askCoachText,
+          const SizedBox(
             width: 20,
           ),
           Container(
@@ -204,154 +176,14 @@ class _CoachProfileState extends State<CoachProfile> {
   TextButton microphoneIconButtonContent() {
     return TextButton(
         onPressed: () {},
-        child: Icon(
+        child: const Icon(
           Icons.mic_rounded,
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
         ));
   }
 
   Widget audioSentComponent(BuildContext context) {
-    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAudioComponent(context) : defaultAudioSent(context);
-  }
-
-  Padding neumorphicCoachAudioComponent(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: Neumorphic(
-        style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-            .copyWith(boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(10)))),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          // color: Colors.black,
-          decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: OlukoColors.black),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/assessment/play.png',
-                          scale: 3.5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Image.asset(
-                            'assets/courses/coach_audio.png',
-                            width: 150,
-                            fit: BoxFit.fill,
-                            scale: 5,
-                            color: OlukoColors.grayColor,
-                          ),
-                        ),
-                        VerticalDivider(color: OlukoColors.grayColor),
-                        Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(),
-                    Text(
-                      '0:50',
-                      style: OlukoFonts.olukoSmallFont(
-                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
-                          custoFontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(),
-                    Row(
-                      children: [
-                        Text(
-                          '10:00AM 22jul, 2022',
-                          style: OlukoFonts.olukoSmallFont(
-                              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
-                              custoFontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(width: 10),
-                        Image.asset(
-                          'assets/courses/coach_tick.png',
-                          scale: 5,
-                          color: OlukoColors.grayColor,
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container defaultAudioSent(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 50,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Visibility(
-          visible: true,
-          child: IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/assessment/play.png',
-                      scale: 5,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Image.asset(
-                        'assets/courses/coach_audio.png',
-                        width: 150,
-                        fit: BoxFit.fill,
-                        scale: 5,
-                      ),
-                    ),
-                  ],
-                ),
-                VerticalDivider(color: OlukoColors.grayColor),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Image.asset(
-                        'assets/courses/coach_delete.png',
-                        scale: 5,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Image.asset(
-                        'assets/courses/coach_tick.png',
-                        scale: 5,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    return CoachAudioSentComponent();
   }
 
   Widget coachGallery(BuildContext context) {
@@ -363,37 +195,51 @@ class _CoachProfileState extends State<CoachProfile> {
         if (state is CoachMediaContentSuccess) {
           coachUploadedContent = state.coachMediaContent;
         }
-        return Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 100),
-            child: Container(
+        return coachUploadedContent.isNotEmpty
+            ? Align(
+                child: Padding(
+                  padding: EdgeInsets.only(top: coachAudioList.isNotEmpty ? 100 : 300),
+                  child: coachAudioList.isNotEmpty
+                      ? CoachMediaCarouselGallery(
+                          coachMedia: coachUploadedContent,
+                          coachUser: widget.coachUser,
+                        )
+                      : ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                            child: Row(
+                              children: [
+                                const Expanded(child: SizedBox()),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: coachUploadedContent.isNotEmpty
+                                      ? GestureDetector(
+                                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach], arguments: {
+                                            'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null
+                                          }),
+                                          child: Text(OlukoLocalizations.get(context, 'viewAll'),
+                                              style: OlukoFonts.olukoBigFont(
+                                                  customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                                        )
+                                      : const SizedBox.shrink(),
+                                )
+                              ],
+                            ),
+                          ),
+                          CoachMediaGridGallery(
+                            coachMedia: coachUploadedContent,
+                            limitedContent: true,
+                          ),
+                        ]),
+                ),
+              )
+            : SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 300,
-                child: CarouselSmallSection(
-                  userToGetData: widget.coachUser as UserResponse,
-                  routeToGo: RouteEnum.aboutCoach,
-                  title: '',
-                  children: coachUploadedContent
-                      .map((mediaContent) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: ImageAndVideoContainer(
-                                backgroundImage: mediaContent.video.thumbUrl,
-                                isContentVideo: true,
-                                videoUrl: mediaContent.video.url,
-                                displayOnViewNamed: ActualProfileRoute.transformationJourney,
-                                originalContent: mediaContent,
-                                isCoachMediaContent: true),
-                          ))
-                      .toList(),
-                )),
-          ),
-        );
+              );
       },
     );
   }
-
-//
 
   Positioned uploadCoverButton(BuildContext context) {
     return Positioned(
@@ -402,7 +248,6 @@ class _CoachProfileState extends State<CoachProfile> {
       child: Visibility(
         visible: false,
         child: Container(
-          clipBehavior: Clip.none,
           width: 40,
           height: 40,
           child: TextButton(onPressed: () {}, child: Image.asset('assets/profile/uploadImage.png')),

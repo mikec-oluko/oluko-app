@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_user.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -72,24 +70,26 @@ class _CoachAppBarState extends State<CoachAppBar> {
           ),
         ),
         actions: [
-          showCoachProfle
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: Row(
-                    children: [
-                      goToCoachProfile(context),
-                      SizedBox(width: 10),
-                      widget.coachUser != null && widget.coachUser.avatarThumbnail != null
-                          ? OlukoNeumorphism.isNeumorphismDesign
-                              ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
-                              : coachAvatarImage()
-                          : OlukoNeumorphism.isNeumorphismDesign
-                              ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
-                              : coachDefaultAvatar(),
-                    ],
-                  ),
-                )
-              : SizedBox.shrink(),
+          if (showCoachProfle)
+            Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: Row(
+                children: [
+                  goToCoachProfile(context),
+                  const SizedBox(width: 10),
+                  if (widget.coachUser != null && widget.coachUser.avatarThumbnail != null)
+                    OlukoNeumorphism.isNeumorphismDesign
+                        ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
+                        : coachAvatarImage()
+                  else
+                    OlukoNeumorphism.isNeumorphismDesign
+                        ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
+                        : coachDefaultAvatar(),
+                ],
+              ),
+            )
+          else
+            const SizedBox.shrink(),
         ],
         elevation: 0.0,
         backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
@@ -111,11 +111,10 @@ class _CoachAppBarState extends State<CoachAppBar> {
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                     ),
             ),
-            showCoachProfle
-                ? widget.coachUser != null && widget.coachUser.avatarThumbnail != null
-                    ? coachAvatarImage()
-                    : coachDefaultAvatar()
-                : SizedBox.shrink(),
+            if (showCoachProfle)
+              widget.coachUser != null && widget.coachUser.avatarThumbnail != null ? coachAvatarImage() : coachDefaultAvatar()
+            else
+              const SizedBox.shrink(),
           ],
         )
       ],
