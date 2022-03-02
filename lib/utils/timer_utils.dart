@@ -29,8 +29,9 @@ class TimerUtils {
 
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
+      SizedBox(
+        width: ScreenUtils.smallScreen(context) ? 200 : 220,
+        height: ScreenUtils.smallScreen(context) ? 200 : 220,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -199,7 +200,7 @@ class TimerUtils {
                       Text(OlukoLocalizations.get(context, 'completed'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
@@ -283,8 +284,8 @@ class TimerUtils {
             scale: ellipseScale,
           ),*/
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 220,
-        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        width: ScreenUtils.smallScreen(context) ? 190 : 230,
+        height: ScreenUtils.smallScreen(context) ? 190 : 230,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(

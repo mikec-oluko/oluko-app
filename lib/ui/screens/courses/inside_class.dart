@@ -114,7 +114,12 @@ class _InsideClassesState extends State<InsideClass> {
               BlocProvider.of<SegmentBloc>(context).getAll(_class);
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
               BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
-              return form();
+              return WillPopScope(
+                  onWillPop: () {
+                    _buttonController.close();
+                    return Future(() => false);
+                  },
+                  child: form());
             } else {
               return OlukoCircularProgressIndicator();
             }

@@ -221,7 +221,10 @@ class _State extends State<StoriesItem> {
               ),
               textAlign: TextAlign.center,
             )
-          : nil,
+          : Image.asset(
+          'assets/home/mvt.png',
+          scale: 3,
+        ),
     );
   }
 
