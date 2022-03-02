@@ -10,7 +10,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class StoryUtils {
 
-  Future<void> createNewPRChallengeStory(BuildContext context, CreateSuccess state, int totalScore, String userId, Segment segment) async {
+  static Future<void> createNewPRChallengeStory(BuildContext context, CreateSuccess state, int totalScore, String userId, Segment segment) async {
       final int result = totalScore ?? 0;
       final bool isNewPersonalRecord =
           await BlocProvider.of<ChallengeSegmentBloc>(context).isNewPersonalRecord(state.segmentSubmission.segmentId, userId, result);
@@ -26,7 +26,7 @@ class StoryUtils {
       }
   }
 
-  Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission, int totalScore, Segment segment) async {
+  static Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission, int totalScore, Segment segment) async {
     String segmentTitle = segment.name ?? '';
     if (segment.isChallenge) {
       segmentTitle += ' ${OlukoLocalizations.get(context, 'challenge')}';

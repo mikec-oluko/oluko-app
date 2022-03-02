@@ -491,7 +491,7 @@ class UserInfo extends StatelessWidget {
         ).image,
       );
     } else {
-      return UserUtils().avatarImageDefault(maxRadius: 22, name: name, lastname: lastname);
+      return UserUtils.avatarImageDefault(maxRadius: 22, name: name, lastname: lastname);
     }
   }
 }
