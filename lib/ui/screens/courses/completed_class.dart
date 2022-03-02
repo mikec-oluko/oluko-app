@@ -8,8 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -77,6 +79,8 @@ class _CompletedClassState extends State<CompletedClass> {
                         onPressed: () {
                           BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
                               .saveSelfieInClass(widget.courseEnrollment, widget.classIndex);
+                          BlocProvider.of<TransformationJourneyBloc>(context)
+                              .createTransformationJourneyUpload(FileTypeEnum.image, _image, widget.courseEnrollment.userId, null);
                           if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
                             Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                               'index': widget.courseIndex,

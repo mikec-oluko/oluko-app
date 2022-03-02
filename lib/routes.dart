@@ -443,7 +443,10 @@ class Routes {
         newRouteView = SignUpNeumorphicPage();
         break;
       case RouteEnum.completedClass:
-        providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
+        providers = [
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
