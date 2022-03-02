@@ -124,7 +124,6 @@ class _State extends State<StoriesItem> {
                       widget.currentUserId != null &&
                       widget.itemUserId != null &&
                       widget.name != null &&
-                      widget.imageUrl != null &&
                       GlobalConfiguration().getValue('showStories') == 'true')
                     GestureDetector(
                         child: getCircularAvatar(),
@@ -183,7 +182,7 @@ class _State extends State<StoriesItem> {
   }
 
   Widget getCircularAvatar() {
-    if (widget.imageUrl != null) {
+    if (widget.imageUrl != null && widget.imageUrl != 'null') {
       return OlukoNeumorphism.isNeumorphismDesign && !widget.isSegmentSection
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
