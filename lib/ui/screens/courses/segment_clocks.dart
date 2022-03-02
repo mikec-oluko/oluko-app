@@ -819,7 +819,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: isCounterByReps ? ScreenUtils.width(context) / 6 : ScreenUtils.width(context) / 3.0,
+                width: isCounterByReps ? ScreenUtils.width(context) / 3.7 : ScreenUtils.width(context) / 3.0,
                 child: BlocBuilder<KeyboardBloc, KeyboardState>(
                   builder: (context, state) {
                     return Scrollbar(
@@ -842,7 +842,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
                           },
                           style: const TextStyle(
-                            fontSize: 32,
+                            fontSize: 20,
                             color: OlukoColors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -855,7 +855,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             focusColor: Colors.transparent,
                             fillColor: Colors.transparent,
                             hintText: OlukoLocalizations.get(context, "enterScore"),
-                            hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 18),
+                            hintStyle: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColorSemiTransparent),
                             hintMaxLines: 1,
                             border: InputBorder.none,
                           ),
@@ -865,14 +865,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   },
                 ),
               ),
-              // const SizedBox(width: 25),
               if (isCounterByReps)
                 Text(
                   OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
                       ? OlukoLocalizations.get(context, 'reps')
                       : timerEntries[timerTaskIndex - 1].movement.name,
-                  style:
-                      const TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                  overflow: TextOverflow.ellipsis,
                 )
               else
                 textController.value != null && textController.value.text != ""
@@ -897,7 +896,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   Text(
                     'Tap here to type the score',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: OlukoColors.primary),
+                    style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.primary),
                   )
                 ],
               ),
@@ -1178,15 +1177,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
       visible: !keyboardVisibilty,
       child: Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
-        child: Text(
-          currentTask,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: smaller ? 20 : 25,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: Text(currentTask,
+            textAlign: TextAlign.center,
+            style: smaller
+                ? OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)
+                : OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold)),
       ),
     );
     ;
@@ -1209,7 +1204,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           child: Text(
             nextTask,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.grayColorSemiTransparent, custoFontWeight: FontWeight.bold),
           ),
         ),
       ),

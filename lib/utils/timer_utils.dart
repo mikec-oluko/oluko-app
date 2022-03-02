@@ -284,8 +284,8 @@ class TimerUtils {
             scale: ellipseScale,
           ),*/
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 170 : 220,
-        height: ScreenUtils.smallScreen(context) ? 170 : 220,
+        width: ScreenUtils.smallScreen(context) ? 190 : 230,
+        height: ScreenUtils.smallScreen(context) ? 190 : 230,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
