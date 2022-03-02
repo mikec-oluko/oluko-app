@@ -209,14 +209,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
                                 _globalService.videoProcessing = true;
                                 if(widget.segments[widget.segmentIndex].isChallenge) {
-                                  await StoryUtils().createNewPRChallengeStory(context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+                                  StoryUtils.createNewPRChallengeStory(context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
                                 }
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
                               BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
                               if (_wantsToCreateStory) {
-                                StoryUtils().callBlocToCreateStory(context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
+                                StoryUtils.callBlocToCreateStory(context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
                                 _segmentSubmission = state?.segmentSubmission;
@@ -1510,13 +1510,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     _wantsToCreateStory = true;
     if (waitingForSegSubCreation) {
       if (_isVideoUploaded) {
-        StoryUtils().callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
+        StoryUtils.callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
       }
     } else {
       if (_segmentSubmission == null) {
         createSegmentSubmission();
       } else if (_isVideoUploaded) {
-        StoryUtils().callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
+        StoryUtils.callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
       }
     }
   }
