@@ -17,9 +17,15 @@ class StoryPage extends StatefulWidget {
   String userId;
   String userStoriesId;
   String name;
+  String lastname;
   String avatarThumbnail;
   StoryPage(
-      {@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
+      {@required this.stories,
+      @required this.userId,
+      @required this.userStoriesId,
+      @required this.name,
+      @required this.avatarThumbnail,
+      this.lastname});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -179,6 +185,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                     child: UserInfo(
                       avatarThumbnail: widget.avatarThumbnail,
                       name: widget.name,
+                      lastname: widget.lastname,
                       userId: widget.userId,
                       hoursFromCreation: widget.stories[_currentIndex].hoursFromCreation,
                     ),
@@ -419,6 +426,7 @@ class UserInfo extends StatelessWidget {
   final String name;
   final String userId;
   final int hoursFromCreation;
+  final String lastname;
 
   const UserInfo({
     Key key,
@@ -426,6 +434,7 @@ class UserInfo extends StatelessWidget {
     @required this.name,
     @required this.userId,
     @required this.hoursFromCreation,
+    this.lastname
   }) : super(key: key);
 
   @override
@@ -481,7 +490,7 @@ class UserInfo extends StatelessWidget {
         ).image,
       );
     } else {
-      return UserUtils().avatarImageDefault(maxRadius: 22, name: name);
+      return UserUtils().avatarImageDefault(maxRadius: 22, name: name, lastname: lastname);
     }
   }
 }

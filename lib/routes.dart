@@ -460,6 +460,7 @@ class Routes {
             stories: argumentsToAdd['stories'] as List<Story>,
             userId: argumentsToAdd['userId'] as String,
             name: argumentsToAdd['name'] as String,
+            lastname: argumentsToAdd['lastname'] as String,
             avatarThumbnail: argumentsToAdd['avatarThumbnail'] as String,
             userStoriesId: argumentsToAdd['userStoriesId'] as String);
         break;

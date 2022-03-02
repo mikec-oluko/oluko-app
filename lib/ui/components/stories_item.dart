@@ -133,6 +133,7 @@ class _State extends State<StoriesItem> {
                               'userId': widget.currentUserId,
                               'userStoriesId': widget.itemUserId,
                               'name': widget.name,
+                              'lastname': widget.lastname,
                               'avatarThumbnail': widget.imageUrl
                             }))
                   else
