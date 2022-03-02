@@ -6,7 +6,7 @@ class UserUtils {
   String defaultAvatarImageUrl =
       'https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/avatar.png?alt=media&token=c16925c3-e2be-47fb-9d15-8cd1469d9790';
 
-  CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname}) {
+  static CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname}) {
     return CircleAvatar(
       maxRadius: maxRadius ?? 30,
       backgroundColor: name == null || lastname == null || name == 'null' || lastname == 'null'
@@ -28,7 +28,7 @@ class UserUtils {
     );
   }
 
-  String getAvatarText(String name, String lastname) {
+  static String getAvatarText(String name, String lastname) {
     String text = '';
     if (name != null && name != 'null' && name.isNotEmpty) {
       text += name.characters?.first?.toString()?.toUpperCase();

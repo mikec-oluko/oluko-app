@@ -201,9 +201,9 @@ class _State extends State<StoriesItem> {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: UserUtils().avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname),
+              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname),
             )
-          : UserUtils().avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
+          : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
     }
   }
 

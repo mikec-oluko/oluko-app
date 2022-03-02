@@ -46,7 +46,7 @@ class ChatRepository {
     return messages;
   }
 
-  Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
+  static Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
     QuerySnapshot<Map<String, dynamic>> chatRefs = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -98,7 +98,7 @@ class ChatRepository {
     return docRef;
   }
 
-  Future<Message> sendHiFive(String userId, String targetUserId) async {
+  static Future<Message> sendHiFive(String userId, String targetUserId) async {
     final CollectionReference userChatCollection = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
