@@ -58,6 +58,7 @@ import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -214,13 +215,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 );
 
                                 _globalService.videoProcessing = true;
-                                await createNewPRChallengeStory(context, state);
+                                if(widget.segments[widget.segmentIndex].isChallenge) {
+                                  await StoryUtils().createNewPRChallengeStory(context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+                                }
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
                               BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
                               if (_wantsToCreateStory) {
-                                callBlocToCreateStory(context, state.segmentSubmission);
+                                StoryUtils().callBlocToCreateStory(context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
                                 _segmentSubmission = state?.segmentSubmission;
@@ -246,26 +249,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
     );
   }
 
-  Future<void> createNewPRChallengeStory(BuildContext context, CreateSuccess state) async {
-    if (segmentIsChallenge()) {
-      final int result = totalScore ?? 0;
-      final bool isNewPersonalRecord =
-          await BlocProvider.of<ChallengeSegmentBloc>(context).isNewPersonalRecord(state.segmentSubmission.segmentId, _user.uid, result);
-      if (isNewPersonalRecord) {
-        final String segmentTitle = '${widget.segments[widget.segmentIndex].name} ${OlukoLocalizations.get(context, 'challenge')}';
-        BlocProvider.of<storyBloc.StoryBloc>(context).createChallengeStory(
-          widget.segments[widget.segmentIndex],
-          _user.uid,
-          segmentTitle,
-          result.toString(),
-          context,
-        );
-      }
-    }
-  }
-
-  bool segmentIsChallenge() => widget.segments[widget.segmentIndex].isChallenge;
-
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
     for (var i = 0; i < coachRequests.length; i++) {
       if (coachRequests[i].segmentId == segmentId) {
@@ -273,17 +256,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
       }
     }
     return null;
-  }
-
-  Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
-    String segmentTitle = widget.segments[widget.segmentIndex].name ?? '';
-    if (segmentIsChallenge()) {
-      segmentTitle += ' ${OlukoLocalizations.get(context, 'challenge')}';
-    }
-    final int result = totalScore ?? 0;
-    final segment = widget.segments[widget.segmentIndex];
-    BlocProvider.of<storyBloc.StoryBloc>(context).createStoryWithVideo(segmentSubmission, segmentTitle, result.toString(), segment, context);
-    AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
   }
 
   bool isSegmentWithRecording() {
@@ -1809,13 +1781,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     _wantsToCreateStory = true;
     if (waitingForSegSubCreation) {
       if (_isVideoUploaded) {
-        callBlocToCreateStory(context, _segmentSubmission);
+        StoryUtils().callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
       }
     } else {
       if (_segmentSubmission == null) {
         createSegmentSubmission();
       } else if (_isVideoUploaded) {
-        callBlocToCreateStory(context, _segmentSubmission);
+        StoryUtils().callBlocToCreateStory(context, _segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
       }
     }
   }
