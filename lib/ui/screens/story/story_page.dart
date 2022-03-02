@@ -97,7 +97,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 final Story story = widget.stories[i];
                 switch (story.content_type) {
                   case 'image':
-                    var img = Image(
+                    final img = Image(
                       image: CachedNetworkImageProvider(story.url),
                       fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
@@ -130,7 +130,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: Container(width: 248, height: 350, child: img),
+                            child: SizedBox(height: ScreenUtils.height(context)*0.45, child: img),
                           ),
                         ],
                       ),
