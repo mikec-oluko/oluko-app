@@ -84,7 +84,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     var loading = false;
     final Story story = widget.stories[_currentIndex];
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
       body: GestureDetector(
         onTapDown: (details) => _onTapDown(details, story),
         child: Stack(
@@ -130,7 +130,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: SizedBox(height: ScreenUtils.height(context)*0.45, child: img),
+                            child: SizedBox(height: ScreenUtils.height(context) * 0.45, child: img),
                           ),
                         ],
                       ),
@@ -194,15 +194,16 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               ),
             ),
             Positioned(
-                bottom: ScreenUtils.height(context) * 0.05,
+                bottom: ScreenUtils.height(context) * 0.02,
                 right: 0,
                 left: 0,
-                child: Column(
-                  children: [
-                    if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Text(
+                child: SizedBox(
+                  height: ScreenUtils.height(context) * 0.25,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
+                        Text(
                           widget.stories[_currentIndex].result,
                           style: const TextStyle(
                             color: Colors.white,
@@ -210,49 +211,49 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                    if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Text(
-                          widget.stories[_currentIndex].segmentTitle,
-                          style: const TextStyle(
-                            color: OlukoColors.primary,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w400,
+                      if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            widget.stories[_currentIndex].segmentTitle,
+                            style: const TextStyle(
+                              color: OlukoColors.primary,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
-                    if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20, left: 25, right: 25),
-                        child: Text(
-                          widget.stories[_currentIndex].description,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.w400,
+                      if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Text(
+                            widget.stories[_currentIndex].description,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
-                    Center(
-                      child: GestureDetector(
-                          onTap: () {
-                            BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
-                            AppMessages().showHiFiveSentDialog(context);
-                          },
-                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                            bloc: BlocProvider.of(context),
-                            listener: (hiFiveSendContext, hiFiveSendState) {
-                              if (hiFiveSendState is HiFiveSendSuccess) {
-                                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
-                              }
+                      Center(
+                        child: GestureDetector(
+                            onTap: () {
+                              BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
+                              AppMessages().showHiFiveSentDialog(context);
                             },
-                            child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                          )),
-                    ),
-                  ],
+                            child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                              bloc: BlocProvider.of(context),
+                              listener: (hiFiveSendContext, hiFiveSendState) {
+                                if (hiFiveSendState is HiFiveSendSuccess) {
+                                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+                                }
+                              },
+                              child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                            )),
+                      ),
+                    ],
+                  ),
                 ))
           ],
         ),
@@ -428,14 +429,14 @@ class UserInfo extends StatelessWidget {
   final int hoursFromCreation;
   final String lastname;
 
-  const UserInfo({
-    Key key,
-    @required this.avatarThumbnail,
-    @required this.name,
-    @required this.userId,
-    @required this.hoursFromCreation,
-    this.lastname
-  }) : super(key: key);
+  const UserInfo(
+      {Key key,
+      @required this.avatarThumbnail,
+      @required this.name,
+      @required this.userId,
+      @required this.hoursFromCreation,
+      this.lastname})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

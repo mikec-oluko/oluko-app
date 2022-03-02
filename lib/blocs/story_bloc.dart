@@ -34,8 +34,9 @@ class StoryBloc extends Cubit<StoryState> {
       SegmentSubmission segmentSubmission, String segmentTitle, String result, Segment segment, BuildContext context) async {
     try {
       final String description = getSegmetDescription(segment, context);
+      final String newPRResult = gerNewPRResult(context, result);
 
-      final Story newStory = await StoryRepository.createStoryWithVideo(segmentSubmission, segmentTitle, result, description);
+      final Story newStory = await StoryRepository.createStoryWithVideo(segmentSubmission, segmentTitle, newPRResult, description);
       emit(CreateSuccess(story: newStory));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -51,7 +52,7 @@ class StoryBloc extends Cubit<StoryState> {
       Segment segment, String userId, String segmentTitle, String result, BuildContext context) async {
     try {
       final String description = getSegmetDescription(segment, context);
-      final String newPRResult = '${OlukoLocalizations.get(context, 'newPR')} $result';
+      final String newPRResult = gerNewPRResult(context, result);
 
       final Story newStory = await StoryRepository.createStoryForChallenge(segment, userId, segmentTitle, newPRResult, description);
       emit(CreateSuccess(story: newStory));
@@ -64,6 +65,8 @@ class StoryBloc extends Cubit<StoryState> {
       rethrow;
     }
   }
+
+  String gerNewPRResult(BuildContext context, String result) => '${OlukoLocalizations.get(context, 'newPR')} $result';
 
   String getSegmetDescription(Segment segment, BuildContext context) {
     String description = '${SegmentUtils.getRoundTitle(segment, context)}: ';
