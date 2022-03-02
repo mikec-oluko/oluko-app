@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
@@ -275,5 +276,14 @@ class SegmentUtils {
           ] +
           workoutWidgets.map((e) => getTextWidget(e, color))?.toList()
     );
+  }
+
+  static CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
+    for (var i = 0; i < coachRequests.length; i++) {
+      if (coachRequests[i].segmentId == segmentId) {
+        return coachRequests[i];
+      }
+    }
+    return null;
   }
 }

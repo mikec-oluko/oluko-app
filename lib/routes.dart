@@ -119,6 +119,7 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_content_deta
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/story/story_page.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'blocs/audio_bloc.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
@@ -442,7 +443,10 @@ class Routes {
         newRouteView = SignUpNeumorphicPage();
         break;
       case RouteEnum.completedClass:
-        providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
+        providers = [
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
@@ -795,6 +799,7 @@ class Routes {
         break;
       case RouteEnum.taskDetails:
         providers = [
+          BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),

@@ -1187,7 +1187,7 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.4.53"
+    version: "19.4.54"
   syncfusion_flutter_gauges:
     dependency: "direct main"
     description:

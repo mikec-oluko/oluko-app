@@ -114,16 +114,16 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       } else {
         Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
       }
+      navigateToTaskDetails();
     });
   }
 
   navigateToTaskDetails() {
-    Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.assessmentVideos]));
-    /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
       'taskIndex': widget.taskIndex,
       'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
       'taskCompleted': true
-    });*/
+    });
   }
 
   Widget form() {
