@@ -81,7 +81,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
       return Text(
         widget.title,
         textAlign: widget.textAlign,
-        style: TextStyle(fontSize: 18, color: OlukoColors.white),
+        style: OlukoFonts.olukoBigFont(),
       );
     } else {
       return Padding(
@@ -89,7 +89,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
           child: Text(
             widget.title,
             textAlign: widget.textAlign,
-            style: TextStyle(fontSize: 18, color: OlukoColors.white),
+            style: OlukoFonts.olukoBigFont(),
           ));
     }
   }

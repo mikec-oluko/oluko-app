@@ -46,7 +46,7 @@ class ChatRepository {
     return messages;
   }
 
-  Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
+  static Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
     QuerySnapshot<Map<String, dynamic>> chatRefs = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -98,7 +98,7 @@ class ChatRepository {
     return docRef;
   }
 
-  Future<Message> sendHiFive(String userId, String targetUserId) async {
+  static Future<Message> sendHiFive(String userId, String targetUserId) async {
     final CollectionReference userChatCollection = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -173,7 +173,7 @@ class ChatRepository {
 
     if (messages?.docs != null) {
       for (final message in messages.docs) {
-        message.reference.delete();
+        await message.reference.delete();
       }
     }
   }
@@ -192,7 +192,7 @@ class ChatRepository {
     if (notifications?.docs != null) {
       for (final notification in notifications.docs) {
         if (notification.data()['is_deleted'] != true) {
-          notification.reference.update({'is_deleted': true});
+          await notification.reference.delete();
         }
       }
     }

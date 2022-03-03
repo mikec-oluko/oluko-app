@@ -30,6 +30,7 @@ import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 

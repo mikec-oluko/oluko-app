@@ -26,14 +26,15 @@ class _State extends State<OlukoBottomNavigationBar> {
   UserInformationBottomBar userInformation;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      if (state is AuthSuccess) {
-        userInformation = UserInformationBottomBar(
-              firstName: state.user.firstName,
-              lastName: state.user.lastName,
-              avatarThumbnail: state.user.avatarThumbnail,
-              );
-      }
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccess) {
+          userInformation = UserInformationBottomBar(
+            firstName: state.user.firstName,
+            lastName: state.user.lastName,
+            avatarThumbnail: state.user.avatarThumbnail,
+          );
+        }
         return OlukoNeumorphism.isNeumorphismDesign
             ? ClipRRect(
                 borderRadius: const BorderRadius.only(
@@ -44,7 +45,8 @@ class _State extends State<OlukoBottomNavigationBar> {
                     decoration: const BoxDecoration(border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
                     child: getBottomNavigationBar()))
             : getBottomNavigationBar();
-    },);
+      },
+    );
   }
 
   BottomNavigationBar getBottomNavigationBar() {
@@ -86,7 +88,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (olukoBottomNavigationBarItem.route == RouteEnum.profile)                   
+                      if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
                         if (userInformation?.avatarThumbnail != null)
                           CircleAvatar(
                             radius: 15,
@@ -101,7 +103,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                                 ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName)
                                 : OlukoColors.black,
                             radius: 15.0,
-                            child: Text(userInformation!=null?userInformation.loadProfileDefaultPicContent():'',
+                            child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
                                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                           )
                       else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
@@ -118,8 +120,8 @@ class _State extends State<OlukoBottomNavigationBar> {
                         padding: const EdgeInsets.only(top: 5.0),
                         child: Text(
                           !olukoBottomNavigationBarItem.selected ? '' : olukoBottomNavigationBarItem.title,
-                          style: TextStyle(
-                              color: olukoBottomNavigationBarItem.disabled
+                          style: OlukoFonts.olukoSmallFont(
+                              customColor: olukoBottomNavigationBarItem.disabled
                                   ? Colors.grey.shade800
                                   : olukoBottomNavigationBarItem.selected
                                       ? OlukoColors.primary

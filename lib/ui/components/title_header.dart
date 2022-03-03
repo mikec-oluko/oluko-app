@@ -12,18 +12,17 @@ class TitleHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FontWeight fontWeight = bold ? FontWeight.bold : FontWeight.w400;
+    Color fontColor = isNeumorphic ? OlukoColors.grayColor : Colors.white;
     return Text(
       title,
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.start,
-      style: TextStyle(
-          fontSize: reduceFontSize
-              ? MediaQuery.of(context).size.width < 400
-                  ? 20
-                  : 30
-              : 30,
-          fontWeight: bold ? FontWeight.bold : FontWeight.w400,
-          color: isNeumorphic ? OlukoColors.grayColor : Colors.white),
+      style: reduceFontSize
+          ? MediaQuery.of(context).size.width < 400
+              ? OlukoFonts.olukoTitleFont(custoFontWeight: fontWeight,customColor: fontColor)
+              : OlukoFonts.olukoSuperBigFont(custoFontWeight: fontWeight,customColor: fontColor)
+          : OlukoFonts.olukoSuperBigFont(custoFontWeight: fontWeight,customColor: fontColor),
     );
   }
 }

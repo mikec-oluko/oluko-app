@@ -32,7 +32,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
     if (videoPlayerController != null &&
         videoPlayerController.value != null &&
         videoPlayerController.value.position == videoPlayerController.value.duration) {
-      await videoPlayerController.dispose();
+          await videoPlayerController.dispose();
       Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUpNeumorphic]);
     }
   });

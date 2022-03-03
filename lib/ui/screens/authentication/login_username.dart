@@ -64,7 +64,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
           child: Text(OlukoLocalizations.get(context, 'emailOrUsername'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
         ),
         const SizedBox(height: 12),
-        Text(OlukoLocalizations.get(context, 'loginSubtitle'), style: const TextStyle(color: Colors.grey)),
+        Text(OlukoLocalizations.get(context, 'loginSubtitle'), style: OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
         const SizedBox(
           height: 45,
         ),
@@ -139,11 +139,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
               child: InkWell(
                 child: Text(
                   OlukoLocalizations.get(context, 'forgotPassword'),
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.grey,
-                  ),
+                  style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
                 ),
                 onTap: () {
                   _formKey.currentState.save();

@@ -140,6 +140,11 @@ class _State extends State<ClassSegmentSection> {
   }
 
   Widget getRoundTitle() {
-    return SegmentUtils.getRoundTitle(widget.segment, context, OlukoColors.grayColor);
+    return Text(
+      SegmentUtils.getRoundTitle(widget.segment, context),
+      style: OlukoNeumorphism.isNeumorphismDesign
+          ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.bold)
+          : OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.bold),
+    );
   }
 }
