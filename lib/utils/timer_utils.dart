@@ -1,16 +1,20 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progressbar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 
 enum InitialTimerType { Start, End }
 
 class TimerUtils {
-  //TODO: CIRCULAR PROGRESS ELEMENT
+  //CIRCULAR PROGRESS ELEMENTS
   static const double _olukoNeumorphicWatchSize = 300;
   static const double _olukoWatchFullSize = 240;
   static const double _olukoNeumorphicWatchProgressSize = 220;
@@ -18,7 +22,6 @@ class TimerUtils {
   static const double _watchHeight = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchProgressSize : _olukoWatchProgressSize;
   static const double _watchWidth = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchProgressSize : _olukoWatchProgressSize;
   static const double _roundWatchWidthWithKeyboard = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchSize : _olukoWatchFullSize;
-
   static const double _progressIndicatorStroke = OlukoNeumorphism.isNeumorphismDesign ? 2 : 4;
   static const Color getGreenOrCoral =
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.coral;
@@ -27,6 +30,7 @@ class TimerUtils {
   static const Color backgroundColor =
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorSemiTransparent;
 
+//CLOCKS
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
@@ -66,18 +70,6 @@ class TimerUtils {
                     color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
       ])
     ]);
-  }
-
-  static String getRepsTimerText(InitialTimerType type, BuildContext context) {
-    if (type == InitialTimerType.Start) {
-      return OlukoLocalizations.get(context, 'startsIn');
-    } else {
-      return OlukoLocalizations.get(context, 'endsIn');
-    }
-  }
-
-  static double getProgress(int totalTime, int currentTime) {
-    return 1 - (currentTime / totalTime);
   }
 
   static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => Container(
@@ -133,44 +125,6 @@ class TimerUtils {
                   const Expanded(child: SizedBox()),
               ])
             ])));
-  }
-
-  static Column neumorphicContentWithPadding(BuildContext context, Widget childrenContent) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: childrenContent,
-        ),
-      ],
-    );
-  }
-
-  static Widget getTextLabel(String text, BuildContext context, bool padding) {
-    return Padding(
-        padding: padding ? EdgeInsets.only(top: 5) : EdgeInsets.only(top: 0),
-        child: Text(text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w300,
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
-  }
-
-  static Widget getRoundLabel(int round) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text('Round',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
-      SizedBox(width: 10),
-      Text((round + 1).toString(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 50,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              color: OlukoColors.white)),
-    ]);
   }
 
   static Widget completedTimer(BuildContext context, int rounds) {
@@ -352,23 +306,6 @@ class TimerUtils {
                 ]))));
   }
 
-  static startCountdown(
-      WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound,
-      {Function() onShowAgainPressed, bool showPanel}) {
-    return Navigator.of(context)
-        .push(PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
-                  seconds: initialTimer != null ? initialTimer : 5,
-                  totalRounds: totalRounds != null ? totalRounds : 1,
-                  currentRound: currentRound != null ? currentRound : 0,
-                  recording: workoutType == WorkoutType.segmentWithRecording,
-                  onShowAgainPressed: onShowAgainPressed,
-                  showPanel: showPanel,
-                )))
-        .then((value) => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments));
-  }
-
   static Widget AMRAPTimer(double progressValue, String duration, BuildContext context, Function() onTap, int roundsValue) {
     return GestureDetector(
         onTap: onTap,
@@ -413,18 +350,6 @@ class TimerUtils {
                 ]))));
   }
 
-  static Widget durationField(String duration) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Text(duration,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
-    );
-  }
-
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
@@ -467,4 +392,85 @@ class TimerUtils {
       ])
     ]);
   }
+
+//HELPER METHODS
+  static Widget durationField(String duration) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Text(duration,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
+    );
+  }
+
+  static String getRepsTimerText(InitialTimerType type, BuildContext context) {
+    if (type == InitialTimerType.Start) {
+      return OlukoLocalizations.get(context, 'startsIn');
+    } else {
+      return OlukoLocalizations.get(context, 'endsIn');
+    }
+  }
+
+  static double getProgress(int totalTime, int currentTime) {
+    return 1 - (currentTime / totalTime);
+  }
+
+  static Widget getTextLabel(String text, BuildContext context, bool padding) {
+    return Padding(
+        padding: padding ? EdgeInsets.only(top: 5) : EdgeInsets.only(top: 0),
+        child: Text(text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w300,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
+  }
+
+  static Widget getRoundLabel(int round) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text('Round',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
+      SizedBox(width: 10),
+      Text((round + 1).toString(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 50,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.white)),
+    ]);
+  }
+
+  static Column neumorphicContentWithPadding(BuildContext context, Widget childrenContent) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 40),
+          child: childrenContent,
+        ),
+      ],
+    );
+  }
+
+  static startCountdown(
+      WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound,
+      {Function() onShowAgainPressed, bool showPanel}) {
+    return Navigator.of(context)
+        .push(PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
+                  seconds: initialTimer != null ? initialTimer : 5,
+                  totalRounds: totalRounds != null ? totalRounds : 1,
+                  currentRound: currentRound != null ? currentRound : 0,
+                  recording: workoutType == WorkoutType.segmentWithRecording,
+                  onShowAgainPressed: onShowAgainPressed,
+                  showPanel: showPanel,
+                )))
+        .then((value) => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments));
+  }
+
 }

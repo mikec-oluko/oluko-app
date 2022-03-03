@@ -300,5 +300,6 @@
     "reDoCourseTitle": "Are you sure you want to do this class again?",
     "reDoCourseBody": "Your previous progress will be deleted.",
     "welcomeVideo": "Welcome video",
-    "movements":"Movements"
+    "movements":"Movements",
+    "newPR": "New PR:"
 }
