@@ -9,6 +9,11 @@ class TaskCardVideoProcessing extends TaskCardState {
   TaskCardVideoProcessing({this.taskIndex});
 }
 
+class TaskCardVideoUploaded extends TaskCardState {
+  final String taskId;
+  TaskCardVideoUploaded({this.taskId});
+}
+
 class TaskCardFailure extends TaskCardState {
   final dynamic exception;
 
@@ -20,5 +25,9 @@ class TaskCardBloc extends Cubit<TaskCardState> {
 
   void taskLoading(int taskIndex) {
     emit(TaskCardVideoProcessing(taskIndex: taskIndex));
+  }
+
+    void taskFinished(String taskId) {
+    emit(TaskCardVideoUploaded(taskId: taskId));
   }
 }

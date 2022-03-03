@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class TitleBody extends StatelessWidget {
   final String title;
@@ -13,8 +14,7 @@ class TitleBody extends StatelessWidget {
       title,
       textAlign: TextAlign.start,
       overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-          fontSize: 18, fontWeight: bold ? FontWeight.w700 : FontWeight.w400, color: Colors.white, overflow: TextOverflow.ellipsis),
+      style: OlukoFonts.olukoBigFont(custoFontWeight: bold ? FontWeight.w700 : FontWeight.w400),
     );
   }
 }
