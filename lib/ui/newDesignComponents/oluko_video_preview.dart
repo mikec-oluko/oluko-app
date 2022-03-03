@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/utils/collage_utils.dart';
 
 class OlukoVideoPreview extends StatefulWidget {
   final String video;
@@ -215,11 +216,6 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     );
   }
 
-  int random(int min, int max) {
-    var rn = new Random();
-    return min + rn.nextInt(max - min);
-  }
-
   Widget imageSection() {
     return widget.image != null
         ? Image(
@@ -237,27 +233,16 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               );
   }
 
-  Widget gridSection() {
-    return GridView.count(
-      physics: NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 1, crossAxisCount: 7, children: getGridItems()); //70 items
+  int random(int min, int max) {
+    var rn = new Random();
+    return min + rn.nextInt(max - min);
   }
 
-  List<Widget> getGridItems() {
-    List<Widget> gridImages = [];
-    for (int i = 0; i < widget.randomImages.length; i++) {
-      if (i < 69) {
-        gridImages.add(Image(
-          image: CachedNetworkImageProvider(widget.randomImages[i]),
-          fit: BoxFit.cover,
-        ));
-      } else {
-        break;
-      }
-    }
-    while (gridImages.length < 70) {
-      gridImages += gridImages;
-    }
-    return gridImages;
+  Widget gridSection() {
+    return GridView.count(
+        physics: NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 1,
+        crossAxisCount: 7,
+        children: CollageUtils.getCollageWidgets(widget.randomImages, 70)); //70 items
   }
 }
