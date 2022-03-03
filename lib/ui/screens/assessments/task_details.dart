@@ -12,7 +12,9 @@ import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -22,6 +24,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -52,6 +55,7 @@ class TaskDetails extends StatefulWidget {
 
 class _TaskDetailsState extends State<TaskDetails> {
   GlobalService _globalService = GlobalService();
+  bool _isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
@@ -74,40 +78,52 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(onWillPop: () async {
-      if (Navigator.canPop(context)) {
-        return true;
-      } else {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-        return false;
-      }
-    }, child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-          builder: (context, assessmentAssignmentState) {
-            if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
-              return BlocBuilder<TaskBloc, TaskState>(
-                builder: (context, taskState) {
-                  if (taskState is TaskSuccess) {
-                    _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                    _tasks = taskState.values;
-                    _task = _tasks[widget.taskIndex];
-                    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task);
-                    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
-                  } else {
-                    return nil;
-                  }
-                },
-              );
-            } else {
-              return nil;
-            }
-          },
-        );
-      } else {
-        return nil;
-      }
-    }));
+    return WillPopScope(
+        onWillPop: () async {
+          if (Navigator.canPop(context)) {
+            return true;
+          } else {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+            return false;
+          }
+        },
+        child: BlocListener<TaskCardBloc, TaskCardState>(listener: (context, taskCardState) {
+          if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
+            setState(() {
+              _isLoading = true;
+            });
+          } else if (taskCardState is TaskCardVideoUploaded) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        }, child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+          if (authState is AuthSuccess) {
+            return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+              builder: (context, assessmentAssignmentState) {
+                if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+                  return BlocBuilder<TaskBloc, TaskState>(
+                    builder: (context, taskState) {
+                      if (taskState is TaskSuccess) {
+                        _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                        _tasks = taskState.values;
+                        _task = _tasks[widget.taskIndex];
+                        BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task.id);
+                        return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
+                      } else {
+                        return nil;
+                      }
+                    },
+                  );
+                } else {
+                  return nil;
+                }
+              },
+            );
+          } else {
+            return nil;
+          }
+        })));
   }
 
   Widget neumorphicForm() {
@@ -296,7 +312,10 @@ class _TaskDetailsState extends State<TaskDetails> {
         if (current.taskSubmission != null && current.taskSubmission.task.id != _task.id) {
           return false;
         }
-        if (previous is GetSuccess && current.taskSubmission != null && current.taskSubmission.id == previous?.taskSubmission?.id) {
+        if (previous is GetSuccess &&
+            current.taskSubmission != null &&
+            current.taskSubmission.id == previous?.taskSubmission?.id &&
+            current.taskSubmission.video.url == previous?.taskSubmission?.video?.url) {
           return false;
         }
         if (previous is! GetSuccess &&
@@ -572,7 +591,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                       ? TextButton(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(OlukoLocalizations.get(context, 'yes')),
+                            child: Text(
+                              OlukoLocalizations.get(context, 'yes'),
+                              style: OlukoFonts.olukoBigFont(),
+                            ),
                           ),
                           onPressed: () {
                             if (_controller != null) {
@@ -635,9 +657,8 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget recordedVideos(TaskSubmission taskSubmission) {
-    return taskSubmission == null
-        ? const SizedBox()
-        : Column(children: [
+    return isAssessmentDone || widget.taskCompleted || _isLoading
+        ? Column(children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: Align(
@@ -670,20 +691,17 @@ class _TaskDetailsState extends State<TaskDetails> {
                 ]),
               ),
             ),
-          ]);
+          ])
+        : const SizedBox();
   }
 
   Widget taskResponse(String timeLabel, String thumbnail, TaskSubmission taskSubmission) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: GestureDetector(
-          onTap: () {
-            if (_controller != null) {
-              _controller.pause();
-            }
-            Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-          },
+    return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
+      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
+        return Padding(padding: const EdgeInsets.only(left: 45), child: OlukoCircularProgressIndicator());
+      } else {
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
@@ -707,12 +725,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                           height: 40,
                           width: 60,
                         )),
-
-              //  Image.asset(
-              //   'assets/assessment/play.png',
-              //   height: 40,
-              //   width: 60,
-              // )),
               Positioned(
                   top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
                   bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
@@ -731,7 +743,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                     ),
                   )),
             ]),
-          )),
-    );
+          ),
+        );
+      }
+    });
   }
 }

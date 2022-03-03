@@ -70,7 +70,8 @@ class MainSignUpPage extends StatelessWidget {
                           const SizedBox(height: 15),
                           Align(
                               alignment: Alignment.topLeft,
-                              child: Text(OlukoLocalizations.get(context, 'bestYouCanDo'), style: const TextStyle(color: Colors.grey))),
+                              child: Text(OlukoLocalizations.get(context, 'bestYouCanDo'),
+                                  style: OlukoFonts.olukoMediumFont(customColor: Colors.grey))),
                         ],
                       ),
                     ),
@@ -98,7 +99,7 @@ class MainSignUpPage extends StatelessWidget {
                       ),
                       Text(
                         OlukoLocalizations.get(context, 'orContinueWith'),
-                        style: const TextStyle(color: Colors.grey),
+                        style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
                       ),
                       Expanded(
                         child: Image.asset(

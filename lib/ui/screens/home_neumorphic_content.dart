@@ -185,7 +185,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             widget.courses[index].name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
           ),
         ),
         Padding(

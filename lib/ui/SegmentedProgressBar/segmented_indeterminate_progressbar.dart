@@ -44,14 +44,14 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
                 0.9
               ])),
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(10),
             child: CircularStepProgressIndicator(
               roundedCap: (_, isSelected) => true,
               padding: math.pi / 15,
               totalSteps: max.toInt(),
               width: 100,
-              selectedStepSize: 20,
-              unselectedStepSize: 20,
+              selectedStepSize: 10,
+              unselectedStepSize: 10,
               gradientColor: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
                 OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
                 OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor.withOpacity(0.8),
@@ -85,7 +85,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
             unselectedColor: Colors.transparent,
             width: 100,
             selectedStepSize: 10,
-            unselectedStepSize: 20,
+            unselectedStepSize: 10,
             currentStep: progress.toInt(),
             child: Padding(
               padding: const EdgeInsets.all(10.0),

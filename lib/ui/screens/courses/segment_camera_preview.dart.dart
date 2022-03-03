@@ -17,6 +17,7 @@ import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 
 class SegmentCameraPreview extends StatefulWidget {

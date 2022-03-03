@@ -137,7 +137,7 @@ class SearchState<T> extends State<SearchBar> {
       decoration: InputDecoration(
         hintText: "Search",
         border: InputBorder.none,
-        hintStyle: TextStyle(color: Colors.white30),
+        hintStyle: OlukoFonts.olukoBigFont(customColor: Colors.white30),
       ),
       style: TextStyle(color: Colors.white, fontSize: 16.0),
       onChanged: (query) => _onSearchChanged(query),

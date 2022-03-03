@@ -76,7 +76,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       return Text(
         widget.title,
         textAlign: widget.textAlign,
-        style: TextStyle(fontSize: 18, color: widget.textColor),
+        style: OlukoFonts.olukoBigFont(customColor: widget.textColor,),
       );
     } else {
       return Padding(

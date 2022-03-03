@@ -95,7 +95,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   void markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
     try {
       await CourseEnrollmentRepository.markSegmentAsCompleted(courseEnrollment, segmentIndex, classIndex);
-      emit(MarkSegmentSuccess());
+      //emit(MarkSegmentSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

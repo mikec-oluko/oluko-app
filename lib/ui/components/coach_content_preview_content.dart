@@ -208,7 +208,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
       List<RecommendationMedia> limitVideoRecommendation = [];
       recommendedVideoContent.length >= 3
           ? limitVideoRecommendation =
-              recommendedVideoContent.getRange(limitVideoRecommendation.length - 3, recommendedVideoContent.length).toList()
+              recommendedVideoContent.getRange(recommendedVideoContent.length-3, recommendedVideoContent.length).toList()
           : limitVideoRecommendation = recommendedVideoContent;
 
       limitVideoRecommendation.forEach((videoRecommended) {

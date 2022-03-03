@@ -22,7 +22,7 @@ class ChallengeSegmentBloc extends Cubit<ChallengeSegmentState> {
 
   void getByClass(String courseEnrollmentId, String classId) async {
     try {
-      List<Challenge> challenges = await ChallengeRepository.getByClass(courseEnrollmentId, classId);
+      final List<Challenge> challenges = await ChallengeRepository.getByClass(courseEnrollmentId, classId);
       emit(ChallengesSuccess(challenges: challenges));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -31,6 +31,24 @@ class ChallengeSegmentBloc extends Cubit<ChallengeSegmentState> {
       );
       emit(Failure(exception: exception));
       rethrow;
+    }
+  }
+
+  Future<bool> isNewPersonalRecord(String segmentId, String userId, int result) async {
+    try {
+      final List<Challenge> challenges = await ChallengeRepository.getUserChallengesBySegmentId(segmentId, userId);
+      bool isNewPR = true;
+      for (final challenge in challenges) {
+        if (challenge.result != null) {
+          final actualResult = int.tryParse(challenge.result);
+          if (actualResult != null && actualResult > result) {
+            isNewPR = false;
+          }
+        }
+      }
+      return isNewPR;
+    } catch (e) {
+      return false;
     }
   }
 }

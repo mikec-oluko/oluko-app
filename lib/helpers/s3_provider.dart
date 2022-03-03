@@ -9,12 +9,14 @@ import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart_2/sig_v4.dart';
 import 'package:oluko_app/helpers/s3_policy.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:oluko_app/config/s3_settings.dart';
 
 class S3Provider {
   String accessKeyId = GlobalConfiguration().getValue('accessKeyID');
   String secretKeyId = GlobalConfiguration().getValue('secretAccessKey');
   String endpoint = GlobalConfiguration().getValue('bucket');
   String region = GlobalConfiguration().getValue('region');
+  bool isConfigLoaded = false;
 
   S3Provider();
   //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
@@ -73,6 +75,7 @@ class S3Provider {
   }
 
   Future<String> putFile(Uint8List bodyBytes, String path, String fileName) async {
+    isConfigLoaded == false ? loadConfig() : null;
     final uri = Uri.parse('$endpoint/$path/$fileName');
     http.Response res;
 
@@ -86,6 +89,27 @@ class S3Provider {
       );
       print(e.toString());
       rethrow;
+    }
+  }
+
+  void loadConfig() {
+    if (this.endpoint != null) {
+      this.isConfigLoaded = true;
+    } else {
+      GlobalConfiguration().loadFromMap(s3Settings);
+      if (this.endpoint == null) {
+        this.endpoint = GlobalConfiguration().getValue('bucket');
+      }
+      if (this.region == null) {
+        this.region = GlobalConfiguration().getValue('region');
+      }
+      if (this.accessKeyId == null) {
+        this.accessKeyId = GlobalConfiguration().getValue('accessKeyID');
+      }
+      if (this.secretKeyId == null) {
+        this.secretKeyId = GlobalConfiguration().getValue('secretAccessKey');
+      }
+      this.isConfigLoaded = true;
     }
   }
 }
