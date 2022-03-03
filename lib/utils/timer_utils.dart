@@ -238,8 +238,8 @@ class TimerUtils {
             scale: ellipseScale,
           ),*/
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 230,
-        height: ScreenUtils.smallScreen(context) ? 190 : 230,
+        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -472,5 +472,4 @@ class TimerUtils {
                 )))
         .then((value) => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments));
   }
-
 }
