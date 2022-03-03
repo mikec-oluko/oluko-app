@@ -112,7 +112,7 @@ class SegmentUtils {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
-                  child: getTextWidget(getLabel(movement), color),
+                  child: SizedBox(width: ScreenUtils.width(context) * 0.57, child: getTextWidget(getLabel(movement), color)),
                 ),
               ],
             ));
@@ -265,17 +265,16 @@ class SegmentUtils {
   static Column workouts(Segment segment, BuildContext context, Color color) {
     final List<String> workoutWidgets = getWorkouts(segment);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-            Text(
-              getRoundTitle(segment, context),
-              style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
-            )
-          ] +
-          workoutWidgets.map((e) => getTextWidget(e, color))?.toList()
-    );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+              Text(
+                getRoundTitle(segment, context),
+                style: OlukoNeumorphism.isNeumorphismDesign
+                    ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+                    : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+              )
+            ] +
+            workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
   }
 
   static CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
