@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:isolate';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -16,8 +12,6 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config/project_settings.dart';
-import 'isolate/isolate_manager.dart';
-import 'services/video_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,21 +112,4 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     super.dispose();
   }
-}
-
-Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
-  final SendPort port = map['port'] as SendPort;
-  final Map<String, dynamic> data = map['data'] as Map<String, dynamic>;
-  Video video;
-  try {
-    // Heavy computing process
-    video = await VideoService.processVideoWithoutEncoding(data['videoFilePath'] as String, data['aspectRatio'] as double,
-        data['id'] as String, port, data['directory'] as String, data['duration'] as int, data['thumbnailPath'] as String);
-
-    port.send(OlukoIsolateMessage(IsolateStatusEnum.success, video: video.toJson()));
-  } catch (e) {
-    port.send(OlukoIsolateMessage(IsolateStatusEnum.failure));
-    rethrow;
-  }
-  Isolate.exit(port, video);
 }
