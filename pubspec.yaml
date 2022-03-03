@@ -43,7 +43,7 @@ dependencies:
   firebase_storage: ^10.2.7 
   # flutter_ffmpeg: ^0.4.0
   filesize: ^2.0.1
-  path_provider: ^2.0.3
+  path_provider: ^2.0.9
   flutter_colorpicker: ^0.6.0
   webview_flutter: ^0.3.24
   amazon_cognito_identity_dart_2: ^1.0.3

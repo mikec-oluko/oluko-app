@@ -125,7 +125,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                       ),
                                       BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
                                         if (movementState is GetAllSuccess) {
-                                          return ClassExpansionPanel(
+                                          return ClassExpansionPanels(
                                             classes: classState.classes,
                                             movements: movementState.movements,
                                             onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(
