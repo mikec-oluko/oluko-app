@@ -118,18 +118,20 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                             name: user.firstName,
                           ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                          padding: const EdgeInsets.only(top: 5.0, bottom: 0.0),
                           child: Text(
                             user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
                                 ? '${user.firstName} ${user.lastName}'
                                 : '',
-                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            style: OlukoFonts.olukoMediumFont(),
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Text(
                           user.username != null && user.username.isNotEmpty ? UserHelper.printUsername(user.username, user.id) : '',
-                          style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          style: OlukoFonts.olukoSmallFont(
+                            customColor: Colors.grey,
+                          ),
                           textAlign: TextAlign.center,
                         )
                       ],

@@ -95,7 +95,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                               textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
                           const SizedBox(height: 1),
                           Text(user.username?.toString() ?? '',
-                              style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
+                              style: OlukoFonts.olukoSmallFont(customColor: Colors.grey), textAlign: TextAlign.center),
                         ],
                       ),
                     ),

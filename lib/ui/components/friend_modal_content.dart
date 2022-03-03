@@ -98,7 +98,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                           '${widget.user.firstName} ${widget.user.lastName}',
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
+                          style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w700),
                         ),
                         _getUserInfo()
                       ],
@@ -273,7 +273,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
         children: [
           Text(
             UserHelper.printUsername(widget.user.username, widget.user.id),
-            style: const TextStyle(color: Colors.grey, fontSize: 15),
+            style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
           ),
           _getUserLocation(),
         ],
