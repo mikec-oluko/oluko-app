@@ -22,6 +22,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
@@ -353,6 +354,7 @@ class Routes {
   final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
   final NotificationBloc _notificationBloc = NotificationBloc();
+  final FeedbackBloc _feedbackBloc = FeedbackBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -655,7 +657,8 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
+          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
+          BlocProvider<FeedbackBloc>.value(value: _feedbackBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(

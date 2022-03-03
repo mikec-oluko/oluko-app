@@ -1756,9 +1756,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         )),
                   )
                 : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
-          widget.workoutType == WorkoutType.segment || shareDone
-              ? FeedbackCard()
-              : ShareCard(createStory: _createStory, whistleAction: whistleAction),
+          if (widget.workoutType == WorkoutType.segment || shareDone) FeedbackCard(widget.courseEnrollment,widget.classIndex,widget.segmentIndex,widget.segments[widget.segmentIndex].id,) else ShareCard(createStory: _createStory, whistleAction: whistleAction),
         ],
       ),
     );

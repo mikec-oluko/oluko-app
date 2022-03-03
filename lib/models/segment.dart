@@ -18,6 +18,8 @@ class Segment extends Base {
   List<SectionSubmodel> sections;
   bool isChallenge;
   String challengeImage;
+  int likes;
+  int dislikes;
 
   Segment(
       {this.name,
@@ -33,6 +35,8 @@ class Segment extends Base {
       this.challengeImage,
       this.type,
       this.alerts,
+      this.likes,
+      this.dislikes,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -78,7 +82,9 @@ class Segment extends Base {
         sections: json['sections'] == null
             ? null
             : List<SectionSubmodel>.from(
-                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
+                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))),
+        likes:json['likes']!=null?json['likes'] as int:0,
+        dislikes:json['dislikes']!=null?json['dislikes'] as int:0,);
     segment.setBase(json);
     return segment;
   }
@@ -97,7 +103,9 @@ class Segment extends Base {
       'challenge_image': challengeImage,
       'alerts': alerts == null ? null : List<dynamic>.from(alerts.map((alert) => alert.toJson())),
       'type': type == null ? null : type.index,
-      'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
+      'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
+      'likes':likes ?? 0,
+      'dislikes':likes ?? 0,
     };
     segmentJson.addEntries(super.toJson().entries);
     return segmentJson;
