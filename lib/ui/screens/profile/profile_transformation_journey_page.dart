@@ -147,7 +147,6 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
         }
         if (state is TransformationJourneyContentSuccess) {
-          
           _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
         }
         if (state is TransformationJourneyContentFailure) {
@@ -277,7 +276,9 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
-          _transformationJourneyContent = state.contentFromUser;
+          for (var i = state.contentFromUser.length-1; i > -1; i--) {
+            _transformationJourneyContent.add(state.contentFromUser[i]);
+          }
           _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
               tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
         }
