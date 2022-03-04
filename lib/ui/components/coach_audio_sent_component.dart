@@ -15,6 +15,8 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
   }
 
   Padding neumorphicCoachAudioComponent(BuildContext context) {
+    const defaultDateString = '10:00AM 22jul, 2022';
+    const defaultDurationString = '0:50';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Neumorphic(
@@ -63,7 +65,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                   children: [
                     const SizedBox(),
                     Text(
-                      '0:50',
+                      defaultDurationString,
                       style: OlukoFonts.olukoSmallFont(
                           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                           custoFontWeight: FontWeight.w500),
@@ -72,7 +74,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     Row(
                       children: [
                         Text(
-                          '10:00AM 22jul, 2022',
+                          defaultDateString,
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                               custoFontWeight: FontWeight.w500),
