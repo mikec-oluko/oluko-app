@@ -9,9 +9,10 @@ class SoundRecorder {
 
   bool get isRecording => _audioRecorder.isRecording;
 
-    bool get isStopped => _audioRecorder.isStopped;
+  bool get isStopped => _audioRecorder.isStopped;
 
   String _audioUrl = "";
+  //DEVUELVE LA URL
   String get audioUrl => _audioUrl;
 
   Future init() async {
@@ -34,17 +35,20 @@ class SoundRecorder {
   }
 
   Future _record() async {
+    //COMIENZA A GRABAR Y CREA UN FILE
     if (!_isRecordedInitialised) return;
     await _audioRecorder.startRecorder(toFile: pathToSaveAudio);
   }
 
   Future _stop() async {
+    //TERMINA EL VIDEO
     if (!_isRecordedInitialised) return;
     String url = await _audioRecorder.stopRecorder();
     _audioUrl = url;
   }
 
   Future toggleRecording() async {
+    //GRABA O TERMINA
     if (_audioRecorder.isStopped) {
       await _record();
     } else {

@@ -44,6 +44,7 @@ class _State extends State<ChallengesCard> {
         Padding(
             padding: EdgeInsets.only(top: 13),
             child: GestureDetector(
+                //TODO: CHALLENGE FOR AUDIO CHECK!!!!!
                 onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail], arguments: {
                       'challenge': widget.navigateToSegment ? widget.segmentChallenge.challengeForAudio : widget.challenge,
                       'userRequested': widget.userRequested

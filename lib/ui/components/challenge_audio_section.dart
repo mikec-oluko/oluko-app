@@ -41,6 +41,7 @@ class _State extends State<ChallengeAudioSection> {
   Widget build(BuildContext context) {
     return BlocBuilder<PanelAudioBloc, PanelAudioState>(builder: (context, state) {
       if (state is PanelAudioSuccess) {
+        //TRUE SI SE GRABO
         audioRecorded = state.audioRecorded;
       }
       return audioRecorded ? audioRecordedSection() : audioRecorderSection();
@@ -63,6 +64,7 @@ class _State extends State<ChallengeAudioSection> {
   }
 
   Widget _recordedContent() {
+    //AUDIO GENERADO PLAY Y DELETE
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       !OlukoNeumorphism.isNeumorphismDesign
           ? Divider(
@@ -98,6 +100,7 @@ class _State extends State<ChallengeAudioSection> {
                           style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white),
                         )),
                   ]),
+                  //RECORD ES EL PATH DEL AUDIO
                   RecordedView(record: widget.recorder.audioUrl, showTicks: submitted, panelController: widget.panelController),
                 ]),
                 SizedBox(height: 15)
@@ -116,6 +119,7 @@ class _State extends State<ChallengeAudioSection> {
   }
 
   _onRecordCompleted() {
+    //TERMINO DE GRABAR
     BlocProvider.of<PanelAudioBloc>(context).deleteAudio(true);
   }
 
@@ -184,6 +188,7 @@ class _State extends State<ChallengeAudioSection> {
               style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
             ),
             RecorderView(
+              //TERMINO DE GRABAR
               recorder: widget.recorder,
               onSaved: () => _onRecordCompleted(),
             )

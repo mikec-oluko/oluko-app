@@ -353,6 +353,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             _activeChallenges = state.challenges;
             listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
           }
+          if (state is ChallengesForUserRequested) {
+            _activeChallenges = state.challenges;
+            listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
+          }
           return buildChallengeSection(
               listOfChallenges: listOfChallenges,
               context: context,
@@ -594,7 +598,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
       BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userRequested.id);
-      BlocProvider.of<ChallengeStreamBloc>(context).getStream(userRequested.id);
+      _isCurrentUser
+          ? BlocProvider.of<ChallengeStreamBloc>(context).getStream(userRequested.id)
+          : BlocProvider.of<ChallengeStreamBloc>(context).getChallengesForUserRequested(userRequested.id);
       BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(userRequested.id);
     }
   }
@@ -684,13 +690,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
               frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                   ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
             ),
-            progress: courseInfo.completion ?? getCourseProgress(
-                courseEnrollments: _courseEnrollmentList,
-                course: _coursesToUse.isNotEmpty
-                    ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
-                        ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
-                        : null
-                    : null),
+            progress: courseInfo.completion ??
+                getCourseProgress(
+                    courseEnrollments: _courseEnrollmentList,
+                    course: _coursesToUse.isNotEmpty
+                        ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
+                            ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
+                            : null
+                        : null),
             canUnenrollCourse: _isCurrentUser,
             unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)));
   }

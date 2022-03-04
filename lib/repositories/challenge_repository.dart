@@ -82,7 +82,6 @@ class ChallengeRepository {
     return null;
   }
 
-
   static Future<void> markAudioAsDeleted(Challenge challenge, List<Audio> audios) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
@@ -90,5 +89,26 @@ class ChallengeRepository {
         .collection('challenges')
         .doc(challenge.id);
     await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
+  }
+
+  static Future<List<Challenge>> getChallengesForUserRequested(
+    String userRequestedId,
+  ) async {
+    List<Challenge> challengeList = [];
+    final QuerySnapshot query = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('challenges')
+        .where('user.id', isEqualTo: userRequestedId)
+        .where('completed_at', isEqualTo: null)
+        .get();
+    for (var challengeDoc in query.docs) {
+      final Map<String, dynamic> challenge = challengeDoc.data() as Map<String, dynamic>;
+      Challenge newChallenge = Challenge.fromJson(challenge);
+      if (challengeList.where((challenge) => challenge.classId == newChallenge.classId).isEmpty) {
+        challengeList.add(newChallenge);
+      }
+    }
+    return challengeList;
   }
 }

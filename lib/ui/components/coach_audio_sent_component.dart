@@ -1,14 +1,24 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 
 class CoachAudioSentComponent extends StatefulWidget {
-  const CoachAudioSentComponent({Key key}) : super(key: key);
+  final List<String> records;
+  final String record;
+  const CoachAudioSentComponent({Key key, this.records, this.record}) : super(key: key);
 
   @override
   State<CoachAudioSentComponent> createState() => _CoachAudioSentComponentState();
 }
 
 class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
+  int _totalDuration;
+  int _currentDuration;
+  double _completedPercentage = 0.0;
+  bool _isPlaying = false;
+  AudioPlayer audioPlayer = AudioPlayer();
+  bool playedOnce = false;
+
   @override
   Widget build(BuildContext context) {
     return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAudioComponent(context) : defaultAudioSent(context);
@@ -35,9 +45,12 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Image.asset(
-                          'assets/assessment/play.png',
-                          scale: 3.5,
+                        GestureDetector(
+                          onTap: () => _onPlay(filePath: widget.record),
+                          child: Image.asset(
+                            'assets/assessment/play.png',
+                            scale: 3.5,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -107,9 +120,12 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
             children: [
               Row(
                 children: [
-                  Image.asset(
-                    'assets/assessment/play.png',
-                    scale: 5,
+                  GestureDetector(
+                    onTap: () => _onPlay(filePath: widget.record),
+                    child: Image.asset(
+                      'assets/assessment/play.png',
+                      scale: 5,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -147,5 +163,48 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         ),
       ),
     );
+  }
+
+  Future<void> _onPlay({String filePath}) async {
+    if (!_isPlaying) {
+      if (playedOnce) {
+        await audioPlayer.resume();
+      } else {
+        await audioPlayer.play(filePath, isLocal: true);
+        setState(() {
+          playedOnce = true;
+        });
+      }
+
+      setState(() {
+        _completedPercentage = 0.0;
+        _isPlaying = true;
+      });
+
+      audioPlayer.onPlayerCompletion.listen((_) {
+        setState(() {
+          _isPlaying = false;
+          _completedPercentage = 0.0;
+          playedOnce = false;
+        });
+      });
+      audioPlayer.onDurationChanged.listen((duration) {
+        setState(() {
+          _totalDuration = duration.inMicroseconds;
+        });
+      });
+
+      audioPlayer.onAudioPositionChanged.listen((duration) {
+        setState(() {
+          _currentDuration = duration.inMicroseconds;
+          _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
+        });
+      });
+    } else {
+      await audioPlayer.pause();
+      setState(() {
+        _isPlaying = false;
+      });
+    }
   }
 }

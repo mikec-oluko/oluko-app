@@ -17,8 +17,10 @@ class _RecorderViewState extends State<RecorderView> {
     final isRecording = widget.recorder.isRecording;
     return GestureDetector(
         onTap: () async {
+          //TODO: EMPIEZA A GRABAR / PARAR VIDEO
           final isRecording = await widget.recorder.toggleRecording();
           if (widget.recorder.isStopped) {
+            //SALVA LA GRABACION
             widget.onSaved();
           }
           setState(() {});

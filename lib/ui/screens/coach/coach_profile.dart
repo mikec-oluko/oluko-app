@@ -14,6 +14,8 @@ import 'package:oluko_app/ui/components/coach_media_grid_gallery.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_recorder.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CoachProfile extends StatefulWidget {
   final CoachUser coachUser;
@@ -27,17 +29,31 @@ class _CoachProfileState extends State<CoachProfile> {
   bool _isVideoPlaying = false;
   List<Audio> coachAudioList = [];
   List<CoachMedia> coachUploadedContent = [];
-
+  final SoundRecorder recorder = SoundRecorder();
+  bool recordingAudio = false;
+  bool audioRecorded = false;
+  List<String> audiosRecorded = [];
   @override
   void initState() {
+    recorder.init();
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
-
+    recordingAudio = recorder.isRecording;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: coachProfileView(context),
+    );
+  }
+
+  Widget coachProfileView(BuildContext context) {
+    return SlidingUpPanel(
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      maxHeight: 100,
+      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      panel: askCoachComponent(context),
       body: Container(
         color: OlukoNeumorphismColors.appBackgroundColor,
         constraints: const BoxConstraints.expand(),
@@ -61,7 +77,7 @@ class _CoachProfileState extends State<CoachProfile> {
                   coachInformationComponent(context),
                   uploadCoverButton(context),
                   coachGallery(context),
-                  askCoachComponent(context)
+                  // askCoachComponent(context)
                 ],
               ),
             ),
@@ -91,22 +107,20 @@ class _CoachProfileState extends State<CoachProfile> {
       alignment: Alignment.bottomCenter,
       child: Container(
           width: MediaQuery.of(context).size.width,
-          height: ScreenUtils.height(context) / 2.5,
+          height: 100,
           // color: Colors.red,
           child: Stack(
             children: [
-              if (coachAudioList.isNotEmpty)
+              if (audiosRecorded.isNotEmpty)
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: ScreenUtils.height(context) / 3.5,
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      audioSentComponent(context),
-                      audioSentComponent(context),
-                      audioSentComponent(context),
-                    ],
-                  ),
+                  child: audiosRecorded.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.zero,
+                          child: ListView(children: audiosRecorded.map((audioPath) => audioSentComponent(context, audioPath)).toList()),
+                        )
+                      : SizedBox.shrink(),
                 )
               else
                 const SizedBox.shrink(),
@@ -165,25 +179,65 @@ class _CoachProfileState extends State<CoachProfile> {
             width: 40,
             height: 40,
             child: OlukoNeumorphism.isNeumorphismDesign
-                ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(), child: microphoneIconButtonContent())
-                : microphoneIconButtonContent(),
+                ? Neumorphic(
+                    style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+                    child: microphoneIconButtonContent(
+                        iconForContent: Icon(recordingAudio ? Icons.stop : Icons.mic,
+                            size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)))
+                : microphoneIconButtonContent(
+                    iconForContent: Icon(recordingAudio ? Icons.stop : Icons.mic,
+                        size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)),
           )
         ],
       ),
     );
   }
 
-  TextButton microphoneIconButtonContent() {
-    return TextButton(
-        onPressed: () {},
-        child: const Icon(
-          Icons.mic_rounded,
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-        ));
+  _onRecordCompleted() {
+    //TERMINO DE GRABAR
+    setState(() {
+      audioRecorded = true;
+      recordingAudio = false;
+
+      audiosRecorded.add(recorder.audioUrl);
+    });
   }
 
-  Widget audioSentComponent(BuildContext context) {
-    return CoachAudioSentComponent();
+  Widget microphoneIconButtonContent({Icon iconForContent}) {
+    return GestureDetector(
+        onTap: () async {
+          //TODO: EMPIEZA A GRABAR / PARAR VIDEO
+          final isRecording = await recorder.toggleRecording();
+          setState(() {
+            recordingAudio = !recordingAudio;
+          });
+
+          if (recorder.isStopped) {
+            //SALVA LA GRABACION
+            _onRecordCompleted();
+          }
+        },
+        child: Stack(alignment: Alignment.center, children: [
+          OlukoNeumorphism.isNeumorphismDesign
+              ? Image.asset(
+                  'assets/neumorphic/audio_circle.png',
+                  scale: 4,
+                )
+              : SizedBox(),
+          Image.asset(
+            'assets/courses/green_circle.png',
+            scale: 6,
+          ),
+          iconForContent
+        ]));
+  }
+
+  Widget audioSentComponent(BuildContext context, String audioPath) {
+    return audioRecorded
+        ? CoachAudioSentComponent(
+            record: audioPath,
+          )
+        : SizedBox.shrink();
   }
 
   Widget coachGallery(BuildContext context) {
@@ -198,8 +252,8 @@ class _CoachProfileState extends State<CoachProfile> {
         return coachUploadedContent.isNotEmpty
             ? Align(
                 child: Padding(
-                  padding: EdgeInsets.only(top: coachAudioList.isNotEmpty ? 100 : 300),
-                  child: coachAudioList.isNotEmpty
+                  padding: EdgeInsets.only(top: audiosRecorded.isNotEmpty ? 100 : 300),
+                  child: audiosRecorded.isNotEmpty
                       ? CoachMediaCarouselGallery(
                           coachMedia: coachUploadedContent,
                           coachUser: widget.coachUser,
