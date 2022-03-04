@@ -186,6 +186,8 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
       limitSegments.forEach((segment) {
         if (segment.video.thumbUrl != null) {
           thumbnailsList.add(segment.video.thumbUrl);
+        } else {
+          thumbnailsList.add(_useDefaultImage);
         }
       });
     }

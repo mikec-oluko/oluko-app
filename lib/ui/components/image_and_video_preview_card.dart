@@ -1,12 +1,14 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import '../../routes.dart';
@@ -18,6 +20,7 @@ class ImageAndVideoPreviewCard extends StatefulWidget {
   final bool showTitle;
   final dynamic originalContent;
   final bool isCoach;
+  final bool isCoachMediaContent;
 
   ImageAndVideoPreviewCard(
       {this.backgroundImage,
@@ -25,7 +28,8 @@ class ImageAndVideoPreviewCard extends StatefulWidget {
       this.isContentVideo = false,
       this.showTitle = false,
       this.originalContent,
-      this.isCoach = false});
+      this.isCoach = false,
+      this.isCoachMediaContent = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -65,6 +69,8 @@ class _State extends State<ImageAndVideoPreviewCard> {
       _widgetToReturn = videoPreview(context);
     } else if (widget.originalContent is TransformationJourneyUpload) {
       _widgetToReturn = widget.isContentVideo ? videoPreview(context) : imagePreview(context);
+    } else if (widget.originalContent is CoachMedia) {
+      _widgetToReturn = widget.isContentVideo ? videoPreview(context) : imagePreview(context);
     }
     return _widgetToReturn;
   }
@@ -86,9 +92,9 @@ class _State extends State<ImageAndVideoPreviewCard> {
                     height: 30,
                     child: Center(
                       child: Text(
-                              titleForPreviewImage != null ? titleForPreviewImage : '',
-                              style: OlukoFonts.olukoSmallFont(),
-                            ),
+                        titleForPreviewImage != null ? titleForPreviewImage : '',
+                        style: OlukoFonts.olukoSmallFont(),
+                      ),
                     ),
                   )
                 : SizedBox()),
@@ -103,30 +109,38 @@ class _State extends State<ImageAndVideoPreviewCard> {
           child: TextButton(
               onPressed: () {
                 //TODO: Change Modal VideoPlayer
-                widget.showTitle
-                    ? AppModal.dialogContent(
-                        // closeButton: true,
-                        context: context,
-                        content: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 30),
-                              child: showVideoPlayer(widget.videoUrl),
-                            ),
-                            Container(
-                                child: GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 20),
-                                child: Image.asset(
-                                  'assets/courses/video_cross.png',
-                                  color: Colors.white,
-                                  height: 80,
-                                  width: 80,
-                                ),
+                if (widget.isCoachMediaContent) {
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                    'videoUrl': widget.videoUrl,
+                    'titleForContent': 'Coach Uploaded Media'
+                    // 'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+                  });
+                } else {
+                  widget.showTitle
+                      ? AppModal.dialogContent(
+                          // closeButton: true,
+                          context: context,
+                          content: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 30),
+                                child: showVideoPlayer(widget.videoUrl),
                               ),
-                            ))
-                          ])
-                    : SizedBox();
+                              Container(
+                                  child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 20),
+                                  child: Image.asset(
+                                    'assets/courses/video_cross.png',
+                                    color: Colors.white,
+                                    height: 80,
+                                    width: 80,
+                                  ),
+                                ),
+                              ))
+                            ])
+                      : SizedBox();
+                }
               },
               child: OlukoNeumorphism.isNeumorphismDesign
                   ? Container(
@@ -158,6 +172,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
   }
 
   BoxDecoration getDecorationForContainer() {
+    final ImageProvider _defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
     return BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         color: OlukoColors.black,
@@ -165,7 +180,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
             fit: BoxFit.cover,
             alignment: Alignment.center,
             image: Image(
-              image: widget.backgroundImage.image,
+              image: widget.backgroundImage.image ?? _defaultImage,
               frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                   ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
             ).image));

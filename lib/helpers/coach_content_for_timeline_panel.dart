@@ -85,7 +85,7 @@ class CoachTimelineFunctions {
             contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
             contentName: element.segmentId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: TimelineInteractionType.values[6],
+            contentType: TimelineInteractionType.values[5],
             sentVideosForNavigation: segmentSubmittedContent,
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
@@ -203,5 +203,39 @@ class CoachTimelineFunctions {
       });
     }
     return recommendationsAsNotification;
+  }
+
+  static List<CoachTimelineGroup> timelinePanelUpdateTabsAndContent(
+      CoachTimelineGroup allTabContent, List<CoachTimelineGroup> timelinePanelContent) {
+    if (timelinePanelContent != null && timelinePanelContent.isNotEmpty) {
+      final indexForAllTab = timelinePanelContent.indexWhere((panelItem) => panelItem.courseId == allTabContent.courseId);
+      if (indexForAllTab != -1) {
+        allTabContent.timelineElements.forEach((allTabNewContent) {
+          addContentToTimeline(timelineGroup: timelinePanelContent[indexForAllTab], newContent: allTabNewContent);
+        });
+        timelinePanelContent.insert(0, timelinePanelContent[indexForAllTab]);
+        timelinePanelContent.removeAt(indexForAllTab + 1);
+      } else {
+        if (timelinePanelContent[0] != null && timelinePanelContent[0].courseId == allTabContent.courseId) {
+          allTabContent.timelineElements.forEach((allTabNewContent) {
+            addContentToTimeline(timelineGroup: timelinePanelContent[0], newContent: allTabNewContent);
+          });
+        } else {
+          allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+          timelinePanelContent.insert(0, allTabContent);
+        }
+      }
+    } else {
+      allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+      timelinePanelContent.insert(0, allTabContent);
+    }
+    return timelinePanelContent;
+  }
+
+  static void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {
+    if (timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).isEmpty) {
+      timelineGroup.timelineElements.add(newContent);
+      timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+    }
   }
 }
