@@ -4,29 +4,136 @@ import 'package:oluko_app/constants/theme.dart';
 const double _kPanelHeaderCollapsedHeight = 48.0;
 const double _kPanelHeaderExpandedHeight = 64.0;
 
-class CustomExpansionPanelList extends StatelessWidget {
+class CustomExpansionPanelList extends StatefulWidget {
   const CustomExpansionPanelList(
-      {Key key, this.children: const <ExpansionPanel>[], this.expansionCallback, this.animationDuration: kThemeAnimationDuration})
+      {Key key,
+      this.children = const <ExpansionPanel>[],
+      this.expansionCallback,
+      this.animationDuration = kThemeAnimationDuration,
+      this.initialOpenPanelValue,
+      this.expandedHeaderPadding,
+      this.dividerColor,
+      this.elevation})
       : assert(children != null),
         assert(animationDuration != null),
+        _allowOnlyOnePanelOpen = false,
+        super(key: key);
+
+  const CustomExpansionPanelList.radio({
+    Key key,
+    this.children = const <ExpansionPanelRadio>[],
+    this.expansionCallback,
+    this.animationDuration = kThemeAnimationDuration,
+    this.initialOpenPanelValue,
+    this.expandedHeaderPadding = _kPanelHeaderExpandedDefaultPadding,
+    this.dividerColor,
+    this.elevation = 2,
+  })  : assert(children != null),
+        assert(animationDuration != null),
+        _allowOnlyOnePanelOpen = true,
         super(key: key);
 
   final List<ExpansionPanel> children;
-
   final ExpansionPanelCallback expansionCallback;
-
   final Duration animationDuration;
+  final Object initialOpenPanelValue;
+  final EdgeInsets expandedHeaderPadding;
+  final Color dividerColor;
+  final double elevation;
+  final bool _allowOnlyOnePanelOpen;
+  static const EdgeInsets _kPanelHeaderExpandedDefaultPadding = EdgeInsets.symmetric(
+    vertical: 64.0 - _kPanelHeaderCollapsedHeight,
+  );
+
+  @override
+  State<StatefulWidget> createState() => _ExpansionPanelListState();
+}
+
+class _ExpansionPanelListState extends State<CustomExpansionPanelList> {
+  ExpansionPanelRadio _currentOpenPanel;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget._allowOnlyOnePanelOpen != null) {
+      assert(_allIdentifiersUnique(), 'All ExpansionPanelRadio identifier values must be unique.');
+      if (widget.initialOpenPanelValue != null) {
+        _currentOpenPanel = searchPanelByValue(widget.children.cast<ExpansionPanelRadio>(), widget.initialOpenPanelValue);
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomExpansionPanelList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget._allowOnlyOnePanelOpen != null) {
+      assert(_allIdentifiersUnique(), 'All ExpansionPanelRadio identifier values must be unique.');
+      // If the previous widget was non-radio ExpansionPanelList, initialize the
+      // open panel to widget.initialOpenPanelValue
+      if (!oldWidget._allowOnlyOnePanelOpen) {
+        _currentOpenPanel = searchPanelByValue(widget.children.cast<ExpansionPanelRadio>(), widget.initialOpenPanelValue);
+      }
+    } else {
+      _currentOpenPanel = null;
+    }
+  }
+
+  bool _allIdentifiersUnique() {
+    final Map<Object, bool> identifierMap = <Object, bool>{};
+    for (final ExpansionPanelRadio child in widget.children.cast<ExpansionPanelRadio>()) {
+      identifierMap[child.value] = true;
+    }
+    return identifierMap.length == widget.children.length;
+  }
 
   bool _isChildExpanded(int index) {
-    return children[index].isExpanded;
+    if (widget._allowOnlyOnePanelOpen != null) {
+      final ExpansionPanelRadio radioWidget = widget.children[index] as ExpansionPanelRadio;
+      return _currentOpenPanel?.value == radioWidget.value;
+    }
+    return widget.children[index].isExpanded;
+  }
+
+  void _handlePressed(bool isExpanded, int index) {
+    widget.expansionCallback?.call(index, isExpanded);
+
+    if (widget._allowOnlyOnePanelOpen != null) {
+      final ExpansionPanelRadio pressedChild = widget.children[index] as ExpansionPanelRadio;
+
+      // If another ExpansionPanelRadio was already open, apply its
+      // expansionCallback (if any) to false, because it's closing.
+      for (int childIndex = 0; childIndex < widget.children.length; childIndex += 1) {
+        final ExpansionPanelRadio child = widget.children[childIndex] as ExpansionPanelRadio;
+        if (widget.expansionCallback != null && childIndex != index && child.value == _currentOpenPanel?.value)
+          widget.expansionCallback(childIndex, false);
+      }
+
+      setState(() {
+        _currentOpenPanel = isExpanded ? null : pressedChild;
+      });
+    }
+  }
+
+  ExpansionPanelRadio searchPanelByValue(List<ExpansionPanelRadio> panels, Object value) {
+    for (final ExpansionPanelRadio panel in panels) {
+      if (panel.value == value) return panel;
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    assert(
+      kElevationToShadow.containsKey(widget.elevation),
+      'Invalid value for elevation. See the kElevationToShadow constant for'
+      ' possible elevation values.',
+    );
+
     final List<Widget> items = <Widget>[];
     const EdgeInsets kExpandedEdgeInsets = const EdgeInsets.symmetric(vertical: _kPanelHeaderExpandedHeight - _kPanelHeaderCollapsedHeight);
 
-    for (int index = 0; index < children.length; index += 1) {
+    for (int index = 0; index < widget.children.length; index += 1) {
       if (_isChildExpanded(index) && index != 0 && !_isChildExpanded(index - 1))
         items.add(Divider(
           key: _SaltedKey<BuildContext, int>(context, index * 2 - 1),
@@ -34,65 +141,75 @@ class CustomExpansionPanelList extends StatelessWidget {
           color: Colors.transparent,
         ));
 
-      final Row header = Row(
+      final ExpansionPanel child = widget.children[index];
+      final Widget headerWidget = child.headerBuilder(
+        context,
+        _isChildExpanded(index),
+      );
+
+      Widget expandIconContainer = Container(
+        margin: const EdgeInsetsDirectional.only(end: 8.0),
+        child: ExpandIcon(
+          isExpanded: _isChildExpanded(index),
+          padding: const EdgeInsets.all(16.0),
+          onPressed: !child.canTapOnHeader ? (bool isExpanded) => _handlePressed(isExpanded, index) : null,
+        ),
+      );
+      if (!child.canTapOnHeader) {
+        final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+        expandIconContainer = Semantics(
+          label: _isChildExpanded(index) ? localizations.expandedIconTapHint : localizations.collapsedIconTapHint,
+          container: true,
+          child: expandIconContainer,
+        );
+      }
+      Widget header = Row(
         children: <Widget>[
           Expanded(
             child: AnimatedContainer(
-              duration: animationDuration,
+              duration: widget.animationDuration,
               curve: Curves.fastOutSlowIn,
-              margin: _isChildExpanded(index) ? kExpandedEdgeInsets : EdgeInsets.zero,
-              child: Container(
-                child: children[index].headerBuilder(
-                  context,
-                  children[index].isExpanded,
-                ),
+              margin: _isChildExpanded(index) ? widget.expandedHeaderPadding : EdgeInsets.zero,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: _kPanelHeaderCollapsedHeight),
+                child: headerWidget,
               ),
             ),
           ),
-          Container(
-            margin: const EdgeInsetsDirectional.only(end: 8.0),
-            child: ExpandIcon(
-              color: OlukoColors.grayColor,
-              isExpanded: _isChildExpanded(index),
-              padding: const EdgeInsets.all(25.0),
-              onPressed: (bool isExpanded) {
-                if (expansionCallback != null) expansionCallback(index, isExpanded);
-              },
-            ),
-          ),
+          expandIconContainer,
         ],
       );
-
+      if (child.canTapOnHeader) {
+        header = MergeSemantics(
+          child: InkWell(
+            onTap: () => _handlePressed(_isChildExpanded(index), index),
+            child: header,
+          ),
+        );
+      }
       double _radiusValue = 8.0;
       items.add(
         Container(
           key: _SaltedKey<BuildContext, int>(context, index * 2),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
-            child: Material(
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
-              elevation: 2.0,
-              borderRadius: BorderRadius.all(Radius.circular(_radiusValue)),
-              child: Column(
-                children: <Widget>[
-                  header,
-                  AnimatedCrossFade(
-                    firstChild: Container(height: 0.0),
-                    secondChild: children[index].body,
-                    firstCurve: const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
-                    secondCurve: const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
-                    sizeCurve: Curves.fastOutSlowIn,
-                    crossFadeState: _isChildExpanded(index) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                    duration: animationDuration,
-                  ),
-                ],
+          color: child.backgroundColor,
+          child: Column(
+            children: <Widget>[
+              header,
+              AnimatedCrossFade(
+                firstChild: Container(height: 0.0),
+                secondChild: child.body,
+                firstCurve: const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
+                secondCurve: const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
+                sizeCurve: Curves.fastOutSlowIn,
+                crossFadeState: _isChildExpanded(index) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                duration: widget.animationDuration,
               ),
-            ),
+            ],
           ),
         ),
       );
 
-      if (_isChildExpanded(index) && index != children.length - 1)
+      if (_isChildExpanded(index) && index != widget.children.length - 1)
         items.add(Divider(
           key: _SaltedKey<BuildContext, int>(context, index * 2 + 1),
           height: 15.0,
@@ -112,12 +229,18 @@ class _SaltedKey<S, V> extends LocalKey {
   final V value;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
-    final dynamic typedOther = other;
-    return salt == typedOther.salt && value == typedOther.value;
+    return other is _SaltedKey<S, V> && other.salt == salt && other.value == value;
   }
 
   @override
   int get hashCode => hashValues(runtimeType, salt, value);
+
+  @override
+  String toString() {
+    final String saltString = S == String ? "<'$salt'>" : '<$salt>';
+    final String valueString = V == String ? "<'$value'>" : '<$value>';
+    return '[$saltString $valueString]';
+  }
 }
