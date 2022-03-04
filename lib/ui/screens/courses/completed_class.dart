@@ -8,11 +8,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/utils/class_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -59,12 +62,6 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget form() {
     return Scaffold(
-        appBar: OlukoAppBar(
-          showBackButton: false,
-          showDivider: false,
-          title: ' ',
-          actions: [],
-        ),
         backgroundColor: Colors.black,
         body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -80,6 +77,10 @@ class _CompletedClassState extends State<CompletedClass> {
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.get(context, 'done'),
                         onPressed: () {
+                          BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+                              .saveSelfieInClass(widget.courseEnrollment, widget.classIndex);
+                          BlocProvider.of<TransformationJourneyBloc>(context)
+                              .createTransformationJourneyUpload(FileTypeEnum.image, _image, widget.courseEnrollment.userId, null);
                           if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
                             Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                               'index': widget.courseIndex,
@@ -270,7 +271,7 @@ class _CompletedClassState extends State<CompletedClass> {
                           ),
                           SizedBox(height: 11),
                           Text(
-                            TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                            ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
                             style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
                           ),
                           Image.asset(

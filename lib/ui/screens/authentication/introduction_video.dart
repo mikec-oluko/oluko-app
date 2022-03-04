@@ -15,9 +15,8 @@ class IntroductionVideo extends StatefulWidget {
 }
 
 Future<ChewieController> getChewieWithVideo(BuildContext context) async {
-  final mediaURL = 
-    await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.introVideo);
-  if(mediaURL == null || mediaURL.isEmpty) {
+  final mediaURL = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.introVideo);
+  if (mediaURL == null || mediaURL.isEmpty) {
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUpNeumorphic]);
   }
   final VideoPlayerController videoPlayerController = VideoPlayerController.network(mediaURL);
@@ -29,8 +28,11 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
     showControls: false,
     fullScreenByDefault: true,
   );
-  videoPlayerController.addListener(() {
-    if (videoPlayerController != null && videoPlayerController.value != null && videoPlayerController.value.position == videoPlayerController.value.duration) {
+  videoPlayerController.addListener(() async {
+    if (videoPlayerController != null &&
+        videoPlayerController.value != null &&
+        videoPlayerController.value.position == videoPlayerController.value.duration) {
+          await videoPlayerController.dispose();
       Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUpNeumorphic]);
     }
   });

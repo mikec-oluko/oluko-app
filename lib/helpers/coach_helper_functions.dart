@@ -123,7 +123,7 @@ class CoachHelperFunctions {
   static List<CoachRecommendationDefault> getRecommendedContentByType(List<CoachRecommendationDefault> coachRecommendations,
       TimelineInteractionType contentTypeRequired, List<CoachRecommendationDefault> listToFill) {
     for (CoachRecommendationDefault recommendation in coachRecommendations) {
-      if (TimelineContentOption.getTimelineOption(recommendation.contentTypeIndex as int) == contentTypeRequired) {
+      if (recommendation.contentType == contentTypeRequired) {
         listToFill.add(recommendation);
       }
     }
@@ -133,7 +133,7 @@ class CoachHelperFunctions {
   static List<Widget> notificationsWidget(
       List<CoachNotificationContent> contentForNotificationPanel, List<Widget> carouselContent, String coachId, String userId) {
     contentForNotificationPanel.forEach((notificationContent) {
-      if (TimelineContentOption.getTimelineOption(notificationContent.contentTypeIndex as int) != TimelineInteractionType.segment) {
+      if (notificationContent.contentType != TimelineInteractionType.segment) {
         carouselContent.add(CoachNotificationPanelContentCard(
           content: notificationContent,
           coachId: coachId,

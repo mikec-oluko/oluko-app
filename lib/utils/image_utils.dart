@@ -23,14 +23,15 @@ class ImageUtils {
   ///Generate a thumbnail for an Image with the specified width & height.
   Future<String> getThumbnailForImage(XFile image, int width, {int height}) async {
     //Image.file(File(image.path)); TODO: does nothing?
+    var calculatedHeight = height;
     if (height == null) {
       var decodedImage = await decodeImageFromList(File(image.path).readAsBytesSync());
       double aspectRatio = decodedImage.width / decodedImage.height;
       //The operator '~/' get the closest int to the operation
-      height = (width ~/ aspectRatio);
+      calculatedHeight = (width ~/ aspectRatio);
     }
-    var thumbnailPath = p.withoutExtension(image.path) + '_thumbnail.' + p.extension(image.path);
-    var thumbnail = await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: height);
+    var thumbnailPath = p.withoutExtension(image.path) + '_thumbnail' + p.extension(image.path);
+    var thumbnail = await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: calculatedHeight);
     return thumbnail.path;
   }
 }

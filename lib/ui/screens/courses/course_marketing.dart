@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/course_helper.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -34,6 +35,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -160,7 +162,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(
                                                   //TODO: change weeks number
-                                                  TimeConverter.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
+                                                  CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                                                       widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
@@ -242,8 +244,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverPersistentHeader(
               pinned: true,
               delegate: SliverAppBarDelegate(
-                ScreenUtils.height(context) * 0.08,
-                ScreenUtils.height(context) * 0.08,
+                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
+                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
                 child: Container(
                   alignment: Alignment.centerLeft,
                   color: OlukoNeumorphismColors.finalGradientColorDark,
@@ -262,7 +264,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               Padding(
                 padding: EdgeInsets.only(right: 15, left: 15, top: 10),
                 child: Text(
-                  TimeConverter.toCourseDuration(
+                  CourseUtils.toCourseDuration(
                       int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
@@ -292,8 +294,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   padding: const EdgeInsets.only(right: 15, left: 15),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: ListView(
+                      shrinkWrap: true,
+                      primary: false,
+                      //crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildStatistics(),
                         Padding(
@@ -410,7 +414,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildClassExpansionPanels() {
-    return ClassExpansionPanel(
+    return ClassExpansionPanels(
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {

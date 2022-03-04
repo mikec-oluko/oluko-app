@@ -185,6 +185,16 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                   ),
                                 ),
                               ),
+                              if (widget.showActions)
+                                Padding(
+                                  padding: EdgeInsets.only(right: 10, left: 20),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: widget.actions,
+                                  ),
+                                )
+                              else
+                                const SizedBox.shrink(),
                             ],
                           ),
                         )
@@ -303,7 +313,16 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                               ),
                             )
                   ////TODO: NO SEARCH BAR
-                  : SizedBox.shrink(),
+                  : widget.showBackButton
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: OlukoNeumorphicCircleButton(
+                                onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
         ),
       ),
     );

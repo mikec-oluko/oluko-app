@@ -1,16 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
-import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
-import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryPage extends StatefulWidget {
@@ -18,9 +17,15 @@ class StoryPage extends StatefulWidget {
   String userId;
   String userStoriesId;
   String name;
+  String lastname;
   String avatarThumbnail;
   StoryPage(
-      {@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
+      {@required this.stories,
+      @required this.userId,
+      @required this.userStoriesId,
+      @required this.name,
+      @required this.avatarThumbnail,
+      this.lastname});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -79,7 +84,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     var loading = false;
     final Story story = widget.stories[_currentIndex];
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
       body: GestureDetector(
         onTapDown: (details) => _onTapDown(details, story),
         child: Stack(
@@ -92,7 +97,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 final Story story = widget.stories[i];
                 switch (story.content_type) {
                   case 'image':
-                    var img = Image(
+                    final img = Image(
                       image: CachedNetworkImageProvider(story.url),
                       fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
@@ -121,38 +126,14 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                     );
                     return Padding(
                       padding: const EdgeInsets.only(top: 170),
-                      child: Column(children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Container(width: 248, height: 350, child: img),
-                        ),
-                        const SizedBox(height: 30),
-                        Text(
-                          widget.stories[_currentIndex].description,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w600,
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(15.0),
+                            child: SizedBox(height: ScreenUtils.height(context) * 0.45, child: img),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        Center(
-                          child: GestureDetector(
-                              onTap: () {
-                                BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
-                                AppMessages().showHiFiveSentDialog(context);
-                              },
-                              child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                                bloc: BlocProvider.of(context),
-                                listener: (hiFiveSendContext, hiFiveSendState) {
-                                  if (hiFiveSendState is HiFiveSendSuccess) {
-                                    AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
-                                  }
-                                },
-                                child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                              )),
-                        ),
-                      ]),
+                        ],
+                      ),
                     );
                   case 'video':
                     if (_videoController != null && _videoController.value.isInitialized) {
@@ -204,13 +185,76 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                     child: UserInfo(
                       avatarThumbnail: widget.avatarThumbnail,
                       name: widget.name,
+                      lastname: widget.lastname,
                       userId: widget.userId,
-                      hour: widget.stories[_currentIndex].createdAt?.toDate(),
+                      hoursFromCreation: widget.stories[_currentIndex].hoursFromCreation,
                     ),
                   ),
                 ],
               ),
             ),
+            Positioned(
+                bottom: ScreenUtils.height(context) * 0.02,
+                right: 0,
+                left: 0,
+                child: SizedBox(
+                  height: ScreenUtils.height(context) * 0.25,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
+                        Text(
+                          widget.stories[_currentIndex].result,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            widget.stories[_currentIndex].segmentTitle,
+                            style: const TextStyle(
+                              color: OlukoColors.primary,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Text(
+                            widget.stories[_currentIndex].description,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      Center(
+                        child: GestureDetector(
+                            onTap: () {
+                              BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
+                              AppMessages().showHiFiveSentDialog(context);
+                            },
+                            child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                              bloc: BlocProvider.of(context),
+                              listener: (hiFiveSendContext, hiFiveSendState) {
+                                if (hiFiveSendState is HiFiveSendSuccess) {
+                                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+                                }
+                              },
+                              child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                            )),
+                      ),
+                    ],
+                  ),
+                ))
           ],
         ),
       ),
@@ -324,29 +368,57 @@ class AnimatedBar extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Stack(
-              children: <Widget>[
-                _buildContainer(
-                  double.infinity,
-                  position < currentIndex ? OlukoColors.primary : Colors.white.withOpacity(0.5),
-                ),
-                if (position == currentIndex)
-                  AnimatedBuilder(
-                    animation: animController,
-                    builder: (context, child) {
-                      return _buildContainer(
-                        constraints.maxWidth * animController.value,
-                        OlukoColors.primary,
-                      );
-                    },
-                  )
-                else
-                  const SizedBox.shrink(),
-              ],
+              children: getTopBars(constraints),
             );
           },
         ),
       ),
     );
+  }
+
+  List<Widget> getTopBars(BoxConstraints constraints) {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return [
+        _buildContainer(
+          double.infinity,
+          position == currentIndex
+              ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
+              : position < currentIndex
+                  ? OlukoColors.white
+                  : Colors.grey.withOpacity(0.5),
+        ),
+        if (position == currentIndex)
+          AnimatedBuilder(
+            animation: animController,
+            builder: (context, child) {
+              return _buildContainer(
+                constraints.maxWidth * animController.value,
+                OlukoColors.white,
+              );
+            },
+          )
+        else
+          const SizedBox.shrink(),
+      ];
+    }
+    return [
+      _buildContainer(
+        double.infinity,
+        position < currentIndex ? OlukoColors.primary : Colors.white.withOpacity(0.5),
+      ),
+      if (position == currentIndex)
+        AnimatedBuilder(
+          animation: animController,
+          builder: (context, child) {
+            return _buildContainer(
+              constraints.maxWidth * animController.value,
+              OlukoColors.primary,
+            );
+          },
+        )
+      else
+        const SizedBox.shrink(),
+    ];
   }
 }
 
@@ -354,33 +426,23 @@ class UserInfo extends StatelessWidget {
   final String avatarThumbnail;
   final String name;
   final String userId;
-  final DateTime hour;
+  final int hoursFromCreation;
+  final String lastname;
 
-  const UserInfo({
-    Key key,
-    @required this.avatarThumbnail,
-    @required this.name,
-    @required this.userId,
-    @required this.hour,
-  }) : super(key: key);
+  const UserInfo(
+      {Key key,
+      @required this.avatarThumbnail,
+      @required this.name,
+      @required this.userId,
+      @required this.hoursFromCreation,
+      this.lastname})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String _hoursSinceCreation;
-    if (hour != null) {
-      _hoursSinceCreation = hour?.difference(DateTime.now())?.inHours?.toString();
-    } else {
-      _hoursSinceCreation = '1';
-    }
     return Row(
       children: <Widget>[
-        CircleAvatar(
-          radius: 22.0,
-          backgroundColor: Colors.grey[300],
-          backgroundImage: Image(
-            image: CachedNetworkImageProvider(avatarThumbnail),
-          ).image,
-        ),
+        getCircularAvatar(),
         const SizedBox(width: 16.0),
         Expanded(
           child: Row(
@@ -395,7 +457,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                '${_hoursSinceCreation}h',
+                '${hoursFromCreation.toString()}h${OlukoNeumorphism.isNeumorphismDesign ? 'r' : ''}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,
@@ -417,5 +479,19 @@ class UserInfo extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  CircleAvatar getCircularAvatar() {
+    if (avatarThumbnail != null && avatarThumbnail != 'null') {
+      return CircleAvatar(
+        radius: 22.0,
+        backgroundColor: Colors.grey[300],
+        backgroundImage: Image(
+          image: CachedNetworkImageProvider(avatarThumbnail),
+        ).image,
+      );
+    } else {
+      return UserUtils.avatarImageDefault(maxRadius: 22, name: name, lastname: lastname);
+    }
   }
 }

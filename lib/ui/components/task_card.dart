@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -15,21 +17,25 @@ class TaskCard extends StatefulWidget {
   final bool isCompleted;
   final bool isDisabled;
   final bool useStartButton;
+  final int index;
 
   TaskCard(
-      {this.task, this.onPressed, this.isCompleted = false, this.isPublic = false, this.isDisabled = false, this.useStartButton = false});
+      {this.task,
+      this.onPressed,
+      this.isCompleted = false,
+      this.isPublic = false,
+      this.isDisabled = false,
+      this.useStartButton = false,
+      this.index});
 
   @override
   _State createState() => _State();
 }
 
 class _State extends State<TaskCard> {
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    return buildTaskCard(context);
-  }
-
-  GestureDetector buildTaskCard(BuildContext context) {
     return OlukoNeumorphism.isNeumorphismDesign ? neumorphicTaskCard(context) : taskCard(context);
   }
 
@@ -183,20 +189,7 @@ class _State extends State<TaskCard> {
                                           custoFontWeight: FontWeight.bold),
                                     ),
                                     Expanded(child: SizedBox()),
-                                    Stack(alignment: Alignment.center, children: [
-                                      Image.asset(
-                                        widget.isCompleted
-                                            ? 'assets/assessment/neumorphic_green_circle.png'
-                                            : 'assets/assessment/neumorphic_green_outlined.png',
-                                        scale: 4,
-                                      ),
-                                      widget.isCompleted
-                                          ? Image.asset(
-                                              'assets/assessment/neumorphic_check.png',
-                                              scale: 4,
-                                            )
-                                          : const SizedBox.shrink()
-                                    ])
+                                    getCardCheck(),
                                   ]),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0, right: 10),
@@ -209,46 +202,82 @@ class _State extends State<TaskCard> {
                                           custoFontWeight: FontWeight.w300),
                                     ),
                                   ),
+                                  getPrivacySection(),
                                 ],
                               ),
                             ),
                           ),
                         ],
                       ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Padding(
-                            padding: const EdgeInsets.only(top: 30).copyWith(bottom: 20),
-                            child: !widget.isDisabled
-                                ? SizedBox(
-                                    width: widget.isCompleted ? 45 : 80,
-                                    height: widget.isCompleted ? 15 : 40,
-                                    child: widget.useStartButton
-                                        ? OlukoNeumorphicSecondaryButton(
-                                            thinPadding: true,
-                                            textColor: OlukoColors.primary,
-                                            isExpanded: false,
-                                            useBorder: false,
-                                            title: OlukoLocalizations.get(context, 'start'),
-                                            onPressed: () {
-                                              print('done');
-                                            },
-                                          )
-                                        : widget.isCompleted
-                                            ? Container(
-                                                color: OlukoNeumorphismColors.olukoNeumorphicBlueBackgroundColor,
-                                                child: Center(
-                                                  child: getPrivacy(context),
-                                                ),
-                                              )
-                                            : SizedBox.shrink(),
-                                  )
-                                : SizedBox.shrink()),
-                      ),
                     ],
                   )),
             ),
           ),
         ));
+  }
+
+  Widget getCardCheck() {
+    return BlocListener<TaskCardBloc, TaskCardState>(
+        listener: (context, taskCardState) {
+          if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.index) {
+            setState(() {
+              isLoading = true;
+            });
+          }
+        },
+        child: cardCheck());
+  }
+
+  Widget cardCheck() {
+    if (isLoading && !widget.isCompleted) {
+      return SizedBox(height: 21, width: 21, child: OlukoCircularProgressIndicator());
+    } else {
+      return Stack(alignment: Alignment.center, children: [
+        Image.asset(
+          widget.isCompleted ? 'assets/assessment/neumorphic_green_circle.png' : 'assets/assessment/neumorphic_green_outlined.png',
+          scale: 4,
+        ),
+        widget.isCompleted
+            ? Image.asset(
+                'assets/assessment/neumorphic_check.png',
+                scale: 4,
+              )
+            : const SizedBox.shrink()
+      ]);
+    }
+    ;
+  }
+
+  Widget getPrivacySection() {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Padding(
+          padding: const EdgeInsets.only(top: 30).copyWith(bottom: 20),
+          child: !widget.isDisabled
+              ? SizedBox(
+                  width: widget.isCompleted ? 60 : 80,
+                  height: widget.isCompleted ? 15 : 40,
+                  child: widget.useStartButton
+                      ? OlukoNeumorphicSecondaryButton(
+                          thinPadding: true,
+                          textColor: OlukoColors.primary,
+                          isExpanded: false,
+                          useBorder: false,
+                          title: OlukoLocalizations.get(context, 'start'),
+                          onPressed: () {
+                            print('done');
+                          },
+                        )
+                      : widget.isCompleted
+                          ? Container(
+                              color: OlukoNeumorphismColors.olukoNeumorphicBlueBackgroundColor,
+                              child: Center(
+                                child: getPrivacy(context),
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                )
+              : SizedBox.shrink()),
+    );
   }
 }

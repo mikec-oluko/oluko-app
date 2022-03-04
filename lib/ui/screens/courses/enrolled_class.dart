@@ -18,6 +18,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -101,7 +102,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                                         child: Text(
                                           //TODO: change weeks number
-                                          TimeConverter.toCourseDuration(
+                                          CourseUtils.toCourseDuration(
                                               6, widget.course.classes != null ? widget.course.classes.length : 0, context),
                                           style: OlukoFonts.olukoBigFont(
                                               custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
@@ -124,7 +125,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                       ),
                                       BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
                                         if (movementState is GetAllSuccess) {
-                                          return ClassExpansionPanel(
+                                          return ClassExpansionPanels(
                                             classes: classState.classes,
                                             movements: movementState.movements,
                                             onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(

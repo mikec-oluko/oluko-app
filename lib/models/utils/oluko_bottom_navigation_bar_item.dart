@@ -1,3 +1,5 @@
+import 'package:oluko_app/routes.dart';
+
 class OlukoBottomNavigationBarItem {
   OlukoBottomNavigationBarItem(
       {this.title,
@@ -11,6 +13,6 @@ class OlukoBottomNavigationBarItem {
   String selectedAssetImageUrl;
   String disabledAssetImageUrl;
   bool selected;
-  String route;
+  RouteEnum route;
   bool disabled;
 }

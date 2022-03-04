@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
@@ -100,7 +101,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
       if (state is AuthSuccess) {
         _currentAuthUser = state.user;
-
+        BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
         if (_isOwnerProfile(authUser: _currentAuthUser, userRequested: widget.userRequested)) {
           _userProfileToDisplay = _currentAuthUser;
           _isCurrentUser = true;
@@ -346,9 +347,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Padding buildActiveChallengesForUser() {
     return Padding(
       padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
-      child: BlocBuilder<ChallengeBloc, ChallengeState>(
+      child: BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(
         builder: (context, state) {
-          if (state is GetChallengeSuccess) {
+          if (state is GetChallengeStreamSuccess) {
             _activeChallenges = state.challenges;
             listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
           }
@@ -593,7 +594,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
       BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userRequested.id);
-      BlocProvider.of<ChallengeBloc>(context).get(userRequested.id);
+      BlocProvider.of<ChallengeStreamBloc>(context).getStream(userRequested.id);
       BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(userRequested.id);
     }
   }

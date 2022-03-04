@@ -1,4 +1,3 @@
-import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,19 +23,14 @@ import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/services/course_service.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
-import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
-import 'package:oluko_app/ui/components/pinned_header.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
-import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 
 class EnrolledCourse extends StatefulWidget {
   final Course course;
@@ -95,7 +89,7 @@ class EnrolledCourse extends StatefulWidget {
         ..._classItemsToUse.map((item) => enrollment.classes[_classItemsToUse.indexOf(item)].completedAt == null
             ? CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)) == 0
                 ? Neumorphic(
-                    margin: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(15),
                     style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                         CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)) > 0),
                     child: GestureDetector(
@@ -110,7 +104,7 @@ class EnrolledCourse extends StatefulWidget {
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(5),
                         child: ClassSection(
                           classProgress: CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)),
                           isCourseEnrolled: true,
@@ -236,7 +230,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                   ListView(children: [
                                     OlukoVideoPreview(
                                       showBackButton: true,
-                                      image: widget.course.posterImage?? widget.course.image,
+                                      image: widget.course.posterImage ?? widget.course.image,
                                       video: widget.course.video,
                                       onBackPressed: () => Navigator.pop(context),
                                       onPlay: () => widget.playPauseVideo(),
@@ -284,7 +278,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                     Padding(
                                       padding: const EdgeInsets.only(bottom: 3),
                                       child: OverlayVideoPreview(
-                                          image:  widget.course.posterImage?? widget.course.image,
+                                          image: widget.course.posterImage ?? widget.course.image,
                                           video: widget.course.video,
                                           showBackButton: true,
                                           showHeartButton: true,
@@ -305,10 +299,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(
                                                   //TODO: change weeks number
-                                                  TimeConverter.toCourseDuration(
-                                                      int.tryParse(widget.course.duration)??0,
-                                                      widget.course.classes != null ? widget.course.classes.length : 0,
-                                                      context),
+                                                  CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
+                                                      widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                                 ),
@@ -433,7 +425,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   }
 
   Widget buildClassExpansionPanels() {
-    return ClassExpansionPanel(
+    return ClassExpansionPanels(
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {

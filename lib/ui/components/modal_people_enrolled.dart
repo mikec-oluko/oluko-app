@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
-import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
-import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
@@ -68,28 +73,31 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
           shrinkWrap: true,
           children: users
               .map((user) => GridTile(
-                    child: Column(
-                      children: [
-                        StoriesItem(
-                          itemUserId: user.id?.toString() ?? '',
-                          name: (() {
-                            if (user.username != null) {
-                              return UserHelper.printUsername(user.username.toString(), user.id.toString());
-                            } else {
-                              return user.firstName?.toString() ?? '';
-                            }
-                          })(),
-                          currentUserId: widget.userId,
-                          maxRadius: 35,
-                          imageUrl: user.avatarThumbnail?.toString() ?? UserUtils().defaultAvatarImageUrl,
-                          stories: user is UserSubmodel && user.stories?.stories != null ? user.stories.stories : [],
-                        ),
-                        Text('${user.firstName ?? ''} ${user.lastName ?? ''}',
-                            textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
-                        const SizedBox(height: 1),
-                        Text(user.username?.toString() ?? '',
-                            style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
-                      ],
+                    child: GestureDetector(
+                      onTap: () => showFriendModal(user),
+                      child: Column(
+                        children: [
+                          StoriesItem(
+                            itemUserId: user.id?.toString() ?? '',
+                            name: (() {
+                              if (user.username != null) {
+                                return UserHelper.printUsername(user.username.toString(), user.id.toString());
+                              } else {
+                                return user.firstName?.toString() ?? '';
+                              }
+                            })(),
+                            currentUserId: widget.userId,
+                            maxRadius: 35,
+                            imageUrl: user.avatarThumbnail?.toString() ?? UserUtils().defaultAvatarImageUrl,
+                            stories: user is UserSubmodel && user.stories?.stories != null ? user.stories.stories : [],
+                          ),
+                          Text('${user.firstName ?? ''} ${user.lastName ?? ''}',
+                              textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
+                          const SizedBox(height: 1),
+                          Text(user.username?.toString() ?? '',
+                              style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
+                        ],
+                      ),
                     ),
                   ))
               .toList());
@@ -99,6 +107,23 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
           padding: const EdgeInsets.only(bottom: 20, top: 10),
           child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
         ),
+      );
+    }
+  }
+
+  showFriendModal(dynamic friendUser) {
+    if (friendUser is UserResponse) {
+      BottomDialogUtils.showBottomDialog(
+        content: FriendModalContent(
+          friendUser,
+          widget.userId,
+          FriendBloc(),
+          HiFiveSendBloc(),
+          HiFiveReceivedBloc(),
+          UserStatisticsBloc(),
+          FavoriteFriendBloc(),
+        ),
+        context: context,
       );
     }
   }

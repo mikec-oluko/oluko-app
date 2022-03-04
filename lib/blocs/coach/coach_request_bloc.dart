@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/repositories/coach_request_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -48,15 +49,8 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
   final CoachRequestRepository _coachRequestRepository = CoachRequestRepository();
   CoachRequestBloc() : super(CoachRequestLoading());
 
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
-  void dispose() {
-    if (subscription != null) {
-      subscription.cancel();
-      subscription = null;
-      emitCoachRequestDispose();
-    }
-  }
+  void dispose() {}
 
   void get(String userId) async {
     if (!(state is CoachRequestSuccess)) {
@@ -91,9 +85,9 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-  void resolve(CoachRequest coachRequest, String userId) async {
+  void resolve(CoachRequest coachRequest, String userId, RequestStatusEnum requestStatus) async {
     try {
-      await _coachRequestRepository.resolve(coachRequest, userId);
+      await _coachRequestRepository.resolve(coachRequest, userId, requestStatus);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

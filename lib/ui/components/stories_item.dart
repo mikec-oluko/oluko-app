@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 import '../../routes.dart';
 
@@ -124,7 +125,6 @@ class _State extends State<StoriesItem> {
                       widget.currentUserId != null &&
                       widget.itemUserId != null &&
                       widget.name != null &&
-                      widget.imageUrl != null &&
                       GlobalConfiguration().getValue('showStories') == 'true')
                     GestureDetector(
                         child: getCircularAvatar(),
@@ -133,6 +133,7 @@ class _State extends State<StoriesItem> {
                               'userId': widget.currentUserId,
                               'userStoriesId': widget.itemUserId,
                               'name': widget.name,
+                              'lastname': widget.lastname,
                               'avatarThumbnail': widget.imageUrl
                             }))
                   else
@@ -183,7 +184,7 @@ class _State extends State<StoriesItem> {
   }
 
   Widget getCircularAvatar() {
-    if (widget.imageUrl != null) {
+    if (widget.imageUrl != null && widget.imageUrl != 'null') {
       return OlukoNeumorphism.isNeumorphismDesign && !widget.isSegmentSection
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
@@ -200,29 +201,10 @@ class _State extends State<StoriesItem> {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: avatarImageDefault(),
+              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname),
             )
-          : avatarImageDefault();
+          : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
     }
-  }
-
-  CircleAvatar avatarImageDefault() {
-    return CircleAvatar(
-      maxRadius: widget.maxRadius ?? 30,
-      backgroundColor: widget.name == null || widget.lastname == null
-          ? OlukoColors.userColor(null, null)
-          : OlukoColors.userColor(widget.name, widget.lastname),
-      child: widget.name != null && widget.name.isNotEmpty
-          ? Text(
-              widget.name.characters?.first?.toString()?.toUpperCase() ?? '',
-              style: OlukoFonts.olukoBigFont(
-                customColor: OlukoColors.white,
-                custoFontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            )
-          : nil,
-    );
   }
 
   double getScale() {

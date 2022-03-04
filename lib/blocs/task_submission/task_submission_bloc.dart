@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
@@ -66,22 +68,6 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     }
   }
 
-  void updateTaskSubmissionVideo(AssessmentAssignment assessmentA, String taskSubmissionId, Video video) async {
-    emit(Loading());
-    try {
-      await TaskSubmissionRepository.updateTaskSubmissionVideo(assessmentA, taskSubmissionId, video);
-      emit(UpdateSuccess());
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      print(e.toString());
-      emit(Failure(exception: e));
-      rethrow;
-    }
-  }
-
   void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String taskSubmissionId, bool isPublic) async {
     try {
       await TaskSubmissionRepository.updateTaskSubmissionPrivacity(assessmentA, taskSubmissionId, isPublic);
@@ -97,9 +83,9 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     }
   }
 
-  void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, Task task) async {
+  void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, String taskId) async {
     try {
-      TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, task);
+      TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, taskId);
       if (taskSubmission == null || taskSubmission.video == null || taskSubmission.video.url == null) {
         taskSubmission = null;
       }
@@ -123,23 +109,6 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     try {
       List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
       emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: e));
-      rethrow;
-    }
-  }
-
-  Future<bool> checkCompleted(AssessmentAssignment assessmentAssignment, Assessment assessment) async {
-    try {
-      List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissions(assessmentAssignment);
-      if (taskSubmissions.length == assessment.tasks.length) {
-        AssessmentAssignmentRepository.setAsCompleted(assessmentAssignment.id);
-      }
-      return false;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

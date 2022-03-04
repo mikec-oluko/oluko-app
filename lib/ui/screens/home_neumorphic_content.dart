@@ -182,14 +182,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             widget.courses[index].name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 10.0, right: 15),
+          padding: const EdgeInsets.only(top: 10.0, right: 15, left: 15),
           child: Text(
             widget.courses[index].description ?? '',
             style: OlukoFonts.olukoBigFont(
@@ -201,12 +201,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
           builder: (context, classState) {
             if (classState is ClassSubscriptionSuccess) {
-              return EnrolledCourse().buildClassEnrolledCards(
-                context,
-                classState.classes,
-                outsideCourse: widget.courses[index],
-                outsideCourseEnrollment: widget.courseEnrollments[index],
-                outsideCourseIndex: index,
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: EnrolledCourse().buildClassEnrolledCards(
+                  context,
+                  classState.classes,
+                  outsideCourse: widget.courses[index],
+                  outsideCourseEnrollment: widget.courseEnrollments[index],
+                  outsideCourseIndex: index,
+                ),
               );
             } else {
               return const SizedBox();
@@ -303,18 +306,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Image.asset(
-                        'assets/home/mvt.png',
-                        scale: 4,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Image.asset(
+                            'assets/home/mvt.png',
+                            scale: 4,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    HandWidget(authState: widget.authState),
+                  ],
                 ),
                 notEnrolledStoriesHeader(showStories),
               ],

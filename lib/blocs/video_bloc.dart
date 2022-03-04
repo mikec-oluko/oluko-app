@@ -1,11 +1,18 @@
 import 'dart:io';
+import 'dart:isolate';
 
+import 'package:camera/camera.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
+import 'package:oluko_app/helpers/video_thumbnail.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/enums/file_extension_enum.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/file_processing.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -14,6 +21,13 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:video_player/video_player.dart';
+import 'package:path/path.dart' as path;
+import '../isolate/isolate_manager.dart';
+
+import '../isolate/video_upload_service.dart';
+import '../main.dart';
+import '../services/video_service.dart';
 
 abstract class VideoState {}
 
@@ -21,7 +35,11 @@ class Loading extends VideoState {}
 
 class VideoSuccess extends VideoState {
   Video video;
-  VideoSuccess({this.video});
+  SegmentSubmission segmentSubmission;
+  AssessmentAssignment assessmentAssignment;
+  Assessment assessment;
+  TaskSubmission taskSubmission;
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission});
 }
 
 class VideoProcessing extends VideoState {
@@ -39,8 +57,8 @@ class VideoEncoded extends VideoState {
 
 class VideoFailure extends VideoState {
   final String exceptionMessage;
-
-  VideoFailure({this.exceptionMessage});
+  SegmentSubmission segmentSubmission;
+  VideoFailure({this.exceptionMessage, this.segmentSubmission});
 }
 
 class VideoBloc extends Cubit<VideoState> {
@@ -50,52 +68,98 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
+  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id,
+      [SegmentSubmission segmentSubmission,
+      AssessmentAssignment assessmentAssignment,
+      Assessment assessment,
+      TaskSubmission taskSubmission]) async {
     try {
-      Video video;
-      if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
-        video = await _processVideo(context, videoFile, aspectRatio, id);
-      } else {
-        //video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
-        video = await _processVideo264Encoding(context, videoFile, aspectRatio, id);
-      }
-      emit(VideoSuccess(video: video));
+      final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
+      final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
+      // A Stream that handles communication between isolates
+      final p = ReceivePort();
+
+      final data = {
+        'port': p.sendPort,
+        'data': {
+          'context': context.toString(),
+          'videoFilePath': videoFile.path,
+          'aspectRatio': aspectRatio,
+          'id': id,
+          'directory': (await getApplicationDocumentsDirectory()).path,
+          'duration': durationInMilliseconds,
+          'thumbnailPath': thumbnailFilePath,
+        }
+      };
+
+      // you can also manage the isolate outside
+      // isolate.kill / pause / addListener.. .
+      final isolate = await Isolate.spawn(processVideoOnBackground, data);
+
+      p.listen(
+        (onData) {
+          OlukoIsolateMessage isolateMessage = onData as OlukoIsolateMessage;
+          if (isolateMessage.status == IsolateStatusEnum.success) {
+            emit(
+              VideoSuccess(
+                video: Video.fromJson(isolateMessage.video),
+                segmentSubmission: segmentSubmission,
+                taskSubmission: taskSubmission,
+                assessment: assessment,
+                assessmentAssignment: assessmentAssignment,
+              ),
+            );
+          } else {
+            emit(VideoFailure());
+          }
+        },
+      );
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      emit(VideoFailure(exceptionMessage: e.toString()));
+      emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission));
       rethrow;
     }
   }
 
   Future<Video> _processVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
+    print('DEPRECATED USE createVideo');
     String videoName = id;
-
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
 
-    _processPhase = '';
-    _progress = 0.0;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = '';
+    // _progress = 0.0;
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Videos/$videoName';
     final videosDir = new Directory(outDirPath);
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
-    final info = await EncodingProvider.getMediaInformation(videoPath);
-    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
-    int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
-
+    VideoPlayerController controller = new VideoPlayerController.file(videoFile);
+    var durationInSeconds = controller.value.duration;
+    int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds.inSeconds.roundToDouble()).toInt();
     video.duration = durationInMilliseconds;
 
-    _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //_processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
+    //_progress += _unitOfProgress;
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     String thumbFilePath;
     try {
-      thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
+      var imagePath = videoPath;
+      if (videoPath.toString().contains('.mp4')) {
+        imagePath = videoPath.toString().substring(0, (videoPath.toString().length) - 4);
+      }
+      final String outPath = '$imagePath.jpeg';
+      await genThumbnail(ThumbnailRequest(
+        video: videoPath,
+        maxWidth: 100,
+        maxHeight: 150,
+        thumbnailPath: outPath,
+      ));
+      thumbFilePath = outPath;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -104,23 +168,22 @@ class VideoBloc extends Cubit<VideoState> {
       rethrow;
     }
 
-    _processPhase = OlukoLocalizations.get(context, 'encodingVideo');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // _processPhase = OlukoLocalizations.get(context, 'encodingVideo');
+    // _progress += _unitOfProgress;
+    // emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     // final encodedFilesDir = await EncodingProvider.encodeHLS(videoPath, outDirPath);
     // emit(VideoEncoded(encodedFilesDir: encodedFilesDir, video: video, thumbFilePath: thumbFilePath));
 
-    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //_processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
+    //_progress += _unitOfProgress;
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    video = await uploadVideo(video, thumbFilePath, videoPath, context);
-
-    return video;
+    return video = await uploadVideo(video, thumbFilePath, videoPath, context);
   }
 
   Future<Video> uploadVideo(Video video, String thumbFilePath, String encodedFilesDir, BuildContext context) async {
+    print('DEPRECATED USE createVideo');
     String thumbUrl;
     if (thumbFilePath != null) {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
@@ -134,14 +197,15 @@ class VideoBloc extends Cubit<VideoState> {
   }
 
   Future<Video> uploadVideoWithoutProcessing(Video video, String thumbFilePath, String filePath, BuildContext context) async {
+    print('DEPRECATED USE createVideo');
     String thumbUrl;
     if (thumbFilePath != null) {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
     }
 
-    emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
+    //emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
     final videoUrl = await VideoProcess.uploadFile(filePath, video.name);
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     video.url = videoUrl;
     video.thumbUrl = thumbUrl;
@@ -150,6 +214,7 @@ class VideoBloc extends Cubit<VideoState> {
   }
 
   Future<String> _uploadFiles(BuildContext context, String dirPath, String videoName) async {
+    print('DEPRECATED USE createVideo');
     final videosDir = Directory(dirPath);
 
     var playlistUrl = '';
@@ -166,12 +231,10 @@ class VideoBloc extends Cubit<VideoState> {
       }
 
       double fileProgress = 0.4 / files.length.toDouble();
-      _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
-          i.toString() +
-          OlukoLocalizations.get(context, 'outOf') +
-          files.length.toString();
+      //_processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
+      i.toString() + OlukoLocalizations.get(context, 'outOf') + files.length.toString();
       _progress += fileProgress;
-      emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+      //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
       final downloadUrl = await VideoProcess.uploadFile(file.path, videoName);
 
@@ -185,31 +248,38 @@ class VideoBloc extends Cubit<VideoState> {
   }
 
   Future<Video> _processVideoWithoutEncoding(BuildContext context, File videoFile, double aspectRatio, String id) async {
+    print('DEPRECATED USE createVideo');
     String videoName = id;
-
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
-
     _processPhase = '';
     _progress = 0.0;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Videos/$videoName';
     final videosDir = new Directory(outDirPath);
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
-    final info = await EncodingProvider.getMediaInformation(videoPath);
-    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+    // final info = await EncodingProvider.getMediaInformation(videoPath);
+    VideoPlayerController controller = new VideoPlayerController.file(videoFile);
+    await controller.initialize();
+    double durationInSeconds = controller.value.duration.inSeconds.toDouble(); //EncodingProvider.getDuration(info.getMediaProperties());
     int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
-
     video.duration = durationInMilliseconds;
-
     _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
     _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     String thumbFilePath = null;
     try {
-      thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
+      final String outDirPath = path.dirname(videoPath);
+
+      ThumbnailResult thumbnail = await genThumbnail(ThumbnailRequest(
+        video: videoPath,
+        maxWidth: 100,
+        maxHeight: 150,
+        thumbnailPath: outDirPath,
+      ));
+
+      thumbFilePath = thumbnail.path;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -218,57 +288,10 @@ class VideoBloc extends Cubit<VideoState> {
       // rethrow;
     }
 
-    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //_processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
+    //_progress += _unitOfProgress;
+    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    video = await uploadVideoWithoutProcessing(video, thumbFilePath, videoPath, context);
-
-    return video;
-  }
-
-  Future<Video> _processVideo264Encoding(BuildContext context, File videoFile, double aspectRatio, String id) async {
-    String videoName = id;
-
-    Video video = Video(name: videoName, aspectRatio: aspectRatio);
-
-    _processPhase = '';
-    _progress = 0.0;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-
-    final Directory extDir = await getApplicationDocumentsDirectory();
-    final outDirPath = '${extDir.path}/Videos/$videoName';
-    final videosDir = new Directory(outDirPath);
-    videosDir.createSync(recursive: true);
-
-    final videoPath = videoFile.path;
-    final info = await EncodingProvider.getMediaInformation(videoPath);
-    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
-    int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
-
-    video.duration = durationInMilliseconds;
-
-    _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-    String thumbFilePath = null;
-    try {
-      thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      // rethrow;
-    }
-    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
-    _progress += _unitOfProgress;
-    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-    final encodedFile = await EncodingProvider.encode264(videoPath, outDirPath);
-    if (videosDir.exists() != null) {
-      video = await uploadVideoWithoutProcessing(video, thumbFilePath, encodedFile, context);
-    }
-
-    return video;
+    return video = await uploadVideoWithoutProcessing(video, thumbFilePath, videoPath, context);
   }
 }

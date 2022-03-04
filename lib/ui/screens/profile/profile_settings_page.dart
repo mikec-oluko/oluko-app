@@ -201,6 +201,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           .updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
     } else if (_notificationNewValue != _authUser.notification) {
       if (index == null) {
+        //TODO: setting param index value?
         index = _privacyNewValue;
       }
       BlocProvider.of<ProfileBloc>(context)

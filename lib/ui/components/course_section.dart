@@ -7,6 +7,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/class_carousel_gallery.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/course_step_section.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -59,7 +60,7 @@ class _CourseSectionState extends State<CourseSection> {
           SizedBox(height: 15),
           Text(
             //TODO: change weeks number
-            TimeConverter.toCourseDuration(3, widget.course.classes != null ? widget.course.classes.length : 0, context),
+            CourseUtils.toCourseDuration(3, widget.course.classes != null ? widget.course.classes.length : 0, context),
             style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
           ),
           SizedBox(height: 2),

@@ -167,9 +167,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
                         _coach = coachUserState.coach;
                         _coachRequests = coachRequests
                             .where((coachRequest) =>
-                                coachRequest.coachId == _coach.id &&
-                                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
-                                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id)
+                                (_coach == null &&
+                                    coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                                    coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
+                                (coachRequest.coachId == _coach.id &&
+                                    coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                                    coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
                             .toList();
                         return form();
                       } else {
@@ -345,13 +348,31 @@ class _SegmentDetailState extends State<SegmentDetail> {
             return const SizedBox();
           }(),
           body: SegmentImageSection(
-              onPressed: () => widget.fromChallenge
-                  ? (() {})
-                  : Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
-                      'courseEnrollment': widget.courseEnrollment,
-                      'classIndex': widget.classIndex,
-                      'courseIndex': widget.courseIndex
-                    }),
+              onPressed: () {
+                if (widget.fromChallenge) {
+                  return;
+                } else {
+                  Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+                  final arguments = {
+                    'courseEnrollment': widget.courseEnrollment,
+                    'classIndex': widget.classIndex,
+                    'courseIndex': widget.courseIndex
+                  };
+                  if (Navigator.canPop(context)) {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      routeLabels[RouteEnum.insideClass],
+                      arguments: arguments,
+                    );
+                  } else {
+                    Navigator.pushNamed(
+                      context,
+                      routeLabels[RouteEnum.insideClass],
+                      arguments: arguments,
+                    );
+                  }
+                }
+              },
               segment: _segments[i],
               challenge: challenge,
               currentSegmentStep: i + 1,

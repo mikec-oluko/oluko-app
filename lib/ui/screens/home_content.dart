@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
@@ -36,6 +37,7 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
+  final bool showStories = GlobalConfiguration().getValue('showStories') == 'true';
   @override
   Widget build(BuildContext context) {
     return form();
@@ -139,15 +141,15 @@ class _HomeContentState extends State<HomeContent> {
         ShaderMask(
           shaderCallback: (rect) {
             return const LinearGradient(
-                stops: [
-                  0.2,
-                  0.5,
-                  0.8,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: OlukoNeumorphismColors.homeGradientColorList,
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+              stops: [
+                0.2,
+                0.5,
+                0.8,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: OlukoNeumorphismColors.homeGradientColorList,
+            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
           },
           blendMode: BlendMode.dstIn,
           child: Container(
@@ -157,7 +159,7 @@ class _HomeContentState extends State<HomeContent> {
                 fit: BoxFit.cover,
               ),
             ),
-            height: ScreenUtils.height(context) - 200,
+            height: ScreenUtils.height(context) - (showStories ? 200 : 140),
             width: ScreenUtils.width(context),
           ),
         ),
@@ -204,7 +206,7 @@ class _HomeContentState extends State<HomeContent> {
               Navigator.of(context).push(
                 PageRouteBuilder(
                   opaque: false,
-                  pageBuilder: (_, __, ___) => VideoOverlay(
+                   pageBuilder: (_, __, ___) => VideoOverlay(
                     videoUrl: mediaURL,
                   ),
                 ),
@@ -234,7 +236,7 @@ class _HomeContentState extends State<HomeContent> {
             ),
           ),
         ),
-        const SizedBox(height: 110),
+        const SizedBox(height: 80),
         enrollButton()
       ],
     );
