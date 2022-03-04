@@ -24,6 +24,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -72,7 +73,7 @@ class SegmentClocks extends StatefulWidget {
   final int courseIndex;
   final bool fromChallenge;
 
-  SegmentClocks(
+  const SegmentClocks(
       {Key key,
       this.courseIndex,
       this.workoutType,
@@ -208,15 +209,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 );
 
                                 _globalService.videoProcessing = true;
-                                if(widget.segments[widget.segmentIndex].isChallenge) {
-                                  StoryUtils.createNewPRChallengeStory(context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+                                BlocProvider.of<CoachRequestStreamBloc>(context)
+                                    .resolve(_coachRequest, _user.uid, RequestStatusEnum.ignored);
+                                if (widget.segments[widget.segmentIndex].isChallenge) {
+                                  StoryUtils.createNewPRChallengeStory(
+                                      context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
                                 }
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
-                              BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid);
+                              BlocProvider.of<CoachRequestStreamBloc>(context)
+                                  .resolve(_coachRequest, _user.uid, RequestStatusEnum.resolved);
                               if (_wantsToCreateStory) {
-                                StoryUtils.callBlocToCreateStory(context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
+                                StoryUtils.callBlocToCreateStory(
+                                    context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
                                 _segmentSubmission = state?.segmentSubmission;
