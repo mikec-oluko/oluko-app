@@ -13,7 +13,7 @@ class OlukoVideoPreview extends StatefulWidget {
   final String video;
   final String image;
   final List<String> randomImages;
-
+  final bool bannerVideo;
   final bool showBackButton;
   final bool showShareButton;
   final bool showHeartButton;
@@ -36,6 +36,7 @@ class OlukoVideoPreview extends StatefulWidget {
       Key key,
       this.onPlay,
       this.videoVisibilty = false,
+      this.bannerVideo = false,
       this.audioWidget})
       : super(key: key);
 
@@ -142,11 +143,11 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   Widget videoSection() {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
-          aspectRatio: 480 / 600,
+          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
           child: Container(color: OlukoColors.white, child: widget.randomImages != null ? gridSection() : imageSection())),
       if (widget.video != null)
         AspectRatio(
-          aspectRatio: 480 / 600,
+          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
           child: Padding(
               padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
               child: GestureDetector(
@@ -224,7 +225,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
           )
         : widget.randomImages == null
             ? Image.asset(
-                'assets/courses/profile_photos.png',
+                widget.bannerVideo ? 'assets/home/mvtthumbnail.png' : 'assets/courses/profile_photos.png',
                 fit: BoxFit.cover,
               )
             : Image(
