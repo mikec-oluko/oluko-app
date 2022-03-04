@@ -381,12 +381,14 @@ class _CourseMarketingState extends State<CourseMarketing> {
   Widget buildStatistics() {
     return BlocBuilder<StatisticsSubscriptionBloc, StatisticsSubscriptionState>(builder: (context, statisticsState) {
       if (statisticsState is StatisticsSubscriptionSuccess) {
-        CourseStatistics courseStatistics =
-            statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList()[0];
+        List<CourseStatistics> courseStatistics =
+            statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList();
+
+        final CourseStatistics courseStatistic = courseStatistics.isNotEmpty ? courseStatistics[0] : null;
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
             child: StatisticChart(
-              courseStatistics: courseStatistics,
+              courseStatistics: courseStatistic,
               course: widget.course,
             ));
       }
