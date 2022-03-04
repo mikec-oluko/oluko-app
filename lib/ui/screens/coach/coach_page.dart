@@ -36,7 +36,7 @@ import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/enums/status_enum.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/task.dart';
@@ -648,7 +648,7 @@ class _CoachPageState extends State<CoachPage> {
           if (segmentItem.segmentId == coachRequestItem.segmentId) {
             if (_requiredSegmentList
                 .where((requiredSegmentItem) =>
-                    requiredSegmentItem.segmentId == coachRequestItem.segmentId && coachRequestItem.status == StatusEnum.requested)
+                    requiredSegmentItem.segmentId == coachRequestItem.segmentId && coachRequestItem.status == RequestStatusEnum.requested)
                 .isEmpty) {
               segmentItem.coachRequest = coachRequestItem;
               segmentItem.createdAt = coachRequestItem.createdAt;
