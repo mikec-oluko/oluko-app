@@ -24,9 +24,10 @@ class Failure extends FeedbackState {
 class FeedbackBloc extends Cubit<FeedbackState> {
   FeedbackBloc() : super(Loading());
 
-  void like(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
+  Future<void> like(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
     try {
-      if (courseEnrollment.classes[classIndex].segments[segmentIndex].likes > 0 ||courseEnrollment.classes[classIndex].segments[segmentIndex].dislikes >0) {
+      if (courseEnrollment.classes[classIndex].segments[segmentIndex].likes > 0 ||
+          courseEnrollment.classes[classIndex].segments[segmentIndex].dislikes > 0) {
         update(courseEnrollment, classIndex, segmentIndex, segmentId, true);
       } else {
         await SegmentRepository.addLike(courseEnrollment, classIndex, segmentIndex, segmentId);
@@ -38,11 +39,13 @@ class FeedbackBloc extends Cubit<FeedbackState> {
       );
       rethrow;
     }
+    return;
   }
 
-  void dislike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
+  Future<void> dislike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
     try {
-      if (courseEnrollment.classes[classIndex].segments[segmentIndex].dislikes > 0||courseEnrollment.classes[classIndex].segments[segmentIndex].likes >0) {
+      if (courseEnrollment.classes[classIndex].segments[segmentIndex].dislikes > 0 ||
+          courseEnrollment.classes[classIndex].segments[segmentIndex].likes > 0) {
         update(courseEnrollment, classIndex, segmentIndex, segmentId, false);
       } else {
         await SegmentRepository.addDisLike(courseEnrollment, classIndex, segmentIndex, segmentId);
@@ -54,9 +57,10 @@ class FeedbackBloc extends Cubit<FeedbackState> {
       );
       rethrow;
     }
+    return;
   }
 
-  void update(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
+  Future<void> update(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
     try {
       await SegmentRepository.updateLikesDislikes(courseEnrollment, classIndex, segmentIndex, segmentId, likes);
     } catch (exception, stackTrace) {
@@ -66,5 +70,6 @@ class FeedbackBloc extends Cubit<FeedbackState> {
       );
       rethrow;
     }
+    return;
   }
 }

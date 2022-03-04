@@ -14,7 +14,7 @@ class FeedbackCard extends StatefulWidget {
   int classIndex;
   int segmentIndex;
   String segmentId;
-  FeedbackCard(this.courseEnrollment,this.classIndex,this.segmentIndex, this.segmentId);
+  FeedbackCard(this.courseEnrollment, this.classIndex, this.segmentIndex, this.segmentId);
   @override
   _State createState() => _State();
 }
@@ -24,6 +24,7 @@ class _State extends State<FeedbackCard> {
   bool like = false;
   bool dislike = false;
   bool updateFeedback = false;
+  bool isProcessingLike = false;
 
   @override
   void initState() {
@@ -110,15 +111,18 @@ class _State extends State<FeedbackCard> {
     );
   }
 
-  void setFeedback() {
+  void setFeedback() async {
     if (updateFeedback) {
-      BlocProvider.of<FeedbackBloc>(context).update(widget.courseEnrollment, widget.classIndex, widget.segmentIndex,widget.segmentId, like);
+      await BlocProvider.of<FeedbackBloc>(context)
+          .update(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId, like);
     } else if (like) {
-      BlocProvider.of<FeedbackBloc>(context).like(widget.courseEnrollment,widget.classIndex,widget.segmentIndex, widget.segmentId);
+      await BlocProvider.of<FeedbackBloc>(context).like(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId);
     } else {
-      BlocProvider.of<FeedbackBloc>(context).dislike(widget.courseEnrollment,widget.classIndex, widget.segmentIndex,widget.segmentId);
+      await BlocProvider.of<FeedbackBloc>(context)
+          .dislike(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId);
     }
     updateFeedback = true;
+    isProcessingLike = false;
   }
 
   Container neumorphicFeedBackCard(BuildContext context) {
@@ -145,11 +149,14 @@ class _State extends State<FeedbackCard> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      setState(() {
-                        like = true;
-                        dislike = false;
-                      });
-                      setFeedback();
+                      if (!isProcessingLike) {
+                        isProcessingLike = true;
+                        setState(() {
+                          like = true;
+                          dislike = false;
+                        });
+                        setFeedback();
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 10),
@@ -188,11 +195,14 @@ class _State extends State<FeedbackCard> {
                     )),
                 GestureDetector(
                     onTap: () {
-                      setState(() {
-                        dislike = true;
-                        like = false;
-                      });
-                      setFeedback();
+                      if (!isProcessingLike) {
+                        isProcessingLike = true;
+                        setState(() {
+                          like = false;
+                          dislike = true;
+                        });
+                        setFeedback();
+                      }
                     },
                     child: Column(
                       children: [
