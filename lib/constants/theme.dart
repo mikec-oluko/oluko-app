@@ -94,6 +94,14 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForCirclePrimaryColor() {
+    return getNeumorphicStyleForCircleElement().copyWith(
+      shape: NeumorphicShape.convex,
+      color: OlukoColors.primary,
+      surfaceIntensity: 0.5,
+    );
+  }
+
   static NeumorphicStyle getNeumorphicStyleForInnerCircleWatch() {
     return const NeumorphicStyle(
         depth: -12,

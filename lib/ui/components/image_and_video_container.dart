@@ -14,6 +14,7 @@ class ImageAndVideoContainer extends StatefulWidget {
   final dynamic originalContent;
   final bool isCoach;
   final bool isForCarousel;
+  final bool isCoachMediaContent;
 
   ImageAndVideoContainer(
       {this.backgroundImage,
@@ -22,7 +23,8 @@ class ImageAndVideoContainer extends StatefulWidget {
       this.displayOnViewNamed,
       this.originalContent,
       this.isCoach = false,
-      this.isForCarousel = false});
+      this.isForCarousel = false,
+      this.isCoachMediaContent = false});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -47,6 +49,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
                   widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
               originalContent: widget.originalContent,
               isCoach: widget.isCoach,
+              isCoachMediaContent: widget.isCoachMediaContent,
             ))
         : Container(
             height: 150,
@@ -63,13 +66,15 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
                   widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
               originalContent: widget.originalContent,
               isCoach: widget.isCoach,
+              isCoachMediaContent: widget.isCoachMediaContent,
             ));
   }
 
   Image backgroundCachedNetworkImageProvider() {
+    final ImageProvider _defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
     if (widget.isForCarousel) {
       return Image(
-        image: CachedNetworkImageProvider(widget.backgroundImage),
+        image: widget.backgroundImage == null ? _defaultImage : CachedNetworkImageProvider(widget.backgroundImage),
         fit: BoxFit.contain,
         height: 150,
         width: 250,
@@ -78,7 +83,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
       );
     }
     return Image(
-      image: CachedNetworkImageProvider(widget.backgroundImage),
+      image: widget.backgroundImage == null ? _defaultImage : CachedNetworkImageProvider(widget.backgroundImage),
       fit: BoxFit.contain,
       height: widget.isCoach ? 150 : 120,
       width: 120,

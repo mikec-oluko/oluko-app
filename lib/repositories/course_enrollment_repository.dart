@@ -83,7 +83,7 @@ class CourseEnrollmentRepository {
         return CourseEnrollment.fromJson(data);
       }).toList();
     }
-    return null;
+    return [];
   }
 
   static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {

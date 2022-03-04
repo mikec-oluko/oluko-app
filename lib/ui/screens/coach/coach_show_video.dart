@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -25,30 +26,23 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.titleForContent,
-          style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-        ),
-        elevation: 0.0,
-        backgroundColor: OlukoColors.black,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      appBar: OlukoAppBar(
+        showTitle: true,
+        showBackButton: true,
+        title: widget.titleForContent,
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: OlukoColors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: Stack(
           children: [
-            Align(alignment: Alignment.center, child: showVideoPlayer(widget.videoUrl, widget.aspectRatio)),
+            Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                  child: showVideoPlayer(widget.videoUrl, widget.aspectRatio),
+                )),
           ],
         ),
       ),
@@ -58,15 +52,25 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   Widget showVideoPlayer(String videoUrl, double aspectRatio) {
     List<Widget> widgets = [];
     if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
+      widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        aspectRatio: aspectRatio,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
-              _controller = chewieController;
-            })));
+    widgets.add(OlukoNeumorphism.isNeumorphismDesign
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: OlukoVideoPlayer(
+                videoUrl: videoUrl,
+                aspectRatio: aspectRatio,
+                autoPlay: false,
+                whenInitialized: (ChewieController chewieController) => setState(() {
+                      _controller = chewieController;
+                    })),
+          )
+        : OlukoVideoPlayer(
+            videoUrl: videoUrl,
+            autoPlay: false,
+            whenInitialized: (ChewieController chewieController) => setState(() {
+                  _controller = chewieController;
+                })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(

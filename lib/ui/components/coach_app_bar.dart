@@ -1,16 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final UserResponse coachUser;
+  final CoachUser coachUser;
   final Function() onNavigation;
   const CoachAppBar({this.coachUser, this.onNavigation});
 
@@ -24,7 +24,7 @@ class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CoachAppBarState extends State<CoachAppBar> {
   String defaultCoachPic = '';
   num numberOfReviewPendingItems = 0;
-  bool showCoachProfle = false;
+  bool showCoachProfle = true;
 
   @override
   void initState() {
@@ -57,46 +57,39 @@ class _CoachAppBarState extends State<CoachAppBar> {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
         automaticallyImplyLeading: false,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Container(
-            color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: showCoachProfle
-                      ? goToCoachProfile(context)
-                      : Text(
-                          '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
-                        ),
-                ),
-              ],
-            ),
-          ),
-        ),
         leading: Container(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               OlukoNeumorphicCircleButton(
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
-                  },
-                  customIcon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: OlukoColors.grayColor,
-                  )),
+                onPressed: () {
+                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+                },
+              ),
             ],
           ),
         ),
         actions: [
-          showCoachProfle
-              ? widget.coachUser != null && widget.coachUser.avatarThumbnail != null
-                  ? coachAvatarImage()
-                  : coachDefaultAvatar()
-              : SizedBox.shrink(),
+          if (showCoachProfle)
+            Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: Row(
+                children: [
+                  goToCoachProfile(context),
+                  const SizedBox(width: 10),
+                  if (widget.coachUser != null && widget.coachUser.avatarThumbnail != null)
+                    OlukoNeumorphism.isNeumorphismDesign
+                        ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
+                        : coachAvatarImage()
+                  else
+                    OlukoNeumorphism.isNeumorphismDesign
+                        ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
+                        : coachDefaultAvatar(),
+                ],
+              ),
+            )
+          else
+            const SizedBox.shrink(),
         ],
         elevation: 0.0,
         backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
@@ -118,11 +111,10 @@ class _CoachAppBarState extends State<CoachAppBar> {
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                     ),
             ),
-            showCoachProfle
-                ? widget.coachUser != null && widget.coachUser.avatarThumbnail != null
-                    ? coachAvatarImage()
-                    : coachDefaultAvatar()
-                : SizedBox.shrink(),
+            if (showCoachProfle)
+              widget.coachUser != null && widget.coachUser.avatarThumbnail != null ? coachAvatarImage() : coachDefaultAvatar()
+            else
+              const SizedBox.shrink(),
           ],
         )
       ],
@@ -150,7 +142,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
             widget.coachUser != null
                 ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
                 : defaultCoachPic,
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, custoFontWeight: FontWeight.w500)),
       ),
     ]);
   }

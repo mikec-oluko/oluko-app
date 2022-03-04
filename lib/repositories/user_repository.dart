@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
+import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -55,6 +56,24 @@ class UserRepository {
     }
     final response = docRef.docs[0].data() as Map<String, dynamic>;
     final loginResponseBody = UserResponse.fromJson(response);
+    return loginResponseBody;
+  }
+
+  Future<CoachUser> getCoachById(String id) async {
+    if (id == null) {
+      return null;
+    }
+    final QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .where('id', isEqualTo: id)
+        .get();
+    if (docRef.docs == null || docRef.docs.isEmpty) {
+      return null;
+    }
+    final response = docRef.docs[0].data() as Map<String, dynamic>;
+    final loginResponseBody = CoachUser.fromJson(response);
     return loginResponseBody;
   }
 
@@ -223,5 +242,4 @@ class UserRepository {
       rethrow;
     }
   }
-
 }
