@@ -24,6 +24,7 @@ import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
@@ -285,6 +286,7 @@ class Routes {
   final CourseHomeBloc _courseHomeBloc = CourseHomeBloc();
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
+  final FriendRequestBloc _friendRequestBloc = FriendRequestBloc();
   final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
   final IgnoreFriendRequestBloc _ignoreFriendRequestBloc = IgnoreFriendRequestBloc();
   final FavoriteFriendBloc _favoriteFriendBloc = FavoriteFriendBloc();
@@ -389,6 +391,7 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<IgnoreFriendRequestBloc>.value(value: _ignoreFriendRequestBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
@@ -479,6 +482,7 @@ class Routes {
       case RouteEnum.friends:
         providers = [
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
