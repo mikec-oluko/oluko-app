@@ -491,7 +491,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             ),
           ),
         ),
-        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.15 : ScreenUtils.height(context) * 0.25),
+        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.2),
         enrollButton()
       ],
     );
