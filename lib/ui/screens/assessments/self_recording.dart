@@ -333,7 +333,7 @@ class _State extends State<SelfRecording> {
   Widget imageWrapper() {
     return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
       builder: (context, state) {
-        if (state is Success) {
+        if (state is Success &&state.firstVideo!=null) {
           return Container(
             width: 40,
             height: 40,
