@@ -287,7 +287,7 @@ class TimerUtils {
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 36 : 32,
+                            fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor

@@ -223,8 +223,8 @@ class SegmentUtils {
     label += ' ${movement.name}';
     if (movement.isBothSide) {
       int qty = (movement.value / 2).toInt();
-      String text = '$qty$parameter ${movement.name}';
-      label += ' ($text / $text)';
+      String text = '$qty$parameter';
+      label += ' ($text/$text)';
     }
     return label;
   }
