@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
@@ -360,6 +361,7 @@ class Routes {
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
   final NotificationBloc _notificationBloc = NotificationBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
+  final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -423,6 +425,7 @@ class Routes {
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<NotificationBloc>.value(value: _notificationBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -998,6 +1001,7 @@ class Routes {
       case RouteEnum.coachProfile:
         providers = [
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
         ];
         final Map<String, CoachUser> argumentsToAdd = arguments as Map<String, CoachUser>;
         newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);

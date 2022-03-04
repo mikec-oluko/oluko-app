@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_media.dart';
@@ -25,19 +26,24 @@ class CoachProfile extends StatefulWidget {
 }
 
 class _CoachProfileState extends State<CoachProfile> {
-  String defaultCoachPic = '';
+  final String _defaultCoachPic = '';
   bool _isVideoPlaying = false;
-  List<Audio> coachAudioList = [];
-  List<CoachMedia> coachUploadedContent = [];
-  final SoundRecorder recorder = SoundRecorder();
-  bool recordingAudio = false;
-  bool audioRecorded = false;
-  List<String> audiosRecorded = [];
+  List<Audio> _coachAudioList = [];
+  List<CoachMedia> _coachUploadedContent = [];
+  final SoundRecorder _recorder = SoundRecorder();
+  bool _recordingAudio = false;
+  bool _audioRecorded = false;
+  List<String> _audiosRecorded = [];
+  double _audioPanelMaxSize = 100.0;
+  Widget _audioRecordedElement;
+  final PanelController _panelController = PanelController();
+
   @override
   void initState() {
-    recorder.init();
+    _recorder.init();
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
-    recordingAudio = recorder.isRecording;
+    BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+    _recordingAudio = _recorder.isRecording;
     super.initState();
   }
 
@@ -49,41 +55,78 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   Widget coachProfileView(BuildContext context) {
-    return SlidingUpPanel(
-      color: OlukoNeumorphismColors.appBackgroundColor,
-      maxHeight: 100,
-      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-      panel: askCoachComponent(context),
-      body: Container(
-        color: OlukoNeumorphismColors.appBackgroundColor,
-        constraints: const BoxConstraints.expand(),
-        child: ListView(
-          clipBehavior: Clip.none,
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  if (widget.coachUser.bannerVideo != null)
-                    coachBannerVideo(context)
-                  else
-                    CoachCoverImage(
-                      coachUser: widget.coachUser,
-                    ),
-                  coachInformationComponent(context),
-                  uploadCoverButton(context),
-                  coachGallery(context),
-                  // askCoachComponent(context)
-                ],
-              ),
+    return BlocBuilder<CoachAudioPanelBloc, CoachAudioPanelState>(
+      buildWhen: (CoachAudioPanelState previous, CoachAudioPanelState current) => previous != current,
+      builder: (context, state) {
+        if (state is CoachAudioPanelDefault) {
+          _audioPanelMaxSize = state.panelMaxSize;
+        }
+        if (state is CoachAudioPanelDeleted) {
+          _audioPanelMaxSize = state.panelMaxSize;
+        }
+        if (state is CoachAudioPanelRecorded) {
+          _audioPanelMaxSize = state.panelMaxSize;
+          _audioRecordedElement = state.audioRecoded;
+          _panelController.animatePanelToPosition(1);
+        }
+
+        if (state is CoachAudioPanelConfirmDelete) {
+          _audioPanelMaxSize = state.panelMaxSize;
+        }
+        return SlidingUpPanel(
+          isDraggable: false,
+          controller: _panelController,
+          minHeight: 100.0,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          maxHeight: _audioPanelMaxSize,
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          panel: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [askCoachMicComponent(recordedAudioWidget: _audioRecordedElement ?? null)],
+          ),
+          body: Container(
+            width: ScreenUtils.width(context),
+            height: ScreenUtils.height(context),
+            color: OlukoNeumorphismColors.appBackgroundColor,
+            constraints: const BoxConstraints.expand(),
+            child: ListView(
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              children: [
+                coachBannerAndInfoSection(context),
+                SizedBox(
+                  height: ScreenUtils.height(context) / 12,
+                ),
+                coachGallery(context),
+                askCoachComponent(context),
+                if (_audiosRecorded.isNotEmpty)
+                  const SizedBox(
+                    height: 110,
+                  )
+                else
+                  const SizedBox.shrink()
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+    );
+  }
+
+  Stack coachBannerAndInfoSection(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        if (widget.coachUser.bannerVideo != null)
+          coachBannerVideo(context)
+        else
+          CoachCoverImage(
+            coachUser: widget.coachUser,
+          ),
+        coachInformationComponent(context),
+        uploadCoverButton(context),
+      ],
     );
   }
 
@@ -103,47 +146,18 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   Widget askCoachComponent(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          // color: Colors.red,
-          child: Stack(
-            children: [
-              if (audiosRecorded.isNotEmpty)
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: ScreenUtils.height(context) / 3.5,
-                  child: audiosRecorded.isNotEmpty
-                      ? Padding(
-                          padding: EdgeInsets.zero,
-                          child: ListView(children: audiosRecorded.map((audioPath) => audioSentComponent(context, audioPath)).toList()),
-                        )
-                      : SizedBox.shrink(),
-                )
-              else
-                const SizedBox.shrink(),
-              Align(alignment: Alignment.bottomCenter, child: askCoachMicComponent())
-            ],
-          )),
-    );
+    return _audiosRecorded.isNotEmpty
+        ? Column(children: _audiosRecorded.map((audioPath) => audioSentComponent(context, audioPath)).toList())
+        : const SizedBox.shrink();
   }
 
-  Widget askCoachMicComponent() {
+  Widget askCoachMicComponent({Widget recordedAudioWidget}) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-            ),
-            width: ScreenUtils.width(context),
-            height: 100,
-            child: askCoachMicContent())
-        : askCoachMicContent();
+        ? Container(width: ScreenUtils.width(context), child: askCoachMicContent(audioRecorded: recordedAudioWidget))
+        : askCoachMicContent(audioRecorded: recordedAudioWidget);
   }
 
-  Padding askCoachMicContent() {
+  Padding askCoachMicContent({Widget audioRecorded}) {
     final askCoachText = Text(
       OlukoLocalizations.get(context, 'askYourCoach'),
       style: OlukoFonts.olukoMediumFont(
@@ -152,42 +166,47 @@ class _CoachProfileState extends State<CoachProfile> {
     );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          if (OlukoNeumorphism.isNeumorphismDesign)
-            Expanded(
-                child: Container(
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                    ),
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: askCoachText,
-                        ))))
-          else
-            askCoachText,
-          const SizedBox(
-            width: 20,
+          if (audioRecorded != null) audioRecorded else const SizedBox.shrink(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (OlukoNeumorphism.isNeumorphismDesign)
+                Expanded(
+                    child: Container(
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                        ),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: askCoachText,
+                            ))))
+              else
+                askCoachText,
+              const SizedBox(
+                width: 20,
+              ),
+              Container(
+                clipBehavior: Clip.none,
+                width: 40,
+                height: 40,
+                child: OlukoNeumorphism.isNeumorphismDesign
+                    ? Neumorphic(
+                        style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+                        child: microphoneIconButtonContent(
+                            iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic,
+                                size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)))
+                    : microphoneIconButtonContent(
+                        iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic,
+                            size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)),
+              )
+            ],
           ),
-          Container(
-            clipBehavior: Clip.none,
-            width: 40,
-            height: 40,
-            child: OlukoNeumorphism.isNeumorphismDesign
-                ? Neumorphic(
-                    style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
-                    child: microphoneIconButtonContent(
-                        iconForContent: Icon(recordingAudio ? Icons.stop : Icons.mic,
-                            size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)))
-                : microphoneIconButtonContent(
-                    iconForContent: Icon(recordingAudio ? Icons.stop : Icons.mic,
-                        size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)),
-          )
         ],
       ),
     );
@@ -196,10 +215,10 @@ class _CoachProfileState extends State<CoachProfile> {
   _onRecordCompleted() {
     //TERMINO DE GRABAR
     setState(() {
-      audioRecorded = true;
-      recordingAudio = false;
-
-      audiosRecorded.add(recorder.audioUrl);
+      _audioRecorded = true;
+      _recordingAudio = false;
+      _audiosRecorded.add(_recorder.audioUrl);
+      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(audioWidget: audioSentComponent(context, _recorder.audioUrl));
     });
   }
 
@@ -207,12 +226,12 @@ class _CoachProfileState extends State<CoachProfile> {
     return GestureDetector(
         onTap: () async {
           //TODO: EMPIEZA A GRABAR / PARAR VIDEO
-          final isRecording = await recorder.toggleRecording();
+          final isRecording = await _recorder.toggleRecording();
           setState(() {
-            recordingAudio = !recordingAudio;
+            _recordingAudio = !_recordingAudio;
           });
 
-          if (recorder.isStopped) {
+          if (_recorder.isStopped) {
             //SALVA LA GRABACION
             _onRecordCompleted();
           }
@@ -233,7 +252,7 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   Widget audioSentComponent(BuildContext context, String audioPath) {
-    return audioRecorded
+    return _audioRecorded
         ? CoachAudioSentComponent(
             record: audioPath,
           )
@@ -244,49 +263,42 @@ class _CoachProfileState extends State<CoachProfile> {
     return BlocBuilder<CoachMediaBloc, CoachMediaState>(
       builder: (context, state) {
         if (state is CoachMediaContentUpdate) {
-          coachUploadedContent = state.coachMediaContent;
+          _coachUploadedContent = state.coachMediaContent;
         }
         if (state is CoachMediaContentSuccess) {
-          coachUploadedContent = state.coachMediaContent;
+          _coachUploadedContent = state.coachMediaContent;
         }
-        return coachUploadedContent.isNotEmpty
-            ? Align(
-                child: Padding(
-                  padding: EdgeInsets.only(top: audiosRecorded.isNotEmpty ? 100 : 300),
-                  child: audiosRecorded.isNotEmpty
-                      ? CoachMediaCarouselGallery(
-                          coachMedia: coachUploadedContent,
-                          coachUser: widget.coachUser,
-                        )
-                      : ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
+        return _coachUploadedContent.isNotEmpty
+            ? _audiosRecorded.isNotEmpty
+                ? CoachMediaCarouselGallery(
+                    coachMedia: _coachUploadedContent,
+                    coachUser: widget.coachUser,
+                  )
+                : Column(children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          const Expanded(child: SizedBox()),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                            child: Row(
-                              children: [
-                                const Expanded(child: SizedBox()),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: coachUploadedContent.isNotEmpty
-                                      ? GestureDetector(
-                                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach], arguments: {
-                                            'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null
-                                          }),
-                                          child: Text(OlukoLocalizations.get(context, 'viewAll'),
-                                              style: OlukoFonts.olukoBigFont(
-                                                  customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
-                                        )
-                                      : const SizedBox.shrink(),
-                                )
-                              ],
-                            ),
-                          ),
-                          CoachMediaGridGallery(
-                            coachMedia: coachUploadedContent,
-                            limitedContent: true,
-                          ),
-                        ]),
-                ),
-              )
+                            padding: const EdgeInsets.only(right: 10),
+                            child: _coachUploadedContent.isNotEmpty
+                                ? GestureDetector(
+                                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach],
+                                        arguments: {'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null}),
+                                    child: Text(OlukoLocalizations.get(context, 'viewAll'),
+                                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                                  )
+                                : const SizedBox.shrink(),
+                          )
+                        ],
+                      ),
+                    ),
+                    CoachMediaGridGallery(
+                      coachMedia: _coachUploadedContent,
+                      limitedContent: true,
+                    ),
+                  ])
             : SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 300,

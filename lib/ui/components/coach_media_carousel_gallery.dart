@@ -22,9 +22,10 @@ class _CoachMediaCarouselGalleryState extends State<CoachMediaCarouselGallery> {
   }
 
   Container coachMediaCarouselGallery(BuildContext context) {
+    const double _galleryHeight = 180;
     return Container(
         width: MediaQuery.of(context).size.width,
-        height: 300,
+        height: _galleryHeight,
         child: CarouselSmallSection(
           routeToGo: RouteEnum.aboutCoach,
           coachUser: widget.coachUser,
