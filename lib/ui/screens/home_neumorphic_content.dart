@@ -391,6 +391,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       OlukoVideoPlayer(
         isOlukoControls: true,
         videoUrl: videoUrl,
+        onVideoFinished: () => setState(() {
+          _controller = null;
+          isVideoVisible = !isVideoVisible;
+        }),
         whenInitialized: (ChewieController chewieController) => setState(() {
           _controller = chewieController;
         }),
@@ -403,7 +407,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         children: widgets +
             [
               Positioned(
-                top: showStories ? 25 : 60,
+                top: showStories ? 25 : 15,
                 right: 10,
                 child: GestureDetector(
                   onTap: () {
