@@ -12,7 +12,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 class VideoProcess {
   static Future<String> uploadFile(String filePath, String folderName) async {
-    final file = new File(filePath);
+    final file = File(filePath);
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();

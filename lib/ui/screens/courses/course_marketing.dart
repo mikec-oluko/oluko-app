@@ -294,8 +294,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   padding: const EdgeInsets.only(right: 15, left: 15),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: ListView(
+                      shrinkWrap: true,
+                      primary: false,
+                      //crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildStatistics(),
                         Padding(
@@ -412,7 +414,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildClassExpansionPanels() {
-    return ClassExpansionPanel(
+    return ClassExpansionPanels(
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) {
