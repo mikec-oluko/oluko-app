@@ -125,7 +125,7 @@ class _State extends State<Courses> {
                     onSubmit: (List<Base> selectedItems) => setState(() {
                       selectedTags = selectedItems as List<Tag>;
                       showFilterSelector = false;
-                      searchKey.currentState.updateSearchResults('');
+                      searchKey.currentState.updateSearchResults('',selectedTags: selectedTags);
                     }),
                     onClosed: () => this.setState(() {
                       showFilterSelector = false;
