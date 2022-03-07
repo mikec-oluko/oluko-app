@@ -276,9 +276,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
-          for (var i = state.contentFromUser.length-1; i > -1; i--) {
-            _transformationJourneyContent.add(state.contentFromUser[i]);
-          }
+          _transformationJourneyContent = state.contentFromUser;
           _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
               tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
         }

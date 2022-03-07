@@ -97,14 +97,7 @@ class SegmentRepository {
             .doc(GlobalConfiguration().getValue("projectId"))
             .collection('segments')
             .doc(segmentId)
-            .update({'likes': FieldValue.increment(1)});
-        await FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue("projectId"))
-            .collection('segments')
-            .doc(segmentId)
-            .update({'dislikes': FieldValue.increment(-1)});
-
+            .update({'likes': FieldValue.increment(1),'dislikes': FieldValue.increment(-1)});
         DocumentReference reference = FirebaseFirestore.instance
             .collection('projects')
             .doc(GlobalConfiguration().getValue('projectId'))
@@ -124,13 +117,7 @@ class SegmentRepository {
             .doc(GlobalConfiguration().getValue("projectId"))
             .collection('segments')
             .doc(segmentId)
-            .update({'likes': FieldValue.increment(-1)});
-        await FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue("projectId"))
-            .collection('segments')
-            .doc(segmentId)
-            .update({'dislikes': FieldValue.increment(1)});
+            .update({'likes': FieldValue.increment(-1),'dislikes': FieldValue.increment(1)});
         DocumentReference reference = FirebaseFirestore.instance
             .collection('projects')
             .doc(GlobalConfiguration().getValue('projectId'))
