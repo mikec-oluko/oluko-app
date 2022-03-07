@@ -455,12 +455,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           )
         else
           imageAspectRatio(),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 50, 10, 0),
-          child: Image.asset(
-            'assets/courses/degraded.png',
-            fit: BoxFit.fitHeight,
-          ),
+        Image.asset(
+          'assets/courses/degraded.png',
+          fit: BoxFit.fitHeight,
         ),
       ],
     );
