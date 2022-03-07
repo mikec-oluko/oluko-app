@@ -353,7 +353,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.1.10):
+  - cloud_firestore (3.1.9):
     - Firebase/Firestore (= 8.11.0)
     - firebase_core
     - Flutter
@@ -379,18 +379,18 @@ PODS:
   - Firebase/Storage (8.11.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.11.0)
-  - firebase_auth (3.3.9):
+  - firebase_auth (3.3.8):
     - Firebase/Auth (= 8.11.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.13.1):
+  - firebase_core (1.12.0):
     - Firebase/CoreOnly (= 8.11.0)
     - Flutter
-  - firebase_database (9.0.8):
+  - firebase_database (9.0.7):
     - Firebase/Database (= 8.11.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.2.9):
+  - firebase_storage (10.2.8):
     - Firebase/Storage (= 8.11.0)
     - firebase_core
     - Flutter
@@ -677,16 +677,16 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: c6c42fe62809b7417aa3c45a6ef0c2812f7fb0d6
+  cloud_firestore: c4fe921497494112ca9de681464ddd44d51b17bb
   FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
   FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
   FBSDKLoginKit: e993f97c7cc794c5da4056d8aec3c3d66033a727
   Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
-  firebase_auth: 99c9cdc8cc2e59f6fd4960b6e183f5430d237838
-  firebase_core: 08f6a85f62060111de5e98d6a214810d11365de9
-  firebase_database: f735e06aef66f3513ef49ce82c2748d6e30f524d
-  firebase_storage: 5b964cad5f351e9c35f8b0e0b878cdd095f30d09
+  firebase_auth: 386760cb543983c9f00ed148cd83e2c8443c94a2
+  firebase_core: 443bccfd6aa6b42f07be365b500773dc69db2d87
+  firebase_database: 2bb2e2aae97c58af3a6d420124ffa8f0b7e5a28c
+  firebase_storage: 6f63ea75fb2e9a329f7fd4e1ef0f149787abd675
   FirebaseAuth: d96d73aba85d192d7a7aa0b86dd6d7f8ec170b4b
   FirebaseCore: 2f4f85b453cc8fea4bb2b37e370007d2bcafe3f0
   FirebaseCoreDiagnostics: 3b40dfadef5b90433a60ae01f01e90fe87aa76aa
