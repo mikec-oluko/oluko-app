@@ -38,7 +38,7 @@ class TransformationJourneyRepository {
         final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
         contentUploaded.add(TransformationJourneyUpload.fromJson(content));
       }
-      contentUploaded.sort((a, b) => a.index.compareTo(b.index));
+      contentUploaded.sort((a, b) => b.index.compareTo(a.index));
       return contentUploaded;
     } catch (e, stackTrace) {
       await Sentry.captureException(

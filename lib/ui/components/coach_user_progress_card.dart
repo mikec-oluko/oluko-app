@@ -3,6 +3,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'coach_user_progress_component.dart';
 
 class CoachUserProgressCard extends StatefulWidget {
@@ -99,7 +100,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
 
   Widget userNeumorphicStatisticsPanel(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtils.modifiedFont(context) ? 0 : 20),
       child: Wrap(
         children: [
           OlukoNeumorphism.isNeumorphismDesign
@@ -119,20 +120,24 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
               width: MediaQuery.of(context).size.width,
               clipBehavior: Clip.none,
               // height: 150,
-              height: _isUserStatisticExpanded ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.height / 12,
+              height: _isUserStatisticExpanded
+                  ? ScreenUtils.modifiedFont(context)
+                      ? MediaQuery.of(context).size.height / 4.5
+                      : MediaQuery.of(context).size.height / 6.0
+                  : MediaQuery.of(context).size.height / 12,
               duration: const Duration(milliseconds: 300),
               child: Stack(
                 children: [
                   Positioned(
                     top: 10,
-                    left: 20,
+                    left: 10,
                     child: CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedClasses : 0,
                         nameOfField: OlukoLocalizations.get(context, 'classesCompleted')),
                   ),
                   Positioned(
                     top: 10,
-                    right: 0,
+                    right: ScreenUtils.modifiedFont(context) ? 10 : 15,
                     child: CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedChallenges : 0,
                         nameOfField: OlukoLocalizations.get(context, 'challengesCompleted')),
@@ -150,7 +155,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                           : SizedBox.shrink()),
                   Positioned(
                     bottom: 0,
-                    left: 20,
+                    left: 10,
                     child: AnimatedContainer(
                       height: _isUserStatisticExpanded ? MediaQuery.of(context).size.height / 12 : 0,
                       duration: const Duration(milliseconds: 200),
@@ -161,7 +166,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   ),
                   Positioned(
                     bottom: 0,
-                    right: 0,
+                    right: ScreenUtils.modifiedFont(context) ? 10 : 15,
                     child: AnimatedContainer(
                       height: _isUserStatisticExpanded ? MediaQuery.of(context).size.height / 12 : 0,
                       duration: const Duration(milliseconds: 200),
@@ -193,7 +198,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                     stops: [0.02, 0.02],
                     colors: [Colors.black, OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat]),
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15))),
-            width: MediaQuery.of(context).size.width - 60,
+            width: ScreenUtils.width(context),
             height: 40,
             child: IconButton(
               onPressed: () {

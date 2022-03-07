@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -31,6 +32,9 @@ class ClocksLowerSection extends StatefulWidget {
   final bool isCameraReady;
   final CameraController cameraController;
   final Widget pauseButton;
+  final CourseEnrollment courseEnrollment;
+  final int classIndex;
+  final String segmentId;
 
   ClocksLowerSection(
       {this.workState,
@@ -47,7 +51,7 @@ class ClocksLowerSection extends StatefulWidget {
       this.counter,
       this.isCameraReady,
       this.cameraController,
-      this.pauseButton});
+      this.pauseButton, this.courseEnrollment, this.classIndex, this.segmentId});
 
   @override
   _State createState() => _State();
@@ -124,7 +128,7 @@ class _State extends State<ClocksLowerSection> {
                         ?.toList(),
                   ),
           widget.workoutType == WorkoutType.segment || widget.shareDone
-              ? FeedbackCard()
+              ? FeedbackCard(widget.courseEnrollment,widget.classIndex,widget.segmentIndex,widget.segmentId)
               : ShareCard(createStory: widget.createStory, whistleAction: _whistleAction),
         ],
       ),

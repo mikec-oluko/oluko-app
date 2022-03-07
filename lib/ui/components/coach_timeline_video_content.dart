@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachTimelineVideoContent extends StatefulWidget {
   const CoachTimelineVideoContent({this.videoTitle, this.videoThumbnail, this.date, this.fileType});
@@ -64,16 +65,34 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                              Text(widget.videoTitle,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                            ],
-                          ),
+                          child: ScreenUtils.modifiedFont(context)
+                              ? SizedBox(
+                                  width: ScreenUtils.width(context) * 0.33,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
+                                          style: OlukoFonts.olukoMediumFont(
+                                              customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                      Text(widget.videoTitle,
+                                          style:
+                                              OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                    ],
+                                  ),
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
+                                        style: OlukoFonts.olukoMediumFont(
+                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                    Text(widget.videoTitle,
+                                        style:
+                                            OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  ],
+                                ),
                         )
                       ],
                     ),
