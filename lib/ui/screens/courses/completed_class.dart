@@ -79,8 +79,10 @@ class _CompletedClassState extends State<CompletedClass> {
                         onPressed: () {
                           BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
                               .saveSelfieInClass(widget.courseEnrollment, widget.classIndex);
-                          BlocProvider.of<TransformationJourneyBloc>(context)
-                              .createTransformationJourneyUpload(FileTypeEnum.image, _image, widget.courseEnrollment.userId, null);
+                          if (_image != null) {
+                            BlocProvider.of<TransformationJourneyBloc>(context)
+                                .createTransformationJourneyUpload(FileTypeEnum.image, _image, widget.courseEnrollment.userId, null);
+                          }
                           if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
                             Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                               'index': widget.courseIndex,

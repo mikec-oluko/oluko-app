@@ -132,7 +132,6 @@ class _CoachProfileState extends State<CoachProfile> {
 
   Container coachBannerVideo(BuildContext context) {
     return Container(
-        //VIDEO LIKE COVER IMAGE
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 3,
         child: OlukoVideoPreview(
