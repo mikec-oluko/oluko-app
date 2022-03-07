@@ -88,44 +88,35 @@ class SegmentRepository {
     });
   }
 
-  static Future<void> updateLikesDislikes(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
+  static Future<void> updateLikesDislikes(
+      CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
+   final DocumentReference segmentReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('segments')
+        .doc(segmentId);
+    final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
     if (likes) {
       final List<EnrollmentClass> classes = courseEnrollment.classes;
       if (classes[classIndex].segments[segmentIndex].likes == 0) {
-        await FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue("projectId"))
-            .collection('segments')
-            .doc(segmentId)
-            .update({'likes': FieldValue.increment(1),'dislikes': FieldValue.increment(-1)});
-        DocumentReference reference = FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue('projectId'))
-            .collection('courseEnrollments')
-            .doc(courseEnrollment.id);
+        await segmentReference.update({'likes': FieldValue.increment(1), 'dislikes': FieldValue.increment(-1)});
         classes[classIndex].segments[segmentIndex].likes = classes[classIndex].segments[segmentIndex].likes + 1;
         classes[classIndex].segments[segmentIndex].dislikes = classes[classIndex].segments[segmentIndex].dislikes - 1;
-        reference.update({
+        courseEnrollmentReference.update({
           'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
         });
       }
     } else {
       final List<EnrollmentClass> classes = courseEnrollment.classes;
       if (classes[classIndex].segments[segmentIndex].dislikes == 0) {
-        await FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue("projectId"))
-            .collection('segments')
-            .doc(segmentId)
-            .update({'likes': FieldValue.increment(-1),'dislikes': FieldValue.increment(1)});
-        DocumentReference reference = FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue('projectId'))
-            .collection('courseEnrollments')
-            .doc(courseEnrollment.id);
+        await segmentReference.update({'likes': FieldValue.increment(-1), 'dislikes': FieldValue.increment(1)});
         classes[classIndex].segments[segmentIndex].likes = classes[classIndex].segments[segmentIndex].likes - 1;
         classes[classIndex].segments[segmentIndex].dislikes = classes[classIndex].segments[segmentIndex].dislikes + 1;
-        reference.update({
+        courseEnrollmentReference.update({
           'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
         });
       }
