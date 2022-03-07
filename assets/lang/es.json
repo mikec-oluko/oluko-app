@@ -290,8 +290,8 @@
     "workoutBadFeedback": "Aargh! realmente no",
     "workoutGoodFeedback": "Fue increíble",
     "errorRetrieving": "Hubo un error al recuperar",
-    "myFriends":"Mis Amigos",
-    "otherUsers":"Otros Usuarios",
+    "myFriends": "Mis Amigos",
+    "otherUsers": "Otros Usuarios",
     "recommendedMovements": "Movimiento Recomendados",
     "recommendedCourses": "Curso Recomendados",
     "timeline": " Cronología",
@@ -300,5 +300,7 @@
     "reDoCourseBody": "Su progreso anterior será eliminado.",
     "welcomeVideo": "Video de bienvenida",
     "movements": "Movimientos",
+    "askYourCoach": "Pregunta al entrenador",
+    "aboutCoach": "Sobre el entrenador",
     "newPR": "Nuevo RP:"
 }

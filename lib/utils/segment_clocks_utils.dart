@@ -5,17 +5,22 @@ import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/custom_keyboard.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/modal_segment_movements.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_watch_app_bar.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:wakelock/wakelock.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
 
@@ -349,5 +354,153 @@ class SegmentClocksUtils {
       }
     }
     return paddingValue;
+  }
+
+  static Widget finishedButtonsWithRecording(BuildContext context, Function() shareDoneAction) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          OlukoPrimaryButton(
+            title: OlukoLocalizations.get(context, 'done'),
+            thinPadding: true,
+            onPressed: () {
+              shareDoneAction();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget finishedButtonsWithoutRecording(
+      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          OlukoOutlinedButton(
+            title: OlukoLocalizations.get(context, 'goToClass'),
+            thinPadding: true,
+            onPressed: () {
+              goToClass();
+            },
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          OlukoPrimaryButton(
+            title: segmentIndex == segments.length - 1
+                ? OlukoLocalizations.get(context, 'done')
+                : OlukoLocalizations.get(context, 'nextSegment'),
+            thinPadding: true,
+            onPressed: () {
+              nextSegmentAction();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget showButtonsWhenFinished(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+    return !OlukoNeumorphism.isNeumorphismDesign
+        ? showFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex)
+        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex);
+  }
+
+  static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+    if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
+      return finishedButtonsWithRecording(context, shareDoneAction);
+    } else {
+      return finishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex);
+    }
+  }
+
+  static Widget neumorphicFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+    Wakelock.disable();
+    if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
+      return neumporphicFinishedButtonsWithRecording(context, shareDoneAction);
+    } else {
+      return neumorphicFinishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex);
+    }
+  }
+
+  static Widget neumorphicFinishedButtonsWithoutRecording(
+      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: OlukoNeumorphism.radiusValue,
+        topRight: OlukoNeumorphism.radiusValue,
+      ),
+      child: Container(
+        height: 100,
+        decoration: const BoxDecoration(
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Center(
+            child: Container(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  OlukoNeumorphicSecondaryButton(
+                    title: OlukoLocalizations.get(context, 'goToClass'),
+                    textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    thinPadding: true,
+                    onPressed: () {
+                      goToClass();
+                    },
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  OlukoNeumorphicPrimaryButton(
+                    title: segmentIndex == segments.length - 1
+                        ? OlukoLocalizations.get(context, 'done')
+                        : OlukoLocalizations.get(context, 'nextSegment'),
+                    thinPadding: true,
+                    onPressed: () {
+                      nextSegmentAction();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget neumporphicFinishedButtonsWithRecording(BuildContext context, Function() shareDoneAction) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          SizedBox(
+            height: 50,
+            width: ScreenUtils.width(context) - 40,
+            child: OlukoNeumorphicPrimaryButton(
+              isExpanded: false,
+              title: OlukoLocalizations.get(context, 'done'),
+              thinPadding: true,
+              onPressed: () {
+                shareDoneAction();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

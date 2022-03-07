@@ -35,7 +35,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       List<UserResponse> uniqueUserList = [];
       List<UserResponse> favoriteUserList = [];
       List<UserResponse> userListToShow = [];
-      if (courseEnrollmentList != null) {
+      if (courseEnrollmentList != null && courseEnrollmentList.isNotEmpty) {
         //User list for all subscribers of this course.
         List<UserResponse> usersSubscribedToCourse =
             await Future.wait(enrolledList.map((e) => UserRepository().getById(e.userReference.id)));

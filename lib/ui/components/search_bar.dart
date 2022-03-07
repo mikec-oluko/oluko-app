@@ -5,13 +5,14 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/tag.dart';
 
 class SearchBar<T> extends StatefulWidget {
   final Function(SearchResults<T>) onSearchResults;
   final Function(SearchResults<T>) onSearchSubmit;
   final Function(TextEditingController) whenInitialized;
   final List<T> Function(String, List<T>) suggestionMethod;
-  final List<T> Function(String, List<T>) searchMethod;
+  final List<T> Function(String, List<T>, List<T>) searchMethod;
   final List<T> items;
   final GlobalKey<SearchState> searchKey;
   final Function() onTapClose;
@@ -126,7 +127,7 @@ class SearchState<T> extends State<SearchBar> {
     _debounce?.cancel();
     setState(() {
       _searchQueryController.text = '';
-      updateSearchQuery(_searchQueryController.text);
+      updateSearchQuery(_searchQueryController.text, []);
     });
   }
 
@@ -145,20 +146,20 @@ class SearchState<T> extends State<SearchBar> {
     );
   }
 
-  void updateSearchQuery(String newQuery) {
+  void updateSearchQuery(String newQuery, List<Tag> tags) {
     setState(() {
       searchQuery = newQuery;
       final suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
-      final List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
+      final List<T> searchResults = widget.searchMethod(searchQuery, widget.items,tags) as List<T>;
       widget.onSearchResults(SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults));
     });
   }
 
-  void updateSearchResults(String newQuery) {
+  void updateSearchResults(String newQuery, {List<Tag> selectedTags = const []}) {
     setState(() {
       searchQuery = newQuery;
       List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
-      List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
+      List<T> searchResults = widget.searchMethod(searchQuery, widget.items, selectedTags) as List<T>;
       widget.onSearchSubmit(
         SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>),
       );
@@ -170,7 +171,7 @@ class SearchState<T> extends State<SearchBar> {
       _debounce.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 1500), () {
-      updateSearchQuery(query);
+      updateSearchQuery(query, []);
     });
   }
 
