@@ -7,12 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/utils/collage_utils.dart';
 
 class OlukoVideoPreview extends StatefulWidget {
   final String video;
   final String image;
   final List<String> randomImages;
-
+  final bool bannerVideo;
   final bool showBackButton;
   final bool showShareButton;
   final bool showHeartButton;
@@ -35,6 +36,7 @@ class OlukoVideoPreview extends StatefulWidget {
       Key key,
       this.onPlay,
       this.videoVisibilty = false,
+      this.bannerVideo = false,
       this.audioWidget})
       : super(key: key);
 
@@ -141,11 +143,11 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   Widget videoSection() {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
-          aspectRatio: 480 / 600,
+          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
           child: Container(color: OlukoColors.white, child: widget.randomImages != null ? gridSection() : imageSection())),
       if (widget.video != null)
         AspectRatio(
-          aspectRatio: 480 / 600,
+          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
           child: Padding(
               padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
               child: GestureDetector(
@@ -215,11 +217,6 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     );
   }
 
-  int random(int min, int max) {
-    var rn = new Random();
-    return min + rn.nextInt(max - min);
-  }
-
   Widget imageSection() {
     return widget.image != null
         ? Image(
@@ -228,7 +225,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
           )
         : widget.randomImages == null
             ? Image.asset(
-                'assets/courses/profile_photos.png',
+                widget.bannerVideo ? 'assets/home/mvtthumbnail.png' : 'assets/courses/profile_photos.png',
                 fit: BoxFit.cover,
               )
             : Image(
@@ -237,27 +234,16 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               );
   }
 
-  Widget gridSection() {
-    return GridView.count(
-      physics: NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 1, crossAxisCount: 7, children: getGridItems()); //70 items
+  int random(int min, int max) {
+    var rn = new Random();
+    return min + rn.nextInt(max - min);
   }
 
-  List<Widget> getGridItems() {
-    List<Widget> gridImages = [];
-    for (int i = 0; i < widget.randomImages.length; i++) {
-      if (i < 69) {
-        gridImages.add(Image(
-          image: CachedNetworkImageProvider(widget.randomImages[i]),
-          fit: BoxFit.cover,
-        ));
-      } else {
-        break;
-      }
-    }
-    while (gridImages.length < 70) {
-      gridImages += gridImages;
-    }
-    return gridImages;
+  Widget gridSection() {
+    return GridView.count(
+        physics: NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 1,
+        crossAxisCount: 7,
+        children: CollageUtils.getCollageWidgets(widget.randomImages, 70)); //70 items
   }
 }

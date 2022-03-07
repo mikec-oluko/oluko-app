@@ -50,7 +50,7 @@ class CourseUtils {
     return courses;
   }
 
-  static List<Course> searchMethod(String query, List<Course> collection, {List<Tag> selectedTags = const []}) {
+  static List<Course> searchMethod(String query, List<Course> collection, List<Tag> selectedTags) {
     List<Course> resultsWithoutFilters = collection.where((course) => course.name.toLowerCase().contains(query.toLowerCase())).toList();
     List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
       final List<String> courseTagIds = course.tags != null ? course.tags.map((e) => e.id).toList() : [];

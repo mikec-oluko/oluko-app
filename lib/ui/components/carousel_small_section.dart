@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -12,8 +13,9 @@ class CarouselSmallSection extends StatefulWidget {
   final String optionLabel;
   final RouteEnum routeToGo;
   final UserResponse userToGetData;
+  final CoachUser coachUser;
 
-  CarouselSmallSection({this.title, this.children, this.onOptionTap, this.optionLabel, this.routeToGo, this.userToGetData});
+  CarouselSmallSection({this.title, this.children, this.onOptionTap, this.optionLabel, this.routeToGo, this.userToGetData, this.coachUser});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -87,6 +89,10 @@ class _State extends State<CarouselSmallSection> {
         break;
       case RouteEnum.profileAssessmentVideos:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos], arguments: {'profileInfo': widget.userToGetData});
+        break;
+      case RouteEnum.aboutCoach:
+        Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach],
+            arguments: {'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null});
         break;
       case RouteEnum.profileChallenges:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges]);
