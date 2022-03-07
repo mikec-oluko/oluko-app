@@ -193,10 +193,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 _globalService.videoProcessing = true;
                                 BlocProvider.of<CoachRequestStreamBloc>(context)
                                     .resolve(_coachRequest, _user.uid, RequestStatusEnum.ignored);
-                                if (widget.segments[widget.segmentIndex].isChallenge) {
-                                  StoryUtils.createNewPRChallengeStory(
-                                      context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
-                                }
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
@@ -372,19 +368,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           ? ScreenUtils.height(context)
                           : ScreenUtils.height(context) * 0.6,
               child: Clock(
-                                workState: workState,
-                                segments: widget.segments,
-                                segmentIndex: widget.segmentIndex,
-                                AMRAPRound: AMRAPRound,
-                                timerEntries: timerEntries,
-                                timerTaskIndex: timerTaskIndex,
-                                textController: textController,
-                                goToNextStep: _goToNextStep,
-                                actionAMRAP: actionAMRAP,
-                                timeLeft: timeLeft,
-                                workoutType: workoutType,
-                                keyboardVisibilty: keyboardVisibilty,
-                              ),
+                workState: workState,
+                segments: widget.segments,
+                segmentIndex: widget.segmentIndex,
+                AMRAPRound: AMRAPRound,
+                timerEntries: timerEntries,
+                timerTaskIndex: timerTaskIndex,
+                textController: textController,
+                goToNextStep: _goToNextStep,
+                actionAMRAP: actionAMRAP,
+                timeLeft: timeLeft,
+                workoutType: workoutType,
+                keyboardVisibilty: keyboardVisibilty,
+              ),
             ),
             SizedBox(
                 height: keyboardVisibilty
@@ -675,6 +671,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
+
+    if (widget.segments[widget.segmentIndex].isChallenge) {
+      StoryUtils.createNewPRChallengeStory(context, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+    }
+
     Wakelock.disable();
     setState(() {
       if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
