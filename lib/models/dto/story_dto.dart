@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 
 class Story extends Base {
@@ -9,7 +10,7 @@ class Story extends Base {
   String description;
   bool seen;
   int duration;
-  int hoursFromCreation;
+  String timeFromCreation;
 
   Story(
       {this.content_type,
@@ -19,7 +20,7 @@ class Story extends Base {
       this.description,
       this.seen,
       this.duration,
-      this.hoursFromCreation,
+      this.timeFromCreation,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -54,9 +55,13 @@ class Story extends Base {
       final now = DateTime.now();
       final createdAt = story.createdAt.toDate();
       final differenceInHours = now.difference(createdAt).inHours;
-      story.hoursFromCreation = differenceInHours;
+      if (differenceInHours != 0) {
+        story.timeFromCreation = '${differenceInHours.toString()}h${OlukoNeumorphism.isNeumorphismDesign ? 'r' : ''}';
+      } else {
+        story.timeFromCreation = '${now.difference(createdAt).inMinutes}min';
+      }
     } else {
-      story.hoursFromCreation = 25;
+      story.timeFromCreation = '25';
     }
 
     return story;
