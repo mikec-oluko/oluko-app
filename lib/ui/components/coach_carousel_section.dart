@@ -13,7 +13,6 @@ class CoachCarouselSliderSection extends StatefulWidget {
 }
 
 class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection> {
-
   @override
   void dispose() {
     super.dispose();
@@ -24,7 +23,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
     return Container(
       color: OlukoNeumorphismColors.appBackgroundColor,
       width: MediaQuery.of(context).size.width,
-      height: 250,
+      height: 270,
       child: Stack(
         fit: StackFit.expand,
         clipBehavior: Clip.none,
@@ -43,7 +42,6 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                   )
                 : const SizedBox.shrink(),
           )
-
         ],
       ),
     );

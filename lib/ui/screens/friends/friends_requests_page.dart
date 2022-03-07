@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/confirm_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/ignore_friend_request_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/friend_request_model.dart';
@@ -49,7 +50,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess && _authStateData == null) {
         _authStateData = authState;
-        BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(authState.user.id);
+        BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(authState.user.id);
       }
       return SingleChildScrollView(
         child: Container(
@@ -59,7 +60,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
             child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
               listener: (context, ignoreFriendState) {
                 if (ignoreFriendState is IgnoreFriendRequestSuccess) {
-                  BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
+                  BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
                   AppMessages.clearAndShowSnackbar(context, 'Request ignored.');
                 } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
                   AppMessages.clearAndShowSnackbar(context, 'Error ignoring request.');
@@ -70,7 +71,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                 listener: (context, confirmFriendState) {
                   disabledActions = false;
                   if (confirmFriendState is ConfirmFriendSuccess) {
-                    BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
+                    BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
                     AppMessages.clearAndShowSnackbar(context, 'Friend added.');
                   } else if (confirmFriendState is ConfirmFriendFailure) {
                     AppMessages.clearAndShowSnackbar(context, 'Error adding friend.');
@@ -88,7 +89,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                         //               userData: friend,
                         //             ))
                         //         .toList()),
-                        BlocBuilder<FriendBloc, FriendState>(builder: (context, friendsRequestState) {
+                        BlocBuilder<FriendRequestBloc, FriendRequestState>(builder: (context, friendsRequestState) {
                           return Column(
                             children: generateFriendRequestsList(friendsRequestState),
                           );
@@ -128,7 +129,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
     );
   }
 
-  List<Widget> generateFriendRequestsList(FriendState friendsRequestState) {
+  List<Widget> generateFriendRequestsList(FriendRequestState friendsRequestState) {
     if (friendsRequestState is GetFriendRequestsSuccess) {
       return friendsRequestState.friendRequestList.length == 0
           ? [
