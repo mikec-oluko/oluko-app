@@ -3,6 +3,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
@@ -16,7 +17,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final Function(SearchResults<T>) onSearchSubmit;
   final Function(TextEditingController) whenSearchBarInitialized;
   final List<T> Function(String, List<T>) suggestionMethod;
-  final List<T> Function(String, List<T>) searchMethod;
+  final List<T> Function(String, List<T>, List<Tag>) searchMethod;
   final bool showBackButton;
   final bool showLogo;
   final String title;
@@ -110,7 +111,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                 widget.onSearchSubmit(searchResults as SearchResults<T>),
                             onSearchResults: (SearchResults<dynamic> searchResults) =>
                                 widget.onSearchResults(searchResults as SearchResults<T>),
-                            searchMethod: (String query, List<dynamic> collection) => widget.searchMethod(query, collection as List<T>),
+                            searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) => widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
                             suggestionMethod: (String query, List<dynamic> collection) =>
                                 widget.suggestionMethod(query, collection as List<T>),
                           )),
@@ -218,8 +219,8 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                               widget.onSearchSubmit(searchResults as SearchResults<T>),
                                           onSearchResults: (SearchResults<dynamic> searchResults) =>
                                               widget.onSearchResults(searchResults as SearchResults<T>),
-                                          searchMethod: (String query, List<dynamic> collection) =>
-                                              widget.searchMethod(query, collection as List<T>),
+                                          searchMethod: (String query, List<dynamic> collection,List<dynamic> tags) =>
+                                              widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
                                           suggestionMethod: (String query, List<dynamic> collection) =>
                                               widget.suggestionMethod(query, collection as List<T>),
                                           onTapClose: () {
