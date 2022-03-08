@@ -417,7 +417,20 @@ class _TaskDetailsState extends State<TaskDetails> {
             },
             child: GestureDetector(
               onTap: () {
-                _globalService.videoProcessing ? getDialog() : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                _globalService.videoProcessing
+                    ? DialogUtils.getDialog(
+                        context,
+                        [
+                          Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                                textAlign: TextAlign.center,
+                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                              ))
+                        ],
+                        showExitButton: true)
+                    : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
               },
               child: const Icon(
                 Icons.file_upload,
