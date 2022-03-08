@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
@@ -19,7 +21,6 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
-import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -42,7 +43,6 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
-import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -80,8 +80,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
-  Duration timeLeft;
-  Timer countdownTimer;
 
   //Alert timer
   Duration alertTimeLeft;
@@ -300,7 +298,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             if (isPlaying) {
               panelController.open();
               if (isCurrentTaskTimed) {
-                _pauseCountdown();
+                BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
               } else {
                 setPaused();
               }
@@ -311,7 +309,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               panelController.close();
               workState = lastWorkStateBeforePause;
               if (isCurrentTaskTimed) {
-                _playCountdown();
+                BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
               } else {
                 if (alertTimerPlaying) {
                   _playAlertTimer();
@@ -334,7 +332,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           if (isPlaying) {
             panelController.open();
             if (isCurrentTaskTimed) {
-              _pauseCountdown();
+              BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
             } else {
               setPaused();
             }
@@ -342,7 +340,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             panelController.close();
             workState = lastWorkStateBeforePause;
             if (isCurrentTaskTimed) {
-              _playCountdown();
+              BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
             }
           }
           isPlaying = !isPlaying;
@@ -372,19 +370,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           ? ScreenUtils.height(context)
                           : ScreenUtils.height(context) * 0.6,
               child: Clock(
-                                workState: workState,
-                                segments: widget.segments,
-                                segmentIndex: widget.segmentIndex,
-                                AMRAPRound: AMRAPRound,
-                                timerEntries: timerEntries,
-                                timerTaskIndex: timerTaskIndex,
-                                textController: textController,
-                                goToNextStep: _goToNextStep,
-                                actionAMRAP: actionAMRAP,
-                                timeLeft: timeLeft,
-                                workoutType: workoutType,
-                                keyboardVisibilty: keyboardVisibilty,
-                              ),
+                workState: workState,
+                segments: widget.segments,
+                segmentIndex: widget.segmentIndex,
+                timerEntries: timerEntries,
+                textController: textController,
+                goToNextStep: _goToNextStep,
+                actionAMRAP: actionAMRAP,
+                setPaused: setPaused,
+                workoutType: workoutType,
+                keyboardVisibilty: keyboardVisibilty,
+              ),
             ),
             SizedBox(
                 height: keyboardVisibilty
@@ -484,9 +480,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void actionAMRAP() {
-    setState(() {
-      AMRAPRound++;
-    });
+    AMRAPRound++;
+
+    BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
+
     if (AMRAPRound == 1) {
       _saveSegmentRound();
     }
@@ -505,7 +502,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         onTap: () async {
           setState(() {
             if (isCurrentTaskTimed()) {
-              _pauseCountdown();
+              BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
             } else {
               setPaused();
             }
@@ -589,13 +586,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return;
     }
 
-    setState(() {
-      timerTaskIndex++;
-      if (timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
-        setAlert();
-      }
-      _playTask();
-    });
+    timerTaskIndex++;
+    if (timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
+      setAlert();
+    }
+    _playTask();
+    BlocProvider.of<TimerTaskBloc>(context).setTimerTaskIndex(timerTaskIndex);
 
     if (timerEntries[timerTaskIndex].stopwatch) {
       _startStopwatch();
@@ -664,8 +660,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _playTask() async {
     workState = getCurrentTaskWorkState();
     if (isCurrentTaskTimed()) {
-      _playCountdown();
-      timeLeft = Duration(seconds: timerEntries[timerTaskIndex].value);
+      BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
+      BlocProvider.of<ClocksTimerBloc>(context).updateTimeLeft();
     }
   }
 
@@ -728,9 +724,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         setAlertDuration(5);
         return;
       }
-      setState(() {
-        alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
-      });
+      alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
     });
   }
 
@@ -746,9 +740,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         _roundAlert = null;
         return;
       }
-      setState(() {
-        alertDurationTimeLeft = Duration(seconds: alertDurationTimeLeft.inSeconds - 1);
-      });
+      alertDurationTimeLeft = Duration(seconds: alertDurationTimeLeft.inSeconds - 1);
     });
   }
 
@@ -768,38 +760,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
     setAlert();
   }
 
-  void _playCountdown() {
-    countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      if (timeLeft.inSeconds == 0) {
-        _pauseCountdown();
-        _goToNextStep();
-        return;
-      }
-      setState(() {
-        timeLeft = Duration(seconds: timeLeft.inSeconds - 1);
-      });
-    });
-    if (alertTimerPlaying) {
-      _playAlertTimer();
-    }
-  }
-
   void setPaused() {
     lastWorkStateBeforePause = workState;
     workState = WorkState.paused;
   }
 
-  void _pauseCountdown() {
-    setPaused();
-    countdownTimer.cancel();
-  }
-
   @override
   void dispose() {
     Wakelock.disable();
-    if (countdownTimer != null && countdownTimer.isActive) {
-      countdownTimer.cancel();
-    }
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
       stopwatchTimer.cancel();
     }
@@ -862,23 +830,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   _addTime() {
     final int addSeconds = 1;
-    setState(() {
-      final int seconds = stopwatchDuration.inSeconds + addSeconds;
-      stopwatchDuration = Duration(seconds: seconds);
-    });
+    final int seconds = stopwatchDuration.inSeconds + addSeconds;
+    stopwatchDuration = Duration(seconds: seconds);
   }
 
   _stopAndResetStopwatch() {
-    setState(() {
-      stopwatchTimer.cancel();
-      stopwatchDuration = Duration();
-    });
+    stopwatchTimer.cancel();
+    stopwatchDuration = Duration();
   }
 
   _resume() {
     setState(() {
       workState = WorkState.exercising;
-      _playCountdown();
+      BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
   }
