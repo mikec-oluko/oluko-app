@@ -19,5 +19,5 @@ Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
     port.send(OlukoIsolateMessage(IsolateStatusEnum.failure));
     rethrow;
   }
-  Isolate.exit(port, video);
+  Isolate.exit();
 }
