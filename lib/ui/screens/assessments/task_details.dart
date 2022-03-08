@@ -147,42 +147,39 @@ class _TaskDetailsState extends State<TaskDetails> {
                 Navigator.pop(context);
               }
             }),
-        body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
-          listener: (context, state) {
-            if (state is GetSuccess && state.taskSubmission != null) {
-              isAssessmentDone = true;
-            }
-          },
-          child: recordAgainRequested
-              ? SlidingUpPanel(
-                  controller: _panelController,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                  maxHeight: panelSize,
-                  panel: recordAgainDialogContent(),
-                  body: viewContent(),
-                )
-              : SlidingUpPanel(
-                  controller: _panelController,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                  maxHeight: recordAgainRequested ? panelSize : 100,
-                  panel: recordAgainRequested
-                      ? recordAgainDialogContent()
-                      : Container(
-                          height: 60,
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: isAssessmentDone || widget.taskCompleted
-                                ? recordAgainButtons(_taskSubmission)
-                                : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                    Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
-                                  ]),
+        body: BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+          builder: (context, state) {
+            return recordAgainRequested
+                ? SlidingUpPanel(
+                    controller: _panelController,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    maxHeight: panelSize,
+                    panel: recordAgainDialogContent(),
+                    body: viewContent(),
+                  )
+                : SlidingUpPanel(
+                    controller: _panelController,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    maxHeight: recordAgainRequested ? panelSize : 100,
+                    panel: recordAgainRequested
+                        ? recordAgainDialogContent()
+                        : Container(
+                            height: 60,
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: isAssessmentDone || widget.taskCompleted
+                                  ? recordAgainButtons(_taskSubmission)
+                                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                      Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
+                                    ]),
+                            ),
                           ),
-                        ),
-                  body: viewContent(),
-                ),
+                    body: viewContent(),
+                  );
+          },
         ),
       ),
     );
