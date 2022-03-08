@@ -28,7 +28,7 @@ class TaskCardBloc extends Cubit<TaskCardState> {
     emit(TaskCardVideoProcessing(taskIndex: taskIndex));
   }
 
-  void taskFinished(String taskId, int taskIndex) {
-    emit(TaskCardVideoUploaded(taskId: taskId,taskIndex: taskIndex));
+  void taskFinished(String taskId) {
+    emit(TaskCardVideoUploaded(taskId: taskId));
   }
 }

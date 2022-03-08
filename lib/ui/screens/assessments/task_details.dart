@@ -417,20 +417,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             },
             child: GestureDetector(
               onTap: () {
-                _globalService.videoProcessing
-                    ? DialogUtils.getDialog(
-                        context,
-                        [
-                          Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Text(
-                                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                                textAlign: TextAlign.center,
-                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                              ))
-                        ],
-                        showExitButton: true)
-                    : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                _globalService.videoProcessing ? getDialog() : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
               },
               child: const Icon(
                 Icons.file_upload,
@@ -680,7 +667,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
       if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
         return Padding(padding: const EdgeInsets.only(left: 45), child: OlukoCircularProgressIndicator());
-      } else if (taskCardState is TaskCardVideoUploaded && taskCardState.taskIndex == widget.taskIndex) {
+      } else if (taskCardState is TaskCardVideoUploaded && taskCardState.taskId == _task.id) {
         return Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: ClipRRect(
@@ -727,7 +714,51 @@ class _TaskDetailsState extends State<TaskDetails> {
           ),
         );
       } else {
-        return SizedBox();
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            child: Stack(alignment: AlignmentDirectional.center, children: [
+              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              Align(
+                  alignment: Alignment.center,
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Container(
+                          width: 50,
+                          height: 50,
+                          child: OlukoBlurredButton(
+                            childContent: Icon(
+                              Icons.play_arrow,
+                              color: OlukoColors.white,
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/assessment/play.png',
+                          scale: 5,
+                          height: 40,
+                          width: 60,
+                        )),
+              Positioned(
+                  top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
+                  bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
+                  left: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(150),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        timeLabel,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  )),
+            ]),
+          ),
+        );
       }
     });
   }

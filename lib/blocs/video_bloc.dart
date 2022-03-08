@@ -73,7 +73,7 @@ class VideoBloc extends Cubit<VideoState> {
       [SegmentSubmission segmentSubmission,
       AssessmentAssignment assessmentAssignment,
       Assessment assessment,
-      TaskSubmission taskSubmission,int taskIndex]) async {
+      TaskSubmission taskSubmission]) async {
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
       final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
@@ -108,7 +108,6 @@ class VideoBloc extends Cubit<VideoState> {
                 taskSubmission: taskSubmission,
                 assessment: assessment,
                 assessmentAssignment: assessmentAssignment,
-                taskIndex: taskIndex
               ),
             );
           } else {
