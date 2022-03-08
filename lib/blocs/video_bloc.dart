@@ -39,7 +39,8 @@ class VideoSuccess extends VideoState {
   AssessmentAssignment assessmentAssignment;
   Assessment assessment;
   TaskSubmission taskSubmission;
-  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission});
+  int taskIndex;
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission,this.taskIndex});
 }
 
 class VideoProcessing extends VideoState {
@@ -72,7 +73,7 @@ class VideoBloc extends Cubit<VideoState> {
       [SegmentSubmission segmentSubmission,
       AssessmentAssignment assessmentAssignment,
       Assessment assessment,
-      TaskSubmission taskSubmission]) async {
+      TaskSubmission taskSubmission,int taskIndex]) async {
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
       final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
@@ -107,6 +108,7 @@ class VideoBloc extends Cubit<VideoState> {
                 taskSubmission: taskSubmission,
                 assessment: assessment,
                 assessmentAssignment: assessmentAssignment,
+                taskIndex: taskIndex
               ),
             );
           } else {

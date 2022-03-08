@@ -699,7 +699,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
       if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
         return Padding(padding: const EdgeInsets.only(left: 45), child: OlukoCircularProgressIndicator());
-      } else {
+      } else if (taskCardState is TaskCardVideoUploaded && taskCardState.taskIndex == widget.taskIndex) {
         return Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: ClipRRect(
@@ -745,6 +745,8 @@ class _TaskDetailsState extends State<TaskDetails> {
             ]),
           ),
         );
+      } else {
+        return SizedBox();
       }
     });
   }
