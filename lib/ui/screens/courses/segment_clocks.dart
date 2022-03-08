@@ -41,6 +41,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -440,27 +441,30 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void nextSegmentAction() {
-    widget.segmentIndex < widget.segments.length - 1
-        ? Navigator.popAndPushNamed(
-            context,
-            routeLabels[RouteEnum.segmentDetail],
-            arguments: {
-              'segmentIndex': widget.segmentIndex + 1,
-              'classIndex': widget.classIndex,
-              'courseEnrollment': widget.courseEnrollment,
-              'courseIndex': widget.courseIndex,
-              'fromChallenge': _isFromChallenge
-            },
-          )
-        : Navigator.popAndPushNamed(
-            context,
-            routeLabels[RouteEnum.completedClass],
-            arguments: {
-              'classIndex': widget.classIndex,
-              'courseEnrollment': widget.courseEnrollment,
-              'courseIndex': widget.courseIndex,
-            },
-          );
+    if (widget.segmentIndex < widget.segments.length - 1) {
+      Navigator.popAndPushNamed(
+        context,
+        routeLabels[RouteEnum.segmentDetail],
+        arguments: {
+          'segmentIndex': widget.segmentIndex + 1,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+          'fromChallenge': _isFromChallenge
+        },
+      );
+    } else {
+      SoundPlayer.playAsset(SoundsEnum.classFinished);
+      Navigator.popAndPushNamed(
+        context,
+        routeLabels[RouteEnum.completedClass],
+        arguments: {
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+        },
+      );
+    }
   }
 
   void goToClassAction() {

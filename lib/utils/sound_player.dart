@@ -2,11 +2,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_player.dart';
 
-enum SoundsEnum {
-  enroll,
-}
+enum SoundsEnum { enroll, classFinished }
 
-Map<SoundsEnum, String> soundsLabels = {SoundsEnum.enroll: 'sounds/enroll_sound.wav'};
+Map<SoundsEnum, String> soundsLabels = {
+  SoundsEnum.enroll: 'sounds/enroll_sound.wav',
+  SoundsEnum.classFinished: 'sounds/class_finished.wav'
+};
 
 class SoundPlayer {
   FlutterSoundPlayer _audioPlayer;
