@@ -24,7 +24,7 @@ class CoachAudioPanelDeleted extends CoachAudioPanelState {
 
 class CoachAudioPanelConfirmDelete extends CoachAudioPanelState {
   final double panelMaxSize;
-  CoachAudioPanelConfirmDelete({this.panelMaxSize = 250});
+  CoachAudioPanelConfirmDelete({this.panelMaxSize = 200});
 }
 
 class CoachAudioPanelFailure extends CoachAudioPanelState {

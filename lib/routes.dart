@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
@@ -362,6 +363,7 @@ class Routes {
   final NotificationBloc _notificationBloc = NotificationBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
   final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
+  final CoachAudioMessageBloc _coachAudioMessageBloc = CoachAudioMessageBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -426,6 +428,7 @@ class Routes {
           BlocProvider<NotificationBloc>.value(value: _notificationBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1002,9 +1005,11 @@ class Routes {
         providers = [
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
         ];
-        final Map<String, CoachUser> argumentsToAdd = arguments as Map<String, CoachUser>;
-        newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView =
+            CoachProfile(coachUser: argumentsToAdd['coachUser'] as CoachUser, currentUser: argumentsToAdd['currentUser'] as UserResponse);
         break;
       case RouteEnum.hiFivePage:
         providers = [

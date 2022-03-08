@@ -1,7 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-final pathToSaveAudio = 'audio_example.aac';
 
 class SoundRecorder {
   FlutterSoundRecorder _audioRecorder;
@@ -35,20 +34,17 @@ class SoundRecorder {
   }
 
   Future _record() async {
-    //COMIENZA A GRABAR Y CREA UN FILE
     if (!_isRecordedInitialised) return;
-    await _audioRecorder.startRecorder(toFile: pathToSaveAudio);
+    await _audioRecorder.startRecorder(toFile: '${Timestamp.now().millisecondsSinceEpoch}.aac');
   }
 
   Future _stop() async {
-    //TERMINA EL VIDEO
     if (!_isRecordedInitialised) return;
     String url = await _audioRecorder.stopRecorder();
     _audioUrl = url;
   }
 
   Future toggleRecording() async {
-    //GRABA O TERMINA
     if (_audioRecorder.isStopped) {
       await _record();
     } else {

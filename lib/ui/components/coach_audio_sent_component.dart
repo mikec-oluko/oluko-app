@@ -1,18 +1,22 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 class CoachAudioSentComponent extends StatefulWidget {
   final List<String> records;
   final String record;
-  const CoachAudioSentComponent({Key key, this.records, this.record}) : super(key: key);
+  final bool isPreviewContent;
+  final Function() onDelete;
+  const CoachAudioSentComponent({Key key, this.records, this.record, this.isPreviewContent = false, this.onDelete}) : super(key: key);
 
   @override
   State<CoachAudioSentComponent> createState() => _CoachAudioSentComponentState();
 }
 
 class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
-  int _totalDuration;
+  Duration _totalDuration;
   int _currentDuration;
   double _completedPercentage = 0.0;
   bool _isPlaying = false;
@@ -28,10 +32,16 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
     const defaultDateString = '10:00AM 22jul, 2022';
     const defaultDurationString = '0:50';
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Neumorphic(
-        style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-            .copyWith(boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10)))),
+        style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
+          boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
+          border: NeumorphicBorder(
+              width: 3,
+              color: widget.isPreviewContent
+                  ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth
+                  : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        ),
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: 100,
@@ -65,7 +75,9 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           ),
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
-                        Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor),
+                        GestureDetector(
+                            onTap: () => widget.onDelete(),
+                            child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
                       ],
                     ),
                   ),
@@ -78,7 +90,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                   children: [
                     const SizedBox(),
                     Text(
-                      defaultDurationString,
+                      _totalDuration != null ? TimeConverter.durationToString(_totalDuration) : '',
                       style: OlukoFonts.olukoSmallFont(
                           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                           custoFontWeight: FontWeight.w500),
@@ -87,17 +99,19 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     Row(
                       children: [
                         Text(
-                          defaultDateString,
+                          TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context),
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                               custoFontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 10),
-                        Image.asset(
-                          'assets/courses/coach_tick.png',
-                          scale: 5,
-                          color: OlukoColors.grayColor,
-                        ),
+                        !widget.isPreviewContent
+                            ? Image.asset(
+                                'assets/courses/coach_tick.png',
+                                scale: 5,
+                                color: OlukoColors.grayColor,
+                              )
+                            : SizedBox.shrink(),
                       ],
                     ),
                   ],
@@ -190,16 +204,16 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
           playedOnce = false;
         });
       });
-      audioPlayer.onDurationChanged.listen((duration) {
+      audioPlayer.onDurationChanged.listen((Duration duration) {
         setState(() {
-          _totalDuration = duration.inMicroseconds;
+          _totalDuration = duration;
         });
       });
 
       audioPlayer.onAudioPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
-          _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
+          _completedPercentage = _currentDuration.toDouble() / _totalDuration.inMicroseconds.toDouble();
         });
       });
     } else {

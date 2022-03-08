@@ -136,6 +136,7 @@ class _CoachPageState extends State<CoachPage> {
                 extendBody: true,
                 appBar: CoachAppBar(
                   coachUser: _coachUser,
+                  currentUser: _currentAuthUser,
                   onNavigation: () => !widget.coachAssignment.introductionCompleted
                       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                       : () {},
