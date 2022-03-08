@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,7 @@ import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -346,8 +348,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 OlukoNeumorphicPrimaryButton(
                   thinPadding: true,
                   title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_disableAction == false) {
+                      await SoundPlayer.playAsset(SoundsEnum.enroll);
                       BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                       if (!widget.isCoachRecommendation) {
                         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
@@ -359,8 +362,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
               else
                 OlukoPrimaryButton(
                   title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_disableAction == false) {
+                      await SoundPlayer.playAsset(SoundsEnum.enroll);
                       BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                       if (!widget.isCoachRecommendation) {
                         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
