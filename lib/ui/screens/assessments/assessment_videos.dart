@@ -404,7 +404,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (widget.isFirstTime) {
       return GestureDetector(
           onTap: () {
-            Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+            Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
           },
           child: Align(
               child: Padding(
