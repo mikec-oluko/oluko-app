@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class SegmentRepository {
@@ -46,5 +48,78 @@ class SegmentRepository {
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('segments').doc(id);
     DocumentSnapshot ds = await reference.get();
     return Segment.fromJson(ds.data() as Map<String, dynamic>);
+  }
+
+  static Future<void> addLike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
+    await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('segments')
+        .doc(segmentId)
+        .update({'likes': FieldValue.increment(1)});
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+    final List<EnrollmentClass> classes = courseEnrollment.classes;
+    classes[classIndex].segments[segmentIndex].likes = classes[classIndex].segments[segmentIndex].likes + 1;
+    reference.update({
+      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+    });
+  }
+
+  static Future<void> addDisLike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
+    await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('segments')
+        .doc(segmentId)
+        .update({'dislikes': FieldValue.increment(1)});
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+    final List<EnrollmentClass> classes = courseEnrollment.classes;
+    classes[classIndex].segments[segmentIndex].dislikes = classes[classIndex].segments[segmentIndex].dislikes + 1;
+    reference.update({
+      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+    });
+  }
+
+  static Future<void> updateLikesDislikes(
+      CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
+   final DocumentReference segmentReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('segments')
+        .doc(segmentId);
+    final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+    if (likes) {
+      final List<EnrollmentClass> classes = courseEnrollment.classes;
+      if (classes[classIndex].segments[segmentIndex].likes == 0) {
+        await segmentReference.update({'likes': FieldValue.increment(1), 'dislikes': FieldValue.increment(-1)});
+        classes[classIndex].segments[segmentIndex].likes = classes[classIndex].segments[segmentIndex].likes + 1;
+        classes[classIndex].segments[segmentIndex].dislikes = classes[classIndex].segments[segmentIndex].dislikes - 1;
+        courseEnrollmentReference.update({
+          'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+        });
+      }
+    } else {
+      final List<EnrollmentClass> classes = courseEnrollment.classes;
+      if (classes[classIndex].segments[segmentIndex].dislikes == 0) {
+        await segmentReference.update({'likes': FieldValue.increment(-1), 'dislikes': FieldValue.increment(1)});
+        classes[classIndex].segments[segmentIndex].likes = classes[classIndex].segments[segmentIndex].likes - 1;
+        classes[classIndex].segments[segmentIndex].dislikes = classes[classIndex].segments[segmentIndex].dislikes + 1;
+        courseEnrollmentReference.update({
+          'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+        });
+      }
+    }
   }
 }

@@ -22,7 +22,9 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
@@ -289,6 +291,7 @@ class Routes {
   final CourseHomeBloc _courseHomeBloc = CourseHomeBloc();
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
+  final FriendRequestBloc _friendRequestBloc = FriendRequestBloc();
   final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
   final IgnoreFriendRequestBloc _ignoreFriendRequestBloc = IgnoreFriendRequestBloc();
   final FavoriteFriendBloc _favoriteFriendBloc = FavoriteFriendBloc();
@@ -359,6 +362,7 @@ class Routes {
   final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
   final NotificationBloc _notificationBloc = NotificationBloc();
+  final FeedbackBloc _feedbackBloc = FeedbackBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -393,6 +397,7 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<IgnoreFriendRequestBloc>.value(value: _ignoreFriendRequestBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
@@ -484,6 +489,7 @@ class Routes {
       case RouteEnum.friends:
         providers = [
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -669,7 +675,8 @@ class Routes {
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
-          BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc)
+          BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
+          BlocProvider<FeedbackBloc>.value(value: _feedbackBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(

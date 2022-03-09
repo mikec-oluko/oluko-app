@@ -1,0 +1,149 @@
+import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
+import 'package:oluko_app/ui/screens/courses/share_card.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
+
+class ClocksLowerSection extends StatefulWidget {
+  final WorkState workState;
+  final List<Segment> segments;
+  final int segmentIndex;
+  final List<TimerEntry> timerEntries;
+  final int timerTaskIndex;
+  final Function() createStory;
+  final WorkoutType workoutType;
+  final bool shareDone;
+  final SegmentSubmission segmentSubmission;
+  final int totalScore;
+  final List<String> scores;
+  final bool counter;
+  final bool isCameraReady;
+  final CameraController cameraController;
+  final Widget pauseButton;
+  final CourseEnrollment courseEnrollment;
+  final int classIndex;
+  final String segmentId;
+
+  ClocksLowerSection(
+      {this.workState,
+      this.segments,
+      this.segmentIndex,
+      this.timerEntries,
+      this.timerTaskIndex,
+      this.createStory,
+      this.workoutType,
+      this.shareDone,
+      this.segmentSubmission,
+      this.scores,
+      this.totalScore,
+      this.counter,
+      this.isCameraReady,
+      this.cameraController,
+      this.pauseButton, this.courseEnrollment, this.classIndex, this.segmentId});
+
+  @override
+  _State createState() => _State();
+}
+
+class _State extends State<ClocksLowerSection> {
+  @override
+  Widget build(BuildContext context) {
+    return _lowerSection();
+  }
+
+  Widget _lowerSection() {
+    if (widget.workState != WorkState.finished) {
+      return Container(
+          color: Colors.black,
+          child: isSegmentWithRecording()
+              ? SegmentClocksUtils.cameraSection(
+                  context, isWorkStateFinished(), widget.isCameraReady, widget.cameraController, widget.pauseButton)
+              : const SizedBox());
+    } else {
+      return _segmentInfoSection();
+    }
+  }
+
+  ///Section with information about segment and workout movements.
+  Widget _segmentInfoSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Column(
+        crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: MovementUtils.movementTitle(
+                    widget.segments[widget.segmentIndex].isChallenge
+                        ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                        : widget.segments[widget.segmentIndex].name,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          if (widget.counter)
+            SizedBox(
+                height: ScreenUtils.height(context) * 0.15,
+                child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    children: SegmentClocksUtils.getScoresByRound(
+                        context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores)))
+          else
+            OlukoNeumorphism.isNeumorphismDesign
+                ? Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SizedBox(
+                        height: ScreenUtils.height(context) * 0.12,
+                        width: ScreenUtils.width(context),
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                              .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                              ?.toList(),
+                        )),
+                  )
+                : Column(
+                    children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                        .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                        ?.toList(),
+                  ),
+          widget.workoutType == WorkoutType.segment || widget.shareDone
+              ? FeedbackCard(widget.courseEnrollment,widget.classIndex,widget.segmentIndex,widget.segmentId)
+              : ShareCard(createStory: widget.createStory, whistleAction: _whistleAction),
+        ],
+      ),
+    );
+  }
+
+  _whistleAction(bool delete) {
+    BlocProvider.of<SegmentSubmissionBloc>(context).setIsDeleted(widget.segmentSubmission, delete);
+  }
+
+  bool isSegmentWithRecording() {
+    return widget.workoutType == WorkoutType.segmentWithRecording;
+  }
+
+  bool isWorkStateFinished() {
+    return widget.workState == WorkState.finished;
+  }
+}

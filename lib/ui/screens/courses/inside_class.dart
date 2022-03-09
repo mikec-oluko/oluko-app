@@ -399,14 +399,14 @@ class _InsideClassesState extends State<InsideClass> {
                                   child: Text(
                                     '$qty+',
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                    style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
                                   ),
                                 );
                               } else {
-                                return const Text(
+                                return  Text(
                                   '0+',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                  style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
                                 );
                               }
                             },

@@ -444,7 +444,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 child: Text(
                   movement.description,
                   style: OlukoNeumorphism.isNeumorphismDesign
-                      ? TextStyle(fontSize: OlukoFonts.olukoMediumFontSize, color: Colors.grey)
+                      ? OlukoFonts.olukoMediumFont(customColor: Colors.grey)
                       : OlukoFonts.olukoMediumFont(),
                 ),
               ),
