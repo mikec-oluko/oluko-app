@@ -70,66 +70,64 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 0.0),
-                                  child: widget.cardImage != null
-                                      ? Container(
-                                          width: 150,
-                                          height: 180,
-                                          decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                              image: DecorationImage(
-                                                image: CachedNetworkImageProvider(widget.cardImage),
-                                                fit: BoxFit.cover,
-                                              )),
-                                          child: Stack(
-                                            children: [
-                                              Positioned(
-                                                top: -10,
-                                                left: -10,
-                                                child: IconButton(
-                                                    iconSize: 24,
-                                                    onPressed: widget.onCloseCard ??
-                                                        () {
-                                                          setState(() {
-                                                            isVisible = !isVisible;
-                                                          });
-                                                        },
-                                                    icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
-                                              )
-                                            ],
-                                          ),
+                                if (widget.cardImage != null)
+                                  Container(
+                                    width: 150,
+                                    height: 180,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                        image: DecorationImage(
+                                          image: CachedNetworkImageProvider(widget.cardImage),
+                                          fit: BoxFit.cover,
+                                        )),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: -10,
+                                          left: -10,
+                                          child: IconButton(
+                                              iconSize: 24,
+                                              onPressed: widget.onCloseCard ??
+                                                  () {
+                                                    setState(() {
+                                                      isVisible = !isVisible;
+                                                    });
+                                                  },
+                                              icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
                                         )
-                                      : Container(
-                                          width: 140,
-                                          height: 170,
-                                          decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(Radius.circular(5)), color: OlukoColors.randomColor()),
-                                          child: Stack(
-                                            children: [
-                                              Positioned(
-                                                top: -10,
-                                                left: -10,
-                                                child: IconButton(
-                                                    iconSize: 32,
-                                                    onPressed: widget.onCloseCard ??
-                                                        () {
-                                                          setState(() {
-                                                            isVisible = !isVisible;
-                                                          });
-                                                        },
-                                                    icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
-                                              ),
-                                              Align(
-                                                child: Text(headerForCard(widget.fileType),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: OlukoFonts.olukoSmallFont(
-                                                        customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                                              )
-                                            ],
-                                          ),
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  Container(
+                                    width: 140,
+                                    height: 170,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(5)), color: OlukoColors.randomColor()),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: -10,
+                                          left: -10,
+                                          child: IconButton(
+                                              iconSize: 32,
+                                              onPressed: widget.onCloseCard ??
+                                                  () {
+                                                    setState(() {
+                                                      isVisible = !isVisible;
+                                                    });
+                                                  },
+                                              icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
                                         ),
-                                )
+                                        Align(
+                                          child: Text(headerForCard(widget.fileType),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: OlukoFonts.olukoSmallFont(
+                                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                        )
+                                      ],
+                                    ),
+                                  )
                               ],
                             ),
                             Flexible(

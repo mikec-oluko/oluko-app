@@ -54,9 +54,6 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
                 children: [
                   profileNeumorphicAccomplishments(
                       achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
-                  const SizedBox(
-                    height: 40,
-                  )
                 ],
               ),
             ),

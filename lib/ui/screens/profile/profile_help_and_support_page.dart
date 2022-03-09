@@ -6,6 +6,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 import '../../../routes.dart';
 
@@ -27,59 +28,64 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
       ),
       body: Container(
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-          child: Stack(
+          child: ListView(
             children: [
               SizedBox(
                 height: 20.0,
               ),
-              ExpansionPanelListWidget(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 5,
-                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                  child: ListView(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: TitleBody(
-                          ProfileViewConstants.profileHelpAndSupportSubTitle,
-                          bold: true,
+              SizedBox(
+                  height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.6 : ScreenUtils.height(context) * 0.65,
+                  child: ExpansionPanelListWidget()),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 5,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                    child: ListView(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15.0),
+                          child: TitleBody(
+                            ProfileViewConstants.profileHelpAndSupportSubTitle,
+                            bold: true,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20.0),
-                      Container(
-                          color: OlukoNeumorphism.isNeumorphismDesign
-                              ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                              : OlukoColors.black,
-                          child: Padding(
-                            padding: OlukoNeumorphism.isNeumorphismDesign
-                                ? const EdgeInsets.fromLTRB(20, 20, 20, 20)
-                                : const EdgeInsets.fromLTRB(15, 0, 15, 15),
-                            child: OlukoNeumorphism.isNeumorphismDesign
-                                ? OlukoNeumorphicPrimaryButton(
-                                    isExpanded: false,
-                                    title: ProfileViewConstants.profileHelpAndSupportButtonText,
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        routeLabels[RouteEnum.profileContactUs],
-                                      );
-                                    },
-                                  )
-                                : OlukoPrimaryButton(
-                                    title: ProfileViewConstants.profileHelpAndSupportButtonText,
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        routeLabels[RouteEnum.profileContactUs],
-                                      );
-                                    },
-                                  ),
-                          ))
-                    ],
+                        SizedBox(height: 20.0),
+                        Container(
+                            color: OlukoNeumorphism.isNeumorphismDesign
+                                ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
+                                : OlukoColors.black,
+                            child: Padding(
+                              padding: OlukoNeumorphism.isNeumorphismDesign
+                                  ? const EdgeInsets.fromLTRB(20, 20, 20, 20)
+                                  : const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                              child: OlukoNeumorphism.isNeumorphismDesign
+                                  ? OlukoNeumorphicPrimaryButton(
+                                      isExpanded: false,
+                                      title: ProfileViewConstants.profileHelpAndSupportButtonText,
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          routeLabels[RouteEnum.profileContactUs],
+                                        );
+                                      },
+                                    )
+                                  : OlukoPrimaryButton(
+                                      title: ProfileViewConstants.profileHelpAndSupportButtonText,
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          routeLabels[RouteEnum.profileContactUs],
+                                        );
+                                      },
+                                    ),
+                            ))
+                      ],
+                    ),
                   ),
                 ),
               )

@@ -181,7 +181,7 @@ class _State extends State<SelfRecording> {
                                   Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                                     'taskIndex': widget.taskIndex,
                                     'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-                                    'taskCompleted': true /**TODO: */
+                                    'taskCompleted': false /**TODO: */
                                   });
                                 },
                                 child: SizedBox(
@@ -333,7 +333,7 @@ class _State extends State<SelfRecording> {
   Widget imageWrapper() {
     return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
       builder: (context, state) {
-        if (state is Success) {
+        if (state is Success &&state.firstVideo!=null) {
           return Container(
             width: 40,
             height: 40,
