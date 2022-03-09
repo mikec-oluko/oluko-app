@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
+import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
@@ -24,6 +25,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
+import 'package:oluko_app/ui/components/clear_all_button.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
@@ -80,6 +82,8 @@ class _State extends State<Courses> {
   Map<CourseCategory, List<Course>> _coursesByCategories;
 
   PanelController panelController = PanelController();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -256,15 +260,7 @@ class _State extends State<Courses> {
       child: Padding(
         padding: const EdgeInsets.only(right: 20.0, top: 5),
         child: showFilterSelector
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    OlukoLocalizations.get(context, 'clearAll'),
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
-                  ),
-                ],
-              )
+            ? ClearAllButton()
             : OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicCircleButton(
                     customIcon: Icon(

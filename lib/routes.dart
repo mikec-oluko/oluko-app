@@ -35,6 +35,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
@@ -368,6 +369,7 @@ class Routes {
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
   final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
+  final SelectedTagsBloc _selectedTagsBloc = SelectedTagsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -381,6 +383,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
@@ -891,6 +894,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
