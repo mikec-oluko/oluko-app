@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
@@ -212,6 +213,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               friendUser,
               _authStateData.user.id,
               FriendBloc(),
+              FriendRequestBloc(),
               HiFiveSendBloc(),
               HiFiveReceivedBloc(),
               UserStatisticsBloc(),
@@ -575,7 +577,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             title: OlukoLocalizations.of(context).find('cancel'),
                             onPressed: () {
                               if (friendState is GetFriendsSuccess) {
-                                BlocProvider.of<FriendBloc>(context)
+                                BlocProvider.of<FriendRequestBloc>(context)
                                     .removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
                               }
                             },
@@ -591,7 +593,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 userIsFriend
                                     ? BlocProvider.of<FriendBloc>(context)
                                         .removeFriend(_authStateData.user.id, friendState.friendData, user.id)
-                                    : BlocProvider.of<FriendBloc>(context)
+                                    : BlocProvider.of<FriendRequestBloc>(context)
                                         .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
                               }
                             },

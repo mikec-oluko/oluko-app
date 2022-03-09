@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -95,7 +96,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                               textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
                           const SizedBox(height: 1),
                           Text(user.username?.toString() ?? '',
-                              style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
+                              style: OlukoFonts.olukoSmallFont(customColor: Colors.grey), textAlign: TextAlign.center),
                         ],
                       ),
                     ),
@@ -118,6 +119,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
           friendUser,
           widget.userId,
           FriendBloc(),
+          FriendRequestBloc(),
           HiFiveSendBloc(),
           HiFiveReceivedBloc(),
           UserStatisticsBloc(),

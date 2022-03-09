@@ -19,7 +19,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
       contentToReturn = Container(
         color: OlukoNeumorphismColors.appBackgroundColor,
         width: MediaQuery.of(context).size.width,
-        height: 150,
+        height: 155,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [

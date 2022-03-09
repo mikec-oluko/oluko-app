@@ -133,11 +133,11 @@ class _HiFivePageState extends State<HiFivePage> {
                     children: [
                       Text(
                         targetUser.firstName,
-                        style: const TextStyle(color: Colors.white, fontSize: 20),
+                        style: OlukoFonts.olukoSuperBigFont(),
                       ),
                       Text(
                         UserHelper.printUsername(targetUser.username, targetUser.id),
-                        style: const TextStyle(color: Colors.white, fontSize: 15),
+                        style: OlukoFonts.olukoMediumFont(),
                       ),
                     ],
                   ),
@@ -147,7 +147,7 @@ class _HiFivePageState extends State<HiFivePage> {
             if (hiFives > 1)
               Text(
                 '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
-                style: TextStyle(color: Colors.grey),
+                style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
               )
             else
               const SizedBox(),

@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
@@ -488,10 +489,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
         BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
         break;
       case UserConnectStatus.notConnected:
-        BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
+        BlocProvider.of<FriendRequestBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
         break;
       case UserConnectStatus.requestPending:
-        BlocProvider.of<FriendBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
+        BlocProvider.of<FriendRequestBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
         break;
       default:
     }

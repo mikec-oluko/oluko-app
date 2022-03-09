@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -25,6 +26,7 @@ class FriendModalContent extends StatefulWidget {
   String currentUserId;
   UserResponse user;
   FriendBloc blocFriends;
+  FriendRequestBloc friendRequestBloc;
   HiFiveSendBloc blocHifiveSend;
   HiFiveReceivedBloc blocHifiveReceived;
   UserStatisticsBloc blocUserStatistics;
@@ -33,6 +35,7 @@ class FriendModalContent extends StatefulWidget {
     this.user,
     this.currentUserId,
     this.blocFriends,
+    this.friendRequestBloc,
     this.blocHifiveSend,
     this.blocHifiveReceived,
     this.blocUserStatistics,
@@ -98,7 +101,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                           '${widget.user.firstName} ${widget.user.lastName}',
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
+                          style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w700),
                         ),
                         _getUserInfo()
                       ],
@@ -273,7 +276,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
         children: [
           Text(
             UserHelper.printUsername(widget.user.username, widget.user.id),
-            style: const TextStyle(color: Colors.grey, fontSize: 15),
+            style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
           ),
           _getUserLocation(),
         ],
@@ -419,7 +422,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
           title: OlukoLocalizations.of(context).find('cancel'),
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
-              widget.blocFriends.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
+              widget.friendRequestBloc.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
             }
           },
         ),
@@ -449,7 +452,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
           title: OlukoLocalizations.of(context).find('connect'),
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
-              widget.blocFriends.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
+              widget.friendRequestBloc.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
             }
           },
         ),
