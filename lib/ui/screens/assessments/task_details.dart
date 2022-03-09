@@ -149,6 +149,9 @@ class _TaskDetailsState extends State<TaskDetails> {
             }),
         body: BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
           builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission.task.id == _task.id) {
+              isAssessmentDone = true;
+            }
             return recordAgainRequested
                 ? SlidingUpPanel(
                     controller: _panelController,
