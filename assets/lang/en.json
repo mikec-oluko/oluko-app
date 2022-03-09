@@ -304,5 +304,7 @@
     "aboutCoach": "About Coach",
     "movements": "Movements",
     "newPR": "New PR:",
-    "typeScore": "Tap here to type the score"
+    "typeScore": "Tap here to type the score",
+   "cancelMssg": "Would you like to cancel?",
+   "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action."
 }

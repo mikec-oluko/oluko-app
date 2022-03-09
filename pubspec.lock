@@ -888,7 +888,7 @@ packages:
       name: permission_handler_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.0.2"
+    version: "9.0.2+1"
   permission_handler_apple:
     dependency: transitive
     description:
@@ -1187,7 +1187,7 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.4.54"
+    version: "19.4.55"
   syncfusion_flutter_gauges:
     dependency: "direct main"
     description:
@@ -1285,7 +1285,7 @@ packages:
       name: video_player
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.19"
+    version: "2.3.0"
   video_player_android:
     dependency: transitive
     description:

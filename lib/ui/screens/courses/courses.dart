@@ -27,12 +27,14 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
+import 'package:oluko_app/ui/newDesignComponents/cancel_bottom_panel.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
@@ -77,6 +79,8 @@ class _State extends State<Courses> {
   List<Course> _courses;
   Map<CourseCategory, List<Course>> _coursesByCategories;
 
+  PanelController panelController = PanelController();
+
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + carSecHeigthPlus;
@@ -90,10 +94,24 @@ class _State extends State<Courses> {
           return BlocBuilder<TagBloc, TagState>(
               bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
               builder: (context, tagState) {
-                return Scaffold(
-                    backgroundColor: Colors.black,
-                    appBar: _appBar(widget.homeEnrollTocourse ?? false),
-                    body: _courseWidget(context, tagState));
+                return SlidingUpPanel(
+                    controller: panelController,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    maxHeight: 250,
+                    minHeight: 0,
+                    panel: CancelBottomPanel(
+                        title: OlukoLocalizations.get(context, 'cancelMssg'),
+                        text: OlukoLocalizations.get(context, 'cancelTxt'),
+                        textButtonTxt: OlukoLocalizations.get(context, 'no'),
+                        primaryButtonTxt: OlukoLocalizations.get(context, 'yes'),
+                        primaryButtonAction: cancelAction,
+                        textButtonAction: () => panelController.close()),
+                    body: Container(
+                        color: Colors.black,
+                        child: Scaffold(
+                            backgroundColor: Colors.black,
+                            appBar: _appBar(widget.homeEnrollTocourse ?? false),
+                            body: _courseWidget(context, tagState))));
               });
         } else {
           return SizedBox();
@@ -120,18 +138,16 @@ class _State extends State<Courses> {
             height: ScreenUtils.height(context),
             width: ScreenUtils.width(context),
             child: showFilterSelector
-                ? CourseUtils.filterSelector(
-                    tagState,
+                ? CourseUtils.filterSelector(tagState,
                     onSubmit: (List<Base> selectedItems) => setState(() {
-                      selectedTags = selectedItems as List<Tag>;
-                      showFilterSelector = false;
-                      searchKey.currentState.updateSearchResults('',selectedTags: selectedTags);
-                    }),
+                          selectedTags = selectedItems as List<Tag>;
+                          showFilterSelector = false;
+                          searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
+                        }),
                     onClosed: () => this.setState(() {
-                      showFilterSelector = false;
-                    }),
-                    showBottomTab: widget.showBottomTab
-                  )
+                          showFilterSelector = false;
+                        }),
+                    showBottomTab: widget.showBottomTab)
                 : searchResults.query.isEmpty && selectedTags.isEmpty
                     ? _mainPage(context)
                     : showSearchSuggestions
@@ -224,24 +240,19 @@ class _State extends State<Courses> {
 
   Widget _filterWidget() {
     return GestureDetector(
-      onTap: () => setState(() {
+      onTap: () {
         if (showFilterSelector == true) {
           //Clear all filters
-          CourseUtils.onClearFilters(context).then((value) => value
-              ? {
-                widget.showBottomTab(),
-                  this.setState(() {
-                    selectedTags.clear();
-                    showFilterSelector = false;
-                  })
-                }
-              : null);
+          //CourseUtils.onClearFilters(context).then((value) => value ? cancelAction() : null);
+          panelController.open();
         } else {
-          widget.showBottomTab();
-          //Toggle filter view
-          showFilterSelector = !showFilterSelector;
+          setState(() {
+            widget.showBottomTab();
+            //Toggle filter view
+            showFilterSelector = !showFilterSelector;
+          });
         }
-      }),
+      },
       child: Padding(
         padding: const EdgeInsets.only(right: 20.0, top: 5),
         child: showFilterSelector
@@ -264,12 +275,8 @@ class _State extends State<Courses> {
                     onPressed: () => this.setState(() {
                       if (showFilterSelector == true) {
                         //Clear all filters
-                        CourseUtils.onClearFilters(context).then((value) => value
-                            ? this.setState(() {
-                                selectedTags.clear();
-                                showFilterSelector = false;
-                              })
-                            : null);
+                        //CourseUtils.onClearFilters(context).then((value) => value ? cancelAction() : null);
+                        panelController.open();
                       } else {
                         //Toggle filter view
                         showFilterSelector = !showFilterSelector;
@@ -284,6 +291,13 @@ class _State extends State<Courses> {
                   ),
       ),
     );
+  }
+
+  void cancelAction() {
+    setState(() {
+      selectedTags.clear();
+    });
+    panelController.close();
   }
 
 //TODO: CHECK COACH ON ENROLL
@@ -318,7 +332,7 @@ class _State extends State<Courses> {
                             var courseList = _courses.where((element) => element.id == courseEntry.key).toList();
                             if (courseList.isNotEmpty) {
                               final course = courseList[0];
-                              
+
                               final List<String> userRecommendationAvatars =
                                   courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 

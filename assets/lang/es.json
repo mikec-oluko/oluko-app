@@ -303,5 +303,7 @@
     "askYourCoach": "Pregunta al entrenador",
     "aboutCoach": "Sobre el entrenador",
     "newPR": "Nuevo RP:",
-    "typeScore": "Toca aquí para ingresar el resultado"
+    "typeScore": "Toca aquí para ingresar el resultado",
+    "cancelMssg": "¿Desea cancelar?",
+    "cancelTxt": "Al cancelar se eliminaran todos los filtros seleccionados, por favor confirme la acción"
 }
