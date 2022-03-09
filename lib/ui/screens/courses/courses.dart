@@ -370,6 +370,7 @@ class _State extends State<Courses> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         AuthSuccess authSuccess = authState;
+        List<Course> enrolledCourses = [];
         return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
             bloc: BlocProvider.of<CourseEnrollmentListStreamBloc>(context)..getStream(authSuccess.user.id ?? authSuccess.user.firebaseId),
             builder: (context, courseEnrollmentState) {
@@ -383,6 +384,7 @@ class _State extends State<Courses> {
                     int courseIndex = courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
+                      enrolledCourses.add(course);
                       return Padding(
                         padding: OlukoNeumorphism.isNeumorphismDesign
                             ? const EdgeInsets.only(right: 12, bottom: 8, top: 8)
@@ -406,6 +408,9 @@ class _State extends State<Courses> {
                       return nil;
                     }
                   }).toList(),
+                  optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+                  onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                      arguments: {'courses': enrolledCourses, 'title': OlukoLocalizations.get(context, 'activeCourses')}),
                 );
               } else {
                 return nil;
