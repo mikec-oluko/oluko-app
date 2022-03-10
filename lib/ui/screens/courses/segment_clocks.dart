@@ -398,7 +398,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   timerTaskIndex: timerTaskIndex,
                   createStory: _createStory,
                   workoutType: workoutType,
-                  shareDone: shareDone,
+                  //shareDone: shareDone,
                   segmentSubmission: _segmentSubmission,
                   scores: scores,
                   totalScore: totalScore,
@@ -440,6 +440,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     setState(() {
       shareDone = true;
     });
+    BlocProvider.of<TimerTaskBloc>(context).setShareDone(shareDone);
   }
 
   void nextSegmentAction() {

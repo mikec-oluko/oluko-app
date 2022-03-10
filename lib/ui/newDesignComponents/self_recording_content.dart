@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -29,16 +28,16 @@ class _SelfRecordingContentState extends State<SelfRecordingContent> {
             )),
         child: Stack(children: [
           Column(children: [
-            const SizedBox(height: 25),
+            const SizedBox(height: 80),
             Text(OlukoLocalizations.get(context, 'notificationSegment'),
                 textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
-            const SizedBox(height: 15),
+            const SizedBox(height: 30),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(OlukoLocalizations.get(context, 'recordingConfirmation'),
                     textAlign: TextAlign.center,
                     style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400))),
-            const SizedBox(height: 35),
+            const SizedBox(height: 100),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
