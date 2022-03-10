@@ -9,9 +9,9 @@ import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'config/project_settings.dart';
+import 'package:oluko_app/config/project_settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,7 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
-  final bool firstTime = await isFirstTime();
+  final bool firstTime = await UserUtils.isFirstTime();
   final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
     initialRoute: route,
@@ -44,24 +44,13 @@ String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
       return routeLabels[RouteEnum.introVideo];
     } else {
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        return routeLabels[RouteEnum.signUpNeumorphic];
+        return routeLabels[RouteEnum.loginNeumorphic];
       } else {
         return routeLabels[RouteEnum.signUp];
       }
     }
   } else {
     return routeLabels[RouteEnum.root];
-  }
-}
-
-Future<bool> isFirstTime() async {
-  final sharedPref = await SharedPreferences.getInstance();
-  final isFirstTime = sharedPref.getBool('first_time');
-  if (isFirstTime != null && !isFirstTime) {
-    return false;
-  } else {
-    sharedPref.setBool('first_time', true);
-    return true;
   }
 }
 

@@ -177,7 +177,7 @@ class AuthBloc extends Cubit<AuthState> {
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.signUpNeumorphic]);
+        Navigator.pushNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
       } else {
         Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
       }
@@ -265,7 +265,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<NotificationBloc>(context).dispose();
       BlocProvider.of<CoachMediaBloc>(context).dispose();
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUpNeumorphic], (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false);
       } else {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       }
