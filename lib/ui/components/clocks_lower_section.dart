@@ -24,6 +24,7 @@ class ClocksLowerSection extends StatefulWidget {
   final List<TimerEntry> timerEntries;
   final int timerTaskIndex;
   final Function() createStory;
+    final WorkoutType originalWorkoutType;
   final WorkoutType workoutType;
   final SegmentSubmission segmentSubmission;
   final int totalScore;
@@ -39,6 +40,7 @@ class ClocksLowerSection extends StatefulWidget {
   ClocksLowerSection(
       {this.workState,
       this.segments,
+      this.originalWorkoutType,
       this.segmentIndex,
       this.timerEntries,
       this.timerTaskIndex,
@@ -139,7 +141,7 @@ class _State extends State<ClocksLowerSection> {
                         .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
                         ?.toList(),
                   ),
-          widget.workoutType == WorkoutType.segment || shareDone
+          widget.originalWorkoutType == WorkoutType.segment || shareDone
               ? FeedbackCard(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId)
               : ShareCard(createStory: widget.createStory, whistleAction: _whistleAction),
         ],

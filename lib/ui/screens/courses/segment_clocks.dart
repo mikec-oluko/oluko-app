@@ -398,6 +398,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   timerTaskIndex: timerTaskIndex,
                   createStory: _createStory,
                   workoutType: workoutType,
+                  originalWorkoutType: widget.workoutType,
                   //shareDone: shareDone,
                   segmentSubmission: _segmentSubmission,
                   scores: scores,
