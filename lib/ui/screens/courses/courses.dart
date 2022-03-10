@@ -120,18 +120,16 @@ class _State extends State<Courses> {
             height: ScreenUtils.height(context),
             width: ScreenUtils.width(context),
             child: showFilterSelector
-                ? CourseUtils.filterSelector(
-                    tagState,
+                ? CourseUtils.filterSelector(tagState,
                     onSubmit: (List<Base> selectedItems) => setState(() {
-                      selectedTags = selectedItems as List<Tag>;
-                      showFilterSelector = false;
-                      searchKey.currentState.updateSearchResults('');
-                    }),
+                          selectedTags = selectedItems as List<Tag>;
+                          showFilterSelector = false;
+                          searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
+                        }),
                     onClosed: () => this.setState(() {
-                      showFilterSelector = false;
-                    }),
-                    showBottomTab: widget.showBottomTab
-                  )
+                          showFilterSelector = false;
+                        }),
+                    showBottomTab: widget.showBottomTab)
                 : searchResults.query.isEmpty && selectedTags.isEmpty
                     ? _mainPage(context)
                     : showSearchSuggestions
@@ -229,7 +227,7 @@ class _State extends State<Courses> {
           //Clear all filters
           CourseUtils.onClearFilters(context).then((value) => value
               ? {
-                widget.showBottomTab(),
+                  widget.showBottomTab(),
                   this.setState(() {
                     selectedTags.clear();
                     showFilterSelector = false;
@@ -318,7 +316,7 @@ class _State extends State<Courses> {
                             var courseList = _courses.where((element) => element.id == courseEntry.key).toList();
                             if (courseList.isNotEmpty) {
                               final course = courseList[0];
-                              
+
                               final List<String> userRecommendationAvatars =
                                   courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 
@@ -356,6 +354,7 @@ class _State extends State<Courses> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         AuthSuccess authSuccess = authState;
+        List<Course> enrolledCourses = [];
         return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
             bloc: BlocProvider.of<CourseEnrollmentListStreamBloc>(context)..getStream(authSuccess.user.id ?? authSuccess.user.firebaseId),
             builder: (context, courseEnrollmentState) {
@@ -369,6 +368,7 @@ class _State extends State<Courses> {
                     int courseIndex = courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
+                      enrolledCourses.add(course);
                       return Padding(
                         padding: OlukoNeumorphism.isNeumorphismDesign
                             ? const EdgeInsets.only(right: 12, bottom: 8, top: 8)
@@ -392,6 +392,9 @@ class _State extends State<Courses> {
                       return nil;
                     }
                   }).toList(),
+                  optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+                  onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                      arguments: {'courses': enrolledCourses, 'title': OlukoLocalizations.get(context, 'activeCourses')}),
                 );
               } else {
                 return nil;

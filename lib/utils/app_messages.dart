@@ -8,14 +8,18 @@ class AppMessages {
     showSnackbar(context, message, backgroundColor: backgroundColor, duration: duration, textColor: textColor);
   }
 
-  static void clearAndShowSnackbarTranslated(BuildContext context, String translationKey, {Color backgroundColor, Duration duration, Color textColor}) {
+  static void clearAndShowSnackbarTranslated(BuildContext context, String translationKey,
+      {Color backgroundColor, Duration duration, Color textColor}) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    showSnackbar(context, OlukoLocalizations.get(context, translationKey), backgroundColor: backgroundColor, duration: duration, textColor: textColor);
+    showSnackbar(context, OlukoLocalizations.get(context, translationKey),
+        backgroundColor: backgroundColor, duration: duration, textColor: textColor);
   }
 
   static void showSnackbar(BuildContext context, String message, {Color backgroundColor, Duration duration, Color textColor}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: textColor != null ? Text(message, style: TextStyle(color: textColor)) : Text(message),
+      content: textColor != null
+          ? Text(message, style: OlukoFonts.olukoMediumFont(customColor: textColor))
+          : Text(message, style: OlukoFonts.olukoMediumFont()),
       backgroundColor: backgroundColor,
       duration: duration ?? const Duration(seconds: 4),
     ));

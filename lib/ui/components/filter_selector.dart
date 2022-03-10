@@ -41,7 +41,7 @@ class _State<T extends Base> extends State<FilterSelector> {
       fit: StackFit.expand,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? 20 : 80.0),
+          padding: EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.14 : 20),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: _getFilterSelectorContent(),
@@ -128,12 +128,13 @@ class _State<T extends Base> extends State<FilterSelector> {
   Widget _getFilterSelectorContent() {
     return Container(
       child: ListView(
-          children: widget.itemList.entries
-              .map((entry) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _getFilterCategory(entry),
-                  ))
-              .toList()),
+        children: widget.itemList.entries
+            .map((entry) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _getFilterCategory(entry),
+                ))
+            .toList(),
+      ),
     );
   }
 

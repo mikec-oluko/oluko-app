@@ -147,42 +147,42 @@ class _TaskDetailsState extends State<TaskDetails> {
                 Navigator.pop(context);
               }
             }),
-        body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
-          listener: (context, state) {
-            if (state is GetSuccess && state.taskSubmission != null) {
+        body: BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+          builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission.task.id == _task.id) {
               isAssessmentDone = true;
             }
-          },
-          child: recordAgainRequested
-              ? SlidingUpPanel(
-                  controller: _panelController,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                  maxHeight: panelSize,
-                  panel: recordAgainDialogContent(),
-                  body: viewContent(),
-                )
-              : SlidingUpPanel(
-                  controller: _panelController,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                  maxHeight: recordAgainRequested ? panelSize : 100,
-                  panel: recordAgainRequested
-                      ? recordAgainDialogContent()
-                      : Container(
-                          height: 60,
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: isAssessmentDone || widget.taskCompleted
-                                ? recordAgainButtons(_taskSubmission)
-                                : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                    Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
-                                  ]),
+            return recordAgainRequested
+                ? SlidingUpPanel(
+                    controller: _panelController,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    maxHeight: panelSize,
+                    panel: recordAgainDialogContent(),
+                    body: viewContent(),
+                  )
+                : SlidingUpPanel(
+                    controller: _panelController,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    maxHeight: recordAgainRequested ? panelSize : 100,
+                    panel: recordAgainRequested
+                        ? recordAgainDialogContent()
+                        : Container(
+                            height: 60,
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: isAssessmentDone || widget.taskCompleted
+                                  ? recordAgainButtons(_taskSubmission)
+                                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                      Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
+                                    ]),
+                            ),
                           ),
-                        ),
-                  body: viewContent(),
-                ),
+                    body: viewContent(),
+                  );
+          },
         ),
       ),
     );
@@ -373,18 +373,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _controller.pause();
               }
               if (_globalService.videoProcessing) {
-                DialogUtils.getDialog(
-                    context,
-                    [
-                      Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                            textAlign: TextAlign.center,
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                          ))
-                    ],
-                    showExitButton: true);
+                getDialog();
               } else {
                 Navigator.pop(context);
                 return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
@@ -403,18 +392,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _controller.pause();
               }
               if (_globalService.videoProcessing) {
-                DialogUtils.getDialog(
-                    context,
-                    [
-                      Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                            textAlign: TextAlign.center,
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                          ))
-                    ],
-                    showExitButton: true);
+                getDialog();
               } else {
                 Navigator.pop(context);
                 return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
@@ -442,7 +420,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             },
             child: GestureDetector(
               onTap: () {
-                BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                _globalService.videoProcessing ? getDialog() : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
               },
               child: const Icon(
                 Icons.file_upload,
@@ -452,6 +430,21 @@ class _TaskDetailsState extends State<TaskDetails> {
             )),
       ],
     );
+  }
+
+  Future<dynamic> getDialog() {
+    return DialogUtils.getDialog(
+        context,
+        [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              ))
+        ],
+        showExitButton: true);
   }
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
@@ -467,18 +460,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     onPressed: () {
                       if (_globalService.videoProcessing) {
-                        DialogUtils.getDialog(
-                            context,
-                            [
-                              Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  child: Text(
-                                    OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                                    textAlign: TextAlign.center,
-                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                                  ))
-                            ],
-                            showExitButton: true);
+                        getDialog();
                       } else {
                         if (OlukoNeumorphism.isNeumorphismDesign) {
                           _panelController.animatePanelToPosition(1.0);
@@ -498,18 +480,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
                       if (_globalService.videoProcessing) {
-                        DialogUtils.getDialog(
-                            context,
-                            [
-                              Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  child: Text(
-                                    OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                                    textAlign: TextAlign.center,
-                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                                  ))
-                            ],
-                            showExitButton: true);
+                        getDialog();
                       } else {
                         DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                       }
@@ -699,6 +670,52 @@ class _TaskDetailsState extends State<TaskDetails> {
     return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
       if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
         return Padding(padding: const EdgeInsets.only(left: 45), child: OlukoCircularProgressIndicator());
+      } else if (taskCardState is TaskCardVideoUploaded && taskCardState.taskId == _task.id) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            child: Stack(alignment: AlignmentDirectional.center, children: [
+              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              Align(
+                  alignment: Alignment.center,
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Container(
+                          width: 50,
+                          height: 50,
+                          child: OlukoBlurredButton(
+                            childContent: Icon(
+                              Icons.play_arrow,
+                              color: OlukoColors.white,
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/assessment/play.png',
+                          scale: 5,
+                          height: 40,
+                          width: 60,
+                        )),
+              Positioned(
+                  top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
+                  bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
+                  left: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(150),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        timeLabel,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  )),
+            ]),
+          ),
+        );
       } else {
         return Padding(
           padding: const EdgeInsets.only(right: 8.0),

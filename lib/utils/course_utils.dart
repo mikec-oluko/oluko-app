@@ -50,7 +50,7 @@ class CourseUtils {
     return courses;
   }
 
-  static List<Course> searchMethod(String query, List<Course> collection, {List<Tag> selectedTags = const []}) {
+  static List<Course> searchMethod(String query, List<Course> collection, List<Tag> selectedTags) {
     List<Course> resultsWithoutFilters = collection.where((course) => course.name.toLowerCase().contains(query.toLowerCase())).toList();
     List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
       final List<String> courseTagIds = course.tags != null ? course.tags.map((e) => e.id).toList() : [];
@@ -111,7 +111,7 @@ class CourseUtils {
                   Text(
                     'Cancelling would remove all the selected filters, please confirm the action.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white24),
+                    style: OlukoFonts.olukoMediumFont(customColor: Colors.white24),
                   )
                 ],
               ),
@@ -138,17 +138,19 @@ class CourseUtils {
         false;
   }
 
-  static Widget filterSelector(TagSuccess state, {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const [],Function showBottomTab}) {
+  static Widget filterSelector(TagSuccess state,
+      {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const [], Function showBottomTab}) {
     return Padding(
         padding: EdgeInsets.only(top: 15.0, left: 0, right: 0),
         child: FilterSelector<Tag>(
-            itemList: Map.fromIterable(state.tagsByCategories.entries,
-                key: (entry) => entry.key.name.toString(),
-                value: (entry) => Map.fromIterable(entry.value as Iterable, key: (tag) => tag as Tag, value: (tag) => tag.name.toString())),
-            selectedTags: selectedTags,
-            onSubmit: onSubmit,
-            onClosed: onClosed,
-            showBottonTab: showBottomTab,));
+          itemList: Map.fromIterable(state.tagsByCategories.entries,
+              key: (entry) => entry.key.name.toString(),
+              value: (entry) => Map.fromIterable(entry.value as Iterable, key: (tag) => tag as Tag, value: (tag) => tag.name.toString())),
+          selectedTags: selectedTags,
+          onSubmit: onSubmit,
+          onClosed: onClosed,
+          showBottonTab: showBottomTab,
+        ));
   }
 
   static String toCourseDuration(int weeks, int classes, BuildContext context) {

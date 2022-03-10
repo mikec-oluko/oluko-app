@@ -147,7 +147,6 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
         }
         if (state is TransformationJourneyContentSuccess) {
-          
           _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
         }
         if (state is TransformationJourneyContentFailure) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
@@ -80,6 +81,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
             itemUser,
             currentUserId,
             FriendBloc(),
+            FriendRequestBloc(),
             HiFiveSendBloc(),
             HiFiveReceivedBloc(),
             UserStatisticsBloc(),

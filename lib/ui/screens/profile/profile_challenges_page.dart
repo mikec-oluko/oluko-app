@@ -55,7 +55,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height / 4,
+                            height: MediaQuery.of(context).size.height / 3,
                             child: ListView(
                               padding: const EdgeInsets.all(0),
                               scrollDirection: Axis.horizontal,
@@ -69,10 +69,12 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 2,
+                        height: MediaQuery.of(context).size.height / 2.1,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -83,7 +85,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                             ),
                             Expanded(
                               child: GridView.builder(
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.7),
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.6),
                                 itemCount: buildListOfChallenges(widget.challengeSegments).length,
                                 itemBuilder: (context, index) => ChallengesCard(
                                   segmentChallenge: widget.challengeSegments[index],
