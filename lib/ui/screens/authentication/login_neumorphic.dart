@@ -149,6 +149,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         ),
         obscureText: !_peekPassword,
+        cursorColor: Colors.white,
         onSaved: (value) {
           if (value != null && value.isNotEmpty) {
             value = value.trim();
