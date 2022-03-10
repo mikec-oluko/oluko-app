@@ -22,7 +22,7 @@ class CoachAudioMessagesRepository {
         .collection('audioSubmissions')
         .where('user_id', isEqualTo: userId)
         .where('coach_id', isEqualTo: coachUserId)
-        // .where('deleted', isEqualTo: false)
+        .where('is_deleted', isNotEqualTo: true)
         .snapshots();
 
     return coachMessagesStream;
@@ -48,6 +48,13 @@ class CoachAudioMessagesRepository {
     return audioMessageToSave;
   }
 
+  Future<CoachAudioMessage> markAudioAsDeleted(CoachAudioMessage audioMessage) async {
+    DocumentReference<Object> audioReference = getMessageReference(audioMessage);
+    audioMessage.isDeleted = true;
+    await audioReference.update(audioMessage.toJson());
+    return audioMessage;
+  }
+
   DocumentReference<Object> getUserReference(String userRequestedId) {
     final DocumentReference userReference = FirebaseFirestore.instance
         .collection('projects')
@@ -55,5 +62,14 @@ class CoachAudioMessagesRepository {
         .collection('users')
         .doc(userRequestedId);
     return userReference;
+  }
+
+  DocumentReference<Object> getMessageReference(CoachAudioMessage audioMessage) {
+    final DocumentReference audioMessageReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('audioSubmissions')
+        .doc(audioMessage.id);
+    return audioMessageReference;
   }
 }

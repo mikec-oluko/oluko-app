@@ -2,14 +2,17 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_audio_message.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class CoachAudioSentComponent extends StatefulWidget {
-  final List<String> records;
   final String record;
   final bool isPreviewContent;
   final Function() onDelete;
-  const CoachAudioSentComponent({Key key, this.records, this.record, this.isPreviewContent = false, this.onDelete}) : super(key: key);
+  final CoachAudioMessage audioMessageItem;
+  const CoachAudioSentComponent({Key key, this.record, this.isPreviewContent = false, this.onDelete, this.audioMessageItem})
+      : super(key: key);
 
   @override
   State<CoachAudioSentComponent> createState() => _CoachAudioSentComponentState();
@@ -29,8 +32,6 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
   }
 
   Padding neumorphicCoachAudioComponent(BuildContext context) {
-    const defaultDateString = '10:00AM 22jul, 2022';
-    const defaultDurationString = '0:50';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Neumorphic(
@@ -59,20 +60,20 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                       children: [
                         GestureDetector(
                           onTap: () => _onPlay(filePath: widget.record),
-                          child: Image.asset(
-                            'assets/assessment/play.png',
-                            scale: 3.5,
+                          child: Neumorphic(
+                            style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+                            child: Image.asset(
+                              !_isPlaying ? 'assets/assessment/play_triangle.png' : 'assets/assessment/pause.png',
+                              width: 45,
+                              height: 45,
+                              scale: 1,
+                              color: OlukoColors.black,
+                            ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Image.asset(
-                            'assets/courses/coach_audio.png',
-                            width: 150,
-                            fit: BoxFit.fill,
-                            scale: 5,
-                            color: OlukoColors.grayColor,
-                          ),
+                          child: Container(width: 200, child: CourseProgressBar(value: _completedPercentage)),
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
                         GestureDetector(
@@ -99,7 +100,9 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     Row(
                       children: [
                         Text(
-                          TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context),
+                          TimeConverter.getDateAndTimeOnStringFormat(
+                              dateToFormat: widget.audioMessageItem != null ? widget.audioMessageItem.createdAt : Timestamp.now(),
+                              context: context),
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                               custoFontWeight: FontWeight.w500),

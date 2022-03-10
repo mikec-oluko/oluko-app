@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CoachAudioPanelState {}
@@ -24,7 +25,9 @@ class CoachAudioPanelDeleted extends CoachAudioPanelState {
 
 class CoachAudioPanelConfirmDelete extends CoachAudioPanelState {
   final double panelMaxSize;
-  CoachAudioPanelConfirmDelete({this.panelMaxSize = 200});
+  final bool isAudioPreview;
+  final CoachAudioMessage audioMessage;
+  CoachAudioPanelConfirmDelete({this.panelMaxSize = 200, this.isAudioPreview = false, this.audioMessage});
 }
 
 class CoachAudioPanelFailure extends CoachAudioPanelState {
@@ -57,7 +60,7 @@ class CoachAudioPanelBloc extends Cubit<CoachAudioPanelState> {
     emit(CoachAudioPanelRecorded(audioRecoded: audioWidget));
   }
 
-  void emitConfirmDeleteState() {
-    emit(CoachAudioPanelConfirmDelete());
+  void emitConfirmDeleteState({bool isPreviewContent, CoachAudioMessage audioMessageItem}) {
+    emit(CoachAudioPanelConfirmDelete(isAudioPreview: isPreviewContent, audioMessage: audioMessageItem));
   }
 }

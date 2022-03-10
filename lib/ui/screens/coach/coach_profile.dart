@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
+import 'package:oluko_app/ui/components/coach_confirm_delete_component.dart';
 import 'package:oluko_app/ui/components/coach_cover_image.dart';
 import 'package:oluko_app/ui/components/coach_information_component.dart';
 import 'package:oluko_app/ui/components/coach_media_carousel_gallery.dart';
@@ -33,27 +35,32 @@ class CoachProfile extends StatefulWidget {
 }
 
 class _CoachProfileState extends State<CoachProfile> {
-  final String _defaultCoachPic = '';
   bool _isVideoPlaying = false;
-  List<CoachAudioMessage> _coachAudioMessages = [];
-  List<CoachMedia> _coachUploadedContent = [];
-  final SoundRecorder _recorder = SoundRecorder();
   bool _recordingAudio = false;
   bool _audioRecorded = false;
-  List<String> _audiosRecorded = [];
   double _audioPanelMaxSize = 100.0;
+  List<CoachAudioMessage> _coachAudioMessages = [];
+  List<CoachMedia> _coachUploadedContent = [];
+  List<String> _audiosRecorded = [];
   Widget _audioRecordedElement;
   Widget _panelNewContent;
+  final SoundRecorder _recorder = SoundRecorder();
   final PanelController _panelController = PanelController();
 
   @override
   void initState() {
-    _recorder.init();
+    !_recorder.isInitialised ? _recorder.init() : null;
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
     BlocProvider.of<CoachAudioMessageBloc>(context).getStream(widget.currentUser.id, widget.coachUser.id);
     BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
     _recordingAudio = _recorder.isRecording;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _recorder.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,30 +77,32 @@ class _CoachProfileState extends State<CoachProfile> {
         if (state is CoachAudioPanelDefault) {
           _audioPanelMaxSize = state.panelMaxSize;
           _audiosRecorded.clear();
-          _panelNewContent = askCoachMicComponent(recordedAudioWidget: _audioRecordedElement ?? null);
+          _recordingAudio = _recorder.isRecording;
+          _panelNewContent = askCoachPanelComponent();
         }
         if (state is CoachAudioPanelDeleted) {
           _audioPanelMaxSize = state.panelMaxSize;
           _audioRecorded = !_audioRecorded;
           _audiosRecorded.clear();
-          _panelNewContent = askCoachMicComponent(recordedAudioWidget: _audioRecordedElement ?? null);
+          _panelNewContent = askCoachPanelComponent(recordedAudioWidget: _audioRecordedElement);
         }
         if (state is CoachAudioPanelRecorded) {
           _audioPanelMaxSize = state.panelMaxSize;
           _audioRecordedElement = state.audioRecoded;
           _panelController.animatePanelToPosition(1);
-          _panelNewContent = askCoachMicComponent(recordedAudioWidget: _audioRecordedElement ?? null);
+          _panelNewContent = askCoachPanelComponent(recordedAudioWidget: _audioRecordedElement);
         }
         if (state is CoachAudioPanelConfirmDelete) {
           _audioPanelMaxSize = state.panelMaxSize;
-          _panelNewContent = confirmDeleteComponent(context);
+          _panelController.panelPosition != 1 ? _panelController.animatePanelToPosition(1) : null;
+
+          _panelNewContent = confirmDeleteComponent(
+              context: context, isPreviewContent: state.isAudioPreview, audioMessage: !state.isAudioPreview ? state.audioMessage : null);
         }
         return SlidingUpPanel(
           parallaxEnabled: true,
-          backdropEnabled: false,
           isDraggable: false,
           controller: _panelController,
-          minHeight: 100.0,
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           maxHeight: _audioPanelMaxSize,
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -101,86 +110,45 @@ class _CoachProfileState extends State<CoachProfile> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Expanded(child: _panelNewContent)],
           ),
-          body: Container(
-            width: ScreenUtils.width(context),
-            height: ScreenUtils.height(context),
-            color: OlukoNeumorphismColors.appBackgroundColor,
-            constraints: const BoxConstraints.expand(),
-            child: ListView(
-              clipBehavior: Clip.none,
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              children: [
-                coachBannerAndInfoSection(context),
-                SizedBox(
-                  height: ScreenUtils.height(context) / 12,
+          body: BlocConsumer<CoachAudioMessageBloc, CoachAudioMessagesState>(
+            listenWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous != current,
+            listener: (context, state) {
+              if (state is CoachAudioMessagesSuccess) {
+                _coachAudioMessages = state.coachAudioMessages;
+              }
+            },
+            buildWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous == current,
+            builder: (context, state) {
+              if (state is CoachAudioMessagesSuccess) {
+                _coachAudioMessages = state.coachAudioMessages;
+              }
+              return Container(
+                width: ScreenUtils.width(context),
+                color: OlukoNeumorphismColors.appBackgroundColor,
+                constraints: const BoxConstraints.expand(),
+                child: ListView(
+                  clipBehavior: Clip.none,
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  children: [
+                    coachBannerAndInfoSection(context),
+                    SizedBox(
+                      height: ScreenUtils.height(context) / 12,
+                    ),
+                    coachGallery(context),
+                    coachAudioMessagesList(context),
+                    _coachAudioMessages.isNotEmpty
+                        ? const SizedBox(
+                            height: 110,
+                          )
+                        : const SizedBox.shrink()
+                  ],
                 ),
-                coachGallery(context),
-                coachAudioMessagesList(context),
-                if (_coachAudioMessages.isNotEmpty)
-                  const SizedBox(
-                    height: 110,
-                  )
-                else
-                  const SizedBox.shrink()
-              ],
-            ),
+              );
+            },
           ),
         );
       },
-    );
-  }
-
-  //TODO: QUITAR COMO WIDGET
-  Padding confirmDeleteComponent(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(OlukoLocalizations.get(context, 'cancelVoiceMessage'),
-                  style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.white)),
-              Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
-                          audioWidget: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: audioSentComponent(context, _recorder.audioUrl),
-                      ));
-                    });
-                  },
-                  child: Text('Deny'),
-                ),
-                Container(
-                    width: 80,
-                    height: 50,
-                    child: OlukoNeumorphicPrimaryButton(
-                        isExpanded: false,
-                        title: 'Allow',
-                        onPressed: () {
-                          setState(() {
-                            _audioRecordedElement = null;
-                          });
-                          BlocProvider.of<CoachAudioPanelBloc>(context).emitDeleteState();
-                        }))
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -200,6 +168,110 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
+  Widget coachGallery(BuildContext context) {
+    return BlocBuilder<CoachMediaBloc, CoachMediaState>(
+      builder: (context, state) {
+        if (state is CoachMediaContentUpdate) {
+          _coachUploadedContent = state.coachMediaContent;
+        }
+        if (state is CoachMediaContentSuccess) {
+          _coachUploadedContent = state.coachMediaContent;
+        }
+        return _coachUploadedContent.isNotEmpty
+            ? _coachAudioMessages.isNotEmpty
+                ? CoachMediaCarouselGallery(
+                    coachMedia: _coachUploadedContent,
+                    coachUser: widget.coachUser,
+                  )
+                : coachMediaGridComponent(context)
+            : SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 300,
+              );
+      },
+    );
+  }
+
+  Column coachMediaGridComponent(BuildContext context) {
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          children: [
+            const Expanded(child: SizedBox()),
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: _coachUploadedContent.isNotEmpty
+                  ? GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach],
+                          arguments: {'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null}),
+                      child: Text(OlukoLocalizations.get(context, 'viewAll'),
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                    )
+                  : const SizedBox.shrink(),
+            )
+          ],
+        ),
+      ),
+      CoachMediaGridGallery(
+        coachMedia: _coachUploadedContent,
+        limitedContent: true,
+      ),
+    ]);
+  }
+
+  Widget coachAudioMessagesList(BuildContext context) {
+    return BlocBuilder<CoachAudioMessageBloc, CoachAudioMessagesState>(
+        buildWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous != current,
+        builder: (context, state) {
+          if (state is CoachAudioMessagesSuccess) {
+            _coachAudioMessages = state.coachAudioMessages;
+          }
+          return _coachAudioMessages.isNotEmpty
+              ? Column(
+                  children: _coachAudioMessages
+                      .map((audioMessageItem) => audioSentComponent(
+                          context: context,
+                          audioPath: audioMessageItem.audioMessage.url,
+                          isPreview: false,
+                          audioMessageItem: audioMessageItem))
+                      .toList())
+              : const SizedBox.shrink();
+        });
+  }
+
+  Padding confirmDeleteComponent({BuildContext context, bool isPreviewContent, CoachAudioMessage audioMessage}) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: CoachConfirmDeleteComponent(
+          allowAction: () {
+            if (isPreviewContent) {
+              setState(() {
+                _audioRecordedElement = null;
+              });
+              BlocProvider.of<CoachAudioPanelBloc>(context).emitDeleteState();
+            } else {
+              BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(audioMessage);
+              BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+            }
+          },
+          denyAction: () {
+            if (isPreviewContent) {
+              setState(() {
+                BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
+                    audioWidget: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
+                ));
+              });
+            } else {
+              BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+            }
+          },
+          isPreviewContent: isPreviewContent,
+        ));
+  }
+
   Container coachBannerVideo(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width,
@@ -214,27 +286,13 @@ class _CoachProfileState extends State<CoachProfile> {
         ));
   }
 
-  Widget coachAudioMessagesList(BuildContext context) {
-    return BlocBuilder<CoachAudioMessageBloc, CoachAudioMessagesState>(
-        buildWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous != current,
-        builder: (context, state) {
-          if (state is CoachAudioMessagesSuccess) {
-            _coachAudioMessages = state.coachAudioMessages;
-          }
-          return _coachAudioMessages.isNotEmpty
-              ? Column(
-                  children: _coachAudioMessages.map((audioMessage) => audioSentComponent(context, audioMessage.audioMessage.url)).toList())
-              : const SizedBox.shrink();
-        });
-  }
-
-  Widget askCoachMicComponent({Widget recordedAudioWidget}) {
+  Widget askCoachPanelComponent({Widget recordedAudioWidget}) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Container(width: ScreenUtils.width(context), child: askCoachMicContent(audioRecorded: recordedAudioWidget))
-        : askCoachMicContent(audioRecorded: recordedAudioWidget);
+        ? Container(width: ScreenUtils.width(context), child: askCoachPanelContent(audioRecorded: recordedAudioWidget))
+        : askCoachPanelContent(audioRecorded: recordedAudioWidget);
   }
 
-  Padding askCoachMicContent({Widget audioRecorded}) {
+  Padding askCoachPanelContent({Widget audioRecorded}) {
     final askCoachText = Text(
       OlukoLocalizations.get(context, 'askYourCoach'),
       style: OlukoFonts.olukoMediumFont(
@@ -251,22 +309,27 @@ class _CoachProfileState extends State<CoachProfile> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (audioRecorded != null) audioRecorded else const SizedBox.shrink(),
-          if (audioRecorded == null)
-            recordAudioTextAndButton(askCoachText)
-          else
-            Container(
-                width: ScreenUtils.width(context) - 40,
-                child: OlukoNeumorphicPrimaryButton(
-                    isExpanded: false,
-                    title: 'Save audio for coach',
-                    onPressed: () {
-                      BlocProvider.of<CoachAudioMessageBloc>(context)
-                          .saveAudioForCoach(File(_recorder.audioUrl), widget.currentUser.id, widget.coachUser.id);
-                      BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
-                    }))
+          if (audioRecorded == null) recordAudioTextAndButton(askCoachText) else saveAudioButton()
         ],
       ),
     );
+  }
+
+  Container saveAudioButton() {
+    return Container(
+        width: ScreenUtils.width(context) - 40,
+        child: OlukoNeumorphicPrimaryButton(
+            isExpanded: false,
+            title: OlukoLocalizations.get(context, 'saveAudioCoach'),
+            onPressed: () {
+              BlocProvider.of<CoachAudioMessageBloc>(context)
+                  .saveAudioForCoach(File(_recorder.audioUrl), widget.currentUser.id, widget.coachUser.id);
+              BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+              setState(() {
+                _audioRecorded = !_audioRecorded;
+                _recordingAudio = !_recordingAudio;
+              });
+            }));
   }
 
   Row recordAudioTextAndButton(Text askCoachText) {
@@ -310,19 +373,6 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
-  _onRecordCompleted() {
-    setState(() {
-      _audioRecorded = true;
-      _recordingAudio = false;
-      _audiosRecorded.add(_recorder.audioUrl);
-      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
-          audioWidget: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: audioSentComponent(context, _recorder.audioUrl),
-      ));
-    });
-  }
-
   Widget microphoneIconButtonContent({Icon iconForContent}) {
     return GestureDetector(
         onTap: () async {
@@ -337,12 +387,13 @@ class _CoachProfileState extends State<CoachProfile> {
           }
         },
         child: Stack(alignment: Alignment.center, children: [
-          OlukoNeumorphism.isNeumorphismDesign
-              ? Image.asset(
-                  'assets/neumorphic/audio_circle.png',
-                  scale: 4,
-                )
-              : SizedBox(),
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            Image.asset(
+              'assets/neumorphic/audio_circle.png',
+              scale: 4,
+            )
+          else
+            const SizedBox.shrink(),
           Image.asset(
             'assets/courses/green_circle.png',
             scale: 6,
@@ -351,59 +402,13 @@ class _CoachProfileState extends State<CoachProfile> {
         ]));
   }
 
-  Widget audioSentComponent(BuildContext context, String audioPath) {
+  Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
     return CoachAudioSentComponent(
       record: audioPath,
-      isPreviewContent: true,
-      onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context).emitConfirmDeleteState(),
-    );
-  }
-
-  Widget coachGallery(BuildContext context) {
-    return BlocBuilder<CoachMediaBloc, CoachMediaState>(
-      builder: (context, state) {
-        if (state is CoachMediaContentUpdate) {
-          _coachUploadedContent = state.coachMediaContent;
-        }
-        if (state is CoachMediaContentSuccess) {
-          _coachUploadedContent = state.coachMediaContent;
-        }
-        return _coachUploadedContent.isNotEmpty
-            ? _coachAudioMessages.isNotEmpty
-                ? CoachMediaCarouselGallery(
-                    coachMedia: _coachUploadedContent,
-                    coachUser: widget.coachUser,
-                  )
-                : Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          const Expanded(child: SizedBox()),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: _coachUploadedContent.isNotEmpty
-                                ? GestureDetector(
-                                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach],
-                                        arguments: {'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null}),
-                                    child: Text(OlukoLocalizations.get(context, 'viewAll'),
-                                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
-                                  )
-                                : const SizedBox.shrink(),
-                          )
-                        ],
-                      ),
-                    ),
-                    CoachMediaGridGallery(
-                      coachMedia: _coachUploadedContent,
-                      limitedContent: true,
-                    ),
-                  ])
-            : SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-              );
-      },
+      audioMessageItem: audioMessageItem,
+      isPreviewContent: isPreview,
+      onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
+          .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );
   }
 
@@ -431,6 +436,19 @@ class _CoachProfileState extends State<CoachProfile> {
   void isVideoPlaying() {
     return setState(() {
       _isVideoPlaying = !_isVideoPlaying;
+    });
+  }
+
+  void _onRecordCompleted() {
+    setState(() {
+      _audioRecorded = true;
+      _recordingAudio = false;
+      _audiosRecorded.add(_recorder.audioUrl);
+      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
+          audioWidget: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
+      ));
     });
   }
 }

@@ -302,5 +302,7 @@
     "movements": "Movimientos",
     "askYourCoach": "Pregunta al entrenador",
     "aboutCoach": "Sobre el entrenador",
-    "newPR": "Nuevo RP:"
+    "newPR": "Nuevo RP:",
+    "saveAudioCoach": "Guardar para el entrenador",
+    "deleteVoiceMessage": "Eliminar mensaje de voz"
 }

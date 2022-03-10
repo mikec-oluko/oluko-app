@@ -10,6 +10,8 @@ class SoundRecorder {
 
   bool get isStopped => _audioRecorder.isStopped;
 
+  bool get isInitialised => _isRecordedInitialised;
+
   String _audioUrl = "";
   //DEVUELVE LA URL
   String get audioUrl => _audioUrl;

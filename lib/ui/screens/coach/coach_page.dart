@@ -511,11 +511,11 @@ class _CoachPageState extends State<CoachPage> {
     List<Widget> carouselContent = [];
     List<CoachNotificationContent> contentForNotificationPanel = [];
 
-    /*if (!widget.coachAssignment.introductionCompleted) {
+    if (!widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachVideoCard(
           videoUrl: _assessment.video,
           onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
-    }*/
+    }
 
     if (!widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachNotificationVideoCard(
@@ -563,17 +563,6 @@ class _CoachPageState extends State<CoachPage> {
         context: context);
   }
 
-  //when triggers no working
-  void buildAnnotationsForTimeline() {
-    CoachTimelineFunctions.getTimelineVideoContent(
-      annotationContent: _annotationVideosContent,
-      mentoredVideos: _mentoredVideoTimelineContent,
-      courseEnrollmentList: _courseEnrollmentList,
-      context: context,
-    );
-    addCoachAssignmentVideo();
-  }
-
   void addCoachAssignmentVideo() {
     if (_annotationVideosContent != null && _introductionVideo != null) {
       if (_annotationVideosContent.where((annotation) => annotation.id == _defaultIntroductionVideoId).toList().isEmpty) {
@@ -583,7 +572,6 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void timelineContentBuilding(BuildContext context) {
-    mentoredVideosTimeline();
     sentVideosTimeline();
 
     _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(
@@ -613,18 +601,6 @@ class _CoachPageState extends State<CoachPage> {
       }
     });
     _sentVideosContent.isNotEmpty ? buildSentVideosForTimeline() : null;
-  }
-
-  void mentoredVideosTimeline() {
-    _mentoredVideoTimelineContent.forEach((mentoredVideo) {
-      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
-        _allContent.add(mentoredVideo);
-      }
-      if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
-        _timelineItemsContent.add(mentoredVideo);
-      }
-    });
-    buildAnnotationsForTimeline();
   }
 
   void coachRecommendationsTimelineItems() {

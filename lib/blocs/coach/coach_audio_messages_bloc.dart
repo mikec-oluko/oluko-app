@@ -58,6 +58,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
           for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
             final Map<String, dynamic> messages = doc.data() as Map<String, dynamic>;
             coachAudioMessages.add(CoachAudioMessage.fromJson(messages));
+            coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
           }
         }
         emit(CoachAudioMessagesSuccess(coachAudioMessages: coachAudioMessages.toList()));
@@ -89,6 +90,20 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     try {
       AudioMessageSubmodel audioContent = await _processAudio(audioRecorded);
       CoachAudioMessage messageUploaded = await _coachAudioMessagesRepository.saveAudioForCoach(audioContent, userId, coachId);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachAudioMessagesFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void markCoachAudioAsDeleted(CoachAudioMessage audioMessage) async {
+    try {
+      CoachAudioMessage deletedMessage = await _coachAudioMessagesRepository.markAudioAsDeleted(audioMessage);
+      print(deletedMessage);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
