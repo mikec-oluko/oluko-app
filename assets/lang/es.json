@@ -305,5 +305,6 @@
     "newPR": "Nuevo RP:",
     "typeScore": "Toca aquí para ingresar el resultado",
     "cancelMssg": "¿Desea cancelar?",
-    "cancelTxt": "Al cancelar se eliminaran todos los filtros seleccionados, por favor confirme la acción"
+    "cancelTxt": "Al cancelar se eliminaran todos los filtros seleccionados, por favor confirme la acción",
+    "recordingConfirmation": "Esta seguro que quiere grabar el segmento?"
 }
