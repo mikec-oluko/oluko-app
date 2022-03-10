@@ -63,10 +63,29 @@ class TaskSubmissionRepository {
   }
 
   static List<TaskSubmission> mapQueryTaskSubmission(QuerySnapshot qs) {
-    return qs.docs.map((DocumentSnapshot ds) {
+    List<TaskSubmission> tasksSubmitted = qs.docs.map((DocumentSnapshot ds) {
       Map<String, dynamic> data = ds.data() as Map<String, dynamic>;
       return TaskSubmission.fromJson(data);
     }).toList();
+    List<TaskSubmission> tasksSubmittedFiltered = [];
+    tasksSubmitted.forEach((element) {
+      if (tasksSubmittedFiltered.isEmpty) {
+        tasksSubmittedFiltered.add(element);
+      } else {
+        var taskFiltered =
+            tasksSubmittedFiltered.firstWhere((elementFiltered) => elementFiltered.task.id == element.task.id, orElse: () => null);
+        if (taskFiltered == null) {
+          tasksSubmittedFiltered.add(element);
+        } else {
+          if (taskFiltered.createdAt.toDate().isBefore(element.createdAt.toDate())) {
+            tasksSubmittedFiltered.remove(taskFiltered);
+            tasksSubmittedFiltered.add(element);
+          }
+          ;
+        }
+      }
+    });
+    return tasksSubmittedFiltered;
   }
 
   static Future<List<TaskSubmission>> getTaskSubmissionsByUserId(String userId) async {
@@ -122,7 +141,8 @@ class TaskSubmissionRepository {
     }
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getTaskSubmissionOfTaskSubscription(AssessmentAssignment assessmentAssignment, Task task) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTaskSubmissionOfTaskSubscription(
+      AssessmentAssignment assessmentAssignment, Task task) {
     Stream<QuerySnapshot<Map<String, dynamic>>> taskSubmissionStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -137,7 +157,13 @@ class TaskSubmissionRepository {
         projectReference.collection("assessmentAssignments").doc(assessmentAssignment.id).collection('taskSubmissions');
     final querySnapshot = await reference.where("task.id", isEqualTo: taskId).get();
     if (querySnapshot.docs.length > 0) {
-      return TaskSubmission.fromJson(querySnapshot.docs[0].data() as Map<String, dynamic>);
+      var mapped = mapQueryTaskSubmission(querySnapshot);
+      // querySnapshot.docs.sort((a, b) {
+      //   return -((a.data() as Map<String, dynamic>)['created_at'] as Timestamp)
+      //       .toDate()
+      //       .compareTo(((b.data() as Map<String, dynamic>)['created_at'] as Timestamp).toDate());
+      // });
+      return mapped[0];
     }
     return null;
   }
