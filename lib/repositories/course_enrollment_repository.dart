@@ -148,7 +148,7 @@ class CourseEnrollmentRepository {
           name: segment.name,
           reference: segment.reference,
           isChallenge: segment.isChallenge,
-          challengeImage: segment.challengeImage,
+          image: segment.image,
           sections: getEnrollmentSections(segment)));
     });
     return enrollmentClass;

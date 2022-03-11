@@ -251,7 +251,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<SegmentSubmodel> getChallenges() {
     List<SegmentSubmodel> challenges = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {
+      if (segment.image != null) {
         challenges.add(segment);
       }
     });
@@ -263,7 +263,7 @@ class _InsideClassesState extends State<InsideClass> {
         ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     List<Widget> challengesCard = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {
+      if (segment.image != null) {
         for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
           if (widget.courseEnrollment.classes[j].id == _class.id) {
             for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {

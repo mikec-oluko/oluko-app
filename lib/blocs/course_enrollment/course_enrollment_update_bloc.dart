@@ -87,9 +87,9 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
   }
 
   Future<void> saveSelfieInClass(CourseEnrollment courseEnrollment, int classIndex) async {
-    var miniThumbnailUrl = courseEnrollment.classes[classIndex].miniSelfieThumbnailUrl;
-    if (miniThumbnailUrl != null) {
-      await ClassRepository.addSelfie(courseEnrollment.classes[classIndex].id, miniThumbnailUrl);
+    var thumbnailUrl = courseEnrollment.classes[classIndex].selfieThumbnailUrl;
+    if (thumbnailUrl != null) {
+      await ClassRepository.addSelfie(courseEnrollment.classes[classIndex].id, thumbnailUrl);
     }
   }
 
