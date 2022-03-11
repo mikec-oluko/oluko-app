@@ -130,7 +130,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
     if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
-      await AppNavigator().goToAssessmentVideosViaMain(context);
+      await AppNavigator().goToAssessmentVideos(context);
     } else {
       await AppNavigator().returnToHome(context);
     }

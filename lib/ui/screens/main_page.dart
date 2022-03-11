@@ -116,10 +116,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     ));
   }
 
-  taskSubmissionActions(VideoSuccess state) async {
+  taskSubmissionActions(VideoSuccess state) {
     BlocProvider.of<TaskSubmissionListBloc>(context)
         .updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
-    await BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
+    BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
     BlocProvider.of<TaskCardBloc>(context).taskFinished(state.taskSubmission.task.id);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(state.assessmentAssignment, state.taskSubmission.task.id);
     BlocProvider.of<TaskSubmissionListBloc>(context).get(state.assessmentAssignment);
