@@ -111,13 +111,13 @@ class _CoachProfileState extends State<CoachProfile> {
             children: [Expanded(child: _panelNewContent)],
           ),
           body: BlocConsumer<CoachAudioMessageBloc, CoachAudioMessagesState>(
-            listenWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous != current,
+            // listenWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous != current,
             listener: (context, state) {
               if (state is CoachAudioMessagesSuccess) {
                 _coachAudioMessages = state.coachAudioMessages;
               }
             },
-            buildWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous == current,
+            // buildWhen: (CoachAudioMessagesState previous, CoachAudioMessagesState current) => previous == current,
             builder: (context, state) {
               if (state is CoachAudioMessagesSuccess) {
                 _coachAudioMessages = state.coachAudioMessages;

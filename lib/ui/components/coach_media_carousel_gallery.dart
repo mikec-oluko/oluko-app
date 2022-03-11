@@ -34,9 +34,9 @@ class _CoachMediaCarouselGalleryState extends State<CoachMediaCarouselGallery> {
               .map((mediaContent) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: ImageAndVideoContainer(
-                        backgroundImage: mediaContent.video.thumbUrl,
-                        isContentVideo: true,
-                        videoUrl: mediaContent.video.url,
+                        backgroundImage: mediaContent.imageUrl ?? mediaContent.video?.thumbUrl,
+                        isContentVideo: mediaContent.imageUrl == null,
+                        videoUrl: mediaContent.video?.url,
                         originalContent: mediaContent,
                         isCoachMediaContent: true),
                   ))

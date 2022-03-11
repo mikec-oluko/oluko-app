@@ -112,7 +112,8 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                             ? Image.asset(
                                 'assets/courses/coach_tick.png',
                                 scale: 5,
-                                color: OlukoColors.grayColor,
+                                color:
+                                    widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
                               )
                             : SizedBox.shrink(),
                       ],

@@ -66,6 +66,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -620,8 +621,10 @@ class Routes {
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
-        newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = TransformationJourneyContentDetail(
+            contentToShow: argumentsToAdd['TransformationJourneyUpload'] as TransformationJourneyUpload,
+            coachMedia: argumentsToAdd['coachMedia'] as CoachMedia);
         break;
       case RouteEnum.logInUsername:
         newRouteView = LoginUsernamePage();

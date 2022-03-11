@@ -41,8 +41,8 @@ class _CoachMediaGridGalleryState extends State<CoachMediaGridGallery> {
             itemBuilder: (context, index) => Card(
                   color: Colors.transparent,
                   child: ImageAndVideoContainer(
-                      backgroundImage: widget.coachMedia[index].video.thumbUrl,
-                      isContentVideo: true,
+                      backgroundImage: widget.coachMedia[index].imageUrl ?? widget.coachMedia[index].video.thumbUrl,
+                      isContentVideo: widget.coachMedia[index].imageUrl == null,
                       videoUrl: widget.coachMedia[index].video.url,
                       originalContent: widget.coachMedia[index],
                       isCoachMediaContent: true),

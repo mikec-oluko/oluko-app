@@ -4,10 +4,12 @@ import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
 
 class CoachMedia extends Base {
+  String imageUrl;
   Video video;
   VideoState videoState;
   CoachMedia(
-      {this.video,
+      {this.imageUrl,
+      this.video,
       this.videoState,
       String id,
       Timestamp createdAt,
@@ -27,6 +29,7 @@ class CoachMedia extends Base {
 
   factory CoachMedia.fromJson(Map<String, dynamic> json) {
     CoachMedia coachMedia = CoachMedia(
+      imageUrl: json['image_url']?.toString(),
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
       videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
     );
@@ -37,6 +40,7 @@ class CoachMedia extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> coachMedia = {
+      'image_url': imageUrl,
       'video': video ?? video.toJson(),
       'video_state': videoState ?? videoState.toJson(),
     };
