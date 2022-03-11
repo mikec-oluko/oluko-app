@@ -43,12 +43,11 @@ class _State extends State<ImageAndVideoPreviewCard> {
 
   @override
   void initState() {
-    setState(() {
-      definePreviewTittleOfTaskSubmission();
-      Future.delayed(Duration.zero, () {
-        definePreviewTitleByTypeOfContent(context);
-      });
+    definePreviewTittleOfTaskSubmission();
+    Future.delayed(Duration.zero, () {
+      definePreviewTitleByTypeOfContent(context);
     });
+
     super.initState();
   }
 
