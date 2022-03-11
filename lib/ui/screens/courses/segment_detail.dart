@@ -62,7 +62,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   int totalSegments;
   bool hasCourseStructureDiscrepancies = false;
   UserResponse _user;
-  List<Segment> _segments=[];
+  List<Segment> _segments = [];
   List<Movement> _movements;
   PanelController panelController = PanelController();
   List<CoachRequest> _coachRequests;
@@ -129,8 +129,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
           return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
             if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess && challengeSegmentState is ChallengesSuccess) {
               for (var segment in segmentState.segments) {
-                for(var enrolledSegment in widget.courseEnrollment.classes[widget.classIndex].segments){
-                  if(segment.id==enrolledSegment.id){
+                for (var enrolledSegment in widget.courseEnrollment.classes[widget.classIndex].segments) {
+                  if (segment.id == enrolledSegment.id &&
+                      _segments.length < widget.courseEnrollment.classes[widget.classIndex].segments.length) {
                     _segments.add(segment);
                   }
                 }
