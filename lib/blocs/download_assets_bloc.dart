@@ -20,7 +20,7 @@ class DownloadSuccess extends DownloadAssetState {
   final String videoUrl;
   final File videoFile;
   final bool isDownloaded;
-  DownloadSuccess( {this.videoUrl, this.videoFile,this.isDownloaded});
+  DownloadSuccess({this.videoUrl, this.videoFile, this.isDownloaded});
 }
 
 class DownloadAssetBloc extends Cubit<DownloadAssetState> {
@@ -30,9 +30,8 @@ class DownloadAssetBloc extends Cubit<DownloadAssetState> {
   void getVideo() async {
     try {
       var dir = await getTemporaryDirectory();
-      var videoPath = "${dir.path}/demo.mp4";
+      var videoPath = "${dir.path}/${IntroductionMediaTypeEnum.completedCourseVideo.name}.mp4";
       String url = await IntroductionMediaRepository.getVideoURL(IntroductionMediaTypeEnum.completedCourseVideo);
-      print("path ${dir.path}");
       if (!downloaded) {
         await dio.download(url, videoPath, onReceiveProgress: (rec, total) {
           if (rec == total) {
@@ -42,7 +41,7 @@ class DownloadAssetBloc extends Cubit<DownloadAssetState> {
       }
       final File file = File(videoPath);
 
-      emit(DownloadSuccess(videoUrl: url, videoFile: file,isDownloaded:downloaded));
+      emit(DownloadSuccess(videoUrl: url, videoFile: file, isDownloaded: downloaded));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
