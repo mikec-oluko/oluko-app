@@ -236,7 +236,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           decoration:OlukoNeumorphism.isNeumorphismDesign?  const BoxDecoration(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ):BoxDecoration(),
+          ):const BoxDecoration(),
           width:OlukoNeumorphism.isNeumorphismDesign?  ScreenUtils.width(context) * 0.9:ScreenUtils.width(context),
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser

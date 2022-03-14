@@ -96,7 +96,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     if (user.city == null || user.state == null || user.country == null) {
       return null;
     }
-    return "${user.city ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
+    return " ${user.city[0].toUpperCase() ?? ''}${user.city.substring(1).toLowerCase() ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
   }
 
   Widget _profileUserNeumorphicInformation(String location, List<String> valuesForArchivements) {
