@@ -363,12 +363,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           const Expanded(child: SizedBox()),
           GestureDetector(
               onTap: () {
-                BottomDialogUtils.showBottomDialog(
-                  context: context,
-                  content: SelfRecordingContent(
-                    onRecordingAction: navigateToSegmentWithRecording,
-                  ),
-                );
+                if (widget.coach != null) {
+                  BottomDialogUtils.showBottomDialog(
+                    context: context,
+                    content: SelfRecordingContent(
+                      onRecordingAction: navigateToSegmentWithRecording,
+                    ),
+                  );
+                }
               },
               child: getCameraIcon())
         ],
