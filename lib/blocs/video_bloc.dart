@@ -40,7 +40,7 @@ class VideoSuccess extends VideoState {
   Assessment assessment;
   TaskSubmission taskSubmission;
   int taskIndex;
-  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission,this.taskIndex});
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission, this.taskIndex});
 }
 
 class VideoProcessing extends VideoState {
