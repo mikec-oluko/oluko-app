@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
             hintStyle: new TextStyle(color: Colors.grey[800]),
             hintText: OlukoLocalizations.get(context, 'emailExample'),
             fillColor: Colors.white70,
-            labelText: OlukoLocalizations.get(context, 'emailOrUsername'),
+            labelText: OlukoLocalizations.get(context, 'usernameOrEmail'),
             labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {

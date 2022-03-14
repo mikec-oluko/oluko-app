@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserUtils {
   String defaultAvatarImageAsset = 'assets/utils/avatar.png';
@@ -22,9 +23,9 @@ class UserUtils {
               textAlign: TextAlign.center,
             )
           : Image.asset(
-          'assets/home/mvt.png',
-          scale: 3,
-        ),
+              'assets/home/mvt.png',
+              scale: 3,
+            ),
     );
   }
 
@@ -37,5 +38,16 @@ class UserUtils {
       text += lastname.characters?.first?.toString()?.toUpperCase();
     }
     return text;
+  }
+
+  static Future<bool> isFirstTime() async {
+    final sharedPref = await SharedPreferences.getInstance();
+    final isFirstTime = sharedPref.getBool('first_time');
+    if (isFirstTime != null && !isFirstTime) {
+      return false;
+    } else {
+      sharedPref.setBool('first_time', true);
+      return true;
+    }
   }
 }

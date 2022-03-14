@@ -61,7 +61,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child: Text(OlukoLocalizations.get(context, 'emailOrUsername'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
+          child: Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
         ),
         const SizedBox(height: 12),
         Text(OlukoLocalizations.get(context, 'loginSubtitle'), style: OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
@@ -86,7 +86,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
             focusedBorder: InputBorder.none,
             filled: false,
             hintStyle: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
-            hintText: OlukoLocalizations.get(context, 'emailOrUsername').toLowerCase(),
+            hintText: OlukoLocalizations.get(context, 'usernameOrEmail').toLowerCase(),
             fillColor: Colors.white70,
           ),
           onSaved: (value) {

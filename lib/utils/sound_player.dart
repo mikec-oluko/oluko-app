@@ -1,5 +1,14 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_player.dart';
+
+enum SoundsEnum { enroll, classFinished, newCoachRecomendation }
+
+Map<SoundsEnum, String> soundsLabels = {
+  SoundsEnum.enroll: 'sounds/enroll_sound.wav',
+  SoundsEnum.classFinished: 'sounds/class_finished.wav',
+  SoundsEnum.newCoachRecomendation: 'sounds/new_coach_recomendation'
+};
 
 class SoundPlayer {
   FlutterSoundPlayer _audioPlayer;
@@ -21,6 +30,12 @@ class SoundPlayer {
     } else {
       await _audioPlayer.startPlayer(fromURI: uri, whenFinished: whenFinished);
     }
+  }
+
+  static Future playAsset(SoundsEnum soundEnum) async {
+    final AudioCache player = AudioCache();
+    final asset = soundsLabels[soundEnum];
+    await player.play(asset);
   }
 
   Future _pause() async {
