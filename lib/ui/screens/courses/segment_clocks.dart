@@ -41,6 +41,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -193,10 +194,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 _globalService.videoProcessing = true;
                                 BlocProvider.of<CoachRequestStreamBloc>(context)
                                     .resolve(_coachRequest, _user.uid, RequestStatusEnum.ignored);
-                                if (widget.segments[widget.segmentIndex].isChallenge) {
-                                  StoryUtils.createNewPRChallengeStory(
-                                      context, state, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
-                                }
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
@@ -372,19 +369,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           ? ScreenUtils.height(context)
                           : ScreenUtils.height(context) * 0.6,
               child: Clock(
-                                workState: workState,
-                                segments: widget.segments,
-                                segmentIndex: widget.segmentIndex,
-                                AMRAPRound: AMRAPRound,
-                                timerEntries: timerEntries,
-                                timerTaskIndex: timerTaskIndex,
-                                textController: textController,
-                                goToNextStep: _goToNextStep,
-                                actionAMRAP: actionAMRAP,
-                                timeLeft: timeLeft,
-                                workoutType: workoutType,
-                                keyboardVisibilty: keyboardVisibilty,
-                              ),
+                workState: workState,
+                segments: widget.segments,
+                segmentIndex: widget.segmentIndex,
+                AMRAPRound: AMRAPRound,
+                timerEntries: timerEntries,
+                timerTaskIndex: timerTaskIndex,
+                textController: textController,
+                goToNextStep: _goToNextStep,
+                actionAMRAP: actionAMRAP,
+                timeLeft: timeLeft,
+                workoutType: workoutType,
+                keyboardVisibilty: keyboardVisibilty,
+              ),
             ),
             SizedBox(
                 height: keyboardVisibilty
@@ -447,27 +444,30 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void nextSegmentAction() {
-    widget.segmentIndex < widget.segments.length - 1
-        ? Navigator.popAndPushNamed(
-            context,
-            routeLabels[RouteEnum.segmentDetail],
-            arguments: {
-              'segmentIndex': widget.segmentIndex + 1,
-              'classIndex': widget.classIndex,
-              'courseEnrollment': widget.courseEnrollment,
-              'courseIndex': widget.courseIndex,
-              'fromChallenge': _isFromChallenge
-            },
-          )
-        : Navigator.popAndPushNamed(
-            context,
-            routeLabels[RouteEnum.completedClass],
-            arguments: {
-              'classIndex': widget.classIndex,
-              'courseEnrollment': widget.courseEnrollment,
-              'courseIndex': widget.courseIndex,
-            },
-          );
+    if (widget.segmentIndex < widget.segments.length - 1) {
+      Navigator.popAndPushNamed(
+        context,
+        routeLabels[RouteEnum.segmentDetail],
+        arguments: {
+          'segmentIndex': widget.segmentIndex + 1,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+          'fromChallenge': _isFromChallenge
+        },
+      );
+    } else {
+      SoundPlayer.playAsset(SoundsEnum.classFinished);
+      Navigator.popAndPushNamed(
+        context,
+        routeLabels[RouteEnum.completedClass],
+        arguments: {
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+        },
+      );
+    }
   }
 
   void goToClassAction() {
@@ -678,6 +678,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
+
+    if (widget.segments[widget.segmentIndex].isChallenge) {
+      StoryUtils.createNewPRChallengeStory(context, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+    }
+
     Wakelock.disable();
     setState(() {
       if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {

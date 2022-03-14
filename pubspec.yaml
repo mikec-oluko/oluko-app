@@ -129,6 +129,7 @@ flutter:
     - assets/fonts/
     - assets/collage_people/
     - assets/collage_logos/
+    - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

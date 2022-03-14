@@ -118,16 +118,16 @@ class AuthBloc extends Cubit<AuthState> {
         AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         navigateToNextScreen(context, firebaseUser.uid);
-        final sharedPref = await SharedPreferences.getInstance();
-        if (sharedPref.getBool('first_time') == true) {
-          sharedPref.setBool('first_time', false);
-          await Permissions.askForPermissions();
-        }
       }
     }
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
+    final sharedPref = await SharedPreferences.getInstance();
+    if (true) {
+      sharedPref.setBool('first_time', false);
+      await Permissions.askForPermissions();
+    }
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
     if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
       await AppNavigator().goToAssessmentVideos(context);
@@ -173,16 +173,11 @@ class AuthBloc extends Cubit<AuthState> {
         AppMessages.clearAndShowSnackbar(
             context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
         navigateToNextScreen(context, firebaseUser.uid);
-        final sharedPref = await SharedPreferences.getInstance();
-        if (sharedPref.getBool('first_time') == true) {
-          sharedPref.setBool('first_time', false);
-          await Permissions.askForPermissions();
-        }
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.signUpNeumorphic]);
+        Navigator.pushNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
       } else {
         Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
       }
@@ -270,7 +265,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<NotificationBloc>(context).dispose();
       BlocProvider.of<CoachMediaBloc>(context).dispose();
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUpNeumorphic], (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false);
       } else {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       }
