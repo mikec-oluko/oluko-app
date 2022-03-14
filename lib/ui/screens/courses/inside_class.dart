@@ -255,7 +255,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<SegmentSubmodel> getChallenges() {
     List<SegmentSubmodel> challenges = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {
+      if (segment.isChallenge) {
         challenges.add(segment);
       }
     });
@@ -267,7 +267,7 @@ class _InsideClassesState extends State<InsideClass> {
         ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     List<Widget> challengesCard = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {
+      if (segment.isChallenge) {
         for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
           if (widget.courseEnrollment.classes[j].id == _class.id) {
             for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
@@ -407,7 +407,7 @@ class _InsideClassesState extends State<InsideClass> {
                                   ),
                                 );
                               } else {
-                                return  Text(
+                                return Text(
                                   '0+',
                                   textAlign: TextAlign.center,
                                   style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),

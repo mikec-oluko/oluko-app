@@ -78,8 +78,7 @@ class _State extends State<ClassSection> {
                             padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10, right: 10),
                             child: Text(
                               widget.classObj.name,
-                              style: OlukoFonts.olukoMediumFont(
-                                  custoFontWeight: FontWeight.w500, customColor: isStarted ? OlukoColors.yellow : OlukoColors.grayColor),
+                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                             ),
                           ),
                           widget.classProgress == 1
