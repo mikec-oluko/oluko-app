@@ -220,10 +220,10 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 20.0),
+                                  padding: const EdgeInsets.only(left: 10.0),
                                   child: Container(
                                     //TODO: light behind
                                     height: 55,
@@ -239,14 +239,13 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                  child: MovementUtils.movementTitle(widget.movement.name),
-                                ),
                                 SizedBox(
-                                  height: 55,
-                                  width: 55,
-                                )
+                                  width: ScreenUtils.width(context) * 0.77,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                    child: MovementUtils.movementTitle(widget.movement.name),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
