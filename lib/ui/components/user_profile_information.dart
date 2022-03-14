@@ -420,7 +420,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           child: Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
             child: Text(
-              '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+              UserHelper.getFullName(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
               style: OlukoFonts.olukoBigFont(
                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
                   custoFontWeight: FontWeight.w500),
