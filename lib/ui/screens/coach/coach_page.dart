@@ -554,14 +554,14 @@ class _CoachPageState extends State<CoachPage> {
     return carouselContent;
   }
 
-  //when triggers no working
-  void buildSentVideosForTimeline() {
-    CoachTimelineFunctions.getTimelineVideoContent(
-        segmentSubmittedContent: _sentVideosContent,
-        sentVideos: _sentVideosTimelineContent,
-        courseEnrollmentList: _courseEnrollmentList,
-        context: context);
-  }
+  // //when triggers no working
+  // void buildSentVideosForTimeline() {
+  //   CoachTimelineFunctions.getTimelineVideoContent(
+  //       segmentSubmittedContent: _sentVideosContent,
+  //       sentVideos: _sentVideosTimelineContent,
+  //       courseEnrollmentList: _courseEnrollmentList,
+  //       context: context);
+  // }
 
   void addCoachAssignmentVideo() {
     if (_annotationVideosContent != null && _introductionVideo != null) {
@@ -572,7 +572,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void timelineContentBuilding(BuildContext context) {
-    sentVideosTimeline();
+    // sentVideosTimeline();
 
     _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(
         timelineItemsContent: _timelineItemsContent,
@@ -591,17 +591,17 @@ class _CoachPageState extends State<CoachPage> {
     _timelinePanelContent = CoachTimelineFunctions.timelinePanelUpdateTabsAndContent(allTabContent, _timelinePanelContent);
   }
 
-  void sentVideosTimeline() {
-    _sentVideosTimelineContent.forEach((sentVideo) {
-      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
-        _allContent.add(sentVideo);
-      }
-      if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
-        _timelineItemsContent.add(sentVideo);
-      }
-    });
-    _sentVideosContent.isNotEmpty ? buildSentVideosForTimeline() : null;
-  }
+  // void sentVideosTimeline() {
+  //   _sentVideosTimelineContent.forEach((sentVideo) {
+  //     if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
+  //       _allContent.add(sentVideo);
+  //     }
+  //     if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
+  //       _timelineItemsContent.add(sentVideo);
+  //     }
+  //   });
+  //   _sentVideosContent.isNotEmpty ? buildSentVideosForTimeline() : null;
+  // }
 
   void coachRecommendationsTimelineItems() {
     _coachRecommendations.isNotEmpty

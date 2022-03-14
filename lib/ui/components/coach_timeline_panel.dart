@@ -142,7 +142,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 CoachTimelineCardContent(
                   cardImage: content.contentThumbnail,
                   cardTitle: content.contentName,
-                  cardSubTitle: content.contentDescription,
+                  cardSubTitle: content.courseForNavigation?.duration,
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.recommendedCourse,
                 ),
@@ -168,18 +168,30 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.segment:
         return Container(
-          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CoachTimelineCircleContent(
-                  circleImage: content.contentThumbnail,
-                  circleTitle: content.contentName,
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
                   date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.recommendedSegment),
+                  fileType: CoachFileTypeEnum.sentVideo),
             ],
           ),
         );
+      // return Container(
+      //   color: OlukoNeumorphismColors.appBackgroundColor,
+      //   child: Column(
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       CoachTimelineCircleContent(
+      //           circleImage: content.contentThumbnail,
+      //           circleTitle: content.contentName,
+      //           date: content.createdAt.toDate(),
+      //           fileType: CoachFileTypeEnum.recommendedSegment),
+      //     ],
+      //   ),
+      // );
       case TimelineInteractionType.movement:
         return GestureDetector(
           onTap: () {

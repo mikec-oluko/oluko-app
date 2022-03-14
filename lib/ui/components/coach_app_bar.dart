@@ -59,16 +59,19 @@ class _CoachAppBarState extends State<CoachAppBar> {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
         automaticallyImplyLeading: false,
-        leading: Container(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              OlukoNeumorphicCircleButton(
-                onPressed: () {
-                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
-                },
-              ),
-            ],
+        leading: Visibility(
+          visible: false,
+          child: Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                OlukoNeumorphicCircleButton(
+                  onPressed: () {
+                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         actions: [
