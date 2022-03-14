@@ -224,8 +224,10 @@ class TimerUtils {
   static Widget restTimer(Widget addCounterValue, double progressValue, String duration, BuildContext context) {
     //double ellipseScale = 4.5;
     return Container(
-        child: Stack(alignment: Alignment.center, children: [
-      /*Image.asset(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          /*Image.asset(
             'assets/courses/ellipse_1.png',
             scale: ellipseScale,
           ),
@@ -237,34 +239,45 @@ class TimerUtils {
             'assets/courses/ellipse_3.png',
             scale: ellipseScale,
           ),*/
-      SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
-        child: AspectRatio(
-            aspectRatio: 1,
-            child: CircularProgressIndicator(
-                strokeWidth: _progressIndicatorStroke,
-                value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
-                color: getGreenOrSkyBlue,
-                backgroundColor: backgroundColor)),
+          SizedBox(
+            width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
+            height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
+            child: AspectRatio(
+                aspectRatio: 1,
+                child: CircularProgressIndicator(
+                    strokeWidth: _progressIndicatorStroke,
+                    value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
+                    color: getGreenOrSkyBlue,
+                    backgroundColor: backgroundColor)),
+          ),
+          if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
+            Align(
+              alignment: Alignment.center,
+              child: addCounterValue,
+            )
+          else
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? OlukoLocalizations.get(context, 'rest')
+                      : OlukoLocalizations.get(context, 'rest').toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
+              SizedBox(height: 12),
+              Text(duration, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+            ]),
+          if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
+            Positioned(
+                bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.11 : ScreenUtils.height(context) * 0.05,
+                child: duration != null
+                    ? Text(duration,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 15, fontWeight: FontWeight.bold, color: Colors.white))
+                    : SizedBox())
+        ],
       ),
-      if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
-        Align(
-          alignment: Alignment.center,
-          child: addCounterValue,
-        )
-      else
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoLocalizations.get(context, 'rest')
-                  : OlukoLocalizations.get(context, 'rest').toUpperCase(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
-          SizedBox(height: 12),
-          Text(duration, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
-        ])
-    ]));
+    );
   }
 
   static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide]) {

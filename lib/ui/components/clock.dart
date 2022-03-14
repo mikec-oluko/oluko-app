@@ -338,12 +338,15 @@ class _State extends State<Clock> {
                 ),
               ),
               if (isCounterByReps)
-                Text(
-                  OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                      ? OlukoLocalizations.get(context, 'reps')
-                      : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
-                  overflow: TextOverflow.ellipsis,
+                FittedBox(
+                  fit: BoxFit.fitHeight,
+                  child: Text(
+                    OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                        ? OlukoLocalizations.get(context, 'reps')
+                        : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 )
               else
                 widget.textController.value != null && widget.textController.value.text != ""
