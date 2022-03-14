@@ -69,7 +69,7 @@ class _CompletedClassState extends State<CompletedClass> {
             showVideo = false;
             return CompletedCourseVideo(
               file: state.videoFile,
-              mediaURL:state.videoUrl,
+              mediaURL: state.videoUrl,
               isDownloaded: state.isDownloaded,
             );
           } else {
@@ -124,9 +124,16 @@ class _CompletedClassState extends State<CompletedClass> {
                             customHeight: 60,
                             title: OlukoLocalizations.get(context, 'done'),
                             onPressed: () {
-                              setState(() {
-                                showVideo = true;
-                              });
+                              if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                                  'index': widget.courseIndex,
+                                  'classIndex': widget.classIndex + 1,
+                                });
+                              } else {
+                                setState(() {
+                                  showVideo = true;
+                                });
+                              }
                             },
                           ),
                         ),

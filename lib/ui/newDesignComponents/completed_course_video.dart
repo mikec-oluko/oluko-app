@@ -41,7 +41,7 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
           _videoPlayerController.value != null &&
           _videoPlayerController.value.position == _videoPlayerController.value.duration) {
         await _videoPlayerController.dispose();
-        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
       }
     });
 
