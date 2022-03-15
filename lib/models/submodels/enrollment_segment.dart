@@ -6,7 +6,7 @@ class EnrollmentSegment {
   DocumentReference reference;
   String name;
   bool isChallenge;
-  String challengeImage;
+  String image;
   Timestamp completedAt;
   List<EnrollmentSection> sections;
   int likes;
@@ -18,7 +18,7 @@ class EnrollmentSegment {
       this.name,
       this.completedAt,
       this.sections,
-      this.challengeImage,
+      this.image,
       this.isChallenge,
       this.likes,
       this.dislikes});
@@ -33,7 +33,7 @@ class EnrollmentSegment {
           : json['is_challenge'] is bool
               ? json['is_challenge'] as bool
               : false,
-      challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
+      image: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
       completedAt: json['completed_at'] as Timestamp,
       sections: json['sections'] == null
           ? null
@@ -50,7 +50,7 @@ class EnrollmentSegment {
         'name': name,
         'completed_at': completedAt,
         'is_challenge': isChallenge,
-        'challenge_image': challengeImage,
+        'image': image,
         'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
         'likes': likes ?? 0,
         'dislikes': dislikes ?? 0,

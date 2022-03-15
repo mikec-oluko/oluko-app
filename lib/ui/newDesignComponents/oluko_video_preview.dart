@@ -142,9 +142,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
 
   Widget videoSection() {
     return Stack(alignment: Alignment.center, children: [
-      AspectRatio(
-          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
-          child: Container(color: OlukoColors.white, child: widget.randomImages != null ? gridSection() : imageSection())),
+      AspectRatio(aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600, child: Container(color: OlukoColors.white, child: gridSection())),
       if (widget.video != null)
         AspectRatio(
           aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,

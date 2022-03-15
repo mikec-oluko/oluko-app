@@ -304,5 +304,9 @@
     "askYourCoach": "Ask your coach",
     "aboutCoach": "About Coach",
     "movements": "Movements",
-    "newPR": "New PR:"
+    "newPR": "New PR:",
+    "typeScore": "Tap here to type the score",
+   "cancelMssg": "Would you like to cancel?",
+   "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
+   "recordingConfirmation": "Are you sure you want to record this segment?"
 }
