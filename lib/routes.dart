@@ -85,10 +85,11 @@ import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.
 import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
-import 'package:oluko_app/ui/screens/authentication/login_password.dart';
-import 'package:oluko_app/ui/screens/authentication/login_username.dart';
+import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_password.dart';
+import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_username.dart';
+import 'package:oluko_app/ui/screens/authentication/login_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
-import 'package:oluko_app/ui/screens/authentication/sign_up_neumorphic.dart';
+import 'package:oluko_app/ui/screens/authentication/loginWithSteps/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/about_coach_page.dart';
@@ -166,7 +167,7 @@ enum RouteEnum {
   root,
   introVideo,
   signUp,
-  signUpNeumorphic,
+  loginNeumorphic,
   signUpWithEmail,
   login,
   friends,
@@ -225,7 +226,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.root: '/',
   RouteEnum.introVideo: '/intro_video',
   RouteEnum.signUp: '/sign-up',
-  RouteEnum.signUpNeumorphic: '/sign-up-neumorphic',
+  RouteEnum.loginNeumorphic: '/login-neumorphic',
   RouteEnum.signUpWithEmail: '/sign-up-with-email',
   RouteEnum.login: '/login',
   RouteEnum.friends: '/friends',
@@ -458,8 +459,8 @@ class Routes {
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
         break;
-      case RouteEnum.signUpNeumorphic:
-        newRouteView = SignUpNeumorphicPage();
+      case RouteEnum.loginNeumorphic:
+        newRouteView = LoginNeumorphicPage();
         break;
       case RouteEnum.completedClass:
         providers = [

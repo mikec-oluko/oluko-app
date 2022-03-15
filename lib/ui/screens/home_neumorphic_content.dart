@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +18,7 @@ import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
-import 'package:oluko_app/ui/components/video_overlay.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -42,6 +43,10 @@ class HomeNeumorphicContent extends StatefulWidget {
 }
 
 class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
+  ChewieController _controller;
+  bool isVideoVisible = false;
+  String mediaURL;
+
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
@@ -170,8 +175,11 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return SliverList(
       delegate: SliverChildListDelegate([
         GestureDetector(
-          onLongPress: () => Navigator.pushNamed(context, routeLabels[RouteEnum.homeLongPress],
-              arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index}),
+          onLongPress: () => Navigator.pushNamed(
+            context,
+            routeLabels[RouteEnum.homeLongPress],
+            arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index},
+          ),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
             child: OverlayVideoPreview(
@@ -299,67 +307,128 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   Scaffold getNotEnrolledContent(bool showStories, BuildContext context) {
     return Scaffold(
-      backgroundColor: OlukoColors.black,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       body: Column(
         children: [
-          Container(
-            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Image.asset(
-                            'assets/home/mvt.png',
-                            scale: 4,
-                          ),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Image.asset(
+                          'assets/home/mvt.png',
+                          scale: 4,
                         ),
                       ),
                     ),
-                    HandWidget(authState: widget.authState),
-                  ],
-                ),
-                notEnrolledStoriesHeader(showStories),
-              ],
-            ),
-          ),
-          Stack(
-            children: [
-              ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                    stops: [
-                      0.2,
-                      0.5,
-                      0.8,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: OlukoNeumorphismColors.homeGradientColorList,
-                  ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-                },
-                //blendMode: BlendMode.dstIn,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/courses/profile_photos.png'),
-                      fit: BoxFit.cover,
-                    ),
                   ),
-                  height: ScreenUtils.height(context) - (showStories ? 240 : 181),
-                  width: ScreenUtils.width(context),
-                ),
+                  HandWidget(authState: widget.authState),
+                ],
               ),
-              Center(child: notErolledContent(showStories))
+              notEnrolledStoriesHeader(showStories),
             ],
           ),
+          if (isVideoVisible)
+            Container(
+              width: ScreenUtils.width(context),
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: isVideoVisible ? 0 : 16),
+                child: Stack(
+                  children: [
+                    showVideoPlayer(mediaURL, showStories),
+                  ],
+                ),
+              ),
+            )
+          else
+            Stack(
+              children: [
+                ShaderMask(
+                  shaderCallback: (rect) {
+                    return const LinearGradient(
+                      stops: [
+                        0.2,
+                        0.5,
+                        0.8,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: OlukoNeumorphismColors.homeGradientColorList,
+                    ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/courses/profile_photos.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    height: ScreenUtils.height(context) - (showStories ? 240 : 181),
+                    width: ScreenUtils.width(context),
+                  ),
+                ),
+                Center(child: notErolledContent(showStories))
+              ],
+            )
         ],
+      ),
+    );
+  }
+
+  Widget showVideoPlayer(String videoUrl, bool showStories) {
+    final List<Widget> widgets = [];
+    if (_controller == null) {
+      widgets.add(const Center(child: CircularProgressIndicator()));
+    }
+    widgets.add(
+      OlukoVideoPlayer(
+        isOlukoControls: true,
+        videoUrl: videoUrl,
+        onVideoFinished: () => setState(() {
+          _controller = null;
+          isVideoVisible = !isVideoVisible;
+        }),
+        whenInitialized: (ChewieController chewieController) => setState(() {
+          _controller = chewieController;
+        }),
+      ),
+    );
+    return SizedBox(
+      width: ScreenUtils.width(context),
+      height: showStories ? ScreenUtils.height(context) * 0.72 : ScreenUtils.height(context) * 0.77,
+      child: Stack(
+        children: widgets +
+            [
+              Positioned(
+                top: showStories ? 25 : 15,
+                right: 10,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _controller = null;
+                      isVideoVisible = !isVideoVisible;
+                    });
+                  },
+                  child: SizedBox(
+                    height: 46,
+                    width: 46,
+                    child: OlukoBlurredButton(
+                      childContent: Image.asset(
+                        'assets/courses/white_cross.png',
+                        scale: 3.5,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
       ),
     );
   }
@@ -396,7 +465,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return Column(
       children: [
         SizedBox(
-          height: showStories ? 40 : 80,
+          height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.05,
         ),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
@@ -407,33 +476,26 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           'assets/home/mvt.png',
           scale: 2,
         ),
-        const SizedBox(height: 80),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: GestureDetector(
-            onTap: () async {
-              final String mediaURL = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.homeVideo);
-              if (mediaURL != null) {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    opaque: false,
-                    pageBuilder: (_, __, ___) => VideoOverlay(
-                      videoUrl: mediaURL,
-                    ),
-                  ),
-                );
-              }
-            },
-            child: SizedBox(
-              width: 65,
-              height: 65,
-              child: OlukoBlurredButton(
-                childContent: Image.asset('assets/courses/play_arrow.png', scale: 3.5, color: OlukoColors.white),
-              ),
+        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),
+        GestureDetector(
+          onTap: () async {
+            final videoUrl = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.homeVideo);
+            if (videoUrl != null) {
+              setState(() {
+                mediaURL = videoUrl;
+                isVideoVisible = true;
+              });
+            }
+          },
+          child: SizedBox(
+            width: 65,
+            height: 65,
+            child: OlukoBlurredButton(
+              childContent: Image.asset('assets/courses/play_arrow.png', scale: 3.5, color: OlukoColors.white),
             ),
           ),
         ),
-        const SizedBox(height: 30),
+        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.2),
         enrollButton()
       ],
     );

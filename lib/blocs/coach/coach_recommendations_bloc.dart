@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CoachRecommendationsState {}
@@ -68,18 +69,21 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
         _recommendationsUpdatedContent.addAll(_recommendationsUpdated);
       }
 
-      _recommendationsUpdatedContent.isNotEmpty
-          ? emit(
-              CoachRecommendationsUpdate(
-                coachRecommendationContent:
-                    await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
-              ),
-            )
-          : emit(
-              CoachRecommendationsSuccess(
-                coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations.toList()),
-              ),
-            );
+      if (_recommendationsUpdatedContent.isNotEmpty) {
+        SoundPlayer.playAsset(SoundsEnum.newCoachRecomendation);
+        emit(
+          CoachRecommendationsUpdate(
+            coachRecommendationContent:
+                await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
+          ),
+        );
+      } else {
+        emit(
+          CoachRecommendationsSuccess(
+            coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations.toList()),
+          ),
+        );
+      }
     });
   }
 
