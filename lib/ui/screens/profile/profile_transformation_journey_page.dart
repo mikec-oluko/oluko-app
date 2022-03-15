@@ -91,7 +91,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Container(
                                 width: OlukoNeumorphism.isNeumorphismDesign
-                                    ? ScreenUtils.width(context) * 0.79
+                                    ? ScreenUtils.width(context) * 0.85
                                     : MediaQuery.of(context).size.width,
                                 decoration: OlukoNeumorphism.isNeumorphismDesign
                                     ? const BoxDecoration(
@@ -232,12 +232,14 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       child: Padding(
         padding: isCurrenUser ? const EdgeInsets.only(top: 150) : const EdgeInsets.only(top: 20),
         child: Container(
-          padding:OlukoNeumorphism.isNeumorphismDesign? const EdgeInsets.symmetric(horizontal: 10, vertical: 10):EdgeInsets.all(0),
-          decoration:OlukoNeumorphism.isNeumorphismDesign?  const BoxDecoration(
-            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ):const BoxDecoration(),
-          width:OlukoNeumorphism.isNeumorphismDesign?  ScreenUtils.width(context) * 0.9:ScreenUtils.width(context),
+          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10) : EdgeInsets.all(0),
+          decoration: OlukoNeumorphism.isNeumorphismDesign
+              ? const BoxDecoration(
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                )
+              : const BoxDecoration(),
+          width: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.width(context) * 0.86 : ScreenUtils.width(context),
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser
               ? DragAndDropGridView(
