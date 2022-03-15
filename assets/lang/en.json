@@ -64,7 +64,8 @@
     "welcomeBack": "Welcome back",
     "passwordShouldNotContainUsername": "Password should not contain your username",
     "passwordShouldNotContainEmail": "Password should not contain your email",
-    "emailOrUsername": "Username/email",
+    "usernameOrEmail": "Username/email",
+    "emailOrUsername": "email/username",
     "generatingThumbnail": "Generating thumbnail",
     "encodingVideo": "Encoding video",
     "uploadingThumbnail": "Uploading thumbnail to cloud storage",
@@ -303,5 +304,9 @@
     "askYourCoach": "Ask your coach",
     "aboutCoach": "About Coach",
     "movements": "Movements",
-    "newPR": "New PR:"
+    "newPR": "New PR:",
+    "typeScore": "Tap here to type the score",
+   "cancelMssg": "Would you like to cancel?",
+   "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
+   "recordingConfirmation": "Are you sure you want to record this segment?"
 }

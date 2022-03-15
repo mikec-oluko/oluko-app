@@ -88,7 +88,7 @@ class _State extends State<ChallengeSection> {
                 children: [
                   ClipRRect(
                     child: CachedNetworkImage(
-                      imageUrl: challenge.challengeImage,
+                      imageUrl: challenge.image,
                       height: 140,
                       width: 100,
                       fit: BoxFit.cover,

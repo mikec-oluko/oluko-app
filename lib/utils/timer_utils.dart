@@ -507,6 +507,8 @@ class TimerUtils {
                   onShowAgainPressed: onShowAgainPressed,
                   showPanel: showPanel,
                 )))
-        .then((value) => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments));
+        .then((value) {
+      Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
+    });
   }
 }

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,7 @@ import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -328,54 +330,58 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
-        (courseEnrollment == null || courseEnrollment.completion >= 1)) {
+    bool showEnorollButton = (courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
+        (courseEnrollment == null || courseEnrollment.completion >= 1);
+    if (showEnorollButton) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-        listener: (context, courseEnrollmentState) {
-          if (courseEnrollmentState is CreateEnrollmentSuccess) {
-            BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-          }
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              if (OlukoNeumorphism.isNeumorphismDesign)
-                OlukoNeumorphicPrimaryButton(
-                  thinPadding: true,
-                  title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
-                    if (_disableAction == false) {
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
-                    }
-                    _disableAction = true;
-                  },
-                )
-              else
-                OlukoPrimaryButton(
-                  title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
-                    if (_disableAction == false) {
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
-                    }
-                    _disableAction = true;
-                  },
-                ),
-            ],
-          ),
-        ),
-      );
+          listener: (context, courseEnrollmentState) {
+            if (courseEnrollmentState is CreateEnrollmentSuccess) {
+              BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
+              Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+            }
+          },
+          child: enrollButton());
     } else {
       return const SizedBox();
     }
+  }
+
+  Widget enrollButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            OlukoNeumorphicPrimaryButton(
+              thinPadding: true,
+              title: OlukoLocalizations.get(context, 'enroll'),
+              onPressed: () {
+                if (_disableAction == false) {
+                  BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                  if (!widget.isCoachRecommendation) {
+                    BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                  }
+                }
+                _disableAction = true;
+              },
+            )
+          else
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.get(context, 'enroll'),
+              onPressed: () {
+                if (_disableAction == false) {
+                  BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                  if (!widget.isCoachRecommendation) {
+                    BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                  }
+                }
+                _disableAction = true;
+              },
+            ),
+        ],
+      ),
+    );
   }
 
   Widget buildStatistics() {

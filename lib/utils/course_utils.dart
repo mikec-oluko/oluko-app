@@ -93,51 +93,6 @@ class CourseUtils {
         itemList: search.searchResults);
   }
 
-  static Future<bool> onClearFilters(BuildContext context) async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            backgroundColor: Colors.grey.shade900,
-            content: Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text('Would you like to cancel?', textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-                  ),
-                  Text(
-                    'Cancelling would remove all the selected filters, please confirm the action.',
-                    textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoMediumFont(customColor: Colors.white24),
-                  )
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Container(
-                width: ScreenUtils.width(context),
-                child: Row(
-                  children: [
-                    OlukoPrimaryButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      title: 'No',
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    OlukoOutlinedButton(onPressed: () => Navigator.of(context).pop(true), title: 'Yes')
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )) ??
-        false;
-  }
-
   static Widget filterSelector(TagSuccess state,
       {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const [], Function showBottomTab}) {
     return Padding(

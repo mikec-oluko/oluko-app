@@ -187,7 +187,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       name: widget.name,
                       lastname: widget.lastname,
                       userId: widget.userId,
-                      hoursFromCreation: widget.stories[_currentIndex].hoursFromCreation,
+                      timeFromCreation: widget.stories[_currentIndex].timeFromCreation,
                     ),
                   ),
                 ],
@@ -426,7 +426,7 @@ class UserInfo extends StatelessWidget {
   final String avatarThumbnail;
   final String name;
   final String userId;
-  final int hoursFromCreation;
+  final String timeFromCreation;
   final String lastname;
 
   const UserInfo(
@@ -434,7 +434,7 @@ class UserInfo extends StatelessWidget {
       @required this.avatarThumbnail,
       @required this.name,
       @required this.userId,
-      @required this.hoursFromCreation,
+      @required this.timeFromCreation,
       this.lastname})
       : super(key: key);
 
@@ -457,7 +457,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                '${hoursFromCreation.toString()}h${OlukoNeumorphism.isNeumorphismDesign ? 'r' : ''}',
+                timeFromCreation,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,

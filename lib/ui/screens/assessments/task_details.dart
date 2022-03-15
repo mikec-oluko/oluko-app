@@ -373,7 +373,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _controller.pause();
               }
               if (_globalService.videoProcessing) {
-                getDialog();
+                showDialog();
               } else {
                 Navigator.pop(context);
                 return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
@@ -392,7 +392,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _controller.pause();
               }
               if (_globalService.videoProcessing) {
-                getDialog();
+                showDialog();
               } else {
                 Navigator.pop(context);
                 return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
@@ -420,7 +420,11 @@ class _TaskDetailsState extends State<TaskDetails> {
             },
             child: GestureDetector(
               onTap: () {
-                _globalService.videoProcessing ? getDialog() : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                if (!_globalService.videoProcessing) {
+                  BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                } else {
+                  showDialog();
+                }
               },
               child: const Icon(
                 Icons.file_upload,
@@ -430,21 +434,6 @@ class _TaskDetailsState extends State<TaskDetails> {
             )),
       ],
     );
-  }
-
-  Future<dynamic> getDialog() {
-    return DialogUtils.getDialog(
-        context,
-        [
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-              ))
-        ],
-        showExitButton: true);
   }
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
@@ -460,7 +449,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     onPressed: () {
                       if (_globalService.videoProcessing) {
-                        getDialog();
+                        showDialog();
                       } else {
                         if (OlukoNeumorphism.isNeumorphismDesign) {
                           _panelController.animatePanelToPosition(1.0);
@@ -480,7 +469,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
                       if (_globalService.videoProcessing) {
-                        getDialog();
+                        showDialog();
                       } else {
                         DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                       }
@@ -510,6 +499,21 @@ class _TaskDetailsState extends State<TaskDetails> {
             })
           ],
         ));
+  }
+
+  showDialog() {
+    return DialogUtils.getDialog(
+        context,
+        [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              ))
+        ],
+        showExitButton: true);
   }
 
   void nextAssessmentButtonOnPress(BuildContext context) {

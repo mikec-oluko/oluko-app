@@ -40,7 +40,7 @@ class VideoSuccess extends VideoState {
   Assessment assessment;
   TaskSubmission taskSubmission;
   int taskIndex;
-  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission,this.taskIndex});
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission, this.taskIndex});
 }
 
 class VideoProcessing extends VideoState {
@@ -99,19 +99,21 @@ class VideoBloc extends Cubit<VideoState> {
 
       p.listen(
         (onData) {
-          OlukoIsolateMessage isolateMessage = onData as OlukoIsolateMessage;
-          if (isolateMessage.status == IsolateStatusEnum.success) {
-            emit(
-              VideoSuccess(
-                video: Video.fromJson(isolateMessage.video),
-                segmentSubmission: segmentSubmission,
-                taskSubmission: taskSubmission,
-                assessment: assessment,
-                assessmentAssignment: assessmentAssignment,
-              ),
-            );
-          } else {
-            emit(VideoFailure());
+          OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
+          if (isolateMessage != null) {
+            if (isolateMessage.status == IsolateStatusEnum.success) {
+              emit(
+                VideoSuccess(
+                  video: Video.fromJson(isolateMessage.video),
+                  segmentSubmission: segmentSubmission,
+                  taskSubmission: taskSubmission,
+                  assessment: assessment,
+                  assessmentAssignment: assessmentAssignment,
+                ),
+              );
+            } else {
+              emit(VideoFailure());
+            }
           }
         },
       );

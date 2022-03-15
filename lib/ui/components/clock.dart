@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
@@ -20,26 +24,23 @@ class Clock extends StatefulWidget {
   final WorkoutType workoutType;
   final List<Segment> segments;
   final int segmentIndex;
-  final int AMRAPRound;
   final List<TimerEntry> timerEntries;
-  final int timerTaskIndex;
+  //final int timerTaskIndex;
   TextEditingController textController;
   final Function() goToNextStep;
+  final Function() setPaused;
   final Function() actionAMRAP;
-  final Duration timeLeft;
   final bool keyboardVisibilty;
 
   Clock(
       {this.workState,
       this.segments,
       this.segmentIndex,
-      this.AMRAPRound,
       this.timerEntries,
-      this.timerTaskIndex,
       this.textController,
       this.goToNextStep,
+      this.setPaused,
       this.actionAMRAP,
-      this.timeLeft,
       this.workoutType,
       this.keyboardVisibilty});
 
@@ -48,9 +49,54 @@ class Clock extends StatefulWidget {
 }
 
 class _State extends State<Clock> {
+  Duration timeLeft;
+  Timer countdownTimer;
+  int timerTaskIndex;
+  int AMRAPRound;
+
+  @override
+  void initState() {
+    timerTaskIndex = 0;
+    AMRAPRound = 0;
+    if (isCurrentTaskTimed()) {
+      timeLeft = Duration(seconds: widget.timerEntries[timerTaskIndex].value);
+      _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
+    }
+  }
+
+  @override
+  void dispose() {
+    if (countdownTimer != null && countdownTimer.isActive) {
+      countdownTimer.cancel();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _timerSection(widget.keyboardVisibilty);
+    return BlocListener<TimerTaskBloc, TimerTaskState>(
+        listener: (context, timerTaskState) {
+          if (timerTaskState is SetTimerTaskIndex) {
+            setState(() {
+              timerTaskIndex = timerTaskState.timerTaskIndex;
+            });
+          } else if (timerTaskState is SetAMRAPRound) {
+            setState(() {
+              AMRAPRound = timerTaskState.AMRAPRound;
+            });
+          }
+        },
+        child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
+            listener: (context, state) {
+              if (state is ClocksTimerPlay) {
+                _playCountdown(() => state.goToNextStep(), () => state.setPaused());
+              } else if (state is ClocksTimerPause) {
+                _pauseCountdown(() => state.setPaused());
+              } else if (state is UpdateTimeLeft) {
+                timeLeft = Duration(seconds: widget.timerEntries[timerTaskIndex].value);
+              }
+            },
+            child: _timerSection(widget.keyboardVisibilty)));
   }
 
   Widget _timerSection(bool keyboardVisibilty) {
@@ -105,20 +151,14 @@ class _State extends State<Clock> {
         return SizedBox(
             height: 150,
             width: 150,
-            child: TimerUtils.completedTimer(
-                context,
-                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])
-                    ? widget.segments[widget.segmentIndex].rounds
-                    : widget.AMRAPRound));
+            child: TimerUtils.completedTimer(context,
+                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
       } else {
         return SizedBox(
             height: 180,
             width: 180,
-            child: TimerUtils.completedTimer(
-                context,
-                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])
-                    ? widget.segments[widget.segmentIndex].rounds
-                    : widget.AMRAPRound));
+            child: TimerUtils.completedTimer(context,
+                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
       }
     }
 
@@ -129,7 +169,7 @@ class _State extends State<Clock> {
           return TimerUtils.repsTimer(
             () => widget.goToNextStep(),
             context,
-            widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+            widget.timerEntries[timerTaskIndex].movement.isBothSide,
           );
         },
       );
@@ -139,63 +179,62 @@ class _State extends State<Clock> {
       return TimerUtils.pausedTimer(context);
     }
 
-    final Duration actualTime = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value) - widget.timeLeft;
+    final Duration actualTime = Duration(seconds: widget.timerEntries[timerTaskIndex].value) - timeLeft;
 
-    double circularProgressIndicatorValue = actualTime.inSeconds / widget.timerEntries[widget.timerTaskIndex].value;
+    double circularProgressIndicatorValue = actualTime.inSeconds / widget.timerEntries[timerTaskIndex].value;
     if (circularProgressIndicatorValue.isNaN) circularProgressIndicatorValue = 0;
 
     if (isWorkStatePaused()) {
-      return TimerUtils.pausedTimer(context, TimeConverter.durationToString(widget.timeLeft));
+      return TimerUtils.pausedTimer(context, TimeConverter.durationToString(timeLeft));
     }
 
     if (widget.workState == WorkState.resting) {
       final bool needInput = useInput();
-      if (widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.none && widget.timeLeft.inSeconds <= 5) {
-        return TimerUtils.finalTimer(InitialTimerType.End, 5, widget.timeLeft.inSeconds, context,
-            isLastEntryOfTheRound() ? widget.timerEntries[widget.timerTaskIndex].round : null);
+      if (widget.timerEntries[timerTaskIndex].counter == CounterEnum.none && timeLeft.inSeconds <= 5) {
+        return TimerUtils.finalTimer(InitialTimerType.End, 5, timeLeft.inSeconds, context,
+            isLastEntryOfTheRound() ? widget.timerEntries[timerTaskIndex].round : null);
       } else {
         return needInput && OlukoNeumorphism.isNeumorphismDesign
             ? TimerUtils.restTimer(
                 needInput ? neumorphicTextfieldForScore(true) : null,
                 circularProgressIndicatorValue,
-                TimeConverter.durationToString(widget.timeLeft),
+                TimeConverter.durationToString(timeLeft),
                 context,
               )
             : TimerUtils.restTimer(
                 needInput ? getTextField(true) : null,
                 circularProgressIndicatorValue,
-                TimeConverter.durationToString(widget.timeLeft),
+                TimeConverter.durationToString(timeLeft),
                 context,
               );
       }
     }
 
-    if (widget.timerEntries[widget.timerTaskIndex].round == null) {
+    if (widget.timerEntries[timerTaskIndex].round == null) {
       //is AMRAP
       return TimerUtils.AMRAPTimer(
         circularProgressIndicatorValue,
-        TimeConverter.durationToString(widget.timeLeft),
+        TimeConverter.durationToString(timeLeft),
         context,
         () {
           widget.actionAMRAP();
         },
-        widget.AMRAPRound,
+        AMRAPRound,
       );
     }
-    final String counter = widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.reps
-        ? widget.timerEntries[widget.timerTaskIndex].movement.name
-        : null;
+    final String counter =
+        widget.timerEntries[timerTaskIndex].counter == CounterEnum.reps ? widget.timerEntries[timerTaskIndex].movement.name : null;
 
-    if (widget.timeLeft.inSeconds <= 5) {
-      return TimerUtils.finalTimer(InitialTimerType.End, 5, widget.timeLeft.inSeconds, context,
-          isLastEntryOfTheRound() ? widget.timerEntries[widget.timerTaskIndex].round : null);
+    if (timeLeft.inSeconds <= 5) {
+      return TimerUtils.finalTimer(
+          InitialTimerType.End, 5, timeLeft.inSeconds, context, isLastEntryOfTheRound() ? widget.timerEntries[timerTaskIndex].round : null);
     } else {
       return TimerUtils.timeTimer(
         circularProgressIndicatorValue,
-        TimeConverter.durationToString(widget.timeLeft),
+        TimeConverter.durationToString(timeLeft),
         context,
         counter,
-        widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+        widget.timerEntries[timerTaskIndex].movement.isBothSide,
       );
     }
   }
@@ -209,14 +248,14 @@ class _State extends State<Clock> {
   }
 
   bool isCurrentMovementRest() {
-    return widget.timerEntries[widget.timerTaskIndex].movement.isRestTime;
+    return widget.timerEntries[timerTaskIndex].movement.isRestTime;
   }
 
   Widget getTextField(bool keyboardVisibilty) {
-    final CounterEnum currentCounter = widget.timerEntries[widget.timerTaskIndex - 1].counter;
+    final CounterEnum currentCounter = widget.timerEntries[timerTaskIndex - 1].counter;
     final bool isCounterByReps = currentCounter == CounterEnum.reps;
     List<String> counterTxt =
-        SegmentClocksUtils.counterText(context, currentCounter, widget.timerEntries[widget.timerTaskIndex - 1].movement.name);
+        SegmentClocksUtils.counterText(context, currentCounter, widget.timerEntries[timerTaskIndex - 1].movement.name);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -338,15 +377,12 @@ class _State extends State<Clock> {
                 ),
               ),
               if (isCounterByReps)
-                FittedBox(
-                  fit: BoxFit.fitHeight,
-                  child: Text(
-                    OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                        ? OlukoLocalizations.get(context, 'reps')
-                        : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                      ? OlukoLocalizations.get(context, 'reps')
+                      : widget.timerEntries[timerTaskIndex - 1].movement.name,
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                  overflow: TextOverflow.ellipsis,
                 )
               else
                 widget.textController.value != null && widget.textController.value.text != ""
@@ -369,7 +405,7 @@ class _State extends State<Clock> {
                 children: [
                   // SizedBox(height: 30),
                   Text(
-                    'Tap here to type the score',
+                    OlukoLocalizations.get(context, "typeScore"),
                     textAlign: TextAlign.center,
                     style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.primary),
                   )
@@ -382,17 +418,17 @@ class _State extends State<Clock> {
   }
 
   bool isCurrentTaskByReps() {
-    return widget.timerEntries[widget.timerTaskIndex].parameter == ParameterEnum.reps;
+    return widget.timerEntries[timerTaskIndex].parameter == ParameterEnum.reps;
   }
 
   bool isCurrentTaskByDistance() {
-    return widget.timerEntries[widget.timerTaskIndex].parameter == ParameterEnum.distance;
+    return widget.timerEntries[timerTaskIndex].parameter == ParameterEnum.distance;
   }
 
   bool isLastEntryOfTheRound() {
-    if (widget.timerTaskIndex == widget.timerEntries.length - 1) {
+    if (timerTaskIndex == widget.timerEntries.length - 1) {
       return true;
-    } else if (widget.timerEntries[widget.timerTaskIndex + 1].round != widget.timerEntries[widget.timerTaskIndex].round) {
+    } else if (widget.timerEntries[timerTaskIndex + 1].round != widget.timerEntries[timerTaskIndex].round) {
       return true;
     } else {
       return false;
@@ -412,7 +448,7 @@ class _State extends State<Clock> {
 
   Widget getRoundsTimer(bool keyboardVisibilty) {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(widget.AMRAPRound, widget.AMRAPRound, keyboardVisibilty);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else if (isWorkStateFinished()) {
       return TimerUtils.roundsTimer(
         widget.segments[widget.segmentIndex].rounds,
@@ -420,10 +456,10 @@ class _State extends State<Clock> {
         keyboardVisibilty,
       );
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.roundsTimer(widget.AMRAPRound, widget.AMRAPRound, keyboardVisibilty);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else {
       return TimerUtils.roundsTimer(
-          widget.segments[widget.segmentIndex].rounds, widget.timerEntries[widget.timerTaskIndex].round, keyboardVisibilty);
+          widget.segments[widget.segmentIndex].rounds, widget.timerEntries[timerTaskIndex].round, keyboardVisibilty);
     }
   }
 
@@ -432,9 +468,9 @@ class _State extends State<Clock> {
       return const SizedBox();
     }
     if (SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.getRoundLabel(widget.timerEntries[widget.timerTaskIndex].round);
+      return TimerUtils.getRoundLabel(widget.timerEntries[timerTaskIndex].round);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.getRoundLabel(widget.AMRAPRound);
+      return TimerUtils.getRoundLabel(AMRAPRound);
     } else {
       return const SizedBox();
     }
@@ -447,7 +483,7 @@ class _State extends State<Clock> {
         : Column(
             children: [
               if (OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else const SizedBox(height: 10),
-              SegmentClocksUtils.recordingTaskSection(keyboardVisibilty, context, widget.timerEntries, widget.timerTaskIndex),
+              SegmentClocksUtils.recordingTaskSection(keyboardVisibilty, context, widget.timerEntries, timerTaskIndex),
               const SizedBox(
                 height: 60,
               ),
@@ -471,10 +507,10 @@ class _State extends State<Clock> {
 
   List<Widget> counterTextField(bool keyboardVisibilty) {
     if (isCurrentMovementRest() &&
-        (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||
-            widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance ||
-            widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight)) {
-      final bool isCounterByReps = widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps;
+        (widget.timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
+            widget.timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance ||
+            widget.timerEntries[timerTaskIndex - 1].counter == CounterEnum.weight)) {
+      final bool isCounterByReps = widget.timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
       return [
         SizedBox.shrink(),
         SegmentClocksUtils.getKeyboard(context, keyboardVisibilty),
@@ -492,17 +528,16 @@ class _State extends State<Clock> {
 
   Widget taskSectionWithoutRecording(bool keyboardVisibilty) {
     //TODO: DIVIDERS
-    final bool hasMultipleLabels = widget.timerEntries[widget.timerTaskIndex].labels.length > 1;
+    final bool hasMultipleLabels = widget.timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       return SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context) * 0.4,
-        child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(widget.timerEntries[widget.timerTaskIndex].labels)),
+        child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(widget.timerEntries[timerTaskIndex].labels)),
       );
     } else {
-      final String currentTask = widget.timerEntries[widget.timerTaskIndex].labels[0];
-      final String nextTask =
-          widget.timerTaskIndex < widget.timerEntries.length - 1 ? widget.timerEntries[widget.timerTaskIndex + 1].labels[0] : '';
+      final String currentTask = widget.timerEntries[timerTaskIndex].labels[0];
+      final String nextTask = timerTaskIndex < widget.timerEntries.length - 1 ? widget.timerEntries[timerTaskIndex + 1].labels[0] : '';
       return Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign
             ? (widget.workState == WorkState.resting && usePulseAnimation())
@@ -524,11 +559,36 @@ class _State extends State<Clock> {
 
   bool usePulseAnimation() =>
       (OlukoNeumorphism.isNeumorphismDesign &&
-          !(widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.reps ||
-              widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.distance)) &&
+          !(widget.timerEntries[timerTaskIndex].counter == CounterEnum.reps ||
+              widget.timerEntries[timerTaskIndex].counter == CounterEnum.distance)) &&
       (widget.workState == WorkState.resting);
 
   bool useInput() => (isCurrentMovementRest() &&
-      (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||
-          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance));
+      (widget.timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
+          widget.timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance));
+
+  void _playCountdown(Function() goToNextStep, Function() setPaused) {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (timeLeft.inSeconds == 0) {
+        _pauseCountdown(setPaused);
+        goToNextStep();
+        return;
+      }
+
+      //BlocProvider.of<ClocksTimerBloc>(context).decrementTimeLeft();
+
+      setState(() {
+        timeLeft = Duration(seconds: timeLeft.inSeconds - 1);
+      });
+    });
+  }
+
+  void _pauseCountdown(Function() setPaused) {
+    setPaused();
+    countdownTimer.cancel();
+  }
+
+  bool isCurrentTaskTimed() {
+    return widget.timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
+  }
 }

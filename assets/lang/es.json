@@ -64,7 +64,8 @@
     "welcomeBack": "Bienvenido",
     "passwordShouldNotContainUsername": "La contraseña no puede contener tu nombre de usuario",
     "passwordShouldNotContainEmail": "La contraseña no puede contener tu email",
-    "emailOrUsername": "Nombre de usuario/email",
+    "usernameOrEmail": "Nombre de usuario/email",
+    "emailOrUsername": "email/Nombre de usuario",
     "generatingThumbnail": "Generando vista previa",
     "encodingVideo": "Codificando el video",
     "uploadingThumbnail": "Subiendo vista previa al almacenamiento en la nube",
@@ -302,5 +303,9 @@
     "movements": "Movimientos",
     "askYourCoach": "Pregunta al entrenador",
     "aboutCoach": "Sobre el entrenador",
-    "newPR": "Nuevo RP:"
+    "newPR": "Nuevo RP:",
+    "typeScore": "Toca aquí para ingresar el resultado",
+    "cancelMssg": "¿Desea cancelar?",
+    "cancelTxt": "Al cancelar se eliminaran todos los filtros seleccionados, por favor confirme la acción",
+    "recordingConfirmation": "Esta seguro que quiere grabar el segmento?"
 }
