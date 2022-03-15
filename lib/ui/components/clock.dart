@@ -230,7 +230,7 @@ class _State extends State<Clock> {
           Row(
             children: [
               const SizedBox(width: 20),
-              Text(counterTxt[0], style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              Text(counterTxt[0], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300)),
               const SizedBox(width: 10),
               SizedBox(
                 width: isCounterByReps ? 40 : 70,
@@ -272,7 +272,7 @@ class _State extends State<Clock> {
                 ),
               ),
               const SizedBox(width: 25),
-              Text(counterTxt[1], style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              Text(counterTxt[1], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300)),
             ],
           ),
         ],
@@ -353,7 +353,7 @@ class _State extends State<Clock> {
                     ? Expanded(
                         child: Text(
                           OlukoLocalizations.get(context, 'meters'),
-                          style: const TextStyle(fontSize: 24, color: OlukoColors.white, fontWeight: FontWeight.w300),
+                          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.w300),
                         ),
                       )
                     : const SizedBox.shrink(),
