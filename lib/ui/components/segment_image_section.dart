@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -25,7 +24,7 @@ import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
-import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/ui/newDesignComponents/self_recording_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -362,7 +361,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           else
             const SizedBox(),
           const Expanded(child: SizedBox()),
-          getCameraIcon()
+          GestureDetector(
+              onTap: () {
+                if (widget.coach != null) {
+                  BottomDialogUtils.showBottomDialog(
+                    context: context,
+                    content: SelfRecordingContent(
+                      onRecordingAction: navigateToSegmentWithRecording,
+                    ),
+                  );
+                }
+              },
+              child: getCameraIcon())
         ],
       ),
     );
@@ -455,12 +465,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           )
         else
           imageAspectRatio(),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 50, 10, 0),
-          child: Image.asset(
-            'assets/courses/degraded.png',
-            fit: BoxFit.fitHeight,
-          ),
+        Image.asset(
+          'assets/courses/degraded.png',
+          fit: BoxFit.fitHeight,
         ),
       ],
     );

@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
+import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
@@ -36,6 +37,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
@@ -58,6 +60,7 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
@@ -85,10 +88,11 @@ import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.
 import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
-import 'package:oluko_app/ui/screens/authentication/login_password.dart';
-import 'package:oluko_app/ui/screens/authentication/login_username.dart';
+import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_password.dart';
+import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_username.dart';
+import 'package:oluko_app/ui/screens/authentication/login_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
-import 'package:oluko_app/ui/screens/authentication/sign_up_neumorphic.dart';
+import 'package:oluko_app/ui/screens/authentication/loginWithSteps/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/about_coach_page.dart';
@@ -166,7 +170,7 @@ enum RouteEnum {
   root,
   introVideo,
   signUp,
-  signUpNeumorphic,
+  loginNeumorphic,
   signUpWithEmail,
   login,
   friends,
@@ -225,7 +229,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.root: '/',
   RouteEnum.introVideo: '/intro_video',
   RouteEnum.signUp: '/sign-up',
-  RouteEnum.signUpNeumorphic: '/sign-up-neumorphic',
+  RouteEnum.loginNeumorphic: '/login-neumorphic',
   RouteEnum.signUpWithEmail: '/sign-up-with-email',
   RouteEnum.login: '/login',
   RouteEnum.friends: '/friends',
@@ -369,6 +373,9 @@ class Routes {
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
   final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
   final CoachAudioMessageBloc _coachAudioMessageBloc = CoachAudioMessageBloc();
+  final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
+  final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
+  final SelectedTagsBloc _selectedTagsBloc = SelectedTagsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -382,6 +389,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
@@ -458,8 +466,8 @@ class Routes {
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
         break;
-      case RouteEnum.signUpNeumorphic:
-        newRouteView = SignUpNeumorphicPage();
+      case RouteEnum.loginNeumorphic:
+        newRouteView = LoginNeumorphicPage();
         break;
       case RouteEnum.completedClass:
         providers = [
@@ -673,6 +681,8 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<TimerTaskBloc>.value(value: _timerTaskBloc),
+          BlocProvider<ClocksTimerBloc>.value(value: _clocksTimerBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
@@ -894,6 +904,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),

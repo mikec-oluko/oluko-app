@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
@@ -23,8 +24,8 @@ class ClocksLowerSection extends StatefulWidget {
   final List<TimerEntry> timerEntries;
   final int timerTaskIndex;
   final Function() createStory;
+    final WorkoutType originalWorkoutType;
   final WorkoutType workoutType;
-  final bool shareDone;
   final SegmentSubmission segmentSubmission;
   final int totalScore;
   final List<String> scores;
@@ -39,28 +40,41 @@ class ClocksLowerSection extends StatefulWidget {
   ClocksLowerSection(
       {this.workState,
       this.segments,
+      this.originalWorkoutType,
       this.segmentIndex,
       this.timerEntries,
       this.timerTaskIndex,
       this.createStory,
       this.workoutType,
-      this.shareDone,
       this.segmentSubmission,
       this.scores,
       this.totalScore,
       this.counter,
       this.isCameraReady,
       this.cameraController,
-      this.pauseButton, this.courseEnrollment, this.classIndex, this.segmentId});
+      this.pauseButton,
+      this.courseEnrollment,
+      this.classIndex,
+      this.segmentId});
 
   @override
   _State createState() => _State();
 }
 
 class _State extends State<ClocksLowerSection> {
+  bool shareDone = false;
+
   @override
   Widget build(BuildContext context) {
-    return _lowerSection();
+    return BlocListener<TimerTaskBloc, TimerTaskState>(
+        listener: (context, timerTaskState) {
+          if (timerTaskState is SetShareDone) {
+            setState(() {
+              shareDone = timerTaskState.shareDone;
+            });
+          }
+        },
+        child: _lowerSection());
   }
 
   Widget _lowerSection() {
@@ -127,8 +141,8 @@ class _State extends State<ClocksLowerSection> {
                         .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
                         ?.toList(),
                   ),
-          widget.workoutType == WorkoutType.segment || widget.shareDone
-              ? FeedbackCard(widget.courseEnrollment,widget.classIndex,widget.segmentIndex,widget.segmentId)
+          widget.originalWorkoutType == WorkoutType.segment || shareDone
+              ? FeedbackCard(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId)
               : ShareCard(createStory: widget.createStory, whistleAction: _whistleAction),
         ],
       ),

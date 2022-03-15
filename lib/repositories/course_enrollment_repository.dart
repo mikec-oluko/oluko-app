@@ -99,6 +99,7 @@ class CourseEnrollmentRepository {
     if (isClassCompleted) {
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
+        courseEnrollment.isUnenrolled = true;
       } else {
         double courseProgress = 1 / courseEnrollment.classes.length;
         courseEnrollment.completion += courseProgress;
@@ -108,6 +109,7 @@ class CourseEnrollmentRepository {
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
       'completion': courseEnrollment.completion,
+      'is_unenrolled': courseEnrollment.isUnenrolled,
       'updated_at': FieldValue.serverTimestamp()
     });
   }
@@ -148,7 +150,7 @@ class CourseEnrollmentRepository {
           name: segment.name,
           reference: segment.reference,
           isChallenge: segment.isChallenge,
-          challengeImage: segment.challengeImage,
+          image: segment.image,
           sections: getEnrollmentSections(segment)));
     });
     return enrollmentClass;

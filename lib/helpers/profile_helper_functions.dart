@@ -53,7 +53,7 @@ class ProfileHelperFunctions {
       challenges.forEach((activeChallenge) {
         if (segmentChallenge.classId == activeChallenge.classId && segmentChallenge.segmentId == activeChallenge.segmentId) {
           segmentChallenge.challengeForAudio = activeChallenge;
-          segmentChallenge.challengeSegment.challengeImage ??= activeChallenge.image;
+          segmentChallenge.challengeSegment.image ??= activeChallenge.image;
         }
       });
     });
