@@ -18,6 +18,9 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
     super.dispose();
   }
 
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,17 +34,55 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: widget.contentForCarousel.isNotEmpty
-                ? CarouselSlider(
-                    items: widget.contentForCarousel,
-                    options: CarouselOptions(
-                        height: 250.0,
-                        enableInfiniteScroll: true,
-                        autoPlay: true,
-                        autoPlayCurve: Curves.easeInExpo,
-                        autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-                        autoPlayInterval: const Duration(seconds: 5),
-                        enlargeCenterPage: true),
-                  )
+                ? Wrap(children: [
+                    CarouselSlider(
+                      carouselController: _controller,
+                      items: widget.contentForCarousel,
+                      options: CarouselOptions(
+                          height: 250.0,
+                          enableInfiniteScroll: true,
+                          autoPlay: true,
+                          autoPlayCurve: Curves.easeInExpo,
+                          autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+                          autoPlayInterval: const Duration(seconds: 5),
+                          enlargeCenterPage: true,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _current = index;
+                            });
+                          }),
+                    ),
+                    Container(
+                      height: 25,
+                      width: MediaQuery.of(context).size.width,
+                      // color: Colors.red,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: widget.contentForCarousel
+                            .map((item) => _current == widget.contentForCarousel.indexOf(item)
+                                ? Container(
+                                    child: Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Image.asset(
+                                          'assets/self_recording/outlined_circle_cam.png',
+                                          scale: 1,
+                                        ),
+                                        Image.asset(
+                                          'assets/self_recording/white_circle_cam.png',
+                                          scale: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Image.asset(
+                                    'assets/self_recording/white_circle_cam.png',
+                                    scale: 1,
+                                  ))
+                            .toList(),
+                      ),
+                    )
+                  ])
                 : const SizedBox.shrink(),
           )
         ],
