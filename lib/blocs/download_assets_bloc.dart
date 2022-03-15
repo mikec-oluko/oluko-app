@@ -11,9 +11,10 @@ abstract class DownloadAssetState {}
 
 class Loading extends DownloadAssetState {}
 
-class Failure extends DownloadAssetState {
+class DownloadFailure extends DownloadAssetState {
   final dynamic exception;
-  Failure({this.exception});
+  final String url;
+  DownloadFailure({this.exception, this.url});
 }
 
 class DownloadSuccess extends DownloadAssetState {
@@ -47,7 +48,8 @@ class DownloadAssetBloc extends Cubit<DownloadAssetState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      String url = await IntroductionMediaRepository.getVideoURL(IntroductionMediaTypeEnum.completedCourseVideo);
+      emit(DownloadFailure(exception: exception, url: url));
       rethrow;
     }
   }

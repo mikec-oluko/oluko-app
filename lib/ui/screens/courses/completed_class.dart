@@ -63,7 +63,6 @@ class _CompletedClassState extends State<CompletedClass> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-
         return BlocBuilder<DownloadAssetBloc, DownloadAssetState>(builder: (context, state) {
           if (state is DownloadSuccess && showVideo) {
             showVideo = false;
@@ -72,6 +71,9 @@ class _CompletedClassState extends State<CompletedClass> {
               mediaURL: state.videoUrl,
               isDownloaded: state.isDownloaded,
             );
+          } else if (state is DownloadFailure && showVideo) {
+            showVideo = false;
+            return CompletedCourseVideo(mediaURL: state.url, isDownloaded: false);
           } else {
             return form();
           }
@@ -300,15 +302,14 @@ class _CompletedClassState extends State<CompletedClass> {
       child: Padding(
         padding: const EdgeInsets.only(left: 15, right: 15, bottom: 13, top: 17),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    height: 174,
-                    width: 120,
+                    height: ScreenUtils.height(context) * 0.25,
+                    width: ScreenUtils.width(context) * 0.33,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: OlukoColors.challengeLockedFilterColor,
@@ -331,8 +332,7 @@ class _CompletedClassState extends State<CompletedClass> {
                     padding: const EdgeInsets.only(left: 20.0, top: 0),
                     child: Container(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
