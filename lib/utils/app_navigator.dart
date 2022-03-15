@@ -11,8 +11,9 @@ class AppNavigator {
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
-  Future<void> goToAssessmentVideos(BuildContext context) async {
-    Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.assessmentVideos], (route) => false, arguments: {'isFirstTime': true});
+  Future<void> goToAssessmentVideosViaMain(BuildContext context) async {
+    Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+    Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': true});
   }
 
   static Future<bool> onWillPop(BuildContext context) async {
