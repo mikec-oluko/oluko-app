@@ -22,7 +22,7 @@ class CoachAudioMessagesRepository {
         .collection('audioSubmissions')
         .where('user_id', isEqualTo: userId)
         .where('coach_id', isEqualTo: coachUserId)
-        .where('is_deleted', isNotEqualTo: true)
+        // .where('is_deleted', isNotEqualTo: true)
         .snapshots();
 
     return coachMessagesStream;

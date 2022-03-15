@@ -58,7 +58,9 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
           for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
             final Map<String, dynamic> messages = doc.data() as Map<String, dynamic>;
             coachAudioMessages.add(CoachAudioMessage.fromJson(messages));
+           if(coachAudioMessages.isNotEmpty){
             coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+            }
           }
         }
         emit(CoachAudioMessagesSuccess(coachAudioMessages: coachAudioMessages.toList()));

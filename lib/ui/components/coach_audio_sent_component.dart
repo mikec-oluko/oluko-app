@@ -4,6 +4,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class CoachAudioSentComponent extends StatefulWidget {
@@ -73,7 +74,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Container(width: 200, child: CourseProgressBar(value: _completedPercentage)),
+                          child: Container(width: ScreenUtils.width(context) / 2.5, child: CourseProgressBar(value: _completedPercentage)),
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
                         GestureDetector(
