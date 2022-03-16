@@ -33,19 +33,19 @@ class SoundUtils {
           if (existSoundAsset(soundToPlay)) {
             playAsset(soundToPlay);
           }
-        } else if (existSoundAsset(posibleSounds)) {
-          playAsset(posibleSounds);
+        } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
+          playAsset(posibleSounds[0]);
         }
       }
     }
   }
 
-  static Future<dynamic> playAsset(soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay[0]['soundAsset'].toString());
+  static Future<dynamic> playAsset(soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay['soundAsset'].toString());
 
-  static bool existSoundAsset(soundToPlay) => soundToPlay != null && soundToPlay[0] != null && soundToPlay[0]['soundAsset'] != null;
+  static bool existSoundAsset(soundToPlay) => soundToPlay != null && soundToPlay['soundAsset'] != null;
 
   static getHighestPrioritySound(List<dynamic> posibleSounds) {
-    posibleSounds.reduce((soundA, soundB) {
+    return posibleSounds.reduce((soundA, soundB) {
       if (double.tryParse(soundA['priority'].toString()) > double.tryParse(soundB['priority'].toString())) {
         return soundA;
       } else {
