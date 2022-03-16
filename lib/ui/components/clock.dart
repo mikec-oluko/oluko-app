@@ -16,6 +16,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 
@@ -569,6 +570,7 @@ class _State extends State<Clock> {
 
   void _playCountdown(Function() goToNextStep, Function() setPaused) {
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      SoundUtils.playSound(timeLeft.inSeconds - 1, widget.timerEntries[timerTaskIndex].value, widget.workState.index);
       if (timeLeft.inSeconds == 0) {
         _pauseCountdown(setPaused);
         goToNextStep();
@@ -576,7 +578,6 @@ class _State extends State<Clock> {
       }
 
       //BlocProvider.of<ClocksTimerBloc>(context).decrementTimeLeft();
-
       setState(() {
         timeLeft = Duration(seconds: timeLeft.inSeconds - 1);
       });

@@ -43,6 +43,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
@@ -455,7 +456,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         },
       );
     } else {
-      SoundPlayer.playAsset(SoundsEnum.classFinished);
+      SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished);
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.completedClass],
