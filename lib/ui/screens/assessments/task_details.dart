@@ -314,7 +314,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         }
         if (previous is GetSuccess &&
             current.taskSubmission != null &&
-            current.taskSubmission.id == previous?.taskSubmission?.id &&
+            current.taskSubmission.id == previous?.taskSubmission?.id && current.taskSubmission.video != null &&
             current.taskSubmission.video.url == previous?.taskSubmission?.video?.url) {
           return false;
         }
