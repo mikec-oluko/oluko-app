@@ -86,9 +86,6 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, String taskId) async {
     try {
       TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, taskId);
-      if (taskSubmission == null || taskSubmission.video == null || taskSubmission.video.url == null) {
-        taskSubmission = null;
-      }
       emit(GetSuccess(taskSubmission: taskSubmission));
     } catch (e, stackTrace) {
       await Sentry.captureException(

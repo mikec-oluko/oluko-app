@@ -659,8 +659,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                         }
                       },
                       child: taskResponse(
-                          TimeConverter.durationToString(
-                              Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
+                          TimeConverter.durationToString(Duration(
+                              milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
                           taskSubmission?.video?.thumbUrl,
                           taskSubmission)),
                 ]),

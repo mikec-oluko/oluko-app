@@ -97,7 +97,7 @@ class VideoBloc extends Cubit<VideoState> {
       // isolate.kill / pause / addListener.. .
       final isolate = await Isolate.spawn(processVideoOnBackground, data);
 
-      p.listen(
+    p.listen(
         (onData) {
           OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
           if (isolateMessage != null) {
