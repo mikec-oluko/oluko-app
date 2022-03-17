@@ -680,7 +680,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null) const Image(image:AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign
@@ -726,7 +726,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null) const Image(image:AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign

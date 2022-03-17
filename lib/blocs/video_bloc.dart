@@ -76,7 +76,12 @@ class VideoBloc extends Cubit<VideoState> {
       TaskSubmission taskSubmission]) async {
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
-      final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
+      String thumbnailFilePath;
+      try {
+        thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
+      } catch (e, stackTrace) {
+        thumbnailFilePath = null;
+      }
       // A Stream that handles communication between isolates
       final p = ReceivePort();
 
@@ -97,7 +102,7 @@ class VideoBloc extends Cubit<VideoState> {
       // isolate.kill / pause / addListener.. .
       final isolate = await Isolate.spawn(processVideoOnBackground, data);
 
-    p.listen(
+      p.listen(
         (onData) {
           OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
           if (isolateMessage != null) {
