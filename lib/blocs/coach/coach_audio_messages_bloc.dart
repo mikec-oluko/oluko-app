@@ -51,19 +51,19 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStream(String userId, String coachId) async {
     try {
-      return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) {
-        final List<CoachAudioMessage> coachAudioMessages = [];
-
-        if (snapshot.docs.isNotEmpty) {
-          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
-            final Map<String, dynamic> messages = doc.data() as Map<String, dynamic>;
-            coachAudioMessages.add(CoachAudioMessage.fromJson(messages));
-           if(coachAudioMessages.isNotEmpty){
-            coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-            }
+      return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
+        emit(Loading());
+        List<CoachAudioMessage> audioMessages = [];
+        if (!snapshot.docs.isNotEmpty) {
+          snapshot.docs.forEach((doc) {
+            final Map<String, dynamic> content = doc.data();
+            audioMessages.add(CoachAudioMessage.fromJson(content));
+          });
+          if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
+            audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
           }
         }
-        emit(CoachAudioMessagesSuccess(coachAudioMessages: coachAudioMessages.toList()));
+        emit(CoachAudioMessagesSuccess(coachAudioMessages: audioMessages));
       });
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -105,7 +105,6 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
   void markCoachAudioAsDeleted(CoachAudioMessage audioMessage) async {
     try {
       CoachAudioMessage deletedMessage = await _coachAudioMessagesRepository.markAudioAsDeleted(audioMessage);
-      print(deletedMessage);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -119,8 +118,6 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
   Future<AudioMessageSubmodel> _processAudio(File audioRecorded) async {
     const _uuid = Uuid();
     final String _audioId = _uuid.v1();
-    AudioMessageSubmodel _audioMessageSubmodel;
-
     try {
       final Directory extDir = await getApplicationDocumentsDirectory();
       final outDirPath = '${extDir.path}/AudioMessages/$_audioId';
@@ -128,8 +125,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       audiosDir.createSync(recursive: true);
       final _audioPath = audioRecorded.path;
 
-      _audioMessageSubmodel = await uploadAudio(_audioId, _audioPath);
-
+      AudioMessageSubmodel _audioMessageSubmodel = await uploadAudio(_audioId, _audioPath);
       return _audioMessageSubmodel;
     } catch (exception, stackTrace) {
       await Sentry.captureException(

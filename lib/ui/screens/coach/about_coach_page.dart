@@ -36,6 +36,8 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
 
   Container coachMediaGalleryComponent() {
     return Container(
+      width: ScreenUtils.width(context),
+      height: ScreenUtils.height(context),
       color: OlukoNeumorphismColors.appBackgroundColor,
       child: BlocBuilder<CoachMediaBloc, CoachMediaState>(
         builder: (context, state) {

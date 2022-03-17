@@ -338,15 +338,16 @@ class _CoachPageState extends State<CoachPage> {
                       builder: (context, state) {
                         return Container(
                           width: ScreenUtils.width(context),
-                          height: 40,
+                          height: 50,
                           color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
                                   '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                  style: OlukoFonts.olukoMediumFont(
+                                      customColor: OlukoColors.grayColor.withOpacity(0.5), custoFontWeight: FontWeight.w500),
                                 ),
                               ),
                             ],

@@ -177,6 +177,9 @@ class _CoachProfileState extends State<CoachProfile> {
         if (state is CoachMediaContentSuccess) {
           _coachUploadedContent = state.coachMediaContent;
         }
+        if (state is CoachMediaDispose) {
+          _coachUploadedContent = state.coachMediaDisposeValue;
+        }
         return _coachUploadedContent.isNotEmpty
             ? _coachAudioMessages.isNotEmpty
                 ? CoachMediaCarouselGallery(

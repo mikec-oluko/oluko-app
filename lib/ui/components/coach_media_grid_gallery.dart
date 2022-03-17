@@ -23,7 +23,7 @@ class _CoachMediaGridGalleryState extends State<CoachMediaGridGallery> {
   Container coachGridGalleryForMedia(BuildContext context) {
     return Container(
       width: ScreenUtils.width(context),
-      height: ScreenUtils.height(context) / 3,
+      height: widget.limitedContent ? ScreenUtils.height(context) / 3 : ScreenUtils.height(context),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: GridView.builder(

@@ -16,15 +16,15 @@ class CoachAudioMessagesRepository {
   CoachAudioMessagesRepository.test({this.firestoreInstance});
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getMessagesForCoachStream(String userId, String coachUserId) {
-    Stream<QuerySnapshot<Map<String, dynamic>>> coachMessagesStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot<Map<String, dynamic>>> coachMessagesStream = firestoreInstance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('audioSubmissions')
         .where('user_id', isEqualTo: userId)
         .where('coach_id', isEqualTo: coachUserId)
         .where('is_deleted', isNotEqualTo: true)
-        .snapshots();
-
+        .where('created_At', isNotEqualTo: null)
+        .snapshots(includeMetadataChanges: true);
     return coachMessagesStream;
   }
 
@@ -33,7 +33,7 @@ class CoachAudioMessagesRepository {
     DocumentReference coachReference = getUserReference(coachId);
 
     CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('audioSubmissions');
+        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('audioSubmissions');
 
     final DocumentReference docRef = reference.doc();
 
@@ -56,16 +56,13 @@ class CoachAudioMessagesRepository {
   }
 
   DocumentReference<Object> getUserReference(String userRequestedId) {
-    final DocumentReference userReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(userRequestedId);
+    final DocumentReference userReference =
+        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userRequestedId);
     return userReference;
   }
 
   DocumentReference<Object> getMessageReference(CoachAudioMessage audioMessage) {
-    final DocumentReference audioMessageReference = FirebaseFirestore.instance
+    final DocumentReference audioMessageReference = firestoreInstance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('audioSubmissions')

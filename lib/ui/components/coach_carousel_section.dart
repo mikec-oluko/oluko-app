@@ -39,7 +39,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                       carouselController: _controller,
                       items: widget.contentForCarousel,
                       options: CarouselOptions(
-                          height: 250.0,
+                          height: 240.0,
                           enableInfiniteScroll: true,
                           autoPlay: true,
                           autoPlayCurve: Curves.easeInExpo,
@@ -52,34 +52,36 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                             });
                           }),
                     ),
-                    Container(
-                      height: 25,
-                      width: MediaQuery.of(context).size.width,
-                      // color: Colors.red,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: widget.contentForCarousel
-                            .map((item) => _current == widget.contentForCarousel.indexOf(item)
-                                ? Container(
-                                    child: Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Image.asset(
-                                          'assets/self_recording/outlined_circle_cam.png',
-                                          scale: 1,
-                                        ),
-                                        Image.asset(
-                                          'assets/self_recording/white_circle_cam.png',
-                                          scale: 1,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Image.asset(
-                                    'assets/self_recording/white_circle_cam.png',
-                                    scale: 1,
-                                  ))
-                            .toList(),
+                    Center(
+                      child: Container(
+                        height: 25,
+                        width: MediaQuery.of(context).size.width / 2,
+                        // color: Colors.red,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: widget.contentForCarousel
+                              .map((item) => _current == widget.contentForCarousel.indexOf(item)
+                                  ? Expanded(
+                                      child: Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Image.asset(
+                                            'assets/self_recording/outlined_circle_cam.png',
+                                          ),
+                                          Image.asset(
+                                            'assets/self_recording/white_circle_cam.png',
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Expanded(
+                                      child: Image.asset(
+                                        'assets/self_recording/white_circle_cam.png',
+                                      ),
+                                    ))
+                              .toList(),
+                        ),
                       ),
                     )
                   ])
