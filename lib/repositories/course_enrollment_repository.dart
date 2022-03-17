@@ -109,6 +109,7 @@ class CourseEnrollmentRepository {
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
       'completion': courseEnrollment.completion,
+      'completed_at':FieldValue.serverTimestamp(),
       'is_unenrolled': courseEnrollment.isUnenrolled,
       'updated_at': FieldValue.serverTimestamp()
     });

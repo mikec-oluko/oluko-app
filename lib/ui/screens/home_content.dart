@@ -174,7 +174,7 @@ class _HomeContentState extends State<HomeContent> {
       child: Row(
         children: [
           OlukoPrimaryButton(
-            title: OlukoLocalizations.get(context, 'enrollToACourse'),
+            title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
             },
