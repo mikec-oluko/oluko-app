@@ -1,5 +1,5 @@
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
-import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/sound.dart';
 import 'package:oluko_app/utils/sound_player.dart';
 
 enum ClockStateEnum { work, rest, segmentStart }
@@ -10,18 +10,18 @@ const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
   static void playSound(int timeLeft, int totalTime, int workState) {
-    final List segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
+    final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
     if (segmentClockSounds.isNotEmpty) {
-      final posibleSounds = segmentClockSounds.where((sound) {
-        if (sound['clock_state'] == workState) {
-          if (sound['type'] == SoundTypeEnum.calculated.index) {
+      final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
+        if (sound.clockState.index == workState) {
+          if (sound.type.index == SoundTypeEnum.calculated.index) {
             if (totalTime != null && totalTime > 0 && timeLeft != null) {
-              return sound['value'] == (timeLeft / totalTime);
+              return sound.value == (timeLeft / totalTime);
             } else {
               return false;
             }
           } else {
-            return sound['value'] == timeLeft;
+            return sound.value == timeLeft;
           }
         }
         return false;
@@ -43,9 +43,9 @@ class SoundUtils {
 
   static bool existSoundAsset(soundToPlay) => soundToPlay != null && soundToPlay['soundAsset'] != null;
 
-  static getHighestPrioritySound(List<dynamic> posibleSounds) {
+  static getHighestPrioritySound(List<Sound> posibleSounds) {
     return posibleSounds.reduce((soundA, soundB) {
-      if (double.tryParse(soundA['priority'].toString()) > double.tryParse(soundB['priority'].toString())) {
+      if (soundA.priority > soundB.priority) {
         return soundA;
       } else {
         return soundB;

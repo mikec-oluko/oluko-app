@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/favorite.dart';
+import 'package:oluko_app/models/sound.dart';
 import 'package:oluko_app/repositories/favorite_repository.dart';
 import 'package:oluko_app/repositories/project_configuration_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -40,10 +41,13 @@ class ProjectConfigurationBloc extends Cubit<ProjectConfigurationState> {
     }
   }
 
-  List getSegmentClockSounds() {
+  List<Sound> getSegmentClockSounds() {
     if (courseConfiguration == null) {
       getCourseConfiguration();
     }
-    return (ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration']['segment_clock_sounds'] as List;
+
+    return ((ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration']['segment_clock_sounds'] as List)
+        .map((sound) => Sound.fromJson(sound as Map))
+        .toList();
   }
 }
