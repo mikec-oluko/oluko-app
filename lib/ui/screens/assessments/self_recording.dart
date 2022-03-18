@@ -27,7 +27,13 @@ import 'package:photo_manager/photo_manager.dart';
 
 class SelfRecording extends StatefulWidget {
   const SelfRecording(
-      {this.taskIndex, this.isPublic, this.isLastTask = false, Key key, this.fromCompletedClass, this.classIndex, this.courseEnrollment})
+      {this.taskIndex,
+      this.isPublic,
+      this.fromCompletedClass = false,
+      this.isLastTask = false,
+      Key key,
+      this.classIndex,
+      this.courseEnrollment})
       : super(key: key);
 
   final int taskIndex;
