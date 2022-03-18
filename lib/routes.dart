@@ -26,7 +26,7 @@ import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_request.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
@@ -566,6 +566,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc), 
           BlocProvider<ChatBloc>.value(
             value: _chatBloc,
           ),

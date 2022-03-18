@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_request.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
@@ -25,6 +25,7 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class FriendsListPage extends StatefulWidget {
   // final List<User> friends;
@@ -147,8 +148,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
             ? [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody(OlukoLocalizations.get(context, 'noFriends'))]),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    SizedBox(
+                        width: ScreenUtils.width(context) * 0.85,
+                        child: Text(
+                          OlukoLocalizations.get(context, 'noFriends'),
+                          textAlign: TextAlign.start,
+                          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                        ))
+                  ]),
                 )
               ]
             : [
