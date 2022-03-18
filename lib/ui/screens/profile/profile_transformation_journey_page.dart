@@ -23,6 +23,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
@@ -77,47 +78,96 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       body: _contentGallery == null
           ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
           : Container(
-              constraints: BoxConstraints.expand(),
+              constraints: const BoxConstraints.expand(),
               color: OlukoNeumorphismColors.appBackgroundColor,
               child: SafeArea(
-                child: Stack(children: [
-                  if (isCurrenUser)
-                    Align(
-                        alignment: Alignment.topCenter,
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
+                child: Stack(
+                    alignment: OlukoNeumorphism.isNeumorphismDesign ? AlignmentDirectional.center : AlignmentDirectional.topStart,
+                    children: [
+                      if (isCurrenUser)
+                        Align(
+                            alignment: Alignment.topCenter,
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                children: [
-                                  OlukoOutlinedButton(
-                                      title: OlukoLocalizations.get(context, 'tapToUpload'),
-                                      onPressed: () {
-                                        BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
-                                      }),
-                                ],
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Container(
+                                width: OlukoNeumorphism.isNeumorphismDesign
+                                    ? ScreenUtils.width(context) * 0.85
+                                    : MediaQuery.of(context).size.width,
+                                decoration: OlukoNeumorphism.isNeumorphismDesign
+                                    ? const BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
+                                    : const BoxDecoration(),
+                                child: OlukoNeumorphism.isNeumorphismDesign
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: OlukoColors.primary),
+                                              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15.0),
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/profile/plus.png',
+                                                    scale: 5,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 10.0),
+                                                    child: Text(
+                                                      OlukoLocalizations.get(context, 'tapToUpload'),
+                                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Row(
+                                            children: [
+                                              OlukoOutlinedButton(
+                                                  title: OlukoLocalizations.get(context, 'tapToUpload'),
+                                                  onPressed: () {
+                                                    BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
+                                                  }),
+                                            ],
+                                          ),
+                                        )),
                               ),
-                            )))
-                  else
-                    const SizedBox(
-                      height: 0,
-                    ),
-                  if (_contentGallery.length != 0)
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: isCurrenUser ? const EdgeInsets.fromLTRB(10, 100, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                        child: Text(
-                          getTitleForContent(uploadListContent: _transformationJourneyContent),
-                          style: OlukoFonts.olukoBigFont(),
+                            ))
+                      else
+                        const SizedBox(
+                          height: 0,
                         ),
-                      ),
-                    )
-                  else
-                    SizedBox(),
-                  _contentGallery.length != 0 ? dragAndDropGridView(context) : SizedBox(),
-                  slidingUpPanelComponent(context),
-                ]),
+                      if (_contentGallery.isNotEmpty)
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: isCurrenUser ? const EdgeInsets.fromLTRB(30, 110, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            child: Text(
+                              getTitleForContent(uploadListContent: _transformationJourneyContent),
+                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(),
+                      if (_contentGallery.isNotEmpty) dragAndDropGridView(context) else const SizedBox(),
+                      slidingUpPanelComponent(context),
+                    ]),
               ),
             ),
     );
@@ -182,6 +232,14 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       child: Padding(
         padding: isCurrenUser ? const EdgeInsets.only(top: 150) : const EdgeInsets.only(top: 20),
         child: Container(
+          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10) : EdgeInsets.all(0),
+          decoration: OlukoNeumorphism.isNeumorphismDesign
+              ? const BoxDecoration(
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                )
+              : const BoxDecoration(),
+          width: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.width(context) * 0.86 : ScreenUtils.width(context),
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser
               ? DragAndDropGridView(

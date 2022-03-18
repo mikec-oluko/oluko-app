@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -129,6 +131,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   CoachRequest _coachRequest;
   XFile videoRecorded;
   bool _isFromChallenge = false;
+  Duration currentTime;
 
   @override
   void initState() {
@@ -255,6 +258,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ? BlocBuilder<KeyboardBloc, KeyboardState>(
               builder: (context, state) {
                 keyboardVisibilty = state.setVisible;
+                textController = state.textEditingController;
                 return !keyboardVisibilty && isSegmentWithoutRecording()
                     ? SlidingUpPanel(
                         controller: panelController,
@@ -369,17 +373,26 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       : isSegmentWithoutRecording()
                           ? ScreenUtils.height(context)
                           : ScreenUtils.height(context) * 0.6,
-              child: Clock(
-                workState: workState,
-                segments: widget.segments,
-                segmentIndex: widget.segmentIndex,
-                timerEntries: timerEntries,
-                textController: textController,
-                goToNextStep: _goToNextStep,
-                actionAMRAP: actionAMRAP,
-                setPaused: setPaused,
-                workoutType: workoutType,
-                keyboardVisibilty: keyboardVisibilty,
+              child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
+                builder: (context, state) {
+                  if (state is CurrentTimeValue) {
+                    currentTime = state.timerTask;
+                  }
+                  return Clock(
+                    workState: workState,
+                    segments: widget.segments,
+                    segmentIndex: widget.segmentIndex,
+                    timerEntries: timerEntries,
+                    textController: textController,
+                    goToNextStep: _goToNextStep,
+                    actionAMRAP: actionAMRAP,
+                    setPaused: setPaused,
+                    workoutType: workoutType,
+                    keyboardVisibilty: keyboardVisibilty,
+                    timerTaskIndex: timerTaskIndex,
+                    timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
+                  );
+                },
               ),
             ),
             SizedBox(
@@ -601,6 +614,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (timerEntries[timerTaskIndex].stopwatch) {
       _startStopwatch();
     }
+    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeZero();
   }
 
   _saveStopwatch() {

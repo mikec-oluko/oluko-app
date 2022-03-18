@@ -22,6 +22,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.d
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
+import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
@@ -35,6 +36,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -371,6 +373,8 @@ class Routes {
   final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
   final SelectedTagsBloc _selectedTagsBloc = SelectedTagsBloc();
+  final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
+  final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -466,6 +470,7 @@ class Routes {
         providers = [
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<DownloadAssetBloc>.value(value: _downloadAssetBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
@@ -686,7 +691,8 @@ class Routes {
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
-          BlocProvider<FeedbackBloc>.value(value: _feedbackBloc)
+          BlocProvider<FeedbackBloc>.value(value: _feedbackBloc),
+          BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
@@ -781,7 +787,8 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc)
+          BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
+          BlocProvider<DownloadAssetBloc>.value(value: _downloadAssetBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -844,12 +851,16 @@ class Routes {
         providers = [
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecording(
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
           isLastTask: argumentsToAdd['isLastTask'] as bool,
+          fromCompletedClass: argumentsToAdd['fromCompletedClass'] as bool,
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
         );
         break;
       case RouteEnum.selfRecordingPreview:

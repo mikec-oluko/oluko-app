@@ -48,6 +48,7 @@ class TimerUtils {
         Text(countDown.toString(),
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'Gilroy',
               fontSize: 80,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
@@ -55,19 +56,17 @@ class TimerUtils {
             )),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(OlukoLocalizations.get(context, 'round') + "  ",
-              textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text((round + 1).toString(),
-              textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
+              textAlign: TextAlign.center, style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold)),
+          Text((round + 1).toString(), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold))
         ]),
         SizedBox(height: 2),
         Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Text(getRepsTimerText(type, context),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
+                style: OlukoFonts.olukoMediumFont(
+                    custoFontWeight: FontWeight.bold,
+                    customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
       ])
     ]);
   }
@@ -124,7 +123,10 @@ class TimerUtils {
                 Text(duration,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: OlukoNeumorphism.isNeumorphismDesign ? 35 : 25, fontWeight: FontWeight.bold, color: Colors.white)),
+                        fontFamily: 'Gilroy',
+                        fontSize: OlukoNeumorphism.isNeumorphismDesign ? 35 : 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
                 if (counter != null)
                   OlukoNeumorphism.isNeumorphismDesign
                       ? neumorphicContentWithPadding(
@@ -171,16 +173,15 @@ class TimerUtils {
                       const SizedBox(height: 8),
                       Text(OlukoLocalizations.get(context, 'completed'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: OlukoNeumorphism.isNeumorphismDesign
+                          style: OlukoFonts.olukoSuperBigFont(
+                              custoFontWeight: FontWeight.bold,
+                              customColor: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                   : Colors.white)),
                       const SizedBox(height: 8),
                       if (rounds != null)
                         Text(rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-                            textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                            textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
                     ],
                   )
                 ])))
@@ -196,10 +197,9 @@ class TimerUtils {
                       const SizedBox(height: 8),
                       Text(OlukoLocalizations.get(context, 'completed'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: OlukoNeumorphism.isNeumorphismDesign
+                          style: OlukoFonts.olukoSubtitleFont(
+                              custoFontWeight: FontWeight.bold,
+                              customColor: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                   : Colors.white)),
                     ],
@@ -227,13 +227,16 @@ class TimerUtils {
                 ? OlukoLocalizations.get(context, 'paused')
                 : OlukoLocalizations.get(context, 'paused').toUpperCase(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue, fontFamily: 'Gilroy')),
         duration != null ? SizedBox(height: 12) : SizedBox(),
         duration != null
             ? Text(duration,
                 textAlign: TextAlign.center,
-                style:
-                    TextStyle(fontSize: OlukoNeumorphism.isNeumorphismDesign ? 30 : 20, fontWeight: FontWeight.bold, color: Colors.white))
+                style: TextStyle(
+                    fontSize: OlukoNeumorphism.isNeumorphismDesign ? 30 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'Gilroy'))
             : SizedBox()
       ])
     ]));
@@ -242,8 +245,10 @@ class TimerUtils {
   static Widget restTimer(Widget addCounterValue, double progressValue, String duration, BuildContext context) {
     //double ellipseScale = 4.5;
     return Container(
-        child: Stack(alignment: Alignment.center, children: [
-      /*Image.asset(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          /*Image.asset(
             'assets/courses/ellipse_1.png',
             scale: ellipseScale,
           ),
@@ -255,34 +260,58 @@ class TimerUtils {
             'assets/courses/ellipse_3.png',
             scale: ellipseScale,
           ),*/
-      SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.28 : ScreenUtils.height(context) * 0.32,
-        child: AspectRatio(
-            aspectRatio: 1,
-            child: CircularProgressIndicator(
-                strokeWidth: _progressIndicatorStroke,
-                value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
-                color: getGreenOrSkyBlue,
-                backgroundColor: backgroundColor)),
+          SizedBox(
+            width: ScreenUtils.smallScreen(context)
+                ? addCounterValue != null
+                    ? ScreenUtils.height(context) * 0.33
+                    : ScreenUtils.height(context) * 0.28
+                : ScreenUtils.height(context) * 0.32,
+            height: ScreenUtils.smallScreen(context)
+                ? addCounterValue != null
+                    ? ScreenUtils.height(context) * 0.33
+                    : ScreenUtils.height(context) * 0.28
+                : ScreenUtils.height(context) * 0.32,
+            child: AspectRatio(
+                aspectRatio: 1,
+                child: CircularProgressIndicator(
+                    strokeWidth: _progressIndicatorStroke,
+                    value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
+                    color: getGreenOrSkyBlue,
+                    backgroundColor: backgroundColor)),
+          ),
+          if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
+            Align(
+              alignment: Alignment.center,
+              child: addCounterValue,
+            )
+          else
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? OlukoLocalizations.get(context, 'rest')
+                      : OlukoLocalizations.get(context, 'rest').toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
+              SizedBox(height: 12),
+              Text(duration,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Gilroy')),
+            ]),
+          if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
+            Positioned(
+                bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.11 : ScreenUtils.height(context) * 0.05,
+                child: duration != null
+                    ? Text(duration,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontFamily: 'Gilroy'))
+                    : SizedBox())
+        ],
       ),
-      if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
-        Align(
-          alignment: Alignment.center,
-          child: addCounterValue,
-        )
-      else
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoLocalizations.get(context, 'rest')
-                  : OlukoLocalizations.get(context, 'rest').toUpperCase(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
-          SizedBox(height: 12),
-          Text(duration, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
-        ])
-    ]));
+    );
   }
 
   static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide]) {
@@ -305,6 +334,7 @@ class TimerUtils {
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
+                            fontFamily: 'Gilroy',
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
@@ -313,10 +343,9 @@ class TimerUtils {
                     SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
+                        style: OlukoFonts.olukoBigFont(
+                            custoFontWeight: FontWeight.w400,
+                            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
                     SizedBox(height: 5),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox()
@@ -345,6 +374,7 @@ class TimerUtils {
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
+                            fontFamily: 'Gilroy',
                             fontSize: OlukoNeumorphism.isNeumorphismDesign ? 42 : 26,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
@@ -354,6 +384,7 @@ class TimerUtils {
                     Text(OlukoLocalizations.get(context, 'forNextRound'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
+                            fontFamily: 'Gilroy',
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
@@ -369,10 +400,11 @@ class TimerUtils {
   }
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
+    var r = ScreenUtils.height(context);
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 220,
-        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -385,6 +417,7 @@ class TimerUtils {
         Text(countDown.toString(),
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'Gilroy',
               fontSize: 80,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
@@ -393,9 +426,13 @@ class TimerUtils {
         if (round != null)
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(OlukoLocalizations.get(context, 'round') + "  ",
-                textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: OlukoColors.primary)),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.primary)),
             Text((round + 1).toString(),
-                textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoBigFont(
+                  custoFontWeight: FontWeight.bold,
+                ))
           ]),
         SizedBox(height: 2),
         if (round != null)
@@ -404,6 +441,7 @@ class TimerUtils {
               child: Text(getRepsTimerText(type, context),
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                      fontFamily: 'Gilroy',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
@@ -417,10 +455,9 @@ class TimerUtils {
       padding: const EdgeInsets.only(top: 10),
       child: Text(duration,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
+          style: OlukoFonts.olukoSubtitleFont(
+              custoFontWeight: FontWeight.bold,
+              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
     );
   }
 
@@ -445,21 +482,22 @@ class TimerUtils {
         padding: padding ? EdgeInsets.only(top: 5) : EdgeInsets.only(top: 0),
         child: Text(text,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w300,
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
+            style: OlukoFonts.olukoMediumFont(
+                custoFontWeight: FontWeight.w300,
+                customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
   }
 
   static Widget getRoundLabel(int round) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text('Round',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
+          style: TextStyle(
+              fontFamily: 'Gilroy', fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
       SizedBox(width: 10),
       Text((round + 1).toString(),
           textAlign: TextAlign.center,
           style: TextStyle(
+              fontFamily: 'Gilroy',
               fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 50,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,

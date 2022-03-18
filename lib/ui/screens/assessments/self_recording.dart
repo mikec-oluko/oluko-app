@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/permissions.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -24,11 +26,16 @@ import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class SelfRecording extends StatefulWidget {
-  const SelfRecording({this.taskIndex, this.isPublic, this.isLastTask = false, Key key}) : super(key: key);
+  const SelfRecording(
+      {this.taskIndex, this.isPublic, this.isLastTask = false, Key key, this.fromCompletedClass, this.classIndex, this.courseEnrollment})
+      : super(key: key);
 
   final int taskIndex;
+  final int classIndex;
   final bool isPublic;
   final bool isLastTask;
+  final bool fromCompletedClass;
+  final CourseEnrollment courseEnrollment;
 
   @override
   _State createState() => _State();
@@ -68,17 +75,21 @@ class _State extends State<SelfRecording> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         BlocProvider.of<GalleryVideoBloc>(context).getFirstVideoFromGalley();
-        return BlocBuilder<TaskBloc, TaskState>(
-          builder: (context, taskState) {
-            if (taskState is TaskSuccess) {
-              _tasks = taskState.values;
-              _task = _tasks[widget.taskIndex];
-              return OlukoNeumorphism.isNeumorphismDesign ? NeumorphicForm() : form();
-            } else {
-              return const SizedBox();
-            }
-          },
-        );
+        if (widget.fromCompletedClass) {
+          return NeumorphicForm();
+        } else {
+          return BlocBuilder<TaskBloc, TaskState>(
+            builder: (context, taskState) {
+              if (taskState is TaskSuccess) {
+                _tasks = taskState.values;
+                _task = _tasks[widget.taskIndex];
+                return OlukoNeumorphism.isNeumorphismDesign ? NeumorphicForm() : form();
+              } else {
+                return const SizedBox();
+              }
+            },
+          );
+        }
       } else {
         return const SizedBox();
       }
@@ -209,13 +220,17 @@ class _State extends State<SelfRecording> {
                             ),
                           ),
                         ])),
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? Positioned(
-                      bottom: 10,
-                      left: 10,
-                      right: 10,
-                      child: Container(width: MediaQuery.of(context).size.width - 40, height: 200, child: neumorphicFormSection()))
-                  : formSection(),
+              if (widget.fromCompletedClass)
+                const SizedBox()
+              else
+                OlukoNeumorphism.isNeumorphismDesign
+                    ? Positioned(
+                        bottom: 10,
+                        left: 10,
+                        right: 10,
+                        child: SizedBox(width: MediaQuery.of(context).size.width - 40, height: 200, child: neumorphicFormSection()),
+                      )
+                    : formSection(),
             ],
           ),
         ));
@@ -333,7 +348,7 @@ class _State extends State<SelfRecording> {
   Widget imageWrapper() {
     return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
       builder: (context, state) {
-        if (state is Success &&state.firstVideo!=null) {
+        if (state is Success && state.firstVideo != null) {
           return Container(
             width: 40,
             height: 40,
@@ -389,7 +404,13 @@ class _State extends State<SelfRecording> {
                   : SizedBox(),
               GestureDetector(
                 onTap: () async {
-                  if (!_buttonBlocked) {
+                  if (widget.fromCompletedClass) {
+                    final XFile selfie = await cameraController.takePicture();
+                    if (selfie != null) {
+                      BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, selfie);
+                    }
+                    Navigator.pop(context);
+                  } else if (!_buttonBlocked) {
                     if (_recording) {
                       final XFile videopath = await cameraController.stopVideoRecording();
                       final String path = videopath.path;
