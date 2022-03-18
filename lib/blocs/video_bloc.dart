@@ -77,46 +77,72 @@ class VideoBloc extends Cubit<VideoState> {
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
       final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
-      // A Stream that handles communication between isolates
-      final p = ReceivePort();
 
-      final data = {
-        'port': p.sendPort,
-        'data': {
-          'context': context.toString(),
-          'videoFilePath': videoFile.path,
-          'aspectRatio': aspectRatio,
-          'id': id,
-          'directory': (await getApplicationDocumentsDirectory()).path,
-          'duration': durationInMilliseconds,
-          'thumbnailPath': thumbnailFilePath,
-        }
-      };
+      if (GlobalConfiguration().getValue('uploadOnIsolate') == 'true') {
+        // A Stream that handles communication between isolates
+        final p = ReceivePort();
 
-      // you can also manage the isolate outside
-      // isolate.kill / pause / addListener.. .
-      final isolate = await Isolate.spawn(processVideoOnBackground, data);
-
-      p.listen(
-        (onData) {
-          OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
-          if (isolateMessage != null) {
-            if (isolateMessage.status == IsolateStatusEnum.success) {
-              emit(
-                VideoSuccess(
-                  video: Video.fromJson(isolateMessage.video),
-                  segmentSubmission: segmentSubmission,
-                  taskSubmission: taskSubmission,
-                  assessment: assessment,
-                  assessmentAssignment: assessmentAssignment,
-                ),
-              );
-            } else {
-              emit(VideoFailure());
-            }
+        final data = {
+          'port': p.sendPort,
+          'data': {
+            'context': context.toString(),
+            'videoFilePath': videoFile.path,
+            'aspectRatio': aspectRatio,
+            'id': id,
+            'directory': (await getApplicationDocumentsDirectory()).path,
+            'duration': durationInMilliseconds,
+            'thumbnailPath': thumbnailFilePath,
           }
-        },
-      );
+        };
+
+        // you can also manage the isolate outside
+        // isolate.kill / pause / addListener.. .
+        final isolate = await Isolate.spawn(processVideoOnBackground, data);
+
+        p.listen(
+          (onData) {
+            OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
+            if (isolateMessage != null) {
+              if (isolateMessage.status == IsolateStatusEnum.success) {
+                emit(
+                  VideoSuccess(
+                    video: Video.fromJson(isolateMessage.video),
+                    segmentSubmission: segmentSubmission,
+                    taskSubmission: taskSubmission,
+                    assessment: assessment,
+                    assessmentAssignment: assessmentAssignment,
+                  ),
+                );
+              } else {
+                emit(VideoFailure());
+              }
+            }
+          },
+        );
+      } else {
+        Video video = await VideoService.processVideoWithoutEncoding(
+          videoFile.path,
+          aspectRatio,
+          id,
+          (await getApplicationDocumentsDirectory()).path,
+          durationInMilliseconds,
+          thumbnailFilePath,
+        );
+
+        if (video != null) {
+          emit(
+            VideoSuccess(
+              video: video,
+              segmentSubmission: segmentSubmission,
+              taskSubmission: taskSubmission,
+              assessment: assessment,
+              assessmentAssignment: assessmentAssignment,
+            ),
+          );
+        } else {
+          emit(VideoFailure());
+        }
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

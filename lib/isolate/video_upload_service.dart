@@ -11,8 +11,15 @@ Future<void> processVideoOnBackground(Map<String, dynamic> map) async {
   Video video;
   try {
     // Heavy computing process
-    video = await VideoService.processVideoWithoutEncoding(data['videoFilePath'] as String, data['aspectRatio'] as double,
-        data['id'] as String, port, data['directory'] as String, data['duration'] as int, data['thumbnailPath'] as String);
+    video = await VideoService.processVideoWithoutEncoding(
+      data['videoFilePath'] as String,
+      data['aspectRatio'] as double,
+      data['id'] as String,
+      data['directory'] as String,
+      data['duration'] as int,
+      data['thumbnailPath'] as String,
+      port,
+    );
 
     port.send(OlukoIsolateMessage(IsolateStatusEnum.success, video: video.toJson()));
   } catch (e) {
