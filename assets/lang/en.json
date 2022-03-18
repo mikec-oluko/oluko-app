@@ -275,7 +275,7 @@
     "activeNow": "Active now",
     "removeThisPerson": "Remove this person?",
     "removeThisPersonBody1": "Are you sure you want to remove ",
-    "removeThisPersonBody2": " from your list?",
+    "removeThisPersonBody2": " from your friends?",
     "cancel": "Cancel",
     "rememberTo": "Remember to",
     "switchSide": "switch side",
@@ -306,7 +306,7 @@
     "movements": "Movements",
     "newPR": "New PR:",
     "typeScore": "Tap here to type the score",
-   "cancelMssg": "Would you like to cancel?",
+   "cancelMssg": "Clear Filters?",
    "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
    "recordingConfirmation": "Are you sure you want to record this segment?"
 }
