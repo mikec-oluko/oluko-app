@@ -22,8 +22,8 @@ class CourseService {
     });
 
     ids.forEach((id) {
-      List<Class> classes = courseClasses.where((element) => element.id == id).toList()
-      if(classes.isNotEmpty){
+      List<Class> classes = courseClasses.where((element) => element.id == id).toList();
+      if (classes.isNotEmpty) {
         Class classToAdd = classes[0];
         sortedClasses.add(classToAdd);
       }
