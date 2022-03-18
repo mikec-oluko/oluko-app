@@ -10,8 +10,7 @@ const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
   static void playSound(int timeLeft, int totalTime, int workState) {
-    final List segmentClockSounds =
-        (ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration']['segment_clock_sounds'] as List;
+    final List segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
     if (segmentClockSounds.isNotEmpty) {
       final posibleSounds = segmentClockSounds.where((sound) {
         if (sound['clock_state'] == workState) {

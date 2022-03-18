@@ -30,7 +30,6 @@ class ProjectConfigurationBloc extends Cubit<ProjectConfigurationState> {
   Object getCourseConfiguration() async {
     try {
       return courseConfiguration ??= await ProjectConfigurationRepository.getCourseConfiguration();
-      emit(ProjectConfigurationuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -39,5 +38,12 @@ class ProjectConfigurationBloc extends Cubit<ProjectConfigurationState> {
       emit(Failure(exception: exception));
       rethrow;
     }
+  }
+
+  List getSegmentClockSounds() {
+    if (courseConfiguration == null) {
+      getCourseConfiguration();
+    }
+    return (ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration']['segment_clock_sounds'] as List;
   }
 }
