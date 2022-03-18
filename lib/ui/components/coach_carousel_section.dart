@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachCarouselSliderSection extends StatefulWidget {
   const CoachCarouselSliderSection({this.contentForCarousel, this.introductionCompleted, this.introductionVideo});
@@ -55,30 +56,26 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                     Center(
                       child: Container(
                         height: 25,
-                        width: MediaQuery.of(context).size.width / 2,
+                        constraints: BoxConstraints(minHeight: 25, minWidth: 10, maxWidth: ScreenUtils.width(context) / 3, maxHeight: 25),
                         // color: Colors.red,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: widget.contentForCarousel
                               .map((item) => _current == widget.contentForCarousel.indexOf(item)
-                                  ? Expanded(
-                                      child: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Image.asset(
-                                            'assets/self_recording/outlined_circle_cam.png',
-                                          ),
-                                          Image.asset(
-                                            'assets/self_recording/white_circle_cam.png',
-                                          ),
-                                        ],
-                                      ),
+                                  ? Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Image.asset(
+                                          'assets/self_recording/outlined_circle_cam.png',
+                                        ),
+                                        Image.asset(
+                                          'assets/self_recording/white_circle_cam.png',
+                                        ),
+                                      ],
                                     )
-                                  : Expanded(
-                                      child: Image.asset(
-                                        'assets/self_recording/white_circle_cam.png',
-                                      ),
+                                  : Image.asset(
+                                      'assets/self_recording/white_circle_cam.png',
                                     ))
                               .toList(),
                         ),

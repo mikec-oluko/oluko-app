@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:avatar_glow/avatar_glow.dart';
@@ -24,6 +25,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_recorder.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CoachProfile extends StatefulWidget {
@@ -46,6 +48,9 @@ class _CoachProfileState extends State<CoachProfile> {
   Widget _panelNewContent;
   final SoundRecorder _recorder = SoundRecorder();
   final PanelController _panelController = PanelController();
+  Timer _timer;
+  Duration duration = Duration();
+  Duration durationToSave = Duration();
 
   @override
   void initState() {
@@ -60,6 +65,7 @@ class _CoachProfileState extends State<CoachProfile> {
   @override
   void dispose() {
     _recorder.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -297,9 +303,13 @@ class _CoachProfileState extends State<CoachProfile> {
 
   Padding askCoachPanelContent({Widget audioRecorded}) {
     final askCoachText = Text(
-      OlukoLocalizations.get(context, 'askYourCoach'),
+      _recordingAudio ? 'RECORDING: ${TimeConverter.durationToString(duration)}' : OlukoLocalizations.get(context, 'askYourCoach'),
       style: OlukoFonts.olukoMediumFont(
-          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
+          customColor: OlukoNeumorphism.isNeumorphismDesign
+              ? _recordingAudio
+                  ? OlukoColors.primary
+                  : OlukoColors.listGrayColor
+              : OlukoColors.white,
           custoFontWeight: FontWeight.w500),
     );
     return recordAudioElement(audioRecorded, askCoachText);
@@ -335,6 +345,27 @@ class _CoachProfileState extends State<CoachProfile> {
             }));
   }
 
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    if (!_recordingAudio) {
+      setState(() {
+        _timer.cancel();
+        durationToSave = duration;
+        duration = Duration.zero;
+      });
+    } else {
+      _timer = Timer.periodic(oneSec, (_) => addTime());
+    }
+  }
+
+  addTime() {
+    final addSeconds = 1;
+    setState(() {
+      final seconds = duration.inSeconds + addSeconds;
+      duration = Duration(seconds: seconds);
+    });
+  }
+
   Row recordAudioTextAndButton(Text askCoachText) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -343,7 +374,13 @@ class _CoachProfileState extends State<CoachProfile> {
           Expanded(
               child: Container(
                   height: 40,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
+                    border: !_recordingAudio
+                        ? null
+                        : Border.all(
+                            width: 2.0,
+                            color: OlukoColors.primary,
+                          ),
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                   ),
@@ -383,6 +420,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
           setState(() {
             _recordingAudio = !_recordingAudio;
+            startTimer();
           });
 
           if (_recorder.isStopped) {
@@ -410,6 +448,7 @@ class _CoachProfileState extends State<CoachProfile> {
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
+      durationFromRecord: isPreview ? durationToSave : null,
       onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );

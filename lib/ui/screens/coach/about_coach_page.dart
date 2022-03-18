@@ -29,6 +29,11 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
         showTitle: true,
         showBackButton: true,
         title: OlukoLocalizations.get(context, 'aboutCoach'),
+        onPressed: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+        },
       ),
       body: coachMediaGalleryComponent(),
     );

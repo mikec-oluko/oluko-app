@@ -98,7 +98,19 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: GestureDetector(
-                        onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+                        onTap: () {
+                          if (widget.onBackPressed != null) {
+                            if (_controller != null) {
+                              _controller.pause();
+                            }
+                            widget.onBackPressed();
+                          } else {
+                            if (_controller != null) {
+                              _controller.pause();
+                            }
+                            Navigator.pop(context);
+                          }
+                        },
                         child: Container(
                             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
                             width: 52,

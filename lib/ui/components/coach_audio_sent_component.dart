@@ -9,10 +9,12 @@ import 'package:oluko_app/utils/time_converter.dart';
 
 class CoachAudioSentComponent extends StatefulWidget {
   final String record;
+  final Duration durationFromRecord;
   final bool isPreviewContent;
   final Function() onDelete;
   final CoachAudioMessage audioMessageItem;
-  const CoachAudioSentComponent({Key key, this.record, this.isPreviewContent = false, this.onDelete, this.audioMessageItem})
+  const CoachAudioSentComponent(
+      {Key key, this.record, this.isPreviewContent = false, this.onDelete, this.audioMessageItem, this.durationFromRecord})
       : super(key: key);
 
   @override
@@ -92,7 +94,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                   children: [
                     const SizedBox(),
                     Text(
-                      _totalDuration != null ? TimeConverter.durationToString(_totalDuration) : '',
+                      _totalDuration != null
+                          ? TimeConverter.durationToString(_totalDuration)
+                          : widget.durationFromRecord != null
+                              ? TimeConverter.durationToString(widget.durationFromRecord)
+                              : '',
                       style: OlukoFonts.olukoSmallFont(
                           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                           custoFontWeight: FontWeight.w500),

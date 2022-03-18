@@ -208,7 +208,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                 });
               },
               icon: Icon(
-                Icons.arrow_drop_up,
+                _isUserStatisticExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                 color: OlukoColors.white,
                 size: 24,
               ),

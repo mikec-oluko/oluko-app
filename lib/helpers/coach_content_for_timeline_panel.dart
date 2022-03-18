@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
+import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
+import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
@@ -8,10 +10,10 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'coach_recommendation_default.dart';
-import 'coach_timeline_content.dart';
 
-String defaultIdForAllContentTimeline = '0';
+const String defaultIdForAllContentTimeline = '0';
+const String defaultIntroVideoId = 'introVideo';
+const String defaultIntroVideoTitle = 'Introduction Video';
 
 class CoachTimelineFunctions {
   static List<CoachTimelineGroup> buildContentForTimelinePanel(
@@ -20,35 +22,60 @@ class CoachTimelineFunctions {
     List<CoachTimelineGroup> timelineTabsAndContent = [];
     List<CoachTimelineItem> contentForItem = [];
     CoachTimelineGroup newTimelineTabItem;
-
-    timelineItemsContent.forEach((timelineItem) {
-      !listOfCourseId.contains(timelineItem.course.id) && enrolledCourseIdList.contains(timelineItem.course.id)
-          ? listOfCourseId.add(timelineItem.course.id)
-          : null;
-    });
-    listOfCourseId.forEach((courseId) {
-      final repeatedItemsQuery = timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
-      String itemId;
-      String itemName;
-      if (repeatedItemsQuery.isNotEmpty) {
-        itemId = repeatedItemsQuery.first.course.id;
-        itemName = repeatedItemsQuery.first.course.name;
-        contentForItem = [];
-        repeatedItemsQuery.forEach((element) {
-          contentForItem.add(element);
-        });
-        contentForItem.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-        newTimelineTabItem = CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
-      } else {
-        newTimelineTabItem = CoachTimelineGroup(
-            courseId: repeatedItemsQuery.first.course.id,
-            courseName: repeatedItemsQuery.first.course.name,
-            timelineElements: [repeatedItemsQuery.first]);
-      }
-      timelineTabsAndContent.add(newTimelineTabItem);
-    });
-
+    if (timelineItemsContent.isNotEmpty) {
+      timelineItemsContent.forEach((timelineItem) {
+        !listOfCourseId.contains(timelineItem.course.id) &&
+                (timelineItem.course.id == defaultIdForAllContentTimeline || enrolledCourseIdList.contains(timelineItem.course.id))
+            ? listOfCourseId.add(timelineItem.course.id)
+            : null;
+      });
+      listOfCourseId.forEach((courseId) {
+        final repeatedItemsQuery = timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
+        String itemId;
+        String itemName;
+        if (repeatedItemsQuery.isNotEmpty) {
+          itemId = repeatedItemsQuery.first.course.id;
+          itemName = repeatedItemsQuery.first.course.name;
+          contentForItem = [];
+          repeatedItemsQuery.forEach((element) {
+            contentForItem.add(element);
+          });
+          contentForItem.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+          newTimelineTabItem = CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
+        } else {
+          newTimelineTabItem = CoachTimelineGroup(
+              courseId: repeatedItemsQuery.first.course.id,
+              courseName: repeatedItemsQuery.first.course.name,
+              timelineElements: [repeatedItemsQuery.first]);
+        }
+        timelineTabsAndContent.add(newTimelineTabItem);
+      });
+    }
     return timelineTabsAndContent;
+  }
+
+  static List<CoachTimelineItem> addWelcomeVideoToTimeline(
+      {@required BuildContext context, @required Annotation welcomeVideo, @required List<CoachTimelineItem> timelineItems}) {
+    welcomeVideo != null && timelineItems != null
+        ? timelineItems.where((element) => element.contentName == defaultIntroVideoTitle).toList().isEmpty
+            ? timelineItems.insert(
+                0,
+                CoachTimelineItem(
+                    coachId: welcomeVideo.coachId,
+                    coachReference: welcomeVideo.coachReference,
+                    contentDescription:
+                        welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'mentoredVideo'),
+                    contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
+                    contentThumbnail: welcomeVideo.video.thumbUrl,
+                    contentType: TimelineInteractionType.values[4],
+                    mentoredVideosForNavigation: [welcomeVideo],
+                    course: CourseTimelineSubmodel(),
+                    id: defaultIdForAllContentTimeline,
+                    createdAt: welcomeVideo.createdAt))
+            : null
+        : null;
+
+    return timelineItems;
   }
 
   static void getTimelineVideoContent(
@@ -63,8 +90,9 @@ class CoachTimelineFunctions {
         CoachTimelineItem newItem = CoachTimelineItem(
             coachId: element.coachId,
             coachReference: element.coachReference,
-            contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
-            contentName: element.id == 'introVideo' ? 'Introduction Video' : element.segmentSubmissionId,
+            contentDescription:
+                element.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentName: element.id == defaultIntroVideoId ? defaultIntroVideoTitle : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
             contentType: TimelineInteractionType.values[4],
             mentoredVideosForNavigation: annotationContent,

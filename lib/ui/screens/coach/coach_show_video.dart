@@ -30,6 +30,11 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
         showTitle: true,
         showBackButton: true,
         title: widget.titleForContent,
+        onPressed: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+        },
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
