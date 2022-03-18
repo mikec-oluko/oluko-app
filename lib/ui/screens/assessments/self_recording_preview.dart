@@ -269,7 +269,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
             'taskIndex': widget.taskIndex,
             'isPublic': widget.isPublic,
-            'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+            'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+            'fromCompletedClass': false
           });
         },
         child: Align(
