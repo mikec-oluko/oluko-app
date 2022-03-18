@@ -385,8 +385,8 @@ class TimerUtils {
     var r = ScreenUtils.height(context);
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.29 : ScreenUtils.height(context) * 0.35,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.29 : ScreenUtils.height(context) * 0.35,
+        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
