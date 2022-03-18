@@ -382,10 +382,11 @@ class TimerUtils {
   }
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
+    var r = ScreenUtils.height(context);
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 220,
-        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.29 : ScreenUtils.height(context) * 0.35,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.29 : ScreenUtils.height(context) * 0.35,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
