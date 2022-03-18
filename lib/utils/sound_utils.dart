@@ -21,14 +21,14 @@ class SoundUtils {
               return false;
             }
           } else {
-            return sound.value == timeLeft;
+            return sound.value.toInt() == timeLeft;
           }
         }
         return false;
       }).toList();
       if (posibleSounds.isNotEmpty) {
         if (posibleSounds.length > 1) {
-          final soundToPlay = getHighestPrioritySound(posibleSounds);
+          final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
           if (existSoundAsset(soundToPlay)) {
             playAsset(soundToPlay);
           }
@@ -39,11 +39,11 @@ class SoundUtils {
     }
   }
 
-  static Future<dynamic> playAsset(soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay['soundAsset'].toString());
+  static Future<dynamic> playAsset(Sound soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
 
-  static bool existSoundAsset(soundToPlay) => soundToPlay != null && soundToPlay['soundAsset'] != null;
+  static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 
-  static getHighestPrioritySound(List<Sound> posibleSounds) {
+  static Sound getHighestPrioritySound(List<Sound> posibleSounds) {
     return posibleSounds.reduce((soundA, soundB) {
       if (soundA.priority > soundB.priority) {
         return soundA;
