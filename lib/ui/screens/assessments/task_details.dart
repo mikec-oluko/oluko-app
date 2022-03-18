@@ -314,7 +314,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         }
         if (previous is GetSuccess &&
             current.taskSubmission != null &&
-            current.taskSubmission.id == previous?.taskSubmission?.id &&
+            current.taskSubmission.id == previous?.taskSubmission?.id && current.taskSubmission.video != null &&
             current.taskSubmission.video.url == previous?.taskSubmission?.video?.url) {
           return false;
         }
@@ -659,8 +659,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                         }
                       },
                       child: taskResponse(
-                          TimeConverter.durationToString(
-                              Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
+                          TimeConverter.durationToString(Duration(
+                              milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
                           taskSubmission?.video?.thumbUrl,
                           taskSubmission)),
                 ]),
@@ -680,7 +680,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null) const Image(image:AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign
@@ -726,7 +726,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null) const Image(image:AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign

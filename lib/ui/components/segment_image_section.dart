@@ -299,6 +299,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         arguments: {
           'segmentIndex': widget.currentSegmentStep - 1,
           'classIndex': widget.classIndex,
+          'coach': widget.coach,
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
           'segments': widget.segments,
@@ -318,6 +319,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       'courseEnrollment': widget.courseEnrollment,
       'courseIndex': widget.courseIndex,
       'workoutType': WorkoutType.segment,
+      'coach': widget.coach,
       'segments': widget.segments,
       'fromChallenge': widget.fromChallenge
     };
@@ -364,12 +366,15 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           GestureDetector(
               onTap: () {
                 if (widget.coach != null) {
-                  BottomDialogUtils.showBottomDialog(
-                    context: context,
-                    content: SelfRecordingContent(
-                      onRecordingAction: navigateToSegmentWithRecording,
-                    ),
-                  );
+                  if (widget.segment.isChallenge && !_canStartSegment) {
+                  } else {
+                    BottomDialogUtils.showBottomDialog(
+                      context: context,
+                      content: SelfRecordingContent(
+                        onRecordingAction: navigateToSegmentWithRecording,
+                      ),
+                    );
+                  }
                 }
               },
               child: getCameraIcon())

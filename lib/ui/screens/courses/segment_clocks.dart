@@ -27,6 +27,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
@@ -55,12 +56,14 @@ class SegmentClocks extends StatefulWidget {
   final List<Segment> segments;
   final int courseIndex;
   final bool fromChallenge;
+  final UserResponse coach;
 
   const SegmentClocks(
       {Key key,
       this.courseIndex,
       this.workoutType,
       this.classIndex,
+      this.coach,
       this.segmentIndex,
       this.courseEnrollment,
       this.segments,
@@ -826,8 +829,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
-    BlocProvider.of<SegmentSubmissionBloc>(context)
-        .create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, _coachRequest);
+    BlocProvider.of<SegmentSubmissionBloc>(context).create(
+        _user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, widget.coach.id, _coachRequest != null);
   }
 
 //STOPWATCH FUNCTIONS

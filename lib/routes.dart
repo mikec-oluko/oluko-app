@@ -694,6 +694,7 @@ class Routes {
           classIndex: argumentsToAdd['classIndex'] as int,
           courseIndex: argumentsToAdd['courseIndex'] as int,
           segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          coach: argumentsToAdd['coach'] as UserResponse,
           workoutType: argumentsToAdd['workoutType'] as WorkoutType,
           segments: argumentsToAdd['segments'] as List<Segment>,
           fromChallenge: argumentsToAdd['fromChallenge'] as bool,
@@ -710,6 +711,7 @@ class Routes {
         newRouteView = SegmentCameraPreview(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
+            coach: argumentsToAdd['coach'] as UserResponse,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             courseIndex: argumentsToAdd['courseIndex'] as int,
             segments: argumentsToAdd['segments'] as List<Segment>);

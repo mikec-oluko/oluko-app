@@ -82,10 +82,28 @@ class TimerUtils {
         if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
         return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
       }(),
-      child: SegmentedIndeterminateProgressbar(
+      child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
+          currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)
+      /*SegmentedIndeterminateProgressbar(
         max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
         progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
-      ));
+      )*/
+      );
+
+  static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
+    if (totalRounds > 28) {
+      return CircularProgressIndicator(
+          strokeWidth: 10,
+          value: getProgressAscending(totalRounds.toInt(), currentRound.toInt()),
+          color: OlukoColors.primary,
+          backgroundColor: backgroundColor);
+    } else {
+      return SegmentedIndeterminateProgressbar(
+        max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
+        progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
+      );
+    }
+  }
 
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter, bool bothSide]) {
     return Container(
@@ -416,6 +434,10 @@ class TimerUtils {
 
   static double getProgress(int totalTime, int currentTime) {
     return 1 - (currentTime / totalTime);
+  }
+
+  static double getProgressAscending(int totalTime, int currentTime) {
+    return currentTime / totalTime;
   }
 
   static Widget getTextLabel(String text, BuildContext context, bool padding) {

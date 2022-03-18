@@ -1,19 +1,13 @@
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/recording_alert_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/settings_dialog.dart';
-import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
-import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -26,8 +20,9 @@ class SegmentCameraPreview extends StatefulWidget {
   final int segmentIndex;
   final List<Segment> segments;
   final int courseIndex;
+  final UserResponse coach;
 
-  SegmentCameraPreview({Key key, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  SegmentCameraPreview({Key key, this.coach, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -154,6 +149,7 @@ class _State extends State<SegmentCameraPreview> {
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
       'courseIndex': widget.courseIndex,
+      'coach': widget.coach,
       'workoutType': WorkoutType.segmentWithRecording,
       'segments': widget.segments,
     };
