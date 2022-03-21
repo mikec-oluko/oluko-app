@@ -29,6 +29,7 @@ class TimerUtils {
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.skyblue;
   static const Color backgroundColor =
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorSemiTransparent;
+  static const _maxStepsForSegmentedClock = 50;
 
 //CLOCKS
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
@@ -91,17 +92,33 @@ class TimerUtils {
       );
 
   static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
-    if (totalRounds > 28) {
-      return CircularProgressIndicator(
-          strokeWidth: 10,
-          value: getProgressAscending(totalRounds.toInt(), currentRound.toInt()),
-          color: OlukoColors.primary,
-          backgroundColor: backgroundColor);
-    } else {
+    if (totalRounds > _maxStepsForSegmentedClock) {
       return SegmentedIndeterminateProgressbar(
         max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
         progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
       );
+    } else {
+      // TODO: VITO
+      /**
+       * En caso que sean mas de 50 sets, devuelve un Stack (con el contenido expanded):
+       * El reloj segmentado con valor 100 (para que se vea continuo y con sombra)
+       * El circular progress indicator, (fondo transparente) y el progreso va sobre el reloj segmentado
+       * Se muestra igual al finalizar (reloj por debajo, progress completo arriba) 
+       */
+      return Stack(fit: StackFit.expand, children: [
+        SegmentedIndeterminateProgressbar(
+          max: 100,
+          progress: 0,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: CircularProgressIndicator(
+              strokeWidth: 10,
+              value: getProgressAscending(totalRounds.toInt(), currentRound.toInt()),
+              color: OlukoColors.primary,
+              backgroundColor: Colors.transparent),
+        )
+      ]);
     }
   }
 

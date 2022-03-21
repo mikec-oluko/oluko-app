@@ -29,6 +29,33 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
         : getSegmentedProgressBar(widget.max, widget.progress);
   }
 
+  double updatePaddingForSteps(int maxSteps) {
+    // TODO: VITO
+    /**
+       * Esta funcion va a determinar el padding entre cada segmento del reloj
+       * manteniendo siempre la misma distancia aprox
+       * Esos son los rangos donde el padding se puede romper/ver mal (como pasaba con 28)
+       * Se llama en el reloj, con el valor max de total steps
+       * Si queres podes hacer un refactor, yo trate de dejarlo claro
+       * math.pi/25 es el valor que encontre mas compatile para los menores a 34 segm
+       * Si en tu cel se ve diferente tendremos que cambiarlo
+       */
+    double defaultStepPadding = math.pi / 25;
+    if (maxSteps >= 34 && maxSteps <= 38) {
+      defaultStepPadding = math.pi / 12;
+    }
+    if (maxSteps >= 38 && maxSteps <= 42) {
+      defaultStepPadding = math.pi / 15;
+    }
+    if (maxSteps > 42 && maxSteps <= 46) {
+      defaultStepPadding = math.pi / 18;
+    }
+    if (maxSteps > 46 && maxSteps <= 50) {
+      defaultStepPadding = math.pi / 20;
+    }
+    return defaultStepPadding;
+  }
+
   Widget getStepProgress(double max, double progress) {
     return Stack(fit: StackFit.expand, children: [
       Neumorphic(
@@ -47,7 +74,8 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
             padding: EdgeInsets.all(10),
             child: CircularStepProgressIndicator(
               roundedCap: (_, isSelected) => true,
-              padding: math.pi / 15,
+              // TODO: VITO: ACA SE PIDE EL PADDING
+              padding: updatePaddingForSteps(max.toInt()),
               totalSteps: max.toInt(),
               width: 100,
               selectedStepSize: 10,
@@ -78,7 +106,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: CircularStepProgressIndicator(
-            padding: math.pi / 15,
+            padding: updatePaddingForSteps(max.toInt()),
             roundedCap: (_, isSelected) => true,
             totalSteps: max.toInt(),
             selectedColor: OlukoColors.primary,
