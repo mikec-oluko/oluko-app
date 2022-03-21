@@ -95,7 +95,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
               Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                 'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
                 'aspectRatio': content.mentoredContent.video.aspectRatio,
-                'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+                'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
               });
               updateAnnotationNotificationAsViewed(content);
             });

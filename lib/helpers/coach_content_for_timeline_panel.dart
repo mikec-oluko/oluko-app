@@ -63,7 +63,7 @@ class CoachTimelineFunctions {
         CoachTimelineItem newItem = CoachTimelineItem(
             coachId: element.coachId,
             coachReference: element.coachReference,
-            contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'personalizedVideo'),
             contentName: element.id == 'introVideo' ? 'Introduction Video' : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
             contentType: TimelineInteractionType.values[4],
@@ -128,8 +128,8 @@ class CoachTimelineFunctions {
       annotationContent.forEach((annotation) {
         if (annotation.notificationViewed == false) {
           CoachNotificationContent newItem = CoachNotificationContent(
-              contentTitle: OlukoLocalizations.get(context, 'mentoredVideo'),
-              contentSubtitle: OlukoLocalizations.get(context, 'mentoredVideo'),
+              contentTitle: OlukoLocalizations.get(context, 'personalizedVideo'),
+              contentSubtitle: OlukoLocalizations.get(context, 'personalizedVideo'),
               contentDescription: '',
               contentImage: annotation.video.thumbUrl,
               videoUrl: annotation.videoHLS ?? annotation.video.url,
