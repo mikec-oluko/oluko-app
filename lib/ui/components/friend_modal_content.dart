@@ -311,23 +311,26 @@ class _FriendModalContentState extends State<FriendModalContent> {
     if (city.isEmpty && country.isEmpty) {
       return const SizedBox();
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Row(
-        children: [
-          Text(
-            city,
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
-          ),
-          Text(
-            state,
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
-          ),
-          Text(
-            country,
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
-          )
-        ],
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          children: [
+            Text(
+              city,
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
+            ),
+            Text(
+              state,
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+            ),
+            Text(
+              country,
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+            )
+          ],
+        ),
       ),
     );
   }
