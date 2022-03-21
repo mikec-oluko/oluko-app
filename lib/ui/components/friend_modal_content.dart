@@ -295,14 +295,18 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Widget _getUserLocation() {
     String city = '';
     String country = '';
+    String state = '';
     if (widget.user.city != null && widget.user.city != 'null') {
       city = widget.user.city;
     }
-    if (widget.user.country != null && widget.user.country != 'null') {
+    if (widget.user.state != null && widget.user.state != 'null') {
       if (city != null) {
-        country = ', ';
+        state = ', ';
       }
-      country += widget.user.country;
+      state += '${widget.user.state} ';
+    }
+    if (widget.user.country != null && widget.user.country != 'null') {
+      country = widget.user.country;
     }
     if (city.isEmpty && country.isEmpty) {
       return const SizedBox();
@@ -313,11 +317,15 @@ class _FriendModalContentState extends State<FriendModalContent> {
         children: [
           Text(
             city,
-            style: const TextStyle(color: OlukoColors.primary, fontSize: 15),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
+          ),
+          Text(
+            state,
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
           ),
           Text(
             country,
-            style: const TextStyle(color: Colors.grey, fontSize: 15),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
           )
         ],
       ),
