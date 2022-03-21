@@ -609,7 +609,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           title: ProfileViewConstants.profileOwnProfileActiveCourses,
           optionLabel: OlukoLocalizations.get(context, 'viewAll'),
           onOptionTap: () {
-            //TODO: COURSE NAVIGATION
+            Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                      arguments: {'courses': _coursesToUse, 'title': OlukoLocalizations.get(context, 'activeCourses')});
           },
           children: contentForCourse != null
               ? contentForCourse

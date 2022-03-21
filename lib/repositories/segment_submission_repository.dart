@@ -21,7 +21,7 @@ class SegmentSubmissionRepository {
   }
 
   static Future<SegmentSubmission> create(
-      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, CoachRequest coachRequest) async {
+      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, bool hasCoachRequest) async {
     DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
 
     DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
@@ -32,8 +32,10 @@ class SegmentSubmissionRepository {
 
     DocumentReference segmentReference = projectReference.collection("segments").doc(segment.id);
 
+    DocumentReference coachReference = projectReference.collection("users").doc(coachId);
+
     DocumentReference coachRequestDocRef =
-        projectReference.collection('coachAssignments').doc(user.uid).collection('coachRequests').doc(coachRequest.id);
+        projectReference.collection('coachAssignments').doc(user.uid).collection('coachRequests').doc(coachId);
 
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
@@ -46,14 +48,15 @@ class SegmentSubmissionRepository {
         courseEnrollmentReference: courseEnrollmentReference,
         status: SegmentSubmissionStatusEnum.created,
         createdBy: user.uid,
-        coachId: coachRequest.coachId,
-        coachReference: coachRequest.coachReference,
+        coachId: coachId,
+        coachReference: coachReference,
         videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
 
     segmentSubmission.id = docRef.id;
     await docRef.set(segmentSubmission.toJson());
-
-    await coachRequestDocRef.update({'segment_submission_id': segmentSubmission.id, 'segment_submission_reference': docRef});
+    if (hasCoachRequest) {
+      await coachRequestDocRef.update({'segment_submission_id': segmentSubmission.id, 'segment_submission_reference': docRef});
+    }
 
     return segmentSubmission;
   }

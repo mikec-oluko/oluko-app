@@ -264,7 +264,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverList(
                 delegate: SliverChildListDelegate([
               Padding(
-                padding: EdgeInsets.only(right: 15, left: 15, top: 10),
+                padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
                   CourseUtils.toCourseDuration(
                       int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),

@@ -68,7 +68,7 @@ class _State extends State<CourseCard> {
                 )
               ],
             )),
-        if (widget.progress != null)
+        if (widget.actualCourse.completion != null)
           Expanded(
             flex: 1,
             child: Align(

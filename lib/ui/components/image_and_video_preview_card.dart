@@ -43,17 +43,13 @@ class _State extends State<ImageAndVideoPreviewCard> {
 
   @override
   void initState() {
-    setState(() {
-      definePreviewTittleOfTaskSubmission();
-      Future.delayed(Duration.zero, () {
-        definePreviewTitleByTypeOfContent(context);
-      });
-    });
+    definePreviewTittleOfTaskSubmission();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    definePreviewTitleByTypeOfContent(context);
     return Container(
       alignment: Alignment.center,
       decoration: getDecorationForContainer(),

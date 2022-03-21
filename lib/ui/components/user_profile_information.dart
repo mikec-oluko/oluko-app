@@ -18,6 +18,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class UserProfileInformation extends StatefulWidget {
   final UserResponse userToDisplayInformation;
@@ -95,7 +96,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     if (user.city == null || user.state == null || user.country == null) {
       return null;
     }
-    return "${user.city ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
+    return " ${user.city[0].toUpperCase() ?? ''}${user.city.substring(1).toLowerCase() ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
   }
 
   Widget _profileUserNeumorphicInformation(String location, List<String> valuesForArchivements) {
@@ -210,7 +211,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
+            padding: EdgeInsets.symmetric(vertical: 5),
             child: OlukoNeumorphicDivider(
               isFadeOut: true,
             ),
@@ -419,7 +420,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           child: Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
             child: Text(
-              '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+              UserHelper.getFullName(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
               style: OlukoFonts.olukoBigFont(
                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
                   custoFontWeight: FontWeight.w500),
@@ -431,10 +432,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           height: 5.0,
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 10.0, bottom: 10),
+          padding: const EdgeInsets.only(
+            left: 10.0,
+            bottom: 10,
+          ),
           child: IntrinsicHeight(
             child: Container(
-              height: 30,
+              height: ScreenUtils.height(context) * 0.09,
               width: 170,
               child: Wrap(
                 children: [

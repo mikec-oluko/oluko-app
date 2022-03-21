@@ -6,6 +6,7 @@ import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -111,7 +112,8 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                 widget.onSearchSubmit(searchResults as SearchResults<T>),
                             onSearchResults: (SearchResults<dynamic> searchResults) =>
                                 widget.onSearchResults(searchResults as SearchResults<T>),
-                            searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) => widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
+                            searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) =>
+                                widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
                             suggestionMethod: (String query, List<dynamic> collection) =>
                                 widget.suggestionMethod(query, collection as List<T>),
                           )),
@@ -167,13 +169,29 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
               : widget.showTitle
                   ? widget.showBackButton
                       ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: OlukoNeumorphicCircleButton(onPressed: widget.onPressed),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    //TODO: light behind
+                                    height: 55,
+                                    width: 55,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.pop(context),
+                                      child: OlukoBlurredButton(
+                                        childContent: Image.asset(
+                                          'assets/courses/left_back_arrow.png',
+                                          scale: 3.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                               Expanded(
                                 child: Align(
@@ -219,7 +237,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                               widget.onSearchSubmit(searchResults as SearchResults<T>),
                                           onSearchResults: (SearchResults<dynamic> searchResults) =>
                                               widget.onSearchResults(searchResults as SearchResults<T>),
-                                          searchMethod: (String query, List<dynamic> collection,List<dynamic> tags) =>
+                                          searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) =>
                                               widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
                                           suggestionMethod: (String query, List<dynamic> collection) =>
                                               widget.suggestionMethod(query, collection as List<T>),
