@@ -25,6 +25,9 @@ class TimerUtils {
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.skyblue;
   static const Color backgroundColor =
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorSemiTransparent;
+  static const _maxStepsForSegmentedClock = 50;
+  static const double _valueForNoSegmentsOnClock = 100;
+  static const double _segmentClockNoProgressValue = 0;
 
 //CLOCKS
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
@@ -79,24 +82,29 @@ class TimerUtils {
       }(),
       child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
           currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)
-      /*SegmentedIndeterminateProgressbar(
-        max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
-        progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
-      )*/
       );
 
   static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
-    if (totalRounds > 28) {
-      return CircularProgressIndicator(
-          strokeWidth: 10,
-          value: getProgressAscending(totalRounds.toInt(), currentRound.toInt()),
-          color: OlukoColors.primary,
-          backgroundColor: backgroundColor);
-    } else {
+    if (totalRounds < _maxStepsForSegmentedClock) {
       return SegmentedIndeterminateProgressbar(
         max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
         progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
       );
+    } else {
+      return Stack(fit: StackFit.expand, children: [
+        SegmentedIndeterminateProgressbar(
+          max: _valueForNoSegmentsOnClock,
+          progress: _segmentClockNoProgressValue,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: CircularProgressIndicator(
+              strokeWidth: 10,
+              value: getProgressAscending(totalRounds.toInt(), currentRound.toInt()),
+              color: OlukoColors.primary,
+              backgroundColor: Colors.transparent),
+        )
+      ]);
     }
   }
 
