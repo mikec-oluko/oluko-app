@@ -34,6 +34,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
           if (_controller != null) {
             _controller.pause();
           }
+          Navigator.pop(context);
         },
       ),
       body: Container(

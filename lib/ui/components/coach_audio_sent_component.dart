@@ -30,6 +30,16 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
   bool playedOnce = false;
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void deactivate() {
+    audioPlayer.pause();
+    super.deactivate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAudioComponent(context) : defaultAudioSent(context);
   }
