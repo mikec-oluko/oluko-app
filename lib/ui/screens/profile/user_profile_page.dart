@@ -45,6 +45,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.da
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
@@ -468,7 +469,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 : OlukoNeumorphicPrimaryButton(
                     title: OlukoLocalizations.get(context, _connectButtonTitle),
                     onPressed: () {
-                      AppMessages().showDialogActionMessage(context, '', 2);
+                      if (connectStatus != UserConnectStatus.connected) {
+                        AppMessages().showDialogActionMessage(context, '', 2);
+                      }
                       checkUserConnectStatus(userRequested);
                       BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
                     },
@@ -482,7 +485,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void checkUserConnectStatus(UserResponse userRequested) {
     switch (connectStatus) {
       case UserConnectStatus.connected:
-        BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
+        BottomDialogUtils.removeConfirmationPopup(
+            _currentAuthUser.id, userRequested, friendData, context, BlocProvider.of<FriendBloc>(context));
+
         break;
       case UserConnectStatus.notConnected:
         BlocProvider.of<FriendRequestBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
@@ -610,7 +615,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           optionLabel: OlukoLocalizations.get(context, 'viewAll'),
           onOptionTap: () {
             Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
-                      arguments: {'courses': _coursesToUse, 'title': OlukoLocalizations.get(context, 'activeCourses')});
+                arguments: {'courses': _coursesToUse, 'title': OlukoLocalizations.get(context, 'activeCourses')});
           },
           children: contentForCourse != null
               ? contentForCourse
@@ -686,13 +691,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
               frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                   ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
             ),
-            progress: courseInfo.completion ?? getCourseProgress(
-                courseEnrollments: _courseEnrollmentList,
-                course: _coursesToUse.isNotEmpty
-                    ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
-                        ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
-                        : null
-                    : null),
+            progress: courseInfo.completion ??
+                getCourseProgress(
+                    courseEnrollments: _courseEnrollmentList,
+                    course: _coursesToUse.isNotEmpty
+                        ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
+                            ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
+                            : null
+                        : null),
             canUnenrollCourse: _isCurrentUser,
             unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)));
   }

@@ -448,7 +448,8 @@ class _FriendModalContentState extends State<FriendModalContent> {
           title: OlukoLocalizations.of(context).find('remove'),
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
-              _showRemoveConfirmationPopup(friendState.friendData);
+              BottomDialogUtils.removeConfirmationPopup(
+                  widget.currentUserId, widget.user, friendState.friendData, context, widget.blocFriends);
             }
           },
         ),
