@@ -30,6 +30,8 @@ class TimerUtils {
   static const Color backgroundColor =
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorSemiTransparent;
   static const _maxStepsForSegmentedClock = 50;
+  static const double _valueForNoSegmentsOnClock = 100;
+  static const double _segmentClockNoProgressValue = 0;
 
 //CLOCKS
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
@@ -107,8 +109,8 @@ class TimerUtils {
        */
       return Stack(fit: StackFit.expand, children: [
         SegmentedIndeterminateProgressbar(
-          max: 100,
-          progress: 0,
+          max: _valueForNoSegmentsOnClock,
+          progress: _segmentClockNoProgressValue,
         ),
         Padding(
           padding: const EdgeInsets.all(15.0),
