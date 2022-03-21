@@ -46,7 +46,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: TitleBody(OlukoLocalizations.get(context, 'favourites')),
+                    child: TitleBody(OlukoLocalizations.get(context, 'favorites')),
                   ),
                 ],
               ),

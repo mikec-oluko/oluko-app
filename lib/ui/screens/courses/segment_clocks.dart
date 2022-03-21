@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -27,6 +29,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
@@ -43,6 +46,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
@@ -55,12 +59,14 @@ class SegmentClocks extends StatefulWidget {
   final List<Segment> segments;
   final int courseIndex;
   final bool fromChallenge;
+  final UserResponse coach;
 
   const SegmentClocks(
       {Key key,
       this.courseIndex,
       this.workoutType,
       this.classIndex,
+      this.coach,
       this.segmentIndex,
       this.courseEnrollment,
       this.segments,
@@ -126,6 +132,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   CoachRequest _coachRequest;
   XFile videoRecorded;
   bool _isFromChallenge = false;
+  Duration currentTime;
 
   @override
   void initState() {
@@ -252,6 +259,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ? BlocBuilder<KeyboardBloc, KeyboardState>(
               builder: (context, state) {
                 keyboardVisibilty = state.setVisible;
+                textController = state.textEditingController;
                 return !keyboardVisibilty && isSegmentWithoutRecording()
                     ? SlidingUpPanel(
                         controller: panelController,
@@ -366,17 +374,26 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       : isSegmentWithoutRecording()
                           ? ScreenUtils.height(context)
                           : ScreenUtils.height(context) * 0.6,
-              child: Clock(
-                workState: workState,
-                segments: widget.segments,
-                segmentIndex: widget.segmentIndex,
-                timerEntries: timerEntries,
-                textController: textController,
-                goToNextStep: _goToNextStep,
-                actionAMRAP: actionAMRAP,
-                setPaused: setPaused,
-                workoutType: workoutType,
-                keyboardVisibilty: keyboardVisibilty,
+              child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
+                builder: (context, state) {
+                  if (state is CurrentTimeValue) {
+                    currentTime = state.timerTask;
+                  }
+                  return Clock(
+                    workState: workState,
+                    segments: widget.segments,
+                    segmentIndex: widget.segmentIndex,
+                    timerEntries: timerEntries,
+                    textController: textController,
+                    goToNextStep: _goToNextStep,
+                    actionAMRAP: actionAMRAP,
+                    setPaused: setPaused,
+                    workoutType: workoutType,
+                    keyboardVisibilty: keyboardVisibilty,
+                    timerTaskIndex: timerTaskIndex,
+                    timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
+                  );
+                },
               ),
             ),
             SizedBox(
@@ -455,7 +472,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         },
       );
     } else {
-      SoundPlayer.playAsset(SoundsEnum.classFinished);
+      SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished);
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.completedClass],
@@ -598,6 +615,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (timerEntries[timerTaskIndex].stopwatch) {
       _startStopwatch();
     }
+    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeZero();
   }
 
   _saveStopwatch() {
@@ -826,8 +844,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
-    BlocProvider.of<SegmentSubmissionBloc>(context)
-        .create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, _coachRequest);
+    BlocProvider.of<SegmentSubmissionBloc>(context).create(
+        _user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, widget.coach.id, _coachRequest != null);
   }
 
 //STOPWATCH FUNCTIONS

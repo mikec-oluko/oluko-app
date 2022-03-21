@@ -78,7 +78,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                       child: Text(
-                        OlukoLocalizations.get(context, 'hey'),
+                        OlukoLocalizations.get(context, 'hello'),
                         style: OlukoNeumorphism.isNeumorphismDesign
                             ? OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)
                             : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),

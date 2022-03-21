@@ -83,7 +83,7 @@ class VideoService {
     return durationInMilliseconds;
   }
 
-  static Future<String> createVideoThumbnail(String videoPath) async {
+  static Future<String>  createVideoThumbnail(String videoPath) async {
     String thumbFilePath = null;
     try {
       final String outDirPath = path.dirname(videoPath);

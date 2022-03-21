@@ -22,8 +22,11 @@ class CourseService {
     });
 
     ids.forEach((id) {
-      Class classToAdd = courseClasses.where((element) => element.id == id).toList()[0];
-      sortedClasses.add(classToAdd);
+      List<Class> classes = courseClasses.where((element) => element.id == id).toList();
+      if (classes.isNotEmpty) {
+        Class classToAdd = classes[0];
+        sortedClasses.add(classToAdd);
+      }
     });
 
     return sortedClasses;

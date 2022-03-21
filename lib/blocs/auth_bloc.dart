@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
+import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
@@ -266,6 +267,8 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<NotificationBloc>(context).dispose();
       BlocProvider.of<CoachMediaBloc>(context).dispose();
       BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
+      BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
+
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false);
       } else {

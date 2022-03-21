@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -41,10 +42,10 @@ class CourseEnrollmentListSuccess extends SegmentSubmissionState {
 class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   SegmentSubmissionBloc() : super(Loading());
 
-  void create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, CoachRequest coachRequest) async {
+  void create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, bool hasCoachRequest) async {
     try {
       SegmentSubmission segmentSubmission =
-          await SegmentSubmissionRepository.create(user, courseEnrollment, segment, videoPath, coachRequest);
+          await SegmentSubmissionRepository.create(user, courseEnrollment, segment, videoPath, coachId, hasCoachRequest);
       emit(CreateSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

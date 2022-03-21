@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/screens/courses/initial_timer_panel.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -30,6 +31,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
   _CountdownOverlayState(int seconds) {
     countdown = seconds;
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      SoundUtils.playSound(countdown - 1, widget.seconds, 2);
       setState(() {
         if (countdown > 1) {
           countdown--;

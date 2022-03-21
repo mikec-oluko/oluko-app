@@ -76,8 +76,12 @@ class VideoBloc extends Cubit<VideoState> {
       TaskSubmission taskSubmission]) async {
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
-      final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
-
+      String thumbnailFilePath;
+      try {
+        thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
+      } catch (e, stackTrace) {
+        thumbnailFilePath = null;
+      }
       if (GlobalConfiguration().getValue('uploadOnIsolate') == 'true') {
         // A Stream that handles communication between isolates
         final p = ReceivePort();
