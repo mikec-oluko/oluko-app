@@ -334,13 +334,50 @@ class _CourseMarketingState extends State<CourseMarketing> {
         (courseEnrollment == null || courseEnrollment.completion >= 1);
     if (showEnorollButton) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-          listener: (context, courseEnrollmentState) {
-            if (courseEnrollmentState is CreateEnrollmentSuccess) {
-              BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
-              Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-            }
-          },
-          child: enrollButton());
+        listener: (context, courseEnrollmentState) {
+          if (courseEnrollmentState is CreateEnrollmentSuccess) {
+            BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
+            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+          }
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              if (OlukoNeumorphism.isNeumorphismDesign)
+                OlukoNeumorphicPrimaryButton(
+                  thinPadding: true,
+                  title: OlukoLocalizations.get(context, 'enroll'),
+                  onPressed: () async {
+                    if (_disableAction == false) {
+                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                      if (!widget.isCoachRecommendation) {
+                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                      }
+                    }
+                    _disableAction = true;
+                  },
+                )
+              else
+                OlukoPrimaryButton(
+                  title: OlukoLocalizations.get(context, 'enroll'),
+                  onPressed: () async {
+                    if (_disableAction == false) {
+                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                      if (!widget.isCoachRecommendation) {
+                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                      }
+                    }
+                    _disableAction = true;
+                  },
+                ),
+            ],
+          ),
+        ),
+      );
     } else {
       return const SizedBox();
     }
