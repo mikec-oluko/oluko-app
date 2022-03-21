@@ -54,7 +54,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
         emit(Loading());
         List<CoachAudioMessage> audioMessages = [];
-        if (!snapshot.docs.isNotEmpty) {
+        if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((doc) {
             final Map<String, dynamic> content = doc.data();
             audioMessages.add(CoachAudioMessage.fromJson(content));
