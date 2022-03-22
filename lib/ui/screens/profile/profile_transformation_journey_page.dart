@@ -211,7 +211,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           onPanelClosed: () {
             BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
           },
-          backdropEnabled: true,
+          backdropEnabled: false,
           isDraggable: false,
           margin: EdgeInsets.all(0),
           header: const SizedBox(),
