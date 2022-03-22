@@ -250,15 +250,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   color: OlukoColors.primary,
                   onPressed: () {
                     if (_coachRequest != null) {
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: CoachRequestContent(
-                          name: widget.coach.firstName,
-                          image: widget.coach.avatar,
-                          onNotRecordingAction: navigateToSegmentWithoutRecording,
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
+                      showCoachDialog();
                     } else {
                       navigateToSegmentWithoutRecording();
                     }
@@ -267,6 +259,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               ],
             ),
           );
+  }
+
+  void showCoachDialog() {
+    BottomDialogUtils.showBottomDialog(
+      context: context,
+      content: CoachRequestContent(
+        name: widget.coach.firstName,
+        image: widget.coach.avatar,
+        onNotRecordingAction: navigateToSegmentWithoutRecording,
+        onRecordingAction: navigateToSegmentWithRecording,
+      ),
+    );
   }
 
   CoachRequest getSegmentCoachRequest(String segmentId) {
@@ -365,15 +369,19 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           const Expanded(child: SizedBox()),
           GestureDetector(
               onTap: () {
-                if (widget.coach != null) {
-                  if (widget.segment.isChallenge && !_canStartSegment) {
-                  } else {
-                    BottomDialogUtils.showBottomDialog(
-                      context: context,
-                      content: SelfRecordingContent(
-                        onRecordingAction: navigateToSegmentWithRecording,
-                      ),
-                    );
+                if (_coachRequest != null) {
+                  showCoachDialog();
+                } else {
+                  if (widget.coach != null) {
+                    if (widget.segment.isChallenge && !_canStartSegment) {
+                    } else {
+                      BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content: SelfRecordingContent(
+                          onRecordingAction: navigateToSegmentWithRecording,
+                        ),
+                      );
+                    }
                   }
                 }
               },
@@ -582,15 +590,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   _onStartPressed() {
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
-      BottomDialogUtils.showBottomDialog(
-        context: context,
-        content: CoachRequestContent(
-          name: widget.coach.firstName,
-          image: widget.coach.avatar,
-          onNotRecordingAction: navigateToSegmentWithoutRecording,
-          onRecordingAction: navigateToSegmentWithRecording,
-        ),
-      );
+      showCoachDialog();
     } else {
       navigateToSegmentWithoutRecording();
     }

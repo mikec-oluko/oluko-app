@@ -178,7 +178,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         coachRequests = coachRequestStreamState.values;
                       }
                       _movements = movementState.movements;
-                      _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id);
+                      _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id, widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
                       return GestureDetector(
                         onTap: () {
                           FocusScope.of(context).unfocus();
@@ -845,7 +845,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
     BlocProvider.of<SegmentSubmissionBloc>(context).create(
-        _user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, widget.coach.id, _coachRequest != null);
+        _user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest != null);
   }
 
 //STOPWATCH FUNCTIONS
