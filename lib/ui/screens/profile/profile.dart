@@ -73,7 +73,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                child: Stack(
+                child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
                     userInformationSection(),
                     buildOptionsList(),
@@ -110,21 +111,19 @@ class _ProfilePageState extends State<ProfilePage> {
     return returnWidget;
   }
 
-  Padding buildOptionsList() {
-    return Padding(
-      padding: EdgeInsets.only(
-          top: OlukoNeumorphism.isNeumorphismDesign
-              ? ScreenUtils.height(context) < 700
-                  ? ScreenUtils.height(context) / 2.65
-                  : ScreenUtils.height(context) / 3
-              : 170),
-      child: ListView.builder(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: ScreenUtils.height(context) < 1000 ? null : NeverScrollableScrollPhysics(),
-          itemCount: ProfileOptions.profileOptions.length,
-          itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
-    );
+  Widget buildOptionsList() {
+    // padding: EdgeInsets.only(
+    //     top: OlukoNeumorphism.isNeumorphismDesign
+    //         ? ScreenUtils.height(context) < 700
+    //             ? ScreenUtils.height(context) / 2.65
+    //             : ScreenUtils.height(context) / 3
+    //         : 170),
+    return ListView.builder(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: ProfileOptions.profileOptions.length,
+        itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index]));
   }
 
   Widget profileOptions(ProfileOptions option) {
