@@ -122,7 +122,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                                   Padding(
                                                     padding: const EdgeInsets.only(left: 10.0),
                                                     child: Text(
-                                                      OlukoLocalizations.get(context, 'tapToUpload'),
+                                                      OlukoLocalizations.get(context, 'upload'),
                                                       style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
                                                     ),
                                                   )
@@ -139,7 +139,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                           child: Row(
                                             children: [
                                               OlukoOutlinedButton(
-                                                  title: OlukoLocalizations.get(context, 'tapToUpload'),
+                                                  title: OlukoLocalizations.get(context, 'upload'),
                                                   onPressed: () {
                                                     BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
                                                   }),

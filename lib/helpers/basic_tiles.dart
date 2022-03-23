@@ -9,17 +9,17 @@ class BasicTile {
 
   static final basicTiles = <BasicTile>[
     BasicTile(title: "Top Queries", tiles: [
-      BasicTile(title: "What is included in the membership?", tiles: [
+      BasicTile(title: "What is included in my membership?", tiles: [
         BasicTile(title: " No information to display, information will be added as soon as possible, check back later."),
       ]),
-      BasicTile(title: "How many courses do i get?", tiles: [
+      BasicTile(title: "How many courses do I get?", tiles: [
         BasicTile(title: " No information to display, information will be added as soon as possible, check back later. "),
       ]),
       BasicTile(title: "Which classes are right for me?", tiles: [
         BasicTile(title: " No information to display, information will be added as soon as possible, check back later. "),
       ]),
     ]),
-    BasicTile(title: "Plans, Pricing and Payments", tiles: [
+    BasicTile(title: "Plans, Pricing, and Payments", tiles: [
       BasicTile(title: "Plans", tiles: [
         BasicTile(title: "Plan 1", tiles: [
           BasicTile(title: " No information to display, information will be added as soon as possible, check back later. "),
