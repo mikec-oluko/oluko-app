@@ -30,7 +30,12 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     final _successText = OlukoLocalizations.get(context, 'uploadedSuccessfully');
     final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
-      color: OlukoNeumorphismColors.appBackgroundColor,
+      decoration: BoxDecoration(
+        borderRadius: OlukoNeumorphism.isNeumorphismDesign
+            ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+            : BorderRadius.zero,
+        color: OlukoNeumorphismColors.appBackgroundColor,
+      ),
       width: MediaQuery.of(context).size.width,
       height: 300,
       child: Row(

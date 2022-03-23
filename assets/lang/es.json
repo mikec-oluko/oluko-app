@@ -310,5 +310,13 @@
     "typeScore": "Toca aquí para ingresar el resultado",
     "cancelMssg": "¿Desea cancelar?",
     "cancelTxt": "Al cancelar se eliminaran todos los filtros seleccionados, por favor confirme la acción",
-    "recordingConfirmation": "Esta seguro que quiere grabar el segmento?"
+    "recordingConfirmation": "Esta seguro que quiere grabar el segmento?",
+    "uploadFailed": "Subida fallida.",
+    "appFailed": "La aplicación falló.",
+    "noFileSelected": "No se seleccionó ningún archivo.",
+    "fileSizeFailed": "Se excede el tamaño del archivo.",
+    "fileFormatException": "El formato de archivo no es compatible.",
+    "fileLoadFailed": "No se pudo cargar el archivo.",
+    "invalidFileDuration": "La duración del archivo no es correcta.",
+    "invalidValue": "El valor ingresado no es correcto."
 }

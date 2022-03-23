@@ -118,7 +118,9 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                       children: [
                         Text(
                           TimeConverter.getDateAndTimeOnStringFormat(
-                              dateToFormat: widget.audioMessageItem != null ? widget.audioMessageItem.createdAt : Timestamp.now(),
+                              dateToFormat: widget.audioMessageItem != null && widget.audioMessageItem.createdAt != null
+                                  ? widget.audioMessageItem.createdAt
+                                  : Timestamp.now(),
                               context: context),
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,

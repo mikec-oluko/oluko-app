@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/utils/oluko_bloc_exception.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
@@ -23,16 +25,16 @@ class ProfileAvatarSuccess extends ProfileAvatarState {
   // ProfileAvatarSuccess({this.lockPanel = false});
 }
 
-class ProfileAvatarFailure extends ProfileAvatarState {
-  dynamic exception;
-  ProfileAvatarFailure({this.exception});
+class ProfileAvatarFailure extends OlukoException with ProfileAvatarState {
+  ProfileAvatarFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
+      : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
 }
 
 class ProfileAvatarRequirePermissions extends ProfileAvatarState {}
 
 class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   ProfileAvatarBloc() : super(ProfileAvatarDefault());
-  ProfileRepository _profileRepository = ProfileRepository();
+  final ProfileRepository _profileRepository = ProfileRepository();
 
   void uploadProfileAvatarImage({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     XFile _image;
@@ -51,10 +53,14 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       }
 
       if (_image == null && _image is! XFile) {
-        emit(ProfileAvatarFailure(exception: Exception()));
+        emit(ProfileAvatarFailure(
+            exception: Exception(),
+            exceptionType: ExceptionTypeEnum.loadFileFailed,
+            exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
         return;
       } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat) {
-        emit(ProfileAvatarFailure(exception: Exception()));
+        emit(ProfileAvatarFailure(
+            exception: Exception(), exceptionType: ExceptionTypeEnum.uploadFailed, exceptionSource: ExceptionTypeSourceEnum.invalidFormat));
         return;
       }
       emit(ProfileAvatarLoading());
@@ -65,9 +71,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         exception,
         stackTrace: stackTrace,
       );
-
-      emit(ProfileAvatarFailure(exception: exception));
-      // rethrow;
+      emit(ProfileAvatarFailure(exception: exception, exceptionType: ExceptionTypeEnum.appFailed));
       return;
     }
   }
