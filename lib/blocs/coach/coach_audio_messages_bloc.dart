@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
@@ -54,14 +55,14 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
         emit(Loading());
         List<CoachAudioMessage> audioMessages = [];
-        if (!snapshot.docs.isNotEmpty) {
+        if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((doc) {
             final Map<String, dynamic> content = doc.data();
             audioMessages.add(CoachAudioMessage.fromJson(content));
           });
-          if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
-            audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-          }
+          // if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
+          //   audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+          // }
         }
         emit(CoachAudioMessagesSuccess(coachAudioMessages: audioMessages));
       });
@@ -88,9 +89,9 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     }
   }
 
-  void saveAudioForCoach(File audioRecorded, String userId, String coachId) async {
+  void saveAudioForCoach({@required File audioRecorded, @required String userId, @required String coachId, Duration audioDuration}) async {
     try {
-      AudioMessageSubmodel audioContent = await _processAudio(audioRecorded);
+      AudioMessageSubmodel audioContent = await _processAudio(audioRecorded, audioDuration);
       CoachAudioMessage messageUploaded = await _coachAudioMessagesRepository.saveAudioForCoach(audioContent, userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -115,7 +116,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     }
   }
 
-  Future<AudioMessageSubmodel> _processAudio(File audioRecorded) async {
+  Future<AudioMessageSubmodel> _processAudio(File audioRecorded, Duration audioDuration) async {
     const _uuid = Uuid();
     final String _audioId = _uuid.v1();
     try {
@@ -125,7 +126,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       audiosDir.createSync(recursive: true);
       final _audioPath = audioRecorded.path;
 
-      AudioMessageSubmodel _audioMessageSubmodel = await uploadAudio(_audioId, _audioPath);
+      AudioMessageSubmodel _audioMessageSubmodel = await uploadAudio(_audioId, _audioPath, audioDuration);
       return _audioMessageSubmodel;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -137,13 +138,13 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     }
   }
 
-  Future<AudioMessageSubmodel> uploadAudio(String audioId, String audioPath) async {
+  Future<AudioMessageSubmodel> uploadAudio(String audioId, String audioPath, Duration audioDuration) async {
     String _audioUrl;
     AudioMessageSubmodel _audioMessageSubmodel;
     try {
       if (audioPath != null) {
         _audioUrl = await VideoProcess.uploadFile(audioPath, audioId);
-        _audioMessageSubmodel = AudioMessageSubmodel(url: _audioUrl, duration: 0);
+        _audioMessageSubmodel = AudioMessageSubmodel(url: _audioUrl, duration: audioDuration.inMilliseconds);
       }
       return _audioMessageSubmodel;
     } catch (exception, stackTrace) {

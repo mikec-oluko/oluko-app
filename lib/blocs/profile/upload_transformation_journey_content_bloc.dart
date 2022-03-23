@@ -6,8 +6,11 @@ import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:oluko_app/models/utils/oluko_bloc_exception.dart';
+import 'package:path/path.dart' as p;
 
 abstract class TransformationJourneyContentState {}
 
@@ -19,9 +22,9 @@ class TransformationJourneyContentOpen extends TransformationJourneyContentState
 
 class TransformationJourneyContentSuccess extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentFailure extends TransformationJourneyContentState {
-  dynamic exception;
-  TransformationJourneyContentFailure({this.exception});
+class TransformationJourneyContentFailure extends OlukoException with TransformationJourneyContentState {
+  TransformationJourneyContentFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
+      : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
 }
 
 class TransformationJourneyRequirePermissions extends TransformationJourneyContentState {}
@@ -32,20 +35,25 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
   void uploadTransformationJourneyContent({DeviceContentFrom uploadedFrom, int indexForContent}) async {
     XFile _image;
     try {
-
       if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
         emit(TransformationJourneyRequirePermissions());
         return;
       }
-      
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.pickImage(source: ImageSource.gallery);
       } else if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.pickImage(source: ImageSource.camera);
       }
-      if (_image == null) {
-        emit(TransformationJourneyContentFailure(exception: new Exception()));
+      if (_image == null && _image is! XFile) {
+        emit(TransformationJourneyContentFailure(
+            exception: Exception(),
+            exceptionType: ExceptionTypeEnum.loadFileFailed,
+            exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
+        return;
+      } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat) {
+        emit(TransformationJourneyContentFailure(
+            exception: Exception(), exceptionType: ExceptionTypeEnum.uploadFailed, exceptionSource: ExceptionTypeSourceEnum.invalidFormat));
         return;
       }
       emit(TransformationJourneyContentLoading());

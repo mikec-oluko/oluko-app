@@ -333,8 +333,11 @@ class _CoachProfileState extends State<CoachProfile> {
             isExpanded: false,
             title: OlukoLocalizations.get(context, 'saveAudioCoach'),
             onPressed: () {
-              BlocProvider.of<CoachAudioMessageBloc>(context)
-                  .saveAudioForCoach(File(_recorder.audioUrl), widget.currentUser.id, widget.coachUser.id);
+              BlocProvider.of<CoachAudioMessageBloc>(context).saveAudioForCoach(
+                  audioRecorded: File(_recorder.audioUrl),
+                  coachId: widget.coachUser.id,
+                  userId: widget.currentUser.id,
+                  audioDuration: durationToSave);
               BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
               setState(() {
                 _audioRecorded = !_audioRecorded;
@@ -446,7 +449,7 @@ class _CoachProfileState extends State<CoachProfile> {
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
-      durationFromRecord: isPreview ? durationToSave : null,
+      durationFromRecord: isPreview ? durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
       onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );

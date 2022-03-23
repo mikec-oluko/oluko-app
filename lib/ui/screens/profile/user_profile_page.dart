@@ -35,6 +35,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
+import 'package:oluko_app/ui/components/modal_exception_message.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -162,6 +163,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   updatePanelProperties(300, false);
                 });
               }
+              if (state is ProfileCoverImageFailure) {
+                setState(() {
+                  updatePanelProperties(100, true);
+                });
+              }
             },
           ),
           BlocListener<ProfileAvatarBloc, ProfileAvatarState>(
@@ -173,6 +179,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
               } else {
                 setState(() {
                   updatePanelProperties(300, false);
+                });
+              }
+              if (state is ProfileAvatarFailure) {
+                setState(() {
+                  updatePanelProperties(100, true);
                 });
               }
             },
@@ -212,6 +223,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
           maxHeight: _panelMaxHeight,
           collapsed: defaultWidgetNoContent,
           controller: _panelController,
+          borderRadius: OlukoNeumorphism.isNeumorphismDesign
+              ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+              : BorderRadius.zero,
           panel: _isNewCoverImage ? profileCoverImageBuilder(profileViewContext) : profileAvatarBuilder(profileViewContext),
           body: buildProfileView(userRequested),
         ),
@@ -237,7 +251,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
         _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
       }
       if (state is ProfileCoverImageFailure) {
-        _panelController.close();
+        _contentForPanel = ModalExceptionMessage(
+            exceptionType: state.exceptionType,
+            onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
+            exceptionSource: state.exceptionSource);
       }
       if (state is ProfileCoverRequirePermissions) {
         _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
@@ -266,7 +283,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
       }
       if (state is ProfileAvatarFailure) {
-        _panelController.close();
+        _contentForPanel = ModalExceptionMessage(
+            exceptionType: state.exceptionType,
+            onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
+            exceptionSource: state.exceptionSource);
+
+        // _panelController.close();
       }
       if (state is ProfileAvatarRequirePermissions) {
         _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
@@ -616,7 +638,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           optionLabel: OlukoLocalizations.get(context, 'viewAll'),
           onOptionTap: () {
             Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
-                      arguments: {'courses': _coursesToUse, 'title': OlukoLocalizations.get(context, 'activeCourses')});
+                arguments: {'courses': _coursesToUse, 'title': OlukoLocalizations.get(context, 'activeCourses')});
           },
           children: contentForCourse != null
               ? contentForCourse

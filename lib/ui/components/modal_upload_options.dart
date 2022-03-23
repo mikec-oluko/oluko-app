@@ -33,7 +33,12 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
 
   Widget returnList(BuildContext context) {
     return Container(
-      color: OlukoNeumorphismColors.appBackgroundColor,
+      decoration: BoxDecoration(
+        borderRadius: OlukoNeumorphism.isNeumorphismDesign
+            ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+            : BorderRadius.zero,
+        color: OlukoNeumorphismColors.appBackgroundColor,
+      ),
       width: MediaQuery.of(context).size.width,
       height: 100,
       child: ListView(
@@ -103,7 +108,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromCamera(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context).uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
+        BlocProvider.of<ProfileAvatarBloc>(context)
+            .uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera, contentFor: UploadFrom.profileImage);
         break;
       case UploadFrom.profileCoverImage:
         BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(
@@ -121,7 +127,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromGallery(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context).uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
+        BlocProvider.of<ProfileAvatarBloc>(context)
+            .uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery, contentFor: UploadFrom.profileImage);
         break;
       case UploadFrom.profileCoverImage:
         BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(

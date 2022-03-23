@@ -311,5 +311,13 @@
     "typeScore": "Tap here to type the score",
     "cancelMssg": "Clear Filters?",
     "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
-    "recordingConfirmation": "Are you sure you want to record this segment?"
+    "recordingConfirmation": "Are you sure you want to record this segment?",
+    "uploadFailed": "Upload failed.",
+    "appFailed": "App failed.",
+    "noFileSelected": "No file was selected.",
+    "fileSizeFailed": "File size is exceeded.",
+    "fileFormatException": "The file format is not supported.",
+    "fileLoadFailed": "Could not load file.",
+    "invalidFileDuration": "The duration of the file is not accepted.",
+    "invalidValue": "The entered value is not correct."
 }
