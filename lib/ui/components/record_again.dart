@@ -6,6 +6,7 @@ import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class RecordAgain extends StatefulWidget {
   final Function() onPressed;
@@ -20,9 +21,7 @@ class _State extends State<RecordAgain> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.taskCardBackground),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.taskCardBackground),
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -42,21 +41,16 @@ class _State extends State<RecordAgain> {
                         children: [
                           Text(
                             'Record Again?',
-                            style: TextStyle(
-                                fontSize: 25,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                           Align(
                             alignment: Alignment.center,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, right: 10),
+                              padding: const EdgeInsets.only(top: 8.0, right: 10),
                               child: Text(
-                                'Are you sure you want to update your recording? Doing this will erase your previous recording.',
+                                OlukoLocalizations.get(context, 'updateRecording'),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 17, color: Colors.white60),
+                                style: TextStyle(fontSize: 17, color: Colors.white60),
                               ),
                             ),
                           ),

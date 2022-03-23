@@ -111,11 +111,11 @@ class _State extends State<SegmentCameraPreview> {
                                         textAlign: TextAlign.center,
                                         style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300, customColor: OlukoColors.white))),
                                 startButton(),
-                                Padding(
+                                /*Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2),
                                     child: Text(OlukoLocalizations.of(context).find('cameraWarning'),
                                         textAlign: TextAlign.center,
-                                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300, customColor: OlukoColors.primary)))
+                                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300, customColor: OlukoColors.primary)))*/
                               ]))),
                     ],
                   ),

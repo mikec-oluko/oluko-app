@@ -26,7 +26,7 @@ class OlukoErrorMessage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   this.section != null
-                      ? OlukoLocalizations.get(context, 'errorOcurredOn') + this.section
+                      ? OlukoLocalizations.get(context, 'errorOccurredOn') + this.section
                       : returnErrorText(context, whyIsError),
                   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
                 ),
@@ -43,7 +43,7 @@ class OlukoErrorMessage extends StatelessWidget {
     if (whyIsError == ErrorTypeOption.noContent) {
       _contentForTitle = OlukoLocalizations.get(context, 'noContent');
     } else {
-      _contentForTitle = OlukoLocalizations.get(context, 'errorOcurred');
+      _contentForTitle = OlukoLocalizations.get(context, 'errorOccurred');
     }
     return _contentForTitle;
   }

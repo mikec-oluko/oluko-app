@@ -27,7 +27,7 @@ class UploadingModalSuccess extends StatefulWidget {
 class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
   @override
   Widget build(BuildContext context) {
-    final _successText = OlukoLocalizations.get(context, 'uploadedSuccessfully');
+    final _successText = OlukoLocalizations.get(context, 'uploadSuccessful');
     final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
       color: OlukoNeumorphismColors.appBackgroundColor,

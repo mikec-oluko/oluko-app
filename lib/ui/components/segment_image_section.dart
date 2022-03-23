@@ -209,7 +209,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   isExpanded: false,
                   title: OlukoNeumorphism.isNeumorphismDesign
                       ? OlukoLocalizations.get(context, 'start')
-                      : OlukoLocalizations.get(context, 'startWorkouts'),
+                      : OlukoLocalizations.get(context, 'startWorkout'),
                   onPressed: () {
                     if (_coachRequest != null) {
                       //TODO: CHECK CHALLENGE
@@ -246,7 +246,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 OlukoPrimaryButton(
                   title: OlukoNeumorphism.isNeumorphismDesign
                       ? OlukoLocalizations.get(context, 'start')
-                      : OlukoLocalizations.get(context, 'startWorkouts'),
+                      : OlukoLocalizations.get(context, 'startWorkout'),
                   color: OlukoColors.primary,
                   onPressed: () {
                     if (_coachRequest != null) {

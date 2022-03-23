@@ -103,7 +103,7 @@ class AuthBloc extends Cubit<AuthState> {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (user.currentPlan == -100) {
       FirebaseAuth.instance.signOut();
-      AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
+      AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
       emit(AuthGuest());
       return;
     } else if (firebaseUser?.emailVerified != null ? !firebaseUser.emailVerified : true) {
@@ -163,7 +163,7 @@ class AuthBloc extends Cubit<AuthState> {
       //If there is no associated user for this account
       if (userResponse == null) {
         FirebaseAuth.instance.signOut();
-        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFound'));
         emit(AuthGuest());
         return;
       }
@@ -211,7 +211,7 @@ class AuthBloc extends Cubit<AuthState> {
       //If there is no associated user for this account
       if (user == null) {
         FirebaseAuth.instance.signOut();
-        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFound'));
         emit(AuthGuest());
         return;
       }
