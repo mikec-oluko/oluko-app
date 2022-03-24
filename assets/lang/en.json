@@ -308,5 +308,6 @@
     "typeScore": "Tap here to type the score",
    "cancelMssg": "Clear Filters?",
    "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
-   "recordingConfirmation": "Are you sure you want to record this segment?"
+   "recordingConfirmation": "Are you sure you want to record this segment?",
+   "goToCoach": "Go to coach"
 }

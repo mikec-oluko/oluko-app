@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/push_notification_bloc.dart';
 
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
@@ -13,7 +14,9 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
+import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -80,40 +83,62 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    PushNotificationService.listenPushNotifications(context);
     if (widget.tab != null) {
       this.tabController.index = widget.tab;
       tabController.animateTo(widget.tab);
       widget.tab = null;
     }
-    return BlocListener<VideoBloc, VideoState>(listener: (context, state) {
-      updateVideo(state);
-    }, child: BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, authState) {
-        if (authState is AuthSuccess) {
-          BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
-        }
-        return Scaffold(
-          body: Padding(
-            padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
-            child: TabBarView(
-              //physics this is setup to stop swiping from tab to tab
-              physics: const NeverScrollableScrollPhysics(),
-              controller: this.tabController,
-              children: tabs,
-            ),
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<VideoBloc, VideoState>(
+            listener: (context, state) {
+              updateVideo(state);
+            },
           ),
-          extendBody: true,
-          bottomNavigationBar: _isBottomTabActive
-              ? OlukoBottomNavigationBar(
-                  selectedIndex: this.tabController.index,
-                  onPressed: (index) => this.setState(() {
-                    this.tabController.animateTo(index as int);
-                  }),
-                )
-              : const SizedBox(),
-        );
-      },
-    ));
+          BlocListener<PushNotificationBloc, PushNotificationState>(
+            listener: (context, state) {
+              if (state is NewPushNotification) {
+                if(ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root] || widget.tab != 1) {
+                  Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.root],
+                  arguments: {
+                    'tab': 1,
+                  },
+                );
+                }
+              }
+            },
+          )
+        ],
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, authState) {
+            if (authState is AuthSuccess) {
+              BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
+            }
+            return Scaffold(
+              body: Padding(
+                padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
+                child: TabBarView(
+                  //physics this is setup to stop swiping from tab to tab
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: this.tabController,
+                  children: tabs,
+                ),
+              ),
+              extendBody: true,
+              bottomNavigationBar: _isBottomTabActive
+                  ? OlukoBottomNavigationBar(
+                      selectedIndex: this.tabController.index,
+                      onPressed: (index) => this.setState(() {
+                        this.tabController.animateTo(index as int);
+                      }),
+                    )
+                  : const SizedBox(),
+            );
+          },
+        ));
   }
 
   taskSubmissionActions(VideoSuccess state) {

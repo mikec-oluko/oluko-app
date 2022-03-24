@@ -21,6 +21,7 @@ import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
+import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
@@ -124,6 +125,7 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
+    PushNotificationService.initializePushNotifications(context, userId);
     final sharedPref = await SharedPreferences.getInstance();
     if (true) {
       sharedPref.setBool('first_time', false);

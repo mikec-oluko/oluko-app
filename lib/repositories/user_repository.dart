@@ -242,4 +242,13 @@ class UserRepository {
       rethrow;
     }
   }
+
+  void saveToken(String userId, String token) {
+    FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .set({'user_token': token}, SetOptions(merge: true));
+  }
 }
