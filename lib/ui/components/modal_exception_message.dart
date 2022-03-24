@@ -3,6 +3,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/oluko_exception_message.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ModalExceptionMessage extends StatefulWidget {
   final ExceptionTypeEnum exceptionType;
@@ -18,7 +19,7 @@ class _ModalExceptionMessageState extends State<ModalExceptionMessage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: OlukoNeumorphism.isNeumorphismDesign
             ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
             : BorderRadius.zero,
@@ -45,7 +46,8 @@ class _ModalExceptionMessageState extends State<ModalExceptionMessage> {
                 child: Container(
                     width: 80,
                     height: 50,
-                    child: OlukoNeumorphicPrimaryButton(title: 'Ok', onPressed: () => widget.onPress(), isExpanded: false)),
+                    child: OlukoNeumorphicPrimaryButton(
+                        title: OlukoLocalizations.get(context, 'ok'), onPressed: () => widget.onPress(), isExpanded: false)),
               )
             ],
           )

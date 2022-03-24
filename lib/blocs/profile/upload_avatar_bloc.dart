@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -11,19 +10,13 @@ import 'package:path/path.dart' as p;
 
 abstract class ProfileAvatarState {}
 
-class ProfileAvatarLoading extends ProfileAvatarState {
-  // bool lockPanel = false;
-  // ProfileAvatarLoading({this.lockPanel = false});
-}
+class ProfileAvatarLoading extends ProfileAvatarState {}
 
 class ProfileAvatarDefault extends ProfileAvatarState {}
 
 class ProfileAvatarOpenPanel extends ProfileAvatarState {}
 
-class ProfileAvatarSuccess extends ProfileAvatarState {
-  // bool lockPanel = false;
-  // ProfileAvatarSuccess({this.lockPanel = false});
-}
+class ProfileAvatarSuccess extends ProfileAvatarState {}
 
 class ProfileAvatarFailure extends OlukoException with ProfileAvatarState {
   ProfileAvatarFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})

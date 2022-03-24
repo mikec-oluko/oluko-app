@@ -79,6 +79,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   UserStatistics userStats;
   final PanelController _panelController = PanelController();
   double _panelMaxHeight = 100.0;
+  double _panelExtendedMaxHeight = 300.0;
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
   bool canHidePanel = true;
@@ -156,16 +157,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
             listener: (context, state) {
               if (state is ProfileCoverImageDefault || state is ProfileCoverImageOpen) {
                 setState(() {
-                  updatePanelProperties(100, true);
+                  updatePanelProperties(_panelMaxHeight, true);
                 });
               } else {
                 setState(() {
-                  updatePanelProperties(300, false);
+                  updatePanelProperties(_panelExtendedMaxHeight, false);
                 });
               }
               if (state is ProfileCoverImageFailure) {
                 setState(() {
-                  updatePanelProperties(100, true);
+                  updatePanelProperties(_panelMaxHeight, true);
                 });
               }
             },
@@ -174,16 +175,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
             listener: (context, state) {
               if (state is ProfileAvatarDefault || state is ProfileAvatarOpenPanel) {
                 setState(() {
-                  updatePanelProperties(100, true);
+                  updatePanelProperties(_panelMaxHeight, true);
                 });
               } else {
                 setState(() {
-                  updatePanelProperties(300, false);
+                  updatePanelProperties(_panelExtendedMaxHeight, false);
                 });
               }
               if (state is ProfileAvatarFailure) {
                 setState(() {
-                  updatePanelProperties(100, true);
+                  updatePanelProperties(_panelMaxHeight, true);
                 });
               }
             },
@@ -224,7 +225,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           collapsed: defaultWidgetNoContent,
           controller: _panelController,
           borderRadius: OlukoNeumorphism.isNeumorphismDesign
-              ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+              ? const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
               : BorderRadius.zero,
           panel: _isNewCoverImage ? profileCoverImageBuilder(profileViewContext) : profileAvatarBuilder(profileViewContext),
           body: buildProfileView(userRequested),
@@ -287,8 +288,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
             exceptionType: state.exceptionType,
             onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
             exceptionSource: state.exceptionSource);
-
-        // _panelController.close();
       }
       if (state is ProfileAvatarRequirePermissions) {
         _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));

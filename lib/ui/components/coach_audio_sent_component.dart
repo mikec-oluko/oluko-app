@@ -34,6 +34,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
     super.dispose();
   }
 
+  //Pause the audio playing on background, when widget is removed from Widget tree.
   void deactivate() {
     audioPlayer.pause();
     super.deactivate();
@@ -127,14 +128,14 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                               custoFontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 10),
-                        !widget.isPreviewContent
-                            ? Image.asset(
-                                'assets/courses/coach_tick.png',
-                                scale: 5,
-                                color:
-                                    widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
-                              )
-                            : SizedBox.shrink(),
+                        if (!widget.isPreviewContent)
+                          Image.asset(
+                            'assets/courses/coach_tick.png',
+                            scale: 5,
+                            color: widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
+                          )
+                        else
+                          const SizedBox.shrink(),
                       ],
                     ),
                   ],

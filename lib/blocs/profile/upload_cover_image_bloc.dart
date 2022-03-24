@@ -12,17 +12,11 @@ abstract class ProfileCoverImageState {}
 
 class ProfileCoverImageOpen extends ProfileCoverImageState {}
 
-class ProfileCoverImageLoading extends ProfileCoverImageState {
-  // bool lockPanel = false;
-  // ProfileCoverImageLoading({this.lockPanel = false});
-}
+class ProfileCoverImageLoading extends ProfileCoverImageState {}
 
 class ProfileCoverImageDefault extends ProfileCoverImageState {}
 
-class ProfileCoverSuccess extends ProfileCoverImageState {
-  // bool lockPanel = false;
-  // ProfileCoverSuccess({this.lockPanel = false});
-}
+class ProfileCoverSuccess extends ProfileCoverImageState {}
 
 class ProfileCoverImageFailure extends OlukoException with ProfileCoverImageState {
   ProfileCoverImageFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
@@ -33,7 +27,7 @@ class ProfileCoverRequirePermissions extends ProfileCoverImageState {}
 
 class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
   ProfileCoverImageBloc() : super(ProfileCoverImageDefault());
-  ProfileRepository _profileRepository = ProfileRepository();
+  final ProfileRepository _profileRepository = ProfileRepository();
 
   void uploadProfileCoverImage({DeviceContentFrom uploadedFrom}) async {
     XFile _image;
@@ -71,7 +65,6 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       );
 
       emit(ProfileCoverImageFailure(exception: exception));
-      // rethrow;
       return;
     }
   }

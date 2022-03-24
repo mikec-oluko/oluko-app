@@ -17,11 +17,9 @@ import 'package:oluko_app/ui/components/modal_exception_message.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
-import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -180,7 +178,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     return BlocConsumer<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
-          _statePanelMaxHeight = 100;
+          _statePanelMaxHeight = _panelMaxHeight;
         } else {
           _statePanelMaxHeight = 300;
         }
@@ -204,7 +202,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
         }
         if (state is TransformationJourneyContentFailure) {
-          _statePanelMaxHeight = 100;
+          _statePanelMaxHeight = _panelMaxHeight;
           _contentForPanel = ModalExceptionMessage(
               exceptionType: state.exceptionType,
               onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,

@@ -50,7 +50,6 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.completedCourseVideo: 'completed course video',
 };
 
-//TODO: Check and use that
 enum TimelineInteractionType {
   course,
   classes,

@@ -33,7 +33,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
 
   Widget returnList(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: OlukoNeumorphism.isNeumorphismDesign
             ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
             : BorderRadius.zero,

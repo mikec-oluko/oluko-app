@@ -60,6 +60,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
             final Map<String, dynamic> content = doc.data();
             audioMessages.add(CoachAudioMessage.fromJson(content));
           });
+          // TODO: disabled needs fix in firebase added event, pending writes, [created_at == null]
           // if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
           //   audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
           // }
@@ -91,8 +92,8 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
 
   void saveAudioForCoach({@required File audioRecorded, @required String userId, @required String coachId, Duration audioDuration}) async {
     try {
-      AudioMessageSubmodel audioContent = await _processAudio(audioRecorded, audioDuration);
-      CoachAudioMessage messageUploaded = await _coachAudioMessagesRepository.saveAudioForCoach(audioContent, userId, coachId);
+      final AudioMessageSubmodel audioContent = await _processAudio(audioRecorded, audioDuration);
+      final CoachAudioMessage messageUploaded = await _coachAudioMessagesRepository.saveAudioForCoach(audioContent, userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -105,7 +106,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
 
   void markCoachAudioAsDeleted(CoachAudioMessage audioMessage) async {
     try {
-      CoachAudioMessage deletedMessage = await _coachAudioMessagesRepository.markAudioAsDeleted(audioMessage);
+      final CoachAudioMessage deletedMessage = await _coachAudioMessagesRepository.markAudioAsDeleted(audioMessage);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

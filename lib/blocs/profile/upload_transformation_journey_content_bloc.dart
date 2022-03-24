@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
@@ -58,9 +57,9 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
       }
       emit(TransformationJourneyContentLoading());
 
-      UserResponse user = await AuthRepository().retrieveLoginData();
+      final UserResponse _user = await AuthRepository().retrieveLoginData();
 
-      await TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, _image, user.id, indexForContent);
+      await TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, _image, _user.id, indexForContent);
 
       emit(TransformationJourneyContentSuccess());
     } catch (e, stackTrace) {

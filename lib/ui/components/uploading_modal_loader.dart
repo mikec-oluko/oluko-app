@@ -5,7 +5,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalLoader extends StatefulWidget {
   final UploadFrom toUpload;
-  UploadingModalLoader(this.toUpload);
+  const UploadingModalLoader(this.toUpload);
   @override
   _UploadingModalLoaderState createState() => _UploadingModalLoaderState();
 }
@@ -13,14 +13,16 @@ class UploadingModalLoader extends StatefulWidget {
 class _UploadingModalLoaderState extends State<UploadingModalLoader> {
   @override
   Widget build(BuildContext context) {
+    const LoaderAndUploadingText _uploadLoader = LoaderAndUploadingText();
+
     if (widget.toUpload == UploadFrom.transformationJourney) {
-      return LoaderAndUploadingText();
+      return _uploadLoader;
     } else if (widget.toUpload == UploadFrom.profileImage || widget.toUpload == UploadFrom.profileCoverImage) {
-      return LoaderAndUploadingText();
+      return _uploadLoader;
     } else if (widget.toUpload == UploadFrom.profileImage) {
-      return LoaderAndUploadingText();
+      return _uploadLoader;
     }
-    return SizedBox();
+    return const SizedBox();
   }
 }
 
@@ -29,7 +31,7 @@ class LoaderAndUploadingText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           borderRadius: OlukoNeumorphism.isNeumorphismDesign
               ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
               : BorderRadius.zero,
@@ -51,7 +53,7 @@ class LoaderAndUploadingText extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 50.0),
                     child: Transform.scale(
                       scale: 2,
-                      child: CircularProgressIndicator(
+                      child: const CircularProgressIndicator(
                           strokeWidth: 2,
                           backgroundColor: OlukoColors.grayColor,
                           valueColor: AlwaysStoppedAnimation<Color>(OlukoColors.primary)),
