@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -11,7 +10,6 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
-import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';

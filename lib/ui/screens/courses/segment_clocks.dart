@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
@@ -156,6 +157,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
+        BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
         Wakelock.disable();
         return SegmentClocksUtils.onWillPop(context, isSegmentWithRecording());
       },
@@ -458,6 +460,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void nextSegmentAction() {
+    BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popAndPushNamed(
         context,
