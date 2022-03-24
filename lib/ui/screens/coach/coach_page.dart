@@ -103,11 +103,13 @@ class _CoachPageState extends State<CoachPage> {
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
     setState(() {
-      _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
-        coachAssignment: widget.coachAssignment,
-        userId: widget.userId,
-        defaultIntroVideoId: _defaultIntroductionVideoId,
-      );
+      if (widget.coachAssignment.introductionVideo != null) {
+        _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
+          coachAssignment: widget.coachAssignment,
+          userId: widget.userId,
+          defaultIntroVideoId: _defaultIntroductionVideoId,
+        );
+      }
     });
 
     super.initState();
@@ -216,11 +218,13 @@ class _CoachPageState extends State<CoachPage> {
                                   builder: (context, timelineState) {
                                     if (timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
+                                      if(_introductionVideo != null){
                                       _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
                                         context: context,
                                         timelineItems: _timelineItemsContent,
                                         welcomeVideo: _introductionVideo,
                                       );
+                                      }
                                     }
                                     return BlocConsumer<CoachRecommendationsBloc, CoachRecommendationsState>(
                                       listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
