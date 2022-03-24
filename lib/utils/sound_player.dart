@@ -1,13 +1,14 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_player.dart';
+import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 
 enum SoundsEnum { enroll, classFinished, newCoachRecomendation }
 
 Map<SoundsEnum, String> soundsLabels = {
-  SoundsEnum.enroll: 'sounds/enroll_sound.wav',
-  SoundsEnum.classFinished: 'sounds/class_finished.wav',
-  SoundsEnum.newCoachRecomendation: 'sounds/new_coach_recomendation'
+  SoundsEnum.enroll: 'enroll_to_course',
+  SoundsEnum.classFinished: 'class_finished',
+  SoundsEnum.newCoachRecomendation: 'new_coach_recomendation'
 };
 
 class SoundPlayer {
@@ -32,10 +33,16 @@ class SoundPlayer {
     }
   }
 
-  static Future playAsset(SoundsEnum soundEnum) async {
+  static Future playAsset({SoundsEnum soundEnum, String asset}) async {
     final AudioCache player = AudioCache();
-    final asset = soundsLabels[soundEnum];
-    await player.play(asset);
+    String assetToPlay = asset;
+    if (soundEnum != null) {
+      final Map courseConfig = (ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration'] as Map;
+      assetToPlay = courseConfig[soundsLabels[soundEnum]].toString();
+    }
+    if(assetToPlay != null && assetToPlay != 'null') {
+      await player.play(assetToPlay);
+    }
   }
 
   Future _pause() async {

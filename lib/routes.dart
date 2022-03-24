@@ -34,6 +34,7 @@ import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -373,6 +374,7 @@ class Routes {
   final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
   final SelectedTagsBloc _selectedTagsBloc = SelectedTagsBloc();
+  final ProjectConfigurationBloc _projectConfigurationBloc = ProjectConfigurationBloc();
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
 
@@ -440,6 +442,8 @@ class Routes {
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<NotificationBloc>.value(value: _notificationBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
+
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
