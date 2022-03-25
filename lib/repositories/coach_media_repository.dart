@@ -47,7 +47,6 @@ class CoachMediaRepository {
         .collection('users')
         .doc(coachId)
         .collection('myMedia')
-        .where('video', isNotEqualTo: null)
         .snapshots();
     return coachMediaStream;
   }

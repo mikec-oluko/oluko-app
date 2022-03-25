@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -11,14 +10,13 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalSuccess extends StatefulWidget {
   final UploadFrom goToPage;
   final UserResponse userRequested;
-  UploadingModalSuccess({this.goToPage, this.userRequested});
+  const UploadingModalSuccess({this.goToPage, this.userRequested});
 
   @override
   _UploadingModalSuccessState createState() => _UploadingModalSuccessState();
@@ -30,7 +28,12 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     final _successText = OlukoLocalizations.get(context, 'uploadedSuccessfully');
     final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
-      color: OlukoNeumorphismColors.appBackgroundColor,
+      decoration: const BoxDecoration(
+        borderRadius: OlukoNeumorphism.isNeumorphismDesign
+            ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+            : BorderRadius.zero,
+        color: OlukoNeumorphismColors.appBackgroundColor,
+      ),
       width: MediaQuery.of(context).size.width,
       height: 300,
       child: Row(

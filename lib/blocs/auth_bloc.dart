@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
@@ -265,6 +266,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
       BlocProvider.of<NotificationBloc>(context).dispose();
       BlocProvider.of<CoachMediaBloc>(context).dispose();
+      BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {

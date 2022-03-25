@@ -79,6 +79,11 @@ class _State extends State<ImageAndVideoPreviewCard> {
             Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
                 arguments: {'TransformationJourneyUpload': transformationJourneyContent});
           }
+
+          if (widget.isCoachMediaContent) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
+                arguments: {'coachMedia': widget.originalContent as CoachMedia});
+          }
         },
         child: Align(
             alignment: Alignment.bottomCenter,

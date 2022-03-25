@@ -73,7 +73,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                 if (widget.cardImage != null)
                                   Container(
                                     width: 150,
-                                    height: 180,
+                                    height: 175,
                                     decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                                         image: DecorationImage(

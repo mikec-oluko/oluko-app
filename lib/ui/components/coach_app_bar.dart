@@ -4,6 +4,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_user.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -11,8 +12,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
   final CoachUser coachUser;
+  final UserResponse currentUser;
   final Function() onNavigation;
-  const CoachAppBar({this.coachUser, this.onNavigation});
+  const CoachAppBar({this.coachUser, this.currentUser, this.onNavigation});
 
   @override
   _CoachAppBarState createState() => _CoachAppBarState();
@@ -57,16 +59,19 @@ class _CoachAppBarState extends State<CoachAppBar> {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
         automaticallyImplyLeading: false,
-        leading: Container(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              OlukoNeumorphicCircleButton(
-                onPressed: () {
-                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
-                },
-              ),
-            ],
+        leading: Visibility(
+          visible: false,
+          child: Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                OlukoNeumorphicCircleButton(
+                  onPressed: () {
+                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         actions: [
@@ -169,11 +174,15 @@ class _CoachAppBarState extends State<CoachAppBar> {
     return GestureDetector(
       onTap: () {
         widget.onNavigation();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile], arguments: {'coachUser': widget.coachUser});
+        Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
+            arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
       },
       child: Text(
-        OlukoLocalizations.get(context, 'hiCoach'),
-        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+        OlukoNeumorphism.isNeumorphismDesign
+            ? OlukoLocalizations.get(context, 'hiCoachNeumorphic')
+            : OlukoLocalizations.get(context, 'hiCoach'),
+        style: OlukoFonts.olukoMediumFont(
+            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, custoFontWeight: FontWeight.w500),
       ),
     );
   }
