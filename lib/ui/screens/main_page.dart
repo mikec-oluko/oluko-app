@@ -133,7 +133,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     } else if (state is VideoSuccess && state.assessment != null) {
       _globalService.videoProcessing = false;
       taskSubmissionActions(state);
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'taskUploadedSuccessfully'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadSuccessful'));
     } else if (state is VideoFailure) {
       _globalService.videoProcessing = false;
 
