@@ -38,16 +38,6 @@ class CoachAudioPanelFailure extends CoachAudioPanelState {
 class CoachAudioPanelBloc extends Cubit<CoachAudioPanelState> {
   CoachAudioPanelBloc() : super(CoachAudioPanelLoading());
 
-  void get() async {
-    try {} catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      rethrow;
-    }
-  }
-
   void emitDefaultState() {
     emit(CoachAudioPanelDefault());
   }
