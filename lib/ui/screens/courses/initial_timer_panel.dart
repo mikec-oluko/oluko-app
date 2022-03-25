@@ -31,10 +31,10 @@ class _State extends State<InitialTimerPanel> {
         child: Column(children: [
           startButton(),
           SizedBox(height: 30),
-          Text(OlukoLocalizations.get(context, 'pauseWarning'),
+          /*Text(OlukoLocalizations.get(context, 'pauseWarning'),
               textAlign: TextAlign.center,
               style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.coral)),
-          SizedBox(height: 5),
+          SizedBox(height: 5),*/
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(OlukoLocalizations.get(context, 'dontShowAgain'),
                 textAlign: TextAlign.center,

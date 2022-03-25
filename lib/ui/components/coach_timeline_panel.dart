@@ -179,19 +179,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             ],
           ),
         );
-      // return Container(
-      //   color: OlukoNeumorphismColors.appBackgroundColor,
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       CoachTimelineCircleContent(
-      //           circleImage: content.contentThumbnail,
-      //           circleTitle: content.contentName,
-      //           date: content.createdAt.toDate(),
-      //           fileType: CoachFileTypeEnum.recommendedSegment),
-      //     ],
-      //   ),
-      // );
       case TimelineInteractionType.movement:
         return GestureDetector(
           onTap: () {
@@ -222,7 +209,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             children: [
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'mentoredVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'personalizedVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.mentoredVideo),
             ],

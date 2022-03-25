@@ -56,7 +56,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              OlukoLocalizations.get(context, 'mentoredVideos'),
+              OlukoLocalizations.get(context, 'personalizedVideos'),
               style: OlukoNeumorphism.isNeumorphismDesign
                   ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
                   : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
@@ -179,7 +179,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
                         // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/04ZUOE5pWwPlVtBsE47q/master.m3u8",
                         // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
-                        'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+                        'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
                       });
                     },
                     child: OlukoNeumorphism.isNeumorphismDesign

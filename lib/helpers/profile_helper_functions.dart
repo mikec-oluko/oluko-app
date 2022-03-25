@@ -67,7 +67,7 @@ class ProfileHelperFunctions {
       case UserConnectStatus.notConnected:
         return 'connect';
       case UserConnectStatus.requestPending:
-        return 'cancelConnectionRequested';
+        return 'connectionRequestCancelled';
       case UserConnectStatus.requestReceived:
         return 'confirm';
       default:

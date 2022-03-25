@@ -178,9 +178,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
             arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
       },
       child: Text(
-        OlukoNeumorphism.isNeumorphismDesign
-            ? OlukoLocalizations.get(context, 'hiCoachNeumorphic')
-            : OlukoLocalizations.get(context, 'hiCoach'),
+        OlukoLocalizations.get(context, 'hiCoach'),
         style: OlukoFonts.olukoMediumFont(
             customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, custoFontWeight: FontWeight.w500),
       ),

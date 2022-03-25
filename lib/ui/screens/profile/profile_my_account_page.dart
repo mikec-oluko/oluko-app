@@ -60,7 +60,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     return Column(
       children: [
         userInformationFields(
-            OlukoLocalizations.get(context, 'userName'), UserHelper.printUsername(_profileInfo.username, _profileInfo.id)),
+            OlukoLocalizations.get(context, 'username'), UserHelper.printUsername(_profileInfo.username, _profileInfo.id)),
         userInformationFields(OlukoLocalizations.get(context, 'firstName'), _profileInfo.firstName),
         userInformationFields(OlukoLocalizations.get(context, 'lastName'), _profileInfo.lastName),
         userInformationFields(OlukoLocalizations.get(context, 'email'), _profileInfo.email),

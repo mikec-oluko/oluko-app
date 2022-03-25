@@ -67,18 +67,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
                   .setRequestSegmentNotificationAsViewed(content.coachRequest.id, widget.userId, true);
             },
             onOpenCard: () {});
-      // );
-      // return CoachNotificationCard(
-      //     cardImage: content.contentImage,
-      //     cardTitle: content.contentTitle,
-      //     cardSubTitle: content.contentSubtitle,
-      //     date: content.createdAt != null ? content.createdAt.toDate() : Timestamp.now().toDate(),
-      //     fileType: CoachFileTypeEnum.recommendedSegment,
-      //     onCloseCard: () {
-      //       BlocProvider.of<CoachRequestBloc>(context)
-      //           .setRequestSegmentNotificationAsViewed(content.coachRequest.id, widget.userId, true);
-      //     },
-      //     onOpenCard: () {});
+
       case TimelineInteractionType.movement:
         return CoachNotificationCard(
             cardImage: content.contentImage,
@@ -104,7 +93,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
               Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                 'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
                 'aspectRatio': content.mentoredContent.video.aspectRatio,
-                'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+                'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
               });
               updateAnnotationNotificationAsViewed(content);
             });

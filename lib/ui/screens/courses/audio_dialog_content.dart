@@ -69,7 +69,7 @@ class _State extends State<AudioDialogContent> {
               SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
-                  child: Text(OlukoLocalizations.get(context, 'hasMessage'),
+                  child: Text(OlukoLocalizations.get(context, 'sentMessage'),
                       textAlign: TextAlign.center,
                       style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))),
               SizedBox(height: 35),

@@ -452,7 +452,7 @@ class _CoachPageState extends State<CoachPage> {
               Padding(
                 padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
                 child: Text(
-                  OlukoLocalizations.get(context, 'upcoming'),
+                  OlukoLocalizations.get(context, 'upcomings'),
                   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                 ),
               ),
