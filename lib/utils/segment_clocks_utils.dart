@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -162,6 +163,7 @@ class SegmentClocksUtils {
                 builder: (context, state) {
                   return TextButton(
                     onPressed: () {
+                      BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
                       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
                       BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
                     },

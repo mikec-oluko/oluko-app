@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/newDesignComponents/animation.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home.dart';
@@ -90,30 +91,41 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         if (authState is AuthSuccess) {
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
         }
-        return Scaffold(
-          body: Padding(
-            padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
-            child: TabBarView(
-              //physics this is setup to stop swiping from tab to tab
-              physics: const NeverScrollableScrollPhysics(),
-              controller: this.tabController,
-              children: tabs,
-            ),
-          ),
-          extendBody: true,
-          bottomNavigationBar: _isBottomTabActive
-              ? OlukoBottomNavigationBar(
-                  selectedIndex: this.tabController.index,
-                  onPressed: (index) => this.setState(() {
-                    this.tabController.animateTo(index as int);
-                  }),
-                )
-              : const SizedBox(),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
+            return Scaffold(
+              body: Padding(
+                padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
+                child: TabBarView(
+                  //physics this is setup to stop swiping from tab to tab
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: this.tabController,
+                  children: tabs,
+                ),
+              ),
+              extendBody: true,
+              bottomNavigationBar: _isBottomTabActive
+                  ? OlukoBottomNavigationBar(
+                      selectedIndex: this.tabController.index,
+                      onPressed: (index) => this.setState(() {
+                        this.tabController.animateTo(index as int);
+                      }),
+                    )
+                  : const SizedBox(),
+            );
+          },
         );
       },
     ));
   }
-
+void _insertOverlay(BuildContext context) {
+    return Overlay.of(context).insert(
+      OverlayEntry(builder: (context) {
+        return Animated();
+      }),
+    );
+  }
   taskSubmissionActions(VideoSuccess state) {
     BlocProvider.of<TaskSubmissionListBloc>(context)
         .updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);

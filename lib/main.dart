@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
@@ -79,49 +78,33 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return BlocProvider<AnimationBloc>(create: (mainContext) => AnimationBloc(),child:MaterialApp(
-      title: '${OLUKO}',
-      theme: ThemeData(
-        canvasColor: Colors.transparent,
-        primarySwatch: Colors.grey,
+    return BlocProvider<AnimationBloc>(
+      create: (mainContext) => AnimationBloc(),
+      child: MaterialApp(
+        title: '${OLUKO}',
+        theme: ThemeData(
+          canvasColor: Colors.transparent,
+          primarySwatch: Colors.grey,
+        ),
+        initialRoute: widget.initialRoute,
+        onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+        localizationsDelegates: [
+          const OlukoLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('es', ''),
+        ],
+        debugShowCheckedModeBanner: false,
       ),
-      initialRoute: widget.initialRoute,
-      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-      localizationsDelegates: [
-        const OlukoLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale('es', ''),
-      ],
-      debugShowCheckedModeBanner: false,
-      home: LayoutBuilder(
-        builder: (context, constraints) {
-          WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
-          return Navigator(
-            initialRoute: widget.initialRoute,
-            onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-          );
-        },
-      ),
-    ) ,);
-    
-     
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void _insertOverlay(BuildContext context) {
-    return Overlay.of(context).insert(
-      OverlayEntry(builder: (context) {
-        return Animated();
-      }),
-    );
   }
 }
