@@ -103,12 +103,15 @@ class _CoachPageState extends State<CoachPage> {
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
     setState(() {
-      _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
-        coachAssignment: widget.coachAssignment,
-        userId: widget.userId,
-        defaultIntroVideoId: _defaultIntroductionVideoId,
-      );
+      if (widget.coachAssignment.video?.url != null) {
+        _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
+          coachAssignment: widget.coachAssignment,
+          userId: widget.userId,
+          defaultIntroVideoId: _defaultIntroductionVideoId,
+        );
+      }
     });
+
     super.initState();
   }
 
@@ -136,6 +139,7 @@ class _CoachPageState extends State<CoachPage> {
                 extendBody: true,
                 appBar: CoachAppBar(
                   coachUser: _coachUser,
+                  currentUser: _currentAuthUser,
                   onNavigation: () => !widget.coachAssignment.introductionCompleted
                       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                       : () {},
@@ -166,6 +170,7 @@ class _CoachPageState extends State<CoachPage> {
                               _annotationVideosContent = mentoredVideosListenerBuilderState.mentoredVideos
                                   .where((mentoredVideo) => mentoredVideo.video != null)
                                   .toList();
+                              addCoachAssignmentVideo();
                             }
                             if (mentoredVideosListenerBuilderState is CoachMentoredVideosDispose) {
                               _annotationVideosContent = mentoredVideosListenerBuilderState.mentoredVideosDisposeValue;
@@ -213,6 +218,13 @@ class _CoachPageState extends State<CoachPage> {
                                   builder: (context, timelineState) {
                                     if (timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
+                                      if (_introductionVideo != null) {
+                                        _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
+                                          context: context,
+                                          timelineItems: _timelineItemsContent,
+                                          welcomeVideo: _introductionVideo,
+                                        );
+                                      }
                                     }
                                     return BlocConsumer<CoachRecommendationsBloc, CoachRecommendationsState>(
                                       listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
@@ -337,15 +349,16 @@ class _CoachPageState extends State<CoachPage> {
                       builder: (context, state) {
                         return Container(
                           width: ScreenUtils.width(context),
-                          height: 40,
+                          height: 50,
                           color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
                                   '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                  style: OlukoFonts.olukoMediumFont(
+                                      customColor: OlukoColors.grayColor.withOpacity(0.5), custoFontWeight: FontWeight.w500),
                                 ),
                               ),
                             ],
@@ -362,7 +375,7 @@ class _CoachPageState extends State<CoachPage> {
                       const SizedBox.shrink(),
                     Padding(
                       padding: paddingTopForElements,
-                      child: userProgressSection(true),
+                      child: userProgressSection(carouselNotificationWidgetList.isEmpty),
                     ),
                     Padding(
                       padding: paddingTopForElements,
@@ -510,11 +523,11 @@ class _CoachPageState extends State<CoachPage> {
     List<Widget> carouselContent = [];
     List<CoachNotificationContent> contentForNotificationPanel = [];
 
-    /*if (!widget.coachAssignment.introductionCompleted) {
+    if (!widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachVideoCard(
           videoUrl: _assessment.video,
           onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
-    }*/
+    }
 
     if (!widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachNotificationVideoCard(
@@ -553,26 +566,6 @@ class _CoachPageState extends State<CoachPage> {
     return carouselContent;
   }
 
-  //when triggers no working
-  void buildSentVideosForTimeline() {
-    CoachTimelineFunctions.getTimelineVideoContent(
-        segmentSubmittedContent: _sentVideosContent,
-        sentVideos: _sentVideosTimelineContent,
-        courseEnrollmentList: _courseEnrollmentList,
-        context: context);
-  }
-
-  //when triggers no working
-  void buildAnnotationsForTimeline() {
-    CoachTimelineFunctions.getTimelineVideoContent(
-      annotationContent: _annotationVideosContent,
-      mentoredVideos: _mentoredVideoTimelineContent,
-      courseEnrollmentList: _courseEnrollmentList,
-      context: context,
-    );
-    addCoachAssignmentVideo();
-  }
-
   void addCoachAssignmentVideo() {
     if (_annotationVideosContent != null && _introductionVideo != null) {
       if (_annotationVideosContent.where((annotation) => annotation.id == _defaultIntroductionVideoId).toList().isEmpty) {
@@ -582,9 +575,6 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void timelineContentBuilding(BuildContext context) {
-    mentoredVideosTimeline();
-    sentVideosTimeline();
-
     _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(
         timelineItemsContent: _timelineItemsContent,
         enrolledCourseIdList: _courseEnrollmentList.map((enrolledCourse) => enrolledCourse.course.id).toList());
@@ -600,30 +590,6 @@ class _CoachPageState extends State<CoachPage> {
         courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: _allContent);
 
     _timelinePanelContent = CoachTimelineFunctions.timelinePanelUpdateTabsAndContent(allTabContent, _timelinePanelContent);
-  }
-
-  void sentVideosTimeline() {
-    _sentVideosTimelineContent.forEach((sentVideo) {
-      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
-        _allContent.add(sentVideo);
-      }
-      if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
-        _timelineItemsContent.add(sentVideo);
-      }
-    });
-    _sentVideosContent.isNotEmpty ? buildSentVideosForTimeline() : null;
-  }
-
-  void mentoredVideosTimeline() {
-    _mentoredVideoTimelineContent.forEach((mentoredVideo) {
-      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
-        _allContent.add(mentoredVideo);
-      }
-      if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
-        _timelineItemsContent.add(mentoredVideo);
-      }
-    });
-    buildAnnotationsForTimeline();
   }
 
   void coachRecommendationsTimelineItems() {

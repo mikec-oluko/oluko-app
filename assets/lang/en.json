@@ -304,6 +304,8 @@
     "aboutCoach": "About Your Coach",
     "movements": "Movements",
     "newPR": "New PR:",
+    "saveAudioCoach": "Save for coach",
+    "deleteVoiceMessage": "Delete voice message?",
     "typeScore": "Tap here to type the score",
    "cancelMssg": "Clear Filters?",
    "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
@@ -316,5 +318,14 @@
    "noInfo": " No information to display, information will be added as soon as possible, check back later. ",
    "plansPricingPayments": "Plans, Pricing, and Payments",
    "plan1": "Plan 1",
-   "plan2": "Plan 2"
+   "plan2": "Plan 2",
+    "uploadFailed": "Upload failed.",
+    "appFailed": "App failed.",
+    "noFileSelected": "No file was selected.",
+    "fileSizeFailed": "File size is exceeded.",
+    "fileFormatException": "The file format is not supported.",
+    "fileLoadFailed": "Could not load file.",
+    "invalidFileDuration": "The duration of the file is not accepted.",
+    "invalidValue": "The entered value is not correct."
+
 }

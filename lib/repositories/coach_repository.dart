@@ -10,6 +10,7 @@ import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/recommendation.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
@@ -244,6 +245,8 @@ class CoachRepository {
         case TimelineInteractionType.classes:
           break;
         case TimelineInteractionType.segment:
+          TaskSubmission taskSubmitted = TaskSubmission.fromJson(ds.data() as Map<String, dynamic>);
+          timelineItem.contentThumbnail = taskSubmitted.video?.thumbUrl;
           break;
         case TimelineInteractionType.movement:
           Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);

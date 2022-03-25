@@ -2,46 +2,42 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:oluko_app/models/utils/oluko_bloc_exception.dart';
+import 'package:path/path.dart' as p;
 
 abstract class ProfileCoverImageState {}
 
 class ProfileCoverImageOpen extends ProfileCoverImageState {}
 
-class ProfileCoverImageLoading extends ProfileCoverImageState {
-  // bool lockPanel = false;
-  // ProfileCoverImageLoading({this.lockPanel = false});
-}
+class ProfileCoverImageLoading extends ProfileCoverImageState {}
 
 class ProfileCoverImageDefault extends ProfileCoverImageState {}
 
-class ProfileCoverSuccess extends ProfileCoverImageState {
-  // bool lockPanel = false;
-  // ProfileCoverSuccess({this.lockPanel = false});
-}
+class ProfileCoverSuccess extends ProfileCoverImageState {}
 
-class ProfileCoverImageFailure extends ProfileCoverImageState {
-  dynamic exception;
-  ProfileCoverImageFailure({this.exception});
+class ProfileCoverImageFailure extends OlukoException with ProfileCoverImageState {
+  ProfileCoverImageFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
+      : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
 }
 
 class ProfileCoverRequirePermissions extends ProfileCoverImageState {}
 
 class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
   ProfileCoverImageBloc() : super(ProfileCoverImageDefault());
-  ProfileRepository _profileRepository = ProfileRepository();
+  final ProfileRepository _profileRepository = ProfileRepository();
 
   void uploadProfileCoverImage({DeviceContentFrom uploadedFrom}) async {
     XFile _image;
 
     try {
-
       if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
         emit(ProfileCoverRequirePermissions());
         return;
       }
-      
+
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -49,7 +45,14 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         _image = await imagePicker.pickImage(source: ImageSource.camera);
       }
       if (_image == null && _image is! XFile) {
-        emit(ProfileCoverImageFailure(exception: Exception()));
+        emit(ProfileCoverImageFailure(
+            exception: Exception(),
+            exceptionType: ExceptionTypeEnum.loadFileFailed,
+            exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
+        return;
+      } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat) {
+        emit(ProfileCoverImageFailure(
+            exception: Exception(), exceptionType: ExceptionTypeEnum.uploadFailed, exceptionSource: ExceptionTypeSourceEnum.invalidFormat));
         return;
       }
       emit(ProfileCoverImageLoading());
@@ -62,7 +65,6 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       );
 
       emit(ProfileCoverImageFailure(exception: exception));
-      // rethrow;
       return;
     }
   }
