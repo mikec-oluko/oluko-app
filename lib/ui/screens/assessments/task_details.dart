@@ -638,42 +638,49 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget recordedVideos(TaskSubmission taskSubmission) {
-    return isAssessmentDone || widget.taskCompleted || _isLoading
-        ? Column(children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TitleBody(
-                    OlukoLocalizations.get(context, 'recordedVideo'),
-                    bold: true,
-                  )),
+    return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
+      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex ||
+          isAssessmentDone ||
+          widget.taskCompleted ||
+          _isLoading) {
+        return Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15.0),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: TitleBody(
+                  OlukoLocalizations.get(context, 'recordedVideo'),
+                  bold: true,
+                )),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              height: 150,
+              child: ListView(scrollDirection: Axis.horizontal, children: [
+                GestureDetector(
+                    onTap: () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      if (taskSubmission.video != null && taskSubmission.video.url != null) {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
+                            arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+                      }
+                    },
+                    child: taskResponse(
+                        TimeConverter.durationToString(Duration(
+                            milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
+                        taskSubmission?.video?.thumbUrl,
+                        taskSubmission)),
+              ]),
             ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                height: 150,
-                child: ListView(scrollDirection: Axis.horizontal, children: [
-                  GestureDetector(
-                      onTap: () {
-                        if (_controller != null) {
-                          _controller.pause();
-                        }
-                        if (taskSubmission.video != null && taskSubmission.video.url != null) {
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                              arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-                        }
-                      },
-                      child: taskResponse(
-                          TimeConverter.durationToString(Duration(
-                              milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
-                          taskSubmission?.video?.thumbUrl,
-                          taskSubmission)),
-                ]),
-              ),
-            ),
-          ])
-        : const SizedBox();
+          ),
+        ]);
+      } else {
+        return const SizedBox();
+      }
+    });
   }
 
   Widget taskResponse(String timeLabel, String thumbnail, TaskSubmission taskSubmission) {
