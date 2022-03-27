@@ -6,6 +6,8 @@ import 'package:oluko_app/repositories/friend_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../models/submodels/friend_model.dart';
+
 abstract class FriendState {}
 
 class FriendLoading extends FriendState {}
@@ -37,6 +39,7 @@ class FriendBloc extends Cubit<FriendState> {
       if (friendData != null) {
         friendList = await Future.wait(friendData.friends.map((friend) async => UserRepository().getById(friend.id)));
       }
+      removeDuplicateAndNullFriends(friendList, friendData);
       emit(GetFriendsSuccess(friendData: friendData, friendUsers: friendList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -46,6 +49,30 @@ class FriendBloc extends Cubit<FriendState> {
       emit(FriendFailure(exception: exception));
       rethrow;
     }
+  }
+
+  void removeDuplicateAndNullFriends(List<UserResponse> friendList, Friend friendData) {
+    friendList.removeWhere((friend) => friend == null);
+    friendData.friends.removeWhere((friend) {
+      UserResponse friendUser;
+      try {
+        friendUser = friendList.where((fuser) => fuser != null && fuser?.id == friend.id).first;
+        if (friendUser == null) {
+          return true;
+        }
+        return false;
+      } catch (e) {
+        return true;
+      }
+    });
+    final List<FriendModel> friendDataSet = [];
+    for (final friend in friendData.friends) {
+      print(friend);
+      if (friendDataSet.isEmpty || friendDataSet.indexWhere((element) => element.id == friend.id) == -1) {
+        friendDataSet.add(friend);
+      }
+    }
+    friendData.friends = friendDataSet;
   }
 
   void getUserFriendsSuggestionsByUserId(String userId) async {
