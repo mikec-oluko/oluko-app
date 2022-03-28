@@ -91,40 +91,28 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         if (authState is AuthSuccess) {
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
         }
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
-            return Scaffold(
-              body: Padding(
-                padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
-                child: TabBarView(
-                  //physics this is setup to stop swiping from tab to tab
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: this.tabController,
-                  children: tabs,
-                ),
-              ),
-              extendBody: true,
-              bottomNavigationBar: _isBottomTabActive
-                  ? OlukoBottomNavigationBar(
-                      selectedIndex: this.tabController.index,
-                      onPressed: (index) => this.setState(() {
-                        this.tabController.animateTo(index as int);
-                      }),
-                    )
-                  : const SizedBox(),
-            );
-          },
+        return Scaffold(
+          body: Padding(
+            padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
+            child: TabBarView(
+              //physics this is setup to stop swiping from tab to tab
+              physics: const NeverScrollableScrollPhysics(),
+              controller: this.tabController,
+              children: tabs,
+            ),
+          ),
+          extendBody: true,
+          bottomNavigationBar: _isBottomTabActive
+              ? OlukoBottomNavigationBar(
+                  selectedIndex: this.tabController.index,
+                  onPressed: (index) => this.setState(() {
+                    this.tabController.animateTo(index as int);
+                  }),
+                )
+              : const SizedBox(),
         );
       },
     ));
-  }
-void _insertOverlay(BuildContext context) {
-    return Overlay.of(context).insert(
-      OverlayEntry(builder: (context) {
-        return Animated();
-      }),
-    );
   }
   taskSubmissionActions(VideoSuccess state) {
     BlocProvider.of<TaskSubmissionListBloc>(context)
