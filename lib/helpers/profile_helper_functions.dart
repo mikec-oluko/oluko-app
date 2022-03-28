@@ -19,14 +19,16 @@ class ProfileHelperFunctions {
           segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
           if (enrolledSegment.isChallenge == true) {
             newChallenge = ChallengeNavigation(
-                enrolledCourse: courseEnrolled,
-                challengeSegment: enrolledSegment,
-                segmentIndex: segmentIndex,
-                segmentId: enrolledSegment.id,
-                classIndex: classIndex,
-                classId: enrolledClass.id,
-                courseIndex: courseIndex,
-                previousSegmentFinish: segmentIndex == 0 ? true : courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null,);
+              enrolledCourse: courseEnrolled,
+              challengeSegment: enrolledSegment,
+              segmentIndex: segmentIndex,
+              segmentId: enrolledSegment.id,
+              classIndex: classIndex,
+              classId: enrolledClass.id,
+              courseIndex: courseIndex,
+              previousSegmentFinish:
+                  segmentIndex == 0 ? true : courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null,
+            );
 
             if (challengesForUser.isEmpty) {
               if (newChallenge != null) {
@@ -65,7 +67,7 @@ class ProfileHelperFunctions {
       case UserConnectStatus.notConnected:
         return 'connect';
       case UserConnectStatus.requestPending:
-        return 'cancelConnectionRequested';
+        return 'connectionRequestCancelled';
       case UserConnectStatus.requestReceived:
         return 'confirm';
       default:

@@ -50,7 +50,6 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.completedCourseVideo: 'completed course video',
 };
 
-//TODO: Check and use that
 enum TimelineInteractionType {
   course,
   classes,
@@ -60,3 +59,7 @@ enum TimelineInteractionType {
   sentVideo,
   recommendedVideo,
 }
+
+enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }
+
+enum ExceptionTypeSourceEnum { invalidFormat, invalidDuration, invalidValue, noFileSelected }

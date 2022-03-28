@@ -62,7 +62,7 @@ class _State extends State<ShareCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              OlukoLocalizations.of(context).find('shareYourVideo'),
+                              OlukoLocalizations.of(context).find('share'),
                               style: OlukoFonts.olukoBigFont(),
                               textAlign: TextAlign.start,
                             ),

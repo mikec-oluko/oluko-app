@@ -79,6 +79,11 @@ class _State extends State<ImageAndVideoPreviewCard> {
             Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
                 arguments: {'TransformationJourneyUpload': transformationJourneyContent});
           }
+
+          if (widget.isCoachMediaContent) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
+                arguments: {'coachMedia': widget.originalContent as CoachMedia});
+          }
         },
         child: Align(
             alignment: Alignment.bottomCenter,
@@ -109,7 +114,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                     'videoUrl': widget.videoUrl,
                     'titleForContent': 'Coach Uploaded Media'
-                    // 'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+                    // 'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
                   });
                 } else {
                   widget.showTitle

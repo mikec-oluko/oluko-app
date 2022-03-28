@@ -16,6 +16,9 @@ class SegmentSubmodel {
 
   SegmentSubmodel({this.id, this.reference, this.image, this.name, this.sections, this.isChallenge,this.rounds,this.totalTime,this.type});
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
+    /*if(json['id']=="M4tI8lLm5tAMGWESNzJB"){
+      print("");
+    }*/
     return SegmentSubmodel(
         id: json['id']?.toString(),
         reference: json['reference'] as DocumentReference,

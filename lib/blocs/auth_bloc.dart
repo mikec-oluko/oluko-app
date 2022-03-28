@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
@@ -104,7 +105,7 @@ class AuthBloc extends Cubit<AuthState> {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (user.currentPlan == -100) {
       FirebaseAuth.instance.signOut();
-      AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
+      AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
       emit(AuthGuest());
       return;
     } else if (firebaseUser?.emailVerified != null ? !firebaseUser.emailVerified : true) {
@@ -165,7 +166,7 @@ class AuthBloc extends Cubit<AuthState> {
       //If there is no associated user for this account
       if (userResponse == null) {
         FirebaseAuth.instance.signOut();
-        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFound'));
         emit(AuthGuest());
         return;
       }
@@ -213,7 +214,7 @@ class AuthBloc extends Cubit<AuthState> {
       //If there is no associated user for this account
       if (user == null) {
         FirebaseAuth.instance.signOut();
-        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFound'));
         emit(AuthGuest());
         return;
       }
@@ -267,6 +268,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
       BlocProvider.of<NotificationBloc>(context).dispose();
       BlocProvider.of<CoachMediaBloc>(context).dispose();
+      BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {

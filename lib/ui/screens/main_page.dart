@@ -154,16 +154,16 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     if (state is VideoSuccess && state.segmentSubmission != null) {
       _globalService.videoProcessing = false;
       saveUploadedState(state);
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'segmentUploadedSuccessfully'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadSuccessful'));
     } else if (state is VideoSuccess && state.assessment != null) {
       _globalService.videoProcessing = false;
       taskSubmissionActions(state);
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'taskUploadedSuccessfully'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadSuccessful'));
     } else if (state is VideoFailure) {
       _globalService.videoProcessing = false;
 
       saveErrorState(state);
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadedWithErrors'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'uploadError'));
     }
   }
 

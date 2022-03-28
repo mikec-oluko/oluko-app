@@ -12,6 +12,8 @@ import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
@@ -72,6 +74,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -374,6 +377,8 @@ class Routes {
   final NotificationBloc _notificationBloc = NotificationBloc();
   final FeedbackBloc _feedbackBloc = FeedbackBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
+  final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
+  final CoachAudioMessageBloc _coachAudioMessageBloc = CoachAudioMessageBloc();
   final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
   final SelectedTagsBloc _selectedTagsBloc = SelectedTagsBloc();
@@ -446,6 +451,8 @@ class Routes {
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<NotificationBloc>.value(value: _notificationBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc)
         ];
@@ -639,8 +646,10 @@ class Routes {
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
-        newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = TransformationJourneyContentDetail(
+            contentToShow: argumentsToAdd['TransformationJourneyUpload'] as TransformationJourneyUpload,
+            coachMedia: argumentsToAdd['coachMedia'] as CoachMedia);
         break;
       case RouteEnum.logInUsername:
         newRouteView = LoginUsernamePage();
@@ -1042,9 +1051,12 @@ class Routes {
       case RouteEnum.coachProfile:
         providers = [
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
         ];
-        final Map<String, CoachUser> argumentsToAdd = arguments as Map<String, CoachUser>;
-        newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView =
+            CoachProfile(coachUser: argumentsToAdd['coachUser'] as CoachUser, currentUser: argumentsToAdd['currentUser'] as UserResponse);
         break;
       case RouteEnum.hiFivePage:
         providers = [

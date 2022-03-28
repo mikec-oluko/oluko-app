@@ -6,7 +6,7 @@ class CoachHeders {
   static String getContentHeader({BuildContext context, CoachFileTypeEnum fileType}) {
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
-        return OlukoLocalizations.of(context).find('timelineMentoredVideo');
+        return OlukoLocalizations.of(context).find('timelinePersonalizedVideo');
       case CoachFileTypeEnum.sentVideo:
         return OlukoLocalizations.of(context).find('timelineSentVideo');
       case CoachFileTypeEnum.recommendedCourse:
