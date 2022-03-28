@@ -254,6 +254,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
+              !_controller.isPlaying ? _controller.play() : null;
             })));
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
