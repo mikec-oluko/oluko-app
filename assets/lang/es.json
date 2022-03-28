@@ -310,7 +310,7 @@
     "cancelMssg": "¿Desea cancelar?",
     "cancelTxt": "Al cancelar se eliminaran todos los filtros seleccionados, por favor confirme la acción",
     "recordingConfirmation": "Esta seguro que quiere grabar el segmento?",
-    "updateRecording": "¿Seguro que quieres actualizar tu grabación? Si lo haces, se borrará su grabación anterior.",       
+    "updateRecording": "¿Seguro que quieres actualizar tu grabación? Si lo haces, se borrará su grabación anterior.",
     "topQueries": "Consultas principales",
     "membershipIncluded": "¿Qué incluye mi membresía?",
     "coursesQuestion": "¿Cuántos cursos obtengo?",
@@ -326,5 +326,8 @@
     "fileFormatException": "El formato de archivo no es compatible.",
     "fileLoadFailed": "No se pudo cargar el archivo.",
     "invalidFileDuration": "La duración del archivo no es correcta.",
-    "invalidValue": "El valor ingresado no es correcto."
+    "invalidValue": "El valor ingresado no es correcto.",
+    "todayCapitalMessage": "HOY",
+    "seeAllRequests": "Ver todas las solicitudes",
+    "requests": "Solicitudes"
 }
