@@ -1,97 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>Oluko App</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleName</key>
-		<string>oluko_app</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleVersion</key> 
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>NSAppleMusicUsageDescription</key>
-		<string>To record user workouts</string>
-		<key>NSCameraUsageDescription</key>
-		<string>Need access to camera</string>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>Need access to mic</string>
-		<key>NSContactsUsageDescription</key>
-		<string>Need access to contacts</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>This app requires access to the photo library.</string>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>ITSAppUsesNonExemptEncryption</key>
-		<false/>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UIViewControllerBasedStatusBarAppearance</key>
-		<false/>
-		<key>CFBundleURLTypes</key>
-		<!-- <key>ITSAppUsesNonExemptEncryption</key> -->
-		<!-- <false/> -->
-		<array>
-			<!--
-			<dict>
-			... Some other CFBundleURLTypes definition.
-			</dict>
-			-->
-			<dict>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<!--
-              Replace "000000000000" with your Facebook App ID here.
-              **NOTE**: The scheme needs to start with `fb` and then your ID.
-            -->
-					<string>fb181124640443683</string>
-					<string>com.googleusercontent.apps.320403124104-ppl0rb8eq0e12rpean64ulsoe9c0dqfc</string>
-				</array>
-			</dict>
-		</array>
-
-		<key>FacebookAppID</key>
-
-		<!-- Replace "000000000000" with your Facebook App ID here. -->
-		<string>181124640443683</string>
-		<key>FacebookDisplayName</key>
-
-		<!-- Replace "YOUR_APP_NAME" with your Facebook App name. -->
-		<string>oluko-app</string>
-
-		<key>LSApplicationQueriesSchemes</key>
-		<array>
-			<string>fbapi</string>
-			<string>fb-messenger-share-api</string>
-			<string>fbauth2</string>
-			<string>fbshareextension</string>
-		</array>
-	</dict>
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Oluko App</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>oluko_app</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb181124640443683</string>
+				<string>com.googleusercontent.apps.320403124104-ppl0rb8eq0e12rpean64ulsoe9c0dqfc</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAppID</key>
+	<string>181124640443683</string>
+	<key>FacebookDisplayName</key>
+	<string>oluko-app</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>To record user workouts</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Need access to camera</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Need access to contacts</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Need access to mic</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the photo library.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+</dict>
 </plist>
