@@ -201,7 +201,7 @@ class SegmentClocksUtils {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Image.asset(
-        'assets/courses/audio_icon.png',
+        'assets/neumorphic/audio.png',
         scale: 4,
       ),
     );
