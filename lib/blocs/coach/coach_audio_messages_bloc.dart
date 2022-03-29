@@ -61,9 +61,9 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
             audioMessages.add(CoachAudioMessage.fromJson(content));
           });
           // TODO: disabled needs fix in firebase added event, pending writes, [created_at == null]
-          // if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
-          //   audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-          // }
+          if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
+            audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+          }
         }
         emit(CoachAudioMessagesSuccess(coachAudioMessages: audioMessages));
       });

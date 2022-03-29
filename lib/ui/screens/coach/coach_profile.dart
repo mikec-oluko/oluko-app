@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
@@ -237,8 +238,24 @@ class _CoachProfileState extends State<CoachProfile> {
         builder: (context, state) {
           if (state is CoachAudioMessagesSuccess) {
             _coachAudioMessages = state.coachAudioMessages;
+            List<CoachAudioMessage> audioMessagesNoDate =
+                state.coachAudioMessages.where((audioElement) => audioElement.createdAt == null).toList();
+            audioMessagesNoDate.forEach((element) {
+              element.createdAt ??= Timestamp.now();
+              if (_coachAudioMessages[_coachAudioMessages.indexOf(element)].createdAt == null) {
+                _coachAudioMessages[_coachAudioMessages.indexOf(element)] = element;
+              }
+            });
+            _coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+
             if (_coachAudioMessages.length > _audioMessageRangeValue && _groupedAudioMessages.isEmpty) {
               _groupedAudioMessages = _coachAudioMessages.getRange(0, 5).toList();
+            } else if (_groupedAudioMessages.isNotEmpty) {
+              if (_groupedAudioMessages.length > _coachAudioMessages.length) {
+                _groupedAudioMessages = _coachAudioMessages;
+              } else {
+                _groupedAudioMessages = _coachAudioMessages.getRange(0, _groupedAudioMessages.length).toList();
+              }
             }
           }
           return _coachAudioMessages.isNotEmpty
@@ -264,6 +281,7 @@ class _CoachProfileState extends State<CoachProfile> {
                                           _coachAudioMessages.getRange(_groupedAudioMessages.length, _coachAudioMessages.length).toList());
                                     });
                                   }
+                                  _groupedAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
                                 }
                               },
                               child: getAudioListsDifference > 0
