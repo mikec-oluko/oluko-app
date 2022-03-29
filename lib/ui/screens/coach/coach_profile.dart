@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
@@ -11,7 +9,6 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
-import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
@@ -42,6 +39,8 @@ class _CoachProfileState extends State<CoachProfile> {
   bool _audioRecorded = false;
   double _audioPanelMaxSize = 100.0;
   List<CoachAudioMessage> _coachAudioMessages = [];
+  List<CoachAudioMessage> _groupedAudioMessages = [];
+
   List<CoachMedia> _coachUploadedContent = [];
   List<String> _audiosRecorded = [];
   Widget _audioRecordedElement;
@@ -51,6 +50,7 @@ class _CoachProfileState extends State<CoachProfile> {
   Timer _timer;
   Duration duration = Duration();
   Duration durationToSave = Duration();
+  final int _audioMessageRangeValue = 5;
 
   @override
   void initState() {
@@ -140,12 +140,16 @@ class _CoachProfileState extends State<CoachProfile> {
                       height: ScreenUtils.height(context) / 12,
                     ),
                     coachGallery(context),
-                    coachAudioMessagesList(context),
-                    _coachAudioMessages.isNotEmpty
-                        ? const SizedBox(
-                            height: 110,
-                          )
-                        : const SizedBox.shrink()
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: coachAudioMessagesList(context),
+                    ),
+                    if (_coachAudioMessages.isNotEmpty)
+                      const SizedBox(
+                        height: 110,
+                      )
+                    else
+                      const SizedBox.shrink()
                   ],
                 ),
               );
@@ -233,19 +237,73 @@ class _CoachProfileState extends State<CoachProfile> {
         builder: (context, state) {
           if (state is CoachAudioMessagesSuccess) {
             _coachAudioMessages = state.coachAudioMessages;
+            if (_coachAudioMessages.length > _audioMessageRangeValue && _groupedAudioMessages.isEmpty) {
+              _groupedAudioMessages = _coachAudioMessages.getRange(0, 5).toList();
+            }
           }
           return _coachAudioMessages.isNotEmpty
               ? Column(
-                  children: _coachAudioMessages
-                      .map((audioMessageItem) => audioSentComponent(
-                          context: context,
-                          audioPath: audioMessageItem.audioMessage.url,
-                          isPreview: false,
-                          audioMessageItem: audioMessageItem))
-                      .toList())
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: hasMoreThanRange
+                          ? GestureDetector(
+                              onTap: () {
+                                if (getAudioListsDifference > 0) {
+                                  if (getAudioListsDifference > _audioMessageRangeValue) {
+                                    final List<CoachAudioMessage> _bulkOfAudios = _coachAudioMessages
+                                        .getRange(_groupedAudioMessages.length, _groupedAudioMessages.length + _audioMessageRangeValue)
+                                        .toList();
+                                    setState(() {
+                                      _groupedAudioMessages = [..._bulkOfAudios, ..._groupedAudioMessages];
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _groupedAudioMessages.addAll(
+                                          _coachAudioMessages.getRange(_groupedAudioMessages.length, _coachAudioMessages.length).toList());
+                                    });
+                                  }
+                                }
+                              },
+                              child: getAudioListsDifference > 0
+                                  ? Text(
+                                      getAudioListsDifference >= _audioMessageRangeValue
+                                          ? seeMoreAudiosText(_audioMessageRangeValue)
+                                          : seeMoreAudiosText(getAudioListsDifference),
+                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500))
+                                  : const SizedBox.shrink(),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                    Column(
+                        children: !hasMoreThanRange
+                            ? _coachAudioMessages
+                                .map((audioMessageItem) => audioSentComponent(
+                                    context: context,
+                                    audioPath: audioMessageItem.audioMessage.url,
+                                    isPreview: false,
+                                    audioMessageItem: audioMessageItem))
+                                .toList()
+                            : _groupedAudioMessages
+                                .map((audioMessageItem) => audioSentComponent(
+                                    context: context,
+                                    audioPath: audioMessageItem.audioMessage.url,
+                                    isPreview: false,
+                                    audioMessageItem: audioMessageItem))
+                                .toList()),
+                  ],
+                )
               : const SizedBox.shrink();
         });
   }
+
+  int get getAudioListsDifference => _coachAudioMessages.length - _groupedAudioMessages.length;
+
+  bool get hasMoreThanRange => _coachAudioMessages.length > _audioMessageRangeValue;
+
+  String seeMoreAudiosText(int nextRangeValue) =>
+      '${OlukoLocalizations.get(context, 'see')} $nextRangeValue ${OlukoLocalizations.get(context, 'more')}';
 
   Padding confirmDeleteComponent({BuildContext context, bool isPreviewContent, CoachAudioMessage audioMessage}) {
     return Padding(
@@ -301,7 +359,9 @@ class _CoachProfileState extends State<CoachProfile> {
 
   Padding askCoachPanelContent({Widget audioRecorded}) {
     final askCoachText = Text(
-      _recordingAudio ? 'RECORDING: ${TimeConverter.durationToString(duration)}' : OlukoLocalizations.get(context, 'askYourCoach'),
+      _recordingAudio
+          ? '${OlukoLocalizations.get(context, 'recordingCapitalText')} ${TimeConverter.durationToString(duration)}'
+          : OlukoLocalizations.get(context, 'askYourCoach'),
       style: OlukoFonts.olukoMediumFont(
           customColor: OlukoNeumorphism.isNeumorphismDesign
               ? _recordingAudio

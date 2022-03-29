@@ -218,7 +218,7 @@ class _CoachPageState extends State<CoachPage> {
                                   builder: (context, timelineState) {
                                     if (timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
-                                      if (_introductionVideo != null) {
+                                      if (_introductionVideo != null && _introductionVideo.video.url != null) {
                                         _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
                                           context: context,
                                           timelineItems: _timelineItemsContent,

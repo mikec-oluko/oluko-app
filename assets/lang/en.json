@@ -329,5 +329,8 @@
     "invalidValue": "The entered value is not correct.",
     "todayCapitalMessage": "TODAY",
     "seeAllRequests": "See all requests",
-    "requests": "Requests"
+    "requests": "Requests",
+    "see": "See",
+    "more": "more",
+    "recordingCapitalText": "RECORDING:"
 }
