@@ -1,17 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final pathToSaveAudio = 'audio_example.aac';
-
 class SoundRecorder {
   FlutterSoundRecorder _audioRecorder;
-  bool _isRecordedInitialised = false;
+  bool _isRecordedInitialized = false;
 
   bool get isRecording => _audioRecorder.isRecording;
 
-    bool get isStopped => _audioRecorder.isStopped;
+  bool get isStopped => _audioRecorder.isStopped;
+
+  bool get isInitialised => _isRecordedInitialized;
 
   String _audioUrl = "";
+
   String get audioUrl => _audioUrl;
 
   Future init() async {
@@ -24,22 +26,22 @@ class SoundRecorder {
       throw RecordingPermissionException('Microphone permission denied');
     }*/
     await _audioRecorder.openAudioSession();
-    _isRecordedInitialised = true;
+    _isRecordedInitialized = true;
   }
 
   Future dispose() async {
     _audioRecorder.closeAudioSession();
     _audioRecorder = null;
-    _isRecordedInitialised = false;
+    _isRecordedInitialized = false;
   }
 
   Future _record() async {
-    if (!_isRecordedInitialised) return;
-    await _audioRecorder.startRecorder(toFile: pathToSaveAudio);
+    if (!_isRecordedInitialized) return;
+    await _audioRecorder.startRecorder(toFile: '${Timestamp.now().millisecondsSinceEpoch}.aac');
   }
 
   Future _stop() async {
-    if (!_isRecordedInitialised) return;
+    if (!_isRecordedInitialized) return;
     String url = await _audioRecorder.stopRecorder();
     _audioUrl = url;
   }

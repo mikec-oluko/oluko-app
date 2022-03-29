@@ -1,27 +1,62 @@
+import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_audio_message.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 class CoachAudioSentComponent extends StatefulWidget {
-  const CoachAudioSentComponent({Key key}) : super(key: key);
+  final String record;
+  final Duration durationFromRecord;
+  final bool isPreviewContent;
+  final Function() onDelete;
+  final CoachAudioMessage audioMessageItem;
+  const CoachAudioSentComponent(
+      {Key key, this.record, this.isPreviewContent = false, this.onDelete, this.audioMessageItem, this.durationFromRecord})
+      : super(key: key);
 
   @override
   State<CoachAudioSentComponent> createState() => _CoachAudioSentComponentState();
 }
 
 class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
+  Duration _totalDuration;
+  int _currentDuration;
+  double _completedPercentage = 0.0;
+  bool _isPlaying = false;
+  AudioPlayer audioPlayer = AudioPlayer();
+  bool playedOnce = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  //Pause the audio playing on background, when widget is removed from Widget tree.
+  void deactivate() {
+    audioPlayer.pause();
+    super.deactivate();
+  }
+
   @override
   Widget build(BuildContext context) {
     return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAudioComponent(context) : defaultAudioSent(context);
   }
 
   Padding neumorphicCoachAudioComponent(BuildContext context) {
-    const defaultDateString = '10:00AM 22jul, 2022';
-    const defaultDurationString = '0:50';
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Neumorphic(
-        style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-            .copyWith(boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10)))),
+        style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
+          boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
+          border: NeumorphicBorder(
+              width: 3,
+              color: widget.isPreviewContent
+                  ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth
+                  : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        ),
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: 100,
@@ -37,22 +72,27 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Image.asset(
-                          'assets/assessment/play.png',
-                          scale: 3.5,
+                        GestureDetector(
+                          onTap: () => _onPlay(filePath: widget.record),
+                          child: Neumorphic(
+                            style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+                            child: Image.asset(
+                              !_isPlaying ? 'assets/assessment/play_triangle.png' : 'assets/assessment/pause.png',
+                              width: 45,
+                              height: 45,
+                              scale: 1,
+                              color: OlukoColors.black,
+                            ),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Image.asset(
-                            'assets/courses/coach_audio.png',
-                            width: 150,
-                            fit: BoxFit.fill,
-                            scale: 5,
-                            color: OlukoColors.grayColor,
-                          ),
+                          child: Container(width: ScreenUtils.width(context) / 2.5, child: CourseProgressBar(value: _completedPercentage)),
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
-                        Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor),
+                        GestureDetector(
+                            onTap: () => widget.onDelete(),
+                            child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
                       ],
                     ),
                   ),
@@ -65,7 +105,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                   children: [
                     const SizedBox(),
                     Text(
-                      defaultDurationString,
+                      _totalDuration != null
+                          ? TimeConverter.durationToString(_totalDuration)
+                          : widget.durationFromRecord != null
+                              ? TimeConverter.durationToString(widget.durationFromRecord)
+                              : '',
                       style: OlukoFonts.olukoSmallFont(
                           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                           custoFontWeight: FontWeight.w500),
@@ -74,17 +118,24 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     Row(
                       children: [
                         Text(
-                          defaultDateString,
+                          TimeConverter.getDateAndTimeOnStringFormat(
+                              dateToFormat: widget.audioMessageItem != null && widget.audioMessageItem.createdAt != null
+                                  ? widget.audioMessageItem.createdAt
+                                  : Timestamp.now(),
+                              context: context),
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                               custoFontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 10),
-                        Image.asset(
-                          'assets/courses/coach_tick.png',
-                          scale: 5,
-                          color: OlukoColors.grayColor,
-                        ),
+                        if (!widget.isPreviewContent)
+                          Image.asset(
+                            'assets/courses/coach_tick.png',
+                            scale: 5,
+                            color: widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
+                          )
+                        else
+                          const SizedBox.shrink(),
                       ],
                     ),
                   ],
@@ -109,9 +160,12 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
             children: [
               Row(
                 children: [
-                  Image.asset(
-                    'assets/assessment/play.png',
-                    scale: 5,
+                  GestureDetector(
+                    onTap: () => _onPlay(filePath: widget.record),
+                    child: Image.asset(
+                      'assets/assessment/play.png',
+                      scale: 5,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -149,5 +203,48 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         ),
       ),
     );
+  }
+
+  Future<void> _onPlay({String filePath}) async {
+    if (!_isPlaying) {
+      if (playedOnce) {
+        await audioPlayer.resume();
+      } else {
+        await audioPlayer.play(filePath, isLocal: true);
+        setState(() {
+          playedOnce = true;
+        });
+      }
+
+      setState(() {
+        _completedPercentage = 0.0;
+        _isPlaying = true;
+      });
+
+      audioPlayer.onPlayerCompletion.listen((_) {
+        setState(() {
+          _isPlaying = false;
+          _completedPercentage = 0.0;
+          playedOnce = false;
+        });
+      });
+      audioPlayer.onDurationChanged.listen((Duration duration) {
+        setState(() {
+          _totalDuration = duration;
+        });
+      });
+
+      audioPlayer.onAudioPositionChanged.listen((duration) {
+        setState(() {
+          _currentDuration = duration.inMicroseconds;
+          _completedPercentage = _currentDuration.toDouble() / _totalDuration.inMicroseconds.toDouble();
+        });
+      });
+    } else {
+      await audioPlayer.pause();
+      setState(() {
+        _isPlaying = false;
+      });
+    }
   }
 }

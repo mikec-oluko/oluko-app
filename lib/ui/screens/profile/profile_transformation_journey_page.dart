@@ -13,14 +13,13 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/modal_exception_message.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
-import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -47,6 +46,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   final PanelController _panelController = PanelController();
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
+  bool canHidePanel = true;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                                   Padding(
                                                     padding: const EdgeInsets.only(left: 10.0),
                                                     child: Text(
-                                                      OlukoLocalizations.get(context, 'tapToUpload'),
+                                                      OlukoLocalizations.get(context, 'upload'),
                                                       style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
                                                     ),
                                                   )
@@ -139,7 +139,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                           child: Row(
                                             children: [
                                               OlukoOutlinedButton(
-                                                  title: OlukoLocalizations.get(context, 'tapToUpload'),
+                                                  title: OlukoLocalizations.get(context, 'upload'),
                                                   onPressed: () {
                                                     BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
                                                   }),
@@ -178,7 +178,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     return BlocConsumer<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
-          _statePanelMaxHeight = 100;
+          _statePanelMaxHeight = _panelMaxHeight;
         } else {
           _statePanelMaxHeight = 300;
         }
@@ -194,13 +194,19 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           _contentForPanel = const SizedBox();
         }
         if (state is TransformationJourneyContentLoading) {
+          canHidePanel = !canHidePanel;
           _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
         }
         if (state is TransformationJourneyContentSuccess) {
+          canHidePanel = !canHidePanel;
           _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
         }
         if (state is TransformationJourneyContentFailure) {
-          _panelController.close();
+          _statePanelMaxHeight = _panelMaxHeight;
+          _contentForPanel = ModalExceptionMessage(
+              exceptionType: state.exceptionType,
+              onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
+              exceptionSource: state.exceptionSource);
         }
         if (state is TransformationJourneyRequirePermissions) {
           _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
@@ -211,7 +217,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           onPanelClosed: () {
             BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
           },
-          backdropEnabled: true,
+          backdropEnabled: canHidePanel,
           isDraggable: false,
           margin: EdgeInsets.all(0),
           header: const SizedBox(),
@@ -222,6 +228,9 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           collapsed: const SizedBox(),
           controller: _panelController,
           panel: _contentForPanel,
+          borderRadius: OlukoNeumorphism.isNeumorphismDesign
+              ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+              : BorderRadius.zero,
         );
       },
     );

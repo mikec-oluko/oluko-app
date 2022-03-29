@@ -42,10 +42,10 @@ class CourseEnrollmentListSuccess extends SegmentSubmissionState {
 class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   SegmentSubmissionBloc() : super(Loading());
 
-  void create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, bool hasCoachRequest) async {
+  void create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, String classId, bool hasCoachRequest) async {
     try {
       SegmentSubmission segmentSubmission =
-          await SegmentSubmissionRepository.create(user, courseEnrollment, segment, videoPath, coachId, hasCoachRequest);
+          await SegmentSubmissionRepository.create(user, courseEnrollment, segment, videoPath, coachId, classId, hasCoachRequest);
       emit(CreateSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

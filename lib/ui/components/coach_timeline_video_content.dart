@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachTimelineVideoContent extends StatefulWidget {
@@ -20,93 +21,88 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: OlukoNeumorphismColors.appBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                ),
+                width: 140,
+                height: 70,
+                child: Stack(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                          ),
-                          width: 140,
-                          height: 70,
-                          child: Stack(
-                            children: [
-                              Align(
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                          image: DecorationImage(
-                                            image: widget.videoThumbnail != null
-                                                ? CachedNetworkImageProvider(widget.videoThumbnail)
-                                                : defaultImage,
-                                            fit: BoxFit.cover,
-                                          )))),
-                              Align(
-                                child: SizedBox(
-                                    child: Image.asset(
-                                  'assets/self_recording/play_button.png',
-                                  color: Colors.white,
-                                  height: 30,
-                                  width: 30,
-                                )),
+                    Align(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                image: DecorationImage(
+                                  image: widget.videoThumbnail != null ? CachedNetworkImageProvider(widget.videoThumbnail) : defaultImage,
+                                  fit: BoxFit.cover,
+                                )))),
+                    Align(
+                      child: SizedBox(
+                        child: OlukoNeumorphism.isNeumorphismDesign
+                            ? Container(
+                                width: 40,
+                                height: 40,
+                                child: OlukoBlurredButton(
+                                    childContent: Image.asset('assets/courses/play_arrow.png',
+                                        height: 5, width: 5, scale: 4, color: OlukoColors.white)),
                               )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ScreenUtils.modifiedFont(context)
-                              ? SizedBox(
-                                  width: ScreenUtils.width(context) * 0.33,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                          style: OlukoFonts.olukoMediumFont(
-                                              customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                                      Text(widget.videoTitle,
-                                          style:
-                                              OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                                    ],
-                                  ),
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                                    Text(widget.videoTitle,
-                                        style:
-                                            OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                                  ],
-                                ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(DateFormat.jm().format(widget.date).toString(),
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
-                    ),
+                            : Image.asset(
+                                'assets/self_recording/play_button.png',
+                                color: Colors.white,
+                                height: 40,
+                                width: 40,
+                              ),
+                      ),
+                    )
                   ],
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ScreenUtils.modifiedFont(context)
+                      ? SizedBox(
+                          width: ScreenUtils.width(context) * 0.33,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                              Text(widget.videoTitle,
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                            Text(widget.videoTitle,
+                                overflow: TextOverflow.ellipsis,
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                ),
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child:
+                Text(DateFormat.jm().format(widget.date).toString(), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+          ),
+        ],
       ),
     );
   }

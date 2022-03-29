@@ -76,6 +76,12 @@ class _RecordedViewState extends State<RecordedView> {
     );
   }
 
+  @override
+  void dispose() {
+    audioPlayer.pause();
+    super.dispose();
+  }
+
   Widget playButton() {
     return GestureDetector(
         onTap: () async {
