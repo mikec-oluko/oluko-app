@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
@@ -79,6 +80,7 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    ProjectConfigurationBloc().getCourseConfiguration();
     return BlocProvider<AnimationBloc>(
       create: (mainContext) => AnimationBloc(),
       child: MaterialApp(

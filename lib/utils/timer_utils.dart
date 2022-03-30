@@ -281,7 +281,8 @@ class TimerUtils {
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
                     strokeWidth: _progressIndicatorStroke,
-                    value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
+                    value: 
+                     progressValue,
                     color: getGreenOrSkyBlue,
                     backgroundColor: backgroundColor)),
           ),
