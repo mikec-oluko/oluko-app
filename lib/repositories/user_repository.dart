@@ -192,10 +192,9 @@ class UserRepository {
     return downloadUrl;
   }
 
-  Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex, {bool notificationValue}) async {
+  Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex) async {
     final DocumentReference<Object> userReference = getUserReference(user);
-
-    user.notification = notificationValue;
+    
     user.privacy = privacyIndex;
     try {
       await userReference.update(user.toJson());

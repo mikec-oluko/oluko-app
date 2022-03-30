@@ -50,7 +50,7 @@ class CourseEnrollment extends Base {
             ? 0.0
             : json['completion'].toString() == '1'
                 ? ((json['completion'] as int).toDouble())
-                : json['completion'] as double,
+                : json['completion'] is double ? json['completion'] as double : ((json['completion'] as int).toDouble()),
         completedAt: json['completed_at'] as Timestamp,
         finishedAt: json['finished_at'] as Timestamp,
         classes: json['classes'] != null

@@ -35,6 +35,7 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
@@ -375,6 +376,7 @@ class Routes {
   final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
   final NotificationBloc _notificationBloc = NotificationBloc();
+  final NotificationSettingsBloc _notificationSettingsBloc = NotificationSettingsBloc();
   final FeedbackBloc _feedbackBloc = FeedbackBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
   final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
@@ -454,7 +456,8 @@ class Routes {
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
-          BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc)
+          BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -544,6 +547,7 @@ class Routes {
       case RouteEnum.profileSettings:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);
@@ -714,7 +718,8 @@ class Routes {
           BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<FeedbackBloc>.value(value: _feedbackBloc),
-          BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc)
+          BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(

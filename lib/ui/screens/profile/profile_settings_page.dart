@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
+import 'package:oluko_app/models/notification_settings.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -35,7 +35,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   void setValuesFromUserProfile() {
     _privacyNewValue = widget.profileInfo.privacy;
-    _notificationNewValue = widget.profileInfo.notification;
+    _notificationNewValue ??= NotificationSettingsBloc.notificationSettings.globalNotifications ?? true;
     _authUser = widget.profileInfo;
   }
 
@@ -108,11 +108,19 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   MergeSemantics olukoSwitch() {
     return MergeSemantics(
       child: ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-          title: Text(ProfileViewConstants.profileSettingsNotification, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
-          trailing: OlukoNeumorphism.isNeumorphismDesign
+        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        title: Text(ProfileViewConstants.profileSettingsNotification, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+        trailing: BlocListener<NotificationSettingsBloc, NotificationSettingsState>(
+          listener: (context, state) {
+            if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
+              setState(() {
+                _notificationNewValue = state.notificationSettings.globalNotifications;
+              });
+            }
+          },
+          child: OlukoNeumorphism.isNeumorphismDesign
               ? Neumorphic(
-                  style: NeumorphicStyle(
+                  style: const NeumorphicStyle(
                       depth: 3,
                       intensity: 1,
                       color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -128,7 +136,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                     width: 50,
                     height: 30,
                     child: NeumorphicSwitch(
-                      style: NeumorphicSwitchStyle(
+                      style: const NeumorphicSwitchStyle(
                           inactiveThumbColor: OlukoColors.primary,
                           activeThumbColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                           activeTrackColor: OlukoColors.primary,
@@ -146,7 +154,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                   onChanged: (bool value) => _setValueForNotifications(value),
                   trackColor: MaterialStateProperty.all(OlukoColors.grayColor),
                   activeColor: OlukoColors.primary,
-                )),
+                ),
+        ),
+      ),
     );
   }
 
@@ -197,15 +207,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       setState(() {
         _privacyNewValue = index;
       });
-      BlocProvider.of<ProfileBloc>(context)
-          .updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
-    } else if (_notificationNewValue != _authUser.notification) {
-      if (index == null) {
-        //TODO: setting param index value?
-        index = _privacyNewValue;
-      }
-      BlocProvider.of<ProfileBloc>(context)
-          .updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
+    } 
+    if(_privacyNewValue != _authUser.privacy) {
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue);
     }
   }
 
@@ -213,7 +217,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     setState(() {
       _notificationNewValue = value;
     });
-    BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
+    BlocProvider.of<NotificationSettingsBloc>(context).update(NotificationSettings(globalNotifications: value, userId: _authUser.id));
   }
 
   String returnOption(String option) => option.split(".")[1];
