@@ -30,7 +30,7 @@ class PushNotificationService {
         bottomDialogDisplayed = true;
         BottomDialogUtils.showBottomDialog(
           content: Container(
-            height: ScreenUtils.height(contextPush) * 0.35,
+            height: 270,
             decoration: const BoxDecoration(
               borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
               image: DecorationImage(
