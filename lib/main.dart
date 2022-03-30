@@ -102,10 +102,14 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         home: LayoutBuilder(
           builder: (context, constraints) {
-            WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _insertOverlay(context),
+            );
             return WillPopScope(
               onWillPop: () async {
-                !await _navigatorKey.currentState.maybePop();
+                if (_navigatorKey.currentState.canPop()) {
+                  !await _navigatorKey.currentState.maybePop();
+                }
                 return false;
               },
               child: Navigator(
