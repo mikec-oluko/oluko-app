@@ -315,6 +315,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         if (previous is GetSuccess &&
             current.taskSubmission != null &&
             current.taskSubmission.id == previous?.taskSubmission?.id &&
+            current.taskSubmission.video != null &&
             current.taskSubmission.video.url == previous?.taskSubmission?.video?.url) {
           return false;
         }
@@ -373,13 +374,14 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _controller.pause();
               }
               if (_globalService.videoProcessing) {
-                getDialog();
+                showDialog();
               } else {
                 Navigator.pop(context);
                 return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                   'taskIndex': widget.taskIndex,
                   'isPublic': _makePublic ?? false,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                  'fromCompletedClass': false
                 });
               }
             },
@@ -392,13 +394,14 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _controller.pause();
               }
               if (_globalService.videoProcessing) {
-                getDialog();
+                showDialog();
               } else {
                 Navigator.pop(context);
                 return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                   'taskIndex': widget.taskIndex,
                   'isPublic': _makePublic ?? false,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                  'fromCompletedClass': false
                 });
               }
             },
@@ -412,7 +415,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                   'taskIndex': widget.taskIndex,
                   'filePath': state.pickedFile.path,
                   'isPublic': _makePublic ?? false,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                  'fromCompletedClass': false
                 });
               } else if (state is PermissionsRequired) {
                 PermissionsUtils.showSettingsMessage(context);
@@ -420,7 +424,11 @@ class _TaskDetailsState extends State<TaskDetails> {
             },
             child: GestureDetector(
               onTap: () {
-                _globalService.videoProcessing ? getDialog() : BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                if (!_globalService.videoProcessing) {
+                  BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                } else {
+                  showDialog();
+                }
               },
               child: const Icon(
                 Icons.file_upload,
@@ -430,21 +438,6 @@ class _TaskDetailsState extends State<TaskDetails> {
             )),
       ],
     );
-  }
-
-  Future<dynamic> getDialog() {
-    return DialogUtils.getDialog(
-        context,
-        [
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-              ))
-        ],
-        showExitButton: true);
   }
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
@@ -460,7 +453,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     onPressed: () {
                       if (_globalService.videoProcessing) {
-                        getDialog();
+                        showDialog();
                       } else {
                         if (OlukoNeumorphism.isNeumorphismDesign) {
                           _panelController.animatePanelToPosition(1.0);
@@ -480,7 +473,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
                       if (_globalService.videoProcessing) {
-                        getDialog();
+                        showDialog();
                       } else {
                         DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                       }
@@ -510,6 +503,21 @@ class _TaskDetailsState extends State<TaskDetails> {
             })
           ],
         ));
+  }
+
+  showDialog() {
+    return DialogUtils.getDialog(
+        context,
+        [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              ))
+        ],
+        showExitButton: true);
   }
 
   void nextAssessmentButtonOnPress(BuildContext context) {
@@ -576,7 +584,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                               'taskIndex': widget.taskIndex,
                               'isPublic': _makePublic,
-                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                              'fromCompletedClass': false
                             });
                           },
                         )
@@ -618,7 +627,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                               'taskIndex': widget.taskIndex,
                               'isPublic': _makePublic,
-                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                              'fromCompletedClass': false
                             });
                           },
                         ),
@@ -655,8 +665,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                         }
                       },
                       child: taskResponse(
-                          TimeConverter.durationToString(
-                              Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
+                          TimeConverter.durationToString(Duration(
+                              milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
                           taskSubmission?.video?.thumbUrl,
                           taskSubmission)),
                 ]),
@@ -676,7 +686,10 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null)
+                const Image(image: AssetImage('assets/assessment/thumbnail.jpg'))
+              else
+                Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign
@@ -722,7 +735,10 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null)
+                const Image(image: AssetImage('assets/assessment/thumbnail.jpg'))
+              else
+                Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign

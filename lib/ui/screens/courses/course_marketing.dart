@@ -264,7 +264,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverList(
                 delegate: SliverChildListDelegate([
               Padding(
-                padding: EdgeInsets.only(right: 15, left: 15, top: 10),
+                padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
                   CourseUtils.toCourseDuration(
                       int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
@@ -330,8 +330,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
-        (courseEnrollment == null || courseEnrollment.completion >= 1)) {
+    bool showEnorollButton = (courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
+        (courseEnrollment == null || courseEnrollment.completion >= 1);
+    if (showEnorollButton) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
         listener: (context, courseEnrollmentState) {
           if (courseEnrollmentState is CreateEnrollmentSuccess) {
@@ -350,7 +351,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   title: OlukoLocalizations.get(context, 'enroll'),
                   onPressed: () async {
                     if (_disableAction == false) {
-                      await SoundPlayer.playAsset(SoundsEnum.enroll);
+                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
                       BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                       if (!widget.isCoachRecommendation) {
                         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
@@ -364,7 +365,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   title: OlukoLocalizations.get(context, 'enroll'),
                   onPressed: () async {
                     if (_disableAction == false) {
-                      await SoundPlayer.playAsset(SoundsEnum.enroll);
+                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
                       BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                       if (!widget.isCoachRecommendation) {
                         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
@@ -380,6 +381,44 @@ class _CourseMarketingState extends State<CourseMarketing> {
     } else {
       return const SizedBox();
     }
+  }
+
+  Widget enrollButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            OlukoNeumorphicPrimaryButton(
+              thinPadding: true,
+              title: OlukoLocalizations.get(context, 'enroll'),
+              onPressed: () {
+                if (_disableAction == false) {
+                  BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                  if (!widget.isCoachRecommendation) {
+                    BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                  }
+                }
+                _disableAction = true;
+              },
+            )
+          else
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.get(context, 'enroll'),
+              onPressed: () {
+                if (_disableAction == false) {
+                  BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                  if (!widget.isCoachRecommendation) {
+                    BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                  }
+                }
+                _disableAction = true;
+              },
+            ),
+        ],
+      ),
+    );
   }
 
   Widget buildStatistics() {

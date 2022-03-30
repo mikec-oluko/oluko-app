@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/ui/components/search_filters.dart';
@@ -166,7 +168,9 @@ class _State<T extends Base> extends State<FilterSelector> {
     List<T> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>)
         .map((item) => item.key)
         .toList();
-    return selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
+    List<Base> selectedItems = selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
+    BlocProvider.of<SelectedTagsBloc>(context).updateSelectedTags(selectedItems.length);
+    return selectedItems;
   }
 
   List<MapEntry<T, String>> _getAllValuesFromCategories(List<MapEntry<String, Map<T, String>>> itemsInCategories) {

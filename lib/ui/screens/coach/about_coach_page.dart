@@ -29,6 +29,11 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
         showTitle: true,
         showBackButton: true,
         title: OlukoLocalizations.get(context, 'aboutCoach'),
+        onPressed: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+        },
       ),
       body: coachMediaGalleryComponent(),
     );
@@ -36,6 +41,8 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
 
   Container coachMediaGalleryComponent() {
     return Container(
+      width: ScreenUtils.width(context),
+      height: ScreenUtils.height(context),
       color: OlukoNeumorphismColors.appBackgroundColor,
       child: BlocBuilder<CoachMediaBloc, CoachMediaState>(
         builder: (context, state) {

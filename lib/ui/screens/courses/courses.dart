@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
+import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
@@ -24,15 +25,18 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
+import 'package:oluko_app/ui/components/clear_all_button.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
+import 'package:oluko_app/ui/newDesignComponents/cancel_bottom_panel.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
@@ -77,6 +81,10 @@ class _State extends State<Courses> {
   List<Course> _courses;
   Map<CourseCategory, List<Course>> _coursesByCategories;
 
+  PanelController panelController = PanelController();
+
+
+
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + carSecHeigthPlus;
@@ -90,10 +98,24 @@ class _State extends State<Courses> {
           return BlocBuilder<TagBloc, TagState>(
               bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
               builder: (context, tagState) {
-                return Scaffold(
-                    backgroundColor: Colors.black,
-                    appBar: _appBar(widget.homeEnrollTocourse ?? false),
-                    body: _courseWidget(context, tagState));
+                return SlidingUpPanel(
+                    controller: panelController,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    maxHeight: 250,
+                    minHeight: 0,
+                    panel: CancelBottomPanel(
+                        title: OlukoLocalizations.get(context, 'cancelMssg'),
+                        text: OlukoLocalizations.get(context, 'cancelTxt'),
+                        textButtonTxt: OlukoLocalizations.get(context, 'no'),
+                        primaryButtonTxt: OlukoLocalizations.get(context, 'yes'),
+                        primaryButtonAction: cancelAction,
+                        textButtonAction: () => panelController.close()),
+                    body: Container(
+                        color: Colors.black,
+                        child: Scaffold(
+                            backgroundColor: Colors.black,
+                            appBar: _appBar(widget.homeEnrollTocourse ?? false),
+                            body: _courseWidget(context, tagState))));
               });
         } else {
           return SizedBox();
@@ -222,36 +244,23 @@ class _State extends State<Courses> {
 
   Widget _filterWidget() {
     return GestureDetector(
-      onTap: () => setState(() {
+      onTap: () {
         if (showFilterSelector == true) {
           //Clear all filters
-          CourseUtils.onClearFilters(context).then((value) => value
-              ? {
-                  widget.showBottomTab(),
-                  this.setState(() {
-                    selectedTags.clear();
-                    showFilterSelector = false;
-                  })
-                }
-              : null);
+          //CourseUtils.onClearFilters(context).then((value) => value ? cancelAction() : null);
+          panelController.open();
         } else {
-          widget.showBottomTab();
-          //Toggle filter view
-          showFilterSelector = !showFilterSelector;
+          setState(() {
+            widget.showBottomTab();
+            //Toggle filter view
+            showFilterSelector = !showFilterSelector;
+          });
         }
-      }),
+      },
       child: Padding(
         padding: const EdgeInsets.only(right: 20.0, top: 5),
         child: showFilterSelector
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    OlukoLocalizations.get(context, 'clearAll'),
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
-                  ),
-                ],
-              )
+            ? ClearAllButton()
             : OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicCircleButton(
                     customIcon: Icon(
@@ -262,12 +271,8 @@ class _State extends State<Courses> {
                     onPressed: () => this.setState(() {
                       if (showFilterSelector == true) {
                         //Clear all filters
-                        CourseUtils.onClearFilters(context).then((value) => value
-                            ? this.setState(() {
-                                selectedTags.clear();
-                                showFilterSelector = false;
-                              })
-                            : null);
+                        //CourseUtils.onClearFilters(context).then((value) => value ? cancelAction() : null);
+                        panelController.open();
                       } else {
                         //Toggle filter view
                         showFilterSelector = !showFilterSelector;
@@ -282,6 +287,13 @@ class _State extends State<Courses> {
                   ),
       ),
     );
+  }
+
+  void cancelAction() {
+    setState(() {
+      selectedTags.clear();
+    });
+    panelController.close();
   }
 
 //TODO: CHECK COACH ON ENROLL

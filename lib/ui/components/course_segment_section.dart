@@ -50,7 +50,7 @@ class _State extends State<CourseSegmentSection> {
                         scrollDirection: Axis.horizontal,
                         child: Row(children: [
                           if (widget.segment.isChallenge)
-                            LockedChallenge(challengeImage: widget.segment.challengeImage, context: context)
+                            LockedChallenge(challengeImage: widget.segment.image, context: context)
                           else
                             const SizedBox(),
                           MovementItemBubbles(
@@ -106,11 +106,11 @@ class _State extends State<CourseSegmentSection> {
           alignment: Alignment.center,
           children: [
             (() {
-              if (widget.segment.challengeImage != null) {
+              if (widget.segment.image != null) {
                 return ClipRRect(
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                   child: Image(
-                    image: CachedNetworkImageProvider(widget.segment.challengeImage),
+                    image: CachedNetworkImageProvider(widget.segment.image),
                     height: 140,
                     width: 100,
                     fit: BoxFit.cover,

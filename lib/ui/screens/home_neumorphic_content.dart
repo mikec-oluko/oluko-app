@@ -451,7 +451,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         children: [
           OlukoNeumorphicPrimaryButton(
             useBorder: true,
-            title: OlukoLocalizations.get(context, 'enrollToACourse'),
+            title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
             },

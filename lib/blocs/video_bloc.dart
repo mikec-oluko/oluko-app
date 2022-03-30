@@ -40,7 +40,7 @@ class VideoSuccess extends VideoState {
   Assessment assessment;
   TaskSubmission taskSubmission;
   int taskIndex;
-  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission,this.taskIndex});
+  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission, this.taskIndex});
 }
 
 class VideoProcessing extends VideoState {
@@ -76,47 +76,77 @@ class VideoBloc extends Cubit<VideoState> {
       TaskSubmission taskSubmission]) async {
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
-      final String thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
-      // A Stream that handles communication between isolates
-      final p = ReceivePort();
+      String thumbnailFilePath;
+      try {
+        thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
+      } catch (e, stackTrace) {
+        thumbnailFilePath = null;
+      }
+      if (GlobalConfiguration().getValue('uploadOnIsolate') == 'true') {
+        // A Stream that handles communication between isolates
+        final p = ReceivePort();
 
-      final data = {
-        'port': p.sendPort,
-        'data': {
-          'context': context.toString(),
-          'videoFilePath': videoFile.path,
-          'aspectRatio': aspectRatio,
-          'id': id,
-          'directory': (await getApplicationDocumentsDirectory()).path,
-          'duration': durationInMilliseconds,
-          'thumbnailPath': thumbnailFilePath,
-        }
-      };
-
-      // you can also manage the isolate outside
-      // isolate.kill / pause / addListener.. .
-      final isolate = await Isolate.spawn(processVideoOnBackground, data);
-
-      p.listen(
-        (onData) {
-          OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
-          if (isolateMessage != null) {
-            if (isolateMessage.status == IsolateStatusEnum.success) {
-              emit(
-                VideoSuccess(
-                  video: Video.fromJson(isolateMessage.video),
-                  segmentSubmission: segmentSubmission,
-                  taskSubmission: taskSubmission,
-                  assessment: assessment,
-                  assessmentAssignment: assessmentAssignment,
-                ),
-              );
-            } else {
-              emit(VideoFailure());
-            }
+        final data = {
+          'port': p.sendPort,
+          'data': {
+            'context': context.toString(),
+            'videoFilePath': videoFile.path,
+            'aspectRatio': aspectRatio,
+            'id': id,
+            'directory': (await getApplicationDocumentsDirectory()).path,
+            'duration': durationInMilliseconds,
+            'thumbnailPath': thumbnailFilePath,
           }
-        },
-      );
+        };
+
+        // you can also manage the isolate outside
+        // isolate.kill / pause / addListener.. .
+        final isolate = await Isolate.spawn(processVideoOnBackground, data);
+
+        p.listen(
+          (onData) {
+            OlukoIsolateMessage isolateMessage = onData is OlukoIsolateMessage ? onData : null;
+            if (isolateMessage != null) {
+              if (isolateMessage.status == IsolateStatusEnum.success) {
+                emit(
+                  VideoSuccess(
+                    video: Video.fromJson(isolateMessage.video),
+                    segmentSubmission: segmentSubmission,
+                    taskSubmission: taskSubmission,
+                    assessment: assessment,
+                    assessmentAssignment: assessmentAssignment,
+                  ),
+                );
+              } else {
+                emit(VideoFailure());
+              }
+            }
+          },
+        );
+      } else {
+        Video video = await VideoService.processVideoWithoutEncoding(
+          videoFile.path,
+          aspectRatio,
+          id,
+          (await getApplicationDocumentsDirectory()).path,
+          durationInMilliseconds,
+          thumbnailFilePath,
+        );
+
+        if (video != null) {
+          emit(
+            VideoSuccess(
+              video: video,
+              segmentSubmission: segmentSubmission,
+              taskSubmission: taskSubmission,
+              assessment: assessment,
+              assessmentAssignment: assessmentAssignment,
+            ),
+          );
+        } else {
+          emit(VideoFailure());
+        }
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

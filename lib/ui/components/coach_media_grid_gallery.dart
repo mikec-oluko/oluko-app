@@ -14,7 +14,7 @@ class CoachMediaGridGallery extends StatefulWidget {
 }
 
 class _CoachMediaGridGalleryState extends State<CoachMediaGridGallery> {
-  final int limitedContentMaxLength = 6;
+  final int _limitedContentMaxLength = 6;
   @override
   Widget build(BuildContext context) {
     return coachGridGalleryForMedia(context);
@@ -23,25 +23,26 @@ class _CoachMediaGridGalleryState extends State<CoachMediaGridGallery> {
   Container coachGridGalleryForMedia(BuildContext context) {
     return Container(
       width: ScreenUtils.width(context),
-      height: ScreenUtils.height(context),
+      height: widget.limitedContent ? ScreenUtils.height(context) / 3 : ScreenUtils.height(context),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: GridView.builder(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
             ),
             itemCount: widget.limitedContent
-                ? widget.coachMedia.length >= limitedContentMaxLength
-                    ? limitedContentMaxLength
+                ? widget.coachMedia.length >= _limitedContentMaxLength
+                    ? _limitedContentMaxLength
                     : widget.coachMedia.length
                 : widget.coachMedia.length,
             itemBuilder: (context, index) => Card(
                   color: Colors.transparent,
                   child: ImageAndVideoContainer(
-                      backgroundImage: widget.coachMedia[index].video.thumbUrl,
-                      isContentVideo: true,
+                      backgroundImage: widget.coachMedia[index].imageUrl ?? widget.coachMedia[index].video.thumbUrl,
+                      isContentVideo: widget.coachMedia[index].imageUrl == null,
                       videoUrl: widget.coachMedia[index].video.url,
                       originalContent: widget.coachMedia[index],
                       isCoachMediaContent: true),

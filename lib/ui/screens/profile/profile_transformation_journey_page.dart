@@ -13,16 +13,16 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/modal_exception_message.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
-import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
@@ -46,6 +46,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   final PanelController _panelController = PanelController();
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
+  bool canHidePanel = true;
 
   @override
   Widget build(BuildContext context) {
@@ -77,47 +78,96 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       body: _contentGallery == null
           ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
           : Container(
-              constraints: BoxConstraints.expand(),
+              constraints: const BoxConstraints.expand(),
               color: OlukoNeumorphismColors.appBackgroundColor,
               child: SafeArea(
-                child: Stack(children: [
-                  if (isCurrenUser)
-                    Align(
-                        alignment: Alignment.topCenter,
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
+                child: Stack(
+                    alignment: OlukoNeumorphism.isNeumorphismDesign ? AlignmentDirectional.center : AlignmentDirectional.topStart,
+                    children: [
+                      if (isCurrenUser)
+                        Align(
+                            alignment: Alignment.topCenter,
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                children: [
-                                  OlukoOutlinedButton(
-                                      title: OlukoLocalizations.get(context, 'tapToUpload'),
-                                      onPressed: () {
-                                        BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
-                                      }),
-                                ],
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Container(
+                                width: OlukoNeumorphism.isNeumorphismDesign
+                                    ? ScreenUtils.width(context) * 0.85
+                                    : MediaQuery.of(context).size.width,
+                                decoration: OlukoNeumorphism.isNeumorphismDesign
+                                    ? const BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
+                                    : const BoxDecoration(),
+                                child: OlukoNeumorphism.isNeumorphismDesign
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: OlukoColors.primary),
+                                              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15.0),
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/profile/plus.png',
+                                                    scale: 5,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 10.0),
+                                                    child: Text(
+                                                      OlukoLocalizations.get(context, 'upload'),
+                                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Row(
+                                            children: [
+                                              OlukoOutlinedButton(
+                                                  title: OlukoLocalizations.get(context, 'upload'),
+                                                  onPressed: () {
+                                                    BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
+                                                  }),
+                                            ],
+                                          ),
+                                        )),
                               ),
-                            )))
-                  else
-                    const SizedBox(
-                      height: 0,
-                    ),
-                  if (_contentGallery.length != 0)
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: isCurrenUser ? const EdgeInsets.fromLTRB(10, 100, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                        child: Text(
-                          getTitleForContent(uploadListContent: _transformationJourneyContent),
-                          style: OlukoFonts.olukoBigFont(),
+                            ))
+                      else
+                        const SizedBox(
+                          height: 0,
                         ),
-                      ),
-                    )
-                  else
-                    SizedBox(),
-                  _contentGallery.length != 0 ? dragAndDropGridView(context) : SizedBox(),
-                  slidingUpPanelComponent(context),
-                ]),
+                      if (_contentGallery.isNotEmpty)
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: isCurrenUser ? const EdgeInsets.fromLTRB(30, 110, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            child: Text(
+                              getTitleForContent(uploadListContent: _transformationJourneyContent),
+                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(),
+                      if (_contentGallery.isNotEmpty) dragAndDropGridView(context) else const SizedBox(),
+                      slidingUpPanelComponent(context),
+                    ]),
               ),
             ),
     );
@@ -128,7 +178,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     return BlocConsumer<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
-          _statePanelMaxHeight = 100;
+          _statePanelMaxHeight = _panelMaxHeight;
         } else {
           _statePanelMaxHeight = 300;
         }
@@ -144,13 +194,19 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           _contentForPanel = const SizedBox();
         }
         if (state is TransformationJourneyContentLoading) {
+          canHidePanel = !canHidePanel;
           _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
         }
         if (state is TransformationJourneyContentSuccess) {
+          canHidePanel = !canHidePanel;
           _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney, userRequested: userToUse);
         }
         if (state is TransformationJourneyContentFailure) {
-          _panelController.close();
+          _statePanelMaxHeight = _panelMaxHeight;
+          _contentForPanel = ModalExceptionMessage(
+              exceptionType: state.exceptionType,
+              onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
+              exceptionSource: state.exceptionSource);
         }
         if (state is TransformationJourneyRequirePermissions) {
           _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
@@ -161,7 +217,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           onPanelClosed: () {
             BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
           },
-          backdropEnabled: true,
+          backdropEnabled: canHidePanel,
           isDraggable: false,
           margin: EdgeInsets.all(0),
           header: const SizedBox(),
@@ -172,6 +228,9 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           collapsed: const SizedBox(),
           controller: _panelController,
           panel: _contentForPanel,
+          borderRadius: OlukoNeumorphism.isNeumorphismDesign
+              ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+              : BorderRadius.zero,
         );
       },
     );
@@ -182,6 +241,14 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       child: Padding(
         padding: isCurrenUser ? const EdgeInsets.only(top: 150) : const EdgeInsets.only(top: 20),
         child: Container(
+          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10) : EdgeInsets.all(0),
+          decoration: OlukoNeumorphism.isNeumorphismDesign
+              ? const BoxDecoration(
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                )
+              : const BoxDecoration(),
+          width: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.width(context) * 0.86 : ScreenUtils.width(context),
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser
               ? DragAndDropGridView(

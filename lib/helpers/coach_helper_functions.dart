@@ -163,9 +163,9 @@ class CoachHelperFunctions {
     return annotation != null && annotation.isNotEmpty
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.mentoredVideos,
-            titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
+            titleForSection: OlukoLocalizations.get(context, 'personalizedVideos'),
             coachAnnotationContent: annotation,
             onNavigation: () => !introFinished ? onNavigation() : () {})
-        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
+        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'personalizedVideos'));
   }
 }

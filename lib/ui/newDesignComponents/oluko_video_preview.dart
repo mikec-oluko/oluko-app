@@ -98,7 +98,19 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: GestureDetector(
-                        onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+                        onTap: () {
+                          if (widget.onBackPressed != null) {
+                            if (_controller != null) {
+                              _controller.pause();
+                            }
+                            widget.onBackPressed();
+                          } else {
+                            if (_controller != null) {
+                              _controller.pause();
+                            }
+                            Navigator.pop(context);
+                          }
+                        },
                         child: Container(
                             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
                             width: 52,
@@ -144,7 +156,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
           aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
-          child: Container(color: OlukoColors.white, child: widget.randomImages != null ? gridSection() : imageSection())),
+          child: Container(color: OlukoColors.white, child: widget.bannerVideo ? imageSection() : gridSection())),
       if (widget.video != null)
         AspectRatio(
           aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,

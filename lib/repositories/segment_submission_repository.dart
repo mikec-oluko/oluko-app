@@ -8,6 +8,7 @@ import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
+import 'package:oluko_app/repositories/coach_request_repository.dart';
 
 class SegmentSubmissionRepository {
   FirebaseFirestore firestoreInstance;
@@ -20,8 +21,8 @@ class SegmentSubmissionRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<SegmentSubmission> create(
-      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, CoachRequest coachRequest) async {
+  static Future<SegmentSubmission> create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId,
+      String classId, bool hasCoachRequest) async {
     DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
 
     DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
@@ -32,8 +33,7 @@ class SegmentSubmissionRepository {
 
     DocumentReference segmentReference = projectReference.collection("segments").doc(segment.id);
 
-    DocumentReference coachRequestDocRef =
-        projectReference.collection('coachAssignments').doc(user.uid).collection('coachRequests').doc(coachRequest.id);
+    DocumentReference coachReference = projectReference.collection("users").doc(coachId);
 
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
@@ -46,15 +46,16 @@ class SegmentSubmissionRepository {
         courseEnrollmentReference: courseEnrollmentReference,
         status: SegmentSubmissionStatusEnum.created,
         createdBy: user.uid,
-        coachId: coachRequest.coachId,
-        coachReference: coachRequest.coachReference,
+        coachId: coachId,
+        coachReference: coachReference,
         videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
 
     segmentSubmission.id = docRef.id;
     await docRef.set(segmentSubmission.toJson());
-
-    await coachRequestDocRef.update({'segment_submission_id': segmentSubmission.id, 'segment_submission_reference': docRef});
-
+    if (hasCoachRequest) {
+      await CoachRequestRepository()
+          .updateSegmentSubmission(user.uid, segment.id, courseEnrollment.id, coachId, classId, segmentSubmission.id, docRef);
+    }
     return segmentSubmission;
   }
 

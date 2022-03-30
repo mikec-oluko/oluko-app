@@ -3,6 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 
 class CoachRequestRepository {
   FirebaseFirestore firestoreInstance;
@@ -103,5 +104,15 @@ class CoachRequestRepository {
     return qs.docs.map((DocumentSnapshot ds) {
       return CoachRequest.fromJson(ds.data() as Map<String, dynamic>);
     }).toList();
+  }
+
+  Future<void> updateSegmentSubmission(String userId, String segmentId, String courseEnrollmentId, String coachId, String classId,
+      String segmentSubmissionId, DocumentReference segmentSubmissionRef) async {
+    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
+    CoachRequest coachRequest =
+        await CoachRequestRepository().getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId, classId);
+    DocumentReference coachRequestDocRef =
+        projectReference.collection('coachAssignments').doc(userId).collection('coachRequests').doc(coachRequest.id);
+    await coachRequestDocRef.update({'segment_submission_id': segmentSubmissionId, 'segment_submission_reference': segmentSubmissionRef});
   }
 }

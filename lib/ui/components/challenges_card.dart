@@ -44,6 +44,7 @@ class _State extends State<ChallengesCard> {
         Padding(
             padding: EdgeInsets.only(top: 13),
             child: GestureDetector(
+                //TODO: CHALLENGE FOR AUDIO CHECK!!!!!
                 onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail], arguments: {
                       'challenge': widget.navigateToSegment ? widget.segmentChallenge.challengeForAudio : widget.challenge,
                       'userRequested': widget.userRequested
@@ -93,8 +94,8 @@ class _State extends State<ChallengesCard> {
                     fit: BoxFit.cover,
                     colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
                     image: widget.navigateToSegment
-                        ? widget.segmentChallenge.challengeSegment.challengeImage != null
-                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.challengeImage)
+                        ? widget.segmentChallenge.challengeSegment.image != null
+                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
                             : defaultImage
                         : widget.challenge.image != null
                             ? CachedNetworkImageProvider(widget.challenge.image)
@@ -145,8 +146,8 @@ class _State extends State<ChallengesCard> {
                   image: new DecorationImage(
                     fit: BoxFit.cover,
                     image: widget.navigateToSegment
-                        ? widget.segmentChallenge.challengeSegment.challengeImage != null
-                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.challengeImage)
+                        ? widget.segmentChallenge.challengeSegment.image != null
+                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
                             : defaultImage
                         : widget.challenge.image != null
                             ? CachedNetworkImageProvider(widget.challenge.image)

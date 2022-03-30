@@ -60,12 +60,13 @@ class CourseUtils {
         return true;
       }
       //Check if this course match with the current tag filters.
-      bool tagMatch = false;
-      courseTagIds.forEach((tagId) {
-        if (selectedTagIds.contains(tagId)) {
-          tagMatch = true;
+      bool tagMatch = true;
+      selectedTagIds.forEach((tagId) {
+        if (!courseTagIds.contains(tagId)) {
+          tagMatch = false;
         }
       });
+
       return tagMatch;
     }).toList();
     return filteredResults;
@@ -91,51 +92,6 @@ class CourseUtils {
             MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
         textInput: search.query,
         itemList: search.searchResults);
-  }
-
-  static Future<bool> onClearFilters(BuildContext context) async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            backgroundColor: Colors.grey.shade900,
-            content: Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text('Would you like to cancel?', textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-                  ),
-                  Text(
-                    'Cancelling would remove all the selected filters, please confirm the action.',
-                    textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoMediumFont(customColor: Colors.white24),
-                  )
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Container(
-                width: ScreenUtils.width(context),
-                child: Row(
-                  children: [
-                    OlukoPrimaryButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      title: 'No',
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    OlukoOutlinedButton(onPressed: () => Navigator.of(context).pop(true), title: 'Yes')
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )) ??
-        false;
   }
 
   static Widget filterSelector(TagSuccess state,

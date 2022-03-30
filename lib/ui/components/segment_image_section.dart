@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -25,7 +24,7 @@ import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
-import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/ui/newDesignComponents/self_recording_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -210,7 +209,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   isExpanded: false,
                   title: OlukoNeumorphism.isNeumorphismDesign
                       ? OlukoLocalizations.get(context, 'start')
-                      : OlukoLocalizations.get(context, 'startWorkouts'),
+                      : OlukoLocalizations.get(context, 'startWorkout'),
                   onPressed: () {
                     if (_coachRequest != null) {
                       //TODO: CHECK CHALLENGE
@@ -247,19 +246,11 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 OlukoPrimaryButton(
                   title: OlukoNeumorphism.isNeumorphismDesign
                       ? OlukoLocalizations.get(context, 'start')
-                      : OlukoLocalizations.get(context, 'startWorkouts'),
+                      : OlukoLocalizations.get(context, 'startWorkout'),
                   color: OlukoColors.primary,
                   onPressed: () {
                     if (_coachRequest != null) {
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: CoachRequestContent(
-                          name: widget.coach.firstName,
-                          image: widget.coach.avatar,
-                          onNotRecordingAction: navigateToSegmentWithoutRecording,
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
+                      showCoachDialog();
                     } else {
                       navigateToSegmentWithoutRecording();
                     }
@@ -268,6 +259,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               ],
             ),
           );
+  }
+
+  void showCoachDialog() {
+    BottomDialogUtils.showBottomDialog(
+      context: context,
+      content: CoachRequestContent(
+        name: widget.coach.firstName,
+        image: widget.coach.avatar,
+        onNotRecordingAction: navigateToSegmentWithoutRecording,
+        onRecordingAction: navigateToSegmentWithRecording,
+      ),
+    );
   }
 
   CoachRequest getSegmentCoachRequest(String segmentId) {
@@ -300,6 +303,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         arguments: {
           'segmentIndex': widget.currentSegmentStep - 1,
           'classIndex': widget.classIndex,
+          'coach': widget.coach,
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
           'segments': widget.segments,
@@ -319,6 +323,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       'courseEnrollment': widget.courseEnrollment,
       'courseIndex': widget.courseIndex,
       'workoutType': WorkoutType.segment,
+      'coach': widget.coach,
       'segments': widget.segments,
       'fromChallenge': widget.fromChallenge
     };
@@ -362,7 +367,25 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           else
             const SizedBox(),
           const Expanded(child: SizedBox()),
-          getCameraIcon()
+          GestureDetector(
+              onTap: () {
+                if (_coachRequest != null) {
+                  showCoachDialog();
+                } else {
+                  if (widget.coach != null) {
+                    if (widget.segment.isChallenge && !_canStartSegment) {
+                    } else {
+                      BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content: SelfRecordingContent(
+                          onRecordingAction: navigateToSegmentWithRecording,
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              child: getCameraIcon())
         ],
       ),
     );
@@ -567,15 +590,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   _onStartPressed() {
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
-      BottomDialogUtils.showBottomDialog(
-        context: context,
-        content: CoachRequestContent(
-          name: widget.coach.firstName,
-          image: widget.coach.avatar,
-          onNotRecordingAction: navigateToSegmentWithoutRecording,
-          onRecordingAction: navigateToSegmentWithRecording,
-        ),
-      );
+      showCoachDialog();
     } else {
       navigateToSegmentWithoutRecording();
     }

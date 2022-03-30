@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
@@ -99,6 +100,9 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {
+          BlocProvider.of<DownloadAssetBloc>(context).getVideo();
+        }
         BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context).getAll();
         BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
@@ -251,7 +255,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<SegmentSubmodel> getChallenges() {
     List<SegmentSubmodel> challenges = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {
+      if (segment.image != null && segment.isChallenge) {
         challenges.add(segment);
       }
     });
@@ -263,7 +267,7 @@ class _InsideClassesState extends State<InsideClass> {
         ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     List<Widget> challengesCard = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {
+      if (segment.image != null && segment.isChallenge) {
         for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
           if (widget.courseEnrollment.classes[j].id == _class.id) {
             for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
@@ -403,7 +407,7 @@ class _InsideClassesState extends State<InsideClass> {
                                   ),
                                 );
                               } else {
-                                return  Text(
+                                return Text(
                                   '0+',
                                   textAlign: TextAlign.center,
                                   style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),

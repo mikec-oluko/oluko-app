@@ -169,7 +169,7 @@ class _HiFivePageState extends State<HiFivePage> {
 
   OlukoAppBar _appBar() {
     return OlukoAppBar(
-      title: 'Hi Five',
+      title: OlukoLocalizations.get(context, 'hifive'),
       showBackButton: true,
       showTitle: OlukoNeumorphism.isNeumorphismDesign,
       showActions: true,
@@ -182,10 +182,10 @@ class _HiFivePageState extends State<HiFivePage> {
                   .sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
             },
             child: OlukoNeumorphism.isNeumorphismDesign
-                ? const Padding(
+                ? Padding(
                     padding: EdgeInsets.only(right: 16.0),
                     child: Text(
-                      'Hi Five all',
+                      OlukoLocalizations.get(context, 'hiFiveAll'),
                       style: TextStyle(color: OlukoColors.primary),
                     ),
                   )
@@ -201,10 +201,10 @@ class _HiFivePageState extends State<HiFivePage> {
                             height: 40,
                             width: 40,
                           ),
-                          const Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
+                          Padding(
+                            padding: EdgeInsets.only(right: 16.0),
                             child: Text(
-                              'Hi Five all',
+                              OlukoLocalizations.get(context, 'hiFiveAll'),
                               style: TextStyle(color: OlukoColors.primary),
                             ),
                           ),

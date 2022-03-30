@@ -254,6 +254,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
+              !_controller.isPlaying ? _controller.play() : null;
             })));
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -269,7 +270,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
             'taskIndex': widget.taskIndex,
             'isPublic': widget.isPublic,
-            'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+            'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+            'fromCompletedClass': false
           });
         },
         child: Align(

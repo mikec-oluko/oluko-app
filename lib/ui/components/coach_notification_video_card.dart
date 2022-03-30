@@ -103,7 +103,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
   String headerForCard(CoachFileTypeEnum fileType) {
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
-        return OlukoLocalizations.of(context).find('mentoredVideo');
+        return OlukoLocalizations.of(context).find('personalizedVideo');
       case CoachFileTypeEnum.recommendedVideo:
         return OlukoLocalizations.of(context).find('recommendedVideos');
       default:

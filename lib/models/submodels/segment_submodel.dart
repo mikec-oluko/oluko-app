@@ -8,14 +8,17 @@ class SegmentSubmodel {
   DocumentReference reference;
   String name;
   bool isChallenge;
-  String challengeImage;
+  String image;
   List<SectionSubmodel> sections;
   SegmentTypeEnum type;
   int rounds;
   int totalTime;
 
-  SegmentSubmodel({this.id, this.reference, this.challengeImage, this.name, this.sections, this.isChallenge,this.rounds,this.totalTime,this.type});
+  SegmentSubmodel({this.id, this.reference, this.image, this.name, this.sections, this.isChallenge,this.rounds,this.totalTime,this.type});
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
+    /*if(json['id']=="M4tI8lLm5tAMGWESNzJB"){
+      print("");
+    }*/
     return SegmentSubmodel(
         id: json['id']?.toString(),
         reference: json['reference'] as DocumentReference,
@@ -25,7 +28,7 @@ class SegmentSubmodel {
             : json['is_challenge'] is bool
                 ? json['is_challenge'] as bool
                 : false,
-        challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
+        image: json['image'] == null ? null : json['image']?.toString(),
         sections: json['sections'] == null
             ? null
             : List<SectionSubmodel>.from((json['sections'] as Iterable)
@@ -41,7 +44,7 @@ class SegmentSubmodel {
         'reference': reference,
         'name': name,
         'is_challenge': isChallenge,
-        'challenge_image': challengeImage,
+        'image': image,
         'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
       };
 }

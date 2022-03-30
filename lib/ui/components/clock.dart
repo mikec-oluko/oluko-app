@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
+import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
@@ -12,6 +17,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 
@@ -20,37 +26,80 @@ class Clock extends StatefulWidget {
   final WorkoutType workoutType;
   final List<Segment> segments;
   final int segmentIndex;
-  final int AMRAPRound;
+  int timerTaskIndex;
   final List<TimerEntry> timerEntries;
-  final int timerTaskIndex;
+  //final int timerTaskIndex;
   TextEditingController textController;
   final Function() goToNextStep;
+  final Function() setPaused;
   final Function() actionAMRAP;
-  final Duration timeLeft;
   final bool keyboardVisibilty;
+  Duration timeLeft;
 
   Clock(
       {this.workState,
       this.segments,
       this.segmentIndex,
-      this.AMRAPRound,
       this.timerEntries,
-      this.timerTaskIndex,
       this.textController,
       this.goToNextStep,
+      this.setPaused,
       this.actionAMRAP,
-      this.timeLeft,
       this.workoutType,
-      this.keyboardVisibilty});
+      this.keyboardVisibilty,
+      this.timerTaskIndex = 0,
+      this.timeLeft});
 
   @override
   _State createState() => _State();
 }
 
 class _State extends State<Clock> {
+  Timer countdownTimer;
+
+  int AMRAPRound = 0;
+
+  @override
+  void initState() {
+    if (isCurrentTaskTimed()) {
+      widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
+      _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
+    }
+  }
+
+  @override
+  void dispose() {
+    if (countdownTimer != null && countdownTimer.isActive) {
+      countdownTimer.cancel();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _timerSection(widget.keyboardVisibilty);
+    return BlocListener<TimerTaskBloc, TimerTaskState>(
+        listener: (context, timerTaskState) {
+          if (timerTaskState is SetTimerTaskIndex) {
+            setState(() {
+              widget.timerTaskIndex = timerTaskState.timerTaskIndex;
+            });
+          } else if (timerTaskState is SetAMRAPRound) {
+            setState(() {
+              AMRAPRound = timerTaskState.AMRAPRound;
+            });
+          }
+        },
+        child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
+            listener: (context, state) {
+              if (state is ClocksTimerPlay) {
+                _playCountdown(() => state.goToNextStep(), () => state.setPaused());
+              } else if (state is ClocksTimerPause) {
+                _pauseCountdown(() => state.setPaused());
+              } else if (state is UpdateTimeLeft) {
+                widget.timeLeft = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value);
+              }
+            },
+            child: _timerSection(widget.keyboardVisibilty)));
   }
 
   Widget _timerSection(bool keyboardVisibilty) {
@@ -105,20 +154,14 @@ class _State extends State<Clock> {
         return SizedBox(
             height: 150,
             width: 150,
-            child: TimerUtils.completedTimer(
-                context,
-                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])
-                    ? widget.segments[widget.segmentIndex].rounds
-                    : widget.AMRAPRound));
+            child: TimerUtils.completedTimer(context,
+                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
       } else {
         return SizedBox(
             height: 180,
             width: 180,
-            child: TimerUtils.completedTimer(
-                context,
-                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])
-                    ? widget.segments[widget.segmentIndex].rounds
-                    : widget.AMRAPRound));
+            child: TimerUtils.completedTimer(context,
+                !SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ? widget.segments[widget.segmentIndex].rounds : AMRAPRound));
       }
     }
 
@@ -179,7 +222,7 @@ class _State extends State<Clock> {
         () {
           widget.actionAMRAP();
         },
-        widget.AMRAPRound,
+        AMRAPRound,
       );
     }
     final String counter = widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.reps
@@ -230,7 +273,7 @@ class _State extends State<Clock> {
           Row(
             children: [
               const SizedBox(width: 20),
-              Text(counterTxt[0], style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              Text(counterTxt[0], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300)),
               const SizedBox(width: 10),
               SizedBox(
                 width: isCounterByReps ? 40 : 70,
@@ -272,7 +315,7 @@ class _State extends State<Clock> {
                 ),
               ),
               const SizedBox(width: 25),
-              Text(counterTxt[1], style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              Text(counterTxt[1], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300)),
             ],
           ),
         ],
@@ -350,7 +393,7 @@ class _State extends State<Clock> {
                     ? Expanded(
                         child: Text(
                           OlukoLocalizations.get(context, 'meters'),
-                          style: const TextStyle(fontSize: 24, color: OlukoColors.white, fontWeight: FontWeight.w300),
+                          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.w300),
                         ),
                       )
                     : const SizedBox.shrink(),
@@ -366,7 +409,7 @@ class _State extends State<Clock> {
                 children: [
                   // SizedBox(height: 30),
                   Text(
-                    'Tap here to type the score',
+                    OlukoLocalizations.get(context, "typeScore"),
                     textAlign: TextAlign.center,
                     style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.primary),
                   )
@@ -409,7 +452,7 @@ class _State extends State<Clock> {
 
   Widget getRoundsTimer(bool keyboardVisibilty) {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(widget.AMRAPRound, widget.AMRAPRound, keyboardVisibilty);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else if (isWorkStateFinished()) {
       return TimerUtils.roundsTimer(
         widget.segments[widget.segmentIndex].rounds,
@@ -417,7 +460,7 @@ class _State extends State<Clock> {
         keyboardVisibilty,
       );
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.roundsTimer(widget.AMRAPRound, widget.AMRAPRound, keyboardVisibilty);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else {
       return TimerUtils.roundsTimer(
           widget.segments[widget.segmentIndex].rounds, widget.timerEntries[widget.timerTaskIndex].round, keyboardVisibilty);
@@ -431,7 +474,7 @@ class _State extends State<Clock> {
     if (SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
       return TimerUtils.getRoundLabel(widget.timerEntries[widget.timerTaskIndex].round);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.getRoundLabel(widget.AMRAPRound);
+      return TimerUtils.getRoundLabel(AMRAPRound);
     } else {
       return const SizedBox();
     }
@@ -528,4 +571,29 @@ class _State extends State<Clock> {
   bool useInput() => (isCurrentMovementRest() &&
       (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||
           widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance));
+
+  void _playCountdown(Function() goToNextStep, Function() setPaused) {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, widget.workState.index);
+      if (widget.timeLeft.inSeconds == 0) {
+        _pauseCountdown(setPaused);
+        goToNextStep();
+        return;
+      }
+      //BlocProvider.of<ClocksTimerBloc>(context).decrementTimeLeft();
+      setState(() {
+        widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds - 1);
+        BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeValue(Duration(milliseconds: widget.timeLeft.inMilliseconds));
+      });
+    });
+  }
+
+  void _pauseCountdown(Function() setPaused) {
+    setPaused();
+    countdownTimer.cancel();
+  }
+
+  bool isCurrentTaskTimed() {
+    return widget.timerEntries[widget.timerTaskIndex].parameter == ParameterEnum.duration;
+  }
 }

@@ -17,6 +17,7 @@ class CollageUtils {
 
   static List<Widget> addRealImages(List<String> userSelfies, int qty) {
     List<Widget> realImages = [];
+    if (userSelfies == null) return realImages;
     for (int i = userSelfies.length - 1; i >= 0; i--) {
       if (realImages.length < qty) {
         realImages.add(Image(
@@ -83,7 +84,12 @@ class CollageUtils {
       route += 'collage_people/';
     }
     route += element.toString();
-    route += '.jpg';
+    if (type == CollageTypeEnum.logos) {
+      route += '.png';
+    } else if (type == CollageTypeEnum.people) {
+      route += '.jpg';
+    }
+
     return route;
   }
 

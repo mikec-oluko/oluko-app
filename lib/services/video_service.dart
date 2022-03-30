@@ -18,7 +18,8 @@ import '../utils/video_process.dart';
 
 class VideoService {
   static Future<Video> processVideoWithoutEncoding(
-      String videoFilePath, double aspectRatio, String id, SendPort port, String directory, int duration, String thumbnailPath) async {
+      String videoFilePath, double aspectRatio, String id, String directory, int duration, String thumbnailPath,
+      [SendPort port]) async {
     try {
       String videoName = id;
       Video video = Video(name: videoName, aspectRatio: aspectRatio);
@@ -82,7 +83,7 @@ class VideoService {
     return durationInMilliseconds;
   }
 
-  static Future<String> createVideoThumbnail(String videoPath) async {
+  static Future<String>  createVideoThumbnail(String videoPath) async {
     String thumbFilePath = null;
     try {
       final String outDirPath = path.dirname(videoPath);
