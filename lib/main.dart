@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -83,44 +84,45 @@ class _MyAppState extends State<MyApp> {
     ProjectConfigurationBloc().getCourseConfiguration();
     return BlocProvider<AnimationBloc>(
       create: (mainContext) => AnimationBloc(),
-      child: MaterialApp(
-        title: '${OLUKO}',
-        theme: ThemeData(
-          canvasColor: Colors.transparent,
-          primarySwatch: Colors.grey,
-        ),
-        initialRoute: widget.initialRoute,
-        onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-        localizationsDelegates: [
-          const OlukoLocalizationsDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: [
-          const Locale('en', ''),
-          const Locale('es', ''),
-        ],
-        debugShowCheckedModeBanner: false,
-        home: LayoutBuilder(
-          builder: (context, constraints) {
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) => _insertOverlay(context),
-            );
-            return WillPopScope(
-              onWillPop: () async {
-                if (_navigatorKey.currentState.canPop()) {
-                  !await _navigatorKey.currentState.maybePop();
-                }
-                return false;
-              },
-              child: Navigator(
-                key: _navigatorKey,
-                initialRoute: widget.initialRoute,
-                onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-              ),
-            );
-          },
+      child: BlocProvider(
+        create: (context) => NotificationBloc(),
+        child: MaterialApp(
+          title: '${OLUKO}',
+          theme: ThemeData(
+            canvasColor: Colors.transparent,
+            primarySwatch: Colors.grey,
+          ),
+          initialRoute: widget.initialRoute,
+          onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+          localizationsDelegates: [
+            const OlukoLocalizationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en', ''),
+            const Locale('es', ''),
+          ],
+          debugShowCheckedModeBanner: false,
+          home: LayoutBuilder(
+            builder: (context, constraints) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
+              return WillPopScope(
+                onWillPop: () async {
+                  if (_navigatorKey.currentState.canPop()) {
+                    !await _navigatorKey.currentState.maybePop();
+                  }
+                  return false;
+                },
+                child: Navigator(
+                  key: _navigatorKey,
+                  initialRoute: widget.initialRoute,
+                  onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

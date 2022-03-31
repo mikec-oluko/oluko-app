@@ -24,9 +24,6 @@ class _HandWidgetState extends State<HandWidget> {
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, notificationState) {
         if (notificationState is NotificationSuccess && notificationState.notifications.isNotEmpty) {
-          if (notificationState.unseenNotifications > 0) {         
-            BlocProvider.of<AnimationBloc>(context).play(notificationState.notifications[0].id);
-          }
           return GestureDetector(
             onTap: () async {
               await BlocProvider.of<NotificationBloc>(context).clearAll(widget.authState.user.id);

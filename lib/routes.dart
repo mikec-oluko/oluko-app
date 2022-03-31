@@ -445,7 +445,6 @@ class Routes {
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
-          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
@@ -820,7 +819,8 @@ class Routes {
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
-          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(

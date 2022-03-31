@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -40,28 +41,39 @@ class _AnimatedState extends State<Animated> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AnimationBloc, AnimationState>(
+    return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, state) {
-        if (state is HiFiveAnimationSuccess && !state.animationDisabled) {
-          _controller.forward();
-          return Stack(
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                getHandIcon(0.2),
-                getHandIcon(0.5),
-                getHandIcon(0.3),
-              ]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                getHandIcon(0.1),
-                getHandIcon(0.6),
-                getHandIcon(0.25),
-              ]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                getHandIcon(0.4),
-                getHandIcon(0.35),
-                getHandIcon(0.65),
-              ]),
-            ],
+        if (state is NotificationSuccess && state.notifications.isNotEmpty) {
+          if (state.unseenNotifications > 0) {
+            BlocProvider.of<AnimationBloc>(context).play(state.notifications[0].id);
+          }
+          return BlocBuilder<AnimationBloc, AnimationState>(
+            builder: (context, state) {
+              if (state is HiFiveAnimationSuccess && !state.animationDisabled) {
+                _controller.forward();
+                return Stack(
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      getHandIcon(0.2),
+                      getHandIcon(0.5),
+                      getHandIcon(0.3),
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                      getHandIcon(0.1),
+                      getHandIcon(0.6),
+                      getHandIcon(0.25),
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                      getHandIcon(0.4),
+                      getHandIcon(0.35),
+                      getHandIcon(0.65),
+                    ]),
+                  ],
+                );
+              } else {
+                return SizedBox();
+              }
+            },
           );
         } else {
           return SizedBox();
