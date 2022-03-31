@@ -35,7 +35,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   void setValuesFromUserProfile() {
     _privacyNewValue = widget.profileInfo.privacy;
-    _notificationNewValue ??= NotificationSettingsBloc.notificationSettings.globalNotifications ?? true;
+    _notificationNewValue ??= NotificationSettingsBloc.notificationSettings?.globalNotifications ?? true;
     _authUser = widget.profileInfo;
   }
 

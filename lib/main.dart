@@ -136,7 +136,7 @@ class _MyAppState extends State<MyApp> {
   void _insertOverlay(BuildContext context) {
     return Overlay.of(context).insert(
       OverlayEntry(builder: (context) {
-        return Animated();
+        return HiFiveAnimation();
       }),
     );
   }

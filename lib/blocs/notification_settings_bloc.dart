@@ -44,8 +44,8 @@ class NotificationSettingsBloc extends Cubit<NotificationSettingsState> {
 
   void update(NotificationSettings notiSettings) {
     try {
-      notiSettings.globalNotifications ??= notificationSettings.globalNotifications;
-      notiSettings.segmentClocksSounds ??= notificationSettings.segmentClocksSounds;
+      notiSettings.globalNotifications ??= notificationSettings?.globalNotifications ?? true;
+      notiSettings.segmentClocksSounds ??= notificationSettings?.segmentClocksSounds ?? true;
       notiSettings.userId ??= notificationSettings.userId;
 
       NotificationSettingsRepository.updateNotificationSetting(notiSettings).then((value) {
