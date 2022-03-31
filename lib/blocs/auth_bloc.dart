@@ -126,7 +126,7 @@ class AuthBloc extends Cubit<AuthState> {
 
   void navigateToNextScreen(BuildContext context, String userId) async {
     final sharedPref = await SharedPreferences.getInstance();
-    if (true) {
+    if (sharedPref.getBool('first_time') == true) {
       sharedPref.setBool('first_time', false);
       await Permissions.askForPermissions();
     }

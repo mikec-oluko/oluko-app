@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -159,58 +160,60 @@ class SegmentClocksUtils {
     );
   }
 
-  static Future<bool> onWillPop(BuildContext contextWBloc, bool isRecording) async {
-    return (await showDialog(
-          context: contextWBloc,
-          builder: (context) => AlertDialog(
-            backgroundColor: Colors.black,
-            title: TitleBody(
-                OlukoLocalizations.get(context, 'exitConfirmationTitle')),
-            content: Text(
-              isRecording
-                  ? OlukoLocalizations.get(
-                      context, 'goBackConfirmationWithRecording')
-                  : OlukoLocalizations.get(
-                      context, 'goBackConfirmationWithoutRecording'),
-              style: OlukoFonts.olukoBigFont(),
+  static Future<bool> onWillPopConfirmationPopup(BuildContext contextWBloc, bool isRecording) async {
+    bool result = false;
+    (await showDialog(
+      context: contextWBloc,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
+        content: Text(
+          isRecording
+              ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
+              : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
+          style: OlukoFonts.olukoBigFont(),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              OlukoLocalizations.get(context, 'no'),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  OlukoLocalizations.get(context, 'no'),
-                ),
-              ),
-              BlocBuilder<KeyboardBloc, KeyboardState>(
-                bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
-                builder: (context, state) {
-                  return TextButton(
-                    onPressed: () {
-                      Navigator.popUntil(
-                          context,
-                          ModalRoute.withName(
-                              routeLabels[RouteEnum.segmentDetail]));
-                      BlocProvider.of<KeyboardBloc>(contextWBloc)
-                          .add(HideKeyboard());
-                    },
-                    child: Text(
-                      OlukoLocalizations.get(context, 'yes'),
-                    ),
-                  );
-                },
-              ),
-            ],
           ),
-        )) ??
-        false;
+          BlocBuilder<KeyboardBloc, KeyboardState>(
+            bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
+            builder: (context, state) {
+              return TextButton(
+                onPressed: () {
+                  BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+                  Navigator.of(context).pop();
+                  BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
+                  result = true;
+                  return;
+                },
+                child: Text(
+                  OlukoLocalizations.get(context, 'yes'),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ));
+
+    return result;
   }
 
-  static PreferredSizeWidget getAppBar(
-      BuildContext context, Widget topBarIcon, bool segmentWithRecording) {
+  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout) {
     PreferredSizeWidget appBarToUse;
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
-        onPressed: () => onWillPop(context, segmentWithRecording),
+        onPressed: () async {
+          bool result = await onWillPopConfirmationPopup(context, segmentWithRecording);
+          if (result) {
+            segmentClockOnWillPop(context, workout);
+          }
+        },
         actions: [topBarIcon, audioIcon()],
       );
     } else {
@@ -224,6 +227,15 @@ class SegmentClocksUtils {
       );
     }
     return appBarToUse;
+  }
+
+  static Future<bool> segmentClockOnWillPop(BuildContext context, WorkoutType workoutType) async {
+    BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+    Wakelock.disable();
+    if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
+      Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+    }
+    return false;
   }
 
   static Widget audioIcon() {

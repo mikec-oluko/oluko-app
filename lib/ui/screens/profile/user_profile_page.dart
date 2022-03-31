@@ -8,7 +8,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_request.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
@@ -46,6 +46,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.da
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
@@ -493,7 +494,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 : OlukoNeumorphicPrimaryButton(
                     title: OlukoLocalizations.get(context, _connectButtonTitle),
                     onPressed: () {
-                      AppMessages().showDialogActionMessage(context, '', 2);
+                      if (connectStatus != UserConnectStatus.connected) {
+                        AppMessages().showDialogActionMessage(context, '', 2);
+                      }
                       checkUserConnectStatus(userRequested);
                       BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
                     },
@@ -507,7 +510,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void checkUserConnectStatus(UserResponse userRequested) {
     switch (connectStatus) {
       case UserConnectStatus.connected:
-        BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
+        BottomDialogUtils.removeConfirmationPopup(
+            _currentAuthUser.id, userRequested, friendData, context, BlocProvider.of<FriendBloc>(context));
+
         break;
       case UserConnectStatus.notConnected:
         BlocProvider.of<FriendRequestBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
