@@ -7,7 +7,6 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 
 class PushNotificationService {
   static FirebaseMessaging messagin = FirebaseMessaging.instance;

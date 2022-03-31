@@ -61,4 +61,12 @@ class NotificationSettingsBloc extends Cubit<NotificationSettingsState> {
       rethrow;
     }
   }
+
+  static bool areGlobalNotificationEnabled() {
+    return notificationSettings == null || notificationSettings.globalNotifications;
+  }
+
+  static bool areSegmentClockNotificationEnabled() {
+    return notificationSettings == null || notificationSettings.segmentClocksSounds;
+  }
 }

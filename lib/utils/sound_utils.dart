@@ -11,7 +11,7 @@ const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
   static void playSound(int timeLeft, int totalTime, int workState) {
-    if (notificationsEnabled()) {
+    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled()) {
       final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
       if (segmentClockSounds.isNotEmpty) {
         final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
@@ -40,11 +40,6 @@ class SoundUtils {
         }
       }
     }
-  }
-
-  static bool notificationsEnabled() {
-    return NotificationSettingsBloc.notificationSettings == null ||
-        NotificationSettingsBloc.notificationSettings.segmentClocksSounds != false;
   }
 
   static Future<dynamic> playAsset(Sound soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
