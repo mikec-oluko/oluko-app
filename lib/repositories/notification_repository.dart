@@ -36,7 +36,7 @@ class NotificationRepository {
         .get();
     for (final notification in notifications.docs) {
       if(notification.data()['seen_at'] == null) {
-        await notification.reference.update({'seen_at': FieldValue.serverTimestamp()});
+        await notification.reference.update({'seen_at': Timestamp.now()});
       }
     }
   }

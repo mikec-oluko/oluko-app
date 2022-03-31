@@ -121,6 +121,7 @@ class _InsideClassesState extends State<InsideClass> {
               return WillPopScope(
                   onWillPop: () {
                     _buttonController.close();
+                    Navigator.pop(context);
                     return Future(() => false);
                   },
                   child: form());

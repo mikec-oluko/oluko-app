@@ -52,9 +52,9 @@ class NotificationBloc extends Cubit<NotificationState> {
     });
   }
 
-  void clearAll(String userId) {
+  Future<void> clearAll(String userId) async {
     try {
-      NotificationRepository.clearAll(userId);
+      await NotificationRepository.clearAll(userId);
     } catch (exception, stackTrace) {
       Sentry.captureException(
         exception,

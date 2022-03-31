@@ -47,7 +47,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.only(top: 10.0),
                             child: Text(
                               OlukoLocalizations.of(context).find('upcomingChallenges'),
                               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
@@ -74,7 +74,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                       ),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 2.1,
+                        height: MediaQuery.of(context).size.height / 2.5,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,

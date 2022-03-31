@@ -55,6 +55,7 @@ class TimeConverter {
     dateSplitted[0] = '${dateSplitted[0]} |';
     if (MediaQuery.of(context).alwaysUse24HourFormat) {
       dateSplitted[1] = DateFormat.Hm(Localizations.localeOf(context).languageCode).format(dateToFormat.toDate());
+      dateSplitted.removeAt(2);
     }
     return dateSplitted.join(' ');
   }
