@@ -7,14 +7,14 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-class Animated extends StatefulWidget {
-  Animated({Key key}) : super(key: key);
+class HiFiveAnimation extends StatefulWidget {
+  HiFiveAnimation({Key key}) : super(key: key);
   BuildContext context;
   @override
-  State<Animated> createState() => _AnimatedState();
+  State<HiFiveAnimation> createState() => _HiFiveAnimationState();
 }
 
-class _AnimatedState extends State<Animated> with TickerProviderStateMixin {
+class _HiFiveAnimationState extends State<HiFiveAnimation> with TickerProviderStateMixin {
   AnimationController _controller;
   Animation<Offset> animation;
   bool hideAnimation = false;
