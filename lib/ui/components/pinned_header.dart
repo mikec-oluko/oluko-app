@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:math' as math;
 
@@ -20,7 +21,6 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     
     return SizedBox.expand(child: child);
   }
-
   @override
   bool shouldRebuild(SliverAppBarDelegate oldDelegate) {
   

@@ -64,47 +64,52 @@ class _State extends State<ChallengeAudioSection> {
 
   Widget _recordedContent() {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      !OlukoNeumorphism.isNeumorphismDesign
-          ? Divider(
-              height: 1,
-              color: OlukoColors.divider,
-              thickness: 1.5,
-              indent: 0,
-              endIndent: 0,
-            )
-          : SizedBox(),
-      OlukoNeumorphism.isNeumorphismDesign
-          ? Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                SizedBox(height: 10),
-                !submitted
-                    ? Text(
-                        OlukoLocalizations.get(context, 'voiceMessages'),
-                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                      )
-                    : SizedBox(),
-                SizedBox(height: !submitted ? 15 : 0),
-                Stack(alignment: AlignmentDirectional.center, children: [
-                  Stack(alignment: AlignmentDirectional.bottomEnd, children: [
-                    Image.asset(
-                      'assets/neumorphic/audio_rectangle.png',
-                      scale: 3.5,
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(right: 15, bottom: 10),
+      if (!OlukoNeumorphism.isNeumorphismDesign)
+        const Divider(
+          height: 1,
+          color: OlukoColors.divider,
+          thickness: 1.5,
+          indent: 0,
+          endIndent: 0,
+        )
+      else
+        SizedBox(),
+      if (OlukoNeumorphism.isNeumorphismDesign)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const SizedBox(height: 10),
+            if (!submitted)
+              Text(
+                OlukoLocalizations.get(context, 'voiceMessages'),
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+              )
+            else
+              SizedBox(),
+            SizedBox(height: !submitted ? 15 : 0),
+            Stack(alignment: AlignmentDirectional.center, children: [
+              Stack(alignment: AlignmentDirectional.bottomEnd, children: [
+                Image.asset(
+                  'assets/neumorphic/audio_rectangle.png',
+                  scale: 3.5,
+                ),
+                OlukoNeumorphism.isNeumorphismDesign
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(right: 15, bottom: 10),
                         child: Text(
                           TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context),
                           style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white),
                         )),
-                  ]),
-                  RecordedView(record: widget.recorder.audioUrl, showTicks: submitted, panelController: widget.panelController),
-                ]),
-                SizedBox(height: 15)
               ]),
-            )
-          : RecordedView(record: widget.recorder.audioUrl, showTicks: submitted, panelController: widget.panelController),
-      !submitted ? _saveButton() : SizedBox()
+              RecordedView(record: widget.recorder.audioUrl, showTicks: submitted, panelController: widget.panelController),
+            ]),
+            const SizedBox(height: 15)
+          ]),
+        )
+      else
+        RecordedView(record: widget.recorder.audioUrl, showTicks: submitted, panelController: widget.panelController),
+      if (!submitted) _saveButton() else const SizedBox()
     ]);
   }
 

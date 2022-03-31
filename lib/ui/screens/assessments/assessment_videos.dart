@@ -306,6 +306,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
+                isOlukoControls: true,
+                showOptions: true,
                 videoUrl: videoUrl,
                 autoPlay: false,
                 whenInitialized: (ChewieController chewieController) => setState(() {

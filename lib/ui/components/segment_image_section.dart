@@ -150,10 +150,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   Widget segmentContent() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Padding(
-            padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.5),
-            child: segmentInformation(),
-          )
+        ? Padding(padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.5), child: segmentInformation())
         : Padding(padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.25, right: 15, left: 15), child: segmentInformation());
   }
 
@@ -189,7 +186,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             children: SegmentUtils.getSegmentSummary(
               widget.segment,
               context,
-              OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
+              OlukoColors.white,
             ),
           ),
         ),

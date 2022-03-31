@@ -43,7 +43,10 @@ class _State extends State<CollapsedMovementVideosSection> {
                 child: Text(OlukoLocalizations.get(context, 'movementVideos'),
                     style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold))),
             SizedBox(width: 10),
-            Icon(Icons.directions_run, color: Colors.white, size: 30),
+            Image.asset(
+              'assets/courses/person_running.png',
+              scale: 4,
+            ),
             Expanded(child: SizedBox()),
             widget.action
           ]),
