@@ -389,9 +389,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Widget getCameraIcon() {
-    if (widget.fromChallenge) {
-      return const SizedBox();
-    } else {
       return Padding(
         padding: const EdgeInsets.only(right: 15),
         child: Stack(
@@ -414,7 +411,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               ],
         ),
       );
-    }
+    
   }
 
   List<Widget> getCameraCircles() {
