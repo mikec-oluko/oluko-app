@@ -11,6 +11,7 @@ import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
 import 'package:oluko_app/ui/screens/friends/friends_requests_page.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class FriendsPage extends StatefulWidget {
   @override
@@ -134,7 +135,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
             unselectedLabelColor: OlukoColors.white,
             labelColor: OlukoColors.white,
             controller: _tabController,
-            tabs: [Tab(text: 'Friends'), Tab(text: 'Requests')],
+            tabs: [Tab(text: OlukoLocalizations.get(context, 'friends')), Tab(text: OlukoLocalizations.get(context, 'requests'))],
           ),
           // Tab(text: 'Friends'), Tab(text: 'Requests')
         ),

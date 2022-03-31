@@ -489,9 +489,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       checkUserConnectStatus(userRequested);
                       BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
                     },
-                    title: OlukoLocalizations.get(context, _connectButtonTitle))
+                    title: _connectButtonTitle)
                 : OlukoNeumorphicPrimaryButton(
-                    title: OlukoLocalizations.get(context, _connectButtonTitle),
+                    title: _connectButtonTitle,
                     onPressed: () {
                       AppMessages().showDialogActionMessage(context, '', 2);
                       checkUserConnectStatus(userRequested);
@@ -760,9 +760,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
       connectStatus = UserConnectStatus.notConnected;
     }
 
-    if (_connectButtonTitle != ProfileHelperFunctions.returnTitleForConnectButton(connectStatus)) {
+    if (_connectButtonTitle != ProfileHelperFunctions.returnTitleForConnectButton(connectStatus, context)) {
       setState(() {
-        _connectButtonTitle = ProfileHelperFunctions.returnTitleForConnectButton(connectStatus);
+        _connectButtonTitle = ProfileHelperFunctions.returnTitleForConnectButton(connectStatus, context);
       });
     }
   }
