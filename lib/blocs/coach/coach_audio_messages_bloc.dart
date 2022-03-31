@@ -26,8 +26,8 @@ class CoachAudioMessagesDispose extends CoachAudioMessagesState {
 }
 
 class CoachAudioMessagesUpdate extends CoachAudioMessagesState {
-  CoachAudioMessagesUpdate({this.coachAudioMessages});
-  final List<CoachAudioMessage> coachAudioMessages;
+  CoachAudioMessagesUpdate({this.coachAudioMessage});
+  final CoachAudioMessage coachAudioMessage;
 }
 
 class CoachAudioMessagesFailure extends CoachAudioMessagesState {
@@ -50,22 +50,61 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     }
   }
 
+  // Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStream(String userId, String coachId) async {
+  //   try {
+  //     return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
+  //       emit(Loading());
+  //       List<CoachAudioMessage> audioMessages = [];
+  //       if (snapshot.docs.isNotEmpty) {
+  //         snapshot.docs.forEach((doc) {
+  //           final Map<String, dynamic> content = doc.data();
+  //           audioMessages.add(CoachAudioMessage.fromJson(content));
+  //         });
+  //         // TODO: disabled needs fix in firebase added event, pending writes, [created_at == null]
+  //         if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
+  //           audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+  //         }
+  //       }
+  //       emit(CoachAudioMessagesSuccess(coachAudioMessages: audioMessages));
+  //     });
+  //   } catch (exception, stackTrace) {
+  //     await Sentry.captureException(
+  //       exception,
+  //       stackTrace: stackTrace,
+  //     );
+  //     emit(CoachAudioMessagesFailure(exception: exception));
+  //     rethrow;
+  //   }
+  // }
+
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStream(String userId, String coachId) async {
     try {
       return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
+        List<CoachAudioMessage> _audioMessages = [];
+        CoachAudioMessage _audioMessageUpdated;
+
+        //TODO: List if load items
+        //TODO: Element if updated, (new element, deleted one)
+        //TODO: Check when changes.length == docs.length, emit only success
+
         emit(Loading());
-        List<CoachAudioMessage> audioMessages = [];
-        if (snapshot.docs.isNotEmpty) {
-          snapshot.docs.forEach((doc) {
-            final Map<String, dynamic> content = doc.data();
-            audioMessages.add(CoachAudioMessage.fromJson(content));
-          });
-          // TODO: disabled needs fix in firebase added event, pending writes, [created_at == null]
-          if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
-            audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+
+        if (snapshot.docChanges.isNotEmpty) {
+          if (snapshot.docChanges.length > 1) {
+            print(snapshot.docChanges);
+          } else {
+            _audioMessageUpdated = CoachAudioMessage.fromJson(snapshot.docChanges.first.doc.data());
           }
+          emit(CoachAudioMessagesUpdate(coachAudioMessage: _audioMessageUpdated));
         }
-        emit(CoachAudioMessagesSuccess(coachAudioMessages: audioMessages));
+        if (snapshot.docs.isNotEmpty && (snapshot.docs.length != snapshot.docChanges.length)) {
+          snapshot.docs.forEach((doc) {
+            final Map<String, dynamic> _audioElement = doc.data();
+            _audioMessages.add(CoachAudioMessage.fromJson(_audioElement));
+          });
+
+          emit(CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages));
+        }
       });
     } catch (exception, stackTrace) {
       await Sentry.captureException(

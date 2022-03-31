@@ -529,7 +529,7 @@ class _CoachPageState extends State<CoachPage> {
           onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
     }
 
-    if (!widget.coachAssignment.introductionCompleted) {
+    if (widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachNotificationVideoCard(
           cardImage: _assessment.thumbnailImage,
           fileType: CoachFileTypeEnum.recommendedVideo,
