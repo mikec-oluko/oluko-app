@@ -59,15 +59,9 @@ class _State extends State<Clock> {
 
   int AMRAPRound = 0;
 
-  //bool initialTimer;
-
-  //Timer countdownInitialTimer;
-  //int initialCountdown;
 
   @override
   void initState() {
-    //initialTimer = false;
-    //playInitialCountdown();
     if (isCurrentTaskTimed()) {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
@@ -243,7 +237,7 @@ class _State extends State<Clock> {
           widget.timeLeft.inSeconds <= 5) {
         return TimerUtils.finalTimer(
             InitialTimerType.End,
-            5,
+            widget.timerEntries[widget.timerTaskIndex].value,
             widget.timeLeft.inSeconds,
             context,
             isLastEntryOfTheRound()
@@ -286,7 +280,7 @@ class _State extends State<Clock> {
     if (widget.timeLeft.inSeconds <= 5) {
       return TimerUtils.finalTimer(
           InitialTimerType.End,
-          5,
+          widget.timerEntries[widget.timerTaskIndex].value,
           widget.timeLeft.inSeconds,
           context,
           isLastEntryOfTheRound()
@@ -496,7 +490,6 @@ class _State extends State<Clock> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // SizedBox(height: 30),
                   Text(
                     OlukoLocalizations.get(context, "typeScore"),
                     textAlign: TextAlign.center,
@@ -709,7 +702,6 @@ class _State extends State<Clock> {
         goToNextStep();
         return;
       }
-      //BlocProvider.of<ClocksTimerBloc>(context).decrementTimeLeft();
       setState(() {
         widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds - 1);
         BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeValue(
@@ -717,27 +709,6 @@ class _State extends State<Clock> {
       });
     });
   }
-
-  /*void playInitialCountdown() {
-    initialCountdown = widget.segments[widget.segmentIndex].initialTimer;
-    countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      SoundUtils.playSound(initialCountdown - 1,
-          widget.segments[widget.segmentIndex].initialTimer, 2);
-      setState(() {
-        if (initialCountdown > 1) {
-          initialCountdown--;
-        } else {
-          countdownTimer.cancel();
-          initialTimer = false;
-          if (isCurrentTaskTimed()) {
-            widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
-            _playCountdown(
-                () => widget.goToNextStep(), () => widget.setPaused());
-          }
-        }
-      });
-    });
-  }*/
 
   void _pauseCountdown(Function() setPaused) {
     setPaused();

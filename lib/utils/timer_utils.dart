@@ -52,7 +52,7 @@ class TimerUtils {
               fontFamily: 'Gilroy',
               fontSize: 80,
               fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
+              //fontStyle: FontStyle.italic,
               color: getGreenOrCoral,
             )),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -424,7 +424,7 @@ class TimerUtils {
               fontFamily: 'Gilroy',
               fontSize: 80,
               fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
+              //fontStyle: FontStyle.italic,
               color: OlukoColors.lightOrange,
             )),
         if (round != null)
