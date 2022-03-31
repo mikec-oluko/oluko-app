@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
@@ -42,26 +44,33 @@ class CourseEnrollment extends Base {
             isHidden: isHidden);
 
   factory CourseEnrollment.fromJson(Map<String, dynamic> json) {
-    CourseEnrollment courseEnrollment = CourseEnrollment(
-        userReference: json['user_reference'] as DocumentReference,
-        userId: json['user_id'] as String,
-        course: json['course'] != null ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>) : null,
-        completion: json['completion'] == null || json['completion'] == 0
-            ? 0.0
-            : json['completion'].toString() == '1'
-                ? ((json['completion'] as int).toDouble())
-                : json['completion'] is double ? json['completion'] as double : ((json['completion'] as int).toDouble()),
-        completedAt: json['completed_at'] as Timestamp,
-        finishedAt: json['finished_at'] as Timestamp,
-        classes: json['classes'] != null
-            ? List<EnrollmentClass>.from((json['classes'] as Iterable).map((c) => EnrollmentClass.fromJson(c as Map<String, dynamic>)))
-            : null,
-        challenges: json['challenges'] != null
-            ? List<Challenge>.from((json['challenges'] as Iterable).map((c) => Challenge.fromJson(c as Map<String, dynamic>)))
-            : null,
-        isUnenrolled: json['is_unenrolled'] == null ? false : json['is_unenrolled'] as bool);
-    courseEnrollment.setBase(json);
-    return courseEnrollment;
+    try {
+      CourseEnrollment courseEnrollment = CourseEnrollment(
+          userReference: json['user_reference'] as DocumentReference,
+          userId: json['user_id'] as String,
+          course: json['course'] != null ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>) : null,
+          completion: json['completion'] == null || json['completion'] == 0
+              ? 0.0
+              : json['completion'].toString() == '1'
+                  ? ((json['completion'] as int).toDouble())
+                  : json['completion'] as num > 1
+                      ? 1.0
+                      : json['completion'] as double,
+          completedAt: json['completed_at'] as Timestamp,
+          finishedAt: json['finished_at'] as Timestamp,
+          classes: json['classes'] != null
+              ? List<EnrollmentClass>.from((json['classes'] as Iterable).map((c) => EnrollmentClass.fromJson(c as Map<String, dynamic>)))
+              : null,
+          challenges: json['challenges'] != null
+              ? List<Challenge>.from((json['challenges'] as Iterable).map((c) => Challenge.fromJson(c as Map<String, dynamic>)))
+              : null,
+          isUnenrolled: json['is_unenrolled'] == null ? false : json['is_unenrolled'] as bool);
+      courseEnrollment.setBase(json);
+      return courseEnrollment;
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
