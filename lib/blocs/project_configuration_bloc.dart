@@ -50,4 +50,17 @@ class ProjectConfigurationBloc extends Cubit<ProjectConfigurationState> {
         .map((sound) => Sound.fromJson(sound as Map))
         .toList();
   }
+
+  Map getSoundsConfiguration() {
+    if (courseConfiguration == null) {
+      getCourseConfiguration();
+    }
+    if (courseConfiguration != null && courseConfiguration is Map) {
+      final soundConfiguration = (courseConfiguration as Map)['sounds_configuration'];
+      if (soundConfiguration != null && soundConfiguration is Map) {
+        return soundConfiguration;
+      }
+    }
+    return null;
+  }
 }
