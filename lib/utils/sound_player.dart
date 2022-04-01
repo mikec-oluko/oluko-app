@@ -39,8 +39,8 @@ class SoundPlayer {
       final AudioCache player = AudioCache();
       String assetToPlay = asset;
       if (soundEnum != null) {
-        final Map courseConfig = (ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration'] as Map;
-        assetToPlay = courseConfig[soundsLabels[soundEnum]].toString();
+        final Map courseConfig = ProjectConfigurationBloc().getSoundsConfiguration();
+        assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
       }
       if (assetToPlay != null && assetToPlay != 'null') {
         await player.play(assetToPlay);
