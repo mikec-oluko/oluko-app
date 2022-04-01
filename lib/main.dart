@@ -13,6 +13,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/ui/newDesignComponents/animation.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';

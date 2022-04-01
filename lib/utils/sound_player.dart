@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_player.dart';
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 
 enum SoundsEnum { enroll, classFinished, newCoachRecomendation }
@@ -34,14 +35,16 @@ class SoundPlayer {
   }
 
   static Future playAsset({SoundsEnum soundEnum, String asset}) async {
-    final AudioCache player = AudioCache();
-    String assetToPlay = asset;
-    if (soundEnum != null) {
-      final Map courseConfig = (ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration'] as Map;
-      assetToPlay = courseConfig[soundsLabels[soundEnum]].toString();
-    }
-    if(assetToPlay != null && assetToPlay != 'null') {
-      await player.play(assetToPlay);
+    if (globalNotificationsEnabled(soundEnum)) {
+      final AudioCache player = AudioCache();
+      String assetToPlay = asset;
+      if (soundEnum != null) {
+        final Map courseConfig = ProjectConfigurationBloc().getSoundsConfiguration();
+        assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
+      }
+      if (assetToPlay != null && assetToPlay != 'null') {
+        await player.play(assetToPlay);
+      }
     }
   }
 
@@ -55,5 +58,12 @@ class SoundPlayer {
     } else {
       await _pause();
     }
+  }
+
+  static bool globalNotificationsEnabled(SoundsEnum soundEnum) {
+    if (NotificationSettingsBloc.notificationSettings != null && soundEnum != null) {
+      return NotificationSettingsBloc.notificationSettings.globalNotifications;
+    }
+    return true;
   }
 }
