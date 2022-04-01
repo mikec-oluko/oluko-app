@@ -28,23 +28,14 @@ enum WorkoutType { segment, segmentWithRecording }
 
 class SegmentClocksUtils {
   static List<Widget> getScoresByRound(
-      BuildContext context,
-      List<TimerEntry> timerEntries,
-      int timerTaskIndex,
-      int totalScore,
-      List<String> scores) {
+      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores) {
     List<String> lbls = counterText(
         context,
-        timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime
-                ? timerTaskIndex
-                : timerTaskIndex - 1]
-            .counter,
+        timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter,
         timerEntries[timerTaskIndex - 1].movement.name);
-    final bool isCounterByReps =
-        timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
+    final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     final List<Widget> widgets = [];
-    String totalText =
-        '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
+    String totalText = '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
     if (!lbls.isEmpty) {
       totalText += lbls[1];
     }
@@ -53,10 +44,7 @@ class SegmentClocksUtils {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(totalText,
-              style: OlukoFonts.olukoSuperBigFont(
-                  custoFontWeight: FontWeight.w600,
-                  customColor: OlukoColors.primary)),
+          Text(totalText, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.primary)),
         ],
       ),
     );
@@ -71,18 +59,14 @@ class SegmentClocksUtils {
             children: [
               Text(
                 '${OlukoLocalizations.get(context, 'round')} ${i + 1}',
-                style: OlukoFonts.olukoBigFont(
-                    custoFontWeight: FontWeight.w600,
-                    customColor: OlukoColors.white),
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white),
               ),
               SizedBox(
                 width: ScreenUtils.width(context) * 0.5,
                 child: Text(
                   scores[i],
                   textAlign: TextAlign.end,
-                  style: OlukoFonts.olukoBigFont(
-                      custoFontWeight: FontWeight.w400,
-                      customColor: OlukoColors.white),
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white),
                 ),
               )
             ],
@@ -93,8 +77,7 @@ class SegmentClocksUtils {
     return widgets;
   }
 
-  static List<String> counterText(
-      BuildContext context, CounterEnum counter, String movementName) {
+  static List<String> counterText(BuildContext context, CounterEnum counter, String movementName) {
     List<String> counterText = [];
     switch (counter) {
       case CounterEnum.reps:
@@ -150,10 +133,7 @@ class SegmentClocksUtils {
           child: Text(
             nextTask,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontSize: 25,
-                color: Color.fromRGBO(255, 255, 255, 0.25),
-                fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -186,8 +166,8 @@ class SegmentClocksUtils {
               return TextButton(
                 onPressed: () {
                   BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
-                  Navigator.of(context).pop();
                   BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
+                  Navigator.of(context).pop();
                   result = true;
                   return;
                 },
@@ -248,33 +228,35 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget recordingTaskSection(bool keyboardVisibilty,
-      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex) {
-    final bool hasMultipleLabels =
-        timerEntries[timerTaskIndex].labels.length > 1;
+  static Widget recordingTaskSection(bool keyboardVisibilty, BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex) {
+    final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
-      final List<Widget> items =
-          SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
-      return SizedBox(
-        width: 200,
-        child: OlukoNeumorphicSecondaryButton(
-          thinPadding: true,
-          isExpanded: false,
-          icon: Icon(
-            //Secondary button allows only text or only icon
-            Icons.search,
-            color: OlukoColors.primary,
+      final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
+      if (timerTaskIndex == 0) {
+        return SizedBox(
+          width: ScreenUtils.width(context),
+          height: ScreenUtils.height(context) * 0.4,
+          child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)),
+        );
+      } else {
+        return SizedBox(
+          width: 200,
+          child: OlukoNeumorphicSecondaryButton(
+            thinPadding: true,
+            isExpanded: false,
+            icon: Icon(
+              //Secondary button allows only text or only icon
+              Icons.search,
+              color: OlukoColors.primary,
+            ),
+            onPressed: () => MovementsModal.modalContent(context: context, content: items),
+            title: OlukoLocalizations.get(context, 'movements'),
           ),
-          onPressed: () =>
-              MovementsModal.modalContent(context: context, content: items),
-          title: OlukoLocalizations.get(context, 'movements'),
-        ),
-      );
+        );
+      }
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
-      final String nextTask = timerTaskIndex < timerEntries.length - 1
-          ? timerEntries[timerTaskIndex + 1].labels[0]
-          : '';
+      final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
       return SizedBox(
         width: ScreenUtils.width(context),
         child: Padding(
@@ -284,18 +266,12 @@ class SegmentClocksUtils {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              SizedBox(
-                  width: ScreenUtils.width(context) * 0.7,
-                  child:
-                      currentTaskWidget(keyboardVisibilty, currentTask, true)),
+              SizedBox(width: ScreenUtils.width(context) * 0.7, child: currentTaskWidget(keyboardVisibilty, currentTask, true)),
               Positioned(
                 left: ScreenUtils.width(context) - 70,
                 child: Text(
                   nextTask,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      color: OlukoColors.grayColorSemiTransparent,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, color: OlukoColors.grayColorSemiTransparent, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -305,14 +281,11 @@ class SegmentClocksUtils {
     }
   }
 
-  static Widget currentTaskWidget(bool keyboardVisibilty, String currentTask,
-      [bool smaller = false]) {
+  static Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
     return Visibility(
       visible: !keyboardVisibilty,
       child: Padding(
-        padding: OlukoNeumorphism.isNeumorphismDesign
-            ? const EdgeInsets.symmetric(horizontal: 20)
-            : EdgeInsets.zero,
+        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
         child: Text(
           currentTask,
           textAlign: TextAlign.center,
@@ -335,8 +308,7 @@ class SegmentClocksUtils {
           children: [
             Text(
               'Uploading',
-              style:
-                  OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w400),
+              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w400),
               textAlign: TextAlign.start,
             ),
             const SizedBox(width: 4),
@@ -348,11 +320,7 @@ class SegmentClocksUtils {
   }
 
   static Widget cameraSection(
-      BuildContext context,
-      bool isWorkStatePaused,
-      bool isCameraReady,
-      CameraController cameraController,
-      Widget pauseButton) {
+      BuildContext context, bool isWorkStatePaused, bool isCameraReady, CameraController cameraController, Widget pauseButton) {
     return isWorkStatePaused
         ? const SizedBox()
         : SizedBox(
@@ -366,21 +334,13 @@ class SegmentClocksUtils {
                   Container(
                     decoration: const BoxDecoration(
                       image: DecorationImage(
-                        image:
-                            AssetImage('assets/courses/camera_background.png'),
+                        image: AssetImage('assets/courses/camera_background.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
-                    child: Center(
-                        child: AspectRatio(
-                            aspectRatio: 3.0 / 4.0,
-                            child: CameraPreview(cameraController))),
+                    child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController))),
                   ),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: pauseButton)),
+                Align(alignment: Alignment.bottomCenter, child: Padding(padding: const EdgeInsets.all(20.0), child: pauseButton)),
               ],
             ),
           );
@@ -425,8 +385,7 @@ class SegmentClocksUtils {
     return paddingValue;
   }
 
-  static Widget finishedButtonsWithRecording(
-      BuildContext context, Function() shareDoneAction) {
+  static Widget finishedButtonsWithRecording(BuildContext context, Function() shareDoneAction) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -445,11 +404,7 @@ class SegmentClocksUtils {
   }
 
   static Widget finishedButtonsWithoutRecording(
-      BuildContext context,
-      Function() goToClass,
-      Function() nextSegmentAction,
-      List<Segment> segments,
-      int segmentIndex) {
+      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -479,70 +434,34 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget showButtonsWhenFinished(
-      WorkoutType workoutType,
-      bool shareDone,
-      BuildContext context,
-      Function() shareDoneAction,
-      Function() goToClass,
-      Function() nextSegmentAction,
-      List<Segment> segments,
-      int segmentIndex) {
+  static Widget showButtonsWhenFinished(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
     return !OlukoNeumorphism.isNeumorphismDesign
-        ? showFinishedButtons(workoutType, shareDone, context, shareDoneAction,
-            goToClass, nextSegmentAction, segments, segmentIndex)
-        : neumorphicFinishedButtons(
-            workoutType,
-            shareDone,
-            context,
-            shareDoneAction,
-            goToClass,
-            nextSegmentAction,
-            segments,
-            segmentIndex);
+        ? showFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex)
+        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex);
   }
 
-  static Widget showFinishedButtons(
-      WorkoutType workoutType,
-      bool shareDone,
-      BuildContext context,
-      Function() shareDoneAction,
-      Function() goToClass,
-      Function() nextSegmentAction,
-      List<Segment> segments,
-      int segmentIndex) {
+  static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return finishedButtonsWithRecording(context, shareDoneAction);
     } else {
-      return finishedButtonsWithoutRecording(
-          context, goToClass, nextSegmentAction, segments, segmentIndex);
+      return finishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex);
     }
   }
 
-  static Widget neumorphicFinishedButtons(
-      WorkoutType workoutType,
-      bool shareDone,
-      BuildContext context,
-      Function() shareDoneAction,
-      Function() goToClass,
-      Function() nextSegmentAction,
-      List<Segment> segments,
-      int segmentIndex) {
+  static Widget neumorphicFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
     Wakelock.disable();
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return neumporphicFinishedButtonsWithRecording(context, shareDoneAction);
     } else {
-      return neumorphicFinishedButtonsWithoutRecording(
-          context, goToClass, nextSegmentAction, segments, segmentIndex);
+      return neumorphicFinishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex);
     }
   }
 
   static Widget neumorphicFinishedButtonsWithoutRecording(
-      BuildContext context,
-      Function() goToClass,
-      Function() nextSegmentAction,
-      List<Segment> segments,
-      int segmentIndex) {
+      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topLeft: OlukoNeumorphism.radiusValue,
@@ -564,8 +483,7 @@ class SegmentClocksUtils {
                 children: [
                   OlukoNeumorphicSecondaryButton(
                     title: OlukoLocalizations.get(context, 'goToClass'),
-                    textColor:
-                        OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     thinPadding: true,
                     onPressed: () {
                       goToClass();
@@ -592,8 +510,7 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget neumporphicFinishedButtonsWithRecording(
-      BuildContext context, Function() shareDoneAction) {
+  static Widget neumporphicFinishedButtonsWithRecording(BuildContext context, Function() shareDoneAction) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
       child: Row(
