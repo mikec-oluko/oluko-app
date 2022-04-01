@@ -1,3 +1,4 @@
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/models/sound.dart';
 import 'package:oluko_app/utils/sound_player.dart';
@@ -10,30 +11,32 @@ const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
   static void playSound(int timeLeft, int totalTime, int workState) {
-    final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
-    if (segmentClockSounds.isNotEmpty) {
-      final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
-        if (sound.clockState.index == workState) {
-          if (sound.type.index == SoundTypeEnum.calculated.index) {
-            if (totalTime != null && totalTime > 0 && timeLeft != null) {
-              return sound.value == (timeLeft / totalTime);
+    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled()) {
+      final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
+      if (segmentClockSounds.isNotEmpty) {
+        final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
+          if (sound.clockState.index == workState) {
+            if (sound.type.index == SoundTypeEnum.calculated.index) {
+              if (totalTime != null && totalTime > 0 && timeLeft != null) {
+                return sound.value == (timeLeft / totalTime);
+              } else {
+                return false;
+              }
             } else {
-              return false;
+              return sound.value.toInt() == timeLeft;
             }
-          } else {
-            return sound.value.toInt() == timeLeft;
           }
-        }
-        return false;
-      }).toList();
-      if (posibleSounds.isNotEmpty) {
-        if (posibleSounds.length > 1) {
-          final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
-          if (existSoundAsset(soundToPlay)) {
-            playAsset(soundToPlay);
+          return false;
+        }).toList();
+        if (posibleSounds.isNotEmpty) {
+          if (posibleSounds.length > 1) {
+            final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
+            if (existSoundAsset(soundToPlay)) {
+              playAsset(soundToPlay);
+            }
+          } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
+            playAsset(posibleSounds[0]);
           }
-        } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
-          playAsset(posibleSounds[0]);
         }
       }
     }

@@ -53,7 +53,7 @@ class RecommendationRepository {
         .then((recommendations) {
       if (recommendations?.docs != null) {
         for (final recommendation in recommendations.docs) {
-          recommendation.reference.update({'is_deleted': true, 'deleted_at': FieldValue.serverTimestamp()});
+          recommendation.reference.update({'is_taken': true});
         }
       }
     });
