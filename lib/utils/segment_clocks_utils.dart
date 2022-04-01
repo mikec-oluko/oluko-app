@@ -170,7 +170,6 @@ class SegmentClocksUtils {
                   Navigator.of(context).pop();
                   BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
                   result = true;
-                  return;
                 },
                 child: Text(
                   OlukoLocalizations.get(context, 'yes'),
@@ -190,9 +189,8 @@ class SegmentClocksUtils {
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
         onPressed: () async {
-          bool result = await onWillPopConfirmationPopup(context, segmentWithRecording);
-          if (result) {
-            segmentClockOnWillPop(context, workout);
+          if (await onWillPopConfirmationPopup(context, segmentWithRecording)) {
+            segmentClockOnWillPop(context);
           }
         },
         actions: [topBarIcon, audioIcon()],
@@ -210,12 +208,10 @@ class SegmentClocksUtils {
     return appBarToUse;
   }
 
-  static Future<bool> segmentClockOnWillPop(BuildContext context, WorkoutType workoutType) async {
+  static Future<bool> segmentClockOnWillPop(BuildContext context) async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Wakelock.disable();
-    if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
-      Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
-    }
+    Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
     return false;
   }
 
@@ -224,7 +220,7 @@ class SegmentClocksUtils {
     return BlocBuilder<NotificationSettingsBloc, NotificationSettingsState>(
       builder: (context, state) {
         if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
-            audioOff = !state.notificationSettings.segmentClocksSounds;
+          audioOff = !state.notificationSettings.segmentClocksSounds;
         }
         return GestureDetector(
           onTap: () {
