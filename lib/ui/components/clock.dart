@@ -182,6 +182,11 @@ class _State extends State<Clock> {
       return TimerUtils.pausedTimer(context);
     }
 
+    if (widget.timerEntries[widget.timerTaskIndex].isInitialTimer != null && widget.timerEntries[widget.timerTaskIndex].isInitialTimer) {
+      return TimerUtils.initialTimer(InitialTimerType.Start, widget.timerEntries[widget.timerTaskIndex].round,
+          widget.timerEntries[widget.timerTaskIndex].value, widget.timeLeft.inSeconds, context);
+    }
+
     final Duration actualTime = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value) - widget.timeLeft;
 
     double circularProgressIndicatorValue = actualTime.inSeconds / widget.timerEntries[widget.timerTaskIndex].value;
@@ -194,8 +199,8 @@ class _State extends State<Clock> {
     if (widget.workState == WorkState.resting) {
       final bool needInput = useInput();
       if (widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.none && widget.timeLeft.inSeconds <= 5) {
-        return TimerUtils.finalTimer(InitialTimerType.End, 5, widget.timeLeft.inSeconds, context,
-            isLastEntryOfTheRound() ? widget.timerEntries[widget.timerTaskIndex].round : null);
+        return TimerUtils.finalTimer(InitialTimerType.End, widget.timerEntries[widget.timerTaskIndex].value, widget.timeLeft.inSeconds,
+            context, isLastEntryOfTheRound() ? widget.timerEntries[widget.timerTaskIndex].round : null);
       } else {
         return needInput && OlukoNeumorphism.isNeumorphismDesign
             ? TimerUtils.restTimer(
@@ -230,8 +235,8 @@ class _State extends State<Clock> {
         : null;
 
     if (widget.timeLeft.inSeconds <= 5) {
-      return TimerUtils.finalTimer(InitialTimerType.End, 5, widget.timeLeft.inSeconds, context,
-          isLastEntryOfTheRound() ? widget.timerEntries[widget.timerTaskIndex].round : null);
+      return TimerUtils.finalTimer(InitialTimerType.End, widget.timerEntries[widget.timerTaskIndex].value, widget.timeLeft.inSeconds,
+          context, isLastEntryOfTheRound() ? widget.timerEntries[widget.timerTaskIndex].round : null);
     } else {
       return TimerUtils.timeTimer(
         circularProgressIndicatorValue,
@@ -407,7 +412,6 @@ class _State extends State<Clock> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // SizedBox(height: 30),
                   Text(
                     OlukoLocalizations.get(context, "typeScore"),
                     textAlign: TextAlign.center,
@@ -540,9 +544,13 @@ class _State extends State<Clock> {
         child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(widget.timerEntries[widget.timerTaskIndex].labels)),
       );
     } else {
-      final String currentTask = widget.timerEntries[widget.timerTaskIndex].labels[0];
-      final String nextTask =
+      String currentTask = widget.timerEntries[widget.timerTaskIndex].labels[0];
+      String nextTask =
           widget.timerTaskIndex < widget.timerEntries.length - 1 ? widget.timerEntries[widget.timerTaskIndex + 1].labels[0] : '';
+      if (widget.timerTaskIndex == 0) {
+        currentTask = widget.timerEntries[widget.timerTaskIndex + 1].labels[0];
+        nextTask = widget.timerEntries[widget.timerTaskIndex + 2].labels[0];
+      }
       return Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign
             ? (widget.workState == WorkState.resting && usePulseAnimation())
@@ -580,7 +588,6 @@ class _State extends State<Clock> {
         goToNextStep();
         return;
       }
-      //BlocProvider.of<ClocksTimerBloc>(context).decrementTimeLeft();
       setState(() {
         widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds - 1);
         BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeValue(Duration(milliseconds: widget.timeLeft.inMilliseconds));

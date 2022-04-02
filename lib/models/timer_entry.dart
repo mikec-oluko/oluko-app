@@ -11,7 +11,8 @@ class TimerEntry {
       this.round,
       this.sectionIndex,
       this.counter,
-      this.stopwatch});
+      this.stopwatch,
+      this.isInitialTimer});
 
   MovementSubmodel movement;
   List<String> labels;
@@ -21,4 +22,5 @@ class TimerEntry {
   CounterEnum counter;
   int sectionIndex;
   bool stopwatch;
+  bool isInitialTimer;
 }

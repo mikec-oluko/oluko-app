@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progressbar.dart';
@@ -50,7 +52,7 @@ class TimerUtils {
               fontFamily: 'Gilroy',
               fontSize: 80,
               fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
+              //fontStyle: FontStyle.italic,
               color: getGreenOrCoral,
             )),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -81,8 +83,7 @@ class TimerUtils {
         return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
       }(),
       child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
-          currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)
-      );
+          currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1));
 
   static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
     if (totalRounds < _maxStepsForSegmentedClock) {
@@ -267,19 +268,19 @@ class TimerUtils {
           SizedBox(
             width: ScreenUtils.smallScreen(context)
                 ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.33
+                    ? ScreenUtils.height(context) * 0.32
                     : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.32,
+                : ScreenUtils.height(context) * 0.30,
             height: ScreenUtils.smallScreen(context)
                 ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.33
+                    ? ScreenUtils.height(context) * 0.32
                     : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.32,
+                : ScreenUtils.height(context) * 0.30,
             child: AspectRatio(
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
                     strokeWidth: _progressIndicatorStroke,
-                    value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
+                    value: progressValue,
                     color: getGreenOrSkyBlue,
                     backgroundColor: backgroundColor)),
           ),
@@ -404,11 +405,10 @@ class TimerUtils {
   }
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
-    var r = ScreenUtils.height(context);
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
+        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -424,7 +424,7 @@ class TimerUtils {
               fontFamily: 'Gilroy',
               fontSize: 80,
               fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
+              //fontStyle: FontStyle.italic,
               color: OlukoColors.lightOrange,
             )),
         if (round != null)
@@ -521,9 +521,8 @@ class TimerUtils {
   }
 
   static startCountdown(
-      WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound,
-      {Function() onShowAgainPressed, bool showPanel}) {
-    return Navigator.of(context)
+      WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound) {
+    /*return Navigator.of(context)
         .push(PageRouteBuilder(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
@@ -534,9 +533,9 @@ class TimerUtils {
                   onShowAgainPressed: onShowAgainPressed,
                   showPanel: showPanel,
                 )))
-        .then((value) {
-
-      Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
-    });
+        .then((value) {*/
+    BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
+    //});
   }
 }

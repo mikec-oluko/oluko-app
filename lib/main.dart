@@ -3,17 +3,22 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/ui/newDesignComponents/animation.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/config/project_settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +26,14 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
-  final bool firstTime = await UserUtils.isFirstTime();
+  bool firstTime;
+  final sharedPref = await SharedPreferences.getInstance();
+    final isFirstTime = sharedPref.getBool('first_time');
+    if (isFirstTime != null && !isFirstTime) {
+      firstTime = false;
+    } else {
+      firstTime = true;
+    }
   final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
     initialRoute: route,
@@ -70,7 +82,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Routes routes = Routes();
-
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
   @override
   Widget build(BuildContext mainContext) {
     SystemChrome.setPreferredOrientations([
@@ -78,30 +90,66 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
     ProjectConfigurationBloc().getCourseConfiguration();
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '${OLUKO}',
-      theme: ThemeData(
-        canvasColor: Colors.transparent,
-        primarySwatch: Colors.grey,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AnimationBloc>(
+          create: (mainContext) => AnimationBloc(),
+        ),
+        BlocProvider(
+          create: (context) => NotificationBloc(),
+        )
+      ],
+      child: MaterialApp(
+        title: '${OLUKO}',
+        theme: ThemeData(
+          canvasColor: Colors.transparent,
+          primarySwatch: Colors.grey,
+        ),
+        initialRoute: widget.initialRoute,
+        onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+        localizationsDelegates: [
+          const OlukoLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('es', ''),
+        ],
+        debugShowCheckedModeBanner: false,
+        home: LayoutBuilder(
+          builder: (context, constraints) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
+            return WillPopScope(
+              onWillPop: () async {
+                if (_navigatorKey.currentState.canPop()) {
+                  !await _navigatorKey.currentState.maybePop();
+                }
+                return false;
+              },
+              child: Navigator(
+                key: _navigatorKey,
+                initialRoute: widget.initialRoute,
+                onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+              ),
+            );
+          },
+        ),
       ),
-      initialRoute: widget.initialRoute,
-      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
-      localizationsDelegates: [
-        const OlukoLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale('es', ''),
-      ],
     );
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _insertOverlay(BuildContext context) {
+    return Overlay.of(context).insert(
+      OverlayEntry(builder: (context) {
+        return HiFiveAnimation();
+      }),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 import 'oluko_neumorphic_back_button.dart';
@@ -30,14 +31,14 @@ class _OlukoWatchAppBarState extends State<OlukoWatchAppBar> {
             child: Container(
               width: ScreenUtils.width(context),
               height: 80,
-              // color: Colors.red,
               child: widget.showBackButton
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          OlukoNeumorphicCircleButton(onPressed: widget.onPressed),
+                          OlukoNeumorphicCircleButton(
+                              customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor), onPressed: widget.onPressed),
                           if (widget.actions != null) ...widget.actions else SizedBox.shrink()
                         ],
                       ),

@@ -1,10 +1,14 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/notification_settings.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -138,50 +142,58 @@ class SegmentClocksUtils {
     );
   }
 
-  static Future<bool> onWillPop(BuildContext contextWBloc, bool isRecording) async {
-    return (await showDialog(
-          context: contextWBloc,
-          builder: (context) => AlertDialog(
-            backgroundColor: Colors.black,
-            title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
-            content: Text(
-              isRecording
-                  ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
-                  : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
-              style: OlukoFonts.olukoBigFont(),
+  static Future<bool> onWillPopConfirmationPopup(BuildContext contextWBloc, bool isRecording) async {
+    bool result = false;
+    (await showDialog(
+      context: contextWBloc,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
+        content: Text(
+          isRecording
+              ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
+              : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
+          style: OlukoFonts.olukoBigFont(),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              OlukoLocalizations.get(context, 'no'),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  OlukoLocalizations.get(context, 'no'),
-                ),
-              ),
-              BlocBuilder<KeyboardBloc, KeyboardState>(
-                bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
-                builder: (context, state) {
-                  return TextButton(
-                    onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
-                      BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
-                    },
-                    child: Text(
-                      OlukoLocalizations.get(context, 'yes'),
-                    ),
-                  );
-                },
-              ),
-            ],
           ),
-        )) ??
-        false;
+          BlocBuilder<KeyboardBloc, KeyboardState>(
+            bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
+            builder: (context, state) {
+              return TextButton(
+                onPressed: () {
+                  BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+                  BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
+                  Navigator.of(context).pop();
+                  result = true;
+                },
+                child: Text(
+                  OlukoLocalizations.get(context, 'yes'),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ));
+
+    return result;
   }
 
-  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording) {
+  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout) {
     PreferredSizeWidget appBarToUse;
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
-        onPressed: () => onWillPop(context, segmentWithRecording),
+        onPressed: () async {
+          if (await onWillPopConfirmationPopup(context, segmentWithRecording)) {
+            segmentClockOnWillPop(context);
+          }
+        },
         actions: [topBarIcon, audioIcon()],
       );
     } else {
@@ -197,13 +209,47 @@ class SegmentClocksUtils {
     return appBarToUse;
   }
 
+  static Future<bool> segmentClockOnWillPop(BuildContext context) async {
+    BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+    Wakelock.disable();
+    Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+    return false;
+  }
+
   static Widget audioIcon() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: Image.asset(
-        'assets/courses/audio_icon.png',
-        scale: 4,
-      ),
+    bool audioOff = !NotificationSettingsBloc.notificationSettings.segmentClocksSounds;
+    return BlocBuilder<NotificationSettingsBloc, NotificationSettingsState>(
+      builder: (context, state) {
+        if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
+          audioOff = !state.notificationSettings.segmentClocksSounds;
+        }
+        return GestureDetector(
+          onTap: () {
+            BlocProvider.of<NotificationSettingsBloc>(context)
+                .update(NotificationSettings(segmentClocksSounds: !NotificationSettingsBloc.notificationSettings.segmentClocksSounds));
+          },
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  OlukoNeumorphism.isNeumorphismDesign ? 'assets/courses/audio_icon_neumorphic.png' : 'assets/courses/audio_icon.png',
+                  scale: 4,
+                ),
+              ),
+              if (audioOff)
+                SizedBox(
+                  width: 19,
+                  height: 19,
+                  child: Image.asset(
+                    'assets/utils/diagonal.png',
+                    color: Colors.white,
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -211,20 +257,28 @@ class SegmentClocksUtils {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
-      return SizedBox(
-        width: 200,
-        child: OlukoNeumorphicSecondaryButton(
-          thinPadding: true,
-          isExpanded: false,
-          icon: Icon(
-            //Secondary button allows only text or only icon
-            Icons.search,
-            color: OlukoColors.primary,
+      if (timerTaskIndex == 0) {
+        return SizedBox(
+          width: ScreenUtils.width(context),
+          height: ScreenUtils.height(context) * 0.4,
+          child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)),
+        );
+      } else {
+        return SizedBox(
+          width: 200,
+          child: OlukoNeumorphicSecondaryButton(
+            thinPadding: true,
+            isExpanded: false,
+            icon: Icon(
+              //Secondary button allows only text or only icon
+              Icons.search,
+              color: OlukoColors.primary,
+            ),
+            onPressed: () => MovementsModal.modalContent(context: context, content: items),
+            title: OlukoLocalizations.get(context, 'movements'),
           ),
-          onPressed: () => MovementsModal.modalContent(context: context, content: items),
-          title: OlukoLocalizations.get(context, 'movements'),
-        ),
-      );
+        );
+      }
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
