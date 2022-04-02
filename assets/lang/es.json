@@ -164,7 +164,7 @@
     "noContent": "No hay contenido para mostrar",
     "remove": "Remover",
     "connect": "Conectar",
-    "connectionRequestCancelled": "Solicitud de conexión cancelada",
+    "connectionRequestCancelled": "Cancelar solicitud de conexión",
     "profileUploadAborted": "Carga de perfil cancelada",
     "cameraInfo": "Presiona el botón para comenzar a grabar",
     "cameraWarning": "Al presionar este botón se iniciará la grabación y el segmento",

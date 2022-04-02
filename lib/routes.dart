@@ -535,6 +535,7 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<HiFiveReceivedBloc>.value(
