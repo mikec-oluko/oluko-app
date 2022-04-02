@@ -167,7 +167,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await SegmentClocksUtils.segmentClockOnWillPop(context, workoutType);
+        if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
+          return await SegmentClocksUtils.segmentClockOnWillPop(context);
+        }
+        return false;
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
