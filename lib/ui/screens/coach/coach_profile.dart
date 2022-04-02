@@ -52,6 +52,7 @@ class _CoachProfileState extends State<CoachProfile> {
   Duration duration = Duration();
   Duration durationToSave = Duration();
   final int _audioMessageRangeValue = 5;
+  int _groupedElementCount = 0;
 
   @override
   void initState() {
@@ -238,64 +239,58 @@ class _CoachProfileState extends State<CoachProfile> {
         builder: (context, state) {
           if (state is CoachAudioMessagesSuccess) {
             _coachAudioMessages = state.coachAudioMessages;
-            List<CoachAudioMessage> audioMessagesNoDate =
-                state.coachAudioMessages.where((audioElement) => audioElement.createdAt == null).toList();
-            audioMessagesNoDate.forEach((element) {
-              element.createdAt ??= Timestamp.now();
-              if (_coachAudioMessages[_coachAudioMessages.indexOf(element)].createdAt == null) {
-                _coachAudioMessages[_coachAudioMessages.indexOf(element)] = element;
-              }
-            });
-            _coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+            if (_coachAudioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
+              _coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+            }
 
-            if (_coachAudioMessages.length > _audioMessageRangeValue && _groupedAudioMessages.isEmpty) {
-              _groupedAudioMessages = _coachAudioMessages.getRange(0, 5).toList();
-            } else if (_groupedAudioMessages.isNotEmpty) {
-              if (_groupedAudioMessages.length > _coachAudioMessages.length) {
+            if (_groupedAudioMessages.isEmpty) {
+              _groupedAudioMessages = _coachAudioMessages.getRange(0, _audioMessageRangeValue).toList();
+              _groupedElementCount = _groupedAudioMessages.length;
+            } else {
+              if (_groupedElementCount >= _coachAudioMessages.length) {
                 _groupedAudioMessages = _coachAudioMessages;
               } else {
-                _groupedAudioMessages = _coachAudioMessages.getRange(0, _groupedAudioMessages.length).toList();
+                _groupedAudioMessages = _coachAudioMessages.getRange(0, _groupedElementCount).toList();
               }
             }
+            if (_groupedAudioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
+              _groupedAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+            }
           }
+
           return _coachAudioMessages.isNotEmpty
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 20),
-                      child: hasMoreThanRange
+                      child: _hasMoreThanRange
                           ? GestureDetector(
                               onTap: () {
-                                if (getAudioListsDifference > 0) {
-                                  if (getAudioListsDifference > _audioMessageRangeValue) {
-                                    final List<CoachAudioMessage> _bulkOfAudios = _coachAudioMessages
-                                        .getRange(_groupedAudioMessages.length, _groupedAudioMessages.length + _audioMessageRangeValue)
-                                        .toList();
+                                if (_getAudioListsDifference > 0) {
+                                  if (_getAudioListsDifference > _audioMessageRangeValue) {
                                     setState(() {
-                                      _groupedAudioMessages = [..._bulkOfAudios, ..._groupedAudioMessages];
+                                      _groupedElementCount = _groupedElementCount + _audioMessageRangeValue;
                                     });
                                   } else {
                                     setState(() {
-                                      _groupedAudioMessages.addAll(
-                                          _coachAudioMessages.getRange(_groupedAudioMessages.length, _coachAudioMessages.length).toList());
+                                      _groupedElementCount = _coachAudioMessages.length;
                                     });
                                   }
-                                  _groupedAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
                                 }
                               },
-                              child: getAudioListsDifference > 0
+                              child: _getAudioListsDifference > 0
                                   ? Text(
-                                      getAudioListsDifference >= _audioMessageRangeValue
+                                      _getAudioListsDifference >= _audioMessageRangeValue
                                           ? seeMoreAudiosText(_audioMessageRangeValue)
-                                          : seeMoreAudiosText(getAudioListsDifference),
+                                          : seeMoreAudiosText(_getAudioListsDifference),
                                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500))
                                   : const SizedBox.shrink(),
                             )
                           : const SizedBox.shrink(),
                     ),
                     Column(
-                        children: !hasMoreThanRange
+                        children: !_hasMoreThanRange
                             ? _coachAudioMessages
                                 .map((audioMessageItem) => audioSentComponent(
                                     context: context,
@@ -316,9 +311,9 @@ class _CoachProfileState extends State<CoachProfile> {
         });
   }
 
-  int get getAudioListsDifference => _coachAudioMessages.length - _groupedAudioMessages.length;
+  int get _getAudioListsDifference => _coachAudioMessages.length - _groupedAudioMessages.length;
 
-  bool get hasMoreThanRange => _coachAudioMessages.length > _audioMessageRangeValue;
+  bool get _hasMoreThanRange => _coachAudioMessages.length > _audioMessageRangeValue;
 
   String seeMoreAudiosText(int nextRangeValue) =>
       '${OlukoLocalizations.get(context, 'see')} $nextRangeValue ${OlukoLocalizations.get(context, 'more')}';
