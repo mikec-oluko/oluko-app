@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/repositories/introduction_media_repository.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
 
 class IntroductionVideo extends StatefulWidget {
@@ -15,6 +16,10 @@ class IntroductionVideo extends StatefulWidget {
 }
 
 Future<ChewieController> getChewieWithVideo(BuildContext context) async {
+  if (!await UserUtils.isFirstTime()) {
+    AppNavigator().returnToHome(context);
+    return null;
+  }
   final mediaURL = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.introVideo);
   if (mediaURL == null || mediaURL.isEmpty) {
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
@@ -32,7 +37,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
     if (videoPlayerController != null &&
         videoPlayerController.value != null &&
         videoPlayerController.value.position == videoPlayerController.value.duration) {
-          await videoPlayerController.dispose();
+      await videoPlayerController.dispose();
       Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
     }
   });

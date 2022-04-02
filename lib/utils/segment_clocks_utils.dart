@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/notification_settings.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -168,7 +170,6 @@ class SegmentClocksUtils {
                   Navigator.of(context).pop();
                   BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
                   result = true;
-                  return;
                 },
                 child: Text(
                   OlukoLocalizations.get(context, 'yes'),
@@ -188,9 +189,8 @@ class SegmentClocksUtils {
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
         onPressed: () async {
-          bool result = await onWillPopConfirmationPopup(context, segmentWithRecording);
-          if (result) {
-            segmentClockOnWillPop(context, workout);
+          if (await onWillPopConfirmationPopup(context, segmentWithRecording)) {
+            segmentClockOnWillPop(context);
           }
         },
         actions: [topBarIcon, audioIcon()],
@@ -208,22 +208,47 @@ class SegmentClocksUtils {
     return appBarToUse;
   }
 
-  static Future<bool> segmentClockOnWillPop(BuildContext context, WorkoutType workoutType) async {
+  static Future<bool> segmentClockOnWillPop(BuildContext context) async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Wakelock.disable();
-    if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
-      Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
-    }
+    Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
     return false;
   }
 
   static Widget audioIcon() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: Image.asset(
-        'assets/courses/audio_icon.png',
-        scale: 4,
-      ),
+    bool audioOff = !NotificationSettingsBloc.notificationSettings.segmentClocksSounds;
+    return BlocBuilder<NotificationSettingsBloc, NotificationSettingsState>(
+      builder: (context, state) {
+        if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
+          audioOff = !state.notificationSettings.segmentClocksSounds;
+        }
+        return GestureDetector(
+          onTap: () {
+            BlocProvider.of<NotificationSettingsBloc>(context)
+                .update(NotificationSettings(segmentClocksSounds: !NotificationSettingsBloc.notificationSettings.segmentClocksSounds));
+          },
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  OlukoNeumorphism.isNeumorphismDesign ? 'assets/courses/audio_icon_neumorphic.png' : 'assets/courses/audio_icon.png',
+                  scale: 4,
+                ),
+              ),
+              if (audioOff)
+                SizedBox(
+                  width: 19,
+                  height: 19,
+                  child: Image.asset(
+                    'assets/utils/diagonal.png',
+                    color: Colors.white,
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 

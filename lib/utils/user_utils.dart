@@ -46,7 +46,7 @@ class UserUtils {
     if (isFirstTime != null && !isFirstTime) {
       return false;
     } else {
-      sharedPref.setBool('first_time', true);
+      sharedPref.setBool('first_time', false);
       return true;
     }
   }

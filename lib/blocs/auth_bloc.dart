@@ -22,10 +22,12 @@ import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
+import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
@@ -125,9 +127,8 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
-    final sharedPref = await SharedPreferences.getInstance();
-    if (sharedPref.getBool('first_time') == true) {
-      sharedPref.setBool('first_time', false);
+    PushNotificationService.initializePushNotifications(context, userId);
+    if (await UserUtils.isFirstTime()) {
       await Permissions.askForPermissions();
     }
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
