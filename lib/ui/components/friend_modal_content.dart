@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_request.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -295,31 +295,42 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Widget _getUserLocation() {
     String city = '';
     String country = '';
+    String state = '';
     if (widget.user.city != null && widget.user.city != 'null') {
       city = widget.user.city;
     }
-    if (widget.user.country != null && widget.user.country != 'null') {
+    if (widget.user.state != null && widget.user.state != 'null') {
       if (city != null) {
-        country = ', ';
+        state = ', ';
       }
-      country += widget.user.country;
+      state += '${widget.user.state} ';
+    }
+    if (widget.user.country != null && widget.user.country != 'null') {
+      country = widget.user.country;
     }
     if (city.isEmpty && country.isEmpty) {
       return const SizedBox();
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Row(
-        children: [
-          Text(
-            city,
-            style: const TextStyle(color: OlukoColors.primary, fontSize: 15),
-          ),
-          Text(
-            country,
-            style: const TextStyle(color: Colors.grey, fontSize: 15),
-          )
-        ],
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          children: [
+            Text(
+              city,
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
+            ),
+            Text(
+              state,
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+            ),
+            Text(
+              country,
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -443,7 +454,8 @@ class _FriendModalContentState extends State<FriendModalContent> {
           title: _buttonTextContent,
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
-              _showRemoveConfirmationPopup(friendState.friendData);
+              BottomDialogUtils.removeConfirmationPopup(
+                  widget.currentUserId, widget.user, friendState.friendData, context, widget.blocFriends);
               setState(() {
                 _buttonTextContent = OlukoLocalizations.of(context).find('connect');
               });

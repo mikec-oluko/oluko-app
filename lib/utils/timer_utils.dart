@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progressbar.dart';
@@ -267,19 +269,20 @@ class TimerUtils {
           SizedBox(
             width: ScreenUtils.smallScreen(context)
                 ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.33
+                    ? ScreenUtils.height(context) * 0.32
                     : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.32,
+                : ScreenUtils.height(context) * 0.30,
             height: ScreenUtils.smallScreen(context)
                 ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.33
+                    ? ScreenUtils.height(context) * 0.32
                     : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.32,
+                : ScreenUtils.height(context) * 0.30,
             child: AspectRatio(
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
                     strokeWidth: _progressIndicatorStroke,
-                    value: OlukoNeumorphism.isNeumorphismDesign ? 1 : progressValue,
+                    value: 
+                     progressValue,
                     color: getGreenOrSkyBlue,
                     backgroundColor: backgroundColor)),
           ),
@@ -404,11 +407,10 @@ class TimerUtils {
   }
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
-    var r = ScreenUtils.height(context);
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.35,
+        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -535,7 +537,7 @@ class TimerUtils {
                   showPanel: showPanel,
                 )))
         .then((value) {
-
+          BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
       Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
     });
   }

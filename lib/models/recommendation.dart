@@ -15,6 +15,7 @@ class Recommendation extends Base with EquatableMixin {
       this.entityReference,
       this.entityType,
       this.notificationViewed,
+      this.isTaken,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,6 +41,7 @@ class Recommendation extends Base with EquatableMixin {
   DocumentReference entityReference;
   TimelineInteractionType entityType;
   bool notificationViewed;
+  bool isTaken;
 
   factory Recommendation.fromJson(Map<String, dynamic> json) {
     Recommendation recommendation = Recommendation(
@@ -51,7 +53,8 @@ class Recommendation extends Base with EquatableMixin {
         entityReference: json['entity_reference'] as DocumentReference,
         //entityType: json['entity_type'] as num,
         entityType: json['entity_type'] is int ? TimelineInteractionType.values[json['entity_type'] as int] : null,
-        notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
+        notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool,
+        isTaken: json['is_taken'] == null ? false : json['is_taken'] as bool);
     recommendation.setBase(json);
     return recommendation;
   }
@@ -67,7 +70,8 @@ class Recommendation extends Base with EquatableMixin {
       'entity_reference': entityReference,
       //'entity_type': entityType,
       'entity_type': entityType.index,
-      'notification_viewed': notificationViewed
+      'notification_viewed': notificationViewed,
+      'is_taken': isTaken
     };
     recommendationJson.addEntries(super.toJson().entries);
     return recommendationJson;
@@ -84,6 +88,7 @@ class Recommendation extends Base with EquatableMixin {
         entityReference,
         entityType,
         notificationViewed,
+        isTaken,
         id,
         createdBy,
         createdAt,

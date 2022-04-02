@@ -81,35 +81,39 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
       return Scaffold(
         backgroundColor: OlukoColors.black,
-        body: CarouselSlider.builder(
-          carouselController: widget.carouselController,
-          itemCount: widget.courseEnrollments.length,
-          itemBuilder: (context, index) {
-            if (widget.courses.length - 1 >= index) {
-              if (widget.courses[index] != null) {
-                return CustomScrollView(
-                  slivers: <Widget>[
-                    getLogo(),
-                    if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
-                    getTabBar(context, index),
-                    getClassView(index, context),
-                  ],
-                );
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [getLogo()];
+          },
+          body: CarouselSlider.builder(
+            carouselController: widget.carouselController,
+            itemCount: widget.courseEnrollments.length,
+            itemBuilder: (context, index) {
+              if (widget.courses.length - 1 >= index) {
+                if (widget.courses[index] != null) {
+                  return CustomScrollView(
+                    slivers: <Widget>[
+                      if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+                      getTabBar(context, index),
+                      getClassView(index, context),
+                    ],
+                  );
+                } else {
+                  return const SizedBox();
+                }
               } else {
                 return const SizedBox();
               }
-            } else {
-              return const SizedBox();
-            }
-          },
-          options: CarouselOptions(
-            disableCenter: true,
-            enableInfiniteScroll: false,
-            height: ScreenUtils.height(context),
-            initialPage: widget.index ?? 0,
-            viewportFraction: 1,
-            onPageChanged: (index, reason) => widget.scrollController.jumpTo(
-              index * ScreenUtils.width(context) * 0.42,
+            },
+            options: CarouselOptions(
+              disableCenter: true,
+              enableInfiniteScroll: false,
+              height: ScreenUtils.height(context),
+              initialPage: widget.index ?? 0,
+              viewportFraction: 1,
+              onPageChanged: (index, reason) => widget.scrollController.jumpTo(
+                index * ScreenUtils.width(context) * 0.42,
+              ),
             ),
           ),
         ),
@@ -495,7 +499,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             ),
           ),
         ),
-        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.2),
+        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),
         enrollButton()
       ],
     );

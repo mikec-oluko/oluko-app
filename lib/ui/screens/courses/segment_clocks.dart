@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
@@ -156,9 +157,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
-        Wakelock.disable();
-        return SegmentClocksUtils.onWillPop(context, isSegmentWithRecording());
+      onWillPop: () async {
+        if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
+          return await SegmentClocksUtils.segmentClockOnWillPop(context);
+        }
+        return false;
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
@@ -178,7 +181,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         coachRequests = coachRequestStreamState.values;
                       }
                       _movements = movementState.movements;
-                      _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id, widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
+                      _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id,
+                          widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
                       return GestureDetector(
                         onTap: () {
                           FocusScope.of(context).unfocus();
@@ -253,7 +257,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Scaffold(
       extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
       resizeToAvoidBottomInset: false,
-      appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording()),
+      appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType),
       backgroundColor: Colors.black,
       body: workState != WorkState.finished
           ? BlocBuilder<KeyboardBloc, KeyboardState>(
@@ -459,6 +463,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void nextSegmentAction() {
+    BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popAndPushNamed(
         context,
@@ -844,8 +849,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
-    BlocProvider.of<SegmentSubmissionBloc>(context).create(
-        _user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest != null);
+    BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex],
+        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest != null);
   }
 
 //STOPWATCH FUNCTIONS

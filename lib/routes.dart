@@ -28,15 +28,17 @@ import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_request.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
+import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
+import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -66,6 +68,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
+import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -333,6 +336,7 @@ class Routes {
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
+  final UserBloc _userBloc = UserBloc();
   final StoryBloc _storyBloc = StoryBloc();
   final StoryListBloc _storyListBloc = StoryListBloc();
   final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
@@ -372,6 +376,7 @@ class Routes {
   final TaskReviewBloc _taskReviewBloc = TaskReviewBloc();
   final TaskCardBloc _taskCardBloc = TaskCardBloc();
   final NotificationBloc _notificationBloc = NotificationBloc();
+  final NotificationSettingsBloc _notificationSettingsBloc = NotificationSettingsBloc();
   final FeedbackBloc _feedbackBloc = FeedbackBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
   final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
@@ -380,6 +385,7 @@ class Routes {
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
   final SelectedTagsBloc _selectedTagsBloc = SelectedTagsBloc();
   final ProjectConfigurationBloc _projectConfigurationBloc = ProjectConfigurationBloc();
+  final PushNotificationBloc _pushNotificationBloc = PushNotificationBloc();
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
 
@@ -445,11 +451,12 @@ class Routes {
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
-          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
+          BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -471,9 +478,11 @@ class Routes {
         newRouteView = IntroductionVideo();
         break;
       case RouteEnum.signUp:
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
         newRouteView = SignUpPage();
         break;
       case RouteEnum.loginNeumorphic:
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
         newRouteView = LoginNeumorphicPage();
         break;
       case RouteEnum.completedClass:
@@ -504,9 +513,11 @@ class Routes {
             userStoriesId: argumentsToAdd['userStoriesId'] as String);
         break;
       case RouteEnum.signUpWithEmail:
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
         newRouteView = SignUpWithMailPage();
         break;
       case RouteEnum.login:
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
         newRouteView = LoginPage();
         break;
       case RouteEnum.friends:
@@ -536,6 +547,7 @@ class Routes {
       case RouteEnum.profileSettings:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);
@@ -578,6 +590,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc), 
           BlocProvider<ChatBloc>.value(
             value: _chatBloc,
           ),
@@ -648,6 +661,7 @@ class Routes {
         newRouteView = LoginUsernamePage();
         break;
       case RouteEnum.logInPassword:
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = LoginPasswordPage(requestData: argumentsToAdd['requestData'] as String);
         break;
@@ -706,7 +720,8 @@ class Routes {
           BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<FeedbackBloc>.value(value: _feedbackBloc),
-          BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc)
+          BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
@@ -821,7 +836,8 @@ class Routes {
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
-          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(

@@ -310,6 +310,7 @@
     "cancelMssg": "Clear Filters?",
     "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
     "recordingConfirmation": "Are you sure you want to record this segment?",
+    "goToCoach": "Go to coach",
     "updateRecording": "Are you sure you want to update your recording? Doing so will erase your previous recording.",
     "topQueries": "Top Queries",
     "membershipIncluded": "What is included in my membership?",
