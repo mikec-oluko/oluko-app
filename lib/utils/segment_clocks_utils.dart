@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -167,8 +168,8 @@ class SegmentClocksUtils {
               return TextButton(
                 onPressed: () {
                   BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
-                  Navigator.of(context).pop();
                   BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
+                  Navigator.of(context).pop();
                   result = true;
                 },
                 child: Text(
@@ -256,20 +257,28 @@ class SegmentClocksUtils {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
-      return SizedBox(
-        width: 200,
-        child: OlukoNeumorphicSecondaryButton(
-          thinPadding: true,
-          isExpanded: false,
-          icon: Icon(
-            //Secondary button allows only text or only icon
-            Icons.search,
-            color: OlukoColors.primary,
+      if (timerTaskIndex == 0) {
+        return SizedBox(
+          width: ScreenUtils.width(context),
+          height: ScreenUtils.height(context) * 0.4,
+          child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)),
+        );
+      } else {
+        return SizedBox(
+          width: 200,
+          child: OlukoNeumorphicSecondaryButton(
+            thinPadding: true,
+            isExpanded: false,
+            icon: Icon(
+              //Secondary button allows only text or only icon
+              Icons.search,
+              color: OlukoColors.primary,
+            ),
+            onPressed: () => MovementsModal.modalContent(context: context, content: items),
+            title: OlukoLocalizations.get(context, 'movements'),
           ),
-          onPressed: () => MovementsModal.modalContent(context: context, content: items),
-          title: OlukoLocalizations.get(context, 'movements'),
-        ),
-      );
+        );
+      }
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';

@@ -13,7 +13,7 @@ class CurrentTimeBloc extends Cubit<CurrentTimeState> {
     emit(CurrentTimeValue(timerTask: currentTime));
   }
 
-  setCurrentTimeZero() {
+  setCurrentTimeNull() {
     emit(CurrentTimeValue());
   }
 }
