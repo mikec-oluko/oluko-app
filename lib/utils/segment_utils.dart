@@ -17,31 +17,43 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'oluko_localizations.dart';
 
 class SegmentUtils {
-  static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
+  static List<Widget> getSegmentSummary(
+      Segment segment, BuildContext context, Color color) {
     List<String> workoutWidgets = getWorkouts(segment);
     return <Widget>[
           Text(
             getRoundTitle(segment, context),
             style: OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-                : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                ? OlukoFonts.olukoSuperBigFont(
+                    customColor: color, custoFontWeight: FontWeight.bold)
+                : OlukoFonts.olukoBigFont(
+                    customColor: color, custoFontWeight: FontWeight.bold),
           ),
           SizedBox(height: 12.0)
         ] +
         workoutWidgets.map((e) => getTextWidget(e, color))?.toList();
   }
 
-  static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
-      {bool roundTitle = true, bool restTime = true, List<Movement> movements = const [], bool viewDetailsScreen = false}) {
+  static List<Widget> getSegmentSummaryforNeumorphic(
+      Segment segment, BuildContext context, Color color,
+      {bool roundTitle = true,
+      bool restTime = true,
+      List<Movement> movements = const [],
+      bool viewDetailsScreen = false}) {
     List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
-        restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
+        restTime: restTime,
+        movements: movements,
+        context: context,
+        viewDetailsScreen: viewDetailsScreen);
     if (roundTitle) {
       return [
             Text(
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                  ? OlukoFonts.olukoSuperBigFont(
+                      customColor: color, custoFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoBigFont(
+                      customColor: color, custoFontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12.0)
           ] +
@@ -52,7 +64,8 @@ class SegmentUtils {
   }
 
   static bool isEMOM(Segment segment) {
-    return segment.sections.length == 1 && segment.type == SegmentTypeEnum.RoundsAndDuration;
+    return segment.sections.length == 1 &&
+        segment.type == SegmentTypeEnum.RoundsAndDuration;
   }
 
   static bool isAMRAP(Segment segment) {
@@ -65,7 +78,9 @@ class SegmentUtils {
     } else if (isAMRAP(segment)) {
       return '${segment.totalTime} ${OlukoLocalizations.get(context, 'seconds').toLowerCase()} AMRAP';
     } else {
-      return segment.rounds > 1 ? '${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')}' : '';
+      return segment.rounds > 1
+          ? '${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')}'
+          : '';
     }
   }
 
@@ -76,9 +91,14 @@ class SegmentUtils {
   static List<String> getWorkouts(Segment segment) {
     List<String> workouts = [];
     if (segment.sections != null) {
-      for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
-        for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
-          MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
+      for (var sectionIndex = 0;
+          sectionIndex < segment.sections.length;
+          sectionIndex++) {
+        for (var movementIndex = 0;
+            movementIndex < segment.sections[sectionIndex].movements.length;
+            movementIndex++) {
+          MovementSubmodel movement =
+              segment.sections[sectionIndex].movements[movementIndex];
           workouts.add(getLabel(movement));
         }
       }
@@ -88,16 +108,27 @@ class SegmentUtils {
   }
 
   static List<Widget> getWorkoutsforNeumorphic(Segment segment, Color color,
-      {bool restTime = true, List<Movement> movements = const [], BuildContext context, bool viewDetailsScreen = false}) {
+      {bool restTime = true,
+      List<Movement> movements = const [],
+      BuildContext context,
+      bool viewDetailsScreen = false}) {
     List<Widget> workouts = [];
     if (segment.sections != null) {
-      for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
-        for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
-          MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
+      for (var sectionIndex = 0;
+          sectionIndex < segment.sections.length;
+          sectionIndex++) {
+        for (var movementIndex = 0;
+            movementIndex < segment.sections[sectionIndex].movements.length;
+            movementIndex++) {
+          MovementSubmodel movement =
+              segment.sections[sectionIndex].movements[movementIndex];
           Movement movementWithImage;
           if (movements.isNotEmpty)
-            for (var movementsIndex = 0; movementsIndex < movements.length; movementsIndex++) {
-              if (movement.id == movements[movementsIndex].id) movementWithImage = movements[movementsIndex];
+            for (var movementsIndex = 0;
+                movementsIndex < movements.length;
+                movementsIndex++) {
+              if (movement.id == movements[movementsIndex].id)
+                movementWithImage = movements[movementsIndex];
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
@@ -107,13 +138,16 @@ class SegmentUtils {
                 MovementItemBubblesNeumorphic(
                   content: movements,
                   viewDetailsScreen: true,
-                  movement: movementWithImage, //movementWithImage=null? overflow error
+                  movement:
+                      movementWithImage, //movementWithImage=null? overflow error
                   width: ScreenUtils.width(context) / 4,
                   bubbleName: false,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
-                  child: SizedBox(width: ScreenUtils.width(context) * 0.57, child: getTextWidget(getLabel(movement), color)),
+                  child: SizedBox(
+                      width: ScreenUtils.width(context) * 0.57,
+                      child: getTextWidget(getLabel(movement), color)),
                 ),
               ],
             ));
@@ -132,8 +166,10 @@ class SegmentUtils {
         child: Text(
           text,
           style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color)
-              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
+              ? OlukoFonts.olukoBigFont(
+                  custoFontWeight: FontWeight.w400, customColor: color)
+              : OlukoFonts.olukoBigFont(
+                  custoFontWeight: FontWeight.w400, customColor: color),
         ));
   }
 
@@ -141,6 +177,7 @@ class SegmentUtils {
   //sets and rounds. Returns a timer entry list consumible by the timer.
   static List<TimerEntry> getExercisesList(Segment segment) {
     List<TimerEntry> entries = [];
+    entries.add(getInitialEntry(segment));
     if (isAMRAP(segment)) {
       MovementSubmodel movementSubmodel = segment.sections[0].movements[0];
       entries.add(TimerEntry(
@@ -164,25 +201,38 @@ class SegmentUtils {
               stopwatch: segment.sections[0].stopwatch,
               labels: getLabels(segment.sections[0].movements)));
         } else {
-          for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
-            bool hasMultipleMovements = segment.sections[sectionIndex].movements.length > 1;
+          for (var sectionIndex = 0;
+              sectionIndex < segment.sections.length;
+              sectionIndex++) {
+            bool hasMultipleMovements =
+                segment.sections[sectionIndex].movements.length > 1;
             if (hasMultipleMovements) {
-              MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
+              MovementSubmodel movementSubmodel =
+                  segment.sections[sectionIndex].movements[0];
               entries.add(TimerEntry(
                   movement: movementSubmodel,
-                  parameter: movementSubmodel.parameter == null ? ParameterEnum.reps : movementSubmodel.parameter,
-                  value: movementSubmodel.value == null ? 5 : movementSubmodel.value,
+                  parameter: movementSubmodel.parameter == null
+                      ? ParameterEnum.reps
+                      : movementSubmodel.parameter,
+                  value: movementSubmodel.value == null
+                      ? 5
+                      : movementSubmodel.value,
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
                   stopwatch: segment.sections[sectionIndex].stopwatch,
                   labels: getLabels(segment.sections[sectionIndex].movements)));
             } else {
-              MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
+              MovementSubmodel movementSubmodel =
+                  segment.sections[sectionIndex].movements[0];
               entries.add(TimerEntry(
                   movement: movementSubmodel,
-                  parameter: movementSubmodel.parameter == null ? ParameterEnum.reps : movementSubmodel.parameter,
-                  value: movementSubmodel.value == null ? 5 : movementSubmodel.value,
+                  parameter: movementSubmodel.parameter == null
+                      ? ParameterEnum.reps
+                      : movementSubmodel.parameter,
+                  value: movementSubmodel.value == null
+                      ? 5
+                      : movementSubmodel.value,
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
@@ -193,7 +243,8 @@ class SegmentUtils {
         }
       }
     }
-    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter == CounterEnum.none) {
+    if (entries[entries.length - 1].movement.isRestTime &&
+        entries[entries.length - 1].movement.counter == CounterEnum.none) {
       entries.removeAt(entries.length - 1);
     }
     return entries;
@@ -242,8 +293,12 @@ class SegmentUtils {
   static List<Widget> getJoinedLabel(List<String> labels) {
     List<Widget> labelWidgets = [];
     labels.forEach((label) {
-      labelWidgets.add(
-          Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
+      labelWidgets.add(Text(label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 20,
+              color: OlukoColors.white,
+              fontWeight: FontWeight.w300)));
       labelWidgets.add(OlukoNeumorphism.isNeumorphismDesign
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
@@ -271,19 +326,39 @@ class SegmentUtils {
               Text(
                 getRoundTitle(segment, context),
                 style: OlukoNeumorphism.isNeumorphismDesign
-                    ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-                    : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                    ? OlukoFonts.olukoSuperBigFont(
+                        customColor: OlukoColors.white,
+                        custoFontWeight: FontWeight.bold)
+                    : OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.white,
+                        custoFontWeight: FontWeight.bold),
               )
             ] +
             workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
   }
 
-  static CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId, String courseEnrollmentId, String classId) {
+  static CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests,
+      String segmentId, String courseEnrollmentId, String classId) {
     for (var i = 0; i < coachRequests.length; i++) {
-      if (coachRequests[i].segmentId == segmentId && coachRequests[i].courseEnrollmentId == courseEnrollmentId && coachRequests[i].classId == classId) {
+      if (coachRequests[i].segmentId == segmentId &&
+          coachRequests[i].courseEnrollmentId == courseEnrollmentId &&
+          coachRequests[i].classId == classId) {
         return coachRequests[i];
       }
     }
     return null;
+  }
+
+  static TimerEntry getInitialEntry(Segment segment) {
+    return TimerEntry(
+        movement: segment.sections[0].movements[0],
+        parameter: ParameterEnum.duration,
+        value: segment.initialTimer,
+        round: 0,
+        sectionIndex: 0,
+        counter: CounterEnum.none,
+        stopwatch: false,
+        labels: getLabels(segment.sections[0].movements),
+        isInitialTimer: true);
   }
 }

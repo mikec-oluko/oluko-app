@@ -56,7 +56,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
   @override
   void initState() {
-    !_recorder.isInitialised ? _recorder.init() : null;
+    !_recorder.isInitialized ? _recorder.init() : null;
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
     BlocProvider.of<CoachAudioMessageBloc>(context).getStream(widget.currentUser.id, widget.coachUser.id);
     BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();

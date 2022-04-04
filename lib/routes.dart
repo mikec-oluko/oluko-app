@@ -591,7 +591,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
-          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc), 
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<ChatBloc>.value(
             value: _chatBloc,
           ),
@@ -671,6 +671,7 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
@@ -734,6 +735,8 @@ class Routes {
           workoutType: argumentsToAdd['workoutType'] as WorkoutType,
           segments: argumentsToAdd['segments'] as List<Segment>,
           fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+          showPanel: argumentsToAdd['showPanel'] as bool,
+          onShowAgainPressed: argumentsToAdd['onShowAgainPressed'] as Function(),
         );
         break;
       case RouteEnum.segmentCameraPreview:
