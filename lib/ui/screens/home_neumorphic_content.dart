@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
@@ -25,6 +26,8 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeNeumorphicContent extends StatefulWidget {
   HomeNeumorphicContent(this.courseEnrollments, this.authState, this.courses, this.user, {Key key, this.index = 0}) : super(key: key);
@@ -93,9 +96,11 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 if (widget.courses[index] != null) {
                   return CustomScrollView(
                     slivers: <Widget>[
-                      if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
-                      getTabBar(context, index),
-                      getClassView(index, context),
+                      SliverStack(children: [
+                        getClassView(index, context),
+                        getTabBar(context, index),
+                        if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+                      ]),
                     ],
                   );
                 } else {
@@ -157,21 +162,35 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     );
   }
 
-  SliverAppBar enrolledContent(bool showStories) {
-    return SliverAppBar(
-      automaticallyImplyLeading: false,
-      stretch: true,
-      toolbarHeight: showStories ? 110 : 50,
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      pinned: true,
-      title: showStories
-          ? Center(
-              child: StoriesHeader(
-                widget.user.uid,
-                maxRadius: 30,
-              ),
-            )
-          : const SizedBox(),
+  Widget enrolledContent(bool showStories) {
+    bool reduceHeigth = false;
+    return BlocBuilder<CarrouselBloc, CarrouselState>(
+      builder: (context, state) {
+        if (state is CarrouselSuccess) {
+          reduceHeigth = false;
+        } else {
+          reduceHeigth = true;
+        }
+        return SliverAppBar(
+          automaticallyImplyLeading: false,
+          stretch: true,
+          toolbarHeight: reduceHeigth
+              ? 0
+              : showStories
+                  ? 110
+                  : 0,
+          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+          pinned: true,
+          title: showStories
+              ? Center(
+                  child: StoriesHeader(
+                    widget.user.uid,
+                    maxRadius: 30,
+                  ),
+                )
+              : const SizedBox(),
+        );
+      },
     );
   }
 
@@ -184,12 +203,22 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             routeLabels[RouteEnum.homeLongPress],
             arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index},
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: OverlayVideoPreview(
-              image: widget.courses[index].posterImage ?? widget.courses[index].image,
-              video: widget.courses[index].video,
-              onBackPressed: () => Navigator.pop(context),
+          child: VisibilityDetector(
+            key: Key('${index}'),
+            onVisibilityChanged: (VisibilityInfo info) {
+              if (info.visibleFraction < 0.5) {
+                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
+              } else {
+                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 3),
+              child: OverlayVideoPreview(
+                image: widget.courses[index].posterImage ?? widget.courses[index].image,
+                video: widget.courses[index].video,
+                onBackPressed: () => Navigator.pop(context),
+              ),
             ),
           ),
         ),
@@ -233,23 +262,27 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget getTabBar(BuildContext context, int index) {
-    if (GlobalConfiguration().getValue('showStories') == 'true') {
-      return MediaQuery.removePadding(context: context, removeTop: true, child: tabBarContent(index));
-    } else {
-      return tabBarContent(index);
-    }
+    return BlocBuilder<CarrouselBloc, CarrouselState>(
+      builder: (context, state) {
+        if (state is CarrouselSuccess && state.widgetIndex == index) {
+          return tabBarContent(index, state.opacity);
+        } else {
+          return tabBarContent(index, 0);
+        }
+      },
+    );
   }
 
-  SliverAppBar tabBarContent(int index) {
+  SliverAppBar tabBarContent(int index, double opacity) {
     return SliverAppBar(
       bottom: const PreferredSize(
         preferredSize: Size(double.infinity, 5),
         child: OlukoNeumorphicDivider(),
       ),
       automaticallyImplyLeading: false,
-      toolbarHeight: 47,
+      toolbarHeight: opacity == 0 ? 0 : 47,
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      pinned: true,
+      pinned: opacity == 0 ? false : true,
       titleSpacing: 0,
       title: SingleChildScrollView(
         controller: widget.scrollController,
