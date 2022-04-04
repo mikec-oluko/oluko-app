@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/submodels/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
@@ -16,11 +17,13 @@ class GetFriendRequestsSuccess extends FriendRequestState {
   Friend friendData;
   GetFriendRequestsSuccess({this.friendRequestList, this.friendData});
 }
+
 class GetFriendsRequestSuccess extends FriendRequestState {
   Friend friendData;
   List<UserResponse> friendUsers;
   GetFriendsRequestSuccess({this.friendData, this.friendUsers});
 }
+
 class FriendRequestFailure extends FriendRequestState {
   final dynamic exception;
 
@@ -78,7 +81,23 @@ class FriendRequestBloc extends Cubit<FriendRequestState> {
       rethrow;
     }
   }
-    void getFriendsByUserId(String userId) async {
+
+  void acceptRequestOfConnect(String userId, Friend currentUserFriend, String userRequestedId) async {
+    try {
+      FriendRequestModel friendModel = FriendRequestModel(id: userRequestedId);
+      await FriendRepository.confirmFriendRequest(currentUserFriend, friendModel);
+      getFriendsByUserId(userId);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendRequestFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void getFriendsByUserId(String userId) async {
     try {
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
       List<UserResponse> friendList;
@@ -95,5 +114,4 @@ class FriendRequestBloc extends Cubit<FriendRequestState> {
       rethrow;
     }
   }
-
 }

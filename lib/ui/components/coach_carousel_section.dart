@@ -41,7 +41,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                       items: widget.contentForCarousel,
                       options: CarouselOptions(
                           height: 240.0,
-                          enableInfiniteScroll: true,
+                          enableInfiniteScroll: widget.contentForCarousel.length > 1,
                           autoPlay: true,
                           autoPlayCurve: Curves.easeInExpo,
                           autoPlayAnimationDuration: const Duration(milliseconds: 1000),

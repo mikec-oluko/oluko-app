@@ -203,6 +203,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
               }
             },
           ),
+          BlocListener<FriendRequestBloc, FriendRequestState>(
+            listenWhen: (FriendRequestState previous, FriendRequestState current) => current != previous,
+            listener: (context, FriendRequestState state) {
+              if (state is GetFriendsRequestSuccess) {
+                friendData = state.friendData;
+                friendUsers = state.friendUsers;
+                checkConnectionStatus(userRequested, friendData);
+                if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
+                  friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
+                }
+              }
+            },
+          ),
         ],
         child: SlidingUpPanel(
           onPanelClosed: () {
@@ -519,6 +532,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
         break;
       case UserConnectStatus.requestPending:
         BlocProvider.of<FriendRequestBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
+        break;
+      case UserConnectStatus.requestReceived:
+        BlocProvider.of<FriendRequestBloc>(context).acceptRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
         break;
       default:
     }
