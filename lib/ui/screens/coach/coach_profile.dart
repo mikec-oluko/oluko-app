@@ -245,7 +245,11 @@ class _CoachProfileState extends State<CoachProfile> {
             }
 
             if (_groupedAudioMessages.isEmpty && _coachAudioMessages.isNotEmpty) {
-              _groupedAudioMessages = _coachAudioMessages.getRange(0, _audioMessageRangeValue).toList();
+              if (_getAudioListsDifference > _audioMessageRangeValue) {
+                _groupedAudioMessages = _coachAudioMessages.getRange(0, _audioMessageRangeValue).toList();
+              } else {
+                _groupedAudioMessages = _coachAudioMessages;
+              }
               _groupedElementCount = _groupedAudioMessages.length;
             } else {
               if (_groupedElementCount >= _coachAudioMessages.length) {
