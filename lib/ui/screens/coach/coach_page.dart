@@ -594,12 +594,18 @@ class _CoachPageState extends State<CoachPage> {
 
   void coachRecommendationsTimelineItems() {
     _coachRecommendations.isNotEmpty
-        ? _coachRecommendations.forEach((recommendation) =>
-            _coachRecommendationTimelineContent.add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)))
+        ? _coachRecommendations.forEach((recommendation) {
+            final newTimelineItem = CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation);
+            if (!_coachRecommendationTimelineContent.contains(newTimelineItem)) {
+              _coachRecommendationTimelineContent.add(newTimelineItem);
+            }
+          })
         : null;
     _coachRecommendationTimelineContent.isNotEmpty
         ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
-            if (_allContent.where((contentElement) => contentElement.contentName == recomendationTimelineItem.contentName).isEmpty) {
+            if (_allContent
+                .where((contentElement) => contentElement.contentThumbnail == recomendationTimelineItem.contentThumbnail)
+                .isEmpty) {
               _allContent.add(recomendationTimelineItem);
             }
           })

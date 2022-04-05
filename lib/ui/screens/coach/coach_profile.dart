@@ -239,11 +239,12 @@ class _CoachProfileState extends State<CoachProfile> {
         builder: (context, state) {
           if (state is CoachAudioMessagesSuccess) {
             _coachAudioMessages = state.coachAudioMessages;
+
             if (_coachAudioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
               _coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
             }
 
-            if (_groupedAudioMessages.isEmpty) {
+            if (_groupedAudioMessages.isEmpty && _coachAudioMessages.isNotEmpty) {
               _groupedAudioMessages = _coachAudioMessages.getRange(0, _audioMessageRangeValue).toList();
               _groupedElementCount = _groupedAudioMessages.length;
             } else {
