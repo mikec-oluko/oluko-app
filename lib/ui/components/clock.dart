@@ -549,7 +549,7 @@ class _State extends State<Clock> {
           widget.timerTaskIndex < widget.timerEntries.length - 1 ? widget.timerEntries[widget.timerTaskIndex + 1].labels[0] : '';
       if (widget.timerTaskIndex == 0) {
         currentTask = widget.timerEntries[widget.timerTaskIndex + 1].labels[0];
-        nextTask = widget.timerEntries[widget.timerTaskIndex + 2].labels[0];
+        nextTask = widget.timerTaskIndex < widget.timerEntries.length - 2 ? widget.timerEntries[widget.timerTaskIndex + 2].labels[0] : '';
       }
       return Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign
