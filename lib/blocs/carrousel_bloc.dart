@@ -9,8 +9,7 @@ class CarrouselLoading extends CarrouselState {}
 
 class CarrouselSuccess extends CarrouselState {
   final int widgetIndex;
-  final double opacity;
-  CarrouselSuccess({this.widgetIndex, this.opacity});
+  CarrouselSuccess({this.widgetIndex});
 }
 
 class CarrouselBloc extends Cubit<CarrouselState> {
@@ -18,7 +17,7 @@ class CarrouselBloc extends Cubit<CarrouselState> {
 
   void widgetIsHiden(bool isHiden, int widgetIndex) {
     if (isHiden) {
-      emit(CarrouselSuccess(widgetIndex: widgetIndex, opacity: 1));
+      emit(CarrouselSuccess(widgetIndex: widgetIndex));
     } else {
       emit(CarrouselLoading());
     }

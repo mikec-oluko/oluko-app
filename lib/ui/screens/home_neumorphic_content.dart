@@ -98,8 +98,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     slivers: <Widget>[
                       SliverStack(children: [
                         getClassView(index, context),
-                        getTabBar(context, index),
                         if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+                        getTabBar(context, index),
                       ]),
                     ],
                   );
@@ -149,48 +149,30 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     );
   }
 
-  MediaQuery getStoriesBar(BuildContext context) {
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: BlocBuilder<StoryBloc, StoryState>(
-        builder: (context, hasStories) {
-          final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
-          return enrolledContent(showStories);
-        },
-      ),
+  Widget getStoriesBar(BuildContext context) {
+    return BlocBuilder<StoryBloc, StoryState>(
+      builder: (context, hasStories) {
+        final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
+        return enrolledContent(showStories);
+      },
     );
   }
 
   Widget enrolledContent(bool showStories) {
-    bool reduceHeigth = false;
-    return BlocBuilder<CarrouselBloc, CarrouselState>(
-      builder: (context, state) {
-        if (state is CarrouselSuccess) {
-          reduceHeigth = false;
-        } else {
-          reduceHeigth = true;
-        }
-        return SliverAppBar(
-          automaticallyImplyLeading: false,
-          stretch: true,
-          toolbarHeight: reduceHeigth
-              ? 0
-              : showStories
-                  ? 110
-                  : 0,
-          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          pinned: true,
-          title: showStories
-              ? Center(
-                  child: StoriesHeader(
-                    widget.user.uid,
-                    maxRadius: 30,
-                  ),
-                )
-              : const SizedBox(),
-        );
-      },
+    return SliverAppBar(
+      automaticallyImplyLeading: false,
+      stretch: true,
+      toolbarHeight: showStories ? 110 : 0,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      pinned: true,
+      title: showStories
+          ? Center(
+              child: StoriesHeader(
+                widget.user.uid,
+                maxRadius: 30,
+              ),
+            )
+          : const SizedBox(),
     );
   }
 
@@ -203,30 +185,30 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             routeLabels[RouteEnum.homeLongPress],
             arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index},
           ),
-          child: VisibilityDetector(
-            key: Key('${index}'),
-            onVisibilityChanged: (VisibilityInfo info) {
-              if (info.visibleFraction < 0.5) {
-                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
-              } else {
-                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 3),
-              child: OverlayVideoPreview(
-                image: widget.courses[index].posterImage ?? widget.courses[index].image,
-                video: widget.courses[index].video,
-                onBackPressed: () => Navigator.pop(context),
-              ),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: OverlayVideoPreview(
+              image: widget.courses[index].posterImage ?? widget.courses[index].image,
+              video: widget.courses[index].video,
+              onBackPressed: () => Navigator.pop(context),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            widget.courses[index].name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+        VisibilityDetector(
+          key: Key('${index}'),
+          onVisibilityChanged: (VisibilityInfo info) {
+            if (info.visibleFraction < 0.5) {
+              BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
+            } else {
+              BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              widget.courses[index].name,
+              style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+            ),
           ),
         ),
         Padding(
@@ -265,65 +247,62 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return BlocBuilder<CarrouselBloc, CarrouselState>(
       builder: (context, state) {
         if (state is CarrouselSuccess && state.widgetIndex == index) {
-          return tabBarContent(index, state.opacity);
+          return tabBarContent(index);
         } else {
-          return tabBarContent(index, 0);
+          return const SliverToBoxAdapter(child: SizedBox());
         }
       },
     );
   }
 
-  SliverAppBar tabBarContent(int index, double opacity) {
-    return SliverAppBar(
-      bottom: const PreferredSize(
-        preferredSize: Size(double.infinity, 5),
-        child: OlukoNeumorphicDivider(),
-      ),
-      automaticallyImplyLeading: false,
-      toolbarHeight: opacity == 0 ? 0 : 47,
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      pinned: opacity == 0 ? false : true,
-      titleSpacing: 0,
-      title: SingleChildScrollView(
-        controller: widget.scrollController,
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: widget.courseEnrollments.map((course) {
-            final i = widget.courseEnrollments.indexOf(course);
-            return Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: GestureDetector(
-                onTap: () {
-                  widget.carouselController.jumpToPage(i);
-                  setState(() {
-                    widget.index = i;
-                  });
-                },
-                child: Column(
-                  children: [
-                    SizedBox(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Center(
-                          child: Text(
-                            course.course.name,
-                            style: OlukoFonts.olukoBigFont(
-                              custoFontWeight: FontWeight.normal,
-                              customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
+  SliverPinnedHeader tabBarContent(int index) {
+    return SliverPinnedHeader(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 130.0),
+        child: Container(
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+          child: SingleChildScrollView(
+            controller: widget.scrollController,
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: widget.courseEnrollments.map((course) {
+                final i = widget.courseEnrollments.indexOf(course);
+                return Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      widget.carouselController.jumpToPage(i);
+                      setState(() {
+                        widget.index = i;
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Center(
+                              child: Text(
+                                course.course.name,
+                                style: OlukoFonts.olukoBigFont(
+                                  custoFontWeight: FontWeight.normal,
+                                  customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        getSelectedAndScroll(i, index),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    getSelectedAndScroll(i, index),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ),
     );
