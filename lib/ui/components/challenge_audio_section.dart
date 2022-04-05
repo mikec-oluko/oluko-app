@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -36,6 +37,15 @@ class _State extends State<ChallengeAudioSection> {
   double _maxHeight = 140;
   bool submitted = false;
   bool audioRecorded = false;
+  bool isRecording = false;
+  Timer _timer;
+  Duration duration = Duration();
+  Duration durationToSave = Duration();
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +112,12 @@ class _State extends State<ChallengeAudioSection> {
                           style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white),
                         )),
               ]),
-              RecordedView(record: widget.recorder.audioUrl, showTicks: submitted, panelController: widget.panelController),
+              RecordedView(
+                record: widget.recorder.audioUrl,
+                showTicks: submitted,
+                panelController: widget.panelController,
+                secondsRecorded: TimeConverter.durationToString(durationToSave),
+              ),
             ]),
             const SizedBox(height: 15)
           ]),
@@ -181,18 +196,45 @@ class _State extends State<ChallengeAudioSection> {
           padding: OlukoNeumorphism.isNeumorphismDesign
               ? EdgeInsets.only(right: 0, left: 15, top: 0, bottom: 15)
               : EdgeInsets.only(right: 15, left: 15, top: 15, bottom: 15),
-          child: Row(children: [
-            Expanded(child: SizedBox()),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            if (isRecording)
+              Text(
+                TimeConverter.durationToString(duration),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.bold),
+              )
+            else
+              SizedBox(),
             Text(
-              OlukoLocalizations.get(context, 'recordAMessage') + widget.userFirstName,
+              isRecording
+                  ? OlukoLocalizations.get(context, 'pressToCancel')
+                  : OlukoLocalizations.get(context, 'recordAMessage') + widget.userFirstName,
               textAlign: TextAlign.left,
               style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
             ),
-            RecorderView(
-              recorder: widget.recorder,
-              onSaved: () => _onRecordCompleted(),
-            )
+            RecorderView(recorder: widget.recorder, onSaved: () => _onRecordCompleted(), startTimer: () => startAudioTimer())
           ]))
     ]);
+  }
+
+  void startAudioTimer() {
+    isRecording = !isRecording;
+    const oneSec = const Duration(seconds: 1);
+    if (!isRecording) {
+      setState(() {
+        _timer.cancel();
+        durationToSave = duration;
+        duration = Duration.zero;
+      });
+    } else {
+      _timer = Timer.periodic(oneSec, (_) => addTime());
+    }
+  }
+
+  addTime() {
+    final addSeconds = 1;
+    setState(() {
+      final seconds = duration.inSeconds + addSeconds;
+      duration = Duration(seconds: seconds);
+    });
   }
 }

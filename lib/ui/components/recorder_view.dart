@@ -5,8 +5,9 @@ import 'package:oluko_app/utils/sound_recorder.dart';
 class RecorderView extends StatefulWidget {
   final SoundRecorder recorder;
   final Function onSaved;
+  final Function startTimer;
 
-  const RecorderView({Key key, this.recorder, this.onSaved}) : super(key: key);
+  const RecorderView({Key key, this.recorder, this.onSaved, this.startTimer}) : super(key: key);
   @override
   _RecorderViewState createState() => _RecorderViewState();
 }
@@ -17,6 +18,7 @@ class _RecorderViewState extends State<RecorderView> {
     final isRecording = widget.recorder.isRecording;
     return GestureDetector(
         onTap: () async {
+          widget.startTimer();
           final isRecording = await widget.recorder.toggleRecording();
           if (widget.recorder.isStopped) {
             widget.onSaved();

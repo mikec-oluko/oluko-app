@@ -14,6 +14,7 @@ class RecordedView extends StatefulWidget {
   final String record;
   final bool showTicks;
   final PanelController panelController;
+  final String secondsRecorded;
 
   const RecordedView({
     Key key,
@@ -21,6 +22,7 @@ class RecordedView extends StatefulWidget {
     this.record,
     this.showTicks,
     this.panelController,
+    this.secondsRecorded,
   }) : super(key: key);
 
   @override
@@ -38,7 +40,6 @@ class _RecordedViewState extends State<RecordedView> {
   @override
   void initState() {
     super.initState();
-    getDuration();
   }
 
   @override
@@ -85,7 +86,7 @@ class _RecordedViewState extends State<RecordedView> {
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
           Positioned(
-              bottom: 0, left: 60, child: Text(_totalDurationInSeconds, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)))
+              bottom: 0, left: 60, child: Text(widget.secondsRecorded, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)))
         else
           SizedBox(),
         if (OlukoNeumorphism.isNeumorphismDesign)
@@ -177,10 +178,5 @@ class _RecordedViewState extends State<RecordedView> {
     }
   }
 
-  getDuration() async {
-    audioPlayer.setUrl(widget.record);
-    double durationInSeconds = TimeConverter.fromMillisecondsToSeconds(await audioPlayer.getDuration());
-    _totalDurationInSeconds = TimeConverter.secondsToMinutes(durationInSeconds);
-    setState(() {});
-  }
+  
 }

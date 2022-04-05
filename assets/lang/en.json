@@ -327,6 +327,7 @@
     "fileFormatException": "The file format is not supported.",
     "fileLoadFailed": "Could not load file.",
     "invalidFileDuration": "The duration of the file is not accepted.",
-    "invalidValue": "The entered value is not correct."
+    "invalidValue": "The entered value is not correct.",
+    "pressToCancel": "Press to cancel"
 
 }

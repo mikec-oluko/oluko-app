@@ -327,5 +327,6 @@
     "fileFormatException": "El formato de archivo no es compatible.",
     "fileLoadFailed": "No se pudo cargar el archivo.",
     "invalidFileDuration": "La duración del archivo no es correcta.",
-    "invalidValue": "El valor ingresado no es correcto."
+    "invalidValue": "El valor ingresado no es correcto.",
+    "pressToCancel":"Press to cancel"
 }
