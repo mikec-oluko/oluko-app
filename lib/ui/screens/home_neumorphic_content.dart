@@ -49,7 +49,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   ChewieController _controller;
   bool isVideoVisible = false;
   String mediaURL;
-
+  bool showStories = false;
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
@@ -152,7 +152,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget getStoriesBar(BuildContext context) {
     return BlocBuilder<StoryBloc, StoryState>(
       builder: (context, hasStories) {
-        final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
+        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
         return enrolledContent(showStories);
       },
     );
@@ -258,7 +258,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   SliverPinnedHeader tabBarContent(int index) {
     return SliverPinnedHeader(
       child: Padding(
-        padding: const EdgeInsets.only(top: 130.0),
+        padding: showStories ? EdgeInsets.only(top: 130.0) : EdgeInsets.only(top: 10),
         child: Container(
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           child: SingleChildScrollView(
@@ -268,7 +268,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               children: widget.courseEnrollments.map((course) {
                 final i = widget.courseEnrollments.indexOf(course);
                 return Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 15),
                   child: GestureDetector(
                     onTap: () {
                       widget.carouselController.jumpToPage(i);
