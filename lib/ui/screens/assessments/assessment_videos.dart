@@ -218,12 +218,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
                                   Row(children: [
                                     if (OlukoNeumorphism.isNeumorphismDesign)
-                                      OlukoNeumorphicPrimaryButton(
-                                        title: OlukoLocalizations.get(context, 'done'),
-                                        onPressed: () {
-                                          DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
-                                        },
-                                      )
+                                      const SizedBox.shrink()
                                     else
                                       OlukoPrimaryButton(
                                         title: OlukoLocalizations.get(context, 'done'),
@@ -248,7 +243,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 height: 50,
                               ),
                       ])),
-                  widget.assessmentsDone && OlukoNeumorphism.isNeumorphismDesign
+                  // widget.assessmentsDone &&
+                  OlukoNeumorphism.isNeumorphismDesign
                       ? BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
                           builder: (context, state) {
                             Widget contentToShow = SizedBox.shrink();
