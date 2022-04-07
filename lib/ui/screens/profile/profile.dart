@@ -37,6 +37,12 @@ class _ProfilePageState extends State<ProfilePage> {
   GlobalService _globalService = GlobalService();
 
   @override
+  void initState() {
+    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _globalService.comesFromCoach = false;
 
@@ -166,8 +172,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.popUntil(context, ModalRoute.withName('/'));
                       setState(() {});
                       break;
+                    case ProfileOptionsTitle.assessmentVideos:
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
+                          arguments: {'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
+                      break;
                     default:
-                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option), arguments: {'isFirstTime': false});
+                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));
                   }
                 }
               : () {},

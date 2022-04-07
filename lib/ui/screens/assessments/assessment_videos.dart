@@ -51,6 +51,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   List<TaskSubmission> taskSubmissionsCompleted;
   List<AssessmentTask> assessmentsTasksList;
   bool isLastTask = false;
+  Widget contentToShow = SizedBox.shrink();
 
   @override
   void initState() {
@@ -181,6 +182,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
                           if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
                             _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                            if (assessmentAssignmentState.assessmentAssignment.completedAt != null) {
+                              if (!widget.assessmentsDone) {
+                                contentToShow = assessmentDoneBottomPanel(context);
+                              }
+                            }
+
                             return Column(
                               children: [
                                 BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
@@ -217,9 +224,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 ),
                                 if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
                                   Row(children: [
-                                    if (OlukoNeumorphism.isNeumorphismDesign)
-                                      const SizedBox.shrink()
-                                    else
+                                    if (!OlukoNeumorphism.isNeumorphismDesign)
                                       OlukoPrimaryButton(
                                         title: OlukoLocalizations.get(context, 'done'),
                                         onPressed: () {
@@ -237,25 +242,14 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         const SizedBox(
                           height: 10,
                         ),
-                        OlukoNeumorphism.isNeumorphismDesign
-                            ? SizedBox.shrink()
-                            : const SizedBox(
-                                height: 50,
-                              ),
+                        if (OlukoNeumorphism.isNeumorphismDesign)
+                          const SizedBox.shrink()
+                        else
+                          const SizedBox(
+                            height: 50,
+                          ),
                       ])),
-                  // widget.assessmentsDone &&
-                  OlukoNeumorphism.isNeumorphismDesign
-                      ? BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-                          builder: (context, state) {
-                            Widget contentToShow = SizedBox.shrink();
-                            if (state is AssessmentAssignmentSuccess &&
-                                (state.assessmentAssignment != null && state.assessmentAssignment.completedAt != null)) {
-                              contentToShow = assessmentDoneBottomPanel(context);
-                            }
-                            return contentToShow;
-                          },
-                        )
-                      : SizedBox.shrink(),
+                  if (OlukoNeumorphism.isNeumorphismDesign) contentToShow else const SizedBox.shrink(),
                 ]))));
   }
 
