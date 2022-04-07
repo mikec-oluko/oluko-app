@@ -704,6 +704,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<TimerTaskBloc>.value(value: _timerTaskBloc),
           BlocProvider<ClocksTimerBloc>.value(value: _clocksTimerBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
