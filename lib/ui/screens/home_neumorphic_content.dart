@@ -3,6 +3,7 @@ import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/carrousel_bloc.dart';
@@ -50,6 +51,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool isVideoVisible = false;
   String mediaURL;
   bool showStories = false;
+  bool showLogo = true;
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
@@ -90,7 +92,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           },
           body: CarouselSlider.builder(
             carouselController: widget.carouselController,
-            itemCount: widget.courseEnrollments.length,
+            itemCount: widget.courseEnrollments.length + 1,
             itemBuilder: (context, index) {
               if (widget.courses.length - 1 >= index) {
                 if (widget.courses[index] != null) {
@@ -107,7 +109,39 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   return const SizedBox();
                 }
               } else {
-                return const SizedBox();
+                return Container(
+                  color: OlukoNeumorphismColors.appBackgroundColor,
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.1),
+                        child: Image.asset(
+                          'assets/home/mvt.png',
+                          scale: 2,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: ScreenUtils.height(context) * 0.1,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                          },
+                          child: Neumorphic(
+                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: Image.asset(
+                                'assets/home/plus.png',
+                                scale: 4,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
               }
             },
             options: CarouselOptions(
@@ -116,9 +150,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               height: ScreenUtils.height(context),
               initialPage: widget.index ?? 0,
               viewportFraction: 1,
-              onPageChanged: (index, reason) => widget.scrollController.jumpTo(
-                index * ScreenUtils.width(context) * 0.42,
-              ),
+              onPageChanged: (index, reason) {
+                if (index <= widget.courses.length - 1) {
+                  if (!showLogo) {
+                    setState(() {
+                      showLogo = true;
+                    });
+                  }
+                } else {
+                  setState(() {
+                    showLogo = false;
+                  });
+                }
+                if (widget.scrollController.hasClients) {
+                  widget.scrollController.jumpTo(
+                    index * ScreenUtils.width(context) * 0.42,
+                  );
+                }
+              },
             ),
           ),
         ),
@@ -130,23 +179,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   SliverToBoxAdapter getLogo() {
     return SliverToBoxAdapter(
-      child: Container(
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, top: 40),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image.asset(
-                'assets/home/mvt.png',
-                scale: 4,
-              ),
-              HandWidget(authState: widget.authState),
-            ],
-          ),
-        ),
-      ),
-    );
+        child: showLogo
+            ? Container(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 40),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        'assets/home/mvt.png',
+                        scale: 4,
+                      ),
+                      HandWidget(authState: widget.authState),
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox());
   }
 
   Widget getStoriesBar(BuildContext context) {
@@ -197,7 +247,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         VisibilityDetector(
           key: Key('${index}'),
           onVisibilityChanged: (VisibilityInfo info) {
-            if (info.visibleFraction < 0.5) {
+            if (info.visibleFraction < 0.001) {
               BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
             } else {
               BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
