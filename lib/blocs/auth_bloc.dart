@@ -128,7 +128,7 @@ class AuthBloc extends Cubit<AuthState> {
 
   void navigateToNextScreen(BuildContext context, String userId) async {
     PushNotificationService.initializePushNotifications(context, userId);
-    if (await UserUtils.isFirstTime()) {
+    if (await UserUtils.checkFirstTimeAndUpdate()) {
       await Permissions.askForPermissions();
     }
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
