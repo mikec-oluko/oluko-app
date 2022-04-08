@@ -56,9 +56,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
         List<CoachAudioMessage> _audioMessages = [];
         CoachAudioMessage _audioTimeUpdated;
         emit(Loading());
-
-        if (snapshot.docChanges.isNotEmpty &&
-            (snapshot.docs.length != snapshot.docChanges.length && snapshot.docChanges.first.newIndex != -1)) {
+        if (snapshot.docChanges.isNotEmpty && snapshot.docChanges.first.newIndex != -1) {
           _audioTimeUpdated = CoachAudioMessage.fromJson(snapshot.docChanges.first.doc.data());
           _audioTimeUpdated.createdAt ??= Timestamp.now();
         }
