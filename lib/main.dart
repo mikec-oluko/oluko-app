@@ -26,14 +26,7 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
-  bool firstTime;
-  final sharedPref = await SharedPreferences.getInstance();
-    final isFirstTime = sharedPref.getBool('first_time');
-    if (isFirstTime != null && !isFirstTime) {
-      firstTime = false;
-    } else {
-      firstTime = true;
-    }
+  final bool firstTime = await UserUtils.isFirstTime();
   final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
     initialRoute: route,
