@@ -130,7 +130,6 @@ class _MyAppState extends State<MyApp> {
               },
               child: Navigator(
                 key: _navigatorKey,
-                initialRoute: widget.initialRoute,
                 onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
               ),
             );
