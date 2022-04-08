@@ -43,11 +43,16 @@ class UserUtils {
   static Future<bool> isFirstTime() async {
     final sharedPref = await SharedPreferences.getInstance();
     final isFirstTime = sharedPref.getBool('first_time');
+    return isFirstTime == null || isFirstTime == true;
+  }
+
+  static Future<bool> checkFirstTimeAndUpdate() async {
+    final sharedPref = await SharedPreferences.getInstance();
+    final isFirstTime = sharedPref.getBool('first_time');
     if (isFirstTime != null && !isFirstTime) {
       return false;
-    } else {
-      sharedPref.setBool('first_time', false);
-      return true;
     }
+    sharedPref.setBool('first_time', false);
+    return true;
   }
 }
