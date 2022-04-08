@@ -75,7 +75,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,false);
     recorder.init();
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.challenge.segmentId, widget.userRequested.id);
   }

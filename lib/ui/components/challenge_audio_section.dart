@@ -52,6 +52,12 @@ class _State extends State<ChallengeAudioSection> {
     return BlocBuilder<PanelAudioBloc, PanelAudioState>(builder: (context, state) {
       if (state is PanelAudioSuccess) {
         audioRecorded = state.audioRecorded;
+        if (audioRecorded && state.stopRecording || !audioRecorded && state.stopRecording) {
+          playAudioTimer(state.stopRecording);
+          if (!audioRecorded) {
+            widget.recorder.delete();
+          }
+        }
       }
       return audioRecorded ? audioRecordedSection() : audioRecorderSection();
     });
@@ -129,14 +135,15 @@ class _State extends State<ChallengeAudioSection> {
   }
 
   _saveAudio() {
-    BlocProvider.of<AudioBloc>(context)..saveAudio(File(widget.recorder.audioUrl), widget.user, widget.challengeId);
+    BlocProvider.of<AudioBloc>(context).saveAudio(File(widget.recorder.audioUrl), widget.user, widget.challengeId);
     setState(() {
       submitted = true;
     });
+    BlocProvider.of<PanelAudioBloc>(context).emitDefaultState();
   }
 
   _onRecordCompleted() {
-    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(true);
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(true, true);
   }
 
   Widget _saveButton() {
@@ -211,25 +218,38 @@ class _State extends State<ChallengeAudioSection> {
               textAlign: TextAlign.left,
               style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
             ),
-            RecorderView(recorder: widget.recorder, onSaved: () => _onRecordCompleted(), startTimer: () => startAudioTimer())
+            isRecording
+                ? GestureDetector(
+                    onTap: () => widget.panelController.open(),
+                    child: Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: Image.asset(
+                          'assets/neumorphic/bin.png',
+                          scale: 4,
+                        )))
+                : SizedBox(),
+            RecorderView(
+              recorder: widget.recorder,
+              onSaved: () => _onRecordCompleted(),
+              playAudioTimer: () => playAudioTimer(false),
+              isRecording: isRecording,
+            )
           ]))
     ]);
   }
 
-  void startAudioTimer() {
-    isRecording = !isRecording;
+  void playAudioTimer(bool playAudioTimer) {
     const oneSec = const Duration(seconds: 1);
-    if (!isRecording) {
-      setState(() {
-        _timer.cancel();
-        durationToSave = duration;
-        duration = Duration.zero;
-      });
+    if (playAudioTimer) {
+      _timer.cancel();
+      durationToSave = duration;
+      duration = Duration.zero;
+      isRecording = false;
     } else {
+      isRecording = true;
       _timer = Timer.periodic(oneSec, (_) => addTime());
     }
   }
-
   addTime() {
     final addSeconds = 1;
     setState(() {
