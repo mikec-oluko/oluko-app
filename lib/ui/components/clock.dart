@@ -388,7 +388,8 @@ class _State extends State<Clock> {
               ),
               Text(
                 OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                    ? OlukoLocalizations.get(context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex].counter))
+                    ? OlukoLocalizations.get(
+                        context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex - 1].counter))
                     : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
                 overflow: TextOverflow.ellipsis,

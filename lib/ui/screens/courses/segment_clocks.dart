@@ -667,6 +667,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
             timerEntries[timerTaskIndex].round < timerEntries[timerTaskIndex + 1].round)) {
       int currentDuration = stopwatchDuration.inSeconds;
       durationPR += currentDuration;
+      totalScore += currentDuration;
+      scores[timerEntries[timerTaskIndex - 1].round] = currentDuration.toString() + ' ' + timerEntries[timerTaskIndex - 1].movement.getLabel();
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
         widget.courseEnrollment,
