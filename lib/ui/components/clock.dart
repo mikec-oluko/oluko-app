@@ -205,7 +205,7 @@ class _State extends State<Clock> {
       } else {
         return needInput && OlukoNeumorphism.isNeumorphismDesign
             ? TimerUtils.restTimer(
-                needInput ? neumorphicTextfieldForScore(true) : null,
+                needInput ? neumorphicTextfieldForScore() : null,
                 circularProgressIndicatorValue,
                 TimeConverter.durationToString(widget.timeLeft),
                 context,
@@ -329,7 +329,7 @@ class _State extends State<Clock> {
     );
   }
 
-  Container neumorphicTextfieldForScore(bool isCounterByReps) {
+  Container neumorphicTextfieldForScore() {
     //TODO: AJUSTAR EL INPUT
     return Container(
       decoration: const BoxDecoration(color: Colors.transparent),
@@ -340,7 +340,7 @@ class _State extends State<Clock> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: isCounterByReps ? ScreenUtils.width(context) / 3.7 : ScreenUtils.width(context) / 3.0,
+                width: ScreenUtils.width(context) / 3.7,
                 child: BlocBuilder<KeyboardBloc, KeyboardState>(
                   builder: (context, state) {
                     return Scrollbar(
@@ -386,23 +386,13 @@ class _State extends State<Clock> {
                   },
                 ),
               ),
-              if (isCounterByReps)
-                Text(
-                  OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                      ? OlukoLocalizations.get(context, 'reps')
-                      : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
-                  overflow: TextOverflow.ellipsis,
-                )
-              else
-                widget.textController.value != null && widget.textController.value.text != ""
-                    ? Expanded(
-                        child: Text(
-                          OlukoLocalizations.get(context, 'meters'),
-                          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.w300),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
+              Text(
+                OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                    ? OlukoLocalizations.get(context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex].counter))
+                    : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
           if (widget.textController.value != null && widget.textController.value.text != "")
@@ -579,7 +569,8 @@ class _State extends State<Clock> {
 
   bool useInput() => (isCurrentMovementRest() &&
       (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||
-          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance));
+          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance ||
+          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight));
 
   void _playCountdown(Function() goToNextStep, Function() setPaused) {
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {

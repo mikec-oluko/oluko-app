@@ -349,4 +349,17 @@ class SegmentUtils {
     }
     return label;
   }
+
+  static String getCounterInputLabel(CounterEnum counter) {
+    switch (counter) {
+      case CounterEnum.reps:
+        return 'reps';
+      case CounterEnum.distance:
+        return 'm';
+      case CounterEnum.weight:
+        return 'lbs';
+      default:
+        return '';
+    }
+  }
 }
