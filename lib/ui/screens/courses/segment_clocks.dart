@@ -748,11 +748,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
 
     Wakelock.disable();
-    setState(() {
-      if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+    
+    if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+      setState(() {
         topBarIcon = SegmentClocksUtils.uploadingIcon();
-      }
-    });
+      });
+    }
+
+    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
+      BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
+    }
   }
 
   int getPersonalRecordValue() {

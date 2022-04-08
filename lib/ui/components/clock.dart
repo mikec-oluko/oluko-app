@@ -57,10 +57,11 @@ class Clock extends StatefulWidget {
 class _State extends State<Clock> {
   Timer countdownTimer;
 
-  int AMRAPRound = 0;
+  int AMRAPRound;
 
   @override
   void initState() {
+    AMRAPRound = 0;
     if (isCurrentTaskTimed()) {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
