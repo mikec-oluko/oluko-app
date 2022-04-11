@@ -51,7 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
         profileInfo = state.user;
         BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(profileInfo.id);
         BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
-
         return profileHomeView();
       } else {
         return Container(
@@ -90,61 +89,56 @@ class _ProfilePageState extends State<ProfilePage> {
         ));
   }
 
-  Widget userInformationSection() {
-    Widget returnWidget;
-    returnWidget = Column(
-      children: [
-        GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': profileInfo})
-                    .then((value) => onGoBack()),
-            child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-              builder: (context, state) {
-                if (state is StatisticsSuccess) {
-                  userStats = state.userStats;
-                }
-                return UserProfileInformation(
-                  userToDisplayInformation: profileInfo,
-                  actualRoute: ActualProfileRoute.rootProfile,
-                  currentUser: profileInfo,
-                  connectStatus: null,
-                  userStats: userStats,
-                );
-              },
-            )),
-      ],
-    );
-    return returnWidget;
-  }
+  Widget userInformationSection() => Column(
+        children: [
+          GestureDetector(
+              onTap: () =>
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': profileInfo})
+                      .then((value) => onGoBack()),
+              child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+                builder: (context, state) {
+                  if (state is StatisticsSuccess) {
+                    userStats = state.userStats;
+                  }
+                  return UserProfileInformation(
+                    userToDisplayInformation: profileInfo,
+                    actualRoute: ActualProfileRoute.rootProfile,
+                    currentUser: profileInfo,
+                    userStats: userStats,
+                  );
+                },
+              )),
+        ],
+      );
 
   Widget buildOptionsList() {
     return ListView.builder(
         padding: EdgeInsets.zero,
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: ProfileOptions.profileOptions.length,
-        itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index]));
+        itemBuilder: (_, index) => _profileOptions(ProfileOptions.profileOptions[index]));
   }
 
-  Widget profileOptions(ProfileOptions option) {
-    return currentOption(option);
+  Widget _profileOptions(ProfileOptions option) {
+    return _currentOption(option);
   }
 
-  Widget currentOption(ProfileOptions option) {
+  Widget _currentOption(ProfileOptions option) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Column(children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: buildOptionContent(option),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30),
               child: OlukoNeumorphicDivider(isFadeOut: true, isForList: true),
             )
           ])
         : Container(
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+            decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
             child: buildOptionContent(option),
           );
   }
@@ -152,7 +146,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Column buildOptionContent(ProfileOptions option) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         InkWell(
           onTap: option.enable

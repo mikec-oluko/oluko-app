@@ -44,7 +44,7 @@ class _CoachProfileState extends State<CoachProfile> {
   int _groupedElementCount = 0;
   double _audioPanelMaxSize = 100.0;
   Duration duration = Duration();
-  Duration durationToSave = Duration();
+  Duration _durationToSave = Duration();
   List<CoachAudioMessage> _coachAudioMessages = [];
   List<CoachAudioMessage> _groupedAudioMessages = [];
   List<CoachMedia> _coachUploadedContent = [];
@@ -57,7 +57,7 @@ class _CoachProfileState extends State<CoachProfile> {
   void initState() {
     !_recorder.isInitialized ? _recorder.init() : null;
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
-    BlocProvider.of<CoachAudioMessageBloc>(context).getStream(widget.currentUser.id, widget.coachUser.id);
+    BlocProvider.of<CoachAudioMessageBloc>(context).getStream(userId: widget.currentUser.id, coachId: widget.coachUser.id);
     BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
     _recordingAudio = _recorder.isRecording;
     super.initState();
@@ -102,7 +102,6 @@ class _CoachProfileState extends State<CoachProfile> {
         if (state is CoachAudioPanelConfirmDelete) {
           _audioPanelMaxSize = state.panelMaxSize;
           _panelController.panelPosition != 1 ? _panelController.animatePanelToPosition(1) : null;
-
           _panelNewContent = confirmDeleteComponent(
               context: context, isPreviewContent: state.isAudioPreview, audioMessage: !state.isAudioPreview ? state.audioMessage : null);
         }
@@ -123,7 +122,7 @@ class _CoachProfileState extends State<CoachProfile> {
                 if (_coachAudioMessages.isEmpty) {
                   _coachAudioMessages = state.coachAudioMessages;
                 } else {
-                  checkAudioMessageStream(streamOfAudioMessages: state.coachAudioMessages);
+                  _checkAudioMessageStream(audioMessages: state.coachAudioMessages);
                 }
                 manageAudioGroupList();
                 _audioMessageSection = _coachAudioMessages.isNotEmpty ? audioMessageListComponent(context) : const SizedBox.shrink();
@@ -182,19 +181,18 @@ class _CoachProfileState extends State<CoachProfile> {
     }
   }
 
-  void checkAudioMessageStream({List<CoachAudioMessage> streamOfAudioMessages}) {
-    List<CoachAudioMessage> _coachAudioListToUpdate = _coachAudioMessages;
-    List<CoachAudioMessage> _deletedAudioElements = [];
+  void _checkAudioMessageStream({List<CoachAudioMessage> audioMessages}) {
     List<CoachAudioMessage> _newAudioElements = [];
+    List<CoachAudioMessage> _deletedAudioElements = [];
+    List<CoachAudioMessage> _coachAudioListToUpdate = _coachAudioMessages;
 
-    _coachAudioMessages.forEach((savedAudio) {
-      if (streamOfAudioMessages.where((newAudioMessage) => newAudioMessage.id == savedAudio.id).toList().isEmpty) {
-        _deletedAudioElements.add(savedAudio);
+    _coachAudioMessages.forEach((currentAudioMessage) {
+      if (audioMessages.where((newAudioMessage) => newAudioMessage.id == currentAudioMessage.id).toList().isEmpty) {
+        _deletedAudioElements.add(currentAudioMessage);
       }
     });
-
-    streamOfAudioMessages.forEach((newAudioElement) {
-      if (_coachAudioMessages.where((savedAudioElement) => savedAudioElement.id == newAudioElement.id).toList().isEmpty) {
+    audioMessages.forEach((newAudioElement) {
+      if (_coachAudioMessages.where((currentAudioMessage) => currentAudioMessage.id == newAudioElement.id).toList().isEmpty) {
         _newAudioElements.add(newAudioElement);
       }
     });
@@ -202,13 +200,11 @@ class _CoachProfileState extends State<CoachProfile> {
       _coachAudioListToUpdate = [..._coachAudioListToUpdate, ..._newAudioElements];
     }
     if (_deletedAudioElements.isNotEmpty) {
-      _deletedAudioElements.forEach((deletedAudioElement) {
-        _coachAudioListToUpdate.removeAt(_coachAudioListToUpdate.indexOf(deletedAudioElement));
+      _deletedAudioElements.forEach((audioRemoved) {
+        _coachAudioListToUpdate.removeAt(_coachAudioListToUpdate.indexOf(audioRemoved));
       });
     }
-    if (_coachAudioMessages.length != _coachAudioListToUpdate.length) {
-      _coachAudioMessages = _coachAudioListToUpdate;
-    }
+    _coachAudioMessages = _coachAudioListToUpdate;
 
     if (_coachAudioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
       _coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
@@ -310,8 +306,8 @@ class _CoachProfileState extends State<CoachProfile> {
                   child: _getAudioListsDifference > 0
                       ? Text(
                           _getAudioListsDifference >= _audioMessageRangeValue
-                              ? seeMoreAudiosText(_audioMessageRangeValue)
-                              : seeMoreAudiosText(_getAudioListsDifference),
+                              ? _seeMoreAudios(nextRangeValue: _audioMessageRangeValue)
+                              : _seeMoreAudios(nextRangeValue: _getAudioListsDifference),
                           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500))
                       : const SizedBox.shrink(),
                 )
@@ -341,7 +337,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
   bool get _hasMoreThanRange => _coachAudioMessages.length > _audioMessageRangeValue;
 
-  String seeMoreAudiosText(int nextRangeValue) =>
+  String _seeMoreAudios({@required int nextRangeValue}) =>
       '${OlukoLocalizations.get(context, 'see')} $nextRangeValue ${OlukoLocalizations.get(context, 'more')}';
 
   Padding confirmDeleteComponent({BuildContext context, bool isPreviewContent, CoachAudioMessage audioMessage}) {
@@ -436,7 +432,7 @@ class _CoachProfileState extends State<CoachProfile> {
                   audioRecorded: File(_recorder.audioUrl),
                   coachId: widget.coachUser.id,
                   userId: widget.currentUser.id,
-                  audioDuration: durationToSave);
+                  audioDuration: _durationToSave);
               BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
               setState(() {
                 _audioRecorded = !_audioRecorded;
@@ -450,7 +446,7 @@ class _CoachProfileState extends State<CoachProfile> {
     if (!_recordingAudio) {
       setState(() {
         _timer.cancel();
-        durationToSave = duration;
+        _durationToSave = duration;
         duration = Duration.zero;
       });
     } else {
@@ -503,11 +499,9 @@ class _CoachProfileState extends State<CoachProfile> {
               ? Neumorphic(
                   style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
                   child: microphoneIconButtonContent(
-                      iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic,
-                          size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)))
+                      iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic, size: 23, color: OlukoColors.white)))
               : microphoneIconButtonContent(
-                  iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic,
-                      size: 23, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black)),
+                  iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic, size: 23, color: OlukoColors.black)),
         )
       ],
     );
@@ -516,7 +510,7 @@ class _CoachProfileState extends State<CoachProfile> {
   Widget microphoneIconButtonContent({Icon iconForContent}) {
     return GestureDetector(
         onTap: () async {
-          final isRecording = await _recorder.toggleRecording();
+          await _recorder.toggleRecording();
 
           setState(() {
             _recordingAudio = !_recordingAudio;
@@ -548,7 +542,7 @@ class _CoachProfileState extends State<CoachProfile> {
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
-      durationFromRecord: isPreview ? durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
+      durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
       onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );

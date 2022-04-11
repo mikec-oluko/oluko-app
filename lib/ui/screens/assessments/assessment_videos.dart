@@ -1,11 +1,9 @@
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
@@ -27,7 +25,6 @@ import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -142,7 +139,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             ),
             body: Container(
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                child: ListView(shrinkWrap: true, children: [
+                child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: [
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(children: [

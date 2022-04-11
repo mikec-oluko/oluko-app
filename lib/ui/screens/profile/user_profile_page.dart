@@ -534,7 +534,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         BlocProvider.of<FriendRequestBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
         break;
       case UserConnectStatus.requestReceived:
-        BlocProvider.of<FriendRequestBloc>(context).acceptRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
+        BlocProvider.of<FriendRequestBloc>(context).acceptRequestOfConnect(_currentAuthUser.id, userRequested.id, friendData);
         break;
       default:
     }
