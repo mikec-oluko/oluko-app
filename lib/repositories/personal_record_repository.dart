@@ -47,8 +47,35 @@ class PersonalRecordRepository {
         .where('challenge_id', isEqualTo: challengeId)
         .get();
     List<PersonalRecord> PRList = mapQueryToPR(docRef);
-    PRList.sort((b, a) => a.createdAt.compareTo(b.createdAt));
+    if (!PRList.isEmpty) {
+      PRList = sortPRs(PRList);
+    }
     return PRList;
+  }
+
+  static List<PersonalRecord> sortPRs(List<PersonalRecord> list) {
+    PersonalRecordParam param = list[0].parameter;
+    PersonalRecord bestPR;
+    int bestPRIndex = 0;
+    for (var i = 1; i < list.length; i++) {
+      int current = list[i].value;
+      int bestPRvalue = list[bestPRIndex].value;
+      if (param == PersonalRecordParam.duration) {
+        if (current < bestPRvalue) {
+          bestPRIndex = i;
+        }
+      } else {
+        if (current > bestPRvalue) {
+          bestPRIndex = i;
+        }
+      }
+    }
+    bestPR = list[bestPRIndex];
+    list.removeAt(bestPRIndex);
+
+    list.sort((b, a) => a.createdAt.compareTo(b.createdAt));
+    list.insert(0, bestPR);
+    return list;
   }
 
   static List<PersonalRecord> mapQueryToPR(QuerySnapshot qs) {
