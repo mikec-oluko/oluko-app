@@ -56,8 +56,6 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                     Center(
                       child: Container(
                         height: 25,
-                        constraints: BoxConstraints(minHeight: 25, minWidth: 10, maxWidth: ScreenUtils.width(context) / 3, maxHeight: 25),
-                        // color: Colors.red,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,

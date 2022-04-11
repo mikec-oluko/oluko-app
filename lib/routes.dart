@@ -614,6 +614,8 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
           challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+          isCurrentUser:
+              argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
         );
         break;
       case RouteEnum.profileTransformationJourney:

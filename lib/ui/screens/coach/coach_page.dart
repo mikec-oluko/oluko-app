@@ -581,7 +581,7 @@ class _CoachPageState extends State<CoachPage> {
 
     _timelinePanelContent.forEach((timelinePanelElement) {
       timelinePanelElement.timelineElements.forEach((timelineContentItem) {
-        if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == timelineContentItem.contentThumbnail).isEmpty) {
+        if (_allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
           _allContent.add(timelineContentItem);
         }
       });
@@ -603,9 +603,7 @@ class _CoachPageState extends State<CoachPage> {
         : null;
     _coachRecommendationTimelineContent.isNotEmpty
         ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
-            if (_allContent
-                .where((contentElement) => contentElement.contentThumbnail == recomendationTimelineItem.contentThumbnail)
-                .isEmpty) {
+            if (_allContent.where((contentElement) => contentElement.contentName == recomendationTimelineItem.contentName).isEmpty) {
               _allContent.add(recomendationTimelineItem);
             }
           })

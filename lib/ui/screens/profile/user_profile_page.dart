@@ -680,7 +680,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           title: OlukoLocalizations.get(context, 'upcomingChallenges'),
           optionLabel: OlukoLocalizations.get(context, 'viewAll'),
           onOptionTap: () {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {'challengeSegments': listOfChallenges});
+            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
+                arguments: {'challengeSegments': listOfChallenges, 'isCurrentUser': _isCurrentUser});
           },
           children: content.isNotEmpty
               ? content
