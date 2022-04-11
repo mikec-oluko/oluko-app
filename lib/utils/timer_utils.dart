@@ -345,7 +345,7 @@ class TimerUtils {
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                 : OlukoColors.primary)),
-                    SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
+                    SizedBox(height: 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
                         style: OlukoFonts.olukoBigFont(
@@ -380,7 +380,7 @@ class TimerUtils {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Gilroy',
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 42 : 26,
+                            fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
