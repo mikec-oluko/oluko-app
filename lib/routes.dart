@@ -44,6 +44,7 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
+import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
@@ -388,6 +389,7 @@ class Routes {
   final PushNotificationBloc _pushNotificationBloc = PushNotificationBloc();
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
+  final StopwatchBloc _stopwatchBloc = StopwatchBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -704,6 +706,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<TimerTaskBloc>.value(value: _timerTaskBloc),
           BlocProvider<ClocksTimerBloc>.value(value: _clocksTimerBloc),

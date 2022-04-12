@@ -17,6 +17,7 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
+import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -750,7 +751,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
 
     Wakelock.disable();
-    
+
     if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
       setState(() {
         topBarIcon = SegmentClocksUtils.uploadingIcon();
@@ -925,11 +926,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     final int addSeconds = 1;
     final int seconds = stopwatchDuration.inSeconds + addSeconds;
     stopwatchDuration = Duration(seconds: seconds);
+    BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
 
   _stopAndResetStopwatch() {
     stopwatchTimer.cancel();
     stopwatchDuration = Duration();
+    BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
 
   _resume() {

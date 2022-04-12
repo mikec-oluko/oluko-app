@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
+import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -59,6 +60,8 @@ class _State extends State<Clock> {
 
   int AMRAPRound;
 
+  Duration stopwatch = Duration();
+
   @override
   void initState() {
     AMRAPRound = 0;
@@ -78,29 +81,37 @@ class _State extends State<Clock> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TimerTaskBloc, TimerTaskState>(
-        listener: (context, timerTaskState) {
-          if (timerTaskState is SetTimerTaskIndex) {
+    return BlocListener<StopwatchBloc, StopwatchState>(
+        listener: (context, stopwatchState) {
+          if (stopwatchState is UpdateStopwatchSuccess) {
             setState(() {
-              widget.timerTaskIndex = timerTaskState.timerTaskIndex;
-            });
-          } else if (timerTaskState is SetAMRAPRound) {
-            setState(() {
-              AMRAPRound = timerTaskState.AMRAPRound;
+              stopwatch = stopwatchState.duration;
             });
           }
         },
-        child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
-            listener: (context, state) {
-              if (state is ClocksTimerPlay) {
-                _playCountdown(() => state.goToNextStep(), () => state.setPaused());
-              } else if (state is ClocksTimerPause) {
-                _pauseCountdown(() => state.setPaused());
-              } else if (state is UpdateTimeLeft) {
-                widget.timeLeft = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value);
+        child: BlocListener<TimerTaskBloc, TimerTaskState>(
+            listener: (context, timerTaskState) {
+              if (timerTaskState is SetTimerTaskIndex) {
+                setState(() {
+                  widget.timerTaskIndex = timerTaskState.timerTaskIndex;
+                });
+              } else if (timerTaskState is SetAMRAPRound) {
+                setState(() {
+                  AMRAPRound = timerTaskState.AMRAPRound;
+                });
               }
             },
-            child: _timerSection(widget.keyboardVisibilty)));
+            child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
+                listener: (context, state) {
+                  if (state is ClocksTimerPlay) {
+                    _playCountdown(() => state.goToNextStep(), () => state.setPaused());
+                  } else if (state is ClocksTimerPause) {
+                    _pauseCountdown(() => state.setPaused());
+                  } else if (state is UpdateTimeLeft) {
+                    widget.timeLeft = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value);
+                  }
+                },
+                child: _timerSection(widget.keyboardVisibilty))));
   }
 
   Widget _timerSection(bool keyboardVisibilty) {
@@ -170,11 +181,8 @@ class _State extends State<Clock> {
       return BlocBuilder<KeyboardBloc, KeyboardState>(
         builder: (context, state) {
           BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
-          return TimerUtils.repsTimer(
-            () => widget.goToNextStep(),
-            context,
-            widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
-          );
+          return TimerUtils.repsTimer(() => widget.goToNextStep(), context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+              widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
         },
       );
     }
