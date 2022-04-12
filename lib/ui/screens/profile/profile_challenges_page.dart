@@ -10,8 +10,9 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
-  ProfileChallengesPage({this.challengeSegments});
+  ProfileChallengesPage({this.challengeSegments, this.isCurrentUser});
   final List<ChallengeNavigation> challengeSegments;
+  final bool isCurrentUser;
   @override
   _ProfileChallengesPageState createState() => _ProfileChallengesPageState();
 }
@@ -90,7 +91,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                                 itemBuilder: (context, index) => ChallengesCard(
                                   segmentChallenge: widget.challengeSegments[index],
                                   useAudio: false,
-                                  navigateToSegment: true,
+                                  navigateToSegment: widget.isCurrentUser,
                                 ),
                               ),
                             ),
@@ -116,7 +117,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
         child: ChallengesCard(
           segmentChallenge: challenge,
           useAudio: false,
-          navigateToSegment: true,
+          navigateToSegment: widget.isCurrentUser,
         ),
       ));
     });

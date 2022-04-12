@@ -29,54 +29,54 @@ class _CoachCoverImageState extends State<CoachCoverImage> {
       },
       blendMode: BlendMode.dstIn,
       child: Container(
-        //VIDEO LIKE COVER IMAGE
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 3,
-        child: widget.coachUser.coverImage == null
-            ? Stack(
-                children: [
-                  Image(
-                    image: const AssetImage('assets/home/mvtthumbnail.png'),
-                    fit: BoxFit.cover,
-                    colorBlendMode: BlendMode.colorBurn,
-                    height: MediaQuery.of(context).size.height,
+          //VIDEO LIKE COVER IMAGE
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 3,
+          child: Stack(
+            children: [
+              widget.coachUser.coverImage == null
+                  ? Image(
+                      image: AssetImage('assets/home/mvtthumbnail.png'),
+                      fit: BoxFit.cover,
+                      colorBlendMode: BlendMode.colorBurn,
+                      height: MediaQuery.of(context).size.height,
+                    )
+                  : Image(
+                      image: CachedNetworkImageProvider(widget.coachUser.coverImage),
+                      fit: BoxFit.cover,
+                      colorBlendMode: BlendMode.colorBurn,
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                    ),
+              if (OlukoNeumorphism.isNeumorphismDesign)
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                            width: 52,
+                            height: 52,
+                            child: Image.asset(
+                              'assets/courses/left_back_arrow.png',
+                              scale: 3.5,
+                            )),
+                      )),
+                )
+              else
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  if (OlukoNeumorphism.isNeumorphismDesign)
-                    Positioned(
-                      top: 40,
-                      left: 20,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
-                                width: 52,
-                                height: 52,
-                                child: Image.asset(
-                                  'assets/courses/left_back_arrow.png',
-                                  scale: 3.5,
-                                )),
-                          )),
-                    )
-                  else
-                    Positioned(
-                      top: 40,
-                      left: 20,
-                      child: IconButton(
-                        icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    )
-                ],
-              )
-            : Image(
-                image: CachedNetworkImageProvider(widget.coachUser.coverImage),
-                fit: BoxFit.cover,
-                colorBlendMode: BlendMode.colorBurn,
-                height: MediaQuery.of(context).size.height,
-              ),
-      ),
+                )
+            ],
+          )),
     );
   }
 }

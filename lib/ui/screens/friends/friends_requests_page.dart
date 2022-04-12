@@ -121,7 +121,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
           child: Row(
             children: [
               OlukoOutlinedButton(
-                title: "See All Requests",
+                title: OlukoLocalizations.get(context, 'seeAllRequests'),
                 onPressed: () {},
               ),
             ],

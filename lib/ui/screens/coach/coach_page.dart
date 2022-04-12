@@ -218,7 +218,7 @@ class _CoachPageState extends State<CoachPage> {
                                   builder: (context, timelineState) {
                                     if (timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
-                                      if (_introductionVideo != null) {
+                                      if (_introductionVideo != null && _introductionVideo.video.url != null) {
                                         _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
                                           context: context,
                                           timelineItems: _timelineItemsContent,
@@ -529,7 +529,7 @@ class _CoachPageState extends State<CoachPage> {
           onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment)));
     }
 
-    if (!widget.coachAssignment.introductionCompleted) {
+    if (widget.coachAssignment.introductionCompleted) {
       carouselContent.add(CoachNotificationVideoCard(
           cardImage: _assessment.thumbnailImage,
           fileType: CoachFileTypeEnum.recommendedVideo,
@@ -581,7 +581,7 @@ class _CoachPageState extends State<CoachPage> {
 
     _timelinePanelContent.forEach((timelinePanelElement) {
       timelinePanelElement.timelineElements.forEach((timelineContentItem) {
-        if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == timelineContentItem.contentThumbnail).isEmpty) {
+        if (_allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
           _allContent.add(timelineContentItem);
         }
       });
@@ -594,8 +594,12 @@ class _CoachPageState extends State<CoachPage> {
 
   void coachRecommendationsTimelineItems() {
     _coachRecommendations.isNotEmpty
-        ? _coachRecommendations.forEach((recommendation) =>
-            _coachRecommendationTimelineContent.add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)))
+        ? _coachRecommendations.forEach((recommendation) {
+            final newTimelineItem = CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation);
+            if (!_coachRecommendationTimelineContent.contains(newTimelineItem)) {
+              _coachRecommendationTimelineContent.add(newTimelineItem);
+            }
+          })
         : null;
     _coachRecommendationTimelineContent.isNotEmpty
         ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
