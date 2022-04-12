@@ -423,48 +423,61 @@ class _FriendModalContentState extends State<FriendModalContent> {
   }
 
   Widget _getButtons(bool connectionRequested, FriendState friendState, bool userIsFriend) {
+    String _buttonTextContent = '';
     if (connectionRequested) {
+      _buttonTextContent = OlukoLocalizations.of(context).find('cancel');
       return Container(
         width: 115,
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
           thinPadding: true,
-          title: OlukoLocalizations.of(context).find('cancel'),
+          title: _buttonTextContent,
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
               widget.friendRequestBloc.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
+              setState(() {
+                _buttonTextContent = OlukoLocalizations.of(context).find('connect');
+              });
             }
           },
         ),
       );
     } else if (userIsFriend) {
+      _buttonTextContent = OlukoLocalizations.of(context).find('remove');
       return SizedBox(
         width: 115,
         child: OlukoNeumorphicSecondaryButton(
           thinPadding: true,
           isExpanded: false,
           textColor: Colors.grey,
-          title: OlukoLocalizations.of(context).find('remove'),
+          title: _buttonTextContent,
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
               BottomDialogUtils.removeConfirmationPopup(
                   widget.currentUserId, widget.user, friendState.friendData, context, widget.blocFriends);
+              setState(() {
+                _buttonTextContent = OlukoLocalizations.of(context).find('connect');
+              });
             }
           },
         ),
       );
     } else {
+      _buttonTextContent = OlukoLocalizations.of(context).find('connect');
       return Container(
         width: 115,
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
           thinPadding: true,
-          title: OlukoLocalizations.of(context).find('connect'),
+          title: _buttonTextContent,
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
               widget.friendRequestBloc.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
+              setState(() {
+                _buttonTextContent = OlukoLocalizations.of(context).find('cancel');
+              });
             }
           },
         ),

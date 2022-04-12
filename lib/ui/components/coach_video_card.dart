@@ -52,8 +52,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 5),
                     child: OlukoNeumorphism.isNeumorphismDesign
-                        ? OlukoBlueHeader(
-                            textContent: OlukoLocalizations.get(context, 'welcomeVideo'))
+                        ? OlukoBlueHeader(textContent: OlukoLocalizations.get(context, 'welcomeVideo'))
                         : Text(OlukoLocalizations.get(context, 'welcomeVideo'),
                             overflow: TextOverflow.ellipsis,
                             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
@@ -61,15 +60,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                   Container(
                     decoration: UserInformationBackground.getContainerGradientDecoration(
                         customBorder: false, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign, useGradient: true),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          showVideoPlayer(widget.videoUrl),
-                        ],
-                      ),
-                    ),
+                    child: showVideoPlayer(videoUrl: widget.videoUrl, isForCard: true),
                   ),
                 ],
               ),
@@ -80,7 +71,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
     );
   }
 
-  Widget showVideoPlayer(String videoUrl) {
+  Widget showVideoPlayer({String videoUrl, bool isForCard = false}) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -88,7 +79,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
 
     widgets.add(OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: isForCard ? 0 : 20),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: OlukoVideoPlayer(
@@ -111,7 +102,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
     return Container(child: SizedBox(height: 180, child: Stack(children: widgets)));
   }
 
-  finishVideo(){
+  finishVideo() {
     _controller.exitFullScreen();
     widget.onVideoFinished();
   }

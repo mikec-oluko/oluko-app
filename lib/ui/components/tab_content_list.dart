@@ -35,9 +35,9 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
         color: OlukoNeumorphismColors.appBackgroundColor,
         child: TimelineTile(
             lineXY: 0.0,
-            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0),
-            beforeLineStyle: const LineStyle(thickness: 1.5),
-            afterLineStyle: const LineStyle(thickness: 1.5),
+            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0, color: OlukoColors.primary),
+            beforeLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
+            afterLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
             isFirst: true,
             endChild: content),
       ));
@@ -47,9 +47,9 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
         child: TimelineTile(
             lineXY: 0.0,
             isLast: true,
-            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0),
-            beforeLineStyle: const LineStyle(thickness: 1.5),
-            afterLineStyle: const LineStyle(thickness: 1.5),
+            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0, color: OlukoColors.primary),
+            beforeLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
+            afterLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
             endChild: content),
       ));
     } else {
@@ -57,9 +57,9 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
         color: OlukoNeumorphismColors.appBackgroundColor,
         child: TimelineTile(
             lineXY: 0.0,
-            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0),
-            beforeLineStyle: const LineStyle(thickness: 1.5),
-            afterLineStyle: const LineStyle(thickness: 1.5),
+            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0, color: OlukoColors.primary),
+            beforeLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
+            afterLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
             endChild: content),
       ));
     }

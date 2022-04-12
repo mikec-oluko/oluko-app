@@ -539,7 +539,9 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
@@ -577,6 +579,7 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<OlukoPanelBloc>.value(value: OlukoPanelBloc()),
@@ -615,6 +618,8 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
           challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+          isCurrentUser:
+              argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
         );
         break;
       case RouteEnum.profileTransformationJourney:

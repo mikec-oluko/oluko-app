@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class TimelineListContent extends StatefulWidget {
@@ -23,7 +24,7 @@ class _TimelineListContentState extends State<TimelineListContent> {
         endChild: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
             padding: const EdgeInsets.only(left: 10),
-            child: Text(widget.newDate ?? 'TODAY',
+            child: Text(widget.newDate ?? OlukoLocalizations.get(context, 'todayCapitalMessage'),
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
           ),
           Column(children: widget.content)
