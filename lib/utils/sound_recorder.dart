@@ -46,9 +46,13 @@ class SoundRecorder {
     _audioUrl = url;
   }
 
-  Future delete() async {
+  Future delete(String audioUrl) async {
+    if(_audioRecorder.isStopped){
+      final audioArchiveString=audioUrl.split('/');
+   return _audioRecorder.deleteRecord(fileName: audioArchiveString[audioArchiveString.length-1]);
+    }
     String url = await _audioRecorder.stopRecorder();
-    _audioRecorder.deleteRecord(fileName: url);
+   return _audioRecorder.deleteRecord(fileName: url);
   }
 
   Future toggleRecording() async {
