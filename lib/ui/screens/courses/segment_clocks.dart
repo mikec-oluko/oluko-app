@@ -97,6 +97,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
 
+  int realTaskIndex = 0;
+
   //Alert timer
   Duration alertTimeLeft;
   Timer alertTimer;
@@ -632,15 +634,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     _saveStopwatch();
 
-    if (timerTaskIndex == timerEntries.length - 1) {
+    if (timerTaskIndex == timerEntries.length - 1 && realTaskIndex <= timerEntries.length - 1) {
       setState(() {
         _roundAlert = null;
       });
       _finishWorkout();
+      realTaskIndex++;
       return;
     }
 
     timerTaskIndex++;
+    realTaskIndex++;
     if (((timerTaskIndex - 1) == 0) || timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
       setAlert();
     }
