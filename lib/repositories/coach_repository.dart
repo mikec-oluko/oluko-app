@@ -251,6 +251,7 @@ class CoachRepository {
         case TimelineInteractionType.movement:
           Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.movementForNavigation = movementForItem;
+          timelineItem.contentName = movementForItem.name;
           break;
         case TimelineInteractionType.mentoredVideo:
           break;

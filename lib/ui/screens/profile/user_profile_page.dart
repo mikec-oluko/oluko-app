@@ -203,6 +203,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
               }
             },
           ),
+          BlocListener<FriendRequestBloc, FriendRequestState>(
+            listenWhen: (FriendRequestState previous, FriendRequestState current) => current != previous,
+            listener: (context, FriendRequestState state) {
+              if (state is GetFriendsRequestSuccess) {
+                friendData = state.friendData;
+                friendUsers = state.friendUsers;
+                checkConnectionStatus(userRequested, friendData);
+                if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
+                  friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
+                }
+              }
+            },
+          ),
         ],
         child: SlidingUpPanel(
           onPanelClosed: () {
@@ -490,9 +503,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       checkUserConnectStatus(userRequested);
                       BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
                     },
-                    title: OlukoLocalizations.get(context, _connectButtonTitle))
+                    title: _connectButtonTitle)
                 : OlukoNeumorphicPrimaryButton(
-                    title: OlukoLocalizations.get(context, _connectButtonTitle),
+                    title: _connectButtonTitle,
                     onPressed: () {
                       if (connectStatus != UserConnectStatus.connected) {
                         AppMessages().showDialogActionMessage(context, '', 2);
@@ -519,6 +532,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
         break;
       case UserConnectStatus.requestPending:
         BlocProvider.of<FriendRequestBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
+        break;
+      case UserConnectStatus.requestReceived:
+        BlocProvider.of<FriendRequestBloc>(context).acceptRequestOfConnect(_currentAuthUser.id, userRequested.id, friendData);
         break;
       default:
     }
@@ -664,7 +680,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           title: OlukoLocalizations.get(context, 'upcomingChallenges'),
           optionLabel: OlukoLocalizations.get(context, 'viewAll'),
           onOptionTap: () {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {'challengeSegments': listOfChallenges});
+            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
+                arguments: {'challengeSegments': listOfChallenges, 'isCurrentUser': _isCurrentUser});
           },
           children: content.isNotEmpty
               ? content
@@ -765,9 +782,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
       connectStatus = UserConnectStatus.notConnected;
     }
 
-    if (_connectButtonTitle != ProfileHelperFunctions.returnTitleForConnectButton(connectStatus)) {
+    if (_connectButtonTitle != ProfileHelperFunctions.returnTitleForConnectButton(connectStatus, context)) {
       setState(() {
-        _connectButtonTitle = ProfileHelperFunctions.returnTitleForConnectButton(connectStatus);
+        _connectButtonTitle = ProfileHelperFunctions.returnTitleForConnectButton(connectStatus, context);
       });
     }
   }
