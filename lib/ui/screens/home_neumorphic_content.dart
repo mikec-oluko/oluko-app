@@ -305,52 +305,75 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     );
   }
 
+  void jumpToTab(int index) {
+    if (widget.scrollController.hasClients) {
+      widget.scrollController.jumpTo(
+        index * ScreenUtils.width(context) * 0.42,
+      );
+    }
+  }
+
   SliverPinnedHeader tabBarContent(int index) {
+    List<GlobalKey> _keys = [];
     return SliverPinnedHeader(
-      child: Padding(
-        padding: showStories ? EdgeInsets.only(top: 130.0) : EdgeInsets.only(top: 10),
-        child: Container(
-          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          child: SingleChildScrollView(
-            controller: widget.scrollController,
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: widget.courseEnrollments.map((course) {
-                final i = widget.courseEnrollments.indexOf(course);
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 15),
-                  child: GestureDetector(
-                    onTap: () {
-                      widget.carouselController.jumpToPage(i);
-                      setState(() {
-                        widget.index = i;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Center(
-                              child: Text(
-                                course.course.name,
-                                style: OlukoFonts.olukoBigFont(
-                                  custoFontWeight: FontWeight.normal,
-                                  customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
+      child: VisibilityDetector(
+        key: Key('tabBar'),
+        onVisibilityChanged: (VisibilityInfo info) {
+          if (info.visibleFraction == 1) {
+            widget.scrollController.position.ensureVisible(
+              _keys[index].currentContext.findRenderObject(),
+              alignment: 0,
+              duration: const Duration(milliseconds: 800),
+            );
+          }
+        },
+        child: Padding(
+          padding: showStories ? EdgeInsets.only(top: 130.0) : EdgeInsets.only(top: 10),
+          child: Container(
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+            child: SingleChildScrollView(
+              controller: widget.scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.courseEnrollments.map((course) {
+                  final i = widget.courseEnrollments.indexOf(course);
+                  _keys.add(GlobalKey(debugLabel: i.toString()));
+                  return Padding(
+                    key: _keys[i],
+                    padding: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        widget.carouselController.jumpToPage(i);
+                        setState(() {
+                          widget.index = i;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Center(
+                                child: Text(
+                                  course.course.name,
+                                  style: OlukoFonts.olukoBigFont(
+                                    custoFontWeight: FontWeight.normal,
+                                    customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        getSelectedAndScroll(i, index),
-                      ],
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          getSelectedAndScroll(i, index),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ),
