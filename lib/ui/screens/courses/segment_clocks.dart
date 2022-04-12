@@ -338,6 +338,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               if (alertTimerPlaying) {
                 alertTimer.cancel();
               }
+              stopwatchTimer.cancel();
             } else {
               panelController.close();
               workState = lastWorkStateBeforePause;
@@ -348,6 +349,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   _playAlertTimer();
                 }
               }
+              _startStopwatch();
             }
             isPlaying = !isPlaying;
           });
@@ -931,13 +933,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
 
-  _stopAndResetStopwatch() {
+  void _stopAndResetStopwatch() {
     stopwatchTimer.cancel();
     stopwatchDuration = Duration();
     BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
 
-  _resume() {
+  void _resume() {
     setState(() {
       workState = WorkState.exercising;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
