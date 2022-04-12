@@ -388,8 +388,8 @@ class Routes {
   final ProjectConfigurationBloc _projectConfigurationBloc = ProjectConfigurationBloc();
   final PushNotificationBloc _pushNotificationBloc = PushNotificationBloc();
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
-  final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
+  final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.

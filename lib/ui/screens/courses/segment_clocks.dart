@@ -212,8 +212,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 );
 
                                 _globalService.videoProcessing = true;
-                                BlocProvider.of<CoachRequestStreamBloc>(context)
-                                    .resolve(_coachRequest, _user.uid, RequestStatusEnum.ignored);
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
@@ -656,6 +654,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
       _setupCameras();
     }
 
+    /*if (isSegmentWithoutRecording() && timerTaskIndex == 1 && _coachRequest != null) {
+      BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+    }*/
+
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
@@ -914,7 +916,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
     BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex],
-        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest != null);
+        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
   }
 
 //STOPWATCH FUNCTIONS

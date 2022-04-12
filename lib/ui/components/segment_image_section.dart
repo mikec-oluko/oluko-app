@@ -4,12 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
@@ -319,6 +321,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   navigateToSegmentWithoutRecording() {
     TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer, widget.segment.rounds, 0);
+    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
   }
 
   Object getArguments() {
