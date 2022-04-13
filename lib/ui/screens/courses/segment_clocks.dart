@@ -224,6 +224,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                     context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
+                                topBarIcon = SizedBox();
                                 _segmentSubmission = state?.segmentSubmission;
                               }
                             }

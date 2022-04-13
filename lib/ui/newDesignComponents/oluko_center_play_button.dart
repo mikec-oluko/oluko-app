@@ -35,9 +35,6 @@ class _OlukoCenterPlayButtonState extends State<OlukoCenterPlayButton> {
           duration: const Duration(milliseconds: 300),
           child: GestureDetector(
             onTap: () {
-              setState(() {
-                _play = !_play;
-              });
               widget.onPressed();
             },
             child: SizedBox(
@@ -46,7 +43,7 @@ class _OlukoCenterPlayButtonState extends State<OlukoCenterPlayButton> {
               child: OlukoBlurredButton(
                 childContent: widget.isFinished
                     ? Icon(Icons.replay, color: widget.iconColor)
-                    : _play
+                    : !widget.isPlaying
                         ? Image.asset(
                             'assets/courses/white_play.png',
                             scale: 3.5,

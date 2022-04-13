@@ -28,13 +28,10 @@ class _State extends State<SegmentStepSection> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                if (OlukoNeumorphism.isNeumorphismDesign)
-                  SizedBox.shrink()
-                else
-                  Text(
-                    '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
-                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
-                  )
+                Text(
+                  '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                )
               ],
             ),
             Row(

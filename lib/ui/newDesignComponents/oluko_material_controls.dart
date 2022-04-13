@@ -8,13 +8,16 @@ import 'package:chewie/src/helpers/utils.dart';
 import 'package:chewie/src/material/widgets/options_dialog.dart';
 import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_center_play_button.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/src/material/widgets/playback_speed_dialog.dart';
 import 'package:chewie/src/models/subtitle_model.dart';
 
 class OlukoMaterialControls extends StatefulWidget {
-  const OlukoMaterialControls({Key key}) : super(key: key);
+  bool showOptions;
+   OlukoMaterialControls({Key key,this.showOptions=false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -88,7 +91,7 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
                       offset: Offset(0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
                       child: _buildSubtitles(context, chewieController.subtitle),
                     ),
-                  // _buildBottomBar(context),
+                  widget.showOptions ?_buildBottomBar(context):SizedBox(),
                 ],
               ),
             ],
@@ -136,7 +139,7 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
           child: Row(
             children: [
               _buildSubtitleToggle(),
-              //if (chewieController.showOptions) _buildOptionsButton(),
+            if(widget.showOptions) if (chewieController.showOptions) _buildOptionsButton(),
             ],
           ),
         ),
@@ -144,15 +147,44 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
     );
   }
 
-  Widget _buildOptionsButton() {
-    final options = <OptionItem>[];
+  Future<void> _onSpeedButtonTap() async {
+    _hideTimer?.cancel();
 
+    final chosenSpeed = await showModalBottomSheet<double>(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: chewieController.useRootNavigator,
+      builder: (context) => PlaybackSpeedDialog(
+        speeds: chewieController.playbackSpeeds,
+        selected: _latestValue.playbackSpeed,
+      ),
+    );
+
+    if (chosenSpeed != null) {
+      controller.setPlaybackSpeed(chosenSpeed);
+    }
+
+    if (_latestValue.isPlaying) {
+      _startHideTimer();
+    }
+  }
+
+  Widget _buildOptionsButton() {
+    final options = <OptionItem>[
+      OptionItem(
+        onTap: () async {
+          _onSpeedButtonTap();
+        },
+        iconData: Icons.speed,
+        title: chewieController.optionsTranslation?.playbackSpeedButtonText ?? 'Playback speed',
+      )
+    ];
     if (chewieController.subtitle != null && chewieController.subtitle.isNotEmpty) {
       options.add(
         OptionItem(
           onTap: () {
             _onSubtitleTap();
-            Navigator.pop(context);
           },
           iconData: _subtitleOn ? Icons.closed_caption : Icons.closed_caption_off_outlined,
           title: chewieController.optionsTranslation?.subtitlesButtonText ?? 'Subtitles',
@@ -175,9 +207,11 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
             await chewieController.optionsBuilder(context, options);
           } else {
             await showModalBottomSheet<OptionItem>(
+              barrierColor: Colors.transparent,
               context: context,
+              backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
               isScrollControlled: true,
-              useRootNavigator: true,
+              useRootNavigator: chewieController.useRootNavigator,
               builder: (context) => OptionsDialog(
                 options: options,
                 cancelButtonText: chewieController.optionsTranslation?.cancelButtonText,
@@ -491,13 +525,12 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
 
           _startHideTimer();
         },
-        colors: chewieController.materialProgressColors ??
-            ChewieProgressColors(
-              playedColor: Theme.of(context).accentColor,
-              handleColor: Theme.of(context).accentColor,
-              bufferedColor: Theme.of(context).backgroundColor.withOpacity(0.5),
-              backgroundColor: Theme.of(context).disabledColor.withOpacity(.5),
-            ),
+        colors: ChewieProgressColors(
+          playedColor: OlukoColors.grayColor,
+          handleColor: OlukoColors.grayColor,
+          bufferedColor: Theme.of(context).backgroundColor.withOpacity(0.5),
+          backgroundColor: Theme.of(context).disabledColor.withOpacity(.5),
+        ),
       ),
     );
   }

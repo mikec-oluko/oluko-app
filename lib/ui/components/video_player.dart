@@ -17,7 +17,7 @@ class OlukoVideoPlayer extends StatefulWidget {
   final String filePath;
   final bool allowFullScreen;
   final bool isOlukoControls;
-  
+  final bool showOptions;
   final Function(ChewieController chewieController) whenInitialized;
   final Function() onVideoFinished;
   final Function() closeVideoPlayer;
@@ -34,8 +34,9 @@ class OlukoVideoPlayer extends StatefulWidget {
     this.aspectRatio,
     Key key,
     this.allowFullScreen = true,
-    this.isOlukoControls = false, 
+    this.isOlukoControls = false,
     this.closeVideoPlayer,
+    this.showOptions=false,
   }) : super(key: key);
 
   @override
@@ -75,7 +76,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
     Widget controls;
     if (Platform.isAndroid) {
-      OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls ? controls = OlukoMaterialControls() : controls = MaterialControls();
+      OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls ? controls = OlukoMaterialControls(showOptions:widget.showOptions) : controls = MaterialControls();
     } else if (Platform.isIOS) {
       //TODO:Change IOS controls
       OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls

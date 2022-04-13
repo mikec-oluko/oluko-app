@@ -525,7 +525,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
       case UserConnectStatus.connected:
         BottomDialogUtils.removeConfirmationPopup(
             _currentAuthUser.id, userRequested, friendData, context, BlocProvider.of<FriendBloc>(context));
-
         break;
       case UserConnectStatus.notConnected:
         BlocProvider.of<FriendRequestBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
@@ -617,12 +616,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   height: MediaQuery.of(context).size.height,
                 ),
         ),
-        OlukoNeumorphism.isNeumorphismDesign
-            ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
-                child: OlukoNeumorphicCircleButton(onPressed: () => Navigator.pop(context)),
-              )
-            : SizedBox.shrink(),
+        if (OlukoNeumorphism.isNeumorphismDesign)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                      width: 52,
+                      height: 52,
+                      child: Image.asset(
+                        'assets/courses/left_back_arrow.png',
+                        scale: 3.5,
+                      )),
+                )),
+          )
+        else
+          SizedBox.shrink(),
       ]),
     );
   }

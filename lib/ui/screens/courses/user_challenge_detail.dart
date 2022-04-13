@@ -28,12 +28,14 @@ import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
+import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_text_button.dart';
 import 'package:oluko_app/ui/screens/courses/challenge_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_recorder.dart';
@@ -73,7 +75,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,false);
     recorder.init();
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.challenge.segmentId, widget.userRequested.id);
   }
@@ -202,40 +204,44 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   }
 
   Widget classInfoSection() {
-    return ListView(children: [
-      Padding(
-          padding: const EdgeInsets.only(bottom: 3),
-          child: Column(children: [
-            OverlayVideoPreview(image: _segment.challengeImage, video: _segment.challengeVideo, showBackButton: true, bottomWidgets: [
-              BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
-                if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
-                  final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
-                  final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
-                  final int qty = favorites + normalUsers;
-                  return CourseInfoSection(
-                    peopleQty: qty,
-                    image: _courseEnrollment.course.image,
-                    clockAction: () => _clockAction(widget.challenge.segmentId),
-                    onPeoplePressed: () => _peopleAction(doneChallengeUsersState.users, doneChallengeUsersState.favoriteUsers),
-                  );
-                } else {
-                  return CourseInfoSection(
-                    peopleQty: 0,
-                    image: _courseEnrollment.course.image,
-                    clockAction: () {},
-                  );
-                }
-              })
-            ]),
-            ChallengeDetailSection(segment: _segment),
-            ChallengeAudioSection(
-              user: _user,
-              challengeId: widget.challenge.id,
-              recorder: recorder,
-              userFirstName: widget.userRequested.firstName,
-              panelController: panelController,
-            )
-          ])),
+    return Stack(children: [
+      ListView(children: [
+        Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: Column(children: [
+              OverlayVideoPreview(image: _segment.image, video: _segment.challengeVideo, showBackButton: true, bottomWidgets: [
+                BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
+                  if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
+                    final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
+                    final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
+                    final int qty = favorites + normalUsers;
+                    return CourseInfoSection(
+                      isUserChallengeSection: true,
+                      peopleQty: qty,
+                      image: _courseEnrollment.course.image,
+                      clockAction: () => _clockAction(widget.challenge.segmentId),
+                      onPeoplePressed: () => _peopleAction(
+                        doneChallengeUsersState.users,
+                        doneChallengeUsersState.favoriteUsers,
+                      ),
+                    );
+                  } else {
+                    return CourseInfoSection(
+                      peopleQty: 0,
+                      image: _courseEnrollment.course.image,
+                      clockAction: () {},
+                    );
+                  }
+                })
+              ]),
+              ChallengeDetailSection(segment: _segment),
+              Container(
+                color: OlukoNeumorphismColors.appBackgroundColor,
+                height: ScreenUtils.height(context) * 0.16,
+              )
+            ])),
+      ]),
+      Positioned(bottom: 0, child: showChallengeAudioModal())
     ]);
   }
 
@@ -245,5 +251,18 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
 
   _clockAction(String segmentId) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
+  }
+
+  Widget showChallengeAudioModal() {
+    return SizedBox(
+      width: ScreenUtils.width(context),
+      child: ChallengeAudioSection(
+        user: _user,
+        challengeId: widget.challenge.id,
+        recorder: recorder,
+        userFirstName: widget.userRequested.firstName,
+        panelController: panelController,
+      ),
+    );
   }
 }
