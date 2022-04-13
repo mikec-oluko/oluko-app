@@ -469,7 +469,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             child: SizedBox(
               height: ScreenUtils.height(context) * 0.14,
               width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(workoutType, shareDone, context, shareDoneAction, goToClassAction,
+              child: SegmentClocksUtils.showButtonsWhenFinished(widget.workoutType, shareDone, context, shareDoneAction, goToClassAction,
                   nextSegmentAction, widget.segments, widget.segmentIndex),
             ),
           )
