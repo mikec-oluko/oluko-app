@@ -219,7 +219,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                       isUserChallengeSection: true,
                       peopleQty: qty,
                       image: _courseEnrollment.course.image,
-                      clockAction: () => _clockAction(),
+                      clockAction: () => _clockAction(widget.challenge.segmentId),
                       onPeoplePressed: () => _peopleAction(
                         doneChallengeUsersState.users,
                         doneChallengeUsersState.favoriteUsers,
@@ -249,8 +249,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
-  _clockAction() {
-    BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel();
+  _clockAction(String segmentId) {
+    BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
   }
 
   Widget showChallengeAudioModal() {

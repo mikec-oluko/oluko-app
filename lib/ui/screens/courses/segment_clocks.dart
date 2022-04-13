@@ -14,8 +14,10 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
+import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -23,6 +25,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
+import 'package:oluko_app/models/enums/personal_record_param.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -94,6 +97,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
 
+  int realTaskIndex = 0;
+
   //Alert timer
   Duration alertTimeLeft;
   Timer alertTimer;
@@ -141,6 +146,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool _isFromChallenge = false;
   Duration currentTime;
   bool open = true;
+  int durationPR = 0;
 
   @override
   void initState() {
@@ -208,8 +214,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                 );
 
                                 _globalService.videoProcessing = true;
-                                BlocProvider.of<CoachRequestStreamBloc>(context)
-                                    .resolve(_coachRequest, _user.uid, RequestStatusEnum.ignored);
                               }
                             } else if (state is UpdateSegmentSubmissionSuccess) {
                               waitingForSegSubCreation = false;
@@ -337,6 +341,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               if (alertTimerPlaying) {
                 alertTimer.cancel();
               }
+              stopwatchTimer.cancel();
             } else {
               panelController.close();
               workState = lastWorkStateBeforePause;
@@ -347,6 +352,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   _playAlertTimer();
                 }
               }
+              _startStopwatch();
             }
             isPlaying = !isPlaying;
           });
@@ -629,15 +635,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     _saveStopwatch();
 
-    if (timerTaskIndex == timerEntries.length - 1) {
+    if (timerTaskIndex == timerEntries.length - 1 && realTaskIndex <= timerEntries.length - 1) {
       setState(() {
         _roundAlert = null;
       });
       _finishWorkout();
+      realTaskIndex++;
       return;
     }
 
     timerTaskIndex++;
+    realTaskIndex++;
     if (((timerTaskIndex - 1) == 0) || timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
       setAlert();
     }
@@ -653,6 +661,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
       _setupCameras();
     }
 
+    /*if (isSegmentWithoutRecording() && timerTaskIndex == 1 && _coachRequest != null) {
+      BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+    }*/
+
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
@@ -664,6 +676,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
             timerEntries[timerTaskIndex].sectionIndex < timerEntries[timerTaskIndex + 1].sectionIndex ||
             timerEntries[timerTaskIndex].round < timerEntries[timerTaskIndex + 1].round)) {
       int currentDuration = stopwatchDuration.inSeconds;
+      durationPR += currentDuration;
+      totalScore += currentDuration;
+      scores[timerEntries[timerTaskIndex].round] = currentDuration.toString() + ' s';
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
         widget.courseEnrollment,
@@ -737,14 +752,37 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     if (widget.segments[widget.segmentIndex].isChallenge) {
       StoryUtils.createNewPRChallengeStory(context, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+      BlocProvider.of<PersonalRecordBloc>(context).create(
+          widget.segments[widget.segmentIndex],
+          widget.courseEnrollment,
+          getPersonalRecordValue(),
+          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]));
     }
 
     Wakelock.disable();
-    setState(() {
-      if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+
+    if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+      setState(() {
         topBarIcon = SegmentClocksUtils.uploadingIcon();
-      }
-    });
+      });
+    }
+
+    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
+      BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
+    }
+  }
+
+  int getPersonalRecordValue() {
+    int value;
+    CounterEnum counter = timerEntries[timerEntries.length - 1].counter;
+    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
+      value = AMRAPRound;
+    } else if (counter != CounterEnum.none) {
+      value = totalScore;
+    } else {
+      value = durationPR;
+    }
+    return value;
   }
 
   setAlert() {
@@ -885,7 +923,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
     BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex],
-        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest != null);
+        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
   }
 
 //STOPWATCH FUNCTIONS
@@ -897,14 +935,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     final int addSeconds = 1;
     final int seconds = stopwatchDuration.inSeconds + addSeconds;
     stopwatchDuration = Duration(seconds: seconds);
+    BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
 
-  _stopAndResetStopwatch() {
+  void _stopAndResetStopwatch() {
     stopwatchTimer.cancel();
     stopwatchDuration = Duration();
+    BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
 
-  _resume() {
+  void _resume() {
     setState(() {
       workState = WorkState.exercising;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
