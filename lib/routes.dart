@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
@@ -390,6 +391,7 @@ class Routes {
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
+   final CarrouselBloc _carrouselBloc = CarrouselBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -459,6 +461,8 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
+          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc)
+          
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([

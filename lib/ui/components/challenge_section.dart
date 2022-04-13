@@ -15,7 +15,7 @@ class ChallengeSection extends StatefulWidget {
   final bool addTitle;
   final bool addName;
 
-  ChallengeSection({this.addName=false, this.challenges, this.addTitle = false, this.challengesCard});
+  ChallengeSection({this.addName = false, this.challenges, this.addTitle = false, this.challengesCard});
 
   @override
   _State createState() => _State();
@@ -40,6 +40,12 @@ class _State extends State<ChallengeSection> {
               color: OlukoColors.grayColor,
               height: 50,
             ),
+          Text(
+            widget.challengesCard.length > 1
+                ? '${widget.challengesCard.length} ${OlukoLocalizations.get(context, 'challenges')}'
+                : '${widget.challengesCard.length} ${OlukoLocalizations.get(context, 'challenge')}',
+            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.bold),
+          ),
           widget.addTitle
               ? OlukoNeumorphism.isNeumorphismDesign
                   ? Text(
@@ -81,30 +87,30 @@ class _State extends State<ChallengeSection> {
 
   List<Widget> getChallengesCards() {
     List<Widget> challengeCards = [];
-     widget.challenges.forEach((challenge) {
-            challengeCards.add(
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    child: CachedNetworkImage(
-                      imageUrl: challenge.image,
-                      height: 140,
-                      width: 100,
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  ),
-                  Image.asset(
-                    'assets/courses/locked_challenge.png',
-                    width: 60,
-                    height: 60,
-                  )
-                ],
+    widget.challenges.forEach((challenge) {
+      challengeCards.add(
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            ClipRRect(
+              child: CachedNetworkImage(
+                imageUrl: challenge.image,
+                height: 140,
+                width: 100,
+                fit: BoxFit.cover,
               ),
-            );
-            challengeCards.add(SizedBox(width: 15));
-          });
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+            ),
+            Image.asset(
+              'assets/courses/locked_challenge.png',
+              width: 60,
+              height: 60,
+            )
+          ],
+        ),
+      );
+      challengeCards.add(SizedBox(width: 15));
+    });
     return challengeCards;
   }
 }

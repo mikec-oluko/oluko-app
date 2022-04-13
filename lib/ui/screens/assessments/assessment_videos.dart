@@ -224,8 +224,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     if (!OlukoNeumorphism.isNeumorphismDesign)
                                       OlukoPrimaryButton(
                                         title: OlukoLocalizations.get(context, 'done'),
-                                        onPressed: () {
-                                          DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
+                                        onPressed: () async {
+                                          if (await popUp(context)) Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                                          return false;
                                         },
                                       )
                                   ])
@@ -293,6 +294,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
+                isOlukoControls: true,
+                showOptions: true,
                 videoUrl: videoUrl,
                 autoPlay: false,
                 whenInitialized: (ChewieController chewieController) => setState(() {
@@ -447,7 +450,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
                         } else {
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                          Navigator.pushNamed(
+                            context,
+                            routeLabels[RouteEnum.root],
+                          );
                         }
                       },
                     ),
@@ -465,5 +471,78 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 ))
           ]))
     ];
+  }
+
+  Future<bool> popUp(BuildContext context) async {
+    bool result = false;
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: ScreenUtils.height(context) * 0.4,
+              child: Column(children: [
+                Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/assessment/green_ellipse.png',
+                    scale: 2,
+                  ),
+                  Image.asset(
+                    'assets/assessment/gray_check.png',
+                    scale: 5,
+                  )
+                ]),
+                Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
+                    child: Text(
+                      OlukoLocalizations.get(context, 'done!'),
+                      style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                    )),
+                Text(
+                  OlukoLocalizations.get(context, 'assessmentMessagePart1'),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                ),
+                Text(
+                  OlukoLocalizations.get(context, 'assessmentMessagePart2'),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                ),
+              ]),
+            )),
+        actions: [
+          Padding(
+              padding: const EdgeInsets.only(top: 25.0),
+              child: Row(
+                children: [
+                  OlukoOutlinedButton(
+                    title: OlukoLocalizations.get(context, 'goBack'),
+                    thinPadding: true,
+                    onPressed: () {
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 20),
+                  OlukoPrimaryButton(
+                    title: OlukoLocalizations.get(context, 'ok'),
+                    onPressed: () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      Navigator.pop(context);
+                      result = true;
+                    },
+                  ),
+                ],
+              ))
+        ],
+      ),
+    );
+
+    return result;
   }
 }

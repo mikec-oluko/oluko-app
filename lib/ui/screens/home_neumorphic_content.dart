@@ -3,8 +3,10 @@ import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
@@ -25,6 +27,8 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeNeumorphicContent extends StatefulWidget {
   HomeNeumorphicContent(this.courseEnrollments, this.authState, this.courses, this.user, {Key key, this.index = 0}) : super(key: key);
@@ -46,7 +50,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   ChewieController _controller;
   bool isVideoVisible = false;
   String mediaURL;
-
+  bool showStories = false;
+  bool showLogo = true;
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
@@ -87,22 +92,56 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           },
           body: CarouselSlider.builder(
             carouselController: widget.carouselController,
-            itemCount: widget.courseEnrollments.length,
+            itemCount: widget.courseEnrollments.length + 1,
             itemBuilder: (context, index) {
               if (widget.courses.length - 1 >= index) {
                 if (widget.courses[index] != null) {
                   return CustomScrollView(
                     slivers: <Widget>[
-                      if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
-                      getTabBar(context, index),
-                      getClassView(index, context),
+                      SliverStack(children: [
+                        getClassView(index, context),
+                        if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+                        getTabBar(context, index),
+                      ]),
                     ],
                   );
                 } else {
                   return const SizedBox();
                 }
               } else {
-                return const SizedBox();
+                return Container(
+                  color: OlukoNeumorphismColors.appBackgroundColor,
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.1),
+                        child: Image.asset(
+                          'assets/home/mvt.png',
+                          scale: 2,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: ScreenUtils.height(context) * 0.1,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                          },
+                          child: Neumorphic(
+                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: Image.asset(
+                                'assets/home/plus.png',
+                                scale: 4,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
               }
             },
             options: CarouselOptions(
@@ -111,9 +150,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               height: ScreenUtils.height(context),
               initialPage: widget.index ?? 0,
               viewportFraction: 1,
-              onPageChanged: (index, reason) => widget.scrollController.jumpTo(
-                index * ScreenUtils.width(context) * 0.42,
-              ),
+              onPageChanged: (index, reason) {
+                if (index <= widget.courses.length - 1) {
+                  if (!showLogo) {
+                    setState(() {
+                      showLogo = true;
+                    });
+                  }
+                } else {
+                  setState(() {
+                    showLogo = false;
+                  });
+                }
+                if (widget.scrollController.hasClients) {
+                  widget.scrollController.jumpTo(
+                    index * ScreenUtils.width(context) * 0.42,
+                  );
+                }
+              },
             ),
           ),
         ),
@@ -125,43 +179,40 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   SliverToBoxAdapter getLogo() {
     return SliverToBoxAdapter(
-      child: Container(
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, top: 40),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image.asset(
-                'assets/home/mvt.png',
-                scale: 4,
-              ),
-              HandWidget(authState: widget.authState),
-            ],
-          ),
-        ),
-      ),
+        child: showLogo
+            ? Container(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 40),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        'assets/home/mvt.png',
+                        scale: 4,
+                      ),
+                      HandWidget(authState: widget.authState),
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox());
+  }
+
+  Widget getStoriesBar(BuildContext context) {
+    return BlocBuilder<StoryBloc, StoryState>(
+      builder: (context, hasStories) {
+        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
+        return enrolledContent(showStories);
+      },
     );
   }
 
-  MediaQuery getStoriesBar(BuildContext context) {
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: BlocBuilder<StoryBloc, StoryState>(
-        builder: (context, hasStories) {
-          final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
-          return enrolledContent(showStories);
-        },
-      ),
-    );
-  }
-
-  SliverAppBar enrolledContent(bool showStories) {
+  Widget enrolledContent(bool showStories) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
-      toolbarHeight: showStories ? 110 : 50,
+      toolbarHeight: showStories ? 110 : 0,
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       pinned: true,
       title: showStories
@@ -193,11 +244,21 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            widget.courses[index].name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+        VisibilityDetector(
+          key: Key('${index}'),
+          onVisibilityChanged: (VisibilityInfo info) {
+            if (info.visibleFraction < 0.001) {
+              BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
+            } else {
+              BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              widget.courses[index].name,
+              style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+            ),
           ),
         ),
         Padding(
@@ -233,64 +294,88 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget getTabBar(BuildContext context, int index) {
-    if (GlobalConfiguration().getValue('showStories') == 'true') {
-      return MediaQuery.removePadding(context: context, removeTop: true, child: tabBarContent(index));
-    } else {
-      return tabBarContent(index);
+    return BlocBuilder<CarrouselBloc, CarrouselState>(
+      builder: (context, state) {
+        if (state is CarrouselSuccess && state.widgetIndex == index) {
+          return tabBarContent(index);
+        } else {
+          return const SliverToBoxAdapter(child: SizedBox());
+        }
+      },
+    );
+  }
+
+  void jumpToTab(int index) {
+    if (widget.scrollController.hasClients) {
+      widget.scrollController.jumpTo(
+        index * ScreenUtils.width(context) * 0.42,
+      );
     }
   }
 
-  SliverAppBar tabBarContent(int index) {
-    return SliverAppBar(
-      bottom: const PreferredSize(
-        preferredSize: Size(double.infinity, 5),
-        child: OlukoNeumorphicDivider(),
-      ),
-      automaticallyImplyLeading: false,
-      toolbarHeight: 47,
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      pinned: true,
-      titleSpacing: 0,
-      title: SingleChildScrollView(
-        controller: widget.scrollController,
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: widget.courseEnrollments.map((course) {
-            final i = widget.courseEnrollments.indexOf(course);
-            return Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: GestureDetector(
-                onTap: () {
-                  widget.carouselController.jumpToPage(i);
-                  setState(() {
-                    widget.index = i;
-                  });
-                },
-                child: Column(
-                  children: [
-                    SizedBox(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Center(
-                          child: Text(
-                            course.course.name,
-                            style: OlukoFonts.olukoBigFont(
-                              custoFontWeight: FontWeight.normal,
-                              customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
+  SliverPinnedHeader tabBarContent(int index) {
+    List<GlobalKey> _keys = [];
+    return SliverPinnedHeader(
+      child: VisibilityDetector(
+        key: Key('tabBar'),
+        onVisibilityChanged: (VisibilityInfo info) {
+          if (info.visibleFraction == 1) {
+            widget.scrollController.position.ensureVisible(
+              _keys[index].currentContext.findRenderObject(),
+              alignment: 0,
+              duration: const Duration(milliseconds: 800),
+            );
+          }
+        },
+        child: Padding(
+          padding: showStories ? EdgeInsets.only(top: 130.0) : EdgeInsets.only(top: 10),
+          child: Container(
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+            child: SingleChildScrollView(
+              controller: widget.scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.courseEnrollments.map((course) {
+                  final i = widget.courseEnrollments.indexOf(course);
+                  _keys.add(GlobalKey(debugLabel: i.toString()));
+                  return Padding(
+                    key: _keys[i],
+                    padding: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        widget.carouselController.jumpToPage(i);
+                        setState(() {
+                          widget.index = i;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Center(
+                                child: Text(
+                                  course.course.name,
+                                  style: OlukoFonts.olukoBigFont(
+                                    custoFontWeight: FontWeight.normal,
+                                    customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          getSelectedAndScroll(i, index),
+                        ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    getSelectedAndScroll(i, index),
-                  ],
-                ),
+                  );
+                }).toList(),
               ),
-            );
-          }).toList(),
+            ),
+          ),
         ),
       ),
     );

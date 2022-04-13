@@ -4,6 +4,8 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/recorder_view.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengesCard extends StatefulWidget {
   final ChallengeNavigation segmentChallenge;
@@ -30,24 +32,39 @@ class _State extends State<ChallengesCard> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(height: 10),
       widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context),
       if (widget.useAudio && widget.audioIcon)
-        Padding(
-            padding: EdgeInsets.only(top: 13),
-            child: GestureDetector(
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
+        Row(
+        children: [
+          if (widget.useAudio && widget.audioIcon)
+            Padding(
+                padding: EdgeInsets.only(top: 13),
+                child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
                     arguments: {'challenge': widget.segmentChallenge.challengeForAudio, 'userRequested': widget.userRequested}),
-                child: Stack(alignment: Alignment.center, children: [
-                  Image.asset(
-                    'assets/courses/green_circle.png',
-                    scale: 6,
-                  ),
-                  Icon(Icons.mic, size: 23, color: OlukoColors.black)
-                ])))
-      else
-        SizedBox.shrink()
+                    child: Stack(alignment: Alignment.center, children: [
+                      Image.asset(
+                        'assets/courses/green_circle.png',
+                        scale: 7,
+                      ),
+                      Icon(Icons.mic, size: 20, color: OlukoColors.black)
+                    ])))
+          else
+            SizedBox.shrink(),
+          if (widget.useAudio && widget.audioIcon)
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: SizedBox(
+                  width: 85,
+                  child: Text(
+                    '${OlukoLocalizations.get(context, 'saveFor')}${widget.userRequested.firstName}',
+                    style: OlukoFonts.olukoSmallFont(),
+                  )),
+            )
+        ],
+      )
     ]);
   }
 
