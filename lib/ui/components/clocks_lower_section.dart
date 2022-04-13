@@ -121,7 +121,7 @@ class _State extends State<ClocksLowerSection> {
             ),
           ),
           const SizedBox(height: 5),
-          if (widget.counter)
+          if (widget.counter || widget.segments[widget.segmentIndex].isChallenge)
             SizedBox(
                 height: ScreenUtils.height(context) * 0.15,
                 child: ListView(
