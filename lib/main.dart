@@ -26,14 +26,7 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
-  bool firstTime;
-  final sharedPref = await SharedPreferences.getInstance();
-    final isFirstTime = sharedPref.getBool('first_time');
-    if (isFirstTime != null && !isFirstTime) {
-      firstTime = false;
-    } else {
-      firstTime = true;
-    }
+  final bool firstTime = await UserUtils.isFirstTime();
   final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
     initialRoute: route,
@@ -130,7 +123,6 @@ class _MyAppState extends State<MyApp> {
               },
               child: Navigator(
                 key: _navigatorKey,
-                initialRoute: widget.initialRoute,
                 onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
               ),
             );

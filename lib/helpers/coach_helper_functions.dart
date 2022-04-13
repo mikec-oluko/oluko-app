@@ -27,8 +27,7 @@ class CoachHelperFunctions {
               favorite: coachAssignment.isFavorite,
               createdAt: coachAssignment.createdAt ?? Timestamp.now(),
               video: Video(
-                url: coachAssignment.videoHLS ??
-                    (coachAssignment.video != null ? coachAssignment.video.url : coachAssignment.introductionVideo),
+                url: coachAssignment.videoHLS ?? (coachAssignment.video != null ? coachAssignment.video.url : null),
                 aspectRatio: coachAssignment.video != null ? coachAssignment.video.aspectRatio ?? 0.60 : 0.60,
                 thumbUrl: coachAssignment.video != null ? coachAssignment.video.thumbUrl ?? null : null,
               ),

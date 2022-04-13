@@ -26,8 +26,8 @@ class CoachAudioMessagesDispose extends CoachAudioMessagesState {
 }
 
 class CoachAudioMessagesUpdate extends CoachAudioMessagesState {
-  CoachAudioMessagesUpdate({this.coachAudioMessages});
-  final List<CoachAudioMessage> coachAudioMessages;
+  CoachAudioMessagesUpdate({this.coachAudioMessage});
+  final CoachAudioMessage coachAudioMessage;
 }
 
 class CoachAudioMessagesFailure extends CoachAudioMessagesState {
@@ -50,22 +50,30 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     }
   }
 
-  Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStream(String userId, String coachId) async {
+  Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStream({@required String userId, @required String coachId}) async {
     try {
       return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
+        List<CoachAudioMessage> _audioMessages = [];
+        CoachAudioMessage _audioDateUpdated;
         emit(Loading());
-        List<CoachAudioMessage> audioMessages = [];
+        if (snapshot.docChanges.isNotEmpty && snapshot.docChanges.first.newIndex != -1) {
+          _audioDateUpdated = CoachAudioMessage.fromJson(snapshot.docChanges.first.doc.data());
+          _audioDateUpdated.createdAt ??= Timestamp.now();
+        }
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((doc) {
-            final Map<String, dynamic> content = doc.data();
-            audioMessages.add(CoachAudioMessage.fromJson(content));
+            final Map<String, dynamic> _audioElement = doc.data();
+            _audioMessages.add(CoachAudioMessage.fromJson(_audioElement));
           });
-          // TODO: disabled needs fix in firebase added event, pending writes, [created_at == null]
-          // if (audioMessages.where((audioElement) => audioElement.createdAt == null).toList().isEmpty) {
-          //   audioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-          // }
         }
-        emit(CoachAudioMessagesSuccess(coachAudioMessages: audioMessages));
+        if (_audioDateUpdated != null) {
+          CoachAudioMessage _audioNoTimeSet =
+              _audioMessages.where((audioFromDoc) => audioFromDoc.id == _audioDateUpdated.id).toList().first;
+          if (_audioNoTimeSet != null) {
+            _audioMessages[_audioMessages.indexOf(_audioNoTimeSet)] = _audioDateUpdated;
+          }
+        }
+        emit(CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages));
       });
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -127,7 +135,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       audiosDir.createSync(recursive: true);
       final _audioPath = audioRecorded.path;
 
-      AudioMessageSubmodel _audioMessageSubmodel = await uploadAudio(_audioId, _audioPath, audioDuration);
+      AudioMessageSubmodel _audioMessageSubmodel = await _uploadAudio(_audioId, _audioPath, audioDuration);
       return _audioMessageSubmodel;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -139,7 +147,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     }
   }
 
-  Future<AudioMessageSubmodel> uploadAudio(String audioId, String audioPath, Duration audioDuration) async {
+  Future<AudioMessageSubmodel> _uploadAudio(String audioId, String audioPath, Duration audioDuration) async {
     String _audioUrl;
     AudioMessageSubmodel _audioMessageSubmodel;
     try {

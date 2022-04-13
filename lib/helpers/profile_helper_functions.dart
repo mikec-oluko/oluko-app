@@ -1,7 +1,9 @@
+import 'package:flutter/widgets.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileHelperFunctions {
   static List<ChallengeNavigation> getChallenges(List<CourseEnrollment> courseEnrollment) {
@@ -60,18 +62,18 @@ class ProfileHelperFunctions {
     return segmentChallenges;
   }
 
-  static String returnTitleForConnectButton(UserConnectStatus connectStatus) {
+  static String returnTitleForConnectButton(UserConnectStatus connectStatus, BuildContext context) {
     switch (connectStatus) {
       case UserConnectStatus.connected:
-        return 'remove';
+        return OlukoLocalizations.get(context, 'remove');
       case UserConnectStatus.notConnected:
-        return 'connect';
+        return OlukoLocalizations.get(context, 'connect');
       case UserConnectStatus.requestPending:
-        return 'connectionRequestCancelled';
+        return OlukoLocalizations.get(context, 'connectionRequestCancelled');
       case UserConnectStatus.requestReceived:
-        return 'confirm';
+        return OlukoLocalizations.get(context, 'confirm');
       default:
-        return 'fail';
+        return OlukoLocalizations.get(context, 'fail');
     }
   }
 }

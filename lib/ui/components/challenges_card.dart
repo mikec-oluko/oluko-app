@@ -2,13 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
-import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/recorder_view.dart';
 
 class ChallengesCard extends StatefulWidget {
-  final Challenge challenge;
   final ChallengeNavigation segmentChallenge;
   // final Function() routeToGo;
   final String routeToGo;
@@ -18,8 +15,7 @@ class ChallengesCard extends StatefulWidget {
   final bool audioIcon;
 
   ChallengesCard(
-      {this.challenge,
-      this.routeToGo,
+      {this.routeToGo,
       this.segmentChallenge,
       this.userRequested,
       this.useAudio = true,
@@ -36,19 +32,13 @@ class _State extends State<ChallengesCard> {
   Widget build(BuildContext context) {
     return Column(children: [
       SizedBox(height: 10),
-      if (widget.navigateToSegment)
-        widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context)
-      else
-        widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context),
+      widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context),
       if (widget.useAudio && widget.audioIcon)
         Padding(
             padding: EdgeInsets.only(top: 13),
             child: GestureDetector(
-                //TODO: CHALLENGE FOR AUDIO CHECK!!!!!
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail], arguments: {
-                      'challenge': widget.navigateToSegment ? widget.segmentChallenge.challengeForAudio : widget.challenge,
-                      'userRequested': widget.userRequested
-                    }),
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
+                    arguments: {'challenge': widget.segmentChallenge.challengeForAudio, 'userRequested': widget.userRequested}),
                 child: Stack(alignment: Alignment.center, children: [
                   Image.asset(
                     'assets/courses/green_circle.png',
@@ -91,16 +81,11 @@ class _State extends State<ChallengesCard> {
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                   color: OlukoColors.challengeLockedFilterColor,
                   image: DecorationImage(
-                    fit: BoxFit.cover,
-                    colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                    image: widget.navigateToSegment
-                        ? widget.segmentChallenge.challengeSegment.image != null
-                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
-                            : defaultImage
-                        : widget.challenge.image != null
-                            ? CachedNetworkImageProvider(widget.challenge.image)
-                            : defaultImage,
-                  ),
+                      fit: BoxFit.cover,
+                      colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
+                      image: widget.segmentChallenge.challengeSegment.image != null
+                          ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
+                          : defaultImage),
                 ),
               ),
               Image.asset(
@@ -144,15 +129,10 @@ class _State extends State<ChallengesCard> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                   image: new DecorationImage(
-                    fit: BoxFit.cover,
-                    image: widget.navigateToSegment
-                        ? widget.segmentChallenge.challengeSegment.image != null
-                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
-                            : defaultImage
-                        : widget.challenge.image != null
-                            ? CachedNetworkImageProvider(widget.challenge.image)
-                            : defaultImage,
-                  ),
+                      fit: BoxFit.cover,
+                      image: widget.segmentChallenge.challengeSegment.image != null
+                          ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
+                          : defaultImage),
                 ),
               ),
             ],
