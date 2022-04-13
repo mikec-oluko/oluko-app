@@ -55,7 +55,8 @@ class _State extends State<ChallengeAudioSection> {
         if (audioRecorded && state.stopRecording || !audioRecorded && state.stopRecording) {
           playAudioTimer(state.stopRecording);
           if (!audioRecorded) {
-            widget.recorder.delete(widget.recorder.audioUrl);
+            widget.recorder.dispose();
+            widget.recorder.init();
           }
         }
       }
