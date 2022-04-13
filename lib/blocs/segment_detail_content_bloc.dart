@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
-import 'package:oluko_app/models/submodels/user_submodel.dart';
 
 abstract class SegmentDetailContentState {}
 
@@ -21,7 +20,10 @@ class SegmentDetailContentPeopleOpen extends SegmentDetailContentState {
   SegmentDetailContentPeopleOpen({this.users, this.favorites});
 }
 
-class SegmentDetailContentClockOpen extends SegmentDetailContentState {}
+class SegmentDetailContentClockOpen extends SegmentDetailContentState {
+  String segmentId;
+  SegmentDetailContentClockOpen({this.segmentId});
+}
 
 class SegmentDetailContentSuccess extends SegmentDetailContentState {}
 
@@ -45,7 +47,7 @@ class SegmentDetailContentBloc extends Cubit<SegmentDetailContentState> {
     emit(SegmentDetailContentPeopleOpen(users: users, favorites: favorites));
   }
 
-  void openClockPanel() {
-    emit(SegmentDetailContentClockOpen());
+  void openClockPanel(String segmentId) {
+    emit(SegmentDetailContentClockOpen(segmentId: segmentId));
   }
 }

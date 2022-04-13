@@ -319,7 +319,7 @@ class TimerUtils {
     );
   }
 
-  static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide]) {
+  static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide, String duration]) {
     return Container(
         child: SizedBox(
             height: _watchHeight,
@@ -345,7 +345,7 @@ class TimerUtils {
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                 : OlukoColors.primary)),
-                    SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
+                    SizedBox(height: 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
                         style: OlukoFonts.olukoBigFont(
@@ -353,7 +353,8 @@ class TimerUtils {
                             customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
                     SizedBox(height: 5),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
-                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox()
+                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox(),
+                    duration == null ? const SizedBox.shrink() : durationField(duration, OlukoColors.lightOrange),
                   ])
                 ]))));
   }
@@ -374,13 +375,13 @@ class TimerUtils {
                           color: getGreenOrCoral,
                           backgroundColor: backgroundColor)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration),
+                    OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
                     const SizedBox(height: 12),
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Gilroy',
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 42 : 26,
+                            fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
@@ -399,7 +400,7 @@ class TimerUtils {
                           )
                         : const SizedBox.shrink(),
                     OlukoNeumorphism.isNeumorphismDesign && roundsValue != null ? getRoundLabel(roundsValue) : const SizedBox.shrink(),
-                    !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration),
+                    !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
                   ])
                 ]))));
   }
@@ -454,14 +455,13 @@ class TimerUtils {
   }
 
 //HELPER METHODS
-  static Widget durationField(String duration) {
+  static Widget durationField(String duration, Color color) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Text(duration,
           textAlign: TextAlign.center,
           style: OlukoFonts.olukoSubtitleFont(
-              custoFontWeight: FontWeight.bold,
-              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
+              custoFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? color : OlukoColors.white)),
     );
   }
 

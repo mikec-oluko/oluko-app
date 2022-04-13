@@ -4,12 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
@@ -22,8 +24,7 @@ import 'package:oluko_app/ui/components/coach_request_content.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
-import 'package:oluko_app/ui/components/vertical_divider.dart'
-    as verticalDivider;
+import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/self_recording_content.dart';
@@ -43,9 +44,8 @@ class SegmentImageSection extends StatefulWidget {
   final int totalSegmentStep;
   final String userId;
   final Function(List<Audio> audios, Challenge challenge) audioAction;
-  final Function(List<UserSubmodel> users, List<UserSubmodel> favorites)
-      peopleAction;
-  final Function() clockAction;
+  final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
+  final Function(String segmentId) clockAction;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int classIndex;
@@ -90,22 +90,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   @override
   void initState() {
-    _challengeAudios = widget.challenge == null
-        ? null
-        : AudioService.getNotDeletedAudios(widget.challenge.audios);
+    _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     _canStartSegment = canStartSegment();
-    BlocProvider.of<DoneChallengeUsersBloc>(context)
-        .get(widget.segment.id, widget.userId);
+    BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;
     super.initState();
   }
 
   bool canStartSegment() {
     if (widget.currentSegmentStep < 2) return true;
-    return widget.courseEnrollment.classes[widget.classIndex]
-            .segments[widget.currentSegmentStep - 2].completedAt !=
-        null;
+    return widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null;
   }
 
   @override
@@ -113,8 +108,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return WillPopScope(
       onWillPop: () {
         if (!widget.fromChallenge) {
-          Navigator.popUntil(
-              context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+          Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
           return Future(() => false);
         } else {
           return Future(() => true);
@@ -128,8 +122,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return Stack(
       children: [
         ListView(
-          padding:
-              OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null,
+          padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null,
           children: [
             Stack(
               children: [
@@ -140,9 +133,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 if (widget.segment.isChallenge) challengeButtons(),
                 //TODO: SEGMENT INFO
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                          OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
+                  padding: EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
                   child: segmentContent(),
                 ),
               ],
@@ -153,12 +144,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             //TODO: START WORKOUT
           ],
         ),
-        Positioned(
-            bottom: 100,
-            child: Align(
-                child: SizedBox(
-                    width: ScreenUtils.width(context),
-                    child: startWorkoutsButton()))),
+        Positioned(bottom: 100, child: Align(child: SizedBox(width: ScreenUtils.width(context), child: startWorkoutsButton()))),
         //TODO: Navigation buttons
         topButtons(),
       ],
@@ -171,10 +157,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.5),
             child: segmentInformation(),
           )
-        : Padding(
-            padding: EdgeInsets.only(
-                top: ScreenUtils.height(context) * 0.25, right: 15, left: 15),
-            child: segmentInformation());
+        : Padding(padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.25, right: 15, left: 15), child: segmentInformation());
   }
 
   Column segmentInformation() {
@@ -182,41 +165,26 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: OlukoNeumorphism.isNeumorphismDesign
-              ? MediaQuery.of(context).size.width - 40
-              : null,
+          width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
           child: Text(
-            widget.segment.isChallenge
-                ? (OlukoLocalizations.get(context, 'challengeTitle') +
-                    widget.segment.name)
-                : widget.segment.name,
+            widget.segment.isChallenge ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name) : widget.segment.name,
             style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-            overflow:
-                OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
           ),
         ),
         const SizedBox(height: 10),
         SizedBox(
-          width: OlukoNeumorphism.isNeumorphismDesign
-              ? MediaQuery.of(context).size.width - 40
-              : null,
+          width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
           child: Text(
             widget.segment.description,
             style: OlukoFonts.olukoBigFont(
-              custoFontWeight: OlukoNeumorphism.isNeumorphismDesign
-                  ? FontWeight.w300
-                  : FontWeight.w400,
-              customColor: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoColors.grayColor
-                  : OlukoColors.white,
+              custoFontWeight: OlukoNeumorphism.isNeumorphismDesign ? FontWeight.w300 : FontWeight.w400,
+              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
             ),
-            overflow:
-                OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
           ),
         ),
-        SegmentStepSection(
-            currentSegmentStep: widget.currentSegmentStep,
-            totalSegmentStep: widget.totalSegmentStep),
+        SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
@@ -224,9 +192,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             children: SegmentUtils.getSegmentSummary(
               widget.segment,
               context,
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoColors.grayColor
-                  : OlukoColors.white,
+              OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
             ),
           ),
         ),
@@ -237,8 +203,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? (widget.segment.isChallenge && _canStartSegment) ||
-                !widget.segment.isChallenge
+        ? (widget.segment.isChallenge && _canStartSegment) || !widget.segment.isChallenge
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: OlukoNeumorphicPrimaryButton(
@@ -249,8 +214,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       ? OlukoLocalizations.get(context, 'start')
                       : OlukoLocalizations.get(context, 'startWorkout'),
                   onPressed: () {
-                    BlocProvider.of<CurrentTimeBloc>(context)
-                        .setCurrentTimeNull();
+                    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
 
                     if (_coachRequest != null) {
                       //TODO: CHECK CHALLENGE
@@ -259,8 +223,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                         content: CoachRequestContent(
                           name: widget.coach?.firstName ?? '',
                           image: widget.coach?.avatar,
-                          onNotRecordingAction:
-                              navigateToSegmentWithoutRecording,
+                          onNotRecordingAction: navigateToSegmentWithoutRecording,
                           onRecordingAction: navigateToSegmentWithRecording,
                         ),
                       );
@@ -291,8 +254,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       : OlukoLocalizations.get(context, 'startWorkout'),
                   color: OlukoColors.primary,
                   onPressed: () {
-                    BlocProvider.of<CurrentTimeBloc>(context)
-                        .setCurrentTimeNull();
+                    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
 
                     if (_coachRequest != null) {
                       showCoachDialog();
@@ -337,8 +299,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 child: Text(
                   OlukoLocalizations.get(context, 'videoIsStillProcessing'),
                   textAlign: TextAlign.center,
-                  style: OlukoFonts.olukoBigFont(
-                      customColor: OlukoColors.grayColor),
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
                 ))
           ],
           showExitButton: true);
@@ -359,8 +320,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(),
-        widget.segment.initialTimer, widget.segment.rounds, 0);
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer, widget.segment.rounds, 0);
+    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
   }
 
   Object getArguments() {
@@ -379,9 +340,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget topButtons() {
     EdgeInsetsGeometry padding;
     if (_coachRequest != null) {
-      padding = const EdgeInsets.only(
-          top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15,
-          left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+      padding =
+          const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
     } else {
       padding = const EdgeInsets.only(
           top: OlukoNeumorphism.isNeumorphismDesign ? 60 : 15,
@@ -395,8 +355,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           if (widget.showBackButton)
             !OlukoNeumorphism.isNeumorphismDesign
                 ? IconButton(
-                    icon: const Icon(Icons.chevron_left,
-                        size: 35, color: Colors.white),
+                    icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
                     onPressed: () {
                       Navigator.pop(context);
                       if (widget.onPressed != null) {
@@ -405,8 +364,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     },
                   )
                 : OlukoNeumorphicCircleButton(
-                    customIcon: const Icon(Icons.arrow_back,
-                        color: OlukoColors.grayColor),
+                    customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
                     onPressed: () {
                       Navigator.pop(context);
                       if (widget.onPressed != null) {
@@ -455,18 +413,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 Image.asset(
                   'assets/courses/outlined_camera.png',
                   scale: 3,
-                  color: OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoColors.white
-                      : OlukoColors.primary,
+                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 1),
                   child: Icon(
                     Icons.circle_outlined,
                     size: 16,
-                    color: OlukoNeumorphism.isNeumorphismDesign
-                        ? OlukoColors.white
-                        : OlukoColors.primary,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
                   ),
                 )
               ],
@@ -512,10 +466,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               return const LinearGradient(
                 begin: Alignment.center,
                 end: Alignment.bottomCenter,
-                colors: [
-                  OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                  Colors.transparent
-                ],
+                colors: [OlukoNeumorphismColors.olukoNeumorphicBackgroundDark, Colors.transparent],
               ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
             },
             blendMode: BlendMode.dstIn,
@@ -563,13 +514,11 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget challengeButtons() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
-            padding: EdgeInsets.only(
-                left: 20, top: ScreenUtils.height(context) * 0.35),
+            padding: EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.35),
             child: challengeButtonsContent(),
           )
         : Padding(
-            padding: EdgeInsets.only(
-                left: 20, top: ScreenUtils.height(context) * 0.13),
+            padding: EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.13),
             child: challengeButtonsContent(),
           );
   }
@@ -588,13 +537,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(
               builder: (context, doneChallengeUsersState) {
                 if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
-                  final int favorites =
-                      doneChallengeUsersState.favoriteUsers != null
-                          ? doneChallengeUsersState.favoriteUsers.length
-                          : 0;
-                  final int normalUsers = doneChallengeUsersState.users != null
-                      ? doneChallengeUsersState.users.length
-                      : 0;
+                  final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
+                  final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
                   return PeopleAndIncludedInButtons(
                     widget: widget,
@@ -607,7 +551,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               },
             ),
             if (OlukoNeumorphism.isNeumorphismDesign) verticalDividerComponent,
-            GestureDetector(onTap: widget.clockAction, child: clockSection()),
+            GestureDetector(onTap: () => widget.clockAction(widget.segments[widget.currentSegmentStep - 1].id), child: clockSection()),
           ],
         )
       ],
@@ -645,8 +589,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           Text(
             OlukoLocalizations.get(context, 'personalRecord'),
             textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
           )
         ],
       ),
@@ -682,8 +625,7 @@ class PeopleAndIncludedInButtons extends StatelessWidget {
         if (state != null)
           GestureDetector(
             onTap: () => widget.peopleAction(state.users, state.favoriteUsers),
-            child: PeopleSection(
-                peopleQty: qty, isChallenge: widget.segment.isChallenge),
+            child: PeopleSection(peopleQty: qty, isChallenge: widget.segment.isChallenge),
           )
         else
           PeopleSection(peopleQty: 0, isChallenge: widget.segment.isChallenge),
@@ -697,29 +639,18 @@ class PeopleAndIncludedInButtons extends StatelessWidget {
               Text(
                 OlukoLocalizations.get(context, 'includedIn'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white),
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
               ),
               Text(
-                state != null && state.occurrencesInClasses != null
-                    ? state.occurrencesInClasses.toString()
-                    : '0',
+                state != null && state.occurrencesInClasses != null ? state.occurrencesInClasses.toString() : '0',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    color: OlukoColors.primary),
+                style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: OlukoColors.primary),
               ),
               const SizedBox(height: 5),
               Text(
                 OlukoLocalizations.get(context, 'classes').toLowerCase(),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white),
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
               ),
             ],
           )
