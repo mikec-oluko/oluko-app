@@ -160,7 +160,8 @@ class UserRepository {
   Future<UserResponse> updateUserCoverImage({UserResponse user, XFile coverImage}) async {
     final DocumentReference<Object> userReference = getUserReference(user);
 
-    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(coverImage.path, '${userReference.path}/coverImage/');
+    final thumbnail = await ImageUtils().getThumbnailForImage(coverImage, 1000);
+    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, '${userReference.path}/coverImage/');
     user.coverImage = coverDownloadImage;
     try {
       await userReference.update(user.toJson());
