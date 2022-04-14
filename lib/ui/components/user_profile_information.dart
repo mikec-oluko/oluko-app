@@ -165,42 +165,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 ? userInfoUnlocked(location)
                                 : userInfoLocked(),
                       ),
-                     /* if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
-                        Expanded(
-                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                            listener: (context, hiFiveSendState) {
-                              if (hiFiveSendState is HiFiveSendSuccess) {
-                                AppMessages.clearAndShowSnackbarTranslated(
-                                    context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
-                              }
-                              BlocProvider.of<HiFiveReceivedBloc>(context)
-                                  .get(context, _authState.user.id, widget.userToDisplayInformation.id);
-                            },
-                            child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
-                              return HiFiveReceivedState is HiFiveReceivedSuccess
-                                  ? TextButton(
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                      ),
-                                      onPressed: () {
-                                        BlocProvider.of<HiFiveSendBloc>(context).set(
-                                          context,
-                                          _authState.user.id,
-                                          widget.userToDisplayInformation.id,
-                                        );
-                                      },
-                                      child: Image.asset(
-                                        HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
-                                        colorBlendMode: BlendMode.lighten,
-                                        scale: 4,
-                                      ),
-                                    )
-                                  : const SizedBox.shrink();
-                            }),
-                          ),
-                        )
-                      else
-                        const SizedBox.shrink(),*/
                     ],
                   ),
                 ),
