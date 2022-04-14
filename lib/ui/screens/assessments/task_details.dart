@@ -370,40 +370,14 @@ class _TaskDetailsState extends State<TaskDetails> {
             thinPadding: true,
             title: OlukoLocalizations.get(context, 'startRecording'),
             onPressed: () {
-              if (_controller != null) {
-                _controller.pause();
-              }
-              if (_globalService.videoProcessing) {
-                showDialog();
-              } else {
-                Navigator.pop(context);
-                return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                  'taskIndex': widget.taskIndex,
-                  'isPublic': _makePublic ?? false,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-                  'fromCompletedClass': false
-                });
-              }
+              startRecordingAction();
             },
           )
         else
           OlukoPrimaryButton(
             title: OlukoLocalizations.get(context, 'startRecording'),
             onPressed: () {
-              if (_controller != null) {
-                _controller.pause();
-              }
-              if (_globalService.videoProcessing) {
-                showDialog();
-              } else {
-                Navigator.pop(context);
-                return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                  'taskIndex': widget.taskIndex,
-                  'isPublic': _makePublic ?? false,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-                  'fromCompletedClass': false
-                });
-              }
+              startRecordingAction();
             },
           ),
         const SizedBox(width: 15),
@@ -440,6 +414,23 @@ class _TaskDetailsState extends State<TaskDetails> {
     );
   }
 
+  void startRecordingAction() {
+    if (_controller != null) {
+      _controller.pause();
+    }
+    /*if (_globalService.videoProcessing) {
+      showDialog();
+    } else {*/
+    Navigator.pop(context);
+    Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+      'taskIndex': widget.taskIndex,
+      'isPublic': _makePublic ?? false,
+      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+      'fromCompletedClass': false
+    });
+    //}
+  }
+
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
     return Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(top: 20.0).copyWith(bottom: 20) : EdgeInsets.only(top: 20.0),
@@ -452,19 +443,19 @@ class _TaskDetailsState extends State<TaskDetails> {
                     thinPadding: true,
                     textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     onPressed: () {
-                      if (_globalService.videoProcessing) {
+                      /*if (_globalService.videoProcessing) {
                         showDialog();
+                      } else {*/
+                      if (OlukoNeumorphism.isNeumorphismDesign) {
+                        _panelController.animatePanelToPosition(1.0);
+                        setState(() {
+                          recordAgainRequested = !recordAgainRequested;
+                          panelSize = 250;
+                        });
                       } else {
-                        if (OlukoNeumorphism.isNeumorphismDesign) {
-                          _panelController.animatePanelToPosition(1.0);
-                          setState(() {
-                            recordAgainRequested = !recordAgainRequested;
-                            panelSize = 250;
-                          });
-                        } else {
-                          DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
-                        }
+                        DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                       }
+                      //}
                     },
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                   )
@@ -472,11 +463,11 @@ class _TaskDetailsState extends State<TaskDetails> {
                     thinPadding: true,
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
-                      if (_globalService.videoProcessing) {
+                      /*if (_globalService.videoProcessing) {
                         showDialog();
-                      } else {
+                      } else {*/
                         DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
-                      }
+                     // }
                     },
                   ),
             const SizedBox(width: 20),

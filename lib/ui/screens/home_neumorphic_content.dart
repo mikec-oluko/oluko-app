@@ -254,10 +254,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           key: Key('${index}'),
           onVisibilityChanged: (VisibilityInfo info) {
             if (info.visibleFraction < 0.001 && homeVisibilty > 0) {
-              BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
+              //BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
             } else {
               if (homeVisibilty > 0) {
-                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
+                //BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
               }
             }
           },
