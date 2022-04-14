@@ -52,12 +52,18 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   String mediaURL;
   bool showStories = false;
   bool showLogo = true;
+  double homeVisibilty;
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
         ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
     BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
-    return homeContainer();
+    return VisibilityDetector(
+        key: Key('Home'),
+        onVisibilityChanged: (VisibilityInfo info) {
+          homeVisibilty = info.visibleFraction;
+        },
+        child: homeContainer());
   }
 
   Widget homeContainer() {
@@ -247,10 +253,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         VisibilityDetector(
           key: Key('${index}'),
           onVisibilityChanged: (VisibilityInfo info) {
-            if (info.visibleFraction < 0.001 && info.visibleFraction > 0) {
+            if (info.visibleFraction < 0.001 && homeVisibilty> 0) {
               BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
             } else {
-              if (info.visibleFraction > 0) {
+              if (homeVisibilty > 0) {
                 BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
               }
             }
