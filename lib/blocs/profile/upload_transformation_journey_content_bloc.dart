@@ -50,7 +50,7 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
             exceptionType: ExceptionTypeEnum.loadFileFailed,
             exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
         return;
-      } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat) {
+      } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat && p.extension(_image.path) != ImageUtils.pngFormat) {
         emit(TransformationJourneyContentFailure(
             exception: Exception(), exceptionType: ExceptionTypeEnum.uploadFailed, exceptionSource: ExceptionTypeSourceEnum.invalidFormat));
         return;
