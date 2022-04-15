@@ -40,9 +40,9 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
       }
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.pickImage(source: ImageSource.gallery);
+        _image = await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50);
       } else if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.pickImage(source: ImageSource.camera);
+        _image = await imagePicker.pickImage(source: ImageSource.camera, imageQuality: 50);
       }
       if (_image == null && _image is! XFile) {
         emit(TransformationJourneyContentFailure(
@@ -50,7 +50,9 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
             exceptionType: ExceptionTypeEnum.loadFileFailed,
             exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
         return;
-      } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat && p.extension(_image.path) != ImageUtils.pngFormat) {
+      } else if (!(p.extension(_image.path) == ImageUtils.jpegFormat ||
+          p.extension(_image.path) == ImageUtils.jpgFormat ||
+          p.extension(_image.path) == ImageUtils.pngFormat)) {
         emit(TransformationJourneyContentFailure(
             exception: Exception(), exceptionType: ExceptionTypeEnum.uploadFailed, exceptionSource: ExceptionTypeSourceEnum.invalidFormat));
         return;

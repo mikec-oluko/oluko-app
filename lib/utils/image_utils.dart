@@ -32,7 +32,13 @@ class ImageUtils {
       calculatedHeight = (width ~/ aspectRatio);
     }
     var thumbnailPath = p.withoutExtension(image.path) + '_thumbnail' + p.extension(image.path);
-    var thumbnail = await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: calculatedHeight);
-    return thumbnail.path;
+
+    if (p.extension(image.path) != ImageUtils.pngFormat) {
+      var thumbnail =
+          await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: calculatedHeight);
+      return thumbnail.path;
+    }
+
+    return image.path;
   }
 }

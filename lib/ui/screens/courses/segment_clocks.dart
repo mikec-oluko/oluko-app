@@ -341,7 +341,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
               if (alertTimerPlaying) {
                 alertTimer.cancel();
               }
-              stopwatchTimer.cancel();
+              if (stopwatchTimer != null) {
+                stopwatchTimer.cancel();
+              }
             } else {
               panelController.close();
               workState = lastWorkStateBeforePause;

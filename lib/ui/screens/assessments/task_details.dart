@@ -418,9 +418,6 @@ class _TaskDetailsState extends State<TaskDetails> {
     if (_controller != null) {
       _controller.pause();
     }
-    /*if (_globalService.videoProcessing) {
-      showDialog();
-    } else {*/
     Navigator.pop(context);
     Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
       'taskIndex': widget.taskIndex,
@@ -428,7 +425,6 @@ class _TaskDetailsState extends State<TaskDetails> {
       'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
       'fromCompletedClass': false
     });
-    //}
   }
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
@@ -443,9 +439,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                     thinPadding: true,
                     textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     onPressed: () {
-                      /*if (_globalService.videoProcessing) {
-                        showDialog();
-                      } else {*/
                       if (OlukoNeumorphism.isNeumorphismDesign) {
                         _panelController.animatePanelToPosition(1.0);
                         setState(() {
@@ -463,11 +456,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     thinPadding: true,
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
-                      /*if (_globalService.videoProcessing) {
-                        showDialog();
-                      } else {*/
                         DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
-                     // }
                     },
                   ),
             const SizedBox(width: 20),
