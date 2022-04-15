@@ -59,19 +59,20 @@ class TransformationJourneyRepository {
 
       switch (type) {
         case FileTypeEnum.image:
-          thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
+          thumbnail = await ImageUtils().getThumbnailForImage(file, 150);
           break;
         case FileTypeEnum.video:
-          thumbnail = await VideoProcess.getThumbnailForVideo(file, 250);
+          thumbnail = await VideoProcess.getThumbnailForVideo(file, 150);
           break;
         default:
           //TODO Handle PDF Uploads
           break;
-      }
+      } 
       if (type == FileTypeEnum.image) {
         final thumbNaildownloadUrl = await _uploadFile(thumbnail, '${transformationJourneyUploadsReference.path}/thumbnails');
 
-        final downloadUrl = await _uploadFile(file.path, transformationJourneyUploadsReference.path);
+        final smallerDownloadUrl = await ImageUtils().getThumbnailForImage(file, 600);
+        final downloadUrl = await _uploadFile(smallerDownloadUrl, transformationJourneyUploadsReference.path);
 
         final TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(
             createdBy: userId,
