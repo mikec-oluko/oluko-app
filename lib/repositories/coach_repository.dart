@@ -312,7 +312,7 @@ class CoachRepository {
               contentTitle: courseRecommended.name,
               contentSubtitle: courseRecommended.classes.length.toString(),
               contentDescription: courseRecommended.duration,
-              contentImage: courseRecommended.image,
+              contentImage: courseRecommended.images.elementAt(courseRecommended.images.length ~/ 2) as String,
               contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               courseContent: courseRecommended);
@@ -329,7 +329,7 @@ class CoachRepository {
               contentTitle: movementRecommended.name,
               contentSubtitle: '',
               contentDescription: movementRecommended.description,
-              contentImage: movementRecommended.image,
+              contentImage: movementRecommended.images.elementAt(movementRecommended.images.length ~/ 2) as String,
               contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               movementContent: movementRecommended);
