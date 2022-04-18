@@ -41,7 +41,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget _friendUsersWidget = const SizedBox.shrink();
   Widget _appUsersWidget = const SizedBox.shrink();
   GetFriendsSuccess _friendState;
-  List<FriendModel> _friends;
+  List<FriendModel> _friends = [];
   final _title = 'Starred';
 
   @override
