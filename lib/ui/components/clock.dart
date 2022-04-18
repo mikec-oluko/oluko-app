@@ -446,11 +446,8 @@ class _State extends State<Clock> {
   Widget roundTimerWithPulse(bool keyboardVisibilty) {
     return AvatarGlow(
       glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
-      endRadius: 190,
-      child: Padding(
-        padding: EdgeInsets.all(ScreenUtils.smallScreen(context) ? 20 : 0),
-        child: getRoundsTimer(keyboardVisibilty),
-      ),
+      endRadius: 250,
+      child: getRoundsTimer(keyboardVisibilty),
     );
   }
 
@@ -571,7 +568,7 @@ class _State extends State<Clock> {
   }
 
   bool usePulseAnimation() {
-    if(isWorkStateFinished()){
+    if (isWorkStateFinished()) {
       return false;
     }
     return (OlukoNeumorphism.isNeumorphismDesign &&
