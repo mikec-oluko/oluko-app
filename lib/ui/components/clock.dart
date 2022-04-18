@@ -65,7 +65,7 @@ class _State extends State<Clock> {
   @override
   void initState() {
     AMRAPRound = 0;
-    if (isCurrentTaskTimed()) {
+    if (!isWorkStateFinished() && isCurrentTaskTimed()) {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
     }
@@ -570,11 +570,15 @@ class _State extends State<Clock> {
     return widget.workoutType == WorkoutType.segment;
   }
 
-  bool usePulseAnimation() =>
-      (OlukoNeumorphism.isNeumorphismDesign &&
-          !(widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.reps ||
-              widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.distance)) &&
-      (widget.workState == WorkState.resting);
+  bool usePulseAnimation() {
+    if(isWorkStateFinished()){
+      return false;
+    }
+    return (OlukoNeumorphism.isNeumorphismDesign &&
+            !(widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.reps ||
+                widget.timerEntries[widget.timerTaskIndex].counter == CounterEnum.distance)) &&
+        (widget.workState == WorkState.resting);
+  }
 
   bool useInput() => (isCurrentMovementRest() &&
       (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||

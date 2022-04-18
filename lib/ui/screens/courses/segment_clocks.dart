@@ -645,10 +645,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
       realTaskIndex++;
       return;
     }
+    if (timerTaskIndex < timerEntries.length - 1) {
+      timerTaskIndex++;
+    }
 
-    timerTaskIndex++;
     realTaskIndex++;
-    if (((timerTaskIndex - 1) == 0) || timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
+    if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
       setAlert();
     }
     _playTask();
@@ -670,6 +672,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
+  }
+
+  bool currentRoundDifferentToNextRound() {
+    if (timerTaskIndex >= timerEntries.length) {
+      return false;
+    }
+    if (timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
+      return true;
+    }
+    return false;
   }
 
   _saveStopwatch() {
