@@ -444,11 +444,12 @@ class _State extends State<Clock> {
   }
 
   Widget roundTimerWithPulse(bool keyboardVisibilty) {
-    return AvatarGlow(
-      glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
-      endRadius: 250,
-      child: getRoundsTimer(keyboardVisibilty),
-    );
+    return Stack(alignment: Alignment.center, children: [
+      Transform.scale(
+          scale: 2.5,
+          child: AvatarGlow(glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor, endRadius: 100, child: SizedBox.shrink())),
+      getRoundsTimer(keyboardVisibilty)
+    ]);
   }
 
   Widget getRoundsTimer(bool keyboardVisibilty) {
