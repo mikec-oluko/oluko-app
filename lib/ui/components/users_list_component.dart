@@ -13,7 +13,8 @@ class UserListComponent extends StatefulWidget {
   final AuthSuccess authUser;
   final List<UserResponse> users;
   final Function(UserResponse friendUser) onTapUser;
-  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser}) : super();
+  final Function() onTopScroll;
+  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.onTopScroll}) : super();
 
   @override
   State<UserListComponent> createState() => _UserListComponentState();
@@ -42,6 +43,9 @@ class _UserListComponentState extends State<UserListComponent> {
             _getMoreUsers();
             setState(() {});
           }
+        }
+        if (_listController.position.pixels == 0) {
+          widget.onTopScroll();
         }
       }
     });

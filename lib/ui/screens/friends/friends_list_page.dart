@@ -43,6 +43,13 @@ class _FriendsListPageState extends State<FriendsListPage> {
   GetFriendsSuccess _friendState;
   List<FriendModel> _friends = [];
   final _title = 'Starred';
+  final _viewScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _viewScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -63,6 +70,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 authUser: widget.authUser,
                 users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
                 onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(seconds: 1), curve: Curves.ease),
               );
             }
             if (userListState is UserListSuccess) {
@@ -71,6 +79,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 authUser: widget.authUser,
                 users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
                 onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(seconds: 1), curve: Curves.ease),
               );
             }
             if (friendState is FriendLoading || userListState is UserListLoading) {
@@ -86,6 +95,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   : _appUsersWidget;
             }
             return SingleChildScrollView(
+              controller: _viewScrollController,
               padding: EdgeInsets.zero,
               child: SizedBox(
                   height: ScreenUtils.height(context),
