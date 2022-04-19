@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
+import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -57,10 +58,13 @@ class Clock extends StatefulWidget {
 class _State extends State<Clock> {
   Timer countdownTimer;
 
-  int AMRAPRound = 0;
+  int AMRAPRound;
+
+  Duration stopwatch = Duration();
 
   @override
   void initState() {
+    AMRAPRound = 0;
     if (isCurrentTaskTimed()) {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
@@ -77,29 +81,37 @@ class _State extends State<Clock> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TimerTaskBloc, TimerTaskState>(
-        listener: (context, timerTaskState) {
-          if (timerTaskState is SetTimerTaskIndex) {
+    return BlocListener<StopwatchBloc, StopwatchState>(
+        listener: (context, stopwatchState) {
+          if (stopwatchState is UpdateStopwatchSuccess) {
             setState(() {
-              widget.timerTaskIndex = timerTaskState.timerTaskIndex;
-            });
-          } else if (timerTaskState is SetAMRAPRound) {
-            setState(() {
-              AMRAPRound = timerTaskState.AMRAPRound;
+              stopwatch = stopwatchState.duration;
             });
           }
         },
-        child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
-            listener: (context, state) {
-              if (state is ClocksTimerPlay) {
-                _playCountdown(() => state.goToNextStep(), () => state.setPaused());
-              } else if (state is ClocksTimerPause) {
-                _pauseCountdown(() => state.setPaused());
-              } else if (state is UpdateTimeLeft) {
-                widget.timeLeft = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value);
+        child: BlocListener<TimerTaskBloc, TimerTaskState>(
+            listener: (context, timerTaskState) {
+              if (timerTaskState is SetTimerTaskIndex) {
+                setState(() {
+                  widget.timerTaskIndex = timerTaskState.timerTaskIndex;
+                });
+              } else if (timerTaskState is SetAMRAPRound) {
+                setState(() {
+                  AMRAPRound = timerTaskState.AMRAPRound;
+                });
               }
             },
-            child: _timerSection(widget.keyboardVisibilty)));
+            child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
+                listener: (context, state) {
+                  if (state is ClocksTimerPlay) {
+                    _playCountdown(() => state.goToNextStep(), () => state.setPaused());
+                  } else if (state is ClocksTimerPause) {
+                    _pauseCountdown(() => state.setPaused());
+                  } else if (state is UpdateTimeLeft) {
+                    widget.timeLeft = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value);
+                  }
+                },
+                child: _timerSection(widget.keyboardVisibilty))));
   }
 
   Widget _timerSection(bool keyboardVisibilty) {
@@ -169,11 +181,8 @@ class _State extends State<Clock> {
       return BlocBuilder<KeyboardBloc, KeyboardState>(
         builder: (context, state) {
           BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
-          return TimerUtils.repsTimer(
-            () => widget.goToNextStep(),
-            context,
-            widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
-          );
+          return TimerUtils.repsTimer(() => widget.goToNextStep(), context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+              widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
         },
       );
     }
@@ -204,7 +213,7 @@ class _State extends State<Clock> {
       } else {
         return needInput && OlukoNeumorphism.isNeumorphismDesign
             ? TimerUtils.restTimer(
-                needInput ? neumorphicTextfieldForScore(true) : null,
+                needInput ? neumorphicTextfieldForScore() : null,
                 circularProgressIndicatorValue,
                 TimeConverter.durationToString(widget.timeLeft),
                 context,
@@ -328,7 +337,7 @@ class _State extends State<Clock> {
     );
   }
 
-  Container neumorphicTextfieldForScore(bool isCounterByReps) {
+  Container neumorphicTextfieldForScore() {
     //TODO: AJUSTAR EL INPUT
     return Container(
       decoration: const BoxDecoration(color: Colors.transparent),
@@ -339,7 +348,7 @@ class _State extends State<Clock> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: isCounterByReps ? ScreenUtils.width(context) / 3.7 : ScreenUtils.width(context) / 3.0,
+                width: ScreenUtils.width(context) / 3.7,
                 child: BlocBuilder<KeyboardBloc, KeyboardState>(
                   builder: (context, state) {
                     return Scrollbar(
@@ -385,23 +394,14 @@ class _State extends State<Clock> {
                   },
                 ),
               ),
-              if (isCounterByReps)
-                Text(
-                  OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                      ? OlukoLocalizations.get(context, 'reps')
-                      : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
-                  overflow: TextOverflow.ellipsis,
-                )
-              else
-                widget.textController.value != null && widget.textController.value.text != ""
-                    ? Expanded(
-                        child: Text(
-                          OlukoLocalizations.get(context, 'meters'),
-                          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.w300),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
+              Text(
+                OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                    ? OlukoLocalizations.get(
+                        context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex - 1].counter))
+                    : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
           if (widget.textController.value != null && widget.textController.value.text != "")
@@ -578,7 +578,8 @@ class _State extends State<Clock> {
 
   bool useInput() => (isCurrentMovementRest() &&
       (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||
-          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance));
+          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance ||
+          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight));
 
   void _playCountdown(Function() goToNextStep, Function() setPaused) {
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {

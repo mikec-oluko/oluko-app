@@ -5,6 +5,7 @@ import 'package:oluko_app/models/submodels/segment_submodel.dart';
 class Class extends Base {
   String video;
   String image;
+  String thumbnailImage;
   String name;
   String description;
   List<SegmentSubmodel> segments;
@@ -16,6 +17,7 @@ class Class extends Base {
       this.segments,
       this.description,
       this.image,
+      this.thumbnailImage,
       this.userSelfies,
       String id,
       Timestamp createdAt,
@@ -38,6 +40,7 @@ class Class extends Base {
       video: json['video']?.toString(),
       name: json['name']?.toString(),
       image: json['image']?.toString(),
+      thumbnailImage: json['poster_image']?.toString(),
       userSelfies: json['user_selfies'] == null || json['user_selfies'].runtimeType == String
           ? null
           : json['user_selfies'] is String

@@ -6,7 +6,8 @@ class PanelAudioDefault extends PanelAudioState {}
 
 class PanelAudioSuccess extends PanelAudioState {
   bool audioRecorded;
-  PanelAudioSuccess({this.audioRecorded});
+  bool stopRecording;
+  PanelAudioSuccess({this.audioRecorded, this.stopRecording});
 }
 
 class PanelAudioFailure extends PanelAudioState {
@@ -17,7 +18,11 @@ class PanelAudioFailure extends PanelAudioState {
 class PanelAudioBloc extends Cubit<PanelAudioState> {
   PanelAudioBloc() : super(PanelAudioDefault());
 
-  void deleteAudio(bool audioRecorded) {
-    emit(PanelAudioSuccess(audioRecorded: audioRecorded));
+  void deleteAudio(bool audioRecorded, bool stopRecording) {
+    emit(PanelAudioSuccess(audioRecorded: audioRecorded, stopRecording: stopRecording));
+  }
+
+  void emitDefaultState() {
+    emit(PanelAudioDefault());
   }
 }

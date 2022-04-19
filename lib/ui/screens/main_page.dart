@@ -2,21 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
-
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
-
 import 'package:oluko_app/blocs/notification_bloc.dart';
-import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
-import 'package:oluko_app/ui/newDesignComponents/animation.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home.dart';
@@ -117,6 +114,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
             }
             return Scaffold(
+              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
               body: Padding(
                 padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
                 child: TabBarView(

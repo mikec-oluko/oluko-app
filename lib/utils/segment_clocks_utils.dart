@@ -40,6 +40,8 @@ class SegmentClocksUtils {
     String totalText = '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
     if (!lbls.isEmpty) {
       totalText += lbls[1];
+    } else {
+      totalText += 's';
     }
 
     widgets.add(

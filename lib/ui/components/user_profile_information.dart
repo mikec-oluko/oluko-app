@@ -165,7 +165,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 ? userInfoUnlocked(location)
                                 : userInfoLocked(),
                       ),
-                      if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
+                     /* if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
                         Expanded(
                           child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                             listener: (context, hiFiveSendState) {
@@ -200,7 +200,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           ),
                         )
                       else
-                        const SizedBox.shrink(),
+                        const SizedBox.shrink(),*/
                     ],
                   ),
                 ),

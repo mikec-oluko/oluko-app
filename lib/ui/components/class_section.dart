@@ -55,7 +55,7 @@ class _State extends State<ClassSection> {
                     ? BorderRadius.only(bottomLeft: (Radius.circular(22)), topLeft: (Radius.circular(22)))
                     : const BorderRadius.all(Radius.circular(10)),
                 child: CachedNetworkImage(
-                  imageUrl: widget.classObj.image,
+                  imageUrl: widget.classObj.thumbnailImage??widget.classObj.image,
                   height: 100,
                   width: 90,
                   fit: BoxFit.cover,

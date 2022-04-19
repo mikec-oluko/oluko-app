@@ -4,9 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/submodels/personal_record.dart';
+import 'package:oluko_app/models/personal_record.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class ModalPersonalRecord extends StatefulWidget {
@@ -21,7 +23,7 @@ class ModalPersonalRecord extends StatefulWidget {
 class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<PersonalRecordBloc>(context).get(widget.segmentId, widget.userId, context);
+    BlocProvider.of<PersonalRecordBloc>(context).get(widget.segmentId, widget.userId);
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 100,
@@ -58,44 +60,48 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
 
   Widget personalRecordGrid(List<PersonalRecord> personalRecords) {
     if (personalRecords.isNotEmpty) {
-      return GridView.count(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          crossAxisCount: 1,
-          children: personalRecords
-              .map((record) => Column(
-                    children: [
-                      const Divider(height: 4, thickness: 0, color: OlukoColors.muted),
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(record.title,
-                                  style: const TextStyle(color: OlukoColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
-                              Text(record.date,
-                                  style: const TextStyle(color: OlukoColors.grayColor, fontSize: 12, fontWeight: FontWeight.w400))
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: record.image != null
-                                  ? Image(image: CachedNetworkImageProvider(record.image), fit: BoxFit.cover, width: 65, height: 90)
-                                  : SizedBox.shrink()),
-                        ),
-                      ])
-                    ],
-                  ))
-              .toList());
+      return Container(
+        height: ScreenUtils.height(context)/1.8,
+        width: ScreenUtils.width(context),
+        child: ListView(children: getPRWidgets(personalRecords)));
     } else {
       return Padding(
         padding: const EdgeInsets.only(bottom: 20, top: 10),
         child: TitleBody(OlukoLocalizations.get(context, 'noPersonalRecords')),
       );
     }
+  }
+
+  List<Widget> getPRWidgets(List<PersonalRecord> personalRecords) {
+    List<Widget> PRWidgets = personalRecords
+        .map((record) => Column(
+              children: [
+                const Divider(height: 4, thickness: 0, color: OlukoColors.muted),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(record.value.toString() + " " + SegmentUtils.getParamLabel(record.parameter),
+                            style: const TextStyle(color: OlukoColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
+                        Text(TimeConverter.returnDateOnStringFormat(dateToFormat: record.createdAt, context: context),
+                            style: const TextStyle(color: OlukoColors.grayColor, fontSize: 12, fontWeight: FontWeight.w400))
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: record.courseImage != null
+                            ? Image(image: CachedNetworkImageProvider(record.courseImage), fit: BoxFit.cover, width: 65, height: 90)
+                            : SizedBox.shrink()),
+                  ),
+                ])
+              ],
+            ))
+        .toList();
+    return PRWidgets;
   }
 }
