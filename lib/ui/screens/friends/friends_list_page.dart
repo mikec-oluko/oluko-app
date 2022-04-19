@@ -96,6 +96,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             }
             return SingleChildScrollView(
               controller: _viewScrollController,
+              physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
               child: SizedBox(
                   height: ScreenUtils.height(context),
