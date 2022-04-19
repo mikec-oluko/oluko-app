@@ -70,7 +70,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 authUser: widget.authUser,
                 users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
                 onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(seconds: 1), curve: Curves.ease),
+                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
               );
             }
             if (userListState is UserListSuccess) {
@@ -79,7 +79,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 authUser: widget.authUser,
                 users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
                 onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(seconds: 1), curve: Curves.ease),
+                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
               );
             }
             if (friendState is FriendLoading || userListState is UserListLoading) {
