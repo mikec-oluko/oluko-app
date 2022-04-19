@@ -125,7 +125,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         child: CircleAvatar(
                           backgroundColor: OlukoColors.black,
                           backgroundImage: Image(
-                            image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatarThumbnail),
+                            image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatar),
                             fit: BoxFit.contain,
                             frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                                 ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 45, width: 45),
