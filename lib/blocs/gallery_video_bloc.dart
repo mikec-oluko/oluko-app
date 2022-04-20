@@ -46,7 +46,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
   void getFirstVideoFromGalley() async {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.gallery, checkMicrophone: false)) {
-        emit(PermissionsRequired());
+        emit(NoContent());
         return;
       }
       Uint8List pickedVideo = await ContentFromGalleyService.getFirstVideoGallery();
@@ -63,7 +63,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
   void getFirstImageFromGalley() async {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.gallery, checkMicrophone: false)) {
-        emit(PermissionsRequired());
+        emit(NoContent());
         return;
       }
       Uint8List pickedImage = await ContentFromGalleyService.getFirstImageGallery();

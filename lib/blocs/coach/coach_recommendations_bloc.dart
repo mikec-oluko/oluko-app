@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/helpers/coach_assignment_status.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
+import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/enums/coach_assignment_status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
 import 'package:oluko_app/utils/sound_player.dart';
@@ -55,7 +58,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       handleDocumentChanges(snapshot, _recommendationsUpdated);
       handleDocuments(snapshot, _recommendations);
 
-      if (_recommendationsUpdated.length >= _recommendations.length) {
+      if ((_recommendationsUpdated.isNotEmpty && _recommendations.isEmpty) || _recommendationsUpdated.length >= _recommendations.length) {
         for (final updatedItem in _recommendationsUpdated) {
           for (final recommendationItem in _recommendations) {
             updatedItem.id == recommendationItem.id
@@ -85,6 +88,20 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
         );
       }
     });
+  }
+
+  Future<void> getStreamFromUser(String userId) async {
+    if(subscription == null) {
+      CoachRepository().getCoachAssignmentByUserId(userId).then(
+      (coachAssignment) {
+        if (coachAssignment != null &&
+            coachAssignment.coachAssignmentStatus as int == CoachAssignmentStatusEnum.approved.index &&
+            coachAssignment.coachId != null) {
+          getStream(userId, coachAssignment.coachId);
+        }
+      },
+    );
+    }
   }
 
   void handleDocuments(QuerySnapshot<Map<String, dynamic>> snapshot, Set<Recommendation> _recommendations) {

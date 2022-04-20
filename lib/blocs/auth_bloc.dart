@@ -14,6 +14,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
+import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -128,13 +129,14 @@ class AuthBloc extends Cubit<AuthState> {
 
   void navigateToNextScreen(BuildContext context, String userId) async {
     PushNotificationService.initializePushNotifications(context, userId);
-    if (await UserUtils.checkFirstTimeAndUpdate()) {
+    if (await UserUtils.isFirstTime()) {
       await Permissions.askForPermissions();
     }
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
     if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
       await AppNavigator().goToAssessmentVideosViaMain(context);
     } else {
+      UserUtils.checkFirstTimeAndUpdate();
       await AppNavigator().returnToHome(context);
     }
   }
@@ -279,14 +281,14 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
-    if (loginRequest.email == null || loginRequest.email == '') {
+  Future<void> sendPasswordResetEmail(BuildContext context, ForgotPasswordDto forgotPasswordDto) async {
+    if (forgotPasswordDto.email == null || forgotPasswordDto.email == '') {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'enterEmail'));
       return;
     }
 
     try {
-      await AuthRepository().sendPasswordResetEmail(loginRequest.email);
+      await AuthRepository().sendPasswordResetEmail(forgotPasswordDto);
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
     } catch (e) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'wrongEmailFormat'));

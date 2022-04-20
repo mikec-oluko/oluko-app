@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
+import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -64,7 +65,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         future: UserUtils.isFirstTime(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data == true) {
+            if (snapshot.data == false) {
               return Column(
                 children: [
                   SizedBox(height: ScreenUtils.height(context) * 0.25),
@@ -181,8 +182,9 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
               _formKey.currentState.save();
               BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
                 context,
-                LoginRequest(
+                ForgotPasswordDto(
                   email: _requestData.email,
+                  projectId: GlobalConfiguration().getValue('projectId'),
                 ),
               );
             },
