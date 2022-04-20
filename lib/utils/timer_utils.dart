@@ -35,8 +35,8 @@ class TimerUtils {
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 200 : 220,
-        height: ScreenUtils.smallScreen(context) ? 200 : 220,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -112,8 +112,8 @@ class TimerUtils {
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter, bool bothSide]) {
     return Container(
         child: SizedBox(
-            width: ScreenUtils.smallScreen(context) ? 190 : 220,
-            height: ScreenUtils.smallScreen(context) ? 190 : 220,
+            width: getProgressCircleSize(context),
+            height: getProgressCircleSize(context),
             child: Stack(alignment: Alignment.center, children: [
               AspectRatio(
                   aspectRatio: 1,
@@ -216,8 +216,8 @@ class TimerUtils {
     return Container(
         child: Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 220,
-        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
         child: const AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -248,34 +248,13 @@ class TimerUtils {
   }
 
   static Widget restTimer(Widget addCounterValue, double progressValue, String duration, BuildContext context) {
-    //double ellipseScale = 4.5;
     return Container(
       child: Stack(
         alignment: Alignment.center,
         children: [
-          /*Image.asset(
-            'assets/courses/ellipse_1.png',
-            scale: ellipseScale,
-          ),
-          Image.asset(
-            'assets/courses/ellipse_2.png',
-            scale: ellipseScale,
-          ),
-          Image.asset(
-            'assets/courses/ellipse_3.png',
-            scale: ellipseScale,
-          ),*/
           SizedBox(
-            width: ScreenUtils.smallScreen(context)
-                ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.32
-                    : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.30,
-            height: ScreenUtils.smallScreen(context)
-                ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.32
-                    : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.30,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
             child: AspectRatio(
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
@@ -328,8 +307,8 @@ class TimerUtils {
                 onTap: onTap,
                 child: Stack(alignment: Alignment.center, children: [
                   SizedBox(
-                    width: ScreenUtils.smallScreen(context) ? 190 : 220,
-                    height: ScreenUtils.smallScreen(context) ? 190 : 220,
+                    width: getProgressCircleSize(context),
+                    height: getProgressCircleSize(context),
                     child: AspectRatio(
                         aspectRatio: 1,
                         child: CircularProgressIndicator(
@@ -364,8 +343,8 @@ class TimerUtils {
         onTap: onTap,
         child: Container(
             child: SizedBox(
-                height: _watchHeight,
-                width: _watchWidth,
+                width: getProgressCircleSize(context),
+                height: getProgressCircleSize(context),
                 child: Stack(alignment: Alignment.center, children: [
                   AspectRatio(
                       aspectRatio: 1,
@@ -408,8 +387,8 @@ class TimerUtils {
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -522,20 +501,11 @@ class TimerUtils {
 
   static startCountdown(
       WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound) {
-    /*return Navigator.of(context)
-        .push(PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
-                  seconds: initialTimer != null ? initialTimer : 5,
-                  totalRounds: totalRounds != null ? totalRounds : 1,
-                  currentRound: currentRound != null ? currentRound : 0,
-                  recording: workoutType == WorkoutType.segmentWithRecording,
-                  onShowAgainPressed: onShowAgainPressed,
-                  showPanel: showPanel,
-                )))
-        .then((value) {*/
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
-    //});
+  }
+
+  static double getProgressCircleSize(BuildContext context){
+    return ScreenUtils.smallScreen(context) ? 210 : 220;
   }
 }
