@@ -89,7 +89,7 @@ class _State extends State<CarouselSmallSection> {
   goToRoute(RouteEnum routeToGo) {
     switch (routeToGo) {
       case RouteEnum.profileTransformationJourney:
-        Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney], arguments: {'profileInfo': widget.userToGetData});
+        Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney], arguments: {'profileInfo': widget.userToGetData,'viewAllPage':true},);
         break;
       case RouteEnum.profileAssessmentVideos:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos], arguments: {'profileInfo': widget.userToGetData});

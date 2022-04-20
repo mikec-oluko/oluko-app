@@ -334,5 +334,6 @@
     "requests": "Requests",
     "see": "See",
     "more": "more",
-    "recordingCapitalText": "RECORDING:"
+    "recordingCapitalText": "RECORDING:",
+    "transformation": "Transformation"
 }
