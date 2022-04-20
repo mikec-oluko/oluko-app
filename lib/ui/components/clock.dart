@@ -65,14 +65,24 @@ class _State extends State<Clock> {
 
   @override
   void initState() {
-    //AMRAPRound = 0;
+    if (AMRAPRound != 0) {
+      AMRAPRound = 0;
+    }
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished() && AMRAPRound == 0) {
-      BlocProvider.of<AmrapRoundBloc>(context).update();
+      BlocProvider.of<AmrapRoundBloc>(context).get();
     }
     if (!isWorkStateFinished() && isCurrentTaskTimed()) {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
     }
+  }
+
+  @override
+  void deactivate() {
+    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished() && AMRAPRound != 0) {
+      BlocProvider.of<AmrapRoundBloc>(context).emitDefault();
+    }
+    super.deactivate();
   }
 
   @override
@@ -94,13 +104,10 @@ class _State extends State<Clock> {
           }
         },
         child:*/
-        BlocConsumer<AmrapRoundBloc, AmrapRound>(listener: (context, amrapState) {
-      if (amrapState is AmrapRound||amrapState is AmrapRoundUpdate) {
-        setState(() {
-          AMRAPRound = amrapState.amrapValue;
-        });
+        BlocBuilder<AmrapRoundBloc, AmrapRound>(builder: (context, amrapState) {
+      if (amrapState is AmrapRound && AMRAPRound != amrapState.amrapValue) {
+        AMRAPRound = amrapState.amrapValue;
       }
-    }, builder: (context, amrapState) {
       return BlocListener<StopwatchBloc, StopwatchState>(
           listener: (context, stopwatchState) {
             if (stopwatchState is UpdateStopwatchSuccess) {
