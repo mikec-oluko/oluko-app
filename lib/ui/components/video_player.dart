@@ -6,6 +6,7 @@ import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
@@ -36,7 +37,7 @@ class OlukoVideoPlayer extends StatefulWidget {
     this.allowFullScreen = true,
     this.isOlukoControls = false,
     this.closeVideoPlayer,
-    this.showOptions=false,
+    this.showOptions = false,
   }) : super(key: key);
 
   @override
@@ -76,7 +77,9 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
     Widget controls;
     if (Platform.isAndroid) {
-      OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls ? controls = OlukoMaterialControls(showOptions:widget.showOptions) : controls = MaterialControls();
+      OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
+          ? controls = OlukoMaterialControls(showOptions: widget.showOptions)
+          : controls = MaterialControls();
     } else if (Platform.isIOS) {
       //TODO:Change IOS controls
       OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
@@ -94,6 +97,12 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
           showControls: widget.showControls,
           placeholder: Center(child: CircularProgressIndicator()),
           deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+          deviceOrientationsOnEnterFullScreen: [
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight
+          ],
           cupertinoProgressColors: ChewieProgressColors(
             handleColor: Colors.black,
             backgroundColor: Colors.black,
