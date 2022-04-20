@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -145,8 +146,9 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                   _formKey.currentState.save();
                   BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
                     context,
-                    LoginRequest(
+                    ForgotPasswordDto(
                       email: data,
+                      projectId: GlobalConfiguration().getValue('projectId')
                     ),
                   );
                 },
