@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         future: UserUtils.isFirstTime(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data == true) {
+            if (snapshot.data == false) {
               return Column(
                 children: [
                   SizedBox(height: ScreenUtils.height(context) * 0.25),
