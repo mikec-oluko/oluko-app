@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'package:flutter/widgets.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
+import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:http/http.dart' show Client, Response;
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,8 +12,6 @@ import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/dto/verify_token_request.dart';
-import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
@@ -153,8 +150,8 @@ class AuthRepository {
     return removed;
   }
 
-  Future<void> sendPasswordResetEmail(String email) {
-    return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  Future<void> sendPasswordResetEmail(ForgotPasswordDto body) async {
+    Response response = await http.post(Uri.parse('$url/forgot-password'), body: body.toJson());
   }
 
   static User getLoggedUser() {

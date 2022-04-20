@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
@@ -341,7 +342,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
               if (alertTimerPlaying) {
                 alertTimer.cancel();
               }
-              stopwatchTimer.cancel();
+              if (stopwatchTimer != null) {
+                stopwatchTimer.cancel();
+              }
             } else {
               panelController.close();
               workState = lastWorkStateBeforePause;
@@ -470,7 +473,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             child: SizedBox(
               height: ScreenUtils.height(context) * 0.14,
               width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(workoutType, shareDone, context, shareDoneAction, goToClassAction,
+              child: SegmentClocksUtils.showButtonsWhenFinished(widget.workoutType, shareDone, context, shareDoneAction, goToClassAction,
                   nextSegmentAction, widget.segments, widget.segmentIndex),
             ),
           )
@@ -539,7 +542,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   void actionAMRAP() {
     AMRAPRound++;
 
-    BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
+    BlocProvider.of<AmrapRoundBloc>(context).set(AMRAPRound);
 
     if (AMRAPRound == 1) {
       _saveSegmentRound();
@@ -643,10 +646,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
       realTaskIndex++;
       return;
     }
+    if (timerTaskIndex < timerEntries.length - 1) {
+      timerTaskIndex++;
+    }
 
-    timerTaskIndex++;
     realTaskIndex++;
-    if (((timerTaskIndex - 1) == 0) || timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
+    if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
       setAlert();
     }
     _playTask();
@@ -668,6 +673,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
+  }
+
+  bool currentRoundDifferentToNextRound() {
+    if (timerTaskIndex >= timerEntries.length) {
+      return false;
+    }
+    if (timerEntries[timerTaskIndex - 1].round != timerEntries[timerTaskIndex].round) {
+      return true;
+    }
+    return false;
   }
 
   _saveStopwatch() {
@@ -765,10 +780,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         topBarIcon = SegmentClocksUtils.uploadingIcon();
       });
-    }
-
-    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
     }
   }
 
