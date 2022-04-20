@@ -450,8 +450,11 @@ class _State extends State<Clock> {
     return Stack(alignment: Alignment.center, children: [
       Transform.scale(
           scale: 1.3,
-          child:
-              const AvatarGlow(glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor, endRadius: 150, child: SizedBox.shrink())),
+          child: const AvatarGlow(
+              showTwoGlows: false,
+              glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
+              endRadius: 150,
+              child: SizedBox.shrink())),
       getRoundsTimer(keyboardVisibilty)
     ]);
   }
