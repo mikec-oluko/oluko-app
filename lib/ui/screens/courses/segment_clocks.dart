@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
@@ -541,7 +542,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   void actionAMRAP() {
     AMRAPRound++;
 
-    BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
+    BlocProvider.of<AmrapRoundBloc>(context).set(AMRAPRound);
 
     if (AMRAPRound == 1) {
       _saveSegmentRound();
@@ -779,10 +780,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         topBarIcon = SegmentClocksUtils.uploadingIcon();
       });
-    }
-
-    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      BlocProvider.of<TimerTaskBloc>(context).setAMRAPRound(AMRAPRound);
     }
   }
 
