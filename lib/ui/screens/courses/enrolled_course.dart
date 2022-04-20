@@ -250,8 +250,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(
                                                   widget.course.description ?? '',
-                                                  style: OlukoFonts.olukoBigFont(
-                                                      custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal),
                                                 ),
                                               ),
                                               Padding(

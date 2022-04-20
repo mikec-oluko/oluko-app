@@ -8,7 +8,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class AppNavigator {
   Future<void> returnToHome(BuildContext context) async {
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
   }
 
   Future<void> goToAssessmentVideosViaMain(BuildContext context) async {
