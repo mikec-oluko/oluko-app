@@ -416,7 +416,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   ),
                   if (_userLocation != null)
                     Text(
-                      location,
+                      location.trim(),
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                     )
                   else
