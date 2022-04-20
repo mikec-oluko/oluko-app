@@ -75,7 +75,12 @@ class _CompletedClassState extends State<CompletedClass> {
             showVideo = false;
             return CompletedCourseVideo(mediaURL: state.url, isDownloaded: false);
           } else {
-            return form();
+            return WillPopScope(
+                onWillPop: () async {
+                  Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+                  return true;
+                },
+                child: form());
           }
         });
       } else {
