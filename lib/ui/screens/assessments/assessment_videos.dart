@@ -31,7 +31,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
   const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, this.assessmentsDone = false, Key key}) : super(key: key);
-  final bool isFirstTime;
+  final bool isFirstTime; //By default in true to solve OM-1425
   final bool isForCoachPage;
   final bool assessmentsDone;
 
@@ -89,9 +89,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                     assessmentsTasksList = _assessment.tasks;
                   }
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
-                  if (widget.isFirstTime) {
-                    BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
-                  }
+
                   BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
                   return form();
                 } else {
@@ -225,6 +223,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                       OlukoPrimaryButton(
                                         title: OlukoLocalizations.get(context, 'done'),
                                         onPressed: () async {
+                                          if (widget.isFirstTime) {
+                                            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                                          }
                                           if (await popUp(context)) Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                                           return false;
                                         },
@@ -270,6 +271,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
               onPressed: () {
                 if (_controller != null) {
                   _controller.pause();
+                }
+                if (widget.isFirstTime) {
+                  BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
                 }
                 Navigator.pushNamed(
                   context,
@@ -394,6 +398,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (widget.isFirstTime) {
       return GestureDetector(
           onTap: () {
+            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
             Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
           },
           child: Align(
