@@ -95,16 +95,7 @@ class _State extends State<Clock> {
 
   @override
   Widget build(BuildContext context) {
-    return /*BlocConsumer<AmrapRoundBloc, AmrapRound>(
-        listener: (context, amrapState) {
-          if (amrapState is AmrapRound || amrapState is AmrapRoundUpdate) {
-            setState(() {
-              AMRAPRound = amrapState.amrapValue;
-            });
-          }
-        },
-        child:*/
-        BlocBuilder<AmrapRoundBloc, AmrapRound>(builder: (context, amrapState) {
+    return BlocBuilder<AmrapRoundBloc, AmrapRound>(builder: (context, amrapState) {
       if (amrapState is AmrapRound && AMRAPRound != amrapState.amrapValue) {
         AMRAPRound = amrapState.amrapValue;
       }
@@ -122,11 +113,7 @@ class _State extends State<Clock> {
                   setState(() {
                     widget.timerTaskIndex = timerTaskState.timerTaskIndex;
                   });
-                } /*else if (timerTaskState is SetAMRAPRound) {
-                setState(() {
-                  AMRAPRound = timerTaskState.AMRAPRound;
-                });
-              }*/
+                }
               },
               child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
                   listener: (context, state) {
