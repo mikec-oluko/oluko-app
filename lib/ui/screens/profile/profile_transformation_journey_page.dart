@@ -71,6 +71,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
       appBar: OlukoAppBar(
+        centerTitle: true,
         showTitle: true,
         showBackButton: true,
         title: widget.viewAllPage ? '' : OlukoLocalizations.get(context, 'transformation'),
