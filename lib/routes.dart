@@ -489,7 +489,8 @@ class Routes {
         break;
       case RouteEnum.loginNeumorphic:
         providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
-        newRouteView = LoginNeumorphicPage();
+        final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
+        newRouteView = LoginNeumorphicPage(dontShowWelcomeTest: argumentsToAdd['dontShowWelcomeTest']);
         break;
       case RouteEnum.completedClass:
         providers = [
