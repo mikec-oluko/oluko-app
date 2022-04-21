@@ -519,7 +519,6 @@ class SegmentClocksUtils {
                   const SizedBox(
                     width: 15,
                   ),
-                  
                   OlukoNeumorphicPrimaryButton(
                     title: segmentIndex == segments.length - 1
                         ? OlukoLocalizations.get(context, 'done')
