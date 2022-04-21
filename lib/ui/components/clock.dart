@@ -141,19 +141,22 @@ class _State extends State<Clock> {
                 if (OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else getSegmentLabel(),
                 Padding(
                     padding: EdgeInsets.only(
-                      top: SegmentClocksUtils.getWatchPadding(widget.workState, usePulseAnimation()),
+                      top: SegmentClocksUtils.getWatchPadding(widget.workState, _usePulseAnimationForResting()),
                     ),
                     child: ScreenUtils.height(context) < 700
                         ? SizedBox(
                             height: isWorkStateFinished() ? 205 : 270,
                             width: isWorkStateFinished() ? 205 : 270,
                             child: Stack(alignment: Alignment.center, children: [
-                              if (usePulseAnimation()) roundTimerWithPulse(keyboardVisibilty) else getRoundsTimer(keyboardVisibilty),
+                              if (_usePulseAnimationForResting())
+                                roundTimerWithPulse(keyboardVisibilty)
+                              else
+                                getRoundsTimer(keyboardVisibilty),
                               countdownSection()
                             ]),
                           )
                         : Stack(alignment: Alignment.center, children: [
-                            if (usePulseAnimation())
+                            if (_usePulseAnimationForResting())
                               roundTimerWithPulse(keyboardVisibilty)
                             else
                               isWorkStateFinished()
@@ -459,11 +462,16 @@ class _State extends State<Clock> {
   }
 
   Widget roundTimerWithPulse(bool keyboardVisibilty) {
-    return AvatarGlow(
-      glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
-      endRadius: 250,
-      child: getRoundsTimer(keyboardVisibilty),
-    );
+    return Stack(alignment: Alignment.center, children: [
+      Transform.scale(
+          scale: 1.3,
+          child: const AvatarGlow(
+              showTwoGlows: false,
+              glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
+              endRadius: 150,
+              child: SizedBox.shrink())),
+      getRoundsTimer(keyboardVisibilty)
+    ]);
   }
 
   Widget getRoundsTimer(bool keyboardVisibilty) {
@@ -565,7 +573,7 @@ class _State extends State<Clock> {
       }
       return Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign
-            ? (widget.workState == WorkState.resting && usePulseAnimation())
+            ? (widget.workState == WorkState.resting && _usePulseAnimationForResting())
                 ? const EdgeInsets.only(top: 40)
                 : const EdgeInsets.only(top: 35)
             : EdgeInsets.zero,
@@ -581,6 +589,9 @@ class _State extends State<Clock> {
   bool isSegmentWithoutRecording() {
     return widget.workoutType == WorkoutType.segment;
   }
+
+  bool _usePulseAnimationForResting() =>
+      isWorkStateFinished() ? false : widget.workState == WorkState.resting && OlukoNeumorphism.isNeumorphismDesign;
 
   bool usePulseAnimation() {
     if (isWorkStateFinished()) {
