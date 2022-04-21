@@ -271,15 +271,15 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       return SizedBox(height: ScreenUtils.height(context) * 0.25);
     } else {
       return Column(
-                children: [
-                  SizedBox(height: ScreenUtils.height(context) * 0.25),
-                  Text(
-                    OlukoLocalizations.get(context, 'welcomeBack'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ],
-              );
+        children: [
+          SizedBox(height: ScreenUtils.height(context) * 0.25),
+          Text(
+            OlukoLocalizations.get(context, 'welcomeBack'),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ],
+      );
     }
   }
 }
