@@ -392,8 +392,8 @@ class Routes {
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
-  final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final CarrouselBloc _carrouselBloc = CarrouselBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
