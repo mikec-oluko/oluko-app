@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
@@ -30,31 +31,46 @@ class FilterSelector<T extends Base> extends StatefulWidget {
 
 class _State<T extends Base> extends State<FilterSelector> {
   Map<String, bool> _selected;
+  Map<String, bool> _remainSelected;
 
   @override
   void initState() {
+    BlocProvider.of<RemainSelectedTagsBloc>(context).get();
     initializeSelectedItems();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.14 : 20),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: _getFilterSelectorContent(),
+    return BlocBuilder<RemainSelectedTagsBloc, SelectedTags>(builder: (context, tagsState) {
+      if (tagsState is SelectedTags) {
+        if (!tagsState.tags.isEmpty) {
+          if (_selected == null) {
+            _selected = tagsToMap(tagsState.tags);
+          } else {
+            tagsState.tags.forEach((element) {
+              _selected[element.id] = true;
+            });
+          }
+        }
+      }
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.14 : 20),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: _getFilterSelectorContent(),
+            ),
           ),
-        ),
-        if (OlukoNeumorphism.isNeumorphismDesign)
-          Align(alignment: Alignment.bottomCenter, child: SizedBox(height: 100, child: filterNeumorphicButtons(context)))
-        else
-          filterButtons(context),
-      ],
-    );
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            Align(alignment: Alignment.bottomCenter, child: SizedBox(height: 100, child: filterNeumorphicButtons(context)))
+          else
+            filterButtons(context),
+        ],
+      );
+    });
   }
 
   Positioned filterButtons(BuildContext context) {
@@ -196,5 +212,15 @@ class _State<T extends Base> extends State<FilterSelector> {
       print('${_getSelectedItemList().length} items selected.');
       widget.onSubmit(_getSelectedItemList());
     }
+  }
+
+  Map<String, bool> tagsToMap(List<Base> tags) {
+    Map<String, bool> mappedTags;
+    List<MapEntry<T, String>> allItems =
+        _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>).toList();
+
+    mappedTags =
+        Map.fromIterable(allItems, key: (item) => item.key.id as String, value: (item) => tags.map((tag) => tag.id).contains(item.key.id));
+    return mappedTags;
   }
 }
