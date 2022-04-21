@@ -22,6 +22,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -211,17 +212,16 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                               title: OlukoLocalizations.get(context, 'submit'),
                               onPressed: () async {
                                 _controller.pause();
-                                if (_taskSubmission == null) {
-                                  BlocProvider.of<TaskSubmissionBloc>(context)
-                                      .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+                                if (!_globalService.videoProcessing) {
+                                  if (_taskSubmission == null) {
+                                    BlocProvider.of<TaskSubmissionBloc>(context)
+                                        .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+                                  } else {
+                                    createVideo(_taskSubmission, _assessmentAssignment, _assessment);
+                                  }
                                 } else {
-                                  createVideo(_taskSubmission, _assessmentAssignment, _assessment);
+                                  showDialog();
                                 }
-                                /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                                arguments: {
-                                  'taskIndex': widget.taskIndex,
-                                  'isLastTask': widget.isLastTask
-                                });*/
                               },
                             ),
                           ),
@@ -234,6 +234,21 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             ],
           ),
         ));
+  }
+
+  showDialog() {
+    return DialogUtils.getDialog(
+        context,
+        [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              ))
+        ],
+        showExitButton: true);
   }
 
   Widget progressScaffold(VideoProcessing state) {
