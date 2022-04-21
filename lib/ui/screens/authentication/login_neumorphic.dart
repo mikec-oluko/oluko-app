@@ -267,7 +267,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   }
 
   Widget getWelcomeText() {
-    if (widget.dontShowWelcomeTest) {
+    if (widget.dontShowWelcomeTest != null && widget.dontShowWelcomeTest == true) {
       return SizedBox(height: ScreenUtils.height(context) * 0.25);
     } else {
       return Column(
