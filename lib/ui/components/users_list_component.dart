@@ -118,18 +118,21 @@ class _UserListComponentState extends State<UserListComponent> {
     );
   }
 
-  Text _printUsername(UserResponse friendUser) {
-    return Text(
-      UserHelper.printUsername(friendUser.username, friendUser.id) ?? '',
-      overflow: TextOverflow.ellipsis,
-      style: OlukoFonts.olukoSmallFont(customColor: Colors.grey),
-      textAlign: TextAlign.center,
+  Widget _printUsername(UserResponse friendUser) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+      child: Text(
+        UserHelper.printUsername(friendUser.username, friendUser.id) ?? '',
+        overflow: TextOverflow.ellipsis,
+        style: OlukoFonts.olukoSmallFont(customColor: Colors.grey),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
   Padding _printName(UserResponse user) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
       child: Text(
         '${user.firstName} ${user.lastName}',
         overflow: TextOverflow.ellipsis,
