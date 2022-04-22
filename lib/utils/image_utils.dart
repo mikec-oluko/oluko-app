@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 class ImageUtils {
   static const String jpgFormat = '.jpg';
   static const String jpegFormat = '.jepg';
+  static const String pngFormat = '.png';
 
   ///Used as a loading placeholder when a NetworkImage is loading
   static Widget frameBuilder(context, Widget child, int frame, bool wasSynchronouslyLoaded, {double height = 120, double width}) {
@@ -31,7 +32,13 @@ class ImageUtils {
       calculatedHeight = (width ~/ aspectRatio);
     }
     var thumbnailPath = p.withoutExtension(image.path) + '_thumbnail' + p.extension(image.path);
-    var thumbnail = await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: calculatedHeight);
-    return thumbnail.path;
+
+    if (p.extension(image.path) != ImageUtils.pngFormat) {
+      var thumbnail =
+          await FlutterImageCompress.compressAndGetFile(image.path, thumbnailPath, minWidth: width, minHeight: calculatedHeight);
+      return thumbnail.path;
+    }
+
+    return image.path;
   }
 }

@@ -30,6 +30,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final bool showTitle;
   final bool showActions;
   final bool reduceHeight;
+  final bool centerTitle;
   final Function showBottomTab;
 
   OlukoAppBar(
@@ -51,7 +52,8 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.searchKey,
       this.showActions = false,
       this.reduceHeight = false,
-      this.showBottomTab});
+      this.showBottomTab,
+      this.centerTitle = false});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -171,12 +173,12 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: widget.centerTitle ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: Align(
-                                  alignment: Alignment.centerLeft,
+                                  alignment: widget.centerTitle ? Alignment.center : Alignment.centerLeft,
                                   child: Container(
                                     //TODO: light behind
                                     height: 55,
@@ -194,13 +196,16 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                 ),
                               ),
                               Expanded(
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: TitleHeader(
-                                    widget.title,
-                                    reduceFontSize: true,
-                                    bold: false,
-                                    isNeumorphic: true,
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: widget.centerTitle ? 40 : 0),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: TitleHeader(
+                                      widget.title,
+                                      reduceFontSize: true,
+                                      bold: false,
+                                      isNeumorphic: true,
+                                    ),
                                   ),
                                 ),
                               ),

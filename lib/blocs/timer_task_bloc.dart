@@ -26,9 +26,9 @@ class TimerTaskBloc extends Cubit<TimerTaskState> {
     emit(SetTimerTaskIndex(timerTaskIndex: timerTaskIndex));
   }
 
-  void setAMRAPRound(int AMRAPRound) {
+  /*void setAMRAPRound(int AMRAPRound) {
     emit(SetAMRAPRound(AMRAPRound: AMRAPRound));
-  }
+  }*/
 
   void setShareDone(bool shareDone) {
     emit(SetShareDone(shareDone: shareDone));

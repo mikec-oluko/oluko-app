@@ -75,6 +75,14 @@ class TimeConverter {
     return dateSplitted.join(' ');
   }
 
+  static String returnTimeStringFormat(DateTime date,BuildContext context) {
+    if (MediaQuery.of(context).alwaysUse24HourFormat) {
+      return DateFormat.Hm().format(date);
+    } else {
+      return DateFormat('hh:mm a').format(date);
+    }
+  }
+
   static String returnDateOnStringFormat({Timestamp dateToFormat, BuildContext context, String separator}) {
     //date doc: https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
     //7/10/1996 5:08 PM

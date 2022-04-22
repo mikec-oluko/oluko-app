@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
@@ -35,6 +36,7 @@ class _HomeState extends State<Home> {
         _user = authState.firebaseUser;
         BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
         BlocProvider.of<NotificationSettingsBloc>(context).get(_user.uid);
+        BlocProvider.of<CoachRecommendationsBloc>(context).getStreamFromUser(_user.uid);
         return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(buildWhen: (previous, current) {
           if (previous is CourseEnrollmentsByUserStreamSuccess && current is CourseEnrollmentsByUserStreamSuccess) {
             if (previous.courseEnrollments.length == current.courseEnrollments.length) {

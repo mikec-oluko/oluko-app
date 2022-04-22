@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
@@ -8,6 +9,7 @@ import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/services/image_upload_service..dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -139,12 +141,9 @@ class UserRepository {
   Future<UserResponse> updateUserAvatar(UserResponse user, XFile file) async {
     final DocumentReference<Object> userReference = getUserReference(user);
 
-    final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
-    final thumbNailUrl = await _uploadFile(thumbnail, '${userReference.path}/thumbnails');
-
-    final downloadUrl = await _uploadFile(file.path, userReference.path);
+    final thumbnail = await ImageUtils().getThumbnailForImage(file, 500);
+    final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, '${userReference.path}/avatar');
     user.avatar = downloadUrl;
-    user.avatarThumbnail = thumbNailUrl;
     try {
       await userReference.update(user.toJson());
       AuthRepository().storeLoginData(user);
@@ -161,7 +160,8 @@ class UserRepository {
   Future<UserResponse> updateUserCoverImage({UserResponse user, XFile coverImage}) async {
     final DocumentReference<Object> userReference = getUserReference(user);
 
-    final coverDownloadImage = await _uploadFile(coverImage.path, userReference.path);
+    final thumbnail = await ImageUtils().getThumbnailForImage(coverImage, 1000);
+    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, '${userReference.path}/coverImage/');
     user.coverImage = coverDownloadImage;
     try {
       await userReference.update(user.toJson());
@@ -180,16 +180,6 @@ class UserRepository {
     final DocumentReference userReference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(user.id);
     return userReference;
-  }
-
-  static Future<String> _uploadFile(String filePath, String folderName) async {
-    final file = File(filePath);
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    final String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
   }
 
   Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex) async {

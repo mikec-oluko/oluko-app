@@ -38,7 +38,6 @@ class CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamSta
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
     return subscription ??= CourseEnrollmentRepository.getUserCourseEnrollmentsSubscription(userId).listen((snapshot) async {
-      emit(Loading());
       List<CourseEnrollment> courseEnrollments = [];
       snapshot.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();

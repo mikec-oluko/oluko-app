@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -391,7 +392,8 @@ class Routes {
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
-   final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -462,7 +464,6 @@ class Routes {
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
           BlocProvider<CarrouselBloc>.value(value: _carrouselBloc)
-          
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -636,8 +637,8 @@ class Routes {
           BlocProvider<TransformationJourneyContentBloc>.value(value: _transformationJourneyContentBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
-        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo'] as UserResponse,viewAllPage: argumentsToAdd['viewAllPage']as bool,);
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [
@@ -715,6 +716,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
           BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<TimerTaskBloc>.value(value: _timerTaskBloc),
@@ -870,7 +872,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool,
+          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? true : argumentsToAdd['isFirstTime'] as bool,
           assessmentsDone:
               argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
         );
