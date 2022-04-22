@@ -106,7 +106,7 @@ if [ "$1" = "deepclean" ]
     echo "Podfile.lock has been terminated" && \
     rm pubspec.lock || true&& \
     echo "pubspec.lock has been exterminated" && \
-    flutter pub get && cd ios && pod install && cd .. && \
+    flutter pub get && cd ios && pod install --repo-update && cd .. && \
     echo "Many pods were installed" && \
     echo "🤖 Deep cleaning bot finished"
 fi
