@@ -9,6 +9,8 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -27,7 +29,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final bool firstTime = await UserUtils.isFirstTime();
-  final String route = getInitialRoute(alreadyLoggedUser, firstTime);
+  final String route = await getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
     initialRoute: route,
   );
@@ -45,7 +47,7 @@ Future<void> main() async {
   }
 }
 
-String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
+Future<String> getInitialRoute(User alreadyLoggedUser, bool isFirstTime) async {
   if (alreadyLoggedUser == null) {
     if (isFirstTime != null && isFirstTime && OlukoNeumorphism.isNeumorphismDesign) {
       return routeLabels[RouteEnum.introVideo];
@@ -57,7 +59,13 @@ String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
       }
     }
   } else {
-    return routeLabels[RouteEnum.root];
+    AssessmentAssignment assesmentA = await AssessmentAssignmentRepository.getByUserId(alreadyLoggedUser.uid);
+    if (assesmentA != null && (assesmentA.seenByUser == null || !assesmentA.seenByUser)) {
+      return routeLabels[RouteEnum.assessmentVideos];
+    }else{
+      return routeLabels[RouteEnum.root];
+    }
+    
   }
 }
 

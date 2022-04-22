@@ -47,7 +47,9 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
                 alignment: Alignment.topCenter,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-                  child: showVideoPlayer(widget.videoUrl, widget.aspectRatio),
+                  child: widget.aspectRatio != null
+                      ? AspectRatio(aspectRatio: widget.aspectRatio, child: showVideoPlayer(widget.videoUrl, widget.aspectRatio))
+                      : showVideoPlayer(widget.videoUrl, widget.aspectRatio),
                 )),
           ],
         ),
