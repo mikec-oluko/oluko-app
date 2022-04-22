@@ -55,9 +55,9 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
             listener: (context, ignoreFriendState) {
               if (ignoreFriendState is IgnoreFriendRequestSuccess) {
                 BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(widget.authUser.user.id);
-                AppMessages.clearAndShowSnackbar(context, 'Request ignored.');
+                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'friendRequestIgnored'));
               } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
-                AppMessages.clearAndShowSnackbar(context, 'Error ignoring request.');
+                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'ignoreFriendRequestError'));
               }
             },
             child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
@@ -66,9 +66,9 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                 disabledActions = false;
                 if (confirmFriendState is ConfirmFriendSuccess) {
                   BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(widget.authUser.user.id);
-                  AppMessages.clearAndShowSnackbar(context, 'Friend added.');
+                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'friendAdded'));
                 } else if (confirmFriendState is ConfirmFriendFailure) {
-                  AppMessages.clearAndShowSnackbar(context, 'Error adding friend.');
+                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'addFriendRequestError'));
                 }
               },
               child: Column(

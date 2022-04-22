@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -42,7 +43,6 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget _appUsersWidget = const SizedBox.shrink();
   GetFriendsSuccess _friendState;
   List<FriendModel> _friends = [];
-  final _title = 'Starred';
   final _viewScrollController = ScrollController();
 
   @override
@@ -286,7 +286,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
                                 ),
-                                if (user.privacy == 0)
+                                if (PrivacyOptions.getPrivacyValue(user.privacy) == SettingsPrivacyOptions.public)
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
