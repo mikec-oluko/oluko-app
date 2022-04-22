@@ -35,6 +35,7 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
@@ -394,6 +395,7 @@ class Routes {
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -463,7 +465,8 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
-          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc)
+          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
+          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -638,7 +641,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo'] as UserResponse,viewAllPage: argumentsToAdd['viewAllPage']as bool,);
+        newRouteView = ProfileTransformationJourneyPage(
+          userRequested: argumentsToAdd['profileInfo'] as UserResponse,
+          viewAllPage: argumentsToAdd['viewAllPage'] as bool,
+        );
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [

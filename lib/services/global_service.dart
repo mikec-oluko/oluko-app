@@ -5,10 +5,12 @@ class GlobalService {
 
   bool _videoProcessing;
   bool _comesFromCoach;
+  bool _hasInternetConnection;
 
   GlobalService._internal() {
     _videoProcessing = false;
     _comesFromCoach = false;
+    _hasInternetConnection = false;
   }
 
   bool get videoProcessing => _videoProcessing;
@@ -18,4 +20,8 @@ class GlobalService {
   bool get comesFromCoach => _comesFromCoach;
 
   set comesFromCoach(bool value) => _comesFromCoach = value;
+
+  bool get hasInternetConnection => _hasInternetConnection;
+
+  set hasInternetConnection(bool value) => _hasInternetConnection = value;
 }
