@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 
 class SegmentSubmodel {
@@ -16,9 +15,6 @@ class SegmentSubmodel {
 
   SegmentSubmodel({this.id, this.reference, this.image, this.name, this.sections, this.isChallenge,this.rounds,this.totalTime,this.type});
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
-    /*if(json['id']=="M4tI8lLm5tAMGWESNzJB"){
-      print("");
-    }*/
     return SegmentSubmodel(
         id: json['id']?.toString(),
         reference: json['reference'] as DocumentReference,
