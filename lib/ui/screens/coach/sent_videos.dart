@@ -167,6 +167,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                         context,
                         routeLabels[RouteEnum.coachShowVideo],
                         arguments: {
+                          'aspectRatio':segmentSubmitted.video.aspectRatio,
                           'videoUrl': segmentSubmitted.video.url,
                           'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
                         },
