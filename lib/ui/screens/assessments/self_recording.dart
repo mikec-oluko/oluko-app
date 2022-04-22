@@ -476,7 +476,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                     onTap: () {
                       BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                     },
-                    child: _recording ? SizedBox() : imageWrapper(),
+                    child: _recording || widget.fromCompletedClass ? SizedBox() : imageWrapper(),
                   )),
             ],
           ),

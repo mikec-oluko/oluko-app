@@ -27,7 +27,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
   final UserResponse userRequested;
-  const ProfileTransformationJourneyPage({this.userRequested});
+  bool viewAllPage;
+  ProfileTransformationJourneyPage({Key key, this.userRequested, this.viewAllPage = false}) : super(key: key);
   @override
   _ProfileTransformationJourneyPageState createState() => _ProfileTransformationJourneyPageState();
 }
@@ -70,9 +71,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
       appBar: OlukoAppBar(
+        centerTitle: true,
         showTitle: true,
         showBackButton: true,
-        title: ProfileViewConstants.profileOptionsTransformationJourney,
+        title: widget.viewAllPage ? '' : OlukoLocalizations.get(context, 'transformation'),
         showSearchBar: false,
       ),
       body: _contentGallery == null
@@ -84,7 +86,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                 child: Stack(
                     alignment: OlukoNeumorphism.isNeumorphismDesign ? AlignmentDirectional.center : AlignmentDirectional.topStart,
                     children: [
-                      if (isCurrenUser)
+                      if (isCurrenUser && !widget.viewAllPage)
                         Align(
                             alignment: Alignment.topCenter,
                             child: Padding(
@@ -156,9 +158,15 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                         Align(
                           alignment: Alignment.topLeft,
                           child: Padding(
-                            padding: isCurrenUser ? const EdgeInsets.fromLTRB(30, 110, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            padding: widget.viewAllPage
+                                ? const EdgeInsets.fromLTRB(30, 20, 10, 10)
+                                : isCurrenUser
+                                    ? const EdgeInsets.fromLTRB(30, 110, 10, 10)
+                                    : const EdgeInsets.fromLTRB(10, 20, 10, 20),
                             child: Text(
-                              getTitleForContent(uploadListContent: _transformationJourneyContent),
+                              widget.viewAllPage
+                                  ? ProfileViewConstants.profileOptionsTransformationJourney
+                                  : getTitleForContent(uploadListContent: _transformationJourneyContent),
                               style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.bold),
                             ),
                           ),
@@ -239,7 +247,11 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   Align dragAndDropGridView(BuildContext context) {
     return Align(
       child: Padding(
-        padding: isCurrenUser ? const EdgeInsets.only(top: 150) : const EdgeInsets.only(top: 20),
+        padding: widget.viewAllPage
+            ? EdgeInsets.only(top: 60)
+            : isCurrenUser
+                ? const EdgeInsets.only(top: 150)
+                : const EdgeInsets.only(top: 20),
         child: Container(
           padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10) : EdgeInsets.all(0),
           decoration: OlukoNeumorphism.isNeumorphismDesign

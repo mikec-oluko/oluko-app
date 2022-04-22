@@ -237,7 +237,7 @@ class _CompletedClassState extends State<CompletedClass> {
                             textAlign: TextAlign.start,
                           ),
                           Text(
-                            DateFormat('hh:mm a').format(_date).toString(),
+                           TimeConverter.returnTimeStringFormat(_date,context),
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
