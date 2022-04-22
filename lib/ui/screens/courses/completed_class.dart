@@ -237,9 +237,7 @@ class _CompletedClassState extends State<CompletedClass> {
                             textAlign: TextAlign.start,
                           ),
                           Text(
-                            MediaQuery.of(context).alwaysUse24HourFormat
-                                ? DateFormat.Hm().format(_date)
-                                : DateFormat('hh:mm a').format(_date),
+                           TimeConverter.returnTimeStringFormat(_date,context),
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
