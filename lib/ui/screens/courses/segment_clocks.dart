@@ -148,6 +148,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   Duration currentTime;
   bool open = true;
   int durationPR = 0;
+  bool _recordingPaused = false;
 
   @override
   void initState() {
@@ -450,7 +451,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                   timerTaskIndex: timerTaskIndex,
                   createStory: _createStory,
                   workoutType: workoutType,
-                  originalWorkoutType: widget.workoutType,
+                  originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
                   //shareDone: shareDone,
                   segmentSubmission: _segmentSubmission,
                   scores: scores,
@@ -471,7 +472,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             child: SizedBox(
               height: ScreenUtils.height(context) * 0.14,
               width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(widget.workoutType, shareDone, context, shareDoneAction, goToClassAction,
+              child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context, shareDoneAction, goToClassAction,
                   nextSegmentAction, widget.segments, widget.segmentIndex),
             ),
           )
@@ -571,6 +572,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
               context: context,
               content: PauseDialogContent(resumeAction: _resume, restartAction: _goToSegmentDetail),
             );
+            _recordingPaused = true;
           }
           setState(() {
             workoutType = WorkoutType.segment;
