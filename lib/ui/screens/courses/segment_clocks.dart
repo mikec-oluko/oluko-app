@@ -87,7 +87,7 @@ class SegmentClocks extends StatefulWidget {
   _SegmentClocksState createState() => _SegmentClocksState();
 }
 
-class _SegmentClocksState extends State<SegmentClocks> {
+class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserver {
   GlobalService _globalService = GlobalService();
 
   final toolbarHeight = kToolbarHeight * 2;
@@ -118,7 +118,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Camera
   List<CameraDescription> cameras;
   CameraController cameraController;
-  bool _isReady = false;
+  bool _isCameraReady = false;
   bool isCameraFront = false;
   List<TimerEntry> timerEntries;
   User _user;
@@ -152,10 +152,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   void initState() {
     Wakelock.enable();
+    WidgetsBinding.instance.addObserver(this);
     workoutType = widget.workoutType;
-    /*if (isSegmentWithRecording()) {
-      _setupCameras();
-    }*/
     _startMovement();
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
@@ -458,7 +456,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   scores: scores,
                   totalScore: totalScore,
                   counter: counter,
-                  isCameraReady: _isReady,
+                  isCameraReady: _isCameraReady,
                   cameraController: cameraController,
                   pauseButton: pauseButton(),
                   classIndex: widget.classIndex,
@@ -882,6 +880,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   void dispose() {
     Wakelock.disable();
+    WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
       stopwatchTimer.cancel();
     }
@@ -895,6 +894,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached || state == AppLifecycleState.paused) return;
+    final isInactive = state == AppLifecycleState.inactive;
+    if (isInactive) {
+      Navigator.pop(context);
+    }
+  }
+
   //Camera functions
   Future<void> _setupCameras() async {
     final int cameraPos = isCameraFront ? 0 : 1;
@@ -906,7 +915,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } on CameraException catch (_) {}
     if (!mounted) return;
     setState(() {
-      _isReady = true;
+      _isCameraReady = true;
     });
   }
 
