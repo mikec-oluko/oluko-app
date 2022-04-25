@@ -106,12 +106,10 @@ class CoachRequestRepository {
     }).toList();
   }
 
-  Future<void> updateSegmentSubmission(String userId, String segmentId, String courseEnrollmentId, String coachId, String classId,
+  Future<void> updateSegmentSubmission(String userId, CoachRequest coachRequest,
       String segmentSubmissionId, DocumentReference segmentSubmissionRef) async {
     DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
-    CoachRequest coachRequest =
-        await CoachRequestRepository().getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId, classId);
-    DocumentReference coachRequestDocRef =
+      DocumentReference coachRequestDocRef =
         projectReference.collection('coachAssignments').doc(userId).collection('coachRequests').doc(coachRequest.id);
     await coachRequestDocRef.update({'segment_submission_id': segmentSubmissionId, 'segment_submission_reference': segmentSubmissionRef});
   }

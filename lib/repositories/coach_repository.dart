@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
-import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
@@ -13,7 +11,6 @@ import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CoachRepository {
@@ -241,6 +238,9 @@ class CoachRepository {
         case TimelineInteractionType.course:
           Course courseForItem = Course.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.courseForNavigation = courseForItem;
+          timelineItem.contentThumbnail =
+              courseForItem.images.length >= 2 ? courseForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
+
           break;
         case TimelineInteractionType.classes:
           break;
@@ -251,6 +251,9 @@ class CoachRepository {
         case TimelineInteractionType.movement:
           Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.movementForNavigation = movementForItem;
+          timelineItem.contentName = movementForItem.name;
+          timelineItem.contentThumbnail =
+              movementForItem.images.length >= 2 ? movementForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
           break;
         case TimelineInteractionType.mentoredVideo:
           break;
@@ -311,7 +314,7 @@ class CoachRepository {
               contentTitle: courseRecommended.name,
               contentSubtitle: courseRecommended.classes.length.toString(),
               contentDescription: courseRecommended.duration,
-              contentImage: courseRecommended.image,
+              contentImage: courseRecommended.images != null ? courseRecommended.images.elementAt(1) as String : courseRecommended.image,
               contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               courseContent: courseRecommended);
@@ -328,7 +331,8 @@ class CoachRepository {
               contentTitle: movementRecommended.name,
               contentSubtitle: '',
               contentDescription: movementRecommended.description,
-              contentImage: movementRecommended.image,
+              contentImage:
+                  movementRecommended.images != null ? movementRecommended.images.elementAt(1) as String : movementRecommended.image,
               contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               movementContent: movementRecommended);

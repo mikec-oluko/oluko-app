@@ -59,44 +59,56 @@ class CoachRequestStreamBloc extends Cubit<CoachRequestStreamState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
-    subscription ??= _coachRequestRepository.getCoachRequestSubscription(userId, coachId).listen((snapshot) async {
+    return subscription ??= _coachRequestRepository.getCoachRequestSubscription(userId, coachId).listen((snapshot) async {
       Set<CoachRequest> coachRequests = Set();
       Set<CoachRequest> coachRequestsUpdated = Set();
       Set<CoachRequest> coachRequestsUpdateContent = Set();
 
-      if (snapshot.docChanges.isNotEmpty) {
-        snapshot.docChanges.forEach((doc) {
-          final Map<String, dynamic> content = doc.doc.data();
-          coachRequestsUpdated.add(CoachRequest.fromJson(content));
-        });
-      }
-      if (snapshot.docs.isNotEmpty) {
-        snapshot.docs.forEach((doc) {
-          final Map<String, dynamic> content = doc.data();
-          coachRequests.add(CoachRequest.fromJson(content));
-        });
-      }
-
-      if (coachRequestsUpdated.length > 0) {
-        coachRequestsUpdateContent.addAll(coachRequests);
-        coachRequestsUpdated.forEach((requestUpdatedItem) {
-          coachRequestsUpdateContent.forEach((requestItem) {
-            requestUpdatedItem.id == requestItem.id
-                ? requestUpdatedItem != requestItem
-                    ? requestItem = requestUpdatedItem
-                    : null
-                : null;
+      try {
+        if (snapshot.docChanges.isNotEmpty) {
+          snapshot.docChanges.forEach((doc) {
+            final Map<String, dynamic> content = doc.doc.data();
+            coachRequestsUpdated.add(CoachRequest.fromJson(content));
           });
-        });
-      } else {
-        coachRequestsUpdateContent.addAll(coachRequestsUpdated);
-      }
+        }
+        if (snapshot.docs.isNotEmpty) {
+          snapshot.docs.forEach((doc) {
+            final Map<String, dynamic> content = doc.data();
+            coachRequests.add(CoachRequest.fromJson(content));
+          });
+        }
 
-      coachRequestsUpdateContent.isNotEmpty
-          ? emit(GetCoachRequestStreamUpdate(values: coachRequestsUpdateContent.toList()))
-          : emit(CoachRequestStreamSuccess(values: coachRequests.toList()));
+        if (coachRequestsUpdated.length > 0) {
+          coachRequestsUpdateContent.addAll(coachRequests);
+          coachRequestsUpdated.forEach((requestUpdatedItem) {
+            coachRequestsUpdateContent.forEach((requestItem) {
+              requestUpdatedItem.id == requestItem.id
+                  ? requestUpdatedItem != requestItem
+                      ? requestItem = requestUpdatedItem
+                      : null
+                  : null;
+            });
+          });
+        } else {
+          coachRequestsUpdateContent.addAll(coachRequestsUpdated);
+        }
+        coachRequestsUpdateContent.isNotEmpty
+            ? emit(GetCoachRequestStreamUpdate(values: coachRequestsUpdateContent.toList()))
+            : emit(CoachRequestStreamSuccess(values: coachRequests.toList()));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(CoachRequestStreamFailure(exception: exception));
+      }
+    }, onError: (dynamic error, StackTrace stackTrace) async {
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      emit(CoachRequestStreamFailure(exception: error));
     });
-    return subscription;
   }
 
   void get(String userId) async {

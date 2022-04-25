@@ -95,7 +95,11 @@ class TransformListOfItemsToWidget {
     if (upcomingChallengesContent != null) {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/", userRequested: requestedUser, useAudio: useAudio),
+        child: ChallengesCard(
+            segmentChallenge: upcomingChallengesContent as ChallengeNavigation,
+            routeToGo: "/",
+            userRequested: requestedUser,
+            useAudio: useAudio),
       );
     }
     if (challengeSegment != null) {

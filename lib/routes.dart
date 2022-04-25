@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
@@ -39,11 +41,13 @@ import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
+import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
+import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
@@ -387,7 +391,11 @@ class Routes {
   final ProjectConfigurationBloc _projectConfigurationBloc = ProjectConfigurationBloc();
   final PushNotificationBloc _pushNotificationBloc = PushNotificationBloc();
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
+  final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
+  final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -401,6 +409,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
@@ -457,6 +466,7 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
+          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -535,7 +545,9 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
@@ -573,6 +585,7 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<OlukoPanelBloc>.value(value: OlukoPanelBloc()),
@@ -611,6 +624,8 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
           challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+          isCurrentUser:
+              argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
         );
         break;
       case RouteEnum.profileTransformationJourney:
@@ -625,8 +640,11 @@ class Routes {
           BlocProvider<TransformationJourneyContentBloc>.value(value: _transformationJourneyContentBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
-        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileTransformationJourneyPage(
+          userRequested: argumentsToAdd['profileInfo'] as UserResponse,
+          viewAllPage: argumentsToAdd['viewAllPage'] as bool,
+        );
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [
@@ -704,6 +722,9 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
+          BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<TimerTaskBloc>.value(value: _timerTaskBloc),
           BlocProvider<ClocksTimerBloc>.value(value: _clocksTimerBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
@@ -857,7 +878,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool,
+          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? true : argumentsToAdd['isFirstTime'] as bool,
           assessmentsDone:
               argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
         );
@@ -939,6 +960,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),

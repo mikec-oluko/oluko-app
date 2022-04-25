@@ -75,7 +75,12 @@ class _CompletedClassState extends State<CompletedClass> {
             showVideo = false;
             return CompletedCourseVideo(mediaURL: state.url, isDownloaded: false);
           } else {
-            return form();
+            return WillPopScope(
+                onWillPop: () async {
+                  Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+                  return true;
+                },
+                child: form());
           }
         });
       } else {
@@ -232,7 +237,7 @@ class _CompletedClassState extends State<CompletedClass> {
                             textAlign: TextAlign.start,
                           ),
                           Text(
-                            DateFormat('hh:mm a').format(_date).toString(),
+                           TimeConverter.returnTimeStringFormat(_date,context),
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,

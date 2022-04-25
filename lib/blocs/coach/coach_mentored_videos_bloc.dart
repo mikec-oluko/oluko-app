@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/annotation.dart';
-import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -48,35 +45,46 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
-    return subscription ??= _coachRepository.getAnnotationSubscription(userId, coachId).listen((snapshot) {
+    return subscription ??= _coachRepository.getAnnotationSubscription(userId, coachId).listen((snapshot) async {
       final Set<Annotation> coachAnnotations = {};
       final Set<Annotation> coachAnnotationsUpdated = {};
-
-      handleDocumentChanges(snapshot, coachAnnotationsUpdated);
-      handleDocuments(snapshot, coachAnnotations);
-
       final Set<Annotation> coachAnnotationsChangedItems = {};
+      try {
+        handleDocumentChanges(snapshot, coachAnnotationsUpdated);
+        handleDocuments(snapshot, coachAnnotations);
 
-      if (coachAnnotationsUpdated.isNotEmpty && coachAnnotations.isNotEmpty) {
-        for (final updateItem in coachAnnotationsUpdated) {
-          for (final annotationItem in coachAnnotations) {
-            if (annotationItem.id == updateItem.id) {
-              if (updateItem != annotationItem) {
-                coachAnnotationsChangedItems.add(updateItem);
+        if (coachAnnotationsUpdated.isNotEmpty && coachAnnotations.isNotEmpty) {
+          for (final updateItem in coachAnnotationsUpdated) {
+            for (final annotationItem in coachAnnotations) {
+              if (annotationItem.id == updateItem.id) {
+                if (updateItem != annotationItem) {
+                  coachAnnotationsChangedItems.add(updateItem);
+                }
               }
             }
           }
+        } else {
+          coachAnnotationsChangedItems.addAll(coachAnnotationsUpdated);
         }
-      } else {
-        coachAnnotationsChangedItems.addAll(coachAnnotationsUpdated);
-      }
 
-      if (coachAnnotationsChangedItems.isNotEmpty) {
-        // emit(CoachMentoredVideosUpdate(mentoredVideos: coachAnnotationsChangedItems.toList())); //TODO: check if this is needed to control builds
-        emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsChangedItems.toList()));
-      } else {
-        emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations.toList()));
+        if (coachAnnotationsChangedItems.isNotEmpty) {
+          emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsChangedItems.toList()));
+        } else {
+          emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations.toList()));
+        }
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(CoachMentoredVideoFailure(exception: exception));
       }
+    }, onError: (dynamic error, StackTrace stackTrace) async {
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      emit(CoachMentoredVideoFailure(exception: error));
     });
   }
 

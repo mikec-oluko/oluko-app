@@ -63,14 +63,14 @@ class _State extends State<DeleteAudioPanel> {
                       ? OlukoPrimaryButton(
                           title: OlukoLocalizations.get(context, 'yes'),
                           onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
+                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,true);
                             widget.panelController.close();
                           },
                         )
                       : OlukoNeumorphicPrimaryButton(
                           title: OlukoLocalizations.get(context, 'allow'),
                           onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
+                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,true);
                             widget.panelController.close();
                           })
                 ],

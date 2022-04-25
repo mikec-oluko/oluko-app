@@ -31,8 +31,8 @@ class PlanBloc extends Cubit<PlanState> {
   void getPlans() async {
     emit(Loading());
     try {
-      final List<Plan> plans = await PlanRepository().getAll();
-      plans.sort((a, b) => a.title.compareTo(b.title));
+      final List<Plan> plans = await PlanRepository.getAll();
+      //plans.sort((a, b) => a.title.compareTo(b.title));
       emit(PlansSuccess(plans: plans));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

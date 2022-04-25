@@ -38,17 +38,31 @@ class NotificationBloc extends Cubit<NotificationState> {
     return subscription ??= NotificationRepository.getNotificationSubscription(userId).listen((snapshot) async {
       final List<Notification> notifications = [];
       int unseenNotifications = 0;
-      for (final doc in snapshot.docs) {
-        final Map<String, dynamic> content = doc.data();
-        final notification = Notification.fromJson(content);
-        if (notification.message == Message().hifiveMessageCode && notification.isDeleted != true) {
-          notifications.add(notification);
-          if (notification.seenAt == null) {
-            unseenNotifications++;
+      try {
+        for (final doc in snapshot.docs) {
+          final Map<String, dynamic> content = doc.data();
+          final notification = Notification.fromJson(content);
+          if (notification.message == Message().hifiveMessageCode && notification.isDeleted != true) {
+            notifications.add(notification);
+            if (notification.seenAt == null) {
+              unseenNotifications++;
+            }
           }
         }
+        emit(NotificationSuccess(notifications: notifications, unseenNotifications: unseenNotifications));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(NotificationFailure(exception: exception));
       }
-      emit(NotificationSuccess(notifications: notifications, unseenNotifications: unseenNotifications));
+    }, onError: (dynamic error, StackTrace stackTrace) async {
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      emit(NotificationFailure(exception: error));
     });
   }
 

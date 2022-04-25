@@ -12,6 +12,21 @@ class TimeConverter {
     return (milliseconds / 1000);
   }
 
+  static String secondsToMinutes(double totalSeconds) {
+    int minutes = totalSeconds ~/ 60;
+    num seconds = totalSeconds % 60;
+    String stringSeconds = seconds.toString();
+    List<String> splittedSeconds = stringSeconds.split('.');
+    String finalSeconds = splittedSeconds[0];
+    String minutesStr;
+    if (seconds < 10) {
+      minutesStr = '${minutes}:0${finalSeconds}';
+    } else {
+      minutesStr = '${minutes}:${finalSeconds}';
+    }
+    return minutesStr;
+  }
+
   static String fromSecondsToStringFormat(double seconds) {
     String stringSeconds = seconds.toString();
     List<String> splittedSeconds = stringSeconds.split('.');
@@ -58,6 +73,14 @@ class TimeConverter {
       dateSplitted.removeAt(2);
     }
     return dateSplitted.join(' ');
+  }
+
+  static String returnTimeStringFormat(DateTime date,BuildContext context) {
+    if (MediaQuery.of(context).alwaysUse24HourFormat) {
+      return DateFormat.Hm().format(date);
+    } else {
+      return DateFormat('hh:mm a').format(date);
+    }
   }
 
   static String returnDateOnStringFormat({Timestamp dateToFormat, BuildContext context, String separator}) {

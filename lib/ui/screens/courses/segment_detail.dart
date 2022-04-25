@@ -260,7 +260,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
             _contentForPanel = ModalPersonalRecord(
-                segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[segmentIndexToUse].id, userId: _user.id);
+                segmentId: state.segmentId, userId: _user.id);
           }
           if (state is SegmentDetailContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
@@ -457,7 +457,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
-  _clockAction() {
-    BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel();
+  _clockAction(String segmentId) {
+    BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
   }
 }

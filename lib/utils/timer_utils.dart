@@ -35,8 +35,8 @@ class TimerUtils {
   static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 200 : 220,
-        height: ScreenUtils.smallScreen(context) ? 200 : 220,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -72,18 +72,20 @@ class TimerUtils {
     ]);
   }
 
-  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => Container(
-      //TODO: CHECK RESOLUTIONS WITH KEYBOARD
-      height: () {
-        if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
-        return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
-      }(),
-      width: () {
-        if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
-        return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
-      }(),
-      child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
-          currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1));
+  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => RotationTransition(
+      turns: AlwaysStoppedAnimation(3/360),
+      child: Container(
+          //TODO: CHECK RESOLUTIONS WITH KEYBOARD
+          height: () {
+            if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
+            return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
+          }(),
+          width: () {
+            if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
+            return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
+          }(),
+          child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
+              currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)));
 
   static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
     if (totalRounds < _maxStepsForSegmentedClock) {
@@ -112,8 +114,8 @@ class TimerUtils {
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter, bool bothSide]) {
     return Container(
         child: SizedBox(
-            width: ScreenUtils.smallScreen(context) ? 190 : 220,
-            height: ScreenUtils.smallScreen(context) ? 190 : 220,
+            width: getProgressCircleSize(context),
+            height: getProgressCircleSize(context),
             child: Stack(alignment: Alignment.center, children: [
               AspectRatio(
                   aspectRatio: 1,
@@ -216,8 +218,8 @@ class TimerUtils {
     return Container(
         child: Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? 190 : 220,
-        height: ScreenUtils.smallScreen(context) ? 190 : 220,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
         child: const AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -248,34 +250,13 @@ class TimerUtils {
   }
 
   static Widget restTimer(Widget addCounterValue, double progressValue, String duration, BuildContext context) {
-    //double ellipseScale = 4.5;
     return Container(
       child: Stack(
         alignment: Alignment.center,
         children: [
-          /*Image.asset(
-            'assets/courses/ellipse_1.png',
-            scale: ellipseScale,
-          ),
-          Image.asset(
-            'assets/courses/ellipse_2.png',
-            scale: ellipseScale,
-          ),
-          Image.asset(
-            'assets/courses/ellipse_3.png',
-            scale: ellipseScale,
-          ),*/
           SizedBox(
-            width: ScreenUtils.smallScreen(context)
-                ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.32
-                    : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.30,
-            height: ScreenUtils.smallScreen(context)
-                ? addCounterValue != null
-                    ? ScreenUtils.height(context) * 0.32
-                    : ScreenUtils.height(context) * 0.28
-                : ScreenUtils.height(context) * 0.30,
+            width: getProgressCircleSize(context),
+            height: getProgressCircleSize(context),
             child: AspectRatio(
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
@@ -319,7 +300,7 @@ class TimerUtils {
     );
   }
 
-  static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide]) {
+  static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide, String duration]) {
     return Container(
         child: SizedBox(
             height: _watchHeight,
@@ -328,8 +309,8 @@ class TimerUtils {
                 onTap: onTap,
                 child: Stack(alignment: Alignment.center, children: [
                   SizedBox(
-                    width: ScreenUtils.smallScreen(context) ? 190 : 220,
-                    height: ScreenUtils.smallScreen(context) ? 190 : 220,
+                    width: getProgressCircleSize(context),
+                    height: getProgressCircleSize(context),
                     child: AspectRatio(
                         aspectRatio: 1,
                         child: CircularProgressIndicator(
@@ -345,7 +326,7 @@ class TimerUtils {
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                 : OlukoColors.primary)),
-                    SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
+                    SizedBox(height: 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
                         style: OlukoFonts.olukoBigFont(
@@ -353,7 +334,8 @@ class TimerUtils {
                             customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
                     SizedBox(height: 5),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
-                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox()
+                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox(),
+                    duration == null ? const SizedBox.shrink() : durationField(duration, OlukoColors.lightOrange),
                   ])
                 ]))));
   }
@@ -363,8 +345,8 @@ class TimerUtils {
         onTap: onTap,
         child: Container(
             child: SizedBox(
-                height: _watchHeight,
-                width: _watchWidth,
+                width: getProgressCircleSize(context),
+                height: getProgressCircleSize(context),
                 child: Stack(alignment: Alignment.center, children: [
                   AspectRatio(
                       aspectRatio: 1,
@@ -374,13 +356,13 @@ class TimerUtils {
                           color: getGreenOrCoral,
                           backgroundColor: backgroundColor)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration),
+                    OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
                     const SizedBox(height: 12),
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Gilroy',
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 42 : 26,
+                            fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
@@ -399,7 +381,7 @@ class TimerUtils {
                           )
                         : const SizedBox.shrink(),
                     OlukoNeumorphism.isNeumorphismDesign && roundsValue != null ? getRoundLabel(roundsValue) : const SizedBox.shrink(),
-                    !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration),
+                    !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
                   ])
                 ]))));
   }
@@ -407,8 +389,8 @@ class TimerUtils {
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
-        width: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
-        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.275 : ScreenUtils.height(context) * 0.30,
+        width: getProgressCircleSize(context),
+        height: getProgressCircleSize(context),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
@@ -454,14 +436,13 @@ class TimerUtils {
   }
 
 //HELPER METHODS
-  static Widget durationField(String duration) {
+  static Widget durationField(String duration, Color color) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Text(duration,
           textAlign: TextAlign.center,
           style: OlukoFonts.olukoSubtitleFont(
-              custoFontWeight: FontWeight.bold,
-              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)),
+              custoFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? color : OlukoColors.white)),
     );
   }
 
@@ -522,20 +503,11 @@ class TimerUtils {
 
   static startCountdown(
       WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound) {
-    /*return Navigator.of(context)
-        .push(PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
-                  seconds: initialTimer != null ? initialTimer : 5,
-                  totalRounds: totalRounds != null ? totalRounds : 1,
-                  currentRound: currentRound != null ? currentRound : 0,
-                  recording: workoutType == WorkoutType.segmentWithRecording,
-                  onShowAgainPressed: onShowAgainPressed,
-                  showPanel: showPanel,
-                )))
-        .then((value) {*/
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
-    //});
+  }
+
+  static double getProgressCircleSize(BuildContext context) {
+    return ScreenUtils.smallScreen(context) ? 210 : 220;
   }
 }

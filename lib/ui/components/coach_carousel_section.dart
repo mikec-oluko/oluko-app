@@ -41,7 +41,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                       items: widget.contentForCarousel,
                       options: CarouselOptions(
                           height: 240.0,
-                          enableInfiniteScroll: true,
+                          enableInfiniteScroll: widget.contentForCarousel.length > 1,
                           autoPlay: true,
                           autoPlayCurve: Curves.easeInExpo,
                           autoPlayAnimationDuration: const Duration(milliseconds: 1000),
@@ -56,8 +56,6 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                     Center(
                       child: Container(
                         height: 25,
-                        constraints: BoxConstraints(minHeight: 25, minWidth: 10, maxWidth: ScreenUtils.width(context) / 3, maxHeight: 25),
-                        // color: Colors.red,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,

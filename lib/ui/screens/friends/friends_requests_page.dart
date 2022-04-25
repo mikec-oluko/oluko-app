@@ -1,6 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/confirm_friend_bloc.dart';
@@ -11,7 +9,6 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_request_card.dart';
-import 'package:oluko_app/ui/components/friends_suggestions_section.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -19,6 +16,8 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class FriendsRequestPage extends StatefulWidget {
+  final AuthSuccess authUser;
+  const FriendsRequestPage({@required this.authUser});
   @override
   _FriendsRequestPageState createState() => _FriendsRequestPageState();
 }
@@ -29,11 +28,11 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
 
   @override
   void initState() {
+    BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(widget.authUser.user.id);
     super.initState();
   }
 
   List<UserResponse> friends = [];
-  AuthSuccess _authStateData;
   bool disabledActions = false;
 
   final List<String> userImages = [
@@ -47,70 +46,65 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess && _authStateData == null) {
-        _authStateData = authState;
-        BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(authState.user.id);
-      }
-      return SingleChildScrollView(
-        child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-            child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
-              listener: (context, ignoreFriendState) {
-                if (ignoreFriendState is IgnoreFriendRequestSuccess) {
-                  BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
-                  AppMessages.clearAndShowSnackbar(context, 'Request ignored.');
-                } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
-                  AppMessages.clearAndShowSnackbar(context, 'Error ignoring request.');
+    return SingleChildScrollView(
+      child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+          child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
+            listener: (context, ignoreFriendState) {
+              if (ignoreFriendState is IgnoreFriendRequestSuccess) {
+                BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(widget.authUser.user.id);
+                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'friendRequestIgnored'));
+              } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
+                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'ignoreFriendRequestError'));
+              }
+            },
+            child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
+              listenWhen: (previousState, currentState) => currentState is ConfirmFriendSuccess,
+              listener: (context, confirmFriendState) {
+                disabledActions = false;
+                if (confirmFriendState is ConfirmFriendSuccess) {
+                  BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(widget.authUser.user.id);
+                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'friendAdded'));
+                } else if (confirmFriendState is ConfirmFriendFailure) {
+                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'addFriendRequestError'));
                 }
               },
-              child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
-                listenWhen: (previousState, currentState) => currentState is ConfirmFriendSuccess,
-                listener: (context, confirmFriendState) {
-                  disabledActions = false;
-                  if (confirmFriendState is ConfirmFriendSuccess) {
-                    BlocProvider.of<FriendRequestBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
-                    AppMessages.clearAndShowSnackbar(context, 'Friend added.');
-                  } else if (confirmFriendState is ConfirmFriendFailure) {
-                    AppMessages.clearAndShowSnackbar(context, 'Error adding friend.');
-                  }
-                },
-                child: Column(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Column(
-                        //     children: friends
-                        //         .map((friend) => FriendRequestCard(
-                        //               userData: friend,
-                        //             ))
-                        //         .toList()),
-                        BlocBuilder<FriendRequestBloc, FriendRequestState>(builder: (context, friendsRequestState) {
-                          return Column(
-                            children: generateFriendRequestsList(friendsRequestState),
-                          );
-                        })
-                      ],
-                    ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(top: 20),
-                    //   child: FriendSuggestionSection(
-                    //     name: "Richard",
-                    //     lastName: "McGregor",
-                    //     userName: "Notorius",
-                    //     imageUser: userImages[6],
-                    //   ),
-                    // )
-                  ],
-                ),
+              child: Column(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Column(
+                      //     children: friends
+                      //         .map((friend) => FriendRequestCard(
+                      //               userData: friend,
+                      //             ))
+                      //         .toList()),
+                      BlocBuilder<FriendRequestBloc, FriendRequestState>(builder: (context, friendsRequestState) {
+                        return Column(
+                          children: generateFriendRequestsList(friendsRequestState),
+                        );
+                      })
+                    ],
+                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(top: 20),
+                  //   child: FriendSuggestionSection(
+                  //     name: "Richard",
+                  //     lastName: "McGregor",
+                  //     userName: "Notorius",
+                  //     imageUser: userImages[6],
+                  //   ),
+                  // )
+                ],
               ),
-            )),
-      );
-    });
+            ),
+          )),
+    );
+    // });
   }
 
   Padding buildAllRequestButton(BuildContext context) {
@@ -121,7 +115,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
           child: Row(
             children: [
               OlukoOutlinedButton(
-                title: "See All Requests",
+                title: OlukoLocalizations.get(context, 'seeAllRequests'),
                 onPressed: () {},
               ),
             ],

@@ -47,24 +47,30 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
                     child: ListView(
                       clipBehavior: Clip.none,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: TitleBody(
-                            ProfileViewConstants.profileHelpAndSupportSubTitle,
-                            bold: true,
-                          ),
-                        ),
+                        OlukoNeumorphism.isNeumorphismDesign
+                            ? Center(
+                                child: TitleBody(
+                                  ProfileViewConstants.profileHelpAndSupportSubTitle,
+                                  bold: true,
+                                ),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                child: TitleBody(
+                                  ProfileViewConstants.profileHelpAndSupportSubTitle,
+                                  bold: true,
+                                ),
+                              ),
                         SizedBox(height: 20.0),
                         Container(
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
                                 : OlukoColors.black,
                             child: Padding(
-                              padding: OlukoNeumorphism.isNeumorphismDesign
-                                  ? const EdgeInsets.fromLTRB(20, 20, 20, 20)
-                                  : const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                              padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(20) : const EdgeInsets.all(15),
                               child: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphicPrimaryButton(
+                                      customHeight: 55,
                                       isExpanded: false,
                                       title: ProfileViewConstants.profileHelpAndSupportButtonText,
                                       onPressed: () {

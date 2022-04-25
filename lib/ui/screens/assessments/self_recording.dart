@@ -47,7 +47,7 @@ class SelfRecording extends StatefulWidget {
   _State createState() => _State();
 }
 
-class _State extends State<SelfRecording> {
+class _State extends State<SelfRecording> with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
 
   //camera
@@ -68,12 +68,23 @@ class _State extends State<SelfRecording> {
   void initState() {
     super.initState();
     _setupCameras();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     cameraController?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.detached) return;
+    final bool isBackground = state == AppLifecycleState.paused;
+    if (isBackground) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -465,7 +476,7 @@ class _State extends State<SelfRecording> {
                     onTap: () {
                       BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                     },
-                    child: _recording ? SizedBox() : imageWrapper(),
+                    child: _recording || widget.fromCompletedClass ? SizedBox() : imageWrapper(),
                   )),
             ],
           ),

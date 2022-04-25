@@ -162,11 +162,11 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   Widget _buildOptionTiles(BuildContext context, PrivacyOptions option) {
     Widget widgetToReturn = Container();
-    if (option.isSwitch == false) {
+    if (!option.isSwitch) {
       widgetToReturn = OlukoNeumorphism.isNeumorphismDesign
-          ? Column(children: [radioButton(option, context), OlukoNeumorphicDivider()])
+          ? Column(children: [neumorphicOptionContent(option), const OlukoNeumorphicDivider()])
           : Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
               ),
@@ -199,6 +199,50 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           onChanged: (value) {
             _setValueForPrivacy(index: value as int);
           }),
+    );
+  }
+
+  Widget neumorphicOptionContent(PrivacyOptions option) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Text(
+                OlukoLocalizations.get(context, returnOption(option.title.toString())),
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              ),
+              option.showSubtitle
+                  ? Text(
+                      OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
+                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                    )
+                  : SizedBox(),
+            ],
+          ),
+          Expanded(child: SizedBox()),
+          GestureDetector(
+              onTap: () => _setValueForPrivacy(index: option.option.index),
+              child: neumorphicRadioButton(option.option.index == _privacyNewValue))
+        ],
+      ),
+    );
+  }
+
+  Widget neumorphicRadioButton(bool isSelected) {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: isSelected
+          ? Image.asset(
+              'assets/profile/selected_option.png',
+              scale: 3.5,
+            )
+          : Image.asset(
+              'assets/profile/no_selected_option.png',
+              scale: 3.5,
+            ),
     );
   }
 
