@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
+import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -83,7 +84,11 @@ class _State extends State<Courses> {
 
   PanelController panelController = PanelController();
 
-
+  @override
+  void initState() {
+    BlocProvider.of<RemainSelectedTagsBloc>(context).set([]);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +151,7 @@ class _State extends State<Courses> {
                     onSubmit: (List<Base> selectedItems) => setState(() {
                           selectedTags = selectedItems as List<Tag>;
                           showFilterSelector = false;
+                          BlocProvider.of<RemainSelectedTagsBloc>(context).set(selectedTags);
                           searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
                         }),
                     onClosed: () => this.setState(() {
