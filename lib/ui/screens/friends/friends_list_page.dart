@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -12,10 +11,12 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/users_list_component.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -28,198 +29,150 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class FriendsListPage extends StatefulWidget {
-  // final List<User> friends;
-  // FriendsListPage({this.friends});
+  final AuthSuccess authUser;
   final String userImage;
-  FriendsListPage({this.userImage});
+  const FriendsListPage({this.userImage, @required this.authUser});
   @override
   _FriendsListPageState createState() => _FriendsListPageState();
 }
 
 class _FriendsListPageState extends State<FriendsListPage> {
-  AuthSuccess _authStateData;
-  UserListSuccess _userListSuccessData;
+  List<UserResponse> _friendUsersList = [];
+  List<UserResponse> _appUsersList = [];
+  Widget _friendUsersWidget = const SizedBox.shrink();
+  Widget _appUsersWidget = const SizedBox.shrink();
+  GetFriendsSuccess _friendState;
+  List<FriendModel> _friends = [];
+  final _viewScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _viewScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
   }
 
-  //TODO: Use from widget
-  List<User> friends;
-  final _title = 'Starred';
-  List<String> userImages = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlCzsqcGBluOOUtgQahXtISLTM3Wb2tkpsoeMqwurI2LEP6pCS0ZgCFLQGiv8BtfJ9p2A&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEMWzdlSputkYso9dJb4VY5VEWQunXGBJMgGys7BLC4MzPQp6yfLURe-9nEdGrcK6Jasc&usqp=CAU',
-    'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20%2820%29.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHNX4Bb1o5JWY91Db6I4jf_wmw24ajOdaOPgRCqFlnEnxcAlQ42pyWJxM9klp3E8JoT0k&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF-rBV5pmJhYA8QbjpPcx6s9SywnXGbvsaxWyFi47oDf9JuL4GruKBY5zl2tM4tdgYdQ0&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU'
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, authState) {
-        if (authState is AuthSuccess && _authStateData == null) {
-          _authStateData = authState;
-          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(authState.user.id);
-        }
-        if (OlukoNeumorphism.isNeumorphismDesign) {
-          return _getContent();
-        } else {
-          return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
-            listener: (favoriteFriendContext, favoriteState) {
-              handleFriendFavoriteState(favoriteState);
-            },
-            child: _getContent(),
-          );
-        }
+    return BlocBuilder<UserListBloc, UserListState>(
+      builder: (context, userListState) {
+        return BlocBuilder<FriendBloc, FriendState>(
+          builder: (context, friendState) {
+            if (friendState is GetFriendsSuccess) {
+              _friendState = friendState;
+              _friendUsersList = friendState.friendUsers;
+              _friends = friendState.friendData != null ? friendState.friendData.friends : [];
+              _friendUsersWidget = UserListComponent(
+                authUser: widget.authUser,
+                users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
+                onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+              );
+            }
+            if (userListState is UserListSuccess) {
+              _appUsersList = userListState.users;
+              _appUsersWidget = UserListComponent(
+                authUser: widget.authUser,
+                users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
+                onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+              );
+            }
+            if (friendState is FriendLoading || userListState is UserListLoading) {
+              _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
+              _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
+            }
+            if (friendState is FriendFailure || userListState is UserListFailure) {
+              _friendUsersWidget = friendState is FriendFailure
+                  ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends')
+                  : _friendUsersWidget;
+              _appUsersWidget = userListState is UserListFailure
+                  ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users')
+                  : _appUsersWidget;
+            }
+            return SingleChildScrollView(
+              controller: _viewScrollController,
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.zero,
+              child: SizedBox(
+                  height: ScreenUtils.height(context),
+                  width: ScreenUtils.width(context),
+                  child: Column(
+                    children: [
+                      _listSection(
+                          titleForSection: OlukoLocalizations.get(context, 'myFriends'),
+                          content: _friendUsersWidget,
+                          listLength: _friends.length),
+                      _listSection(
+                          titleForSection: OlukoLocalizations.get(context, 'otherUsers'),
+                          content: _appUsersWidget,
+                          listLength: _appUsersList.length),
+                    ],
+                  )),
+            );
+          },
+        );
       },
     );
   }
 
-  Widget _getContent() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: SingleChildScrollView(
+  Widget _listSection({@required String titleForSection, @required Widget content, @required int listLength}) {
+    return Flexible(
+        flex: listLength >= 5 ? 5 : 2,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<FriendBloc, FriendState>(
-              builder: (context, friendState) {
-                return BlocBuilder<UserListBloc, UserListState>(
-                  builder: (userListContext, userListState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text(OlukoLocalizations.get(context, 'myFriends'), style: OlukoFonts.olukoBigFont()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: Column(
-                            children: generateFriendList(friendState),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text(OlukoLocalizations.get(context, 'otherUsers'), style: OlukoFonts.olukoBigFont()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: GridView.count(
-                            childAspectRatio: 0.7,
-                            crossAxisCount: 4,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: generateUsersList(friendState, userListState),
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                );
-              },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+              child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
             ),
+            Expanded(child: content),
           ],
-        ),
-      ),
+        ));
+  }
+
+  Padding getLoaderWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: OlukoCircularProgressIndicator(),
     );
   }
 
-  ///Manage friends retrieval state
-  List<Widget> generateFriendList(FriendState friendState) {
-    if (friendState is FriendLoading) {
-      return [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: OlukoCircularProgressIndicator(),
-        )
-      ];
-    } else if (friendState is FriendFailure) {
-      return [TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends')];
-    } else if (friendState is GetFriendsSuccess) {
-      if (friendState.friendData != null) {
-        return friendState.friendData.friends.isEmpty
-            ? [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    SizedBox(
-                        width: ScreenUtils.width(context) * 0.85,
-                        child: Text(
-                          OlukoLocalizations.get(context, 'noFriends'),
-                          textAlign: TextAlign.start,
-                          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
-                        ))
-                  ]),
-                )
-              ]
-            : [
-                GridView.count(
-                  padding: EdgeInsets.zero,
-                  childAspectRatio: 0.7,
-                  crossAxisCount: 4,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  children: friendState.friendData.friends.map((friend) {
-                    UserResponse friendUser;
-                    try {
-                      friendUser = friendState.friendUsers.where((fuser) => fuser != null && fuser?.id == friend.id).first;
-                    } catch (e) {
-                      friendUser = null;
-                    }
-                    if (friendUser == null) {
-                      return Container();
-                    }
-                    return GestureDetector(
-                      onTap: () {
-                        modalOnUserTap(friendUser, friendState);
-                      },
-                      child: Column(
-                        children: [
-                          StoriesItem(
-                            maxRadius: 30,
-                            imageUrl: friendUser.avatarThumbnail,
-                            name: friendUser.firstName,
-                            lastname: friendUser.lastName,
-                            currentUserId: _authStateData.user.id,
-                            itemUserId: friendUser.id,
-                            addUnseenStoriesRing: true,
-                            bloc: StoryListBloc(),
-                            from: StoriesItemFrom.friends,
-                          ),
-                          printName(friendUser),
-                          printUsername(friendUser)
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                )
-              ];
-      } else {
-        return [];
-      }
+  List<UserResponse> _filterFriendUsers(
+      {@required bool isForFriends, List<FriendModel> friends, List<UserResponse> friendUsersList, List<UserResponse> users}) {
+    List<UserResponse> _friendsUsers = [];
+    List<UserResponse> _appUsers = [];
+    if (isForFriends) {
+      friends.forEach((friend) {
+        UserResponse friendUser = friendUsersList
+            .where(
+              (friendUser) => friendUser != null && friendUser?.id == friend.id,
+            )
+            .first;
+        friendUser != null ? _friendsUsers.add(friendUser) : null;
+      });
+      return _friendsUsers;
     } else {
-      return [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: OlukoCircularProgressIndicator(),
-        )
-      ];
+      return _appUsers = users
+          .where((appUser) =>
+              appUser.privacy != 2 &&
+              (appUser.id != widget.authUser.user.id &&
+                  ((friendUsersList == null) || (friendUsersList.indexWhere((friend) => friend != null && friend.id == appUser.id) == -1))))
+          .toList();
     }
   }
 
-  modalOnUserTap(UserResponse friendUser, GetFriendsSuccess friendState) {
+  modalOnUserTap(UserResponse friendUser) {
     BottomDialogUtils.showBottomDialog(
       content: OlukoNeumorphism.isNeumorphismDesign
           ? FriendModalContent(
               friendUser,
-              _authStateData.user.id,
+              widget.authUser.user.id,
               FriendBloc(),
               FriendRequestBloc(),
               HiFiveSendBloc(),
@@ -227,90 +180,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
               UserStatisticsBloc(),
               FavoriteFriendBloc(),
             )
-          : dialogContainer(context: context, user: friendUser, friendState: friendState),
+          : dialogContainer(context: context, user: friendUser, friendState: _friendState),
       context: context,
-    );
-  }
-
-  Text printUsername(UserResponse friendUser) {
-    return Text(
-      UserHelper.printUsername(friendUser.username, friendUser.id) ?? '',
-      overflow: TextOverflow.ellipsis,
-      style: OlukoFonts.olukoSmallFont(customColor: Colors.grey),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  List<Widget> generateUsersList(FriendState friendState, UserListState userListState) {
-    if (userListState is! UserListSuccess && _userListSuccessData == null) {
-      BlocProvider.of<UserListBloc>(context).get();
-    }
-    if (userListState is UserListSuccess) {
-      _userListSuccessData = userListState;
-    }
-    if (friendState is FriendLoading || userListState is UserListLoading) {
-      return [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: OlukoCircularProgressIndicator(),
-        )
-      ];
-    } else if (userListState is UserListFailure) {
-      return [TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users')];
-    } else if (friendState is GetFriendsSuccess && userListState is UserListSuccess) {
-      if (userListState.users != null) {
-        return userListState.users.isEmpty
-            ? [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody(OlukoLocalizations.get(context, 'noUsers'))]),
-                )
-              ]
-            : userListState.users
-                .where(
-                (e) =>
-                    e.privacy != 2 &&
-                    (e.id != _authStateData.user.id &&
-                        ((friendState.friendUsers == null) ||
-                            (friendState.friendUsers.indexWhere((friend) => friend != null && friend.id == e.id) == -1))),
-              )
-                .map((user) {
-                return GestureDetector(
-                  onTap: () {
-                    modalOnUserTap(user, friendState);
-                  },
-                  child: Column(
-                    children: [
-                      StoriesItem(maxRadius: 30, imageUrl: user.avatarThumbnail, name: user.firstName, lastname: user.lastName),
-                      printName(user),
-                      printUsername(user)
-                    ],
-                  ),
-                );
-              }).toList();
-      } else {
-        return [];
-      }
-    } else {
-      return [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: OlukoCircularProgressIndicator(),
-        )
-      ];
-    }
-  }
-
-  Padding printName(UserResponse user) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Text(
-        '${user.firstName} ${user.lastName}',
-        overflow: TextOverflow.ellipsis,
-        style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
-        textAlign: TextAlign.center,
-      ),
     );
   }
 
@@ -347,41 +218,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
     );
   }
 
-  Widget usersGrid(List<UserResponse> users) {
-    if (users.isNotEmpty) {
-      return GridView.count(
-        childAspectRatio: 0.7,
-        crossAxisCount: 4,
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        children: users
-            .map(
-              (user) => Column(
-                children: [
-                  StoriesItem(
-                    maxRadius: 30,
-                    imageUrl: user.avatar,
-                    name: user.firstName,
-                    lastname: user.lastName,
-                  ),
-                  printName(user),
-                  printUsername(user),
-                ],
-              ),
-            )
-            .toList(),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 20, top: 10),
-        child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
-      );
-    }
-  }
-
   handleFriendFavoriteState(FavoriteFriendState favoriteState) {
     if (favoriteState is FavoriteFriendSuccess) {
-      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
+      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.authUser.user.id);
       AppMessages.clearAndShowSnackbar(context, 'Friend updated.');
     } else if (favoriteState is FavoriteFriendFailure) {
       AppMessages.clearAndShowSnackbar(context, 'Error updating Friend.');
@@ -391,7 +230,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget dialogContainer({BuildContext context, UserResponse user, FriendState friendState}) {
     bool connectionRequested =
         friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
-    BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+    BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.authUser.user.id, user.id);
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(user.id);
     return BlocBuilder<FriendBloc, FriendState>(
       bloc: BlocProvider.of<FriendBloc>(context),
@@ -432,7 +271,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             name: user.firstName,
                             lastname: user.lastName,
                             getStories: true,
-                            currentUserId: _authStateData.user.id,
+                            currentUserId: widget.authUser.user.id,
                             itemUserId: user.id,
                           ),
                         Expanded(
@@ -447,7 +286,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
                                 ),
-                                if (user.privacy == 0)
+                                if (PrivacyOptions.getPrivacyValue(user.privacy) == SettingsPrivacyOptions.public)
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -500,7 +339,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                         padding: const EdgeInsets.only(right: 16.0),
                                         child: GestureDetector(
                                           onTap: () {
-                                            BlocProvider.of<HiFiveSendBloc>(context).set(context, _authStateData.user.id, user.id);
+                                            BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.authUser.user.id, user.id);
                                             AppMessages().showHiFiveSentDialog(context);
                                           },
                                           child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
@@ -515,7 +354,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                 );
                                               }
                                               if (hiFiveSendState is HiFiveSendSuccess) {
-                                                BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+                                                BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.authUser.user.id, user.id);
                                               }
                                             },
                                             child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
@@ -586,7 +425,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             onPressed: () {
                               if (friendState is GetFriendsSuccess) {
                                 BlocProvider.of<FriendRequestBloc>(context)
-                                    .removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
+                                    .removeRequestSent(widget.authUser.user.id, friendState.friendData, user.id);
                               }
                             },
                           )
@@ -600,9 +439,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               if (friendState is GetFriendsSuccess) {
                                 userIsFriend
                                     ? BlocProvider.of<FriendBloc>(context)
-                                        .removeFriend(_authStateData.user.id, friendState.friendData, user.id)
+                                        .removeFriend(widget.authUser.user.id, friendState.friendData, user.id)
                                     : BlocProvider.of<FriendRequestBloc>(context)
-                                        .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
+                                        .sendRequestOfConnect(widget.authUser.user.id, friendState.friendData, user.id);
                               }
                             },
                           ),

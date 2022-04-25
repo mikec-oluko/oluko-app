@@ -20,6 +20,7 @@ class Course extends Base {
   List<ObjectSubmodel> tags;
   String image;
   String posterImage;
+  List<dynamic> images;
   DocumentReference statisticsReference;
 
   Course(
@@ -39,6 +40,7 @@ class Course extends Base {
       this.tags,
       this.image,
       this.posterImage,
+      this.images,
       this.video,
       this.description,
       String id,
@@ -62,28 +64,30 @@ class Course extends Base {
       return null;
     }
     Course course = Course(
-        name: json['name']?.toString(),
-        statisticsReference: json['statistics_reference'] != null ? json['statistics_reference'] as DocumentReference : null,
-        video: json['video']?.toString(),
-        duration: json['duration']==null?'0':json['duration'].toString(),
-        description: json['description']?.toString(),
-        equipment: json['equipment'] == null ? null : json['equipment'] as List<String>,
-        intensity: json['intensity'] == null ? null : json['intensity'] as List<String>,
-        categories: json['categories'] == null ? null : json['categories'] as List<String>,
-        workoutDuration: json['workout_duration'] == null ? null : json['workout_duration'] as List<String>,
-        recommendedEngagement: json['recommended_engagement'] as bool,
-        recommendedEngagementGap: json['recommended_engagementGap'] as bool,
-        engagementGapTime: json['engagement_gap_time'],
-        engagementTime: json['engagement_time'],
-        mandatoryGapTime: json['mandatory_gap_time'] as bool,
-        classes: json['classes'] != null
-            ? List<ObjectSubmodel>.from((json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
-            : null,
-        tags: json['tags'] != null
-            ? List<ObjectSubmodel>.from((json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
-            : null,
-        image: json['image']?.toString(),
-        posterImage: json['poster_image']?.toString(),);
+      name: json['name']?.toString(),
+      statisticsReference: json['statistics_reference'] != null ? json['statistics_reference'] as DocumentReference : null,
+      video: json['video']?.toString(),
+      duration: json['duration'] == null ? '0' : json['duration'].toString(),
+      description: json['description']?.toString(),
+      equipment: json['equipment'] == null ? null : json['equipment'] as List<String>,
+      intensity: json['intensity'] == null ? null : json['intensity'] as List<String>,
+      categories: json['categories'] == null ? null : json['categories'] as List<String>,
+      workoutDuration: json['workout_duration'] == null ? null : json['workout_duration'] as List<String>,
+      recommendedEngagement: json['recommended_engagement'] as bool,
+      recommendedEngagementGap: json['recommended_engagementGap'] as bool,
+      engagementGapTime: json['engagement_gap_time'],
+      engagementTime: json['engagement_time'],
+      mandatoryGapTime: json['mandatory_gap_time'] as bool,
+      classes: json['classes'] != null
+          ? List<ObjectSubmodel>.from((json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
+          : null,
+      tags: json['tags'] != null
+          ? List<ObjectSubmodel>.from((json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
+          : null,
+      image: json['image']?.toString(),
+      images: json['images'] as List<dynamic>,
+      posterImage: json['poster_image']?.toString(),
+    );
     course.setBase(json);
     return course;
   }
@@ -107,6 +111,7 @@ class Course extends Base {
       'tags': tags == null ? null : tags,
       'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
       'image': image,
+      'images': images
     };
     courseJson.addEntries(super.toJson().entries);
     return courseJson;

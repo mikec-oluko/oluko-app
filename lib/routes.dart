@@ -393,8 +393,8 @@ class Routes {
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
-  final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -641,7 +641,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo'] as UserResponse,viewAllPage: argumentsToAdd['viewAllPage']as bool,);
+        newRouteView = ProfileTransformationJourneyPage(
+          userRequested: argumentsToAdd['profileInfo'] as UserResponse,
+          viewAllPage: argumentsToAdd['viewAllPage'] as bool,
+        );
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [
