@@ -72,18 +72,20 @@ class TimerUtils {
     ]);
   }
 
-  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => Container(
-      //TODO: CHECK RESOLUTIONS WITH KEYBOARD
-      height: () {
-        if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
-        return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
-      }(),
-      width: () {
-        if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
-        return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
-      }(),
-      child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
-          currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1));
+  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => RotationTransition(
+      turns: AlwaysStoppedAnimation(3/360),
+      child: Container(
+          //TODO: CHECK RESOLUTIONS WITH KEYBOARD
+          height: () {
+            if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
+            return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
+          }(),
+          width: () {
+            if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
+            return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
+          }(),
+          child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
+              currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)));
 
   static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
     if (totalRounds < _maxStepsForSegmentedClock) {
@@ -253,8 +255,8 @@ class TimerUtils {
         alignment: Alignment.center,
         children: [
           SizedBox(
-        width: getProgressCircleSize(context),
-        height: getProgressCircleSize(context),
+            width: getProgressCircleSize(context),
+            height: getProgressCircleSize(context),
             child: AspectRatio(
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
@@ -505,7 +507,7 @@ class TimerUtils {
     Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
   }
 
-  static double getProgressCircleSize(BuildContext context){
+  static double getProgressCircleSize(BuildContext context) {
     return ScreenUtils.smallScreen(context) ? 210 : 220;
   }
 }

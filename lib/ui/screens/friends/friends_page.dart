@@ -1,4 +1,8 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
@@ -14,12 +18,13 @@ class FriendsPage extends StatefulWidget {
 class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _activeTabIndex;
-  List<Widget> _pages = [FriendsListPage(), FriendsRequestPage()];
+  final int _numOfTabs = 2;
   final String _title = "Friends";
+  AuthSuccess _authStateData;
 
   @override
   void initState() {
-    _tabController = TabController(length: _pages.length, vsync: this);
+    _tabController = TabController(length: _numOfTabs, vsync: this);
     super.initState();
   }
 
@@ -43,40 +48,58 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
         title: _title,
         showTitle: true,
       ),
-      body: Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-        child: WillPopScope(
-          onWillPop: () => AppNavigator.onWillPop(context),
-          child: Stack(
-            children: [
-              Column(
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, authState) {
+          if (authState is AuthSuccess && _authStateData == null) {
+            _authStateData = authState;
+            //TODO: CHECK IF NEED IT INSIDE TABS
+            BlocProvider.of<UserListBloc>(context).get();
+            BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
+          }
+          return Container(
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+            child: WillPopScope(
+              onWillPop: () => AppNavigator.onWillPop(context),
+              child: Stack(
                 children: [
-                  Padding(
-                    padding: OlukoNeumorphism.isNeumorphismDesign
-                        ? const EdgeInsets.symmetric(horizontal: 5, vertical: 20)
-                        : const EdgeInsets.symmetric(horizontal: 5),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: OlukoNeumorphism.isNeumorphismDesign ? neumoprhicTabs() : defaultTabs(),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      color:
-                          OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: _pages,
-                          )),
-                    ),
-                  ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: OlukoNeumorphism.isNeumorphismDesign
+                            ? const EdgeInsets.symmetric(horizontal: 5, vertical: 20)
+                            : const EdgeInsets.symmetric(horizontal: 5),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: OlukoNeumorphism.isNeumorphismDesign ? neumoprhicTabs() : defaultTabs(),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          color: OlukoNeumorphism.isNeumorphismDesign
+                              ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
+                              : OlukoColors.black,
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: TabBarView(
+                                controller: _tabController,
+                                children: [
+                                  FriendsListPage(
+                                    authUser: _authStateData,
+                                  ),
+                                  FriendsRequestPage(
+                                    authUser: _authStateData,
+                                  )
+                                ],
+                              )),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

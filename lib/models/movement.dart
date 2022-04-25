@@ -8,6 +8,7 @@ class Movement extends Base {
   String video;
   List<ObjectSubmodel> tags;
   String image;
+  List<dynamic> images;
 
   Movement(
       {this.name,
@@ -15,6 +16,7 @@ class Movement extends Base {
       this.description,
       this.tags,
       this.image,
+      this.images,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -37,6 +39,7 @@ class Movement extends Base {
         video: json['video']?.toString(),
         description: json['description']?.toString(),
         image: json['image'] == null ? null : json['image']?.toString(),
+        images: json['images'] as List<dynamic>,
         tags: json['tags'] == null
             ? null
             : (json['tags'] as Iterable).map<ObjectSubmodel>((tag) => ObjectSubmodel.fromJson(tag as Map<String, dynamic>)).toList());
@@ -50,6 +53,7 @@ class Movement extends Base {
       'video': video,
       'description': description,
       'image': image,
+      'images': images,
       'tags': tags == null ? null : List<dynamic>.from(tags),
     };
     movementJson.addEntries(super.toJson().entries);

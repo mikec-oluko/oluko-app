@@ -58,13 +58,27 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
     return subscription ??= CourseCategoryRepository().getCategoriesSubscription().listen((snapshot) async {
-      emit(CourseCategoryLoading());
       List<CourseCategory> courseCategories = [];
-      snapshot.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
-        courseCategories.add(CourseCategory.fromJson(content));
-      });
-      emit(CourseCategorySubscriptionSuccess(values: courseCategories));
+      try {
+        emit(CourseCategoryLoading());
+        snapshot.docs.forEach((doc) {
+          final Map<String, dynamic> content = doc.data();
+          courseCategories.add(CourseCategory.fromJson(content));
+        });
+        emit(CourseCategorySubscriptionSuccess(values: courseCategories));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(CourseCategoryFailure(exception: exception));
+      }
+    }, onError: (dynamic error, StackTrace stackTrace) async {
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      emit(CourseCategoryFailure(exception: error));
     });
   }
 }

@@ -41,6 +41,7 @@ import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
+import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -392,8 +393,9 @@ class Routes {
   final DownloadAssetBloc _downloadAssetBloc = DownloadAssetBloc();
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
-  final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -407,6 +409,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
@@ -638,7 +641,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo'] as UserResponse,viewAllPage: argumentsToAdd['viewAllPage']as bool,);
+        newRouteView = ProfileTransformationJourneyPage(
+          userRequested: argumentsToAdd['profileInfo'] as UserResponse,
+          viewAllPage: argumentsToAdd['viewAllPage'] as bool,
+        );
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [
@@ -956,6 +962,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
