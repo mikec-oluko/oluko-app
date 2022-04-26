@@ -18,7 +18,7 @@ class _State extends State<CoursePoster> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Padding(padding: EdgeInsets.only(top: 40), child: Container(child: Column(children: [classContainer(140.0, 108.0)]))),
+      child: Padding(padding: EdgeInsets.only(top: 40), child: Container(child: Column(children: [classContainer(108.0, 108.0)]))),
     );
   }
 
