@@ -63,16 +63,12 @@ class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVide
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
-                isOlukoControls: true,
-                showOptions: true,
                 videoUrl: widget.videoUrl,
                 whenInitialized: (ChewieController chewieController) => setState(() {
                       _controller = chewieController;
                     })),
           )
         : OlukoVideoPlayer(
-            isOlukoControls: true,
-            showOptions: true,
             videoUrl: widget.videoUrl,
             whenInitialized: (ChewieController chewieController) => this.setState(() {
                   _controller = chewieController;

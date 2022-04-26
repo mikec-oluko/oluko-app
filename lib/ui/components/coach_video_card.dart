@@ -83,8 +83,6 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: OlukoVideoPlayer(
-                  isOlukoControls: true,
-                  showOptions: true,
                   videoUrl: videoUrl,
                   autoPlay: false,
                   whenInitialized: (ChewieController chewieController) => setState(() {
@@ -94,8 +92,6 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
             ),
           )
         : OlukoVideoPlayer(
-            isOlukoControls: true,
-            showOptions: true,
             videoUrl: videoUrl,
             autoPlay: false,
             whenInitialized: (ChewieController chewieController) => setState(() {

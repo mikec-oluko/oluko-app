@@ -307,8 +307,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                     })),
           )
         : OlukoVideoPlayer(
-            isOlukoControls: true,
-            showOptions: true,
             videoUrl: videoUrl,
             autoPlay: false,
             whenInitialized: (ChewieController chewieController) => setState(() {
