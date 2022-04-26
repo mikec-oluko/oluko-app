@@ -73,7 +73,8 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
             _audioMessages[_audioMessages.indexOf(_audioNoTimeSet)] = _audioDateUpdated;
           }
         }
-        emit(CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages));
+        emit(
+            CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages.where((audioMessage) => audioMessage.createdAt != null).toList()));
       });
     } catch (exception, stackTrace) {
       await Sentry.captureException(
