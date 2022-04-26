@@ -400,6 +400,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     _clearUnusedVideoControllers(index);
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+        showOptions: true,
+        isOlukoControls: true,
         key: _videoKeys[index],
         videoUrl: videoUrl,
         autoPlay: false,
