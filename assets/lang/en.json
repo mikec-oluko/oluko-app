@@ -334,5 +334,9 @@
     "requests": "Requests",
     "see": "See",
     "more": "more",
-    "recordingCapitalText": "RECORDING:"
+    "recordingCapitalText": "Recording:",
+    "transformation": "Transformation",
+    "friendRequestIgnored": "Request ignored.",
+    "ignoreFriendRequestError": "Error ignoring request.",
+    "addFriendRequestError": "Error adding friend."
 }

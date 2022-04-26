@@ -328,11 +328,15 @@
     "fileLoadFailed": "No se pudo cargar el archivo.",
     "invalidFileDuration": "La duración del archivo no es correcta.",
     "invalidValue": "El valor ingresado no es correcto.",
-    "pressToCancel":"Press to cancel",
+    "pressToCancel": "Press to cancel",
     "todayCapitalMessage": "HOY",
     "seeAllRequests": "Ver todas las solicitudes",
     "requests": "Solicitudes",
     "see": "Ver",
     "more": "más",
-    "recordingCapitalText": "GRABANDO:"
+    "recordingCapitalText": "Grabando:",
+    "transformation": "Transformation",
+    "friendRequestIgnored": "Solicitud ignorada.",
+    "ignoreFriendRequestError": "Error ignorando una solicitud.",
+    "addFriendRequestError": "Error al agregar amigo."
 }

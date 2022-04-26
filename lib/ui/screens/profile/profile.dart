@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       break;
                     case ProfileOptionsTitle.transformationJourney:
                       Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                          arguments: {'profileInfo': profileInfo});
+                          arguments: {'profileInfo': profileInfo,'viewAllPage':false});
                       break;
                     case ProfileOptionsTitle.logout:
                       BlocProvider.of<AuthBloc>(context).logout(context);
@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       break;
                     case ProfileOptionsTitle.assessmentVideos:
                       Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
-                          arguments: {'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
+                          arguments: {'isFirstTime':false,'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
                       break;
                     default:
                       Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));
