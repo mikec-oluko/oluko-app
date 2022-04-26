@@ -116,7 +116,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             //USER CIRCLEAVATAR
             Row(
               children: [
-                if (widget.userToDisplayInformation.avatarThumbnail != null)
+                if (widget.userToDisplayInformation.avatar != null)
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Stack(clipBehavior: Clip.none, children: [
