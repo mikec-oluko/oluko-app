@@ -205,14 +205,14 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             //USER CIRCLEAVATAR
             Row(
               children: [
-                if (widget.userToDisplayInformation.avatarThumbnail != null)
+                if (widget.userToDisplayInformation.avatar != null)
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Stack(clipBehavior: Clip.none, children: [
                       CircleAvatar(
                         backgroundColor: OlukoColors.black,
                         backgroundImage: Image(
-                          image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatarThumbnail),
+                          image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatar),
                           fit: BoxFit.contain,
                           frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                               ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
