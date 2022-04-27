@@ -269,12 +269,25 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
-              !_controller.isPlaying ? _controller.play() : null;
+              //playChewieController();
             })));
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
-    }
+    } /*else {
+      _controller.addListener(() {
+        if (!_controller.isPlaying) {
+          _controller.play();
+        }
+      });
+    }*/
+    //playChewieController();
     return widgets;
+  }
+
+  playChewieController() {
+    if (_controller != null && !_controller.isPlaying) {
+      _controller.play();
+    }
   }
 
   Widget retakeButton() {

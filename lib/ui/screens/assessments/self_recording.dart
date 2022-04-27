@@ -70,12 +70,11 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
   }
 
   @override
-  @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached || state == AppLifecycleState.paused) return;
-    final isInactive = state == AppLifecycleState.inactive;
-    if (isInactive) {
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.paused || state == AppLifecycleState.inactive) return;
+    final isClosed = state == AppLifecycleState.detached;
+    if (isClosed) {
       Navigator.pop(context);
     }
   }

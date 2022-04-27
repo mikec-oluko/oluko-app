@@ -338,5 +338,6 @@
     "transformation": "Transformation",
     "friendRequestIgnored": "Request ignored.",
     "ignoreFriendRequestError": "Error ignoring request.",
-    "addFriendRequestError": "Error adding friend."
+    "addFriendRequestError": "Error adding friend.",
+    "noCourseFound": "No Course Found"
 }

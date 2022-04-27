@@ -47,12 +47,26 @@ class OlukoVideoPlayer extends StatefulWidget {
 class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   VideoPlayerController _controller;
   ChewieController chewieController;
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
 
     if (widget.filePath != null) {
+      
       _controller = VideoPlayerController.file(File(widget.filePath));
+        
+        /*..initialize().then((_) {
+          setState(() {
+            isLoading = false;
+          });
+        });*/
+
+      //THIS IS A TEST
+      /*String urlTest = "https://oluko-development.s3.amazonaws.com/yZUiSvz7IQitdQ2uScfn/REC_EB82BF7B-21DB-4F6E-BDFE-726451BEE2F5.mp4";
+      _controller = VideoPlayerController.network(urlTest);*/
+
     } else {
       if (widget.videoUrl != null) {
         _controller = VideoPlayerController.network(widget.videoUrl);
@@ -126,7 +140,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return chewieController != null
+    return chewieController != null /*&& !_controller.value.isBuffering*/
         ? Chewie(
             controller: chewieController,
           )
