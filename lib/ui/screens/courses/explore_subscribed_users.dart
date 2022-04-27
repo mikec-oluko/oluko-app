@@ -105,7 +105,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                           StoriesItem(
                             maxRadius: 30,
                             imageUrl: user.avatarThumbnail,
-                            bloc: StoryListBloc(),
+                            bloc: BlocProvider.of<StoryListBloc>(context),
                             getStories: true,
                             itemUserId: user.id,
                             currentUserId: loggedUser.user.id,
