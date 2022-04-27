@@ -66,7 +66,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: widget.coachUser.avatarThumbnail == null
+              child: widget.coachUser.avatar == null
                   ? Stack(children: [
                       if (OlukoNeumorphism.isNeumorphismDesign)
                         Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: avatarName())
@@ -129,7 +129,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
     return CircleAvatar(
       backgroundColor: OlukoColors.black,
       backgroundImage: Image(
-        image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
+        image: CachedNetworkImageProvider(widget.coachUser.avatar),
         fit: BoxFit.contain,
         frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
             ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),

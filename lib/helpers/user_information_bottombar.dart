@@ -6,9 +6,9 @@ import 'package:oluko_app/constants/theme.dart';
 class UserInformationBottomBar {
   String firstName;
   String lastName;
-  String avatarThumbnail;
+  String avatar;
   UserInformationBottomBar({
-    this.avatarThumbnail,
+    this.avatar,
     this.firstName,
     this.lastName,
   });

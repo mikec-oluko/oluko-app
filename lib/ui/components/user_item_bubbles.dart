@@ -47,7 +47,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
 
   List<Widget> buildUserItems() {
     List<Widget> users = widget.content
-        .map((user) => _imageItem(context, user?.avatarThumbnail, user?.username, itemUser: user, currentUserId: widget.currentUserId))
+        .map((user) => _imageItem(context, user?.avatar, user?.username, itemUser: user, currentUserId: widget.currentUserId))
         .toList();
 
     if (users != null && users.isNotEmpty) {

@@ -48,6 +48,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   List<TaskSubmission> taskSubmissionsCompleted;
   List<AssessmentTask> assessmentsTasksList;
   bool isLastTask = false;
+  bool _showDonePanel = false;
   Widget contentToShow = SizedBox.shrink();
 
   @override
@@ -74,6 +75,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
           listener: (context, assessmentAssignmentState) {
             if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
               BlocProvider.of<TaskSubmissionListBloc>(context).get(assessmentAssignmentState.assessmentAssignment);
+              if (assessmentAssignmentState.assessmentAssignment.completedAt != null) {
+                if (!widget.assessmentsDone) {
+                  if (!_showDonePanel) {
+                    setState(() {
+                      _showDonePanel = true;
+                    });
+                  }
+                }
+              }
             }
           },
           child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
@@ -248,7 +258,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             height: 50,
                           ),
                       ])),
-                  if (OlukoNeumorphism.isNeumorphismDesign) contentToShow else const SizedBox.shrink(),
+                  Visibility(
+                      visible: OlukoNeumorphism.isNeumorphismDesign ? _showDonePanel : false, child: assessmentDoneBottomPanel(context)),
                 ]))));
   }
 
@@ -299,7 +310,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
                 isOlukoControls: true,
-                showOptions: true,
                 videoUrl: videoUrl,
                 autoPlay: false,
                 whenInitialized: (ChewieController chewieController) => setState(() {
@@ -307,6 +317,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                     })),
           )
         : OlukoVideoPlayer(
+            isOlukoControls: true,
             videoUrl: videoUrl,
             autoPlay: false,
             whenInitialized: (ChewieController chewieController) => setState(() {
