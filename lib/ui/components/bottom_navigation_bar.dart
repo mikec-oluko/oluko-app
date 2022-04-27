@@ -32,7 +32,7 @@ class _State extends State<OlukoBottomNavigationBar> {
           userInformation = UserInformationBottomBar(
             firstName: state.user.firstName,
             lastName: state.user.lastName,
-            avatarThumbnail: state.user.avatarThumbnail,
+            avatar: state.user.avatar,
           );
         }
         return OlukoNeumorphism.isNeumorphismDesign
@@ -89,11 +89,11 @@ class _State extends State<OlukoBottomNavigationBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
-                        if (userInformation?.avatarThumbnail != null)
+                        if (userInformation?.avatar != null)
                           CircleAvatar(
                             radius: 15,
                             backgroundImage: Image(
-                              image: CachedNetworkImageProvider(userInformation.avatarThumbnail),
+                              image: CachedNetworkImageProvider(userInformation.avatar),
                               fit: BoxFit.contain,
                             ).image,
                           )

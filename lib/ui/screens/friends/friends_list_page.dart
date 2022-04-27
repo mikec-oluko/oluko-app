@@ -258,7 +258,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         if (!userIsFriend)
                           StoriesItem(
                             maxRadius: 40,
-                            imageUrl: user.avatarThumbnail,
+                            imageUrl: user.avatar,
                             name: user.firstName,
                             lastname: user.lastName,
                           )
@@ -267,7 +267,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             from: StoriesItemFrom.friendsModal,
                             bloc: BlocProvider.of<StoryListBloc>(context),
                             maxRadius: 40,
-                            imageUrl: user.avatarThumbnail,
+                            imageUrl: user.avatar,
                             name: user.firstName,
                             lastname: user.lastName,
                             getStories: true,

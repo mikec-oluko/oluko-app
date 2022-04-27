@@ -100,7 +100,7 @@ class _UserListComponentState extends State<UserListComponent> {
                 children: [
                   StoriesItem(
                     maxRadius: 30,
-                    imageUrl: friendElement.avatarThumbnail,
+                    imageUrl: friendElement.avatar,
                     name: friendElement.firstName,
                     lastname: friendElement.lastName,
                     currentUserId: widget.authUser.user.id,
