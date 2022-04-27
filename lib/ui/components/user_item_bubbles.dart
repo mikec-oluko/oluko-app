@@ -76,7 +76,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
       width: 85,
       height: 100,
       child: GestureDetector(
-        onLongPress: () => BottomDialogUtils.showBottomDialog(
+        onTap: () => BottomDialogUtils.showBottomDialog(
           content: FriendModalContent(
             itemUser,
             currentUserId,
@@ -96,8 +96,6 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
               from: StoriesItemFrom.longPressHome,
               maxRadius: 25,
               imageUrl: imageUrl,
-              bloc: StoryListBloc(),
-              getStories: true,
               currentUserId: currentUserId,
               itemUserId: itemUser?.id,
               name: itemUser?.firstName,
