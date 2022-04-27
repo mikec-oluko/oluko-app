@@ -66,7 +66,9 @@ class _CoachProfileState extends State<CoachProfile> {
   @override
   void dispose() {
     _recorder.dispose();
-    _timer.cancel();
+    if (_timer != null) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 
@@ -121,6 +123,7 @@ class _CoachProfileState extends State<CoachProfile> {
               if (state is CoachAudioMessagesSuccess) {
                 if (_coachAudioMessages.isEmpty) {
                   _coachAudioMessages = state.coachAudioMessages;
+                  _coachAudioMessages.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
                 } else {
                   _checkAudioMessageStream(audioMessages: state.coachAudioMessages);
                 }

@@ -717,7 +717,9 @@ class _CoachPageState extends State<CoachPage> {
     List<RecommendationMedia> recommendationVideos = [];
     for (CoachRecommendationDefault recommendation in _coachRecommendations) {
       if (recommendation.contentType == TimelineInteractionType.recommendedVideo) {
-        recommendationVideos.add(recommendation.recommendationMedia);
+        RecommendationMedia _mediaUpdatedDateOfCreation = recommendation.recommendationMedia;
+        _mediaUpdatedDateOfCreation.createdAt = recommendation.createdAt;
+        recommendationVideos.add(_mediaUpdatedDateOfCreation);
       }
     }
     return recommendationVideos;

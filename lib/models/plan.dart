@@ -46,8 +46,12 @@ class Plan extends Base {
   List<PlanFeature> features;
   InfoDialog infoDialog;
   num price;
+  double amountDecimal;
   bool recurrent;
   String title;
+  bool active;
+  String currency;
+  String description;
   String backgroundImage;
   Map<String, String> metadata;
 

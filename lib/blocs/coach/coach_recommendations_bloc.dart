@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/helpers/coach_assignment_status.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
-import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/enums/coach_assignment_status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
@@ -54,53 +52,66 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       final Set<Recommendation> _recommendations = {};
       final Set<Recommendation> _recommendationsUpdated = {};
       final Set<Recommendation> _recommendationsUpdatedContent = {};
+      try {
+        handleDocumentChanges(snapshot, _recommendationsUpdated);
+        handleDocuments(snapshot, _recommendations);
 
-      handleDocumentChanges(snapshot, _recommendationsUpdated);
-      handleDocuments(snapshot, _recommendations);
-
-      if ((_recommendationsUpdated.isNotEmpty && _recommendations.isEmpty) || _recommendationsUpdated.length >= _recommendations.length) {
-        for (final updatedItem in _recommendationsUpdated) {
-          for (final recommendationItem in _recommendations) {
-            updatedItem.id == recommendationItem.id
-                ? updatedItem != recommendationItem
-                    ? _recommendationsUpdatedContent.add(updatedItem)
-                    : null
-                : null;
+        if ((_recommendationsUpdated.isNotEmpty && _recommendations.isEmpty) || _recommendationsUpdated.length >= _recommendations.length) {
+          for (final updatedItem in _recommendationsUpdated) {
+            for (final recommendationItem in _recommendations) {
+              updatedItem.id == recommendationItem.id
+                  ? updatedItem != recommendationItem
+                      ? _recommendationsUpdatedContent.add(updatedItem)
+                      : null
+                  : null;
+            }
           }
+        } else {
+          _recommendationsUpdatedContent.addAll(_recommendationsUpdated);
         }
-      } else {
-        _recommendationsUpdatedContent.addAll(_recommendationsUpdated);
-      }
 
-      if (_recommendationsUpdatedContent.isNotEmpty) {
-        SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
-        emit(
-          CoachRecommendationsUpdate(
-            coachRecommendationContent:
-                await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
-          ),
+        if (_recommendationsUpdatedContent.isNotEmpty) {
+          SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          emit(
+            CoachRecommendationsUpdate(
+              coachRecommendationContent:
+                  await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
+            ),
+          );
+        } else {
+          emit(
+            CoachRecommendationsSuccess(
+              coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations.toList()),
+            ),
+          );
+        }
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
         );
-      } else {
-        emit(
-          CoachRecommendationsSuccess(
-            coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations.toList()),
-          ),
-        );
+        emit(CoachRecommendationsFailure(exception: exception));
       }
+    }, onError: (dynamic error, StackTrace stackTrace) async {
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      emit(CoachRecommendationsFailure(exception: error));
     });
   }
 
   Future<void> getStreamFromUser(String userId) async {
-    if(subscription == null) {
+    if (subscription == null) {
       CoachRepository().getCoachAssignmentByUserId(userId).then(
-      (coachAssignment) {
-        if (coachAssignment != null &&
-            coachAssignment.coachAssignmentStatus as int == CoachAssignmentStatusEnum.approved.index &&
-            coachAssignment.coachId != null) {
-          getStream(userId, coachAssignment.coachId);
-        }
-      },
-    );
+        (coachAssignment) {
+          if (coachAssignment != null &&
+              coachAssignment.coachAssignmentStatus as int == CoachAssignmentStatusEnum.approved.index &&
+              coachAssignment.coachId != null) {
+            getStream(userId, coachAssignment.coachId);
+          }
+        },
+      );
     }
   }
 

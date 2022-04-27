@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseSubscriptionState {}
 
@@ -33,14 +33,28 @@ class CourseSubscriptionBloc extends Cubit<CourseSubscriptionState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    List<Course> courses = [];
     return subscription ??= CourseRepository().getCoursesSubscription().listen((snapshot) async {
-      emit(CourseLoading());
-      List<Course> courses = [];
-      snapshot.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
-        courses.add(Course.fromJson(content));
-      });
-      emit(CourseSubscriptionSuccess(values: courses));
+      try {
+        emit(CourseLoading());
+        snapshot.docs.forEach((doc) {
+          final Map<String, dynamic> content = doc.data();
+          courses.add(Course.fromJson(content));
+        });
+        emit(CourseSubscriptionSuccess(values: courses));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(CourseFailure(exception: exception));
+      }
+    }, onError: (dynamic error, StackTrace stackTrace) async {
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: error));
     });
   }
 }
