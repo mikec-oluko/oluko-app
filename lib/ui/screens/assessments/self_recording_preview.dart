@@ -27,8 +27,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key}) : super(key: key);
-
+  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.taskId}) : super(key: key);
+  final String taskId;
   final String filePath;
   final int taskIndex;
   final bool isPublic;
@@ -82,7 +82,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
-                    if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null) {
+                    if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null && taskSubmissionState.taskSubmission.task.id==widget.taskId) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
                     }
                     if (taskSubmissionState is CreateSuccess) {
@@ -283,6 +283,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           _controller.pause();
           Navigator.pop(context);
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+            'taskId':widget.taskId,
             'taskIndex': widget.taskIndex,
             'isPublic': widget.isPublic,
             'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,

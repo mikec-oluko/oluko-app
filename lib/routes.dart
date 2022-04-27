@@ -907,6 +907,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecording(
+          taskId: argumentsToAdd['taskId'] as String,
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
           isLastTask: argumentsToAdd['isLastTask'] as bool,
@@ -930,6 +931,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecordingPreview(
+          taskId: argumentsToAdd['taskId'] as String,
           filePath: argumentsToAdd['filePath'].toString(),
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
