@@ -53,6 +53,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   void initState() {
+    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.authUser.user.id);
     super.initState();
   }
 
