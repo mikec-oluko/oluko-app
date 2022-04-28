@@ -41,7 +41,10 @@ class AuthRepository {
     }
     ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody as Map<String, dynamic>);
     if (apiResponse.statusCode == 200) {
-      await firebaseAuthInstance.signInWithCustomToken(apiResponse.data['accessToken'] as String);
+      final accesToken = apiResponse.data['accessToken'] as String;
+      final facebookAuthCredential = FacebookAuthProvider.credential(accesToken);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await firebaseAuthInstance.signInWithCustomToken(accesToken);
     }
     return apiResponse;
   }
@@ -80,6 +83,10 @@ class AuthRepository {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('apiToken', googleAuth?.accessToken);
+
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
@@ -96,6 +103,8 @@ class AuthRepository {
     if (result.accessToken != null) {
       // Create a credential from the access token
       final facebookAuthCredential = FacebookAuthProvider.credential(result.accessToken.token);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('apiToken', result.accessToken.token);
       try {
         //TODO: handle account with same email exception
         // Once signed in, return the UserCredential
