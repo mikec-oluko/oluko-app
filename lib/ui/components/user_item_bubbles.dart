@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
@@ -76,16 +77,16 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
       width: 85,
       height: 100,
       child: GestureDetector(
-        onLongPress: () => BottomDialogUtils.showBottomDialog(
+        onTap: () => BottomDialogUtils.showBottomDialog(
           content: FriendModalContent(
             itemUser,
             currentUserId,
-            FriendBloc(),
-            FriendRequestBloc(),
-            HiFiveSendBloc(),
-            HiFiveReceivedBloc(),
-            UserStatisticsBloc(),
-            FavoriteFriendBloc(),
+            BlocProvider.of<FriendBloc>(context),
+            BlocProvider.of<FriendRequestBloc>(context),
+            BlocProvider.of<HiFiveSendBloc>(context),
+            BlocProvider.of<HiFiveReceivedBloc>(context),
+            BlocProvider.of<UserStatisticsBloc>(context),
+            BlocProvider.of<FavoriteFriendBloc>(context),
           ),
           context: context,
         ),
@@ -96,8 +97,6 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
               from: StoriesItemFrom.longPressHome,
               maxRadius: 25,
               imageUrl: imageUrl,
-              bloc: StoryListBloc(),
-              getStories: true,
               currentUserId: currentUserId,
               itemUserId: itemUser?.id,
               name: itemUser?.firstName,

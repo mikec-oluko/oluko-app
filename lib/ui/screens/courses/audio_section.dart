@@ -178,7 +178,7 @@ class _State extends State<AudioSection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            StoriesItem(maxRadius: 28, imageUrl: imageUrl, bloc: StoryListBloc()),
+            StoriesItem(maxRadius: 28, imageUrl: imageUrl),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(

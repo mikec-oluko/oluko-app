@@ -140,7 +140,7 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
                     child: MovementItem(maxRadius: 35, imageUrl: imageUrl, referenceMovementsSection: referenceMovementsSection),
                   )
                 : bubbleName ?? true
-                    ? StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc())
+                    ? StoriesItem(maxRadius: 23, imageUrl: imageUrl)
                     : Padding(
                         padding: const EdgeInsets.only(left: 5, right: 5),
                         child: MovementItem(maxRadius: 40, imageUrl: imageUrl),

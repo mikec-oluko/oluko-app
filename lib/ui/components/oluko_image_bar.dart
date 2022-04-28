@@ -98,7 +98,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
       onTap: () => onPressed(context),
       child: Column(
         children: [
-          StoriesItem(maxRadius: 25, imageUrl: imageItemUrl, bloc: StoryListBloc()),
+          StoriesItem(maxRadius: 25, imageUrl: imageItemUrl),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(

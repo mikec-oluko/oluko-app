@@ -105,7 +105,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                           StoriesItem(
                             maxRadius: 30,
                             imageUrl: user.avatar,
-                            bloc: StoryListBloc(),
+                            bloc: BlocProvider.of<StoryListBloc>(context),
                             getStories: true,
                             itemUserId: user.id,
                             currentUserId: loggedUser.user.id,
@@ -152,12 +152,12 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       content: FriendModalContent(
         friendUser,
         loggedUser.user.id,
-        FriendBloc(),
-        FriendRequestBloc(),
-        HiFiveSendBloc(),
-        HiFiveReceivedBloc(),
-        UserStatisticsBloc(),
-        FavoriteFriendBloc(),
+        BlocProvider.of<FriendBloc>(context),
+        BlocProvider.of<FriendRequestBloc>(context),
+        BlocProvider.of<HiFiveSendBloc>(context),
+        BlocProvider.of<HiFiveReceivedBloc>(context),
+        BlocProvider.of<UserStatisticsBloc>(context),
+        BlocProvider.of<FavoriteFriendBloc>(context),
       ),
       context: context,
     );

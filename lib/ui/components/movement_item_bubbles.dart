@@ -83,11 +83,10 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
               StoriesItem(
                 maxRadius: widget.isSegmentSection ? 30 : 23,
                 imageUrl: imageUrl,
-                bloc: StoryListBloc(),
                 isSegmentSection: widget.isSegmentSection,
               )
             else
-              StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
+              StoriesItem(maxRadius: 23, imageUrl: imageUrl),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
