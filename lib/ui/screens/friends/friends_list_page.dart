@@ -53,6 +53,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   void initState() {
+    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.authUser.user.id);
     super.initState();
   }
 
@@ -75,6 +76,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             }
             if (userListState is UserListSuccess) {
               _appUsersList = userListState.users;
+              _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
               _appUsersWidget = UserListComponent(
                 authUser: widget.authUser,
                 users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
@@ -128,7 +130,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+              padding: const EdgeInsets.all(20),
               child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
             ),
             Expanded(child: content),
@@ -173,12 +175,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
           ? FriendModalContent(
               friendUser,
               widget.authUser.user.id,
-              FriendBloc(),
-              FriendRequestBloc(),
-              HiFiveSendBloc(),
-              HiFiveReceivedBloc(),
-              UserStatisticsBloc(),
-              FavoriteFriendBloc(),
+              BlocProvider.of<FriendBloc>(context),
+              BlocProvider.of<FriendRequestBloc>(context),
+              BlocProvider.of<HiFiveSendBloc>(context),
+              BlocProvider.of<HiFiveReceivedBloc>(context),
+              BlocProvider.of<UserStatisticsBloc>(context),
+              BlocProvider.of<FavoriteFriendBloc>(context),
             )
           : dialogContainer(context: context, user: friendUser, friendState: _friendState),
       context: context,
@@ -265,7 +267,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         else
                           StoriesItem(
                             from: StoriesItemFrom.friendsModal,
-                            bloc: StoryListBloc(),
+                            bloc: BlocProvider.of<StoryListBloc>(context),
                             maxRadius: 40,
                             imageUrl: user.avatar,
                             name: user.firstName,

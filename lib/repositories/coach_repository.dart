@@ -237,6 +237,7 @@ class CoachRepository {
       switch (timelineItem.contentType) {
         case TimelineInteractionType.course:
           Course courseForItem = Course.fromJson(ds.data() as Map<String, dynamic>);
+          timelineItem.contentName = courseForItem.name;
           timelineItem.courseForNavigation = courseForItem;
           timelineItem.contentThumbnail =
               courseForItem.images.length >= 2 ? courseForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
