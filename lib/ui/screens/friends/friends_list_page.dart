@@ -76,6 +76,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             }
             if (userListState is UserListSuccess) {
               _appUsersList = userListState.users;
+              _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
               _appUsersWidget = UserListComponent(
                 authUser: widget.authUser,
                 users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
