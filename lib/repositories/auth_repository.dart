@@ -48,8 +48,8 @@ class AuthRepository {
     ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody as Map<String, dynamic>);
     if (apiResponse.statusCode == 200) {
       final accesToken = apiResponse.data['accessToken'] as String;
-      final facebookAuthCredential = FacebookAuthProvider.credential(accesToken);
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('apiToken', accesToken);
       await firebaseAuthInstance.signInWithCustomToken(accesToken);
     }
     return apiResponse;
