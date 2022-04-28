@@ -493,7 +493,8 @@ class Routes {
         break;
       case RouteEnum.loginNeumorphic:
         providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
-        newRouteView = LoginNeumorphicPage();
+        final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
+        newRouteView = LoginNeumorphicPage(dontShowWelcomeTest: argumentsToAdd != null ? argumentsToAdd['dontShowWelcomeTest'] : null);
         break;
       case RouteEnum.completedClass:
         providers = [
@@ -700,7 +701,13 @@ class Routes {
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -788,6 +795,12 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -840,6 +853,12 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
           BlocProvider<DownloadAssetBloc>.value(value: _downloadAssetBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -859,7 +878,13 @@ class Routes {
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc)
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(
@@ -907,6 +932,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecording(
+          taskId: argumentsToAdd['taskId'] as String,
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
           isLastTask: argumentsToAdd['isLastTask'] as bool,
@@ -930,6 +956,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecordingPreview(
+          taskId: argumentsToAdd['taskId'] as String,
           filePath: argumentsToAdd['filePath'].toString(),
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
@@ -1003,7 +1030,13 @@ class Routes {
         String courseId = args['courseId'].toString();
         providers = [
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
@@ -1099,7 +1132,13 @@ class Routes {
       case RouteEnum.homeLongPress:
         providers = [
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc)
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeLongPress(

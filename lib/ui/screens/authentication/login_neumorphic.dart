@@ -14,7 +14,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
-  LoginNeumorphicPage({Key key}) : super(key: key);
+  LoginNeumorphicPage({this.dontShowWelcomeTest, Key key}) : super(key: key);
+  bool dontShowWelcomeTest;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -61,29 +62,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
 
   List<Widget> formFields() {
     return [
-      FutureBuilder(
-        future: UserUtils.isFirstTime(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data == false) {
-              return Column(
-                children: [
-                  SizedBox(height: ScreenUtils.height(context) * 0.25),
-                  Text(
-                    OlukoLocalizations.get(context, 'welcomeBack'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ],
-              );
-            } else {
-              return SizedBox(height: ScreenUtils.height(context) * 0.25);
-            }
-          } else {
-            return SizedBox(height: ScreenUtils.height(context) * 0.25);
-          }
-        },
-      ),
+      getWelcomeText(),
       SizedBox(
         height: ScreenUtils.height(context) * 0.07,
       ),
@@ -285,5 +264,22 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         ),
       ]),
     ];
+  }
+
+  Widget getWelcomeText() {
+    if (widget.dontShowWelcomeTest != null && widget.dontShowWelcomeTest == true) {
+      return SizedBox(height: ScreenUtils.height(context) * 0.25);
+    } else {
+      return Column(
+        children: [
+          SizedBox(height: ScreenUtils.height(context) * 0.25),
+          Text(
+            OlukoLocalizations.get(context, 'welcomeBack'),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ],
+      );
+    }
   }
 }

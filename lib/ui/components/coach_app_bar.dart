@@ -82,7 +82,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
                 children: [
                   goToCoachProfile(context),
                   const SizedBox(width: 10),
-                  if (widget.coachUser != null && widget.coachUser.avatarThumbnail != null)
+                  if (widget.coachUser != null && widget.coachUser.avatar != null)
                     OlukoNeumorphism.isNeumorphismDesign
                         ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
                         : coachAvatarImage()
@@ -117,7 +117,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
                     ),
             ),
             if (showCoachProfle)
-              widget.coachUser != null && widget.coachUser.avatarThumbnail != null ? coachAvatarImage() : coachDefaultAvatar()
+              widget.coachUser != null && widget.coachUser.avatar != null ? coachAvatarImage() : coachDefaultAvatar()
             else
               const SizedBox.shrink(),
           ],
@@ -158,7 +158,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
       child: CircleAvatar(
         backgroundColor: OlukoColors.black,
         backgroundImage: Image(
-          image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
+          image: CachedNetworkImageProvider(widget.coachUser.avatar),
           fit: BoxFit.contain,
           frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
               ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 24, width: 24),

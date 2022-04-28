@@ -22,7 +22,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
   }
   final mediaURL = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.introVideo);
   if (mediaURL == null || mediaURL.isEmpty) {
-    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
+    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
   }
   final VideoPlayerController videoPlayerController = VideoPlayerController.network(mediaURL);
   await videoPlayerController.initialize();
@@ -38,7 +38,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
         videoPlayerController.value != null &&
         videoPlayerController.value.position == videoPlayerController.value.duration) {
       await videoPlayerController.dispose();
-      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
+      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
     }
   });
   return chewieController;

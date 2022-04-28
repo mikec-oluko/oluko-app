@@ -386,6 +386,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (state is Success && state.pickedFile != null) {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                  'taskId':_task.id,
                   'taskIndex': widget.taskIndex,
                   'filePath': state.pickedFile.path,
                   'isPublic': _makePublic ?? false,
@@ -420,6 +421,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
     Navigator.pop(context);
     Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+      'taskId':_task.id,
       'taskIndex': widget.taskIndex,
       'isPublic': _makePublic ?? false,
       'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
@@ -562,6 +564,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             Navigator.pop(context);
                             //Navigator.pop(context);
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                              'taskId': _task.id,
                               'taskIndex': widget.taskIndex,
                               'isPublic': _makePublic,
                               'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
@@ -605,6 +608,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             Navigator.pop(context);
                             //Navigator.pop(context);
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                              'taskId':_task.id,
                               'taskIndex': widget.taskIndex,
                               'isPublic': _makePublic,
                               'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
