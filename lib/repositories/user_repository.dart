@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/coach_user.dart';
+import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -184,7 +186,7 @@ class UserRepository {
 
   Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex) async {
     final DocumentReference<Object> userReference = getUserReference(user);
-    
+
     user.privacy = privacyIndex;
     try {
       await userReference.update(user.toJson());
@@ -239,5 +241,16 @@ class UserRepository {
         .collection('users')
         .doc(userId)
         .set({'user_token': token}, SetOptions(merge: true));
+  }
+
+  Future<Response> changeUserInfo(UserDto user, String userId) async {
+    Client http = Client();
+    final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/user';
+    var body = user.toJson();
+    body.removeWhere((key, value) => value == null);
+    body.removeWhere((key, value) => value == true);
+    body.removeWhere((key, value) => value == 0);
+    Response response = await http.put(Uri.parse('$url/${userId}'), body: body);
+    return response;
   }
 }

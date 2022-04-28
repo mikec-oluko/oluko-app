@@ -7,9 +7,12 @@ import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/profile_options.dart';
 import 'package:oluko_app/helpers/profile_routes.dart';
+import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/services/global_service.dart';
+import 'package:oluko_app/services/update_user_information_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -49,6 +52,13 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         profileInfo = state.user;
+        UserRepository uR = UserRepository();
+        uR.changeUserInfo(
+            UserDto(
+              firstName: 'Pedrito',
+              lastName: 'Luna',
+            ),
+            profileInfo.id);
         BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(profileInfo.id);
         BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
         return profileHomeView();
@@ -157,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       break;
                     case ProfileOptionsTitle.transformationJourney:
                       Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                          arguments: {'profileInfo': profileInfo,'viewAllPage':false});
+                          arguments: {'profileInfo': profileInfo, 'viewAllPage': false});
                       break;
                     case ProfileOptionsTitle.logout:
                       BlocProvider.of<AuthBloc>(context).logout(context);
@@ -166,8 +176,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       setState(() {});
                       break;
                     case ProfileOptionsTitle.assessmentVideos:
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
-                          arguments: {'isFirstTime':false,'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {
+                        'isFirstTime': false,
+                        'isFromProfile': true,
+                        'assessmentsDone': profileInfo.assessmentsCompletedAt != null
+                      });
                       break;
                     default:
                       Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));
