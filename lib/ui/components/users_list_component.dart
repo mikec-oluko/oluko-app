@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
@@ -99,13 +100,13 @@ class _UserListComponentState extends State<UserListComponent> {
                 children: [
                   StoriesItem(
                     maxRadius: 30,
-                    imageUrl: friendElement.avatarThumbnail,
+                    imageUrl: friendElement.avatar,
                     name: friendElement.firstName,
                     lastname: friendElement.lastName,
                     currentUserId: widget.authUser.user.id,
                     itemUserId: friendElement.id,
                     addUnseenStoriesRing: true,
-                    bloc: StoryListBloc(),
+                    bloc: BlocProvider.of<StoryListBloc>(context),
                     from: StoriesItemFrom.friends,
                   ),
                   _printName(friendElement),

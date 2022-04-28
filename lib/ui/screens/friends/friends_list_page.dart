@@ -173,12 +173,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
           ? FriendModalContent(
               friendUser,
               widget.authUser.user.id,
-              FriendBloc(),
-              FriendRequestBloc(),
-              HiFiveSendBloc(),
-              HiFiveReceivedBloc(),
-              UserStatisticsBloc(),
-              FavoriteFriendBloc(),
+              BlocProvider.of<FriendBloc>(context),
+              BlocProvider.of<FriendRequestBloc>(context),
+              BlocProvider.of<HiFiveSendBloc>(context),
+              BlocProvider.of<HiFiveReceivedBloc>(context),
+              BlocProvider.of<UserStatisticsBloc>(context),
+              BlocProvider.of<FavoriteFriendBloc>(context),
             )
           : dialogContainer(context: context, user: friendUser, friendState: _friendState),
       context: context,
@@ -258,16 +258,16 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         if (!userIsFriend)
                           StoriesItem(
                             maxRadius: 40,
-                            imageUrl: user.avatarThumbnail,
+                            imageUrl: user.avatar,
                             name: user.firstName,
                             lastname: user.lastName,
                           )
                         else
                           StoriesItem(
                             from: StoriesItemFrom.friendsModal,
-                            bloc: StoryListBloc(),
+                            bloc: BlocProvider.of<StoryListBloc>(context),
                             maxRadius: 40,
-                            imageUrl: user.avatarThumbnail,
+                            imageUrl: user.avatar,
                             name: user.firstName,
                             lastname: user.lastName,
                             getStories: true,

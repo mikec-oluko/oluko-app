@@ -86,7 +86,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                   alignment: Alignment.centerLeft,
                   child: StoriesItem(
                     maxRadius: 40,
-                    imageUrl: widget.user.avatarThumbnail ?? widget.user.avatar,
+                    imageUrl: widget.user.avatar,
                     name: widget.user.firstName,
                     lastname: widget.user.lastName,
                   ),

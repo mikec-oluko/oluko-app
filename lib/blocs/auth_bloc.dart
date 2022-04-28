@@ -273,7 +273,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});
       } else {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       }

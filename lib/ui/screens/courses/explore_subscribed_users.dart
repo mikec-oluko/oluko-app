@@ -104,8 +104,8 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         if (areFriends)
                           StoriesItem(
                             maxRadius: 30,
-                            imageUrl: user.avatarThumbnail,
-                            bloc: StoryListBloc(),
+                            imageUrl: user.avatar,
+                            bloc: BlocProvider.of<StoryListBloc>(context),
                             getStories: true,
                             itemUserId: user.id,
                             currentUserId: loggedUser.user.id,
@@ -115,7 +115,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         else
                           StoriesItem(
                             maxRadius: 30,
-                            imageUrl: user.avatarThumbnail,
+                            imageUrl: user.avatar,
                             name: user.firstName,
                           ),
                         Padding(
@@ -152,12 +152,12 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       content: FriendModalContent(
         friendUser,
         loggedUser.user.id,
-        FriendBloc(),
-        FriendRequestBloc(),
-        HiFiveSendBloc(),
-        HiFiveReceivedBloc(),
-        UserStatisticsBloc(),
-        FavoriteFriendBloc(),
+        BlocProvider.of<FriendBloc>(context),
+        BlocProvider.of<FriendRequestBloc>(context),
+        BlocProvider.of<HiFiveSendBloc>(context),
+        BlocProvider.of<HiFiveReceivedBloc>(context),
+        BlocProvider.of<UserStatisticsBloc>(context),
+        BlocProvider.of<FavoriteFriendBloc>(context),
       ),
       context: context,
     );

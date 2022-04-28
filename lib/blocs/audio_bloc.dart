@@ -49,7 +49,7 @@ class AudioBloc extends Cubit<AudioState> {
     String audioName = user.id;
     var uuid = Uuid();
     String audioId = uuid.v1();
-    Audio audio = Audio(id: audioId, userId: user.id, userAvatarThumbnail: user.avatarThumbnail, userName: user.firstName);
+    Audio audio = Audio(id: audioId, userId: user.id, userAvatarThumbnail: user.avatar, userName: user.firstName);
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Audios/$audioId';
     final audiosDir = new Directory(outDirPath);

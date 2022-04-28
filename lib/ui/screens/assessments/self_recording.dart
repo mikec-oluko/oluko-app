@@ -33,9 +33,10 @@ class SelfRecording extends StatefulWidget {
       this.isLastTask = false,
       Key key,
       this.classIndex,
-      this.courseEnrollment})
+      this.courseEnrollment,  this.taskId})
       : super(key: key);
 
+  final String taskId;
   final int taskIndex;
   final int classIndex;
   final bool isPublic;
@@ -436,6 +437,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         context,
                         routeLabels[RouteEnum.selfRecordingPreview],
                         arguments: {
+                          'taskId':widget.taskId,
                           'taskIndex': widget.taskIndex,
                           'filePath': path,
                           'isPublic': widget.isPublic,
@@ -462,6 +464,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         context,
                         routeLabels[RouteEnum.selfRecordingPreview],
                         arguments: {
+                          'taskId':widget.taskId,
                           'taskIndex': widget.taskIndex,
                           'filePath': state.pickedFile.path,
                           'isPublic': widget.isPublic,
