@@ -30,6 +30,12 @@ class AuthRepository {
     this.firebaseAuthInstance = FirebaseAuth.instance;
   }
 
+  Future<String> getApiToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String apiToken = prefs.getString('apiToken');
+    return apiToken;
+  }
+
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body = loginRequest.toJson();
     body.removeWhere((key, value) => value == null);

@@ -108,8 +108,7 @@ class UserRepository {
     final CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
 
-    final UserResponse user =
-        UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
+    final UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
     user.id = docRef.id;
     user.username = docRef.id;
@@ -250,7 +249,15 @@ class UserRepository {
     body.removeWhere((key, value) => value == null);
     body.removeWhere((key, value) => value == true);
     body.removeWhere((key, value) => value == 0);
-    Response response = await http.put(Uri.parse('$url/${userId}'), body: body);
+
+    final apiToken = await AuthRepository().getApiToken();
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $apiToken',
+    };
+
+    Response response = await http.put(Uri.parse('$url/${userId}'), headers: headers, body: body);
     return response;
   }
 }

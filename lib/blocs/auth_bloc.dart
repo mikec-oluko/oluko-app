@@ -148,8 +148,7 @@ class AuthBloc extends Cubit<AuthState> {
       try {
         result = await _authRepository.signInWithGoogle();
       } on FirebaseAuthException catch (error) {
-        AppMessages.clearAndShowSnackbar(
-            context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
         rethrow;
       } catch (error) {
         AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -194,8 +193,7 @@ class AuthBloc extends Cubit<AuthState> {
     try {
       result = await _authRepository.signInWithFacebook();
     } on FirebaseAuthException catch (error) {
-      AppMessages.clearAndShowSnackbar(
-          context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
       rethrow;
     } catch (error) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -273,7 +271,8 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false,
+            arguments: {'dontShowWelcomeTest': true});
       } else {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       }
