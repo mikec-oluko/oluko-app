@@ -129,7 +129,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+              padding: const EdgeInsets.all(20),
               child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
             ),
             Expanded(child: content),
