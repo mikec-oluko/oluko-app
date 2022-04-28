@@ -34,6 +34,7 @@ class FriendBloc extends Cubit<FriendState> {
 
   void getFriendsByUserId(String userId) async {
     try {
+      emit(FriendLoading());
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
       List<UserResponse> friendList;
       if (friendData != null) {
