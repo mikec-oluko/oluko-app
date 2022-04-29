@@ -272,10 +272,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(21), topRight: Radius.circular(21)),
                 controller: recordingPanelController,
                 minHeight: 0,
-                maxHeight: 330,
+                maxHeight: 310,
                 collapsed: Container(color: Colors.black),
                 panel: InitialTimerPanel(
                   panelController: recordingPanelController,

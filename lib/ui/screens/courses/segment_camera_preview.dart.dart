@@ -107,7 +107,7 @@ class _State extends State<SegmentCameraPreview> {
 
   Widget bottomPanel() {
     return Container(
-        height: 230,
+        height: 240,
         width: ScreenUtils.width(context),
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -121,9 +121,7 @@ class _State extends State<SegmentCameraPreview> {
               Text(OlukoLocalizations.of(context).find('cameraInfo'),
                   textAlign: TextAlign.left,
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
-              Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child:startButton()),
+              startButton(),
               Text(OlukoLocalizations.of(context).find('cameraWarning'),
                   textAlign: TextAlign.left,
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
@@ -177,6 +175,10 @@ class _State extends State<SegmentCameraPreview> {
 
   Widget recordIcon() {
     return Stack(alignment: Alignment.center, children: [
+      Image.asset(
+        'assets/neumorphic/button_shade.png',
+        scale: 4,
+      ),
       Image.asset(
         'assets/self_recording/green_elipse_cam.png',
         scale: 4,
