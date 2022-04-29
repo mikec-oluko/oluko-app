@@ -338,5 +338,15 @@
     "transformation": "Transformation",
     "friendRequestIgnored": "Solicitud ignorada.",
     "ignoreFriendRequestError": "Error ignorando una solicitud.",
-    "addFriendRequestError": "Error al agregar amigo."
+    "addFriendRequestError": "Error al agregar amigo.",
+    "saveChanges": "Guardar cambios.",
+    "allFieldsRequired": "Todos los campos son requeridos",
+    "usernameRequired":"Nombre de usuario requerido",
+    "firstnameRequired":"Nombre es requerido",
+    "lastnameRequired":"Apellido es requerido",
+    "cityRequired":"Cidudad es requerido",
+    "emailRequired":"Email es requerido",
+    "countryRequired":"Pais es requerido",
+    "stateRequired":"Estado es requerido",
+    "infoUpdateSuccess":"Información actualizada con éxito"
 }

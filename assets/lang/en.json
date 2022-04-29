@@ -338,5 +338,16 @@
     "transformation": "Transformation",
     "friendRequestIgnored": "Request ignored.",
     "ignoreFriendRequestError": "Error ignoring request.",
-    "addFriendRequestError": "Error adding friend."
+    "addFriendRequestError": "Error adding friend.",
+    "saveChanges": "Save changes.",
+    "allFieldsRequired": "All fields are required",
+    "usernameRequired":"Username is required",
+    "firstnameRequired":"First name is required",
+    "lastnameRequired":"Lasr name is required",
+    "cityRequired":"City is required",
+    "emailRequired":"State is required",
+    "countryRequired":"Country is required",
+    "stateRequired":"State is required",
+    "infoUpdateSuccess":"Information updated successfully",
+    "updateEmailUserNameMsg":"Are you sure you want to update your email/username? This will log you out of the system."
 }
