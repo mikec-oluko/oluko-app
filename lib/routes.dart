@@ -128,6 +128,7 @@ import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/home_long_press.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
+import 'package:oluko_app/ui/screens/oluko_no_internet_connection.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
@@ -233,7 +234,8 @@ enum RouteEnum {
   homeLongPress,
   assessmentNeumorphicDone,
   coachRecommendedContentGallery,
-  aboutCoach
+  aboutCoach,
+  noInternetConnection
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -292,7 +294,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLongPress: 'home_long_press',
   RouteEnum.assessmentNeumorphicDone: '/assessment_neumorphic_done',
   RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery',
-  RouteEnum.aboutCoach: '/coach-about-coach-view'
+  RouteEnum.aboutCoach: '/coach-about-coach-view',
+  RouteEnum.noInternetConnection: '/no-internet-connection'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -1166,6 +1169,9 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AboutCoachPage(coachBannerVideo: argumentsToAdd['coachBannerVideo'] as String);
+        break;
+      case RouteEnum.noInternetConnection:
+        newRouteView = const OlukoNoInternetConnectionPage();
         break;
       default:
         newRouteView = MainPage();

@@ -60,13 +60,16 @@ class InternetConnectionBloc extends Cubit<InternetConnectionState> {
     return _connectivitySubscription ??= _connectivityChecker.onConnectivityChanged.listen((ConnectivityResult connectivityResult) {
       switch (connectivityResult) {
         case ConnectivityResult.mobile:
-          print(ConnectivityResult.mobile.name);
+          emit(InternetConnectionConnectedStatus(connectivityResult: connectivityResult));
           break;
         case ConnectivityResult.wifi:
-          print(ConnectivityResult.wifi.name);
-
+          emit(InternetConnectionConnectedStatus(connectivityResult: connectivityResult));
+          break;
+        case ConnectivityResult.none:
+          emit(InternetConnectionDisconnectedStatus());
           break;
         default:
+          emit(Loading());
       }
     });
   }

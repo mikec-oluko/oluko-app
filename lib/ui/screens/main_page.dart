@@ -73,7 +73,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     tabs = getTabs();
-    BlocProvider.of<InternetConnectionBloc>(context).getInternetConnectionStream();
+    // BlocProvider.of<InternetConnectionBloc>(context).getInternetConnectionStream();
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
 
     tabController = TabController(length: this.tabs.length, vsync: this);
@@ -100,6 +100,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               }
               if (internetState is InternetConnectionDisconnectedStatus) {
                 _globalService.hasInternetConnection = false;
+                Navigator.pushNamed(context, routeLabels[RouteEnum.noInternetConnection]);
               }
             },
           ),
