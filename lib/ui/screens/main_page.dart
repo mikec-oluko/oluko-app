@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -73,6 +74,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.initState();
     tabs = getTabs();
     BlocProvider.of<InternetConnectionBloc>(context).getInternetConnectionStream();
+    BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
 
     tabController = TabController(length: this.tabs.length, vsync: this);
     tabController.addListener(() {
@@ -93,6 +95,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           BlocListener<InternetConnectionBloc, InternetConnectionState>(
             listener: (context, internetState) {
               if (internetState is InternetConnectionConnectedStatus) {
+                ConnectivityResult connectivityResult = internetState.connectivityResult;
                 _globalService.hasInternetConnection = true;
               }
               if (internetState is InternetConnectionDisconnectedStatus) {
