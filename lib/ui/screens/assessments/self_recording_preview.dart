@@ -27,7 +27,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.taskId}) : super(key: key);
+  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.taskId})
+      : super(key: key);
   final String taskId;
   final String filePath;
   final int taskIndex;
@@ -58,16 +59,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return /*WillPopScope(
-        onWillPop: () => () async {
-              if (videoState is VideoSuccess) {
-                return true;
-              }
-              AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('videoIsStillProcessing'));
-              return false;
-            }(),
-        child:*/
-        BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
           return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
@@ -82,7 +74,9 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
-                    if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null && taskSubmissionState.taskSubmission.task.id==widget.taskId) {
+                    if (taskSubmissionState is GetSuccess &&
+                        taskSubmissionState.taskSubmission != null &&
+                        taskSubmissionState.taskSubmission.task.id == widget.taskId) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
                     }
                     if (taskSubmissionState is CreateSuccess) {
@@ -101,7 +95,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       } else {
         return const SizedBox();
       }
-    }) /*)*/;
+    });
   }
 
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) {
@@ -128,23 +122,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   }
 
   Widget form() {
-    /*return Form(
-        key: _formKey,
-        child: BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
-          videoState = state;
-          if (state is VideoSuccess) {
-            BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionVideo(_assessmentAssignment, _taskSubmission.id, state.video);
-            BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
-            BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
-            //navigateToTaskDetails();
-          }
-        }, builder: (context, state) {
-          if (state is VideoProcessing) {
-            return progressScaffold(state);
-          } else {*/
     return OlukoNeumorphism.isNeumorphismDesign ? neumorphicContentScaffold() : contentScaffold();
-    // }
-    // }));
   }
 
   Widget contentScaffold() {
@@ -269,12 +247,17 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
-              !_controller.isPlaying ? _controller.play() : null;
             })));
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
     return widgets;
+  }
+
+  playChewieController() {
+    if (_controller != null && !_controller.isPlaying) {
+      _controller.play();
+    }
   }
 
   Widget retakeButton() {
@@ -283,7 +266,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           _controller.pause();
           Navigator.pop(context);
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-            'taskId':widget.taskId,
+            'taskId': widget.taskId,
             'taskIndex': widget.taskIndex,
             'isPublic': widget.isPublic,
             'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,

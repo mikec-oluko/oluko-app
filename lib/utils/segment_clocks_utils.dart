@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -187,12 +188,14 @@ class SegmentClocksUtils {
     return result;
   }
 
-  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout) {
+  static PreferredSizeWidget getAppBar(
+      BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout, Function() resetAMRAP) {
     PreferredSizeWidget appBarToUse;
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
         onPressed: () async {
           if (await onWillPopConfirmationPopup(context, segmentWithRecording)) {
+            resetAMRAP();
             segmentClockOnWillPop(context);
           }
         },
@@ -211,7 +214,7 @@ class SegmentClocksUtils {
     return appBarToUse;
   }
 
-  static Future<bool> segmentClockOnWillPop(BuildContext context) async {
+  static bool segmentClockOnWillPop(BuildContext context) {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Wakelock.disable();
     Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
@@ -367,33 +370,27 @@ class SegmentClocksUtils {
                     ),
                     child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController))),
                   ),
-                Align(alignment: Alignment.bottomCenter, child: Padding(padding: const EdgeInsets.all(20.0), child: pauseButton)),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0), child: pauseButton)),
               ],
             ),
           );
   }
 
   static Widget pauseButton() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Image.asset(
-          'assets/courses/oval.png',
-          scale: 4,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 8),
+    return Stack(alignment: Alignment.center, children: [
+      Image.asset(
+        'assets/neumorphic/button_shade.png',
+        scale: 4.4,
+      ),
+      Padding(
+          padding: EdgeInsets.only(left: 2, top: 1),
           child: Image.asset(
-            'assets/courses/center_oval.png',
-            scale: 4,
-          ),
-        ),
-        Image.asset(
-          'assets/courses/pause_button.png',
-          scale: 4,
-        ),
-      ],
-    );
+            'assets/neumorphic/record_button.png',
+            scale: 7,
+          )),
+    ]);
   }
 
   static double getWatchPadding(WorkState workState, bool usePulseAnimation) {

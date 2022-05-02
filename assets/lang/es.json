@@ -167,7 +167,7 @@
     "connectionRequestCancelled": "Cancelar solicitud de conexión",
     "profileUploadAborted": "Carga de perfil cancelada",
     "cameraInfo": "Presiona el botón para comenzar a grabar",
-    "cameraWarning": "Al presionar este botón se iniciará la grabación y el segmento",
+    "cameraWarning": "Configure su cámara en la orientación y posición deseada",
     "startsIn": "Comienza en",
     "endsIn": "Termina en",
     "pauseWarning": "Si presiona este botón durante la grabación, finalizará la grabación y se detendrá el segmento.",
@@ -338,5 +338,6 @@
     "transformation": "Transformation",
     "friendRequestIgnored": "Solicitud ignorada.",
     "ignoreFriendRequestError": "Error ignorando una solicitud.",
-    "addFriendRequestError": "Error al agregar amigo."
+    "addFriendRequestError": "Error al agregar amigo.",
+    "noCourseFound": "Ningun Curso Encontrado"
 }

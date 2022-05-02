@@ -167,7 +167,7 @@
     "connect": "Connect",
     "connectionRequestCancelled": "Cancel connection request",
     "profileUploadAborted": "Profile upload aborted",
-    "cameraInfo": "Hit the button to start recording",
+    "cameraInfo": "Set your camera to your desired orientation and position",
     "cameraWarning": "Hitting this button will start the recording and the Segment",
     "startsIn": "Starts In",
     "endsIn": "Ends In",
@@ -338,5 +338,6 @@
     "transformation": "Transformation",
     "friendRequestIgnored": "Request ignored.",
     "ignoreFriendRequestError": "Error ignoring request.",
-    "addFriendRequestError": "Error adding friend."
+    "addFriendRequestError": "Error adding friend.",
+    "noCourseFound": "No Course Found"
 }
