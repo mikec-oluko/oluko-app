@@ -1,12 +1,9 @@
 import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
@@ -54,19 +51,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
     super.initState();
 
     if (widget.filePath != null) {
-      
       _controller = VideoPlayerController.file(File(widget.filePath));
-        
-        /*..initialize().then((_) {
-          setState(() {
-            isLoading = false;
-          });
-        });*/
-
-      //THIS IS A TEST
-      /*String urlTest = "https://oluko-development.s3.amazonaws.com/yZUiSvz7IQitdQ2uScfn/REC_EB82BF7B-21DB-4F6E-BDFE-726451BEE2F5.mp4";
-      _controller = VideoPlayerController.network(urlTest);*/
-
     } else {
       if (widget.videoUrl != null) {
         _controller = VideoPlayerController.network(widget.videoUrl);
@@ -140,7 +125,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return chewieController != null /*&& !_controller.value.isBuffering*/
+    return chewieController != null
         ? Chewie(
             controller: chewieController,
           )
