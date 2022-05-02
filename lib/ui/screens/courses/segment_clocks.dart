@@ -172,7 +172,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
-          return await SegmentClocksUtils.segmentClockOnWillPop(context);
+          resetAMRAPRound();
+          return SegmentClocksUtils.segmentClockOnWillPop(context);
         }
         return false;
       },
@@ -247,6 +248,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
+  void resetAMRAPRound() {
+    AMRAPRound = 0;
+    BlocProvider.of<AmrapRoundBloc>(context).emitDefault();
+  }
+
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
     for (var i = 0; i < coachRequests.length; i++) {
       if (coachRequests[i].segmentId == segmentId) {
@@ -268,7 +274,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType),
+        appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound),
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
@@ -472,8 +478,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             child: SizedBox(
               height: ScreenUtils.height(context) * 0.14,
               width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context, shareDoneAction, goToClassAction,
-                  nextSegmentAction, widget.segments, widget.segmentIndex),
+              child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
+                  shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex),
             ),
           )
         else

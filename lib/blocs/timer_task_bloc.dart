@@ -14,21 +14,12 @@ class SetShareDone extends TimerTaskState {
   SetShareDone({this.shareDone});
 }
 
-class SetAMRAPRound extends TimerTaskState {
-  final int AMRAPRound;
-  SetAMRAPRound({this.AMRAPRound});
-}
-
 class TimerTaskBloc extends Cubit<TimerTaskState> {
   TimerTaskBloc() : super(TimerTaskLoading());
 
   void setTimerTaskIndex(int timerTaskIndex) {
     emit(SetTimerTaskIndex(timerTaskIndex: timerTaskIndex));
   }
-
-  /*void setAMRAPRound(int AMRAPRound) {
-    emit(SetAMRAPRound(AMRAPRound: AMRAPRound));
-  }*/
 
   void setShareDone(bool shareDone) {
     emit(SetShareDone(shareDone: shareDone));

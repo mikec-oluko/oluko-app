@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -187,12 +188,14 @@ class SegmentClocksUtils {
     return result;
   }
 
-  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout) {
+  static PreferredSizeWidget getAppBar(
+      BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout, Function() resetAMRAP) {
     PreferredSizeWidget appBarToUse;
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
         onPressed: () async {
           if (await onWillPopConfirmationPopup(context, segmentWithRecording)) {
+            resetAMRAP();
             segmentClockOnWillPop(context);
           }
         },
@@ -211,7 +214,7 @@ class SegmentClocksUtils {
     return appBarToUse;
   }
 
-  static Future<bool> segmentClockOnWillPop(BuildContext context) async {
+  static bool segmentClockOnWillPop(BuildContext context) {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Wakelock.disable();
     Navigator.of(context).popUntil(ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
