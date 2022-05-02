@@ -31,12 +31,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   ChangeUserInformation newFields = ChangeUserInformation();
   bool emailHasChanged = false;
   bool usernameHasChanged = false;
+  bool isGoogleAuth = false;
   final formKey = GlobalKey<FormState>();
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         //BlocProvider.of<PlanBloc>(context).getPlans();
         this._profileInfo = state.user;
+        isGoogleAuth = state.firebaseUser.providerData[0].providerId == 'google.com';
         return buildScaffoldPage(context);
       } else {
         return Container(
@@ -136,6 +138,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
                     child: TextFormField(
+                      enabled: !isGoogleAuth,
                       initialValue: value,
                       onSaved: (value) async {
                         if (value != null || value.isNotEmpty) {
@@ -175,8 +178,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                         border: InputBorder.none,
                       ),
                       style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.w500,
-                      ),
+                          custoFontWeight: FontWeight.w500, customColor: !isGoogleAuth ? OlukoColors.white : OlukoColors.grayColor),
                     ),
                   ),
                 ],
