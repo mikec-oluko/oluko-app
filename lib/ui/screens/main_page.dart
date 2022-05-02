@@ -99,8 +99,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 _globalService.hasInternetConnection = true;
               }
               if (internetState is InternetConnectionDisconnectedStatus) {
-                _globalService.hasInternetConnection = false;
-                Navigator.pushNamed(context, routeLabels[RouteEnum.noInternetConnection]);
+                if (_globalService.hasInternetConnection) {
+                  _globalService.hasInternetConnection = false;
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.noInternetConnection]);
+                }
               }
             },
           ),

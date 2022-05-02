@@ -112,11 +112,11 @@ class _OlukoNoInternetConectionComponentState extends State<OlukoNoInternetConec
                     height: ScreenUtils.height(context) / 2.5,
                   ),
                   Container(
-                    width: 80,
+                    width: 100,
                     child: OlukoNeumorphicPrimaryButton(
                       isExpanded: false,
-                      // title: OlukoLocalizations.get(context, 'retry'),
-                      title: 'retry',
+                      customHeight: 60,
+                      title: OlukoLocalizations.get(context, 'retry'),
                       onPressed: () {
                         if (_globalService.hasInternetConnection) {
                           if (Navigator.canPop(context)) {
