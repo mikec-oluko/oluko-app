@@ -12,7 +12,6 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/services/global_service.dart';
-import 'package:oluko_app/services/update_user_information_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -52,13 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         profileInfo = state.user;
-        UserRepository uR = UserRepository();
-        uR.changeUserInfo(
-            UserDto(
-              firstName: 'Pedrito',
-              lastName: 'Luna',
-            ),
-            profileInfo.id);
         BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(profileInfo.id);
         BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
         return profileHomeView();
