@@ -52,6 +52,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   String mediaURL;
   bool showStories = false;
   bool showLogo = true;
+  int courseIndex;
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
@@ -237,17 +238,26 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
-            child: OverlayVideoPreview(
-              image: widget.courses[index].posterImage ?? widget.courses[index].image,
-              video: widget.courses[index].video,
-              onBackPressed: () => Navigator.pop(context),
+            child: VisibilityDetector(
+              key: Key('Video${index}'),
+              onVisibilityChanged: (VisibilityInfo info) {
+                if (info.visibleFraction == 1 && mounted) {
+                  courseIndex = index;
+                }
+                
+              },
+              child: OverlayVideoPreview(
+                image: widget.courses[index].posterImage ?? widget.courses[index].image,
+                video: widget.courses[index].video,
+                onBackPressed: () => Navigator.pop(context),
+              ),
             ),
           ),
         ),
         VisibilityDetector(
           key: Key('${index}'),
           onVisibilityChanged: (VisibilityInfo info) {
-            if (info.visibleFraction < 0.001 && mounted) {
+            if (info.visibleFraction < 0.001 && mounted && courseIndex == index) {
               BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
             } else {
               if (mounted) {
