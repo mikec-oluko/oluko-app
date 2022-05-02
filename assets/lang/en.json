@@ -339,5 +339,8 @@
     "friendRequestIgnored": "Request ignored.",
     "ignoreFriendRequestError": "Error ignoring request.",
     "addFriendRequestError": "Error adding friend.",
-    "noCourseFound": "No Course Found"
+    "noCourseFound": "No Course Found",
+    "oopsMessage": "Oops!",
+    "noInternetConnectionHeaderText": "No internet conection",
+    "noInternetConnectionBodyText": "Make sure wi-fi or mobile data is turned on and then retry."
 }

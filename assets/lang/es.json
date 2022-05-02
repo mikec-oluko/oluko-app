@@ -339,5 +339,8 @@
     "friendRequestIgnored": "Solicitud ignorada.",
     "ignoreFriendRequestError": "Error ignorando una solicitud.",
     "addFriendRequestError": "Error al agregar amigo.",
-    "noCourseFound": "Ningun Curso Encontrado"
+    "noCourseFound": "Ningun Curso Encontrado",
+    "oopsMessage": "Oops!",
+    "noInternetConnectionHeaderText": "No hay conexión a internet",
+    "noInternetConnectionBodyText": "Asegúrate de que el wifi o los datos móviles estén activados y vuelve a intentarlo."
 }
