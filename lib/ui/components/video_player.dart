@@ -1,12 +1,9 @@
 import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
@@ -47,6 +44,8 @@ class OlukoVideoPlayer extends StatefulWidget {
 class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   VideoPlayerController _controller;
   ChewieController chewieController;
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
