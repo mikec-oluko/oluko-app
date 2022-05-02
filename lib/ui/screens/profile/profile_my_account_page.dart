@@ -5,7 +5,6 @@ import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -98,10 +97,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Widget userInformationFields(String title, String value) {
     String oldEmail;
     String oldUserName;
-    if (FormHelper.isEmail(value)) {
-      if (title == 'Email') {
-        oldEmail = value;
-      }
+    if (title == 'Email') {
+      oldEmail = value;
     }
     if (title == 'Username') {
       oldUserName = value;
@@ -146,8 +143,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                         }
                         switch (title) {
                           case 'Username':
-                            if (value != oldEmail) {
-                              emailHasChanged = true;
+                            if (value != oldUserName) {
+                              usernameHasChanged = true;
                             }
                             newFields.username = value;
                             break;
@@ -158,12 +155,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                             newFields.lastName = value;
                             break;
                           case 'Email':
-                            if (FormHelper.isEmail(value)) {
-                              if (value != oldEmail) {
-                                emailHasChanged = true;
-                              }
-                              newFields.email = value;
+                            if (value != oldEmail) {
+                              emailHasChanged = true;
                             }
+                            newFields.email = value;
                             break;
                           case 'City':
                             newFields.city = value;
@@ -237,12 +232,16 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
               if (emailHasChanged || usernameHasChanged) {
                 if (await logOutConfirmationPopUp(context)) {
                   AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
-                  await BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context);
-                  logOut();
+                  if (await BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context)) {
+                    logOut();
+                  }
                 }
               } else {
+                AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
                 BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context);
               }
+              usernameHasChanged = false;
+              emailHasChanged = false;
             },
             isExpanded: false,
             customHeight: 60,

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
+import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
 import 'package:oluko_app/repositories/assessment_repository.dart';
@@ -27,47 +30,59 @@ class UserInformationBloc extends Cubit<UserInformationState> {
   UserInformationBloc() : super(Loading());
   final _userRepository = UserRepository();
 
-  updateUserInformation(ChangeUserInformation userInformation, String userId, BuildContext context) async {
+  Future<bool> updateUserInformation(ChangeUserInformation userInformation, String userId, BuildContext context) async {
     if (_checkAllNullsAndEmptys(userInformation)) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'allFieldsRequired');
-      return;
+      return false;
     }
     if (userInformation.username.isEmpty || userInformation.username == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'usernameRequired');
-      return;
+      return false;
     }
     if (userInformation.state.isEmpty || userInformation.state == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'stateRequired');
-      return;
+      return false;
     }
     if (userInformation.lastName.isEmpty || userInformation.lastName == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'lastnameRequired');
-      return;
+      return false;
     }
     if (userInformation.firstName.isEmpty || userInformation.firstName == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'firstnameRequired');
-      return;
+      return false;
     }
     if (userInformation.email.isEmpty || userInformation.email == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'emailRequired');
-      return;
+      return false;
+    } else if (!FormHelper.isEmail(userInformation.email)) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'wrongEmailFormat');
+      return false;
     }
+
     if (userInformation.country.isEmpty || userInformation.country == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'countryRequired');
-      return;
+      return false;
     }
     if (userInformation.city.isEmpty || userInformation.city == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'cityRequired');
-      return;
+      return false;
     }
-   
-     final Response response = await _userRepository.updateUserInformation(userInformation, userId);
-      if (response.statusCode == 200) {
-       AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');
-     }
-     else{
-       AppMessages.clearAndShowSnackbarTranslated(context, 'uploadFailed');
-     }
+
+    final Response response = await _userRepository.updateUserInformation(userInformation, userId);
+    List<String> messageList;
+    if (response.statusCode == 200) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');
+      return true;
+    } else {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['message'] != null && responseBody['message'] is String) {
+         messageList = [responseBody['message'].toString()];
+      }
+      AppMessages.showSnackbar(
+        context,messageList[0]
+      );
+      return false;
+    }
   }
 
   bool _checkAllNullsAndEmptys(ChangeUserInformation userInformation) {
