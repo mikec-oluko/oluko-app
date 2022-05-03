@@ -74,6 +74,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
@@ -396,6 +397,7 @@ class Routes {
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final UserProgressBloc _userProgressBloc = UserProgressBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -729,6 +731,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<UserProgressBloc>.value(value: _userProgressBloc),
           BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
           BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),

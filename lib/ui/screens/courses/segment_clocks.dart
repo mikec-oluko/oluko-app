@@ -20,6 +20,7 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
@@ -149,6 +150,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool open = true;
   int durationPR = 0;
   bool _recordingPaused = false;
+  bool _progressCreated = false;
 
   @override
   void initState() {
@@ -173,6 +175,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
           resetAMRAPRound();
+          deleteUserProgress();
           return SegmentClocksUtils.segmentClockOnWillPop(context);
         }
         return false;
@@ -181,6 +184,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         builder: (context, authState) {
           if (authState is AuthSuccess) {
             _user = authState.firebaseUser;
+            if (!_progressCreated && _user != null) {
+              BlocProvider.of<UserProgressBloc>(context).create(
+                  _user.uid,
+                  SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) || SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])
+                      ? 1
+                      : 0);
+              _progressCreated = true;
+            }
             return BlocBuilder<MovementBloc, MovementState>(
               builder: (context, movementState) {
                 return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
@@ -253,6 +264,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     BlocProvider.of<AmrapRoundBloc>(context).emitDefault();
   }
 
+  void deleteUserProgress() {
+    BlocProvider.of<UserProgressBloc>(context).delete(_user.uid);
+  }
+
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
     for (var i = 0; i < coachRequests.length; i++) {
       if (coachRequests[i].segmentId == segmentId) {
@@ -274,7 +289,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound),
+        appBar:
+            SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
@@ -476,11 +492,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           Positioned(
             bottom: 0,
             child: SizedBox(
-              height: ScreenUtils.height(context) * 0.14,
-              width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
-                  shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex),
-            ),
+                height: ScreenUtils.height(context) * 0.14,
+                width: ScreenUtils.width(context),
+                child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
+                    shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex, deleteUserProgress)),
           )
         else
           const SizedBox(),
@@ -659,6 +674,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     realTaskIndex++;
     if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
       setAlert();
+      if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
+        BlocProvider.of<UserProgressBloc>(context)
+            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds);
+      }
     }
     _playTask();
     BlocProvider.of<TimerTaskBloc>(context).setTimerTaskIndex(timerTaskIndex);
@@ -762,6 +781,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _finishWorkout() {
+    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
+      BlocProvider.of<UserProgressBloc>(context).update(_user.uid, 1);
+    }
+
     if (alertTimer != null) {
       alertTimer.cancel();
     }
@@ -877,7 +900,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       Wakelock.enable();
     }
     _playTask();
-    //setAlert();
   }
 
   void setPaused() {
