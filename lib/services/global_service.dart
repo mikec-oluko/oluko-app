@@ -26,7 +26,7 @@ class GlobalService {
 
   bool get hasInternetConnection => _hasInternetConnection;
 
-  set hasInternetConnection(bool value) => _hasInternetConnection = value;
+  set setInternetConnection(bool value) => _hasInternetConnection = value;
 
   ConnectivityResult get getConnectivityType => _connectivityType;
 
