@@ -63,3 +63,5 @@ enum TimelineInteractionType {
 enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }
 
 enum ExceptionTypeSourceEnum { invalidFormat, invalidDuration, invalidValue, noFileSelected }
+
+enum MediaType { video, image, audio }
