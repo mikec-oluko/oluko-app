@@ -1,3 +1,5 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 class GlobalService {
   static final GlobalService _instance = GlobalService._internal();
 
@@ -6,6 +8,7 @@ class GlobalService {
   bool _videoProcessing;
   bool _comesFromCoach;
   bool _hasInternetConnection;
+  ConnectivityResult _connectivityType;
 
   GlobalService._internal() {
     _videoProcessing = false;
@@ -24,4 +27,8 @@ class GlobalService {
   bool get hasInternetConnection => _hasInternetConnection;
 
   set hasInternetConnection(bool value) => _hasInternetConnection = value;
+
+  ConnectivityResult get getConnectivityType => _connectivityType;
+
+  set setConnectivityType(ConnectivityResult connectivityResult) => _connectivityType = connectivityResult;
 }

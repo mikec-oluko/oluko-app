@@ -95,12 +95,13 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           BlocListener<InternetConnectionBloc, InternetConnectionState>(
             listener: (context, internetState) {
               if (internetState is InternetConnectionConnectedStatus) {
-                ConnectivityResult connectivityResult = internetState.connectivityResult;
                 _globalService.hasInternetConnection = true;
+                _globalService.setConnectivityType = internetState.connectivityResult;
               }
               if (internetState is InternetConnectionDisconnectedStatus) {
                 if (_globalService.hasInternetConnection) {
                   _globalService.hasInternetConnection = false;
+                  _globalService.setConnectivityType = ConnectivityResult.none;
                   Navigator.pushNamed(context, routeLabels[RouteEnum.noInternetConnection]);
                 }
               }
