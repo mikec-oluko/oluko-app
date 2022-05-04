@@ -146,6 +146,10 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
+    if (!_globalService.hasInternetConnection) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
+      return;
+    }
     emit(AuthLoading());
     UserCredential result;
     try {

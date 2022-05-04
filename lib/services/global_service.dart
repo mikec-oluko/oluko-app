@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 
-class GlobalService {
+class GlobalService with ChangeNotifier {
   static final GlobalService _instance = GlobalService._internal();
 
   factory GlobalService() => _instance;
@@ -26,9 +27,15 @@ class GlobalService {
 
   bool get hasInternetConnection => _hasInternetConnection;
 
-  set setInternetConnection(bool value) => _hasInternetConnection = value;
+  set setInternetConnection(bool value) {
+    _hasInternetConnection = value;
+    // notifyListeners();
+  }
 
   ConnectivityResult get getConnectivityType => _connectivityType;
 
-  set setConnectivityType(ConnectivityResult connectivityResult) => _connectivityType = connectivityResult;
+  set setConnectivityType(ConnectivityResult connectivityResult) {
+    _connectivityType = connectivityResult;
+    // notifyListeners();
+  }
 }
