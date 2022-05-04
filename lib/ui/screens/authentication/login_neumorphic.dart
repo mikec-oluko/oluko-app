@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
@@ -25,6 +26,12 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   final _formKey = GlobalKey<FormState>();
   final LoginRequest _requestData = LoginRequest();
   bool _peekPassword = false;
+
+  @override
+  void initState() {
+    BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
