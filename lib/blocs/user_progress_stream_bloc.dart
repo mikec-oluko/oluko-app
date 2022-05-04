@@ -28,13 +28,13 @@ class UserProgressFailure extends UserProgressStreamState {
 class UserProgressStreamBloc extends Cubit<UserProgressStreamState> {
   UserProgressStreamBloc() : super(UserProgressLoading());
 
-  StreamSubscription<DatabaseEvent> subscription;
+  StreamSubscription<DatabaseEvent> usersProgressStream;
 
   @override
   void dispose() {
-    if (subscription != null) {
-      subscription.cancel();
-      subscription = null;
+    if (usersProgressStream != null) {
+      usersProgressStream.cancel();
+      usersProgressStream = null;
     }
   }
 
@@ -53,11 +53,18 @@ class UserProgressStreamBloc extends Cubit<UserProgressStreamState> {
   }
 
   StreamSubscription<DatabaseEvent> getStream() {
-    if (subscription == null) {
-      subscription = UserProgressRepository.getSubscription().listen((event) {
+    try {
+      return usersProgressStream ??= UserProgressRepository.getSubscription().listen((event) {
+        print(event.snapshot.value);
         emit(UserProgressUpdate(event: event));
       });
+    } catch (exception, stackTrace) {
+      Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(UserProgressFailure(exception: exception));
+      rethrow;
     }
-    return subscription;
   }
 }

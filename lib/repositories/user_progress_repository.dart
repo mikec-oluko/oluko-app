@@ -35,7 +35,6 @@ class UserProgressRepository {
   }
 
   static Stream<DatabaseEvent> getSubscription() {
-    Stream<DatabaseEvent> userProgressStream = FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/usersProgress'}').onChildChanged;
-    return userProgressStream;
+    return FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/usersProgress'}').onChildChanged;
   }
 }
