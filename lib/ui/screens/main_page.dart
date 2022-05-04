@@ -73,7 +73,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     tabs = getTabs();
-    // BlocProvider.of<InternetConnectionBloc>(context).getInternetConnectionStream();
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
 
     tabController = TabController(length: this.tabs.length, vsync: this);

@@ -83,7 +83,6 @@ class _OlukoNoInternetConectionComponentState extends State<OlukoNoInternetConec
                       child: ScaleTransition(
                         scale: _animate,
                         child: Column(
-                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 10),
