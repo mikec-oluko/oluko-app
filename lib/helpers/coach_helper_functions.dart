@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
+import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -166,5 +168,31 @@ class CoachHelperFunctions {
             coachAnnotationContent: annotation,
             onNavigation: () => !introFinished ? onNavigation() : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'personalizedVideos'));
+  }
+
+  static List<Widget> createPersonalizedVideoFromContent({List<Annotation> mentoredVideos, List<CoachMediaMessage> videoMessages}) {
+    List<Widget> personalizedVideosWidgetList = [];
+    List<CoachPersonalizedVideo> personalizedContent = [];
+    try {
+      if (mentoredVideos != null && mentoredVideos.isNotEmpty) {
+        mentoredVideos.forEach((annotation) {
+          CoachPersonalizedVideo newPersonalizedVideo =
+              CoachPersonalizedVideo(createdAt: annotation.createdAt, videoContent: annotation.video, annotationContent: annotation);
+          if (personalizedContent.isNotEmpty) {
+            if (personalizedContent
+                .where((content) => content.annotationContent.id == newPersonalizedVideo.annotationContent.id)
+                .toList()
+                .isEmpty) {
+              personalizedContent.add(newPersonalizedVideo);
+            }
+          } else {
+            personalizedContent.add(newPersonalizedVideo);
+          }
+        });
+      }
+      if (videoMessages != null && videoMessages.isNotEmpty) {}
+    } catch (e) {}
+
+    return personalizedVideosWidgetList;
   }
 }

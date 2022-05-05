@@ -1,19 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/annotation.dart';
-import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 
 class MentoredVideosPage extends StatefulWidget {
   final List<Annotation> coachAnnotation;
-  const MentoredVideosPage({this.coachAnnotation});
+  final List<CoachMediaMessage> coachVideoMessage;
+  const MentoredVideosPage({this.coachAnnotation, this.coachVideoMessage});
 
   @override
   _MentoredVideosPageState createState() => _MentoredVideosPageState();

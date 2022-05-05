@@ -19,6 +19,7 @@ import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
@@ -401,6 +402,7 @@ class Routes {
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -472,7 +474,8 @@ class Routes {
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
           BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
-          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
+          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1070,6 +1073,7 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1094,7 +1098,8 @@ class Routes {
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
-          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc)
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         newRouteView = CoachPage();
         break;
