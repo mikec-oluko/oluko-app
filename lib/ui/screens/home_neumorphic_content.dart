@@ -248,12 +248,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 if (info.visibleFraction == 1 && mounted) {
                   courseIndex = index;
                 }
-                
               },
-              child: OverlayVideoPreview(
-                image: widget.courses[index].posterImage ?? widget.courses[index].image,
+              child: OlukoVideoPreview(
+                showVideoOptions: true,
+                image: widget.courses[index].image,
                 video: widget.courses[index].video,
                 onBackPressed: () => Navigator.pop(context),
+                onPlay: () => isVideoPlaying(),
+                videoVisibilty: _isVideoPlaying,
               ),
             ),
           ),
@@ -298,6 +300,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   outsideCourse: widget.courses[index],
                   outsideCourseEnrollment: widget.courseEnrollments[index],
                   outsideCourseIndex: index,
+                  outSideCloseVideo: closeVideo,
                 ),
               );
             } else {

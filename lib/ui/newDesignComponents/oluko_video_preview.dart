@@ -17,6 +17,7 @@ class OlukoVideoPreview extends StatefulWidget {
   final bool showBackButton;
   final bool showShareButton;
   final bool showHeartButton;
+  final bool showVideoOptions;
   final Function() onBackPressed;
   final Function() onPlay;
   //final Function() onSharePressed;
@@ -37,7 +38,8 @@ class OlukoVideoPreview extends StatefulWidget {
       this.onPlay,
       this.videoVisibilty = false,
       this.bannerVideo = false,
-      this.audioWidget})
+      this.audioWidget, 
+      this.showVideoOptions=false})
       : super(key: key);
 
   @override
@@ -198,6 +200,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     }
     widgets.add(
       OlukoVideoPlayer(
+        showOptions: widget.showVideoOptions,
         closeVideoPlayer: () => widget.onPlay(),
         isOlukoControls: true,
         videoUrl: videoUrl,
