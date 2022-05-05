@@ -36,7 +36,7 @@ class _State extends State<MovementVideosSection> {
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(
                 color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)))
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(19), topRight: Radius.circular(19)))
             : decorationImage(),
         child: Column(children: [
           SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
@@ -48,12 +48,12 @@ class _State extends State<MovementVideosSection> {
                     child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
                   ),
                 ),
-          OlukoNeumorphism.isNeumorphismDesign ? SizedBox(height: 10) : SizedBox.shrink(),
+          OlukoNeumorphism.isNeumorphismDesign ? SizedBox(height: 25) : SizedBox.shrink(),
           Row(children: [
             Padding(
               padding: EdgeInsets.only(left: 20),
               child: Text(OlukoLocalizations.get(context, 'movementVideos'),
-                  style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
+                  style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
             ),
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),

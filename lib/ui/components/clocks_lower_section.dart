@@ -83,11 +83,7 @@ class _State extends State<ClocksLowerSection> {
           color: Colors.black,
           child: isSegmentWithRecording() && widget.timerTaskIndex > 0
               ? SegmentClocksUtils.cameraSection(
-                  context,
-                  isWorkStateFinished(),
-                  widget.isCameraReady,
-                  widget.cameraController,
-                  widget.pauseButton)
+                  context, isWorkStateFinished(), widget.isCameraReady, widget.cameraController, widget.pauseButton)
               : const SizedBox());
     } else {
       return _segmentInfoSection();
@@ -98,78 +94,81 @@ class _State extends State<ClocksLowerSection> {
   Widget _segmentInfoSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Stack(children: [
+        Column(
+          crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+          children: [
+            getTitle(),
+            const SizedBox(height: 5),
+            if (widget.counter || widget.segments[widget.segmentIndex].isChallenge) getScores() else getWorkouts(),
+          ],
+        ),
+        Positioned(
+          bottom: 15,
+          child: Container(width: ScreenUtils.width(context) - 40, height: 140, child: getCard()),
+        ),
+      ]),
+    );
+  }
+
+  Widget getWorkouts() {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? Padding(
+            padding: const EdgeInsets.all(10),
+            child: SizedBox(
+                height: ScreenUtils.height(context) * 0.12,
+                width: ScreenUtils.width(context),
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                      .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                      ?.toList(),
+                )),
+          )
+        : Column(
+            children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
+                .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
+                ?.toList(),
+          );
+  }
+
+  Widget getScores() {
+    return SizedBox(
+        height: ScreenUtils.height(context) * 0.15,
+        child: ListView(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            children: SegmentClocksUtils.getScoresByRound(
+                context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores)));
+  }
+
+  Widget getTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
-        crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: MovementUtils.movementTitle(
-                    widget.segments[widget.segmentIndex].isChallenge
-                        ? OlukoLocalizations.get(context, 'challengeTitle') +
-                            widget.segments[widget.segmentIndex].name
-                        : widget.segments[widget.segmentIndex].name,
-                  ),
-                ),
-              ],
+          FittedBox(
+            fit: BoxFit.fitWidth,
+            child: MovementUtils.movementTitle(
+              widget.segments[widget.segmentIndex].isChallenge
+                  ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                  : widget.segments[widget.segmentIndex].name,
             ),
           ),
-          const SizedBox(height: 5),
-          if (widget.counter || widget.segments[widget.segmentIndex].isChallenge)
-            SizedBox(
-                height: ScreenUtils.height(context) * 0.15,
-                child: ListView(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    children: SegmentClocksUtils.getScoresByRound(
-                        context,
-                        widget.timerEntries,
-                        widget.timerTaskIndex,
-                        widget.totalScore,
-                        widget.scores)))
-          else
-            OlukoNeumorphism.isNeumorphismDesign
-                ? Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SizedBox(
-                        height: ScreenUtils.height(context) * 0.12,
-                        width: ScreenUtils.width(context),
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          children: SegmentUtils.getWorkouts(
-                                  widget.segments[widget.segmentIndex])
-                              .map((e) => SegmentUtils.getTextWidget(
-                                  e, OlukoColors.grayColor))
-                              ?.toList(),
-                        )),
-                  )
-                : Column(
-                    children: SegmentUtils.getWorkouts(
-                            widget.segments[widget.segmentIndex])
-                        .map((e) => SegmentUtils.getTextWidget(
-                            e, OlukoColors.grayColor))
-                        ?.toList(),
-                  ),
-          widget.originalWorkoutType == WorkoutType.segment || shareDone
-              ? FeedbackCard(widget.courseEnrollment, widget.classIndex,
-                  widget.segmentIndex, widget.segmentId)
-              : ShareCard(
-                  createStory: widget.createStory,
-                  whistleAction: _whistleAction),
         ],
       ),
     );
   }
 
+  Widget getCard() {
+    return widget.originalWorkoutType == WorkoutType.segment || shareDone
+        ? FeedbackCard(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId)
+        : ShareCard(createStory: widget.createStory, whistleAction: _whistleAction);
+  }
+
   _whistleAction(bool delete) {
-    BlocProvider.of<SegmentSubmissionBloc>(context)
-        .setIsDeleted(widget.segmentSubmission, delete);
+    BlocProvider.of<SegmentSubmissionBloc>(context).setIsDeleted(widget.segmentSubmission, delete);
   }
 
   bool isSegmentWithRecording() {

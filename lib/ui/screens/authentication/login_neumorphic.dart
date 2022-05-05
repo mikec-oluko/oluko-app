@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
@@ -25,6 +26,12 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   final _formKey = GlobalKey<FormState>();
   final LoginRequest _requestData = LoginRequest();
   bool _peekPassword = false;
+
+  @override
+  void initState() {
+    BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -220,50 +227,55 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       const SizedBox(
         height: 15,
       ),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: OlukoNeumorphicSecondaryButton(
-            title: '',
-            useBorder: true,
-            isExpanded: false,
-            thinPadding: true,
-            onlyIcon: true,
-            onPressed: () {
-              BlocProvider.of<AuthBloc>(context).loginWithFacebook(context);
-            },
-            icon: Align(
-                child: Image.asset(
-              'assets/login/facebook-logo.png',
-              width: 30,
-            )),
-          ),
-        ),
-        const SizedBox(width: 35),
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: OlukoNeumorphicSecondaryButton(
-            title: '',
-            useBorder: true,
-            isExpanded: false,
-            thinPadding: true,
-            onlyIcon: true,
-            onPressed: () {
-              BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
-            },
-            icon: Align(
+      //getExternalLoginButtons(),
+      getOnlyGoogleButton(),
+    ];
+  }
+
+  Widget getExternalLoginButtons() {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      SizedBox(
+        width: 120,
+        height: 50,
+        child: OlukoNeumorphicSecondaryButton(
+          title: '',
+          useBorder: true,
+          isExpanded: false,
+          thinPadding: true,
+          onlyIcon: true,
+          onPressed: () {
+            BlocProvider.of<AuthBloc>(context).loginWithFacebook(context);
+          },
+          icon: Align(
               child: Image.asset(
-                'assets/login/google-logo.png',
-                width: 25,
-                color: Colors.white,
-              ),
+            'assets/login/facebook-logo.png',
+            width: 30,
+          )),
+        ),
+      ),
+      const SizedBox(width: 35),
+      SizedBox(
+        width: 120,
+        height: 50,
+        child: OlukoNeumorphicSecondaryButton(
+          title: '',
+          useBorder: true,
+          isExpanded: false,
+          thinPadding: true,
+          onlyIcon: true,
+          onPressed: () {
+            BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
+          },
+          icon: Align(
+            child: Image.asset(
+              'assets/login/google-logo.png',
+              width: 25,
+              color: Colors.white,
             ),
           ),
         ),
-      ]),
-    ];
+      ),
+    ]);
   }
 
   Widget getWelcomeText() {
@@ -281,5 +293,29 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         ],
       );
     }
+  }
+
+  Widget getOnlyGoogleButton() {
+    return SizedBox(
+      width: ScreenUtils.width(context),
+      height: 50,
+      child: OlukoNeumorphicSecondaryButton(
+        title: '',
+        useBorder: true,
+        isExpanded: false,
+        thinPadding: true,
+        onlyIcon: true,
+        onPressed: () {
+          BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
+        },
+        icon: Align(
+          child: Image.asset(
+            'assets/login/google-logo.png',
+            width: 25,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }
