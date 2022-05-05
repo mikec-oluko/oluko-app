@@ -60,6 +60,7 @@ class EnrolledCourse extends StatefulWidget {
   Widget buildClassEnrolledCards(
     BuildContext context,
     List<Class> classes, {
+    Function outSideCloseVideo,
     Course outsideCourse,
     CourseEnrollment outsideCourseEnrollment,
     int outsideCourseIndex,
@@ -96,6 +97,8 @@ class EnrolledCourse extends StatefulWidget {
                       onTap: () {
                         if (closeVideo != null) {
                           closeVideo();
+                        } else {
+                          outSideCloseVideo();
                         }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                           'courseEnrollment': enrollment,
@@ -116,11 +119,18 @@ class EnrolledCourse extends StatefulWidget {
                     ))
                 : Container(
                     child: GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
-                        'courseEnrollment': enrollment,
-                        'classIndex': _classItemsToUse.indexOf(item),
-                        'courseIndex': index,
-                      }),
+                      onTap: () {
+                        if (closeVideo != null) {
+                          closeVideo();
+                        } else {
+                          outSideCloseVideo();
+                        }
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                          'courseEnrollment': enrollment,
+                          'classIndex': _classItemsToUse.indexOf(item),
+                          'courseIndex': index,
+                        });
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ClassSection(
