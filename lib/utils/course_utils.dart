@@ -84,14 +84,21 @@ class CourseUtils {
         keyNameList: search.suggestedItems.map((e) => e.name).toList());
   }
 
-  static SearchResultsGrid<Course> searchResults(BuildContext context, SearchResults<Course> search, double cardsAspectRatio,
-      int searchResultsToShowPortrait, int searchResultsToShowLandscape) {
-    return SearchResultsGrid<Course>(
-        childAspectRatio: cardsAspectRatio,
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
-        textInput: search.query,
-        itemList: search.searchResults);
+  static Widget searchResults(BuildContext context, SearchResults<Course> search, double cardsAspectRatio, int searchResultsToShowPortrait,
+      int searchResultsToShowLandscape) {
+    return search.searchResults.isEmpty
+        ? Padding(
+          padding: EdgeInsets.only(left:30,top:20),
+          child: Text(
+            OlukoLocalizations.get(context, 'noCourseFound'),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          ))
+        : SearchResultsGrid<Course>(
+            childAspectRatio: cardsAspectRatio,
+            crossAxisCount:
+                MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
+            textInput: search.query,
+            itemList: search.searchResults);
   }
 
   static Widget filterSelector(TagSuccess state,

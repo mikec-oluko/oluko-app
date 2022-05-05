@@ -35,6 +35,7 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
@@ -127,6 +128,7 @@ import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/home_long_press.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
+import 'package:oluko_app/ui/screens/oluko_no_internet_connection.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
@@ -232,7 +234,8 @@ enum RouteEnum {
   homeLongPress,
   assessmentNeumorphicDone,
   coachRecommendedContentGallery,
-  aboutCoach
+  aboutCoach,
+  noInternetConnection
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -291,7 +294,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLongPress: 'home_long_press',
   RouteEnum.assessmentNeumorphicDone: '/assessment_neumorphic_done',
   RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery',
-  RouteEnum.aboutCoach: '/coach-about-coach-view'
+  RouteEnum.aboutCoach: '/coach-about-coach-view',
+  RouteEnum.noInternetConnection: '/no-internet-connection'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -394,6 +398,7 @@ class Routes {
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
 
@@ -466,7 +471,8 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
-          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc)
+          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
+          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -492,8 +498,12 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.loginNeumorphic:
-        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
-        newRouteView = LoginNeumorphicPage();
+        providers = [
+          BlocProvider<UserBloc>.value(value: _userBloc),
+          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
+        ];
+        final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
+        newRouteView = LoginNeumorphicPage(dontShowWelcomeTest: argumentsToAdd != null ? argumentsToAdd['dontShowWelcomeTest'] : null);
         break;
       case RouteEnum.completedClass:
         providers = [
@@ -700,7 +710,13 @@ class Routes {
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -788,6 +804,12 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -840,6 +862,12 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
           BlocProvider<DownloadAssetBloc>.value(value: _downloadAssetBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -859,7 +887,13 @@ class Routes {
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc)
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(
@@ -907,6 +941,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecording(
+          taskId: argumentsToAdd['taskId'] as String,
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
           isLastTask: argumentsToAdd['isLastTask'] as bool,
@@ -930,6 +965,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecordingPreview(
+          taskId: argumentsToAdd['taskId'] as String,
           filePath: argumentsToAdd['filePath'].toString(),
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
@@ -1003,7 +1039,13 @@ class Routes {
         String courseId = args['courseId'].toString();
         providers = [
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
@@ -1099,7 +1141,13 @@ class Routes {
       case RouteEnum.homeLongPress:
         providers = [
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc)
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeLongPress(
@@ -1124,6 +1172,9 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AboutCoachPage(coachBannerVideo: argumentsToAdd['coachBannerVideo'] as String);
+        break;
+      case RouteEnum.noInternetConnection:
+        newRouteView = const OlukoNoInternetConnectionPage();
         break;
       default:
         newRouteView = MainPage();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
@@ -89,7 +90,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                             })(),
                             currentUserId: widget.userId,
                             maxRadius: 35,
-                            imageUrl: user.avatarThumbnail?.toString() ?? UserUtils().defaultAvatarImageUrl,
+                            imageUrl: user.avatar.toString(),
                             stories: user is UserSubmodel && user.stories?.stories != null ? user.stories.stories : [],
                           ),
                           Text('${user.firstName ?? ''} ${user.lastName ?? ''}',
@@ -118,12 +119,12 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
         content: FriendModalContent(
           friendUser,
           widget.userId,
-          FriendBloc(),
-          FriendRequestBloc(),
-          HiFiveSendBloc(),
-          HiFiveReceivedBloc(),
-          UserStatisticsBloc(),
-          FavoriteFriendBloc(),
+          BlocProvider.of<FriendBloc>(context),
+          BlocProvider.of<FriendRequestBloc>(context),
+          BlocProvider.of<HiFiveSendBloc>(context),
+          BlocProvider.of<HiFiveReceivedBloc>(context),
+          BlocProvider.of<UserStatisticsBloc>(context),
+          BlocProvider.of<FavoriteFriendBloc>(context),
         ),
         context: context,
       );

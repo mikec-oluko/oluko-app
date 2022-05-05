@@ -24,6 +24,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -52,6 +53,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   String mediaURL;
   bool showStories = false;
   bool showLogo = true;
+  int courseIndex;
+  bool _isVideoPlaying = false;
+
   @override
   Widget build(BuildContext context) {
     widget.scrollController =
@@ -97,6 +101,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               if (widget.courses.length - 1 >= index) {
                 if (widget.courses[index] != null) {
                   return CustomScrollView(
+                    cacheExtent: 205.0 * widget.courses[index].classes.length,
                     slivers: <Widget>[
                       SliverStack(children: [
                         getClassView(index, context),
@@ -237,17 +242,28 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
-            child: OverlayVideoPreview(
-              image: widget.courses[index].posterImage ?? widget.courses[index].image,
-              video: widget.courses[index].video,
-              onBackPressed: () => Navigator.pop(context),
+            child: VisibilityDetector(
+              key: Key('Video${index}'),
+              onVisibilityChanged: (VisibilityInfo info) {
+                if (info.visibleFraction == 1 && mounted) {
+                  courseIndex = index;
+                }
+              },
+              child: OlukoVideoPreview(
+                showVideoOptions: true,
+                image: widget.courses[index].image,
+                video: widget.courses[index].video,
+                onBackPressed: () => Navigator.pop(context),
+                onPlay: () => isVideoPlaying(),
+                videoVisibilty: _isVideoPlaying,
+              ),
             ),
           ),
         ),
         VisibilityDetector(
           key: Key('${index}'),
           onVisibilityChanged: (VisibilityInfo info) {
-            if (info.visibleFraction < 0.001 && mounted) {
+            if (info.visibleFraction < 0.001 && mounted && courseIndex == index) {
               BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
             } else {
               if (mounted) {
@@ -284,6 +300,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   outsideCourse: widget.courses[index],
                   outsideCourseEnrollment: widget.courseEnrollments[index],
                   outsideCourseIndex: index,
+                  outSideCloseVideo: closeVideo,
                 ),
               );
             } else {
@@ -293,6 +310,26 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         ),
       ]),
     );
+  }
+
+  void pauseVideo() {
+    if (_controller != null) {
+      _controller.pause();
+    }
+  }
+
+  void isVideoPlaying() {
+    return setState(() {
+      _isVideoPlaying = !_isVideoPlaying;
+    });
+  }
+
+  void closeVideo() {
+    setState(() {
+      if (_isVideoPlaying) {
+        _isVideoPlaying = !_isVideoPlaying;
+      }
+    });
   }
 
   Widget getTabBar(BuildContext context, int index) {

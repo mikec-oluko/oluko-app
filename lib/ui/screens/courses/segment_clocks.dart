@@ -87,7 +87,7 @@ class SegmentClocks extends StatefulWidget {
   _SegmentClocksState createState() => _SegmentClocksState();
 }
 
-class _SegmentClocksState extends State<SegmentClocks> {
+class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserver {
   GlobalService _globalService = GlobalService();
 
   final toolbarHeight = kToolbarHeight * 2;
@@ -118,7 +118,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Camera
   List<CameraDescription> cameras;
   CameraController cameraController;
-  bool _isReady = false;
+  bool _isCameraReady = false;
   bool isCameraFront = false;
   List<TimerEntry> timerEntries;
   User _user;
@@ -148,14 +148,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Duration currentTime;
   bool open = true;
   int durationPR = 0;
+  bool _recordingPaused = false;
 
   @override
   void initState() {
     Wakelock.enable();
+    WidgetsBinding.instance.addObserver(this);
     workoutType = widget.workoutType;
-    /*if (isSegmentWithRecording()) {
-      _setupCameras();
-    }*/
     _startMovement();
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
@@ -173,7 +172,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
-          return await SegmentClocksUtils.segmentClockOnWillPop(context);
+          resetAMRAPRound();
+          return SegmentClocksUtils.segmentClockOnWillPop(context);
         }
         return false;
       },
@@ -248,6 +248,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
     );
   }
 
+  void resetAMRAPRound() {
+    AMRAPRound = 0;
+    BlocProvider.of<AmrapRoundBloc>(context).emitDefault();
+  }
+
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
     for (var i = 0; i < coachRequests.length; i++) {
       if (coachRequests[i].segmentId == segmentId) {
@@ -269,14 +274,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType),
+        appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound),
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(21), topRight: Radius.circular(21)),
                 controller: recordingPanelController,
                 minHeight: 0,
-                maxHeight: 330,
+                maxHeight: 310,
                 collapsed: Container(color: Colors.black),
                 panel: InitialTimerPanel(
                   panelController: recordingPanelController,
@@ -452,13 +457,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   timerTaskIndex: timerTaskIndex,
                   createStory: _createStory,
                   workoutType: workoutType,
-                  originalWorkoutType: widget.workoutType,
+                  originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
                   //shareDone: shareDone,
                   segmentSubmission: _segmentSubmission,
                   scores: scores,
                   totalScore: totalScore,
                   counter: counter,
-                  isCameraReady: _isReady,
+                  isCameraReady: _isCameraReady,
                   cameraController: cameraController,
                   pauseButton: pauseButton(),
                   classIndex: widget.classIndex,
@@ -473,8 +478,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
             child: SizedBox(
               height: ScreenUtils.height(context) * 0.14,
               width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(widget.workoutType, shareDone, context, shareDoneAction, goToClassAction,
-                  nextSegmentAction, widget.segments, widget.segmentIndex),
+              child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
+                  shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex),
             ),
           )
         else
@@ -573,6 +578,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               context: context,
               content: PauseDialogContent(resumeAction: _resume, restartAction: _goToSegmentDetail),
             );
+            _recordingPaused = true;
           }
           setState(() {
             workoutType = WorkoutType.segment;
@@ -882,6 +888,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   void dispose() {
     Wakelock.disable();
+    WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
       stopwatchTimer.cancel();
     }
@@ -895,6 +902,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached || state == AppLifecycleState.paused) return;
+    final isInactive = state == AppLifecycleState.inactive;
+    if (isInactive) {
+      Navigator.pop(context);
+    }
+  }
+
   //Camera functions
   Future<void> _setupCameras() async {
     final int cameraPos = isCameraFront ? 0 : 1;
@@ -906,7 +923,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } on CameraException catch (_) {}
     if (!mounted) return;
     setState(() {
-      _isReady = true;
+      _isCameraReady = true;
     });
   }
 

@@ -1,6 +1,8 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
@@ -71,6 +73,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     tabs = getTabs();
+    BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
+
     tabController = TabController(length: this.tabs.length, vsync: this);
     tabController.addListener(() {
       setState(() {});
@@ -87,6 +91,25 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     }
     return MultiBlocListener(
         listeners: [
+          BlocListener<InternetConnectionBloc, InternetConnectionState>(
+            listener: (context, internetState) {
+              if (internetState is InternetConnectionConnectedStatus) {
+                if (!_globalService.hasInternetConnection) {
+                  _globalService.setInternetConnection = true;
+                  _globalService.setConnectivityType = internetState.connectivityResult;
+                }
+              }
+              if (internetState is InternetConnectionDisconnectedStatus) {
+                if (!_globalService.hasInternetConnection) {
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.noInternetConnection]);
+                } else {
+                  _globalService.setInternetConnection = false;
+                  _globalService.setConnectivityType = ConnectivityResult.none;
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.noInternetConnection]);
+                }
+              }
+            },
+          ),
           BlocListener<VideoBloc, VideoState>(
             listener: (context, state) {
               updateVideo(state);
@@ -95,14 +118,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           BlocListener<PushNotificationBloc, PushNotificationState>(
             listener: (context, state) {
               if (state is NewPushNotification) {
-                if(ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root] || widget.tab != 1) {
+                if (ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root] || widget.tab != 1) {
                   Navigator.pushNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'tab': 1,
-                  },
-                );
+                    context,
+                    routeLabels[RouteEnum.root],
+                    arguments: {
+                      'tab': 1,
+                    },
+                  );
                 }
               }
             },
@@ -137,6 +160,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           },
         ));
   }
+
   taskSubmissionActions(VideoSuccess state) {
     BlocProvider.of<TaskSubmissionListBloc>(context)
         .updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);

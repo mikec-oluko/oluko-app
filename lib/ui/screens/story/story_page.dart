@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -298,6 +299,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     if (!widget.stories[_currentIndex].seen) {
       widget.stories[_currentIndex].seen = true;
       BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStoriesId, widget.stories[_currentIndex].id);
+      BlocProvider.of<StoryListBloc>(context).get(widget.userId);
     }
   }
 
@@ -430,12 +432,7 @@ class UserInfo extends StatelessWidget {
   final String lastname;
 
   const UserInfo(
-      {Key key,
-      @required this.avatarThumbnail,
-      @required this.name,
-      @required this.userId,
-      @required this.timeFromCreation,
-      this.lastname})
+      {Key key, @required this.avatarThumbnail, @required this.name, @required this.userId, @required this.timeFromCreation, this.lastname})
       : super(key: key);
 
   @override

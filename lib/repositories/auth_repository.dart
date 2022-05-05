@@ -30,6 +30,12 @@ class AuthRepository {
     this.firebaseAuthInstance = FirebaseAuth.instance;
   }
 
+  Future<String> getApiToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String apiToken = prefs.getString('apiToken');
+    return apiToken;
+  }
+
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body = loginRequest.toJson();
     body.removeWhere((key, value) => value == null);
@@ -41,7 +47,10 @@ class AuthRepository {
     }
     ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody as Map<String, dynamic>);
     if (apiResponse.statusCode == 200) {
-      await firebaseAuthInstance.signInWithCustomToken(apiResponse.data['accessToken'] as String);
+      final accesToken = apiResponse.data['accessToken'] as String;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('apiToken', accesToken);
+      await firebaseAuthInstance.signInWithCustomToken(accesToken);
     }
     return apiResponse;
   }
@@ -80,6 +89,10 @@ class AuthRepository {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('apiToken', googleAuth?.accessToken);
+
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
@@ -96,6 +109,8 @@ class AuthRepository {
     if (result.accessToken != null) {
       // Create a credential from the access token
       final facebookAuthCredential = FacebookAuthProvider.credential(result.accessToken.token);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('apiToken', result.accessToken.token);
       try {
         //TODO: handle account with same email exception
         // Once signed in, return the UserCredential

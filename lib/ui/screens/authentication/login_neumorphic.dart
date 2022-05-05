@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
@@ -14,7 +15,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
-  LoginNeumorphicPage({Key key}) : super(key: key);
+  LoginNeumorphicPage({this.dontShowWelcomeTest, Key key}) : super(key: key);
+  bool dontShowWelcomeTest;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -24,6 +26,12 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   final _formKey = GlobalKey<FormState>();
   final LoginRequest _requestData = LoginRequest();
   bool _peekPassword = false;
+
+  @override
+  void initState() {
+    BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,29 +69,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
 
   List<Widget> formFields() {
     return [
-      FutureBuilder(
-        future: UserUtils.isFirstTime(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data == false) {
-              return Column(
-                children: [
-                  SizedBox(height: ScreenUtils.height(context) * 0.25),
-                  Text(
-                    OlukoLocalizations.get(context, 'welcomeBack'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ],
-              );
-            } else {
-              return SizedBox(height: ScreenUtils.height(context) * 0.25);
-            }
-          } else {
-            return SizedBox(height: ScreenUtils.height(context) * 0.25);
-          }
-        },
-      ),
+      getWelcomeText(),
       SizedBox(
         height: ScreenUtils.height(context) * 0.07,
       ),
@@ -241,49 +227,95 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       const SizedBox(
         height: 15,
       ),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: OlukoNeumorphicSecondaryButton(
-            title: '',
-            useBorder: true,
-            isExpanded: false,
-            thinPadding: true,
-            onlyIcon: true,
-            onPressed: () {
-              BlocProvider.of<AuthBloc>(context).loginWithFacebook(context);
-            },
-            icon: Align(
-                child: Image.asset(
-              'assets/login/facebook-logo.png',
-              width: 30,
-            )),
-          ),
-        ),
-        const SizedBox(width: 35),
-        SizedBox(
-          width: 120,
-          height: 50,
-          child: OlukoNeumorphicSecondaryButton(
-            title: '',
-            useBorder: true,
-            isExpanded: false,
-            thinPadding: true,
-            onlyIcon: true,
-            onPressed: () {
-              BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
-            },
-            icon: Align(
+      //getExternalLoginButtons(),
+      getOnlyGoogleButton(),
+    ];
+  }
+
+  Widget getExternalLoginButtons() {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      SizedBox(
+        width: 120,
+        height: 50,
+        child: OlukoNeumorphicSecondaryButton(
+          title: '',
+          useBorder: true,
+          isExpanded: false,
+          thinPadding: true,
+          onlyIcon: true,
+          onPressed: () {
+            BlocProvider.of<AuthBloc>(context).loginWithFacebook(context);
+          },
+          icon: Align(
               child: Image.asset(
-                'assets/login/google-logo.png',
-                width: 25,
-                color: Colors.white,
-              ),
+            'assets/login/facebook-logo.png',
+            width: 30,
+          )),
+        ),
+      ),
+      const SizedBox(width: 35),
+      SizedBox(
+        width: 120,
+        height: 50,
+        child: OlukoNeumorphicSecondaryButton(
+          title: '',
+          useBorder: true,
+          isExpanded: false,
+          thinPadding: true,
+          onlyIcon: true,
+          onPressed: () {
+            BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
+          },
+          icon: Align(
+            child: Image.asset(
+              'assets/login/google-logo.png',
+              width: 25,
+              color: Colors.white,
             ),
           ),
         ),
-      ]),
-    ];
+      ),
+    ]);
+  }
+
+  Widget getWelcomeText() {
+    if (widget.dontShowWelcomeTest != null && widget.dontShowWelcomeTest == true) {
+      return SizedBox(height: ScreenUtils.height(context) * 0.25);
+    } else {
+      return Column(
+        children: [
+          SizedBox(height: ScreenUtils.height(context) * 0.25),
+          Text(
+            OlukoLocalizations.get(context, 'welcomeBack'),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget getOnlyGoogleButton() {
+    return SizedBox(
+      width: ScreenUtils.width(context),
+      height: 50,
+      child: OlukoNeumorphicSecondaryButton(
+        title: '',
+        useBorder: true,
+        isExpanded: false,
+        thinPadding: true,
+        onlyIcon: true,
+        onPressed: () {
+          BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
+        },
+        icon: Align(
+          child: Image.asset(
+            'assets/login/google-logo.png',
+            width: 25,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }

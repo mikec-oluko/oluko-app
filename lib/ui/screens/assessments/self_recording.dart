@@ -1,29 +1,20 @@
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
-import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
-import 'package:photo_manager/photo_manager.dart';
 
 class SelfRecording extends StatefulWidget {
   const SelfRecording(
@@ -33,9 +24,10 @@ class SelfRecording extends StatefulWidget {
       this.isLastTask = false,
       Key key,
       this.classIndex,
-      this.courseEnrollment})
+      this.courseEnrollment,  this.taskId})
       : super(key: key);
 
+  final String taskId;
   final int taskIndex;
   final int classIndex;
   final bool isPublic;
@@ -74,18 +66,20 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
   @override
   void dispose() {
     cameraController?.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.inactive || state == AppLifecycleState.detached) return;
-    final bool isBackground = state == AppLifecycleState.paused;
-    if (isBackground) {
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.paused || state == AppLifecycleState.inactive) return;
+    final isClosed = state == AppLifecycleState.detached;
+    if (isClosed) {
       Navigator.pop(context);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -436,6 +430,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         context,
                         routeLabels[RouteEnum.selfRecordingPreview],
                         arguments: {
+                          'taskId':widget.taskId,
                           'taskIndex': widget.taskIndex,
                           'filePath': path,
                           'isPublic': widget.isPublic,
@@ -462,6 +457,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         context,
                         routeLabels[RouteEnum.selfRecordingPreview],
                         arguments: {
+                          'taskId':widget.taskId,
                           'taskIndex': widget.taskIndex,
                           'filePath': state.pickedFile.path,
                           'isPublic': widget.isPublic,
