@@ -65,3 +65,5 @@ enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFai
 enum ExceptionTypeSourceEnum { invalidFormat, invalidDuration, invalidValue, noFileSelected }
 
 enum MediaType { video, image, audio }
+
+enum NoInternetContentEnum { fullscreen, widget }
