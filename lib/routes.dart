@@ -161,6 +161,7 @@ import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
+import 'models/coach_media_message.dart';
 import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
@@ -1113,9 +1114,12 @@ class Routes {
       case RouteEnum.mentoredVideos:
         providers = [
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
-        final Map<String, List<Annotation>> argumentsToAdd = arguments as Map<String, List<Annotation>>;
-        newRouteView = MentoredVideosPage(coachAnnotation: argumentsToAdd['coachAnnotation']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = MentoredVideosPage(
+            coachAnnotation: argumentsToAdd['coachAnnotation'] as List<Annotation>,
+            coachVideoMessage: argumentsToAdd['coachVideoMessages'] as List<CoachMediaMessage>);
         break;
       case RouteEnum.coachShowVideo:
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

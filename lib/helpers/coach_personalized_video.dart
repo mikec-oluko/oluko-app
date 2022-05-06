@@ -6,7 +6,8 @@ import 'package:oluko_app/models/submodels/video.dart';
 class CoachPersonalizedVideo {
   Timestamp createdAt;
   Video videoContent;
+  String videoHls;
   Annotation annotationContent;
   CoachMediaMessage videoMessageContent;
-  CoachPersonalizedVideo({this.createdAt, this.videoContent, this.annotationContent, this.videoMessageContent});
+  CoachPersonalizedVideo({this.createdAt, this.videoContent, this.videoHls, this.annotationContent, this.videoMessageContent});
 }
