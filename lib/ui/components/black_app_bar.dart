@@ -79,70 +79,52 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
           backgroundColor: Colors.black,
-          leading: widget.showBackButton
-              ? IconButton(
-                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                  onPressed: () => {
-                        if (this.widget.onPressed == null) {Navigator.pop(context)} else {this.widget.onPressed()}
-                      })
-              : nil,
-          title: widget.showLogo
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Image.asset(
-                    'assets/home/mvt.png',
-                    scale: 4,
-                  ))
-              : Align(
-                  alignment: Alignment.centerLeft,
-                  child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: TitleHeader(widget.title, bold: true, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign))),
+          leading: backButton(),
+          title: getTitle(),
           actions: widget.actions,
-          bottom: widget.showSearchBar == true
-              ? PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: Column(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                          child: SearchBar<T>(
-                            key: widget.searchKey,
-                            items: widget.searchResultItems,
-                            whenInitialized: (TextEditingController controller) => widget.whenSearchBarInitialized(controller),
-                            onSearchSubmit: (SearchResults<dynamic> searchResults) =>
-                                widget.onSearchSubmit(searchResults as SearchResults<T>),
-                            onSearchResults: (SearchResults<dynamic> searchResults) =>
-                                widget.onSearchResults(searchResults as SearchResults<T>),
-                            searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) =>
-                                widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
-                            suggestionMethod: (String query, List<dynamic> collection) =>
-                                widget.suggestionMethod(query, collection as List<T>),
-                          )),
-                      Divider(
-                        height: 1,
-                        color: OlukoColors.divider,
-                        thickness: 1,
-                        indent: 0,
-                        endIndent: 0,
-                      )
-                    ],
-                  ))
-              : PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: Column(
-                    children: [
-                      widget.showDivider
-                          ? Divider(
-                              height: 1,
-                              color: OlukoColors.divider,
-                              thickness: 1.5,
-                              indent: 0,
-                              endIndent: 0,
-                            )
-                          : SizedBox()
-                    ],
-                  ))),
+          bottom: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: widget.showSearchBar
+                  ? getSearchBar()
+                  : Column(
+                      children: [
+                        widget.showDivider
+                            ? Divider(
+                                height: 1,
+                                color: OlukoColors.divider,
+                                thickness: 1.5,
+                                indent: 0,
+                                endIndent: 0,
+                              )
+                            : SizedBox()
+                      ],
+                    ))),
+    );
+  }
+
+  Widget getSearchBar() {
+    return Column(
+      children: [
+        Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: SearchBar<T>(
+              key: widget.searchKey,
+              items: widget.searchResultItems,
+              whenInitialized: (TextEditingController controller) => widget.whenSearchBarInitialized(controller),
+              onSearchSubmit: (SearchResults<dynamic> searchResults) => widget.onSearchSubmit(searchResults as SearchResults<T>),
+              onSearchResults: (SearchResults<dynamic> searchResults) => widget.onSearchResults(searchResults as SearchResults<T>),
+              searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) =>
+                  widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
+              suggestionMethod: (String query, List<dynamic> collection) => widget.suggestionMethod(query, collection as List<T>),
+            )),
+        Divider(
+          height: 1,
+          color: OlukoColors.divider,
+          thickness: 1,
+          indent: 0,
+          endIndent: 0,
+        )
+      ],
     );
   }
 
@@ -175,26 +157,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                           child: Row(
                             mainAxisAlignment: widget.centerTitle ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: Align(
-                                  alignment: widget.centerTitle ? Alignment.center : Alignment.centerLeft,
-                                  child: Container(
-                                    //TODO: light behind
-                                    height: 55,
-                                    width: 55,
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.pop(context),
-                                      child: OlukoBlurredButton(
-                                        childContent: Image.asset(
-                                          'assets/courses/left_back_arrow.png',
-                                          scale: 3.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              getNeumorphicBackButton(),
                               Expanded(
                                 child: Padding(
                                   padding: EdgeInsets.only(right: widget.centerTitle ? 40 : 0),
@@ -202,7 +165,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                     alignment: Alignment.center,
                                     child: TitleHeader(
                                       widget.title,
-                                      reduceFontSize: true,
+                                      //reduceFontSize: true,
                                       bold: false,
                                       isNeumorphic: true,
                                     ),
@@ -223,93 +186,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                           ),
                         )
                       : widget.showSearchBar
-                          ? Center(
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Opacity(
-                                    opacity: isSearchVisible ? 1 : 0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                                      child: IgnorePointer(
-                                        ignoring: !isSearchVisible,
-                                        child: SearchBar<T>(
-                                          key: widget.searchKey,
-                                          items: widget.searchResultItems,
-                                          whenInitialized: (TextEditingController controller) =>
-                                              widget.whenSearchBarInitialized(controller),
-                                          onSearchSubmit: (SearchResults<dynamic> searchResults) =>
-                                              widget.onSearchSubmit(searchResults as SearchResults<T>),
-                                          onSearchResults: (SearchResults<dynamic> searchResults) =>
-                                              widget.onSearchResults(searchResults as SearchResults<T>),
-                                          searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) =>
-                                              widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
-                                          suggestionMethod: (String query, List<dynamic> collection) =>
-                                              widget.suggestionMethod(query, collection as List<T>),
-                                          onTapClose: () {
-                                            setState(() {
-                                              isSearchVisible = !isSearchVisible;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 20.0),
-                                      child: Visibility(
-                                        visible: !isSearchVisible,
-                                        child: GestureDetector(
-                                          // onTap: ,
-                                          child: OlukoNeumorphicCircleButton(
-                                              onPressed: () {
-                                                if (widget.title == OlukoLocalizations.get(context, 'filters')) {
-                                                  //Close keyboard
-                                                  FocusScope.of(context).unfocus();
-                                                  widget.actionButton();
-                                                  widget.showBottomTab();
-                                                } else {
-                                                  setState(() {
-                                                    isSearchVisible = !isSearchVisible;
-                                                  });
-                                                }
-                                              },
-                                              customIcon: Icon(
-                                                widget.title == OlukoLocalizations.get(context, 'filters')
-                                                    ? Icons.arrow_back
-                                                    : Icons.search,
-                                                color: OlukoColors.grayColor,
-                                              )),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  //TODO: TITLE BEHIND SEARCHBAR
-                                  Visibility(
-                                    visible: !isSearchVisible,
-                                    child: Center(
-                                      child: TitleHeader(
-                                        widget.title,
-                                        bold: false,
-                                        isNeumorphic: true,
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: !isSearchVisible,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: widget.actions,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
+                          ? getNeumorphicSearchBar()
                           : Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -320,7 +197,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                         widget.title,
                                         bold: false,
                                         isNeumorphic: true,
-                                        reduceFontSize: true,
+                                        //reduceFontSize: true,
                                       ),
                                     ),
                                   ),
@@ -352,6 +229,16 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
     );
   }
 
+  Widget backButton() {
+    return widget.showBackButton
+        ? IconButton(
+            icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+            onPressed: () => {
+                  if (this.widget.onPressed == null) {Navigator.pop(context)} else {this.widget.onPressed()}
+                })
+        : nil;
+  }
+
   Align getLogo() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -361,6 +248,127 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           'assets/home/mvt.png',
           scale: 4,
         ),
+      ),
+    );
+  }
+
+  Widget getTitle() {
+    return widget.showLogo
+        ? Align(
+            alignment: Alignment.centerLeft,
+            child: Image.asset(
+              'assets/home/mvt.png',
+              scale: 4,
+            ))
+        : Align(
+            alignment: Alignment.centerLeft,
+            child: FittedBox(
+                fit: BoxFit.fitWidth, child: TitleHeader(widget.title, bold: true, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign)));
+  }
+
+  Widget getNeumorphicBackButton(){
+    return Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Align(
+                                  alignment: widget.centerTitle ? Alignment.center : Alignment.centerLeft,
+                                  child: Container(
+                                    //TODO: light behind
+                                    height: 55,
+                                    width: 55,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.pop(context),
+                                      child: OlukoBlurredButton(
+                                        childContent: Image.asset(
+                                          'assets/courses/left_back_arrow.png',
+                                          scale: 3.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+  }
+
+  Widget getNeumorphicSearchBar() {
+    return Center(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Opacity(
+            opacity: isSearchVisible ? 1 : 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: IgnorePointer(
+                ignoring: !isSearchVisible,
+                child: SearchBar<T>(
+                  key: widget.searchKey,
+                  items: widget.searchResultItems,
+                  whenInitialized: (TextEditingController controller) => widget.whenSearchBarInitialized(controller),
+                  onSearchSubmit: (SearchResults<dynamic> searchResults) => widget.onSearchSubmit(searchResults as SearchResults<T>),
+                  onSearchResults: (SearchResults<dynamic> searchResults) => widget.onSearchResults(searchResults as SearchResults<T>),
+                  searchMethod: (String query, List<dynamic> collection, List<dynamic> tags) =>
+                      widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
+                  suggestionMethod: (String query, List<dynamic> collection) => widget.suggestionMethod(query, collection as List<T>),
+                  onTapClose: () {
+                    setState(() {
+                      isSearchVisible = !isSearchVisible;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Visibility(
+                visible: !isSearchVisible,
+                child: GestureDetector(
+                  // onTap: ,
+                  child: OlukoNeumorphicCircleButton(
+                      onPressed: () {
+                        if (widget.title == OlukoLocalizations.get(context, 'filters')) {
+                          //Close keyboard
+                          FocusScope.of(context).unfocus();
+                          widget.actionButton();
+                          widget.showBottomTab();
+                        } else {
+                          setState(() {
+                            isSearchVisible = !isSearchVisible;
+                          });
+                        }
+                      },
+                      customIcon: Icon(
+                        widget.title == OlukoLocalizations.get(context, 'filters') ? Icons.arrow_back : Icons.search,
+                        color: OlukoColors.grayColor,
+                      )),
+                ),
+              ),
+            ),
+          ),
+          //TODO: TITLE BEHIND SEARCHBAR
+          Visibility(
+            visible: !isSearchVisible,
+            child: Center(
+              child: TitleHeader(
+                widget.title,
+                bold: false,
+                isNeumorphic: true,
+              ),
+            ),
+          ),
+          Visibility(
+            visible: !isSearchVisible,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: widget.actions,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

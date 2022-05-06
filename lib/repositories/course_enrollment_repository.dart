@@ -1,21 +1,12 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
-import 'package:oluko_app/repositories/story_repository.dart';
-import 'package:path/path.dart' as p;
-import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
@@ -23,8 +14,6 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
-import 'package:oluko_app/services/course_enrollment_service.dart';
-import 'package:oluko_app/utils/image_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {

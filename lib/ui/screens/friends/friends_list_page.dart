@@ -8,6 +8,8 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -96,29 +98,31 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users')
                   : _appUsersWidget;
             }
-            return SingleChildScrollView(
-              controller: _viewScrollController,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.zero,
-              child: SizedBox(
-                  height: ScreenUtils.height(context),
-                  width: ScreenUtils.width(context),
-                  child: Column(
-                    children: [
-                      _listSection(
-                          titleForSection: OlukoLocalizations.get(context, 'myFriends'),
-                          content: _friendUsersWidget,
-                          listLength: _friends.length),
-                      _listSection(
-                          titleForSection: OlukoLocalizations.get(context, 'otherUsers'),
-                          content: _appUsersWidget,
-                          listLength: _appUsersList.length),
-                    ],
-                  )),
-            );
+            return _scrollView();
           },
         );
       },
+    );
+  }
+
+  Widget _scrollView() {
+    return SingleChildScrollView(
+      controller: _viewScrollController,
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.zero,
+      child: SizedBox(
+          height: ScreenUtils.height(context),
+          width: ScreenUtils.width(context),
+          child: Column(
+            children: [
+              _listSection(
+                  titleForSection: OlukoLocalizations.get(context, 'myFriends'), content: _friendUsersWidget, listLength: _friends.length),
+              _listSection(
+                  titleForSection: OlukoLocalizations.get(context, 'otherUsers'),
+                  content: _appUsersWidget,
+                  listLength: _appUsersList.length),
+            ],
+          )),
     );
   }
 
