@@ -76,10 +76,8 @@ class _CoachMainPageState extends State<CoachMainPage> {
                               currentUser: _currentUser,
                               coachAssignment: _coachAssignment,
                             )
-                          : const AssessmentVideos(
-                              isFirstTime: false,
-                              isForCoachPage: true,
-                            );
+                          : AssessmentVideos(
+                              isFirstTime: false, isForCoachPage: true, assessmentsDone: _currentUser.assessmentsCompletedAt != null);
                     }
                   } else {
                     return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
