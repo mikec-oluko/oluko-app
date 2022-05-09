@@ -600,6 +600,8 @@ class _CoachPageState extends State<CoachPage> {
       timelinePanelElement.timelineElements.forEach((timelineContentItem) {
         if (_allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
           _allContent.add(timelineContentItem);
+        } else if (timelineContentItem.contentType == TimelineInteractionType.mentoredVideo) {
+          _allContent.add(timelineContentItem);
         }
       });
     });
