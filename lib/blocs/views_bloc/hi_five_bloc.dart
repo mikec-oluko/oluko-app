@@ -80,7 +80,16 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     }
   }
 
-  void sendHiFiveToAll(BuildContext context, String userId, List<String> targetUserIds) async {
+  void sendHiFiveToAll(BuildContext context, String userId, HiFiveSuccess hiFiveState /*List<String> targetUserIds*/) async {
+    final targetUserIds = hiFiveState.users.map((e) => e.id).toList();
+
+    var hiFivesAmount = 0;
+    hiFiveState.chat.forEach((chat, messagesList) {
+      if (messagesList != null && messagesList.isNotEmpty) {
+        hiFivesAmount += messagesList.length;
+      }
+    });
+
     targetUserIds.forEach((targetUserId) async {
       await ChatRepository.removeNotification(userId, targetUserId);
       await ChatRepository.sendHiFive(userId, targetUserId);
@@ -88,10 +97,14 @@ class HiFiveBloc extends Cubit<HiFiveState> {
 
     _lastState.users.removeWhere((element) => targetUserIds.contains(element.id));
     _lastState.chat.removeWhere((key, value) => targetUserIds.contains(key.id));
-    emit(HiFiveSuccess(
+
+    emit(
+      HiFiveSuccess(
         chat: _lastState.chat,
         users: _lastState.users,
-        alertMessage: '${targetUserIds.length} Hi-Five${targetUserIds.length > 1 ? 's' : ''} sended'));
+        alertMessage: '$hiFivesAmount Hi-Five${targetUserIds.length > 1 ? 's' : ''} sended',
+      ),
+    );
   }
 
   void ignoreHiFive(BuildContext context, String userId, String targetUserId) async {
