@@ -124,15 +124,14 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
                         child: CircleAvatar(
                           backgroundColor: OlukoColors.black,
-                          backgroundImage: Image(
-                            image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatar),
-                            fit: BoxFit.contain,
-                            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 45, width: 45),
-                            height: 45,
-                            width: 45,
-                          ).image,
                           radius: 40.0,
+                          child: CachedNetworkImage(
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            imageUrl: widget.userToDisplayInformation.avatar,
+                          ),
                         ),
                       ),
                       getVisibility(widget, context, _isOwner),
