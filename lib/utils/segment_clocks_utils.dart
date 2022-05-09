@@ -464,7 +464,8 @@ class SegmentClocksUtils {
     return !OlukoNeumorphism.isNeumorphismDesign
         ? showFinishedButtons(
             workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress)
-        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
+        : neumorphicFinishedButtons(
+            workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
   }
 
   static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
@@ -559,5 +560,15 @@ class SegmentClocksUtils {
         ],
       ),
     );
+  }
+
+  static bool diferentMovsWithRepCouter(List<TimerEntry> timerEntries) {
+    String firstMov = timerEntries[0].movement.id;
+    for (final t in timerEntries) {
+      if (!t.movement.isRestTime && t.movement.id != firstMov) {
+        return true;
+      }
+    }
+    return false;
   }
 }

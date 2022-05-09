@@ -137,6 +137,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool shareDone = false;
   WorkoutType workoutType;
   List<String> scores = [];
+  List<int> scoresInt = [];
   int totalScore = 0;
   bool counter = false;
   bool _wantsToCreateStory = false;
@@ -151,6 +152,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   int durationPR = 0;
   bool _recordingPaused = false;
   bool _progressCreated = false;
+  bool _areDiferentMovsWithRepCouter = false;
 
   @override
   void initState() {
@@ -161,6 +163,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
+      scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
 
     setState(() {
@@ -718,7 +721,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       int currentDuration = stopwatchDuration.inSeconds;
       durationPR += currentDuration;
       totalScore += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] = currentDuration.toString() + ' s';
+      scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
+      scores[timerEntries[timerTaskIndex].round] = scoresInt[timerEntries[timerTaskIndex].round].toString() + ' s';
+
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
         widget.courseEnrollment,
@@ -761,7 +766,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     setState(() {
       totalScore += int.parse(textController.text);
     });
-    scores[timerEntries[timerTaskIndex - 1].round] = textController.text + ' ' + timerEntries[timerTaskIndex - 1].movement.getLabel();
+    scoresInt[timerEntries[timerTaskIndex - 1].round] += int.parse(textController.text);
+    scores[timerEntries[timerTaskIndex - 1].round] = scoresInt[timerEntries[timerTaskIndex - 1].round].toString() +
+        ' ' +
+        (_areDiferentMovsWithRepCouter ? 'reps' : timerEntries[timerTaskIndex - 1].movement.getLabel());
   }
 
   WorkState getCurrentTaskWorkState() {
@@ -891,6 +899,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    _areDiferentMovsWithRepCouter = SegmentClocksUtils.diferentMovsWithRepCouter(timerEntries);
     if (timerEntries.isEmpty) {
       _finishWorkout();
       return;
