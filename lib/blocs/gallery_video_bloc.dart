@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_format_validator.dart';
 import 'package:oluko_app/services/content_from_gallery_service.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:path/path.dart' as p;
@@ -26,7 +27,7 @@ class UploadFailure extends GalleryVideoState {
   final dynamic exception;
   final bool badFormat;
 
-  UploadFailure( {this.exception,this.badFormat});
+  UploadFailure({this.exception, this.badFormat});
 }
 
 class GalleryVideoBloc extends Cubit<GalleryVideoState> {
@@ -40,7 +41,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       final imagePicker = ImagePicker();
       XFile video = await imagePicker.pickVideo(source: ImageSource.gallery);
       final extension = p.extension(video.path);
-      if (extension != '.mp4') {
+      if (!VideoFormatValidator.formatValidator(extension)) {
         emit(UploadFailure(badFormat: true));
         return;
       }
