@@ -339,5 +339,5 @@
     "friendRequestIgnored": "Request ignored.",
     "ignoreFriendRequestError": "Error ignoring request.",
     "addFriendRequestError": "Error adding friend.",
-    "onlyMp4Format": "Only .mp4 format is allowed."
+    "badVideoFormat": "That video format is not allowed."
 }

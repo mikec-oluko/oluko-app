@@ -476,7 +476,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                       PermissionsUtils.showSettingsMessage(context);
                     }
                     else if(state is UploadFailure && state.badFormat){
-                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'onlyMp4Format'));
+                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
                     }
                   },
                   child: GestureDetector(
