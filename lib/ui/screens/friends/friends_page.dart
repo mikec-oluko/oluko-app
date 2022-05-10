@@ -3,6 +3,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
@@ -42,6 +43,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    //BlocProvider.of<UserProgressStreamBloc>(context).getStream();
     return Scaffold(
       appBar: OlukoAppBar(
         showBackButton: false,
@@ -83,9 +85,13 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
                               child: TabBarView(
                                 controller: _tabController,
                                 children: [
+                                  /*BlocBuilder<UserProgressStreamBloc, UserProgressStreamState>(builder: (context, userProgressState) {
+                                    if (userProgressState is UserProgressUpdate) {}
+                                    return*/
                                   FriendsListPage(
                                     authUser: _authStateData,
-                                  ),
+                                  ), //;
+                                  //}),
                                   FriendsRequestPage(
                                     authUser: _authStateData,
                                   )
