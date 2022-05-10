@@ -19,6 +19,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -473,6 +474,9 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                       );
                     } else if (state is PermissionsRequired) {
                       PermissionsUtils.showSettingsMessage(context);
+                    }
+                    else if(state is UploadFailure && state.badFormat){
+                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'onlyMp4Format'));
                     }
                   },
                   child: GestureDetector(
