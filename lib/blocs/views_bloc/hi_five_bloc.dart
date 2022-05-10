@@ -80,7 +80,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     }
   }
 
-  void sendHiFiveToAll(BuildContext context, String userId, HiFiveSuccess hiFiveState /*List<String> targetUserIds*/) async {
+  void sendHiFiveToAll(BuildContext context, String userId, HiFiveSuccess hiFiveState) async {
     final targetUserIds = hiFiveState.users.map((e) => e.id).toList();
 
     var hiFivesAmount = 0;
@@ -102,7 +102,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
       HiFiveSuccess(
         chat: _lastState.chat,
         users: _lastState.users,
-        alertMessage: '$hiFivesAmount Hi-Five${targetUserIds.length > 1 ? 's' : ''} sended',
+        alertMessage: '$hiFivesAmount Hi-Five${hiFivesAmount > 1 ? 's' : ''} sended',
       ),
     );
   }
