@@ -18,8 +18,6 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleVersion</key> 
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -31,7 +29,17 @@
 				<string>com.googleusercontent.apps.214950619734-bhf65nb0t8rqc43kgduc61o11olga97i</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.14784345427-s7rnnaa7m58gs6eji38v0ckgasgi3erl</string>
+			</array>
+		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FacebookAppID</key>
 	<string>181124640443683</string>
 	<key>FacebookDisplayName</key>
@@ -49,6 +57,8 @@
 	<string>To record user workouts</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Need access to camera</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires access to contacts.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Need access to mic</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -57,8 +67,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSContactsUsageDescription</key>
-	<string>This app requires access to contacts.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
