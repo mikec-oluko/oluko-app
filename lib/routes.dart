@@ -35,6 +35,7 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
+import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
@@ -74,6 +75,8 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
@@ -127,6 +130,7 @@ import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/home_long_press.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
+import 'package:oluko_app/ui/screens/oluko_no_internet_connection.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
@@ -232,7 +236,8 @@ enum RouteEnum {
   homeLongPress,
   assessmentNeumorphicDone,
   coachRecommendedContentGallery,
-  aboutCoach
+  aboutCoach,
+  noInternetConnection
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -291,7 +296,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLongPress: 'home_long_press',
   RouteEnum.assessmentNeumorphicDone: '/assessment_neumorphic_done',
   RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery',
-  RouteEnum.aboutCoach: '/coach-about-coach-view'
+  RouteEnum.aboutCoach: '/coach-about-coach-view',
+  RouteEnum.noInternetConnection: '/no-internet-connection'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -394,8 +400,11 @@ class Routes {
   final StopwatchBloc _stopwatchBloc = StopwatchBloc();
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
+  final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final UserProgressBloc _userProgressBloc = UserProgressBloc();
+  final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -409,6 +418,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
@@ -466,7 +476,8 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
-          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc)
+          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
+          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -492,7 +503,10 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.loginNeumorphic:
-        providers = [BlocProvider<UserBloc>.value(value: _userBloc)];
+        providers = [
+          BlocProvider<UserBloc>.value(value: _userBloc),
+          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
+        ];
         final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
         newRouteView = LoginNeumorphicPage(dontShowWelcomeTest: argumentsToAdd != null ? argumentsToAdd['dontShowWelcomeTest'] : null);
         break;
@@ -533,6 +547,7 @@ class Routes {
         break;
       case RouteEnum.friends:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
@@ -729,6 +744,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<UserProgressBloc>.value(value: _userProgressBloc),
           BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
           BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
@@ -1163,6 +1179,9 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AboutCoachPage(coachBannerVideo: argumentsToAdd['coachBannerVideo'] as String);
+        break;
+      case RouteEnum.noInternetConnection:
+        newRouteView = const OlukoNoInternetConnectionPage();
         break;
       default:
         newRouteView = MainPage();

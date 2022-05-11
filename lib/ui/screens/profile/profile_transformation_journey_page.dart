@@ -264,6 +264,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser
               ? DragAndDropGridView(
+                  physics: ClampingScrollPhysics(),
                   isCustomChildWhenDragging: true,
                   childWhenDragging: (pos) => Container(
                     height: 50,
@@ -332,6 +333,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   ),
                 )
               : GridView.builder(
+                  physics: ClampingScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                   ),

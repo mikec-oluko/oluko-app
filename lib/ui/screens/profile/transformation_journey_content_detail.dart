@@ -30,18 +30,12 @@ class _TransformationJourneyContentDetailState extends State<TransformationJourn
 
   Container showImageDetailsView({BuildContext context, String imageUrl, Timestamp contentCreatedAt}) {
     return Container(
+      padding: EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       color: OlukoNeumorphismColors.appBackgroundColor,
       child: Stack(
         children: [
-          Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: contentCreatedAt, context: context),
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white)),
-              )),
           Align(
               alignment: Alignment.center,
               child: Container(
@@ -57,7 +51,14 @@ class _TransformationJourneyContentDetailState extends State<TransformationJourn
                               ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                         ).image)),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2,
+                height: MediaQuery.of(context).size.height,
+              )),
+          Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: contentCreatedAt, context: context),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white)),
               )),
         ],
       ),

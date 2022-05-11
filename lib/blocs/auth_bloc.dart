@@ -70,6 +70,10 @@ class AuthBloc extends Cubit<AuthState> {
   Color snackBarBackgroud = const Color.fromRGBO(248, 248, 248, 1);
 
   Future<void> login(BuildContext context, LoginRequest request) async {
+    if (!_globalService.hasInternetConnection) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
+      return;
+    }
     if (request.email == null && request.userName.isEmpty && request.password.isEmpty) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'invalidUsernameOrPw');
       return;
@@ -142,14 +146,17 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
+    if (!_globalService.hasInternetConnection) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
+      return;
+    }
     emit(AuthLoading());
     UserCredential result;
     try {
       try {
         result = await _authRepository.signInWithGoogle();
       } on FirebaseAuthException catch (error) {
-        AppMessages.clearAndShowSnackbar(
-            context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
         rethrow;
       } catch (error) {
         AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -194,8 +201,7 @@ class AuthBloc extends Cubit<AuthState> {
     try {
       result = await _authRepository.signInWithFacebook();
     } on FirebaseAuthException catch (error) {
-      AppMessages.clearAndShowSnackbar(
-          context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
       rethrow;
     } catch (error) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -273,7 +279,8 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false,
+            arguments: {'dontShowWelcomeTest': true});
       } else {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       }

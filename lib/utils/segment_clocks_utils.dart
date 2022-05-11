@@ -1,10 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
-import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -188,14 +186,15 @@ class SegmentClocksUtils {
     return result;
   }
 
-  static PreferredSizeWidget getAppBar(
-      BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout, Function() resetAMRAP) {
+  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout,
+      Function() resetAMRAP, Function() deleteUserProgress) {
     PreferredSizeWidget appBarToUse;
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
         onPressed: () async {
           if (await onWillPopConfirmationPopup(context, segmentWithRecording)) {
             resetAMRAP();
+            deleteUserProgress();
             segmentClockOnWillPop(context);
           }
         },
@@ -427,8 +426,8 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget finishedButtonsWithoutRecording(
-      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+  static Widget finishedButtonsWithoutRecording(BuildContext context, Function() goToClass, Function() nextSegmentAction,
+      List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -439,6 +438,7 @@ class SegmentClocksUtils {
             thinPadding: true,
             onPressed: () {
               goToClass();
+              deleteUserProgress();
             },
           ),
           const SizedBox(
@@ -451,6 +451,7 @@ class SegmentClocksUtils {
             thinPadding: true,
             onPressed: () {
               nextSegmentAction();
+              deleteUserProgress();
             },
           ),
         ],
@@ -459,33 +460,34 @@ class SegmentClocksUtils {
   }
 
   static Widget showButtonsWhenFinished(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
-      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     return !OlukoNeumorphism.isNeumorphismDesign
-        ? showFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex)
-        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex);
+        ? showFinishedButtons(
+            workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress)
+        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
   }
 
   static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
-      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return finishedButtonsWithRecording(context, shareDoneAction);
     } else {
-      return finishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex);
+      return finishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
     }
   }
 
   static Widget neumorphicFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
-      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     Wakelock.disable();
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return neumporphicFinishedButtonsWithRecording(context, shareDoneAction);
     } else {
-      return neumorphicFinishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex);
+      return neumorphicFinishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
     }
   }
 
-  static Widget neumorphicFinishedButtonsWithoutRecording(
-      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex) {
+  static Widget neumorphicFinishedButtonsWithoutRecording(BuildContext context, Function() goToClass, Function() nextSegmentAction,
+      List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topLeft: OlukoNeumorphism.radiusValue,
@@ -511,6 +513,7 @@ class SegmentClocksUtils {
                     thinPadding: true,
                     onPressed: () {
                       goToClass();
+                      deleteUserProgress();
                     },
                   ),
                   const SizedBox(
@@ -523,6 +526,7 @@ class SegmentClocksUtils {
                     thinPadding: true,
                     onPressed: () {
                       nextSegmentAction();
+                      deleteUserProgress();
                     },
                   ),
                 ],
