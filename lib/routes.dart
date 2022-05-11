@@ -76,6 +76,7 @@ import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
@@ -401,6 +402,7 @@ class Routes {
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final FAQBloc _fAQBloc = FAQBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -588,6 +590,7 @@ class Routes {
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:
+        providers = [BlocProvider<FAQBloc>.value(value: _fAQBloc),];
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
