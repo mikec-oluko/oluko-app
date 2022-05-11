@@ -37,19 +37,23 @@ class _State extends State<StoriesHeader> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: storyState.usersStories.map((userStory) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 5),
-                      child: StoriesItem(
-                        from: StoriesItemFrom.neumorphicHome,
-                        stories: userStory.stories,
-                        imageUrl: userStory.avatar_thumbnail,
-                        maxRadius: widget.maxRadius ?? 35,
-                        itemUserId: userStory.id,
-                        name: userStory.name,
-                        currentUserId: widget.userId,
-                        showName: true,
-                      ),
-                    );
+                    if (userStory.stories.isNotEmpty && userStory.name != null && userStory.name != 'null') {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: StoriesItem(
+                          from: StoriesItemFrom.neumorphicHome,
+                          stories: userStory.stories,
+                          imageUrl: userStory.avatar_thumbnail,
+                          maxRadius: widget.maxRadius ?? 35,
+                          itemUserId: userStory.id,
+                          name: userStory.name,
+                          currentUserId: widget.userId,
+                          showName: true,
+                        ),
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
                   }).toList(),
                 ),
               )
