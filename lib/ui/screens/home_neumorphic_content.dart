@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course.dart';
@@ -54,6 +55,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool showStories = false;
   bool showLogo = true;
   int courseIndex;
+  double tabBarPadding = 0;
   bool _isVideoPlaying = false;
 
   @override
@@ -92,7 +94,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         backgroundColor: OlukoColors.black,
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [getLogo()];
+            return [
+              getLogo(),
+              if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+            ];
           },
           body: CarouselSlider.builder(
             carouselController: widget.carouselController,
@@ -105,7 +110,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     slivers: <Widget>[
                       SliverStack(children: [
                         getClassView(index, context),
-                        if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
                         getTabBar(context, index),
                       ]),
                     ],
@@ -114,6 +118,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   return const SizedBox();
                 }
               } else {
+                courseIndex = widget.courses.length;
+                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
                 return Container(
                   color: OlukoNeumorphismColors.appBackgroundColor,
                   child: Stack(
@@ -232,6 +238,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   SliverList getClassView(int index, BuildContext context) {
+    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.courses[index].video);
     return SliverList(
       delegate: SliverChildListDelegate([
         GestureDetector(
@@ -245,37 +252,38 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             child: VisibilityDetector(
               key: Key('Video${index}'),
               onVisibilityChanged: (VisibilityInfo info) {
-                if (info.visibleFraction == 1 && mounted) {
+                if (info.visibleFraction > 0.5 && mounted) {
                   courseIndex = index;
                 }
               },
               child: OlukoVideoPreview(
-                showVideoOptions: true,
                 image: widget.courses[index].image,
                 video: widget.courses[index].video,
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,
+                bottomWidgets: [
+                  VisibilityDetector(
+                    key: Key('${index}'),
+                    onVisibilityChanged: (VisibilityInfo info) {
+                      if (info.visibleFraction < 0.001 && mounted && courseIndex == index && !_isVideoPlaying) {
+                        BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
+                      } else {
+                        if (mounted) {
+                          BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
+                        }
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        widget.courses[index].name,
+                        style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ),
-        VisibilityDetector(
-          key: Key('${index}'),
-          onVisibilityChanged: (VisibilityInfo info) {
-            if (info.visibleFraction < 0.001 && mounted && courseIndex == index) {
-              BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
-            } else {
-              if (mounted) {
-                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
-              }
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              widget.courses[index].name,
-              style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
             ),
           ),
         ),
