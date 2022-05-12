@@ -262,6 +262,8 @@ class CoachRepository {
           break;
         case TimelineInteractionType.recommendedVideo:
           break;
+        case TimelineInteractionType.messageVideo:
+          break;
         default:
       }
     }

@@ -35,7 +35,9 @@ enum CoachFileTypeEnum {
   recommendedMovement,
   recommendedSegment,
   faqVideo,
-  recommendedVideo
+  recommendedVideo,
+   introductionVideo,
+  messageVideo
 }
 
 enum StoriesItemFrom { friends, friendsModal, home, neumorphicHome, longPressHome }
@@ -58,6 +60,8 @@ enum TimelineInteractionType {
   mentoredVideo,
   sentVideo,
   recommendedVideo,
+  introductionVideo,
+  messageVideo
 }
 
 enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }

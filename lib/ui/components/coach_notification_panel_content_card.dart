@@ -104,6 +104,20 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
           onCloseCard: () {},
           onOpenCard: () {},
         );
+      case TimelineInteractionType.messageVideo:
+        return CoachNotificationVideoCard(
+          cardImage: content.contentImage,
+          fileType: CoachFileTypeEnum.messageVideo,
+          onCloseCard: () {},
+          onOpenCard: () {},
+        );
+      case TimelineInteractionType.introductionVideo:
+        return CoachNotificationVideoCard(
+          cardImage: content.contentImage,
+          fileType: CoachFileTypeEnum.introductionVideo,
+          onCloseCard: () {},
+          onOpenCard: () {},
+        );
       case TimelineInteractionType.recommendedVideo:
         return CoachNotificationVideoCard(
             cardImage: content.contentImage,

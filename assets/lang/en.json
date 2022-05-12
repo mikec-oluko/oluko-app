@@ -343,5 +343,6 @@
     "oopsMessage": "Oops!",
     "noInternetConnectionHeaderText": "No internet conection",
     "noInternetConnectionBodyText": "Make sure wi-fi or mobile data is turned on and then retry.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "coachMessageVideo": "Video Message"
 }
