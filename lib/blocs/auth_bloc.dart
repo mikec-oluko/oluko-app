@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -156,7 +157,8 @@ class AuthBloc extends Cubit<AuthState> {
       try {
         result = await _authRepository.signInWithGoogle();
       } on FirebaseAuthException catch (error) {
-        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        AppMessages.clearAndShowSnackbar(
+            context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
         rethrow;
       } catch (error) {
         AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -201,7 +203,8 @@ class AuthBloc extends Cubit<AuthState> {
     try {
       result = await _authRepository.signInWithFacebook();
     } on FirebaseAuthException catch (error) {
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      AppMessages.clearAndShowSnackbar(
+          context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
       rethrow;
     } catch (error) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -266,6 +269,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
       BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
       BlocProvider.of<StoryListBloc>(context).dispose();
+      BlocProvider.of<UserProgressStreamBloc>(context).dispose();
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
       BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
       BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();

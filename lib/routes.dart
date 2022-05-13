@@ -76,6 +76,7 @@ import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -405,6 +406,7 @@ class Routes {
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
+  final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -418,6 +420,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
@@ -547,6 +550,7 @@ class Routes {
         break;
       case RouteEnum.friends:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -561,6 +565,8 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -601,6 +607,8 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
@@ -1147,6 +1155,8 @@ class Routes {
         break;
       case RouteEnum.homeLongPress:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),

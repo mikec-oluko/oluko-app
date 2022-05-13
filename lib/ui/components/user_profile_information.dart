@@ -6,12 +6,14 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -111,18 +113,29 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
-        Column(
-          children: [
+       // Column(
+         // children: [
             //USER CIRCLEAVATAR
             Row(
               children: [
-                if (widget.userToDisplayInformation.avatar != null)
-                  Padding(
+                Stack(children: [
+                  StoriesItem(
+                    maxRadius: 40,
+                    imageUrl: widget.userToDisplayInformation.avatar,
+                    name: widget.userToDisplayInformation.firstName,
+                    lastname: widget.userToDisplayInformation.lastName,
+                    userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                  ),
+                  getVisibility(widget, context, _isOwner),
+                ]),
+                /*if (widget.userToDisplayInformation.avatar != null)
+                  /*Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Stack(clipBehavior: Clip.none, children: [
-                      Neumorphic(
-                        style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                        child: CircleAvatar(
+                    child: */
+                  Stack(clipBehavior: Clip.none, children: [
+                    /*Neumorphic(
+                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                          child:*/ /*CircleAvatar(
                           backgroundColor: OlukoColors.black,
                           backgroundImage: Image(
                             image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatar),
@@ -133,27 +146,40 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             width: 45,
                           ).image,
                           radius: 40.0,
-                        ),
-                      ),
-                      getVisibility(widget, context, _isOwner),
-                    ]),
-                  )
+                        ),*/
+                    StoriesItem(
+                      maxRadius: 40,
+                      imageUrl: widget.userToDisplayInformation.avatar,
+                      name: widget.userToDisplayInformation.firstName,
+                      lastname: widget.userToDisplayInformation.lastName,
+                      userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                    ) /*)*/,
+                    getVisibility(widget, context, _isOwner),
+                  ])
+                //)
                 else
                   // Padding(
                   //   padding: const EdgeInsets.all(5.0),
                   // child:
                   Stack(children: [
-                    CircleAvatar(
+                    /*CircleAvatar(
                       backgroundColor: widget.userToDisplayInformation != null
                           ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
                           : OlukoColors.black,
                       radius: 40.0,
                       child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
                           style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                    ),*/
+                    StoriesItem(
+                      maxRadius: 40,
+                      imageUrl: widget.userToDisplayInformation.avatar,
+                      name: widget.userToDisplayInformation.firstName,
+                      lastname: widget.userToDisplayInformation.lastName,
+                      userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                     ),
                     getVisibility(widget, context, _isOwner),
                   ]),
-                // ),
+                // ),*/
                 Expanded(
                   child: Row(
                     children: [
@@ -171,8 +197,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 //HIFIVE BUTTON
               ],
             ),
-          ],
-        ),
+          //],
+       // ),
         if (OlukoNeumorphism.isNeumorphismDesign)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 5),

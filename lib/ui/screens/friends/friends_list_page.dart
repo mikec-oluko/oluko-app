@@ -9,12 +9,14 @@ import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -46,6 +48,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   GetFriendsSuccess _friendState;
   List<FriendModel> _friends = [];
   final _viewScrollController = ScrollController();
+  Map<String, UserProgress> _usersProgess = {};
 
   @override
   void dispose() {
@@ -55,54 +58,65 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   void initState() {
+    BlocProvider.of<UserProgressListBloc>(context).get();
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.authUser.user.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserListBloc, UserListState>(
-      builder: (context, userListState) {
-        return BlocBuilder<FriendBloc, FriendState>(
-          builder: (context, friendState) {
-            if (friendState is GetFriendsSuccess) {
-              _friendState = friendState;
-              _friendUsersList = friendState.friendUsers;
-              _friends = friendState.friendData != null ? friendState.friendData.friends : [];
-              _friendUsersWidget = UserListComponent(
-                authUser: widget.authUser,
-                users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
-                onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
-              );
-            }
-            if (userListState is UserListSuccess) {
-              _appUsersList = userListState.users;
-              _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
-              _appUsersWidget = UserListComponent(
-                authUser: widget.authUser,
-                users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
-                onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
-              );
-            }
-            if (friendState is FriendLoading || userListState is UserListLoading) {
-              _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
-              _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
-            }
-            if (friendState is FriendFailure || userListState is UserListFailure) {
-              _friendUsersWidget = friendState is FriendFailure
-                  ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends')
-                  : _friendUsersWidget;
-              _appUsersWidget = userListState is UserListFailure
-                  ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users')
-                  : _appUsersWidget;
-            }
-            return _scrollView();
-          },
-        );
-      },
-    );
+    return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
+      if (userProgressListState is GetUserProgressSuccess) {
+        setState(() {
+          _usersProgess = userProgressListState.usersProgress;
+        });
+      }
+    }, builder: (context, userProgressListState) {
+      return BlocBuilder<UserListBloc, UserListState>(
+        builder: (context, userListState) {
+          return BlocBuilder<FriendBloc, FriendState>(
+            builder: (context, friendState) {
+              if (friendState is GetFriendsSuccess) {
+                _friendState = friendState;
+                _friendUsersList = friendState.friendUsers;
+                _friends = friendState.friendData != null ? friendState.friendData.friends : [];
+                _friendUsersWidget = UserListComponent(
+                  usersProgess: _usersProgess,
+                  authUser: widget.authUser,
+                  users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
+                  onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                  onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+                );
+              }
+              if (userListState is UserListSuccess) {
+                _appUsersList = userListState.users;
+                _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
+                _appUsersWidget = UserListComponent(
+                  usersProgess: _usersProgess,
+                  authUser: widget.authUser,
+                  users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
+                  onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                  onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+                );
+              }
+              if (friendState is FriendLoading || userListState is UserListLoading) {
+                _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
+                _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
+              }
+              if (friendState is FriendFailure || userListState is UserListFailure) {
+                _friendUsersWidget = friendState is FriendFailure
+                    ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends')
+                    : _friendUsersWidget;
+                _appUsersWidget = userListState is UserListFailure
+                    ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users')
+                    : _appUsersWidget;
+              }
+              return _scrollView();
+            },
+          );
+        },
+      );
+    });
   }
 
   Widget _scrollView() {
@@ -185,7 +199,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               BlocProvider.of<HiFiveReceivedBloc>(context),
               BlocProvider.of<UserStatisticsBloc>(context),
               BlocProvider.of<FavoriteFriendBloc>(context),
-            )
+              BlocProvider.of<UserProgressStreamBloc>(context))
           : dialogContainer(context: context, user: friendUser, friendState: _friendState),
       context: context,
     );

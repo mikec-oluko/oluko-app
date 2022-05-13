@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -18,7 +19,9 @@ class UserItemBubbles extends StatefulWidget {
   final List<UserResponse> content;
   final double width;
   final String currentUserId;
-  UserItemBubbles({this.content, this.width, this.currentUserId});
+  final Map<String, UserProgress> usersProgess;
+
+  UserItemBubbles({this.content, this.width, this.currentUserId, this.usersProgess});
   @override
   _UserItemBubblesState createState() => _UserItemBubblesState();
 }
@@ -91,9 +94,9 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
           context: context,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             StoriesItem(
+              userProgress: widget.usersProgess[itemUser?.id],
               from: StoriesItemFrom.longPressHome,
               maxRadius: 25,
               imageUrl: imageUrl,
@@ -101,6 +104,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
               itemUserId: itemUser?.id,
               name: itemUser?.firstName,
             ),
+            
             Text(
               username ?? itemUser?.username ?? '',
               textAlign: TextAlign.center,
