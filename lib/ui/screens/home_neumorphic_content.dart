@@ -54,6 +54,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   String mediaURL;
   bool showStories = false;
   bool showLogo = true;
+  bool showTabBar = false;
   int courseIndex;
   double tabBarPadding = 0;
   bool _isVideoPlaying = false;
@@ -103,6 +104,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             carouselController: widget.carouselController,
             itemCount: widget.courseEnrollments.length + 1,
             itemBuilder: (context, index) {
+              courseIndex = index;
+             if(!showStories){ 
+               BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
+               }
               if (widget.courses.length - 1 >= index) {
                 if (widget.courses[index] != null) {
                   return CustomScrollView(
@@ -118,39 +123,46 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   return const SizedBox();
                 }
               } else {
-                courseIndex = widget.courses.length;
-                BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
-                return Container(
-                  color: OlukoNeumorphismColors.appBackgroundColor,
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.1),
-                        child: Image.asset(
-                          'assets/home/mvt.png',
-                          scale: 2,
+                return VisibilityDetector(
+                  key: Key('plusScreen'),
+                  onVisibilityChanged: (VisibilityInfo info) {
+                    if (info.visibleFraction > 0.3) {
+                      BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, index);
+                      BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid, showStories: false);
+                    }
+                  },
+                  child: Container(
+                    color: OlukoNeumorphismColors.appBackgroundColor,
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.1),
+                          child: Image.asset(
+                            'assets/home/mvt.png',
+                            scale: 2,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: ScreenUtils.height(context) * 0.1,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
-                          },
-                          child: Neumorphic(
-                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Image.asset(
-                                'assets/home/plus.png',
-                                scale: 4,
+                        Positioned(
+                          bottom: ScreenUtils.height(context) * 0.1,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                            },
+                            child: Neumorphic(
+                              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: Image.asset(
+                                  'assets/home/plus.png',
+                                  scale: 4,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 );
               }
@@ -213,7 +225,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget getStoriesBar(BuildContext context) {
     return BlocBuilder<StoryBloc, StoryState>(
       builder: (context, hasStories) {
-        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
+        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories && hasStories.showStories;
         return enrolledContent(showStories);
       },
     );
@@ -250,10 +262,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
             child: VisibilityDetector(
-              key: Key('Video${index}'),
+              key: Key('video${index}'),
               onVisibilityChanged: (VisibilityInfo info) {
-                if (info.visibleFraction > 0.5 && mounted) {
-                  courseIndex = index;
+                if (info.visibleFraction > 0) {
+                  showTabBar = false;
+                } else {
+                  showTabBar = true;
                 }
               },
               child: OlukoVideoPreview(
@@ -267,10 +281,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     key: Key('${index}'),
                     onVisibilityChanged: (VisibilityInfo info) {
                       if (info.visibleFraction < 0.001 && mounted && courseIndex == index && !_isVideoPlaying) {
-                        BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(true, index);
+                        BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, index);
                       } else {
                         if (mounted) {
-                          BlocProvider.of<CarrouselBloc>(context).widgetIsHiden(false, index);
+                          BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, index);
                         }
                       }
                     },
@@ -341,9 +355,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget getTabBar(BuildContext context, int index) {
-    return BlocBuilder<CarrouselBloc, CarrouselState>(
+    return BlocBuilder<CarouselBloc, CarouselState>(
       builder: (context, state) {
-        if (state is CarrouselSuccess && state.widgetIndex == index) {
+        if (state is CarouselSuccess && state.widgetIndex == index&&showTabBar) {
           return tabBarContent(index);
         } else {
           return const SliverToBoxAdapter(child: SizedBox());

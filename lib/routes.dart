@@ -400,7 +400,7 @@ class Routes {
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
-  final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final CarouselBloc _carouselBloc = CarouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -472,7 +472,7 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
-          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
