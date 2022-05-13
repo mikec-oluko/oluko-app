@@ -98,6 +98,9 @@ class _State extends State<StoriesItem> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.userProgress != null && _userProgress == null) {
+      _userProgress = widget.userProgress;
+    }
     return BlocListener<StoryListBloc, StoryListState>(
         bloc: widget.bloc ?? StoryListBloc(),
         listener: (context, state) {

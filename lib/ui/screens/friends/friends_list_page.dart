@@ -193,6 +193,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           ? FriendModalContent(
               friendUser,
               widget.authUser.user.id,
+              _usersProgess,
               BlocProvider.of<FriendBloc>(context),
               BlocProvider.of<FriendRequestBloc>(context),
               BlocProvider.of<HiFiveSendBloc>(context),

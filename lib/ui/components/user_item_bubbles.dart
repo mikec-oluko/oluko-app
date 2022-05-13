@@ -84,6 +84,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
           content: FriendModalContent(
             itemUser,
             currentUserId,
+            null,
             BlocProvider.of<FriendBloc>(context),
             BlocProvider.of<FriendRequestBloc>(context),
             BlocProvider.of<HiFiveSendBloc>(context),

@@ -120,6 +120,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
         content: FriendModalContent(
             friendUser,
             widget.userId,
+            null,
             BlocProvider.of<FriendBloc>(context),
             BlocProvider.of<FriendRequestBloc>(context),
             BlocProvider.of<HiFiveSendBloc>(context),
