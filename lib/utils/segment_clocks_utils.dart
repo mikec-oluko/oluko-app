@@ -29,18 +29,23 @@ enum WorkoutType { segment, segmentWithRecording }
 
 class SegmentClocksUtils {
   static List<Widget> getScoresByRound(
-      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores) {
+      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores,
+      [bool areDiferentMovsWithRepCouter]) {
     List<String> lbls = counterText(
         context,
         timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter,
         timerEntries[timerTaskIndex - 1].movement.name);
-    final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     final List<Widget> widgets = [];
     String totalText = '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
-    if (!lbls.isEmpty) {
-      totalText += lbls[1];
+
+    if (areDiferentMovsWithRepCouter != null && areDiferentMovsWithRepCouter) {
+      totalText += SegmentUtils.getCounterInputLabel(timerEntries[timerTaskIndex - 1].counter);
     } else {
-      totalText += 's';
+      if (!lbls.isEmpty) {
+        totalText += lbls[1];
+      } else {
+        totalText += 's';
+      }
     }
 
     widgets.add(

@@ -469,6 +469,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                             ? 0
                             : ScreenUtils.height(context) * 0.4,
                 child: ClocksLowerSection(
+                  areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
                   workState: workState,
                   segments: widget.segments,
                   segmentIndex: widget.segmentIndex,
