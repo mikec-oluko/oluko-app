@@ -129,8 +129,15 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             height: 80,
                             width: 80,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => CircularProgressIndicator(),
                             imageUrl: widget.userToDisplayInformation.avatar,
+                            placeholder: (context, url) => Container(
+                              color: OlukoColors.userColor(
+                                  widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
+                              child: Center(
+                                child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
+                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                              ),
+                            ),
                           ),
                         ),
                       ),
