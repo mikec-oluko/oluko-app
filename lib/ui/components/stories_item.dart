@@ -125,7 +125,9 @@ class _State extends State<StoriesItem> {
                 children: [
                   if (widget._hasUnseenStories)
                     Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
-                  Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()),
+                  widget.userProgressStreamBloc != null
+                      ? Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator())
+                      : SizedBox(),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
                       widget.currentUserId != null &&
