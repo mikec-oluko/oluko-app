@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
@@ -23,7 +24,7 @@ class CoachAudioMessagesRepository {
         .where('user_id', isEqualTo: userId)
         .where('coach_id', isEqualTo: coachUserId)
         .where('is_deleted', isNotEqualTo: true)
-        .where('created_At', isNotEqualTo: null)
+        .where('created_at', isNotEqualTo: null)
         .snapshots(includeMetadataChanges: true);
     return coachMessagesStream;
   }
@@ -68,5 +69,15 @@ class CoachAudioMessagesRepository {
         .collection('audioSubmissions')
         .doc(audioMessage.id);
     return audioMessageReference;
+  }
+
+  Future<CoachAudioMessage> getAudioMessage(String audioMessageId) async {
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('audioSubmissions')
+        .doc(audioMessageId);
+    DocumentSnapshot ds = await docRef.get();
+    return CoachAudioMessage.fromJson(ds.data() as Map<String, dynamic>);
   }
 }

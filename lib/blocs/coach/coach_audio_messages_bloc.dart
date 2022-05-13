@@ -54,27 +54,21 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     try {
       return subscription ??= _coachAudioMessagesRepository.getMessagesForCoachStream(userId, coachId).listen((snapshot) async {
         List<CoachAudioMessage> _audioMessages = [];
-        CoachAudioMessage _audioDateUpdated;
-        emit(Loading());
-        if (snapshot.docChanges.isNotEmpty && snapshot.docChanges.first.newIndex != -1) {
-          _audioDateUpdated = CoachAudioMessage.fromJson(snapshot.docChanges.first.doc.data());
-          _audioDateUpdated.createdAt ??= Timestamp.now();
-        }
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((doc) {
             final Map<String, dynamic> _audioElement = doc.data();
             _audioMessages.add(CoachAudioMessage.fromJson(_audioElement));
           });
         }
-        if (_audioDateUpdated != null) {
-          CoachAudioMessage _audioNoTimeSet =
-              _audioMessages.where((audioFromDoc) => audioFromDoc.id == _audioDateUpdated.id).toList().first;
-          if (_audioNoTimeSet != null) {
-            _audioMessages[_audioMessages.indexOf(_audioNoTimeSet)] = _audioDateUpdated;
+        List<CoachAudioMessage> noCreatedAtValueMessages = _audioMessages.where((audioFromDoc) => audioFromDoc.createdAt == null).toList();
+        if (noCreatedAtValueMessages.isNotEmpty) {
+          _audioMessages = await _getDateOfCreationForMessages(audiosWithoutDate: noCreatedAtValueMessages, audioMessages: _audioMessages);
+          if (_audioMessages.where((audioFromDoc) => audioFromDoc.createdAt == null).toList().isEmpty) {
+            emit(CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages));
           }
+        } else {
+          emit(CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages));
         }
-        emit(
-            CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages.where((audioMessage) => audioMessage.createdAt != null).toList()));
       });
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -84,6 +78,22 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       emit(CoachAudioMessagesFailure(exception: exception));
       rethrow;
     }
+  }
+
+  Future<List<CoachAudioMessage>> _getDateOfCreationForMessages(
+      {List<CoachAudioMessage> audiosWithoutDate, List<CoachAudioMessage> audioMessages}) async {
+    for (CoachAudioMessage audioElement in audiosWithoutDate) {
+      CoachAudioMessage requestedAudioMessage = await _coachAudioMessagesRepository.getAudioMessage(audioElement.id);
+      if (requestedAudioMessage.createdAt != null) {
+        audioMessages[audioMessages.indexOf(
+            audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
+      } else if (requestedAudioMessage.updatedAt != null) {
+        requestedAudioMessage.createdAt = requestedAudioMessage.updatedAt;
+        audioMessages[audioMessages.indexOf(
+            audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
+      }
+    }
+    return audioMessages;
   }
 
   void emitCoachMessagesDispose() async {
