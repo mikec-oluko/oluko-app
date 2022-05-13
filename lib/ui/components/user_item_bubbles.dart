@@ -97,6 +97,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
         child: Column(
           children: [
             StoriesItem(
+              showUserProgress: true,
               userProgress: widget.usersProgess[itemUser?.id],
               from: StoriesItemFrom.longPressHome,
               maxRadius: 25,
@@ -105,7 +106,6 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
               itemUserId: itemUser?.id,
               name: itemUser?.firstName,
             ),
-            
             Text(
               username ?? itemUser?.username ?? '',
               textAlign: TextAlign.center,

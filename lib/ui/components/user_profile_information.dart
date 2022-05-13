@@ -131,6 +131,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             children: [
               Stack(children: [
                 StoriesItem(
+                  showUserProgress: true,
                   userProgress: _usersProgess[widget.userToDisplayInformation.id],
                   itemUserId: widget.userToDisplayInformation.id,
                   maxRadius: 40,

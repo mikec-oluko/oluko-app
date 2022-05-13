@@ -83,6 +83,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: StoriesItem(
+                    showUserProgress: true,
                     itemUserId: widget.user.id,
                     userProgress: widget.usersProgess[widget.user.id],
                     maxRadius: 40,

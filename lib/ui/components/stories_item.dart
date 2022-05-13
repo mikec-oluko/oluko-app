@@ -30,6 +30,7 @@ class StoriesItem extends StatefulWidget {
   StoriesItemFrom from;
   UserProgressStreamBloc userProgressStreamBloc;
   UserProgress userProgress;
+  bool showUserProgress;
 
   StoriesItem(
       {this.maxRadius,
@@ -40,6 +41,7 @@ class StoriesItem extends StatefulWidget {
       this.stories,
       this.progressValue = 0,
       this.showName = false,
+      this.showUserProgress = false,
       this.getStories = false,
       this.addUnseenStoriesRing = false,
       this.currentUserId,
@@ -125,9 +127,7 @@ class _State extends State<StoriesItem> {
                 children: [
                   if (widget._hasUnseenStories)
                     Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
-                  widget.userProgressStreamBloc != null
-                      ? Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator())
-                      : SizedBox(),
+                  widget.showUserProgress ? Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()) : SizedBox(),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
                       widget.currentUserId != null &&

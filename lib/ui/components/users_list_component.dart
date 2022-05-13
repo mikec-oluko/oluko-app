@@ -105,6 +105,7 @@ class _UserListComponentState extends State<UserListComponent> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   StoriesItem(
+                    showUserProgress: true,
                     userProgress: widget.usersProgess[friendElement.id],
                     progressValue: 0.5,
                     maxRadius: 30,
