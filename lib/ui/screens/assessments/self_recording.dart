@@ -13,6 +13,9 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 
@@ -466,6 +469,9 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                       );
                     } else if (state is PermissionsRequired) {
                       PermissionsUtils.showSettingsMessage(context);
+                    }
+                    else if(state is UploadFailure && state.badFormat){
+                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
                     }
                   },
                   child: GestureDetector(

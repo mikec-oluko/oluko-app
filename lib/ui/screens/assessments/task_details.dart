@@ -396,6 +396,9 @@ class _TaskDetailsState extends State<TaskDetails> {
               } else if (state is PermissionsRequired) {
                 PermissionsUtils.showSettingsMessage(context);
               }
+               else if(state is UploadFailure && state.badFormat){
+                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
+                    }
             },
             child: GestureDetector(
               onTap: () {
