@@ -83,7 +83,7 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
   Future<List<CoachAudioMessage>> _getDateOfCreationForMessages(
       {@required List<CoachAudioMessage> audiosWithoutDate, @required List<CoachAudioMessage> audioMessages}) async {
     for (CoachAudioMessage noDateAudioMessage in audiosWithoutDate) {
-      CoachAudioMessage requestedAudioMessage = await _coachAudioMessagesRepository.getAudioMessage(noDateAudioMessage.id);
+      CoachAudioMessage requestedAudioMessage = await _requestUpdatedVersion(noDateAudioMessage);
       if (requestedAudioMessage.createdAt != null) {
         audioMessages[audioMessages.indexOf(
             audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
@@ -94,6 +94,14 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       }
     }
     return audioMessages;
+  }
+
+  Future<CoachAudioMessage> _requestUpdatedVersion(CoachAudioMessage noDateAudioMessage) async {
+    CoachAudioMessage requestedAudioMessage = await _coachAudioMessagesRepository.getAudioMessage(noDateAudioMessage.id);
+    if (requestedAudioMessage.createdAt == null) {
+      requestedAudioMessage = await _requestUpdatedVersion(noDateAudioMessage);
+    }
+    return requestedAudioMessage;
   }
 
   void emitCoachMessagesDispose() async {
