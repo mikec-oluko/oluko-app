@@ -267,7 +267,7 @@ class _State extends State<StoriesItem> {
       });
     } else if (userProgressStreamState is UserProgressRemove && userProgressStreamState.obj.id == widget.itemUserId) {
       setState(() {
-        _userProgress = null;
+        _userProgress.progress = 0;
       });
     }
   }
