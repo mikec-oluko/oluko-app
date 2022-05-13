@@ -77,7 +77,7 @@ class CoachAudioMessagesRepository {
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('audioSubmissions')
         .doc(audioMessageId);
-    DocumentSnapshot ds = await docRef.get();
-    return CoachAudioMessage.fromJson(ds.data() as Map<String, dynamic>);
+    DocumentSnapshot updatedAudioMessage = await docRef.get();
+    return CoachAudioMessage.fromJson(updatedAudioMessage.data() as Map<String, dynamic>);
   }
 }

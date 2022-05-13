@@ -60,9 +60,9 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
             _audioMessages.add(CoachAudioMessage.fromJson(_audioElement));
           });
         }
-        List<CoachAudioMessage> noCreatedAtValueMessages = _audioMessages.where((audioFromDoc) => audioFromDoc.createdAt == null).toList();
-        if (noCreatedAtValueMessages.isNotEmpty) {
-          _audioMessages = await _getDateOfCreationForMessages(audiosWithoutDate: noCreatedAtValueMessages, audioMessages: _audioMessages);
+        List<CoachAudioMessage> _audioMessagesNoDateSet = _audioMessages.where((audioFromDoc) => audioFromDoc.createdAt == null).toList();
+        if (_audioMessagesNoDateSet.isNotEmpty) {
+          _audioMessages = await _getDateOfCreationForMessages(audiosWithoutDate: _audioMessagesNoDateSet, audioMessages: _audioMessages);
           if (_audioMessages.where((audioFromDoc) => audioFromDoc.createdAt == null).toList().isEmpty) {
             emit(CoachAudioMessagesSuccess(coachAudioMessages: _audioMessages));
           }
@@ -81,9 +81,9 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
   }
 
   Future<List<CoachAudioMessage>> _getDateOfCreationForMessages(
-      {List<CoachAudioMessage> audiosWithoutDate, List<CoachAudioMessage> audioMessages}) async {
-    for (CoachAudioMessage audioElement in audiosWithoutDate) {
-      CoachAudioMessage requestedAudioMessage = await _coachAudioMessagesRepository.getAudioMessage(audioElement.id);
+      {@required List<CoachAudioMessage> audiosWithoutDate, @required List<CoachAudioMessage> audioMessages}) async {
+    for (CoachAudioMessage noDateAudioMessage in audiosWithoutDate) {
+      CoachAudioMessage requestedAudioMessage = await _coachAudioMessagesRepository.getAudioMessage(noDateAudioMessage.id);
       if (requestedAudioMessage.createdAt != null) {
         audioMessages[audioMessages.indexOf(
             audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
