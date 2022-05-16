@@ -158,34 +158,28 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   }
 
   Widget videoSection() {
-    return BlocBuilder<VideoBloc, VideoState>(
-      builder: (context, state) {
-        if (state is VideoSuccess && state.aspectRatio != null) {
-          aspectRatio = state.aspectRatio;
-        }
-        return Stack(alignment: Alignment.center, children: [
+    if (widget.bannerVideo) {
+      return Stack(alignment: Alignment.center, children: [
+        AspectRatio(
+            aspectRatio: 5 / 3,
+            child: Container(
+                color: OlukoColors.white,
+                child: widget.image != null
+                    ? imageSection()
+                    : widget.bannerVideo
+                        ? imageSection()
+                        : gridSection())),
+        if (widget.video != null)
           AspectRatio(
-              aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
-              child: Container(
-                  color: OlukoColors.white,
-                  child: widget.image != null
-                      ? imageSection()
-                      : widget.bannerVideo
-                          ? imageSection()
-                          : gridSection())),
-          if (widget.video != null)
-            Padding(
+            aspectRatio: 5 / 3,
+            child: Padding(
                 padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
                 child: GestureDetector(
                   onTap: () => widget.onPlay(),
                   child: Align(
                       child: Stack(children: [
-                    if (aspectRatio == null && widget.videoVisibilty)
-                      Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    else if (widget.videoVisibilty)
-                      AspectRatio(aspectRatio: aspectRatio, child: showVideoPlayer(widget.video))
+                    if (widget.videoVisibilty)
+                      showVideoPlayer(widget.video)
                     else
                       SizedBox(
                         height: 52,
@@ -198,10 +192,55 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                         ),
                       ),
                   ])),
-                ))
-        ]);
-      },
-    );
+                )),
+          )
+      ]);
+    } else {
+      return BlocBuilder<VideoBloc, VideoState>(
+        builder: (context, state) {
+          if (state is VideoSuccess && state.aspectRatio != null) {
+            aspectRatio = state.aspectRatio;
+          }
+          return Stack(alignment: Alignment.center, children: [
+            AspectRatio(
+                aspectRatio: 480 / 600,
+                child: Container(
+                    color: OlukoColors.white,
+                    child: widget.image != null
+                        ? imageSection()
+                        : widget.bannerVideo
+                            ? imageSection()
+                            : gridSection())),
+            if (widget.video != null)
+              Padding(
+                  padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
+                  child: GestureDetector(
+                    onTap: () => widget.onPlay(),
+                    child: Align(
+                        child: Stack(children: [
+                      if (aspectRatio == null && widget.videoVisibilty)
+                        const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      else if (widget.videoVisibilty)
+                        AspectRatio(aspectRatio: aspectRatio, child: showVideoPlayer(widget.video))
+                      else
+                        SizedBox(
+                          height: 52,
+                          width: 52,
+                          child: OlukoBlurredButton(
+                            childContent: Image.asset(
+                              'assets/courses/white_play.png',
+                              scale: 3.5,
+                            ),
+                          ),
+                        ),
+                    ])),
+                  ))
+          ]);
+        },
+      );
+    }
   }
 
   Widget showVideoPlayer(String videoUrl) {
