@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -137,6 +138,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool shareDone = false;
   WorkoutType workoutType;
   List<String> scores = [];
+  List<int> scoresInt = [];
   int totalScore = 0;
   bool counter = false;
   bool _wantsToCreateStory = false;
@@ -151,6 +153,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   int durationPR = 0;
   bool _recordingPaused = false;
   bool _progressCreated = false;
+  bool _areDiferentMovsWithRepCouter = false;
 
   @override
   void initState() {
@@ -161,6 +164,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
+      scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
 
     setState(() {
@@ -171,6 +175,16 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
+    /*final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    if (widget.workoutType == WorkoutType.segmentWithRecording) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }*/
+
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
@@ -434,13 +448,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         Column(
           children: [
             SizedBox(
-              height: keyboardVisibilty
-                  ? ScreenUtils.height(context)
-                  : isWorkStateFinished()
-                      ? ScreenUtils.height(context) * 0.4
-                      : isSegmentWithoutRecording()
-                          ? ScreenUtils.height(context)
-                          : ScreenUtils.height(context) * 0.6,
+              height: clockScreenProportion(keyboardVisibilty, true),
               child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
                 builder: (context, state) {
                   if (state is CurrentTimeValue) {
@@ -464,14 +472,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
               ),
             ),
             SizedBox(
-                height: keyboardVisibilty
-                    ? 0
-                    : isWorkStateFinished()
-                        ? ScreenUtils.height(context) * 0.46
-                        : isSegmentWithoutRecording()
-                            ? 0
-                            : ScreenUtils.height(context) * 0.4,
+                height: lowerSectionScreenProportion(keyboardVisibilty, true),
                 child: ClocksLowerSection(
+                  areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
                   workState: workState,
                   segments: widget.segments,
                   segmentIndex: widget.segmentIndex,
@@ -724,7 +727,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       int currentDuration = stopwatchDuration.inSeconds;
       durationPR += currentDuration;
       totalScore += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] = currentDuration.toString() + ' s';
+      scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
+      scores[timerEntries[timerTaskIndex].round] = scoresInt[timerEntries[timerTaskIndex].round].toString() + ' s';
+
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
         widget.courseEnrollment,
@@ -767,7 +772,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     setState(() {
       totalScore += int.parse(textController.text);
     });
-    scores[timerEntries[timerTaskIndex - 1].round] = textController.text + ' ' + timerEntries[timerTaskIndex - 1].movement.getLabel();
+    scoresInt[timerEntries[timerTaskIndex - 1].round] += int.parse(textController.text);
+    scores[timerEntries[timerTaskIndex - 1].round] = scoresInt[timerEntries[timerTaskIndex - 1].round].toString() +
+        ' ' +
+        (_areDiferentMovsWithRepCouter ? 'reps' : timerEntries[timerTaskIndex - 1].movement.getLabel());
   }
 
   WorkState getCurrentTaskWorkState() {
@@ -897,6 +905,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    _areDiferentMovsWithRepCouter = SegmentClocksUtils.diferentMovsWithRepCouter(timerEntries);
     if (timerEntries.isEmpty) {
       _finishWorkout();
       return;
@@ -915,6 +924,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   void dispose() {
+    /*SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);*/
     Wakelock.disable();
     WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
@@ -1014,5 +1027,27 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
+  }
+
+  double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty
+        ? screenProportion
+        : isWorkStateFinished()
+            ? screenProportion * 0.4
+            : isSegmentWithoutRecording()
+                ? screenProportion
+                : screenProportion * 0.6;
+  }
+
+  double lowerSectionScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty
+        ? 0
+        : isWorkStateFinished()
+            ? screenProportion * 0.46
+            : isSegmentWithoutRecording()
+                ? 0
+                : screenProportion * 0.4;
   }
 }

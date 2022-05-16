@@ -6,9 +6,11 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -31,16 +33,12 @@ class FriendModalContent extends StatefulWidget {
   HiFiveReceivedBloc blocHifiveReceived;
   UserStatisticsBloc blocUserStatistics;
   FavoriteFriendBloc blocFavoriteFriend;
-  FriendModalContent(
-    this.user,
-    this.currentUserId,
-    this.blocFriends,
-    this.friendRequestBloc,
-    this.blocHifiveSend,
-    this.blocHifiveReceived,
-    this.blocUserStatistics,
-    this.blocFavoriteFriend,
-  );
+  UserProgressStreamBloc userProgressStreamBloc;
+  Map<String, UserProgress> usersProgess;
+
+  FriendModalContent(this.user, this.currentUserId, this.usersProgess, this.blocFriends, this.friendRequestBloc, this.blocHifiveSend,
+      this.blocHifiveReceived, this.blocUserStatistics, this.blocFavoriteFriend,
+      [this.userProgressStreamBloc]);
   @override
   _FriendModalContentState createState() => _FriendModalContentState();
 }
@@ -85,10 +83,14 @@ class _FriendModalContentState extends State<FriendModalContent> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: StoriesItem(
+                    showUserProgress: true,
+                    itemUserId: widget.user.id,
+                    userProgress: widget.usersProgess[widget.user.id],
                     maxRadius: 40,
                     imageUrl: widget.user.avatar,
                     name: widget.user.firstName,
                     lastname: widget.user.lastName,
+                    userProgressStreamBloc: widget.userProgressStreamBloc,
                   ),
                 ),
                 Expanded(
