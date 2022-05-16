@@ -343,5 +343,6 @@
     "oopsMessage": "Oops!",
     "noInternetConnectionHeaderText": "No hay conexión a internet",
     "noInternetConnectionBodyText": "Asegúrate de que el wifi o los datos móviles estén activados y vuelve a intentarlo.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "exitOnButtonBack": "Pulsa el botón atrás para Salir"
 }
