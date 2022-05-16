@@ -215,7 +215,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget getStoriesBar(BuildContext context) {
     return BlocBuilder<StoryBloc, StoryState>(
       builder: (context, hasStories) {
-        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories && false;
+        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories && showLogo;
         return enrolledContent(showStories);
       },
     );
