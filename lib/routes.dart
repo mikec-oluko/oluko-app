@@ -871,6 +871,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1129,6 +1130,7 @@ class Routes {
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView =
