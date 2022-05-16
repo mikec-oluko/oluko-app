@@ -351,39 +351,45 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         title: '',
         onlyIcon: true,
         onPressed: () {
-          final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
-          setState(() {
-            if (isPlaying) {
-              panelController.open();
-              if (isCurrentTaskTimed) {
-                BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
-              } else {
-                setPaused();
-              }
-              if (alertTimerPlaying) {
-                alertTimer.cancel();
-              }
-              if (stopwatchTimer != null) {
-                stopwatchTimer.cancel();
-              }
-            } else {
-              panelController.close();
-              workState = lastWorkStateBeforePause;
-              if (isCurrentTaskTimed) {
-                BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
-              } else {
-                if (alertTimerPlaying) {
-                  _playAlertTimer();
-                }
-              }
-              _startStopwatch();
-            }
-            isPlaying = !isPlaying;
-          });
+          playPauseSegment();
         },
         icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
       ),
     );
+  }
+
+  void playPauseSegment() {
+    final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
+    setState(() {
+      if (isPlaying) {
+        if(isSegmentWithoutRecording()){
+           panelController.open();
+        }
+        if (isCurrentTaskTimed) {
+          BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
+        } else {
+          setPaused();
+        }
+        if (alertTimerPlaying) {
+          alertTimer.cancel();
+        }
+        if (stopwatchTimer != null) {
+          stopwatchTimer.cancel();
+        }
+      } else {
+        panelController.close();
+        workState = lastWorkStateBeforePause;
+        if (isCurrentTaskTimed) {
+          BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
+        } else {
+          if (alertTimerPlaying) {
+            _playAlertTimer();
+          }
+        }
+        _startStopwatch();
+      }
+      isPlaying = !isPlaying;
+    });
   }
 
   Widget playPauseAction() {
@@ -927,10 +933,18 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached || state == AppLifecycleState.paused) return;
-    final isInactive = state == AppLifecycleState.inactive;
-    if (isInactive) {
-      Navigator.pop(context);
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) return;
+    final isPausedInactive = state == AppLifecycleState.paused;
+    if (isPausedInactive) {
+      playPauseSegment();
+      if (cameraController != null) {
+        cameraController.pauseVideoRecording();
+      }
+    } else {
+      if (cameraController != null) {
+        cameraController.resumeVideoRecording();
+        _resume();
+      }
     }
   }
 

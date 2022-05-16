@@ -72,6 +72,7 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
@@ -405,6 +406,7 @@ class Routes {
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
+  final UserInformationBloc _userInformationBloc = UserInformationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -586,7 +588,24 @@ class Routes {
           ),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
-          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc)
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<UserInformationBloc>.value(value: _userInformationBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
+          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
+          BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;

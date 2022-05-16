@@ -343,5 +343,15 @@
     "oopsMessage": "Oops!",
     "noInternetConnectionHeaderText": "No hay conexión a internet",
     "noInternetConnectionBodyText": "Asegúrate de que el wifi o los datos móviles estén activados y vuelve a intentarlo.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "saveChanges": "Guardar cambios.",
+    "allFieldsRequired": "Todos los campos son requeridos",
+    "usernameRequired":"Nombre de usuario requerido",
+    "firstnameRequired":"Nombre es requerido",
+    "lastnameRequired":"Apellido es requerido",
+    "cityRequired":"Cidudad es requerido",
+    "emailRequired":"Email es requerido",
+    "countryRequired":"Pais es requerido",
+    "stateRequired":"Estado es requerido",
+    "infoUpdateSuccess":"Información actualizada con éxito"
 }

@@ -141,7 +141,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       }*/
                     },
               showTitle: true,
-              showBackButton: widget.isFirstTime != true,
+              showBackButton: widget.isFirstTime != true && widget.isForCoachPage != true,
               title: widget.isForCoachPage ? OlukoLocalizations.get(context, 'coach') : OlukoLocalizations.get(context, 'assessment'),
               actions: [skipButton()],
             ),

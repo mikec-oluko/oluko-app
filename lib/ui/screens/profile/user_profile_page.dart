@@ -547,7 +547,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           height: OlukoNeumorphism.isNeumorphismDesign
               ? ScreenUtils.height(context) < 700
                   ? ScreenUtils.height(context) / 2.5
-                  : ScreenUtils.height(context) / 3
+                  : ScreenUtils.height(context) / 2.8
               : ScreenUtils.height(context) / 5,
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
