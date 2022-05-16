@@ -76,6 +76,8 @@ import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
@@ -402,6 +404,8 @@ class Routes {
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final UserProgressBloc _userProgressBloc = UserProgressBloc();
+  final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
   final UserInformationBloc _userInformationBloc = UserInformationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -416,6 +420,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
@@ -544,6 +549,7 @@ class Routes {
         break;
       case RouteEnum.friends:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
@@ -757,6 +763,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<UserProgressBloc>.value(value: _userProgressBloc),
           BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
           BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),

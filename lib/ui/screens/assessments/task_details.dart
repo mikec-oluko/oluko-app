@@ -386,7 +386,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (state is Success && state.pickedFile != null) {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                  'taskId':_task.id,
+                  'taskId': _task.id,
                   'taskIndex': widget.taskIndex,
                   'filePath': state.pickedFile.path,
                   'isPublic': _makePublic ?? false,
@@ -424,7 +424,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
     Navigator.pop(context);
     Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-      'taskId':_task.id,
+      'taskId': _task.id,
       'taskIndex': widget.taskIndex,
       'isPublic': _makePublic ?? false,
       'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
@@ -461,7 +461,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     thinPadding: true,
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
-                        DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                      DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                     },
                   ),
             const SizedBox(width: 20),
@@ -508,7 +508,8 @@ class _TaskDetailsState extends State<TaskDetails> {
   void nextAssessmentButtonOnPress(BuildContext context) {
     if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
       //TODO: Check plan enable skip
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+      //AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+      goToAssessmentVideos();
     } else {
       if (_controller != null) {
         _controller.pause();
@@ -523,13 +524,17 @@ class _TaskDetailsState extends State<TaskDetails> {
           'taskCompleted': false /**TODO: */
         });
       } else {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        } else {
-          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
-              arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
-        }
+        goToAssessmentVideos();
       }
+    }
+  }
+
+  void goToAssessmentVideos() {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
+          arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
     }
   }
 
@@ -611,7 +616,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             Navigator.pop(context);
                             //Navigator.pop(context);
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                              'taskId':_task.id,
+                              'taskId': _task.id,
                               'taskIndex': widget.taskIndex,
                               'isPublic': _makePublic,
                               'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
