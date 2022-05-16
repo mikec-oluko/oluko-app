@@ -4,6 +4,7 @@ import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -263,6 +264,8 @@ class CoachRepository {
         case TimelineInteractionType.recommendedVideo:
           break;
         case TimelineInteractionType.messageVideo:
+          CoachMediaMessage coachMediaMessage = CoachMediaMessage.fromJson(ds.data() as Map<String, dynamic>);
+          timelineItem.coachMediaMessage = coachMediaMessage;
           break;
         default:
       }
@@ -357,7 +360,6 @@ class CoachRepository {
               createdAt: recommendation.createdAt,
               recommendationMedia: mediaContentRecommended);
           coachRecommendations.add(recommendationItem);
-
           break;
         default:
       }
