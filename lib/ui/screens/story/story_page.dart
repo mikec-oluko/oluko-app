@@ -198,64 +198,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 bottom: ScreenUtils.height(context) * 0.02,
                 right: 0,
                 left: 0,
-                child: SizedBox(
-                  height: ScreenUtils.height(context) * 0.25,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
-                        Text(
-                          widget.stories[_currentIndex].result,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            widget.stories[_currentIndex].segmentTitle,
-                            style: const TextStyle(
-                              color: OlukoColors.primary,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25),
-                          child: Text(
-                            widget.stories[_currentIndex].description,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      Center(
-                        child: GestureDetector(
-                            onTap: () {
-                              BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
-                              AppMessages().showHiFiveSentDialog(context);
-                            },
-                            child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                              bloc: BlocProvider.of(context),
-                              listener: (hiFiveSendContext, hiFiveSendState) {
-                                if (hiFiveSendState is HiFiveSendSuccess) {
-                                  AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
-                                }
-                              },
-                              child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                            )),
-                      ),
-                    ],
-                  ),
-                ))
+                child: SizedBox(height: ScreenUtils.height(context) * 0.25, child: getBottomWidgets(story.content_type)))
           ],
         ),
       ),
@@ -332,6 +275,72 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         curve: Curves.easeInOut,
       );
     }
+  }
+
+  Widget getBottomWidgets(String contentType) {
+    if (contentType == 'video') {
+      return hiFiveWidget();
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
+            Text(
+              widget.stories[_currentIndex].result,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                widget.stories[_currentIndex].segmentTitle,
+                style: const TextStyle(
+                  color: OlukoColors.primary,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text(
+                widget.stories[_currentIndex].description,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          hiFiveWidget()
+        ],
+      );
+    }
+  }
+
+  Center hiFiveWidget() {
+    return Center(
+      child: GestureDetector(
+          onTap: () {
+            BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
+            AppMessages().showHiFiveSentDialog(context);
+          },
+          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+            bloc: BlocProvider.of(context),
+            listener: (hiFiveSendContext, hiFiveSendState) {
+              if (hiFiveSendState is HiFiveSendSuccess) {
+                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+              }
+            },
+            child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+          )),
+    );
   }
 }
 
