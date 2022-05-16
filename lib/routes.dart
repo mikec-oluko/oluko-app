@@ -407,8 +407,8 @@ class Routes {
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
+   final UserInformationBloc _userInformationBloc = UserInformationBloc();
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
-  final UserInformationBloc _userInformationBloc = UserInformationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
