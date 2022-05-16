@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -174,6 +175,16 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
+    /*final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    if (widget.workoutType == WorkoutType.segmentWithRecording) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }*/
+
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
@@ -431,13 +442,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         Column(
           children: [
             SizedBox(
-              height: keyboardVisibilty
-                  ? ScreenUtils.height(context)
-                  : isWorkStateFinished()
-                      ? ScreenUtils.height(context) * 0.4
-                      : isSegmentWithoutRecording()
-                          ? ScreenUtils.height(context)
-                          : ScreenUtils.height(context) * 0.6,
+              height: clockScreenProportion(keyboardVisibilty, true),
               child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
                 builder: (context, state) {
                   if (state is CurrentTimeValue) {
@@ -461,13 +466,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
               ),
             ),
             SizedBox(
-                height: keyboardVisibilty
-                    ? 0
-                    : isWorkStateFinished()
-                        ? ScreenUtils.height(context) * 0.46
-                        : isSegmentWithoutRecording()
-                            ? 0
-                            : ScreenUtils.height(context) * 0.4,
+                height: lowerSectionScreenProportion(keyboardVisibilty, true),
                 child: ClocksLowerSection(
                   areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
                   workState: workState,
@@ -919,6 +918,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   void dispose() {
+    /*SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);*/
     Wakelock.disable();
     WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
@@ -1010,5 +1013,27 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
+  }
+
+  double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty
+        ? screenProportion
+        : isWorkStateFinished()
+            ? screenProportion * 0.4
+            : isSegmentWithoutRecording()
+                ? screenProportion
+                : screenProportion * 0.6;
+  }
+
+  double lowerSectionScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty
+        ? 0
+        : isWorkStateFinished()
+            ? screenProportion * 0.46
+            : isSegmentWithoutRecording()
+                ? 0
+                : screenProportion * 0.4;
   }
 }
