@@ -84,14 +84,11 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       {@required List<CoachAudioMessage> audiosWithoutDate, @required List<CoachAudioMessage> audioMessages}) async {
     for (CoachAudioMessage noDateAudioMessage in audiosWithoutDate) {
       CoachAudioMessage requestedAudioMessage = await _requestUpdatedVersion(noDateAudioMessage);
-      if (requestedAudioMessage.createdAt != null) {
-        audioMessages[audioMessages.indexOf(
-            audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
-      } else if (requestedAudioMessage.updatedAt != null) {
+      if (requestedAudioMessage.createdAt == null && requestedAudioMessage.updatedAt != null) {
         requestedAudioMessage.createdAt = requestedAudioMessage.updatedAt;
-        audioMessages[audioMessages.indexOf(
-            audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
       }
+      audioMessages[audioMessages.indexOf(
+          audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
     }
     return audioMessages;
   }
