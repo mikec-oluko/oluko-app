@@ -10,13 +10,13 @@ enum SoundTypeEnum { fixed, calculated }
 const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
-  static void playSound(int timeLeft, int totalTime, int workState, {bool isInitialTimer = false}) {
+  static void playSound(int timeLeft, int totalTime, int workState) {
     if (NotificationSettingsBloc.areSegmentClockNotificationEnabled()) {
       final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
       if (segmentClockSounds.isNotEmpty) {
         final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
           if (sound.clockState.index == workState) {
-            if (sound.type.index == SoundTypeEnum.calculated.index && (isInitialTimer == null || !isInitialTimer)) {
+            if (sound.type.index == SoundTypeEnum.calculated.index && (workState != ClockStateEnum.segmentStart.index)) {
               if (totalTime != null && totalTime > 0 && timeLeft != null) {
                 return sound.value == (timeLeft / totalTime);
               } else {

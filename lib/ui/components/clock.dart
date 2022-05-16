@@ -610,8 +610,8 @@ class _State extends State<Clock> {
 
   void _playCountdown(Function() goToNextStep, Function() setPaused) {
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, widget.workState.index,
-          isInitialTimer: widget.timerEntries[widget.timerTaskIndex].isInitialTimer);
+      SoundUtils.playSound(
+          widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index));
       if (widget.timeLeft.inSeconds == 0) {
         _pauseCountdown(setPaused);
         goToNextStep();
@@ -632,4 +632,11 @@ class _State extends State<Clock> {
   bool isCurrentTaskTimed() {
     return widget.timerEntries[widget.timerTaskIndex].parameter == ParameterEnum.duration;
   }
+}
+
+int workStateForSounds(int workState) {
+  if (workState == WorkState.countdown.index) {
+    return ClockStateEnum.segmentStart.index;
+  }
+  return workState;
 }
