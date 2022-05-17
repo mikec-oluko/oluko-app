@@ -359,7 +359,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               onPressed: () {
                 BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
               },
-              child: Image.asset('assets/profile/uploadImage.png')),
+              child: Image.asset('assets/profile/upload_icon.png')),
         ),
       ),
     );
