@@ -499,7 +499,7 @@ class UserInfo extends StatelessWidget {
   }
 
   CircleAvatar getCircularAvatar() {
-    if (avatarThumbnail != null && avatarThumbnail != 'null') {
+    if (avatarThumbnail != null) {
       return CircleAvatar(
         radius: 22.0,
         backgroundColor: Colors.grey[300],
