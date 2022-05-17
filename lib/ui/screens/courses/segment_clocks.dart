@@ -455,7 +455,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                     currentTime = state.timerTask;
                   }
                   return Padding(
-                      padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 30 : 35),
+                      padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 30 : 45),
                       child: Clock(
                         workState: workState,
                         segments: widget.segments,
