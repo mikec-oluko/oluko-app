@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
@@ -7,6 +6,7 @@ import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
+import 'package:oluko_app/models/enums/story_content_enum.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -20,13 +20,14 @@ class StoryPage extends StatefulWidget {
   String name;
   String lastname;
   String avatarThumbnail;
-  StoryPage(
-      {@required this.stories,
-      @required this.userId,
-      @required this.userStoriesId,
-      @required this.name,
-      @required this.avatarThumbnail,
-      this.lastname});
+  StoryPage({
+    @required this.stories,
+    @required this.userId,
+    @required this.userStoriesId,
+    @required this.name,
+    @required this.avatarThumbnail,
+    this.lastname,
+  });
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -38,6 +39,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   Future<void> _initializeVideoPlayerFuture;
   int _currentIndex = 0;
 
+  @override
   void initState() {
     super.initState();
     _pageController = PageController();
@@ -96,7 +98,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               itemCount: widget.stories.length,
               itemBuilder: (context, i) {
                 final Story story = widget.stories[i];
-                switch (story.content_type) {
+                switch (story.contentType) {
                   case 'image':
                     final img = Image(
                       image: CachedNetworkImageProvider(story.url),
@@ -139,17 +141,18 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                   case 'video':
                     if (_videoController != null && _videoController.value.isInitialized) {
                       return FutureBuilder(
-                          future: _initializeVideoPlayerFuture,
-                          builder: (context, snapshot) {
-                            return FittedBox(
-                              fit: BoxFit.cover,
-                              child: SizedBox(
-                                width: _videoController.value.size.width,
-                                height: _videoController.value.size.height,
-                                child: VideoPlayer(_videoController),
-                              ),
-                            );
-                          });
+                        future: _initializeVideoPlayerFuture,
+                        builder: (context, snapshot) {
+                          return FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: _videoController.value.size.width,
+                              height: _videoController.value.size.height,
+                              child: VideoPlayer(_videoController),
+                            ),
+                          );
+                        },
+                      );
                     } else {
                       return const Center(child: CircularProgressIndicator());
                     }
@@ -164,20 +167,21 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               child: Column(
                 children: <Widget>[
                   Row(
-                      children: widget.stories
-                          .asMap()
-                          .map((i, e) {
-                            return MapEntry(
-                              i,
-                              AnimatedBar(
-                                animController: _animController,
-                                position: i,
-                                currentIndex: _currentIndex,
-                              ),
-                            );
-                          })
-                          .values
-                          .toList()),
+                    children: widget.stories
+                        .asMap()
+                        .map((i, e) {
+                          return MapEntry(
+                            i,
+                            AnimatedBar(
+                              animController: _animController,
+                              position: i,
+                              currentIndex: _currentIndex,
+                            ),
+                          );
+                        })
+                        .values
+                        .toList(),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 1.5,
@@ -195,10 +199,11 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               ),
             ),
             Positioned(
-                bottom: ScreenUtils.height(context) * 0.02,
-                right: 0,
-                left: 0,
-                child: SizedBox(height: ScreenUtils.height(context) * 0.25, child: getBottomWidgets(story.content_type)))
+              bottom: ScreenUtils.height(context) * 0.02,
+              right: 0,
+              left: 0,
+              child: SizedBox(height: ScreenUtils.height(context) * 0.25, child: getBottomWidgets(story.contentType)),
+            )
           ],
         ),
       ),
@@ -226,7 +231,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         }
       });
     } else {
-      if (story.content_type == 'video') {
+      if (story.contentType == storyContentLabels[StoryContentEnum.Video]) {
         if (_videoController.value.isPlaying) {
           _videoController.pause();
           _animController.stop();
@@ -250,7 +255,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     _animController.stop();
     _animController.reset();
     _videoController?.dispose();
-    switch (story.content_type) {
+    switch (story.contentType) {
       case 'image':
         _animController.duration = Duration(seconds: story.duration);
         _animController.forward();
@@ -278,22 +283,22 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   Widget getBottomWidgets(String contentType) {
-    if (contentType == 'video') {
+    if (contentType == storyContentLabels[StoryContentEnum.Video]) {
       return hiFiveWidget();
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (widget.stories[_currentIndex].result != null && widget.stories[_currentIndex].result != 'null')
+          if (widget.stories[_currentIndex].result != null)
             Text(
               widget.stories[_currentIndex].result,
               style: const TextStyle(
-                color: Colors.white,
+                color: OlukoColors.white,
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
               ),
             ),
-          if (widget.stories[_currentIndex].segmentTitle != null && widget.stories[_currentIndex].segmentTitle != 'null')
+          if (widget.stories[_currentIndex].segmentTitle != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -305,14 +310,14 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 ),
               ),
             ),
-          if (widget.stories[_currentIndex].description != null && widget.stories[_currentIndex].description != 'null')
+          if (widget.stories[_currentIndex].description != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Text(
                 widget.stories[_currentIndex].description,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: Colors.grey,
+                  color: OlukoColors.grayColor,
                   fontSize: 12.0,
                   fontWeight: FontWeight.w400,
                 ),
@@ -327,19 +332,20 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   Center hiFiveWidget() {
     return Center(
       child: GestureDetector(
-          onTap: () {
-            BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
-            AppMessages().showHiFiveSentDialog(context);
+        onTap: () {
+          BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
+          AppMessages().showHiFiveSentDialog(context);
+        },
+        child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+          bloc: BlocProvider.of(context),
+          listener: (hiFiveSendContext, hiFiveSendState) {
+            if (hiFiveSendState is HiFiveSendSuccess) {
+              AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+            }
           },
-          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-            bloc: BlocProvider.of(context),
-            listener: (hiFiveSendContext, hiFiveSendState) {
-              if (hiFiveSendState is HiFiveSendSuccess) {
-                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
-              }
-            },
-            child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-          )),
+          child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+        ),
+      ),
     );
   }
 }
@@ -440,9 +446,14 @@ class UserInfo extends StatelessWidget {
   final String timeFromCreation;
   final String lastname;
 
-  const UserInfo(
-      {Key key, @required this.avatarThumbnail, @required this.name, @required this.userId, @required this.timeFromCreation, this.lastname})
-      : super(key: key);
+  const UserInfo({
+    Key key,
+    @required this.avatarThumbnail,
+    @required this.name,
+    @required this.userId,
+    @required this.timeFromCreation,
+    this.lastname,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
