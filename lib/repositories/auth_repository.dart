@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
@@ -159,10 +160,13 @@ class AuthRepository {
 
   Future<bool> removeLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Future<bool> removed = prefs.remove('login-data');
+    final Future<bool> removedLoginData = prefs.remove('login-data');
+    final Future<bool> removedApiToken = prefs.remove('apiToken');
+    final Future<bool> removeFutures =
+        Future.wait([removedLoginData, removedApiToken]).then((results) => !results.any((element) => element == false));
     FirebaseAuth.instance.signOut();
     print('Removed login info.');
-    return removed;
+    return removeFutures;
   }
 
   Future<void> sendPasswordResetEmail(ForgotPasswordDto body) async {

@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/coach_user.dart';
+import 'package:oluko_app/models/dto/change_user_information.dart';
 import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
@@ -108,7 +109,8 @@ class UserRepository {
     final CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
 
-    final UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
+    final UserResponse user =
+        UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
     user.id = docRef.id;
     user.username = docRef.id;
@@ -242,21 +244,14 @@ class UserRepository {
         .set({'user_token': token}, SetOptions(merge: true));
   }
 
-  Future<Response> changeUserInfo(UserDto user, String userId) async {
+  Future<Response> updateUserInformation(ChangeUserInformation user, String userId) async {
     Client http = Client();
     final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/user';
     var body = user.toJson();
-    body.removeWhere((key, value) => value == null);
-    body.removeWhere((key, value) => value == true);
-    body.removeWhere((key, value) => value == 0);
-
     final apiToken = await AuthRepository().getApiToken();
     final headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
       'Authorization': 'Bearer $apiToken',
     };
-
     Response response = await http.put(Uri.parse('$url/${userId}'), headers: headers, body: body);
     return response;
   }
