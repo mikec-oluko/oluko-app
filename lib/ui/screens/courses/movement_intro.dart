@@ -198,6 +198,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       if (movementInfoState is MovementInfoSuccess && widget.movement.id == movementInfoState.movement.id) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
+          movementInfoState.movementVariants.sort((a, b) => a.index.compareTo(b.index));
           movementInfoState.movementVariants.forEach((element) {
             tabs.add(element.name);
             _videoKeys.add(GlobalKey());
