@@ -203,7 +203,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
           }
           return Stack(alignment: Alignment.center, children: [
             AspectRatio(
-                aspectRatio: 480 / 600,
+                aspectRatio: 347 / 520,
                 child: Container(
                     color: OlukoColors.white,
                     child: widget.image != null

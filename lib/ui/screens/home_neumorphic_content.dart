@@ -54,7 +54,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   String mediaURL;
   bool showStories = false;
   bool showLogo = true;
-  int courseIndex;
+  int courseIndex = 0;
   double tabBarPadding = 0;
   bool _isVideoPlaying = false;
 
@@ -124,7 +124,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     alignment: Alignment.topCenter,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.1),
+                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.15),
                         child: Image.asset(
                           'assets/home/mvt.png',
                           scale: 2,
@@ -190,23 +190,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     }
   }
 
-  SliverToBoxAdapter getLogo() {
-    return SliverToBoxAdapter(
-        child: showLogo
+  SliverAppBar getLogo() {
+    return SliverAppBar(
+        automaticallyImplyLeading: false,
+        stretch: true,
+        pinned: true,
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        title: showLogo
             ? Container(
                 color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, top: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Image.asset(
-                        'assets/home/mvt.png',
-                        scale: 4,
-                      ),
-                      HandWidget(authState: widget.authState),
-                    ],
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      'assets/home/mvt.png',
+                      scale: 4,
+                    ),
+                    HandWidget(authState: widget.authState),
+                  ],
                 ),
               )
             : const SizedBox());
@@ -222,13 +223,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget enrolledContent(bool showStories) {
-    return SliverAppBar(
-      automaticallyImplyLeading: false,
-      stretch: true,
-      toolbarHeight: showStories ? 110 : 0,
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      pinned: true,
-      title: showStories
+    return SliverToBoxAdapter(
+        child: Container(
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      child: showStories
           ? Center(
               child: StoriesHeader(
                 widget.user.uid,
@@ -236,7 +234,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               ),
             )
           : const SizedBox(),
-    );
+    ));
   }
 
   SliverList getClassView(int index, BuildContext context) {
@@ -369,7 +367,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           }
         },
         child: Padding(
-          padding: showStories ? EdgeInsets.only(top: 130.0) : EdgeInsets.only(top: 10),
+          padding: EdgeInsets.only(top: 80),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
