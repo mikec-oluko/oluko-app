@@ -29,18 +29,23 @@ enum WorkoutType { segment, segmentWithRecording }
 
 class SegmentClocksUtils {
   static List<Widget> getScoresByRound(
-      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores) {
+      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores,
+      [bool areDiferentMovsWithRepCouter]) {
     List<String> lbls = counterText(
         context,
         timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter,
         timerEntries[timerTaskIndex - 1].movement.name);
-    final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     final List<Widget> widgets = [];
     String totalText = '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
-    if (!lbls.isEmpty) {
-      totalText += lbls[1];
+
+    if (areDiferentMovsWithRepCouter != null && areDiferentMovsWithRepCouter) {
+      totalText += SegmentUtils.getCounterInputLabel(timerEntries[timerTaskIndex - 1].counter);
     } else {
-      totalText += 's';
+      if (!lbls.isEmpty) {
+        totalText += lbls[1];
+      } else {
+        totalText += 's';
+      }
     }
 
     widgets.add(
@@ -464,7 +469,8 @@ class SegmentClocksUtils {
     return !OlukoNeumorphism.isNeumorphismDesign
         ? showFinishedButtons(
             workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress)
-        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
+        : neumorphicFinishedButtons(
+            workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
   }
 
   static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
@@ -559,5 +565,15 @@ class SegmentClocksUtils {
         ],
       ),
     );
+  }
+
+  static bool diferentMovsWithRepCouter(List<TimerEntry> timerEntries) {
+    String firstMov = timerEntries[0].movement.id;
+    for (final t in timerEntries) {
+      if (!t.movement.isRestTime && t.movement.id != firstMov) {
+        return true;
+      }
+    }
+    return false;
   }
 }

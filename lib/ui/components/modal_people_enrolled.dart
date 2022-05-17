@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
@@ -117,15 +118,15 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
     if (friendUser is UserResponse) {
       BottomDialogUtils.showBottomDialog(
         content: FriendModalContent(
-          friendUser,
-          widget.userId,
-          BlocProvider.of<FriendBloc>(context),
-          BlocProvider.of<FriendRequestBloc>(context),
-          BlocProvider.of<HiFiveSendBloc>(context),
-          BlocProvider.of<HiFiveReceivedBloc>(context),
-          BlocProvider.of<UserStatisticsBloc>(context),
-          BlocProvider.of<FavoriteFriendBloc>(context),
-        ),
+            friendUser,
+            widget.userId,
+            null,
+            BlocProvider.of<FriendBloc>(context),
+            BlocProvider.of<FriendRequestBloc>(context),
+            BlocProvider.of<HiFiveSendBloc>(context),
+            BlocProvider.of<HiFiveReceivedBloc>(context),
+            BlocProvider.of<UserStatisticsBloc>(context),
+            BlocProvider.of<FavoriteFriendBloc>(context)),
         context: context,
       );
     }

@@ -23,18 +23,20 @@ class UserProgressRepository {
     docRef.remove();
   }
 
-  static Future<List<UserProgress>> getAll(String userId) async {
+  static Future<Map<String,UserProgress>> getAll() async {
     final DataSnapshot snapshot =
         await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/usersProgress'}').get();
-    final List<UserProgress> userProgresses = [];
-    final Map<String, dynamic> json = Map<String, dynamic>.from(snapshot.value as Map);
-    json.forEach((key, userStory) {
-      userProgresses.add(UserProgress.fromJson(Map<String, dynamic>.from(userStory as Map)));
-    });
-    return userProgresses;
+    final Map<String,UserProgress> usersProgress = {};
+    if (snapshot.value != null) {
+      Map<String, dynamic> values = Map<String, dynamic>.from(snapshot.value as Map);
+      values.forEach((key, obj) {
+        usersProgress[key] = UserProgress(id: obj['id'].toString(), progress: double.parse(obj['progress'].toString()));
+      });
+    }
+    return usersProgress;
   }
 
-  static Stream<DatabaseEvent> getSubscription() {
-    return FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/usersProgress'}').onChildChanged;
+    static DatabaseReference getReference() {
+    return FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/usersProgress'}');
   }
 }

@@ -39,7 +39,13 @@ class CourseSubscriptionBloc extends Cubit<CourseSubscriptionState> {
         emit(CourseLoading());
         snapshot.docs.forEach((doc) {
           final Map<String, dynamic> content = doc.data();
-          courses.add(Course.fromJson(content));
+          Course c = Course.fromJson(content);
+          final index = courses.indexWhere((element) => element.id == c.id);
+          if (index == -1) {
+            courses.add(c);
+          }else{
+            print("DUPLICATED COURSE");
+          }
         });
         emit(CourseSubscriptionSuccess(values: courses));
       } catch (exception, stackTrace) {

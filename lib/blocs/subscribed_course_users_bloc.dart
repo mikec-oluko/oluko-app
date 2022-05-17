@@ -80,20 +80,13 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
     try {
       emit(SubscribedCourseUsersLoading());
       List<UserResponse> returnList = [];
-      final List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
+      List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByActiveCourse(courseId, userId);
+      courseEnrollmentList =
+          courseEnrollmentList.where((element) => element.completion < 1).toList();
       if (courseEnrollmentList != null) {
-        List<String> enrolledUserId = courseEnrollmentList
-            .where((element) => element.isUnenrolled != true)
-            .where((element) => element.completion < 1)
-            .map((e) => e.createdBy)
-            .toList();
-        //delete duplicates
-        enrolledUserId = enrolledUserId.toSet().toList();
-
-        for (final user in enrolledUserId) {
-          final UserResponse userToAdd = await UserRepository().getById(user);
-          returnList.add(userToAdd);
-        }
+        List<String> enrolledUserId = courseEnrollmentList.map((e) => e.createdBy).toList();
+        returnList = await UserRepository().getAll();
+        returnList = returnList.where((element) => enrolledUserId.indexOf(element.id) != -1 && element.id != userId).toList();
       }
       emit(SubscribedCourseUsersSuccess(users: returnList));
     } catch (exception, stackTrace) {

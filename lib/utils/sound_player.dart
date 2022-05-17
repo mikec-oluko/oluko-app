@@ -36,7 +36,7 @@ class SoundPlayer {
 
   static Future playAsset({SoundsEnum soundEnum, String asset}) async {
     if (globalNotificationsEnabled(soundEnum)) {
-      final AudioCache player = AudioCache();
+      final AudioCache player = AudioCache(duckAudio: true);
       String assetToPlay = asset;
       if (soundEnum != null) {
         final Map courseConfig = ProjectConfigurationBloc().getSoundsConfiguration();

@@ -152,6 +152,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       content: FriendModalContent(
         friendUser,
         loggedUser.user.id,
+        null,
         BlocProvider.of<FriendBloc>(context),
         BlocProvider.of<FriendRequestBloc>(context),
         BlocProvider.of<HiFiveSendBloc>(context),
