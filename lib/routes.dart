@@ -72,9 +72,13 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
@@ -401,6 +405,10 @@ class Routes {
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarrouselBloc _carrouselBloc = CarrouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final UserProgressBloc _userProgressBloc = UserProgressBloc();
+  final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
+  final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
+  final UserInformationBloc _userInformationBloc = UserInformationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -414,6 +422,8 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
@@ -542,6 +552,8 @@ class Routes {
         break;
       case RouteEnum.friends:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
@@ -555,6 +567,8 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -580,7 +594,24 @@ class Routes {
           ),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
-          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc)
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<UserInformationBloc>.value(value: _userInformationBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
+          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
+          BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
@@ -595,6 +626,8 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
@@ -738,6 +771,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<UserProgressBloc>.value(value: _userProgressBloc),
           BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
           BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
@@ -1140,6 +1174,8 @@ class Routes {
         break;
       case RouteEnum.homeLongPress:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),

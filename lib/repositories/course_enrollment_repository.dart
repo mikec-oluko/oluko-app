@@ -1,21 +1,12 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
-import 'package:oluko_app/repositories/story_repository.dart';
-import 'package:path/path.dart' as p;
-import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
@@ -23,8 +14,6 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
-import 'package:oluko_app/services/course_enrollment_service.dart';
-import 'package:oluko_app/utils/image_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {
@@ -109,7 +98,7 @@ class CourseEnrollmentRepository {
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
       'completion': courseEnrollment.completion,
-      'completed_at':FieldValue.serverTimestamp(),
+      'completed_at': FieldValue.serverTimestamp(),
       'is_unenrolled': courseEnrollment.isUnenrolled,
       'updated_at': FieldValue.serverTimestamp()
     });
@@ -356,5 +345,20 @@ class CourseEnrollmentRepository {
     section.stopwatchs[currentRound] = stopwatch;
 
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
+  }
+
+    static Future<List<CourseEnrollment>> getByActiveCourse(String courseId, String userId) async {
+    final CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
+
+    final QuerySnapshot qs = await reference.where('course.id', isEqualTo: courseId).where('is_unenrolled', isNotEqualTo: true).get();
+
+    if (qs.docs.isNotEmpty) {
+      return qs.docs.map((courseData) {
+        final data = courseData.data() as Map<String, dynamic>;
+        return CourseEnrollment.fromJson(data);
+      }).toList();
+    }
+    return [];
   }
 }

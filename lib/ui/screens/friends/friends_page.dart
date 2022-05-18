@@ -3,6 +3,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';

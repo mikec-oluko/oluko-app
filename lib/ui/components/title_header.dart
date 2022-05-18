@@ -12,7 +12,7 @@ class TitleHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FontWeight fontWeight = bold ? FontWeight.bold : FontWeight.w400;
+    FontWeight fontWeight = bold ? FontWeight.bold : FontWeight.w500;
     Color fontColor = isNeumorphic ? OlukoColors.grayColor : Colors.white;
     return Text(
       title,

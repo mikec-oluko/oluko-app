@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -20,6 +21,7 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
@@ -136,6 +138,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool shareDone = false;
   WorkoutType workoutType;
   List<String> scores = [];
+  List<int> scoresInt = [];
   int totalScore = 0;
   bool counter = false;
   bool _wantsToCreateStory = false;
@@ -149,6 +152,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool open = true;
   int durationPR = 0;
   bool _recordingPaused = false;
+  bool _progressCreated = false;
+  bool _areDiferentMovsWithRepCouter = false;
 
   @override
   void initState() {
@@ -159,6 +164,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
+      scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
 
     setState(() {
@@ -169,10 +175,21 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
+    /*final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    if (widget.workoutType == WorkoutType.segmentWithRecording) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }*/
+
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
           resetAMRAPRound();
+          deleteUserProgress();
           return SegmentClocksUtils.segmentClockOnWillPop(context);
         }
         return false;
@@ -181,6 +198,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         builder: (context, authState) {
           if (authState is AuthSuccess) {
             _user = authState.firebaseUser;
+            if (!_progressCreated && _user != null) {
+              BlocProvider.of<UserProgressBloc>(context).create(
+                  _user.uid,
+                  SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) || SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])
+                      ? 1
+                      : 0);
+              _progressCreated = true;
+            }
             return BlocBuilder<MovementBloc, MovementState>(
               builder: (context, movementState) {
                 return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
@@ -253,6 +278,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     BlocProvider.of<AmrapRoundBloc>(context).emitDefault();
   }
 
+  void deleteUserProgress() {
+    BlocProvider.of<UserProgressBloc>(context).delete(_user.uid);
+  }
+
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
     for (var i = 0; i < coachRequests.length; i++) {
       if (coachRequests[i].segmentId == segmentId) {
@@ -274,7 +303,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar: SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound),
+        appBar:
+            SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
@@ -335,39 +365,45 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         title: '',
         onlyIcon: true,
         onPressed: () {
-          final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
-          setState(() {
-            if (isPlaying) {
-              panelController.open();
-              if (isCurrentTaskTimed) {
-                BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
-              } else {
-                setPaused();
-              }
-              if (alertTimerPlaying) {
-                alertTimer.cancel();
-              }
-              if (stopwatchTimer != null) {
-                stopwatchTimer.cancel();
-              }
-            } else {
-              panelController.close();
-              workState = lastWorkStateBeforePause;
-              if (isCurrentTaskTimed) {
-                BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
-              } else {
-                if (alertTimerPlaying) {
-                  _playAlertTimer();
-                }
-              }
-              _startStopwatch();
-            }
-            isPlaying = !isPlaying;
-          });
+          playPauseSegment();
         },
         icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
       ),
     );
+  }
+
+  void playPauseSegment() {
+    final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
+    setState(() {
+      if (isPlaying) {
+        if (isSegmentWithoutRecording()) {
+          panelController.open();
+        }
+        if (isCurrentTaskTimed) {
+          BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
+        } else {
+          setPaused();
+        }
+        if (alertTimerPlaying) {
+          alertTimer.cancel();
+        }
+        if (stopwatchTimer != null) {
+          stopwatchTimer.cancel();
+        }
+      } else {
+        panelController.close();
+        workState = lastWorkStateBeforePause;
+        if (isCurrentTaskTimed) {
+          BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
+        } else {
+          if (alertTimerPlaying) {
+            _playAlertTimer();
+          }
+        }
+        _startStopwatch();
+      }
+      isPlaying = !isPlaying;
+    });
   }
 
   Widget playPauseAction() {
@@ -412,13 +448,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         Column(
           children: [
             SizedBox(
-              height: keyboardVisibilty
-                  ? ScreenUtils.height(context)
-                  : isWorkStateFinished()
-                      ? ScreenUtils.height(context) * 0.4
-                      : isSegmentWithoutRecording()
-                          ? ScreenUtils.height(context)
-                          : ScreenUtils.height(context) * 0.6,
+              height: clockScreenProportion(keyboardVisibilty, true),
               child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
                 builder: (context, state) {
                   if (state is CurrentTimeValue) {
@@ -442,14 +472,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
               ),
             ),
             SizedBox(
-                height: keyboardVisibilty
-                    ? 0
-                    : isWorkStateFinished()
-                        ? ScreenUtils.height(context) * 0.46
-                        : isSegmentWithoutRecording()
-                            ? 0
-                            : ScreenUtils.height(context) * 0.4,
+                height: lowerSectionScreenProportion(keyboardVisibilty, true),
                 child: ClocksLowerSection(
+                  areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
                   workState: workState,
                   segments: widget.segments,
                   segmentIndex: widget.segmentIndex,
@@ -476,11 +501,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           Positioned(
             bottom: 0,
             child: SizedBox(
-              height: ScreenUtils.height(context) * 0.14,
-              width: ScreenUtils.width(context),
-              child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
-                  shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex),
-            ),
+                height: ScreenUtils.height(context) * 0.14,
+                width: ScreenUtils.width(context),
+                child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
+                    shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex, deleteUserProgress)),
           )
         else
           const SizedBox(),
@@ -659,6 +683,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     realTaskIndex++;
     if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
       setAlert();
+      if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
+        BlocProvider.of<UserProgressBloc>(context)
+            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds);
+      }
     }
     _playTask();
     BlocProvider.of<TimerTaskBloc>(context).setTimerTaskIndex(timerTaskIndex);
@@ -699,7 +727,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       int currentDuration = stopwatchDuration.inSeconds;
       durationPR += currentDuration;
       totalScore += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] = currentDuration.toString() + ' s';
+      scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
+      scores[timerEntries[timerTaskIndex].round] = scoresInt[timerEntries[timerTaskIndex].round].toString() + ' s';
+
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
         widget.courseEnrollment,
@@ -742,12 +772,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     setState(() {
       totalScore += int.parse(textController.text);
     });
-    scores[timerEntries[timerTaskIndex - 1].round] = textController.text + ' ' + timerEntries[timerTaskIndex - 1].movement.getLabel();
+    scoresInt[timerEntries[timerTaskIndex - 1].round] += int.parse(textController.text);
+    scores[timerEntries[timerTaskIndex - 1].round] = scoresInt[timerEntries[timerTaskIndex - 1].round].toString() +
+        ' ' +
+        (_areDiferentMovsWithRepCouter ? 'reps' : timerEntries[timerTaskIndex - 1].movement.getLabel());
   }
 
   WorkState getCurrentTaskWorkState() {
     if (isCurrentMovementRest()) {
       return WorkState.resting;
+    } else if (isInitialTimer()) {
+      return WorkState.countdown;
     } else {
       return WorkState.exercising;
     }
@@ -762,6 +797,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _finishWorkout() {
+    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
+      BlocProvider.of<UserProgressBloc>(context).update(_user.uid, 1);
+    }
+
     if (alertTimer != null) {
       alertTimer.cancel();
     }
@@ -868,6 +907,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    _areDiferentMovsWithRepCouter = SegmentClocksUtils.diferentMovsWithRepCouter(timerEntries);
     if (timerEntries.isEmpty) {
       _finishWorkout();
       return;
@@ -877,7 +917,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       Wakelock.enable();
     }
     _playTask();
-    //setAlert();
   }
 
   void setPaused() {
@@ -887,6 +926,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   void dispose() {
+    /*SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);*/
     Wakelock.disable();
     WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
@@ -905,10 +948,18 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached || state == AppLifecycleState.paused) return;
-    final isInactive = state == AppLifecycleState.inactive;
-    if (isInactive) {
-      Navigator.pop(context);
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) return;
+    final isPausedInactive = state == AppLifecycleState.paused;
+    if (isPausedInactive) {
+      playPauseSegment();
+      if (cameraController != null) {
+        cameraController.pauseVideoRecording();
+      }
+    } else {
+      if (cameraController != null) {
+        cameraController.resumeVideoRecording();
+        _resume();
+      }
     }
   }
 
@@ -978,5 +1029,31 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
+  }
+
+  bool isInitialTimer() {
+    return timerEntries[timerTaskIndex].isInitialTimer != null && timerEntries[timerTaskIndex].isInitialTimer;
+  }
+
+  double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty
+        ? screenProportion
+        : isWorkStateFinished()
+            ? screenProportion * 0.4
+            : isSegmentWithoutRecording()
+                ? screenProportion
+                : screenProportion * 0.6;
+  }
+
+  double lowerSectionScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty
+        ? 0
+        : isWorkStateFinished()
+            ? screenProportion * 0.46
+            : isSegmentWithoutRecording()
+                ? 0
+                : screenProportion * 0.4;
   }
 }

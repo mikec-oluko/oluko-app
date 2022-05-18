@@ -215,6 +215,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   Widget enrolledContent(bool showStories) {
     return SliverAppBar(
+      centerTitle: false,
       automaticallyImplyLeading: false,
       stretch: true,
       toolbarHeight: showStories ? 110 : 0,

@@ -36,9 +36,11 @@ class ClocksLowerSection extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final String segmentId;
+  final bool areDiferentMovsWithRepCouter;
 
   ClocksLowerSection(
       {this.workState,
+      this.areDiferentMovsWithRepCouter,
       this.segments,
       this.originalWorkoutType,
       this.segmentIndex,
@@ -139,7 +141,7 @@ class _State extends State<ClocksLowerSection> {
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             children: SegmentClocksUtils.getScoresByRound(
-                context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores)));
+                context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores, widget.areDiferentMovsWithRepCouter)));
   }
 
   Widget getTitle() {

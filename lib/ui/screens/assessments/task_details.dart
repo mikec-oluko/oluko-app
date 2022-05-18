@@ -1,10 +1,5 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -14,7 +9,6 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
-import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -88,42 +82,42 @@ class _TaskDetailsState extends State<TaskDetails> {
           }
         },
         child: BlocListener<TaskCardBloc, TaskCardState>(listener: (context, taskCardState) {
-          if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
-            setState(() {
-              _isLoading = true;
-            });
-          } else if (taskCardState is TaskCardVideoUploaded) {
-            setState(() {
-              _isLoading = false;
-            });
-          }
-        }, child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-          if (authState is AuthSuccess) {
-            return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-              builder: (context, assessmentAssignmentState) {
-                if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
-                  return BlocBuilder<TaskBloc, TaskState>(
-                    builder: (context, taskState) {
-                      if (taskState is TaskSuccess) {
-                        _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                        _tasks = taskState.values;
-                        _task = _tasks[widget.taskIndex];
-                        BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task.id);
-                        return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
-                      } else {
-                        return nil;
-                      }
-                    },
-                  );
-                } else {
-                  return nil;
-                }
-              },
-            );
-          } else {
-            return nil;
-          }
-        })));
+              if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
+                setState(() {
+                  _isLoading = true;
+                });
+              } else if (taskCardState is TaskCardVideoUploaded) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+            }, child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+              if (authState is AuthSuccess) {
+                return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+                  builder: (context, assessmentAssignmentState) {
+                    if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+                      return BlocBuilder<TaskBloc, TaskState>(
+                        builder: (context, taskState) {
+                          if (taskState is TaskSuccess) {
+                            _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                            _tasks = taskState.values;
+                            _task = _tasks[widget.taskIndex];
+                            BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task.id);
+                            return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
+                          } else {
+                            return nil;
+                          }
+                        },
+                      );
+                    } else {
+                      return nil;
+                    }
+                  },
+                );
+              } else {
+                return nil;
+              }
+            })));
   }
 
   Widget neumorphicForm() {
@@ -240,9 +234,11 @@ class _TaskDetailsState extends State<TaskDetails> {
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => setState(() {
-              _controller = chewieController;
-            })));
+        whenInitialized: (ChewieController chewieController) {
+          //setState(() {
+          _controller = chewieController;
+          //});
+        }));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
@@ -257,7 +253,6 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget formSection([TaskSubmission taskSubmission]) {
     return Container(
-        //height: MediaQuery.of(context).size.height / 1.75,
         child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -271,15 +266,19 @@ class _TaskDetailsState extends State<TaskDetails> {
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicSwitch(
                     value: _makePublic ?? false,
-                    onSwitchChange: (bool value) => setState(() {
+                    onSwitchChange: (bool value) {
                       if (taskSubmission != null) {
+                        setState(() {
                         _makePublic = value;
+                        //BlocProvider.of<TaskPrivacityBloc>(context).set(value);
                         BlocProvider.of<TaskSubmissionBloc>(context)
                             .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                        });
                       } else {
                         AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
                       }
-                    }),
+                      ;
+                    },
                   )
                 : Switch(
                     value: _makePublic ?? false,
@@ -386,7 +385,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (state is Success && state.pickedFile != null) {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                  'taskId':_task.id,
+                  'taskId': _task.id,
                   'taskIndex': widget.taskIndex,
                   'filePath': state.pickedFile.path,
                   'isPublic': _makePublic ?? false,
@@ -396,6 +395,9 @@ class _TaskDetailsState extends State<TaskDetails> {
               } else if (state is PermissionsRequired) {
                 PermissionsUtils.showSettingsMessage(context);
               }
+               else if(state is UploadFailure && state.badFormat){
+                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
+                    }
             },
             child: GestureDetector(
               onTap: () {
@@ -421,7 +423,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
     Navigator.pop(context);
     Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-      'taskId':_task.id,
+      'taskId': _task.id,
       'taskIndex': widget.taskIndex,
       'isPublic': _makePublic ?? false,
       'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
@@ -458,7 +460,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     thinPadding: true,
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                     onPressed: () {
-                        DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                      DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                     },
                   ),
             const SizedBox(width: 20),
@@ -505,7 +507,8 @@ class _TaskDetailsState extends State<TaskDetails> {
   void nextAssessmentButtonOnPress(BuildContext context) {
     if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
       //TODO: Check plan enable skip
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+      //AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+      goToAssessmentVideos();
     } else {
       if (_controller != null) {
         _controller.pause();
@@ -520,13 +523,17 @@ class _TaskDetailsState extends State<TaskDetails> {
           'taskCompleted': false /**TODO: */
         });
       } else {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        } else {
-          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
-              arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
-        }
+        goToAssessmentVideos();
       }
+    }
+  }
+
+  void goToAssessmentVideos() {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
+          arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
     }
   }
 
@@ -608,7 +615,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             Navigator.pop(context);
                             //Navigator.pop(context);
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                              'taskId':_task.id,
+                              'taskId': _task.id,
                               'taskIndex': widget.taskIndex,
                               'isPublic': _makePublic,
                               'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
