@@ -497,7 +497,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       children: [
         if (OlukoNeumorphism.isNeumorphismDesign)
           if (widget.segment.video != null)
-            video()
+            videoWidget()
           else
             SizedBox(
               height: MediaQuery.of(context).size.height / 1,
@@ -514,7 +514,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Widget video() {
+  Widget videoWidget() {
     return OlukoVideoPreview(
       showCrossButton: false,
       image: widget.segment.image,
