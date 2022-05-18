@@ -222,10 +222,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       pinned: true,
       title: showStories
-          ? StoriesHeader(
-            widget.user.uid,
-            maxRadius: 30,
-          )
+          ? Center(
+              child: StoriesHeader(
+                widget.user.uid,
+                maxRadius: 30,
+              ),
+            )
           : const SizedBox(),
     );
   }

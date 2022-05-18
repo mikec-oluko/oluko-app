@@ -783,6 +783,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   WorkState getCurrentTaskWorkState() {
     if (isCurrentMovementRest()) {
       return WorkState.resting;
+    } else if (isInitialTimer()) {
+      return WorkState.countdown;
     } else {
       return WorkState.exercising;
     }
@@ -1029,6 +1031,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
+  }
+
+  bool isInitialTimer() {
+    return timerEntries[timerTaskIndex].isInitialTimer != null && timerEntries[timerTaskIndex].isInitialTimer;
   }
 
   double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
