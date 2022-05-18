@@ -16,6 +16,7 @@ import 'package:video_player/video_player.dart';
 class OlukoVideoPreview extends StatefulWidget {
   final String video;
   final String image;
+  final bool showCrossButton;
   final List<String> randomImages;
   final bool bannerVideo;
   final bool showBackButton;
@@ -43,7 +44,8 @@ class OlukoVideoPreview extends StatefulWidget {
       this.videoVisibilty = false,
       this.bannerVideo = false,
       this.audioWidget,
-      this.showVideoOptions = false})
+      this.showVideoOptions = false,
+      this.showCrossButton=true})
       : super(key: key);
 
   @override
@@ -262,29 +264,30 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     return Container(
       color: Colors.black,
       child: Stack(
-        children: widgets +
-            [
-              Visibility(
-                child: Positioned(
-                  top: 22,
-                  right: 10,
-                  child: GestureDetector(
-                    onTap: () => widget.onPlay(),
-                    child: SizedBox(
-                      height: 46,
-                      width: 46,
-                      child: OlukoBlurredButton(
-                        childContent: Image.asset(
-                          'assets/courses/white_cross.png',
-                          scale: 3.5,
+              children: widgets +
+                  [
+                    Visibility(
+                      visible: widget.showCrossButton,
+                      child: Positioned(
+                        top: 22,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: () => widget.onPlay(),
+                          child: SizedBox(
+                            height: 46,
+                            width: 46,
+                            child: OlukoBlurredButton(
+                              childContent: Image.asset(
+                                'assets/courses/white_cross.png',
+                                scale: 3.5,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-      ),
+                    )
+                  ],
+            ),
     );
   }
 

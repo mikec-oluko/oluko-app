@@ -55,7 +55,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool showStories = false;
   bool showLogo = true;
   int courseIndex = 0;
-  double tabBarPadding = 0;
   bool _isVideoPlaying = false;
 
   @override
@@ -367,7 +366,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           }
         },
         child: Padding(
-          padding: EdgeInsets.only(top: 80),
+          padding: EdgeInsets.only(top: 75),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
