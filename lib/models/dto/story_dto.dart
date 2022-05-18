@@ -3,7 +3,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 
 class Story extends Base {
-  String content_type;
+  String contentType;
   String url;
   String result;
   String segmentTitle;
@@ -13,7 +13,7 @@ class Story extends Base {
   String timeFromCreation;
 
   Story(
-      {this.content_type,
+      {this.contentType,
       this.url,
       this.result,
       this.segmentTitle,
@@ -42,11 +42,11 @@ class Story extends Base {
       return null;
     }
     Story story = Story(
-        content_type: json['content_type'].toString(),
-        url: json['url'].toString(),
-        result: json['result'].toString(),
-        segmentTitle: json['segmentTitle'].toString(),
-        description: json['description'].toString(),
+        contentType: json['content_type']?.toString(),
+        url: json['url']?.toString(),
+        result: json['result']?.toString(),
+        segmentTitle: json['segmentTitle']?.toString(),
+        description: json['description']?.toString(),
         seen: json['seen'] != null ? json['seen'] as bool : false,
         duration: (json['duration'] is int) ? (json['duration'] as int) : 5);
     story.setBase(json);
@@ -70,7 +70,7 @@ class Story extends Base {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> storyJson = {
       'id': id,
-      'content_type': content_type,
+      'content_type': contentType,
       'url': url,
       'result': result,
       'segmentTitle': segmentTitle,
