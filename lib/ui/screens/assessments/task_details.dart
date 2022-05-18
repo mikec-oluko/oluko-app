@@ -235,9 +235,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) {
-          //setState(() {
           _controller = chewieController;
-          //});
         }));
 
     return ConstrainedBox(

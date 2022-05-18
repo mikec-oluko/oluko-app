@@ -30,59 +30,47 @@ class _State extends State<ShareCard> {
     return Container(
       decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
       child: Padding(
-        padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 18, bottom: 12.0),
+        padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 12, bottom: 12.0),
         child: Column(
           children: [
             Container(
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                      flex: 2,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(Radius.circular(5)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              'assets/assessment/task_response_thumbnail.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
+                  thumbnailImage(),
+                  Padding(
+                      padding: EdgeInsets.only(left: 20, top: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            OlukoLocalizations.of(context).find('share'),
+                            style: OlukoFonts.olukoBigFont(),
+                            textAlign: TextAlign.start,
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              storyButton(),
+                              whistleButton(),
+                            ],
+                          )
+                        ],
                       )),
-                  Expanded(
-                    flex: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, top: 0),
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              OlukoLocalizations.of(context).find('share'),
-                              style: OlukoFonts.olukoBigFont(),
-                              textAlign: TextAlign.start,
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                storyButton(),
-                                whistleButton(),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget thumbnailImage() {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(5)),
+      child: Image.asset(
+        'assets/assessment/task_response_thumbnail.png',
+        scale: 17,
       ),
     );
   }
@@ -117,7 +105,7 @@ class _State extends State<ShareCard> {
                     color: _whistleEnabled ? null : Colors.grey,
                   )),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
                 child: Row(children: [
                   Text('Coach',
                       style: _whistleEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
@@ -142,7 +130,7 @@ class _State extends State<ShareCard> {
               color: _storyEnabled ? null : Colors.grey,
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
               child: Row(
                 children: [
                   Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
