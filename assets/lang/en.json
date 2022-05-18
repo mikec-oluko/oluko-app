@@ -344,6 +344,7 @@
     "noInternetConnectionHeaderText": "No internet conection",
     "noInternetConnectionBodyText": "Make sure wi-fi or mobile data is turned on and then retry.",
     "retry": "Retry",
+    "noRequests": "No requests",
     "badVideoFormat": "This video format is not allowed.",
     "saveChanges": "Save changes.",
     "allFieldsRequired": "All fields are required",

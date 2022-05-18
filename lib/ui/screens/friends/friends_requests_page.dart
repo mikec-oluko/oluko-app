@@ -129,7 +129,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
           ? [
               Padding(
                 padding: const EdgeInsets.all(32.0),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody('No Requests.')]),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody(OlukoLocalizations.of(context).find('noRequests'))]),
               )
             ]
           : friendsRequestState.friendRequestList

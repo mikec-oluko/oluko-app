@@ -43,7 +43,6 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    //BlocProvider.of<UserProgressStreamBloc>(context).getStream();
     return Scaffold(
       appBar: OlukoAppBar(
         showBackButton: false,
@@ -85,13 +84,9 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
                               child: TabBarView(
                                 controller: _tabController,
                                 children: [
-                                  /*BlocBuilder<UserProgressStreamBloc, UserProgressStreamState>(builder: (context, userProgressState) {
-                                    if (userProgressState is UserProgressUpdate) {}
-                                    return*/
                                   FriendsListPage(
                                     authUser: _authStateData,
-                                  ), //;
-                                  //}),
+                                  ),
                                   FriendsRequestPage(
                                     authUser: _authStateData,
                                   )

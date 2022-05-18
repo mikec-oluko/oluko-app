@@ -169,7 +169,7 @@ class _HiFivePageState extends State<HiFivePage> {
 
   OlukoAppBar _appBar() {
     return OlukoAppBar(
-      title: OlukoLocalizations.get(context, 'hifive'),
+      title: OlukoLocalizations.get(context, 'hiFive'),
       showBackButton: true,
       showTitle: OlukoNeumorphism.isNeumorphismDesign,
       showActions: true,
@@ -179,7 +179,7 @@ class _HiFivePageState extends State<HiFivePage> {
           child: GestureDetector(
             onTap: () {
               BlocProvider.of<HiFiveBloc>(context)
-                  .sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
+                  .sendHiFiveToAll(context, _authState.user.id, _hiFiveState);
             },
             child: OlukoNeumorphism.isNeumorphismDesign
                 ? Padding(

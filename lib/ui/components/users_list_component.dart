@@ -2,9 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -15,7 +18,10 @@ class UserListComponent extends StatefulWidget {
   final List<UserResponse> users;
   final Function(UserResponse friendUser) onTapUser;
   final Function() onTopScroll;
-  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.onTopScroll}) : super();
+  final Map<String, UserProgress> usersProgess;
+
+  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgess, this.onTopScroll})
+      : super();
 
   @override
   State<UserListComponent> createState() => _UserListComponentState();
@@ -99,6 +105,9 @@ class _UserListComponentState extends State<UserListComponent> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   StoriesItem(
+                    showUserProgress: true,
+                    userProgress: widget.usersProgess[friendElement.id],
+                    progressValue: 0.5,
                     maxRadius: 30,
                     imageUrl: friendElement.avatar,
                     name: friendElement.firstName,
