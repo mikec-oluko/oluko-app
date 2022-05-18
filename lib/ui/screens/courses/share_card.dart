@@ -30,27 +30,14 @@ class _State extends State<ShareCard> {
     return Container(
       decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
       child: Padding(
-        padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 18, bottom: 12.0),
+        padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 12, bottom: 12.0),
         child: Column(
           children: [
             Container(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                      flex: 2,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(Radius.circular(5)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              'assets/assessment/task_response_thumbnail.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                      )),
+                  Expanded(flex: 2, child: thumbnailImage()),
                   Expanded(
                     flex: 8,
                     child: Padding(
@@ -83,6 +70,21 @@ class _State extends State<ShareCard> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget thumbnailImage() {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(5)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image.asset(
+            'assets/assessment/task_response_thumbnail.png',
+            fit: BoxFit.cover,
+          ),
+        ],
       ),
     );
   }
