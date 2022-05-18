@@ -259,8 +259,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPersonalRecord(
-                segmentId: state.segmentId, userId: _user.id);
+            _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
           }
           if (state is SegmentDetailContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);

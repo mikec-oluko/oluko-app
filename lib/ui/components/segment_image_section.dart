@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -87,12 +89,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   bool _canStartSegment = true;
   List<Audio> _challengeAudios;
   int _audioQty;
+  bool isFinishedBefore = false;
 
   @override
   void initState() {
     _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     _canStartSegment = canStartSegment();
+    if (widget.segment.isChallenge) {
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(widget.segment.id, widget.userId);
+    }
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;
     super.initState();
@@ -144,7 +150,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             //TODO: START WORKOUT
           ],
         ),
-        Positioned(bottom: 100, child: Align(child: SizedBox(width: ScreenUtils.width(context), child: startWorkoutsButton()))),
+        Positioned(
+            bottom: 100,
+            child: Align(
+                child: SizedBox(
+                    width: ScreenUtils.width(context),
+                    child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
+                      if (state is ChallengeHistoricalResult) {
+                        isFinishedBefore = state.wasCompletedBefore;
+                      }
+                      return startWorkoutsButton(isFinishedBefore);
+                    })))),
         //TODO: Navigation buttons
         topButtons(),
       ],
@@ -201,9 +217,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
-  Widget startWorkoutsButton() {
+  Widget startWorkoutsButton(bool isFinihedBefore) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? (widget.segment.isChallenge && _canStartSegment) || !widget.segment.isChallenge
+        ? ((widget.segment.isChallenge && _canStartSegment) || widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: OlukoNeumorphicPrimaryButton(
@@ -401,29 +417,28 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Widget getCameraIcon() {
-      return Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: Stack(
-          alignment: Alignment.center,
-          children: getCameraCircles() +
-              [
-                Image.asset(
-                  'assets/courses/outlined_camera.png',
-                  scale: 3,
+    return Padding(
+      padding: const EdgeInsets.only(right: 15),
+      child: Stack(
+        alignment: Alignment.center,
+        children: getCameraCircles() +
+            [
+              Image.asset(
+                'assets/courses/outlined_camera.png',
+                scale: 3,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 1),
+                child: Icon(
+                  Icons.circle_outlined,
+                  size: 16,
                   color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 1),
-                  child: Icon(
-                    Icons.circle_outlined,
-                    size: 16,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                  ),
-                )
-              ],
-        ),
-      );
-    
+              )
+            ],
+      ),
+    );
   }
 
   List<Widget> getCameraCircles() {

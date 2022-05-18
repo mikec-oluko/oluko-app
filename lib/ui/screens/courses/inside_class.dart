@@ -277,10 +277,12 @@ class _InsideClassesState extends State<InsideClass> {
                   segmentChallenge.previousSegmentFinish = widget.courseEnrollment.classes[j].segments[k - 1].completedAt != null;
                   segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
                   segmentChallenge.segmentIndex = k;
+                  segmentChallenge.challengeSegment.image ??= segment.image;
                 } else {
                   segmentChallenge.segmentIndex = k;
                   segmentChallenge.previousSegmentFinish = true;
                   segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
+                  segmentChallenge.challengeSegment.image ??= segment.image;
                 }
               }
             }
