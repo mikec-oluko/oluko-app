@@ -1096,6 +1096,7 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
         newRouteView = CoachMainPage();
         break;
