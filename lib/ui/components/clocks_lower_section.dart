@@ -137,13 +137,11 @@ class _State extends State<ClocksLowerSection> {
   Widget getScores() {
     return SizedBox(
         height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 6.4 : ScreenUtils.height(context) / 5.2,
-        child: Container(
-            color: Colors.red,
-            child: ListView(
+        child: ListView(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 children: SegmentClocksUtils.getScoresByRound(context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore,
-                    widget.scores, widget.areDiferentMovsWithRepCouter))));
+                    widget.scores, widget.areDiferentMovsWithRepCouter)));
   }
 
   Widget getTitle() {
