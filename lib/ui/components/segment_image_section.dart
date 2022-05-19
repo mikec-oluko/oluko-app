@@ -38,6 +38,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class SegmentImageSection extends StatefulWidget {
   final Function() onPressed;
@@ -49,6 +50,7 @@ class SegmentImageSection extends StatefulWidget {
   final Function(List<Audio> audios, Challenge challenge) audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function(String segmentId) clockAction;
+  bool isVideoPlaying;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int classIndex;
@@ -76,7 +78,8 @@ class SegmentImageSection extends StatefulWidget {
       this.coachRequests,
       this.coach,
       this.fromChallenge,
-      Key key})
+      Key key,
+      this.isVideoPlaying})
       : super(key: key);
 
   @override
@@ -85,7 +88,6 @@ class SegmentImageSection extends StatefulWidget {
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   GlobalService _globalService = GlobalService();
-  bool _isVideoPlaying = false;
   ChewieController _controller;
   bool isVideoVisible = false;
   CoachRequest _coachRequest;
@@ -135,7 +137,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   height: ScreenUtils.height(context) / 1.3,
                   child: imageSection(),
                 ),
-                if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
+                if (widget.segment.isChallenge && !widget.isVideoPlaying) challengeButtons(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
                   child: segmentContent(),
@@ -378,7 +380,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           else
             const SizedBox(),
           const Expanded(child: SizedBox()),
-          if (!_isVideoPlaying)
+          if (!widget.isVideoPlaying)
             GestureDetector(
               onTap: () {
                 BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
@@ -515,33 +517,27 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Widget videoWidget() {
-    return OlukoVideoPreview(
-      showCrossButton: false,
-      image: widget.segment.image,
-      video: widget.segment.video,
-      onBackPressed: () => Navigator.pop(context),
-      onPlay: () => isVideoPlaying(),
-      videoVisibilty: _isVideoPlaying,
+    return VisibilityDetector(
+      key: Key('videoPlayer'),
+      onVisibilityChanged: (VisibilityInfo info) {
+        if (info.visibleFraction < 0.1 && mounted) {
+          isVideoPlaying();
+        }
+      },
+      child: OlukoVideoPreview(
+        showCrossButton: false,
+        image: widget.segment.image,
+        video: widget.segment.video,
+        onBackPressed: () => Navigator.pop(context),
+        onPlay: () => isVideoPlaying(),
+        videoVisibilty: widget.isVideoPlaying,
+      ),
     );
-  }
-
-  void pauseVideo() {
-    if (_controller != null) {
-      _controller.pause();
-    }
   }
 
   void isVideoPlaying() {
     return setState(() {
-      _isVideoPlaying = !_isVideoPlaying;
-    });
-  }
-
-  void closeVideo() {
-    setState(() {
-      if (_isVideoPlaying) {
-        _isVideoPlaying = !_isVideoPlaying;
-      }
+      widget.isVideoPlaying = !widget.isVideoPlaying;
     });
   }
 
@@ -647,6 +643,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   _onStartPressed() {
+    isVideoPlaying();
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
       showCoachDialog();
