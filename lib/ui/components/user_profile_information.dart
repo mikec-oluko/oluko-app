@@ -88,7 +88,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     : MediaQuery.of(context).size.height / 3.1
                 : null,
             child: Padding(
-                padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
+                padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 10 : 10),
                 child: OlukoNeumorphism.isNeumorphismDesign
                     ? _profileUserNeumorphicInformation(_userLocation, _valuesDemo)
                     : _profileUserInformation(_userLocation, _valuesDemo)),
