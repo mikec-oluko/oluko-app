@@ -222,15 +222,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget enrolledContent(bool showStories) {
-     return SliverToBoxAdapter(
+    return SliverToBoxAdapter(
         child: Container(
+      alignment: Alignment.centerLeft,
       color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       child: showStories
-          ? Center(
-              child: StoriesHeader(
-                widget.user.uid,
-                maxRadius: 30,
-              ),
+          ? StoriesHeader(
+              widget.user.uid,
+              maxRadius: 30,
             )
           : const SizedBox(),
     ));
