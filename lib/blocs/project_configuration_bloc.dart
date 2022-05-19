@@ -46,9 +46,17 @@ class ProjectConfigurationBloc extends Cubit<ProjectConfigurationState> {
       getCourseConfiguration();
     }
 
-    return ((ProjectConfigurationBloc.courseConfiguration as Map)['sounds_configuration']['segment_clock_sounds'] as List)
-        .map((sound) => Sound.fromJson(sound as Map))
-        .toList();
+    final Map courseConfig = ProjectConfigurationBloc.courseConfiguration as Map;
+    if (courseConfig != null &&
+        courseConfig.isNotEmpty &&
+        courseConfig['sounds_configuration'] != null &&
+        courseConfig['sounds_configuration']['segment_clock_sounds'] != null) {
+      final segmentClockSounds = courseConfig['sounds_configuration']['segment_clock_sounds'] as List;
+      if (segmentClockSounds != null && segmentClockSounds.isNotEmpty) {
+        return segmentClockSounds.map((sound) => Sound.fromJson(sound as Map)).toList();
+      }
+    }
+    return [];
   }
 
   Map getSoundsConfiguration() {

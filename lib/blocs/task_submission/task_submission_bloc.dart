@@ -1,13 +1,9 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
-import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
-import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -71,7 +67,6 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String taskSubmissionId, bool isPublic) async {
     try {
       await TaskSubmissionRepository.updateTaskSubmissionPrivacity(assessmentA, taskSubmissionId, isPublic);
-      emit(PrivacyUpdatedSuccess(isPublic: isPublic));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

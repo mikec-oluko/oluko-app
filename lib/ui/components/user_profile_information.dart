@@ -6,12 +6,16 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -40,9 +44,11 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   PrivacyOptions _privacyOptions = PrivacyOptions();
   HiFiveReceivedSuccess _hiFiveReceivedState;
   AuthSuccess _authState;
+  Map<String, UserProgress> _usersProgess = {};
 
   @override
   void initState() {
+    BlocProvider.of<UserProgressListBloc>(context).get();
     _userLocation = getUserLocation(widget.userToDisplayInformation);
     _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
     super.initState();
@@ -108,90 +114,111 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
     final profileDefaultProfilePicContent =
         '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
-    return Column(
-      children: [
-        //PROFILE IMAGE AND INFO
-        Column(
-          children: [
-            //USER CIRCLEAVATAR
-            Row(
-              children: [
-                if (widget.userToDisplayInformation.avatar != null)
-                  Padding(
+    return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
+      if (userProgressListState is GetUserProgressSuccess) {
+        setState(() {
+          _usersProgess = userProgressListState.usersProgress;
+        });
+      }
+    }, builder: (context, userProgressListState) {
+      return Column(
+        children: [
+          //PROFILE IMAGE AND INFO
+          // Column(
+          // children: [
+          //USER CIRCLEAVATAR
+          Row(
+            children: [
+              Stack(children: [
+                StoriesItem(
+                  showUserProgress: true,
+                  userProgress: _usersProgess[widget.userToDisplayInformation.id],
+                  itemUserId: widget.userToDisplayInformation.id,
+                  maxRadius: 40,
+                  imageUrl: widget.userToDisplayInformation.avatar,
+                  name: widget.userToDisplayInformation.firstName,
+                  lastname: widget.userToDisplayInformation.lastName,
+                  userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                ),
+                getVisibility(widget, context, _isOwner),
+              ]),
+              /*if (widget.userToDisplayInformation.avatar != null)
+                  /*Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Stack(clipBehavior: Clip.none, children: [
-                      Neumorphic(
-                        style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                        child: CircleAvatar(
+                    child: */
+                  Stack(clipBehavior: Clip.none, children: [
+                    /*Neumorphic(
+                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                          child:*/ /*CircleAvatar(
                           backgroundColor: OlukoColors.black,
                           radius: 40.0,
-                          child: CachedNetworkImage(
-                            height: 80,
-                            width: 80,
-                            fit: BoxFit.cover,
-                            imageUrl: widget.userToDisplayInformation.avatar,
-                            placeholder: (context, url) => Container(
-                              color: OlukoColors.userColor(
-                                  widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
-                              child: Center(
-                                child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
-                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      getVisibility(widget, context, _isOwner),
-                    ]),
-                  )
+                        ),*/
+                    StoriesItem(
+                      maxRadius: 40,
+                      imageUrl: widget.userToDisplayInformation.avatar,
+                      name: widget.userToDisplayInformation.firstName,
+                      lastname: widget.userToDisplayInformation.lastName,
+                      userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                    ) /*)*/,
+                    getVisibility(widget, context, _isOwner),
+                  ])
+                //)
                 else
                   // Padding(
                   //   padding: const EdgeInsets.all(5.0),
                   // child:
                   Stack(children: [
-                    CircleAvatar(
+                    /*CircleAvatar(
                       backgroundColor: widget.userToDisplayInformation != null
                           ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
                           : OlukoColors.black,
                       radius: 40.0,
                       child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
                           style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                    ),*/
+                    StoriesItem(
+                      maxRadius: 40,
+                      imageUrl: widget.userToDisplayInformation.avatar,
+                      name: widget.userToDisplayInformation.firstName,
+                      lastname: widget.userToDisplayInformation.lastName,
+                      userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                     ),
                     getVisibility(widget, context, _isOwner),
                   ]),
-                // ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: _isOwner
-                            ? userInfoUnlocked(location)
-                            : canShowDetails
-                                ? userInfoUnlocked(location)
-                                : userInfoLocked(),
-                      ),
-                    ],
-                  ),
+                // ),*/
+              Expanded(
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: _isOwner
+                          ? userInfoUnlocked(location)
+                          : canShowDetails
+                              ? userInfoUnlocked(location)
+                              : userInfoLocked(),
+                    ),
+                  ],
                 ),
-                //HIFIVE BUTTON
-              ],
-            ),
-          ],
-        ),
-        if (OlukoNeumorphism.isNeumorphismDesign)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            child: OlukoNeumorphicDivider(
-              isFadeOut: true,
-            ),
-          )
-        else
-          const SizedBox.shrink(),
-        //TODO: CHECK IF NEU
-        Expanded(child: getUserProfileProgress(widget.userStats, canShowDetails))
-      ],
-    );
+              ),
+              //HIFIVE BUTTON
+            ],
+          ),
+          //],
+          // ),
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: OlukoNeumorphicDivider(
+                isFadeOut: true,
+              ),
+            )
+          else
+            const SizedBox.shrink(),
+          //TODO: CHECK IF NEU
+          Expanded(child: getUserProfileProgress(widget.userStats, canShowDetails))
+        ],
+      );
+    });
   }
 
   Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
@@ -332,7 +359,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               onPressed: () {
                 BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
               },
-              child: Image.asset('assets/profile/uploadImage.png')),
+              child: Image.asset('assets/profile/upload_icon.png')),
         ),
       ),
     );

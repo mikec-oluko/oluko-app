@@ -222,7 +222,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget enrolledContent(bool showStories) {
-    return SliverToBoxAdapter(
+     return SliverToBoxAdapter(
         child: Container(
       color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       child: showStories

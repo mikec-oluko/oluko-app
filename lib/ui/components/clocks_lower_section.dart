@@ -36,9 +36,11 @@ class ClocksLowerSection extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final String segmentId;
+  final bool areDiferentMovsWithRepCouter;
 
   ClocksLowerSection(
       {this.workState,
+      this.areDiferentMovsWithRepCouter,
       this.segments,
       this.originalWorkoutType,
       this.segmentIndex,
@@ -116,7 +118,7 @@ class _State extends State<ClocksLowerSection> {
         ? Padding(
             padding: const EdgeInsets.all(10),
             child: SizedBox(
-                height: ScreenUtils.height(context) * 0.12,
+                height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
                 width: ScreenUtils.width(context),
                 child: ListView(
                   padding: EdgeInsets.zero,
@@ -134,12 +136,12 @@ class _State extends State<ClocksLowerSection> {
 
   Widget getScores() {
     return SizedBox(
-        height: ScreenUtils.height(context) * 0.15,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 6.4 : ScreenUtils.height(context) / 5.2,
         child: ListView(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            children: SegmentClocksUtils.getScoresByRound(
-                context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores)));
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                children: SegmentClocksUtils.getScoresByRound(context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore,
+                    widget.scores, widget.areDiferentMovsWithRepCouter)));
   }
 
   Widget getTitle() {
@@ -148,14 +150,16 @@ class _State extends State<ClocksLowerSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FittedBox(
-            fit: BoxFit.fitWidth,
-            child: MovementUtils.movementTitle(
-              widget.segments[widget.segmentIndex].isChallenge
-                  ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
-                  : widget.segments[widget.segmentIndex].name,
-            ),
-          ),
+          Padding(
+              padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 5 : 15),
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: MovementUtils.movementTitle(
+                  widget.segments[widget.segmentIndex].isChallenge
+                      ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                      : widget.segments[widget.segmentIndex].name,
+                ),
+              )),
         ],
       ),
     );
