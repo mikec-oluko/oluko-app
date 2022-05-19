@@ -380,7 +380,7 @@ class _CoachProfileState extends State<CoachProfile> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 3,
         child: OlukoVideoPreview(
-          video:'https://oluko-development.s3.amazonaws.com/gIfUkmrLsUMJgZu7bhIP/converted.mp4',
+          video:widget.coachUser.bannerVideo,
           showBackButton: true,
           onBackPressed: () => Navigator.pop(context),
           onPlay: () => isVideoPlaying(),

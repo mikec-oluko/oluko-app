@@ -48,7 +48,7 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.introVideo: 'intro video',
   IntroductionMediaTypeEnum.homeVideo: 'home video',
   IntroductionMediaTypeEnum.completedCourseVideo: 'completed course video',
-  IntroductionMediaTypeEnum.coachTabCorePlan: 'Coach Tab Core Plan',
+  IntroductionMediaTypeEnum.coachTabCorePlan: 'coach tab core plan',
 };
 
 enum TimelineInteractionType {
