@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/course_helper.dart';
 import 'package:oluko_app/models/class.dart';
@@ -108,6 +109,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<MovementBloc>(context).getStream();
+          BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
         }
 
         return form();
@@ -233,6 +235,26 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
+                  bottomWidgets: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Text(
+                          widget.course.name,
+                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
+                            widget.course.classes != null ? widget.course.classes.length : 0, context),
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SliverPersistentHeader(
@@ -243,35 +265,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
                   )),
             ]),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: SliverAppBarDelegate(
-                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
-                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  color: OlukoNeumorphismColors.finalGradientColorDark,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      widget.course.name,
-                      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Text(
-                  CourseUtils.toCourseDuration(
-                      int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                ),
-              ),
-            ])),
             if (courseEnrollmentState is GetEnrollmentSuccess)
               SliverVisibility(
                 visible: (courseEnrollmentState.courseEnrollment != null && courseEnrollmentState.courseEnrollment.isUnenrolled == true) ||

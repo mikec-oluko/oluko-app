@@ -4,14 +4,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/collage_utils.dart';
+import 'package:video_player/video_player.dart';
 
 class OlukoVideoPreview extends StatefulWidget {
   final String video;
   final String image;
+  final bool showCrossButton;
   final List<String> randomImages;
   final bool bannerVideo;
   final bool showBackButton;
@@ -38,8 +43,9 @@ class OlukoVideoPreview extends StatefulWidget {
       this.onPlay,
       this.videoVisibilty = false,
       this.bannerVideo = false,
-      this.audioWidget, 
-      this.showVideoOptions=false})
+      this.audioWidget,
+      this.showVideoOptions = false,
+      this.showCrossButton=true})
       : super(key: key);
 
   @override
@@ -48,7 +54,7 @@ class OlukoVideoPreview extends StatefulWidget {
 
 class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   ChewieController _controller;
-
+  double aspectRatio;
   @override
   void initState() {
     super.initState();
@@ -61,18 +67,17 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
             alignment: Alignment.bottomLeft,
             children: [videoWithButtons()] +
                 [
-                  Visibility(
-                      visible: !widget.videoVisibilty,
-                      child: Column(
-                        children: widget.bottomWidgets,
-                      ))
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: widget.bottomWidgets,
+                  )
                 ])
         : videoWithButtons();
   }
 
   Widget videoWithButtons() {
     return Stack(children: [
-      if (widget.videoVisibilty)
+      if (widget.videoVisibilty && widget.bottomWidgets == null)
         videoSection()
       else
         ShaderMask(
@@ -155,42 +160,89 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   }
 
   Widget videoSection() {
-    return Stack(alignment: Alignment.center, children: [
-      AspectRatio(
-          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
-          child: Container(
-              color: OlukoColors.white,
-              child: widget.image != null
-                  ? imageSection()
-                  : widget.bannerVideo
-                      ? imageSection()
-                      : gridSection())),
-      if (widget.video != null)
+    if (widget.bannerVideo) {
+      return Stack(alignment: Alignment.center, children: [
         AspectRatio(
-          aspectRatio: widget.bannerVideo ? 5 / 3 : 480 / 600,
-          child: Padding(
-              padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
-              child: GestureDetector(
-                onTap: () => widget.onPlay(),
-                child: Align(
-                    child: Stack(children: [
-                  if (widget.videoVisibilty)
-                    showVideoPlayer(widget.video)
-                  else
-                    SizedBox(
-                      height: 52,
-                      width: 52,
-                      child: OlukoBlurredButton(
-                        childContent: Image.asset(
-                          'assets/courses/white_play.png',
-                          scale: 3.5,
+            aspectRatio: 5 / 3,
+            child: Container(
+                color: OlukoColors.white,
+                child: widget.image != null
+                    ? imageSection()
+                    : widget.bannerVideo
+                        ? imageSection()
+                        : gridSection())),
+        if (widget.video != null)
+          AspectRatio(
+            aspectRatio: 5 / 3,
+            child: Padding(
+                padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
+                child: GestureDetector(
+                  onTap: () => widget.onPlay(),
+                  child: Align(
+                      child: Stack(children: [
+                    if (widget.videoVisibilty)
+                      showVideoPlayer(widget.video)
+                    else
+                      SizedBox(
+                        height: 52,
+                        width: 52,
+                        child: OlukoBlurredButton(
+                          childContent: Image.asset(
+                            'assets/courses/white_play.png',
+                            scale: 3.5,
+                          ),
                         ),
                       ),
-                    ),
-                ])),
-              )),
-        )
-    ]);
+                  ])),
+                )),
+          )
+      ]);
+    } else {
+      return BlocBuilder<VideoBloc, VideoState>(
+        builder: (context, state) {
+          if (state is VideoSuccess && state.aspectRatio != null) {
+            aspectRatio = state.aspectRatio;
+          }
+          return Stack(alignment: Alignment.center, children: [
+            AspectRatio(
+                aspectRatio: 347 / 520,
+                child: Container(
+                    color: OlukoColors.white,
+                    child: widget.image != null
+                        ? imageSection()
+                        : widget.bannerVideo
+                            ? imageSection()
+                            : gridSection())),
+            if (widget.video != null)
+              Padding(
+                  padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
+                  child: GestureDetector(
+                    onTap: () => widget.onPlay(),
+                    child: Align(
+                        child: Stack(children: [
+                      if (aspectRatio == null && widget.videoVisibilty)
+                        const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      else if (widget.videoVisibilty)
+                        AspectRatio(aspectRatio: aspectRatio, child: showVideoPlayer(widget.video))
+                      else
+                        SizedBox(
+                          height: 52,
+                          width: 52,
+                          child: OlukoBlurredButton(
+                            childContent: Image.asset(
+                              'assets/courses/white_play.png',
+                              scale: 3.5,
+                            ),
+                          ),
+                        ),
+                    ])),
+                  ))
+          ]);
+        },
+      );
+    }
   }
 
   Widget showVideoPlayer(String videoUrl) {
@@ -212,29 +264,30 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     return Container(
       color: Colors.black,
       child: Stack(
-        children: widgets +
-            [
-              Visibility(
-                child: Positioned(
-                  top: 25,
-                  right: 10,
-                  child: GestureDetector(
-                    onTap: () => widget.onPlay(),
-                    child: SizedBox(
-                      height: 46,
-                      width: 46,
-                      child: OlukoBlurredButton(
-                        childContent: Image.asset(
-                          'assets/courses/white_cross.png',
-                          scale: 3.5,
+              children: widgets +
+                  [
+                    Visibility(
+                      visible: widget.showCrossButton,
+                      child: Positioned(
+                        top: 22,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: () => widget.onPlay(),
+                          child: SizedBox(
+                            height: 46,
+                            width: 46,
+                            child: OlukoBlurredButton(
+                              childContent: Image.asset(
+                                'assets/courses/white_cross.png',
+                                scale: 3.5,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-      ),
+                    )
+                  ],
+            ),
     );
   }
 

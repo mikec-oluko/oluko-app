@@ -23,6 +23,7 @@ class IntroductionMediaBloc extends Cubit<IntroductionMediaState> {
   Future<String> getVideo(IntroductionMediaTypeEnum type) async {
     try {
       final String mediaURL = await IntroductionMediaRepository.getVideoURL(type);
+      emit(Success(mediaURL: mediaURL));
       return mediaURL;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
