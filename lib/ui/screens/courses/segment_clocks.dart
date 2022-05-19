@@ -823,7 +823,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           widget.segments[widget.segmentIndex],
           widget.courseEnrollment,
           getPersonalRecordValue(),
-          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]));
+          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]),
+          widget.fromChallenge);
     }
 
     Wakelock.disable();
