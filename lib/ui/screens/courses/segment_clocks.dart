@@ -454,20 +454,27 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                   if (state is CurrentTimeValue) {
                     currentTime = state.timerTask;
                   }
-                  return Clock(
-                    workState: workState,
-                    segments: widget.segments,
-                    segmentIndex: widget.segmentIndex,
-                    timerEntries: timerEntries,
-                    textController: textController,
-                    goToNextStep: _goToNextStep,
-                    actionAMRAP: actionAMRAP,
-                    setPaused: setPaused,
-                    workoutType: workoutType,
-                    keyboardVisibilty: keyboardVisibilty,
-                    timerTaskIndex: timerTaskIndex,
-                    timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
-                  );
+                  return Padding(
+                      padding: EdgeInsets.only(
+                          top: ScreenUtils.smallScreen(context)
+                              ? 30
+                              : ScreenUtils.mediumScreen(context)
+                                  ? 44
+                                  : 55),
+                      child: Clock(
+                        workState: workState,
+                        segments: widget.segments,
+                        segmentIndex: widget.segmentIndex,
+                        timerEntries: timerEntries,
+                        textController: textController,
+                        goToNextStep: _goToNextStep,
+                        actionAMRAP: actionAMRAP,
+                        setPaused: setPaused,
+                        workoutType: workoutType,
+                        keyboardVisibilty: keyboardVisibilty,
+                        timerTaskIndex: timerTaskIndex,
+                        timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
+                      ));
                 },
               ),
             ),

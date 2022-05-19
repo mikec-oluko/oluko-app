@@ -32,6 +32,7 @@ class CourseCategoryRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseCategories')
+        .where('is_deleted',isNotEqualTo: true)
         .snapshots();
     return categoriesStream;
   }

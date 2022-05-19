@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
+import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_assignment_status.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -47,6 +48,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
         if (state is AuthSuccess) {
           _currentUser = state.user;
           BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_currentUser.id);
+          BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.coachTabCorePlan);
         }
         return _currentUser.currentPlan >= 1
             ? BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
@@ -84,8 +86,16 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   }
                 },
               )
-            : NoCoachPage(
-                introductionVideo: "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/emnsmBgZ13UBRqTS26Qd/video.mp4",
+            : BlocBuilder<IntroductionMediaBloc, IntroductionMediaState>(
+                builder: (context, state) {
+                  if (state is Success && state.mediaURL != null) {
+                    return NoCoachPage(
+                      introductionVideo: state.mediaURL,
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                },
               );
       },
     );

@@ -584,7 +584,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 });
                 BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
               },
-              child: Image.asset('assets/profile/uploadImage.png')),
+              child: Image.asset('assets/profile/upload_icon.png')),
         ),
       ),
     );

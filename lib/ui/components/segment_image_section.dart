@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -25,8 +26,10 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/newDesignComponents/self_recording_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -35,6 +38,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class SegmentImageSection extends StatefulWidget {
   final Function() onPressed;
@@ -46,6 +50,7 @@ class SegmentImageSection extends StatefulWidget {
   final Function(List<Audio> audios, Challenge challenge) audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function(String segmentId) clockAction;
+  bool isVideoPlaying;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int classIndex;
@@ -73,7 +78,8 @@ class SegmentImageSection extends StatefulWidget {
       this.coachRequests,
       this.coach,
       this.fromChallenge,
-      Key key})
+      Key key,
+      this.isVideoPlaying})
       : super(key: key);
 
   @override
@@ -82,7 +88,8 @@ class SegmentImageSection extends StatefulWidget {
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   GlobalService _globalService = GlobalService();
-
+  ChewieController _controller;
+  bool isVideoVisible = false;
   CoachRequest _coachRequest;
   bool _canStartSegment = true;
   List<Audio> _challengeAudios;
@@ -130,8 +137,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   height: ScreenUtils.height(context) / 1.3,
                   child: imageSection(),
                 ),
-                if (widget.segment.isChallenge) challengeButtons(),
-                //TODO: SEGMENT INFO
+                if (widget.segment.isChallenge && !widget.isVideoPlaying) challengeButtons(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
                   child: segmentContent(),
@@ -141,7 +147,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             const SizedBox(
               height: 130,
             ),
-            //TODO: START WORKOUT
           ],
         ),
         Positioned(bottom: 100, child: Align(child: SizedBox(width: ScreenUtils.width(context), child: startWorkoutsButton()))),
@@ -154,7 +159,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget segmentContent() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
-            padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.5),
+            padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.54),
             child: segmentInformation(),
           )
         : Padding(padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.25, right: 15, left: 15), child: segmentInformation());
@@ -375,7 +380,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           else
             const SizedBox(),
           const Expanded(child: SizedBox()),
-          GestureDetector(
+          if (!widget.isVideoPlaying)
+            GestureDetector(
               onTap: () {
                 BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
                 if (_coachRequest != null) {
@@ -394,36 +400,50 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   }
                 }
               },
-              child: getCameraIcon())
+              child: getCameraIcon(),
+            )
+          else
+            GestureDetector(
+              onTap: () => isVideoPlaying(),
+              child: SizedBox(
+                height: 46,
+                width: 46,
+                child: OlukoBlurredButton(
+                  childContent: Image.asset(
+                    'assets/courses/white_cross.png',
+                    scale: 3.5,
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );
   }
 
   Widget getCameraIcon() {
-      return Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: Stack(
-          alignment: Alignment.center,
-          children: getCameraCircles() +
-              [
-                Image.asset(
-                  'assets/courses/outlined_camera.png',
-                  scale: 3,
+    return Padding(
+      padding: const EdgeInsets.only(right: 15),
+      child: Stack(
+        alignment: Alignment.center,
+        children: getCameraCircles() +
+            [
+              Image.asset(
+                'assets/courses/outlined_camera.png',
+                scale: 3,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 1),
+                child: Icon(
+                  Icons.circle_outlined,
+                  size: 16,
                   color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 1),
-                  child: Icon(
-                    Icons.circle_outlined,
-                    size: 16,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                  ),
-                )
-              ],
-        ),
-      );
-    
+              )
+            ],
+      ),
+    );
   }
 
   List<Widget> getCameraCircles() {
@@ -478,18 +498,47 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       alignment: Alignment.center,
       children: [
         if (OlukoNeumorphism.isNeumorphismDesign)
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 1,
-            child: imageAspectRatio(),
-          )
+          if (widget.segment.video != null)
+            videoWidget()
+          else
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 1,
+              child: imageAspectRatio(),
+            )
         else
           imageAspectRatio(),
-        Image.asset(
-          'assets/courses/degraded.png',
-          fit: BoxFit.fitHeight,
-        ),
+        if (widget.segment.video == null)
+          Image.asset(
+            'assets/courses/degraded.png',
+            fit: BoxFit.fitHeight,
+          ),
       ],
     );
+  }
+
+  Widget videoWidget() {
+    return VisibilityDetector(
+      key: Key('videoPlayer'),
+      onVisibilityChanged: (VisibilityInfo info) {
+        if (info.visibleFraction < 0.1 && mounted) {
+          isVideoPlaying();
+        }
+      },
+      child: OlukoVideoPreview(
+        showCrossButton: false,
+        image: widget.segment.image,
+        video: widget.segment.video,
+        onBackPressed: () => Navigator.pop(context),
+        onPlay: () => isVideoPlaying(),
+        videoVisibilty: widget.isVideoPlaying,
+      ),
+    );
+  }
+
+  void isVideoPlaying() {
+    return setState(() {
+      widget.isVideoPlaying = !widget.isVideoPlaying;
+    });
   }
 
   AspectRatio imageAspectRatio() {
@@ -511,7 +560,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget challengeButtons() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
-            padding: EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.35),
+            padding: EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.42),
             child: challengeButtonsContent(),
           )
         : Padding(
@@ -594,6 +643,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   _onStartPressed() {
+    isVideoPlaying();
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
       showCoachDialog();

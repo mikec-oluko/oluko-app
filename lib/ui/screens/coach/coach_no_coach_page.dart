@@ -41,7 +41,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
             Container(
               color: OlukoNeumorphismColors.appBackgroundColor,
               width: MediaQuery.of(context).size.width,
-              height: 250,
+              height: 200,
               child: Stack(
                 fit: StackFit.expand,
                 clipBehavior: Clip.none,

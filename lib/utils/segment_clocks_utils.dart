@@ -274,19 +274,19 @@ class SegmentClocksUtils {
         );
       } else {
         return SizedBox(
-          width: 200,
-          child: OlukoNeumorphicSecondaryButton(
-            thinPadding: true,
-            isExpanded: false,
-            icon: Icon(
-              //Secondary button allows only text or only icon
-              Icons.search,
-              color: OlukoColors.primary,
-            ),
-            onPressed: () => MovementsModal.modalContent(context: context, content: items),
-            title: OlukoLocalizations.get(context, 'movements'),
-          ),
-        );
+              width: 200,
+              child: OlukoNeumorphicSecondaryButton(
+                thinPadding: true,
+                isExpanded: false,
+                icon: Icon(
+                  //Secondary button allows only text or only icon
+                  Icons.search,
+                  color: OlukoColors.primary,
+                ),
+                onPressed: () => MovementsModal.modalContent(context: context, content: items),
+                title: OlukoLocalizations.get(context, 'movements'),
+              ),
+            );
       }
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];

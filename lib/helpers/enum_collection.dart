@@ -42,12 +42,13 @@ enum StoriesItemFrom { friends, friendsModal, home, neumorphicHome, longPressHom
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
 
-enum IntroductionMediaTypeEnum { introVideo, homeVideo, completedCourseVideo }
+enum IntroductionMediaTypeEnum { introVideo, homeVideo, completedCourseVideo,coachTabCorePlan }
 
 Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.introVideo: 'intro video',
   IntroductionMediaTypeEnum.homeVideo: 'home video',
   IntroductionMediaTypeEnum.completedCourseVideo: 'completed course video',
+  IntroductionMediaTypeEnum.coachTabCorePlan: 'coach tab core plan',
 };
 
 enum TimelineInteractionType {
