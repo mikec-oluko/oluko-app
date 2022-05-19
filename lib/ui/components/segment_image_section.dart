@@ -50,7 +50,6 @@ class SegmentImageSection extends StatefulWidget {
   final Function(List<Audio> audios, Challenge challenge) audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function(String segmentId) clockAction;
-  bool isVideoPlaying;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int classIndex;
@@ -60,27 +59,26 @@ class SegmentImageSection extends StatefulWidget {
   final Challenge challenge;
   final bool fromChallenge;
 
-  SegmentImageSection(
-      {this.onPressed = null,
-      this.segment,
-      this.showBackButton = true,
-      this.currentSegmentStep,
-      this.totalSegmentStep,
-      this.challenge,
-      this.userId,
-      this.audioAction,
-      this.clockAction,
-      this.peopleAction,
-      this.courseEnrollment,
-      this.courseIndex,
-      this.segments,
-      this.classIndex,
-      this.coachRequests,
-      this.coach,
-      this.fromChallenge,
-      Key key,
-      this.isVideoPlaying})
-      : super(key: key);
+  SegmentImageSection({
+    this.onPressed = null,
+    this.segment,
+    this.showBackButton = true,
+    this.currentSegmentStep,
+    this.totalSegmentStep,
+    this.challenge,
+    this.userId,
+    this.audioAction,
+    this.clockAction,
+    this.peopleAction,
+    this.courseEnrollment,
+    this.courseIndex,
+    this.segments,
+    this.classIndex,
+    this.coachRequests,
+    this.coach,
+    this.fromChallenge,
+    Key key,
+  }) : super(key: key);
 
   @override
   _SegmentImageSectionState createState() => _SegmentImageSectionState();
@@ -90,6 +88,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   GlobalService _globalService = GlobalService();
   ChewieController _controller;
   bool isVideoVisible = false;
+  bool _isVideoPlaying = false;
   CoachRequest _coachRequest;
   bool _canStartSegment = true;
   List<Audio> _challengeAudios;
@@ -137,7 +136,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   height: ScreenUtils.height(context) / 1.3,
                   child: imageSection(),
                 ),
-                if (widget.segment.isChallenge && !widget.isVideoPlaying) challengeButtons(),
+                if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
                   child: segmentContent(),
@@ -380,7 +379,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           else
             const SizedBox(),
           const Expanded(child: SizedBox()),
-          if (!widget.isVideoPlaying)
+          if (!_isVideoPlaying)
             GestureDetector(
               onTap: () {
                 BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
@@ -530,14 +529,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         video: widget.segment.video,
         onBackPressed: () => Navigator.pop(context),
         onPlay: () => isVideoPlaying(),
-        videoVisibilty: widget.isVideoPlaying,
+        videoVisibilty: _isVideoPlaying,
       ),
     );
   }
 
   void isVideoPlaying() {
     return setState(() {
-      widget.isVideoPlaying = !widget.isVideoPlaying;
+      _isVideoPlaying = !_isVideoPlaying;
     });
   }
 
