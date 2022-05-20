@@ -1044,7 +1044,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
     double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
-    return keyboardVisibilty
+    return keyboardVisibilty || getCurrentTaskWorkState() == WorkState.countdown
         ? screenProportion
         : isWorkStateFinished()
             ? screenProportion * 0.4
@@ -1055,7 +1055,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   double lowerSectionScreenProportion(bool keyboardVisibilty, bool isHeight) {
     double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
-    return keyboardVisibilty
+    return keyboardVisibilty || getCurrentTaskWorkState() == WorkState.countdown
         ? 0
         : isWorkStateFinished()
             ? screenProportion * 0.46
