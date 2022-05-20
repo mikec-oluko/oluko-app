@@ -24,10 +24,7 @@ class _ExpansionPanelListState extends State<ExpansionPanelListWidget> {
             ParentTileWidget(
               tile: BasicTile(title: OlukoLocalizations.get(context, fAQCategories[type]), tiles: [
                 for (FAQItem faq in widget.faqList)
-                  if (faq.category == type)
-                    () {
-                      return BasicTile(title: faq.question, tiles: [BasicTile(title: faq.answer)]);
-                    }()
+                  if (faq.category == type) BasicTile(title: faq.question, tiles: [BasicTile(title: faq.answer)])
               ]),
             )
         ],
