@@ -44,4 +44,5 @@ jobs:
           jira-base-url: "${{env.JIRA_BASE_URL}}"
           issues: ${{steps.jira_keys.outputs.jira-keys}}
           title: 'Merged into ${{ steps.branch_step.outputs.branch }}'
+          app-name: Oluko-app
 
