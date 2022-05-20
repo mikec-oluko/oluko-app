@@ -3,7 +3,10 @@ name: Deploy to Firebase Hosting on merge
 on:
   push:
     branches:
-      - feature/jira-integration
+      - develop
+      - master
+      - deploy/qa
+      - deploy/staging
 
 env:
   JIRA_API_TOKEN: "${{secrets.JIRA_API_TOKEN}}"
