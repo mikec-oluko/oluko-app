@@ -1,5 +1,5 @@
 
-name: Deploy to Firebase Hosting on merge
+name: Link jira issues
 on:
   push:
     branches:
