@@ -3,7 +3,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
-import 'package:oluko_app/models/submodels/questions_answers.dart';
+import 'package:oluko_app/models/faq_item.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/faq_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -13,7 +13,7 @@ abstract class FAQState {}
 class FAQLoading extends FAQState {}
 
 class FAQSuccess extends FAQState {
-  List<QuestionAndAnswer> faqList;
+  List<FAQItem> faqList;
   FAQSuccess({this.faqList});
 }
 
@@ -28,7 +28,7 @@ class FAQBloc extends Cubit<FAQState> {
 
   void get() async {
     try {
-      List<QuestionAndAnswer> fAQlist = await FAQRepository.getAll();
+      List<FAQItem> fAQlist = await FAQRepository.getAll();
       emit(FAQSuccess(faqList: fAQlist));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
