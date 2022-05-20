@@ -35,5 +35,5 @@ jobs:
           jira-email: "${{env.JIRA_USER_EMAIL}}"
           jira-base-url: "${{env.JIRA_BASE_URL}}"
           issues: ${{steps.jira_keys.outputs.jira-keys}}
-          title: 'Merged into ${GITHUB_REF##*/}'
+          title: 'Merged into ${{github.ref##*/}}'
 
