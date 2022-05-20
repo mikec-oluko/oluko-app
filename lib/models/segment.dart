@@ -8,6 +8,7 @@ class Segment extends Base {
   String challengeVideo;
   String name;
   String image;
+  String video;
   String description;
   int initialTimer;
   SegmentTypeEnum type;
@@ -25,6 +26,7 @@ class Segment extends Base {
       {this.name,
       this.sections,
       this.image,
+      this.video,
       this.rounds,
       this.description,
       this.initialTimer,
@@ -63,6 +65,7 @@ class Segment extends Base {
         challengeVideo: json['challenge_video'] == null ? null : json['challenge_video'].toString(),
         name: json['name']?.toString(),
         image: json['image']?.toString(),
+        video: json['video']?.toString(),
         rounds: json['rounds'] as int,
         description: json['description']?.toString(),
         isChallenge: json['is_challenge'] == null

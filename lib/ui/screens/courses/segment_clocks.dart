@@ -376,8 +376,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
     setState(() {
       if (isPlaying) {
-        if(isSegmentWithoutRecording()){
-           panelController.open();
+        if (isSegmentWithoutRecording()) {
+          panelController.open();
         }
         if (isCurrentTaskTimed) {
           BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
@@ -454,20 +454,27 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                   if (state is CurrentTimeValue) {
                     currentTime = state.timerTask;
                   }
-                  return Clock(
-                    workState: workState,
-                    segments: widget.segments,
-                    segmentIndex: widget.segmentIndex,
-                    timerEntries: timerEntries,
-                    textController: textController,
-                    goToNextStep: _goToNextStep,
-                    actionAMRAP: actionAMRAP,
-                    setPaused: setPaused,
-                    workoutType: workoutType,
-                    keyboardVisibilty: keyboardVisibilty,
-                    timerTaskIndex: timerTaskIndex,
-                    timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
-                  );
+                  return Padding(
+                      padding: EdgeInsets.only(
+                          top: ScreenUtils.smallScreen(context)
+                              ? 30
+                              : ScreenUtils.mediumScreen(context)
+                                  ? 44
+                                  : 55),
+                      child: Clock(
+                        workState: workState,
+                        segments: widget.segments,
+                        segmentIndex: widget.segmentIndex,
+                        timerEntries: timerEntries,
+                        textController: textController,
+                        goToNextStep: _goToNextStep,
+                        actionAMRAP: actionAMRAP,
+                        setPaused: setPaused,
+                        workoutType: workoutType,
+                        keyboardVisibilty: keyboardVisibilty,
+                        timerTaskIndex: timerTaskIndex,
+                        timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
+                      ));
                 },
               ),
             ),
@@ -781,6 +788,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   WorkState getCurrentTaskWorkState() {
     if (isCurrentMovementRest()) {
       return WorkState.resting;
+    } else if (isInitialTimer()) {
+      return WorkState.countdown;
     } else {
       return WorkState.exercising;
     }
@@ -1027,6 +1036,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
+  }
+
+  bool isInitialTimer() {
+    return timerEntries[timerTaskIndex].isInitialTimer != null && timerEntries[timerTaskIndex].isInitialTimer;
   }
 
   double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {

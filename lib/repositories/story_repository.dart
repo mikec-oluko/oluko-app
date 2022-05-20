@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
+import 'package:oluko_app/models/enums/story_content_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 
@@ -19,7 +20,7 @@ class StoryRepository {
         .collection('stories')
         .doc();
     final Story story = Story(
-        content_type: 'video',
+        contentType: storyContentLabels[StoryContentEnum.Video],
         url: segmentSubmission.video.url,
         description: description,
         createdBy: segmentSubmission.userId,
@@ -41,7 +42,7 @@ class StoryRepository {
         .collection('stories')
         .doc();
     final Story story = Story(
-        content_type: 'image',
+        contentType: storyContentLabels[StoryContentEnum.Image],
         url: segment.challengeImage ?? segment.image,
         description: description,
         createdBy: userId,

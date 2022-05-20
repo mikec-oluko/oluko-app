@@ -17,8 +17,9 @@ class CreateSuccess extends StoryState {
 }
 
 class HasStoriesSuccess extends StoryState {
-  HasStoriesSuccess({this.hasStories});
+  HasStoriesSuccess({this.hasStories, this.showStories});
   final bool hasStories;
+  final bool showStories;
 }
 
 class Failure extends StoryState {
@@ -48,8 +49,7 @@ class StoryBloc extends Cubit<StoryState> {
     }
   }
 
-  Future<void> createChallengeStory(
-      Segment segment, String userId, String segmentTitle, String result, BuildContext context) async {
+  Future<void> createChallengeStory(Segment segment, String userId, String segmentTitle, String result, BuildContext context) async {
     try {
       final String description = getSegmetDescription(segment, context);
       final String newPRResult = gerNewPRResult(context, result);
@@ -94,10 +94,10 @@ class StoryBloc extends Cubit<StoryState> {
     }
   }
 
-  void hasStories(String userId) async {
+  void hasStories(String userId, {bool showStories=true}) async {
     try {
       final bool hasStories = await StoryRepository().hasStories(userId);
-      emit(HasStoriesSuccess(hasStories: hasStories));
+      emit(HasStoriesSuccess(hasStories: hasStories,showStories: showStories));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

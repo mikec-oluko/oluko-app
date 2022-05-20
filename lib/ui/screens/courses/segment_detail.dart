@@ -354,46 +354,47 @@ class _SegmentDetailState extends State<SegmentDetail> {
             return const SizedBox();
           }(),
           body: SegmentImageSection(
-              onPressed: () {
-                if (widget.fromChallenge) {
-                  return;
+            onPressed: () {
+              if (widget.fromChallenge) {
+                return;
+              } else {
+                Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+                final arguments = {
+                  'courseEnrollment': widget.courseEnrollment,
+                  'classIndex': widget.classIndex,
+                  'courseIndex': widget.courseIndex
+                };
+                if (Navigator.canPop(context)) {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    routeLabels[RouteEnum.insideClass],
+                    arguments: arguments,
+                  );
                 } else {
-                  Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
-                  final arguments = {
-                    'courseEnrollment': widget.courseEnrollment,
-                    'classIndex': widget.classIndex,
-                    'courseIndex': widget.courseIndex
-                  };
-                  if (Navigator.canPop(context)) {
-                    Navigator.pushReplacementNamed(
-                      context,
-                      routeLabels[RouteEnum.insideClass],
-                      arguments: arguments,
-                    );
-                  } else {
-                    Navigator.pushNamed(
-                      context,
-                      routeLabels[RouteEnum.insideClass],
-                      arguments: arguments,
-                    );
-                  }
+                  Navigator.pushNamed(
+                    context,
+                    routeLabels[RouteEnum.insideClass],
+                    arguments: arguments,
+                  );
                 }
-              },
-              segment: _segments[i],
-              challenge: challenge,
-              currentSegmentStep: i + 1,
-              totalSegmentStep: totalSegmentStep,
-              userId: _user.id,
-              audioAction: _audioAction,
-              peopleAction: _peopleAction,
-              clockAction: _clockAction,
-              courseEnrollment: widget.courseEnrollment,
-              courseIndex: widget.courseIndex,
-              segments: _segments,
-              classIndex: widget.classIndex,
-              coachRequests: _coachRequests,
-              coach: _coach,
-              fromChallenge: widget.fromChallenge)));
+              }
+            },
+            segment: _segments[i],
+            challenge: challenge,
+            currentSegmentStep: i + 1,
+            totalSegmentStep: totalSegmentStep,
+            userId: _user.id,
+            audioAction: _audioAction,
+            peopleAction: _peopleAction,
+            clockAction: _clockAction,
+            courseEnrollment: widget.courseEnrollment,
+            courseIndex: widget.courseIndex,
+            segments: _segments,
+            classIndex: widget.classIndex,
+            coachRequests: _coachRequests,
+            coach: _coach,
+            fromChallenge: widget.fromChallenge,
+          )));
     }
     return segmentWidgets;
   }

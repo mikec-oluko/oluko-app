@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -210,6 +211,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<MovementBloc>(context).getStream();
+          BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
         }
         return form();
       } else {
@@ -245,6 +247,15 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                       onBackPressed: () => Navigator.pop(context),
                                       onPlay: () => widget.playPauseVideo(),
                                       videoVisibilty: _isVideoPlaying,
+                                      bottomWidgets: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                                          child: Text(
+                                            widget.course.name,
+                                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     showEnrollButton(enrollmentState.courseEnrollment, context),
                                     Padding(
@@ -252,10 +263,6 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                         child: Container(
                                             width: MediaQuery.of(context).size.width,
                                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                              Text(
-                                                widget.course.name,
-                                                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                                              ),
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(

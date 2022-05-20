@@ -679,6 +679,7 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   goToSegmentDetail() {
+    closeVideo();
     int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
     if (segmentIndex == -1 || widget.courseEnrollment.classes[widget.classIndex].completedAt != null) {
       segmentIndex = 0;

@@ -81,6 +81,7 @@ import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
@@ -92,6 +93,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
@@ -404,13 +406,14 @@ class Routes {
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
-  final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final CarouselBloc _carouselBloc = CarouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
-  final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final UserInformationBloc _userInformationBloc = UserInformationBloc();
   final ChallengeCompletedBeforeBloc _challengeCompletedBeforeBloc = ChallengeCompletedBeforeBloc();
+  final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
+  final FAQBloc _fAQBloc = FAQBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -483,7 +486,7 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
-          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
@@ -622,6 +625,7 @@ class Routes {
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:
+        providers = [BlocProvider<FAQBloc>.value(value: _fAQBloc),];
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
@@ -758,7 +762,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
-          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -853,6 +858,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -872,6 +878,7 @@ class Routes {
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -911,7 +918,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
-          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1115,7 +1123,8 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
-          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1173,6 +1182,7 @@ class Routes {
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView =

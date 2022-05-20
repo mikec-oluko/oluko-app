@@ -14,6 +14,7 @@ import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 import 'oluko_localizations.dart';
 
@@ -207,7 +208,8 @@ class SegmentUtils {
     if (movement.parameter != null) {
       switch (movement.parameter) {
         case ParameterEnum.duration:
-          label += 's';
+        label = TimeConverter.durationToString(Duration(seconds: movement.value));
+          //label += 's';
           parameter = 's';
           break;
         case ParameterEnum.reps:
