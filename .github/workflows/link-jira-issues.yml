@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get the current branch name
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: branch_step
+
       - name: Parse Jira Keys from Commit
         id: jira_keys
         uses: HighwayThree/jira-extract-issue-keys@master
@@ -35,5 +40,5 @@ jobs:
           jira-email: "${{env.JIRA_USER_EMAIL}}"
           jira-base-url: "${{env.JIRA_BASE_URL}}"
           issues: ${{steps.jira_keys.outputs.jira-keys}}
-          title: 'Merged into ${{github.ref##*/}}'
+          title: 'Merged into ${{ steps.branch_step.outputs.branch }}'
 
