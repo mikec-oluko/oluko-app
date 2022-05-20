@@ -4,6 +4,7 @@ import 'package:oluko_app/helpers/basic_tiles.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/faq_item.dart';
 import 'package:oluko_app/ui/components/parent_tile.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ExpansionPanelListWidget extends StatefulWidget {
   List<FAQItem> faqList;
@@ -21,9 +22,12 @@ class _ExpansionPanelListState extends State<ExpansionPanelListWidget> {
         children: [
           for (var type in FAQCategoriesEnum.values)
             ParentTileWidget(
-              tile: BasicTile(title: fAQCategories[type], tiles: [
+              tile: BasicTile(title: OlukoLocalizations.get(context, fAQCategories[type]), tiles: [
                 for (FAQItem faq in widget.faqList)
-                  if (faq.category == type) BasicTile(title: faq.question, tiles: [BasicTile(title: faq.answer)]),
+                  if (faq.category == type)
+                    () {
+                      return BasicTile(title: faq.question, tiles: [BasicTile(title: faq.answer)]);
+                    }()
               ]),
             )
         ],

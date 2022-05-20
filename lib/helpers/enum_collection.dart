@@ -70,7 +70,7 @@ enum NoInternetContentEnum { fullscreen, widget }
 enum FAQCategoriesEnum { myAccount, memberships, about }
 
 Map<FAQCategoriesEnum, String> fAQCategories = {
-  FAQCategoriesEnum.myAccount: 'My Account',
-  FAQCategoriesEnum.memberships: 'Memberships',
-  FAQCategoriesEnum.about:'About',
+  FAQCategoriesEnum.myAccount: 'myAccount', 
+  FAQCategoriesEnum.memberships: 'about',
+  FAQCategoriesEnum.about:'memberships',
 };

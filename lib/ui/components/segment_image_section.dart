@@ -403,7 +403,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             )
           else
             GestureDetector(
-              onTap: () => isVideoPlaying(),
+              onTap: () => changeVideoState(),
               child: SizedBox(
                 height: 46,
                 width: 46,
@@ -528,7 +528,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         image: widget.segment.image,
         video: widget.segment.video,
         onBackPressed: () => Navigator.pop(context),
-        onPlay: () => isVideoPlaying(),
+        onPlay: () => changeVideoState(),
         videoVisibilty: _isVideoPlaying,
       ),
     );
@@ -542,7 +542,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     }
   }
 
-  void isVideoPlaying() {
+  void changeVideoState() {
     setState(() {
       _isVideoPlaying = !_isVideoPlaying;
     });
@@ -650,7 +650,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   _onStartPressed() {
-    isVideoPlaying();
+    changeVideoState();
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
       showCoachDialog();
