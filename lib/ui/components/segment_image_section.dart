@@ -520,7 +520,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       key: Key('videoPlayer'),
       onVisibilityChanged: (VisibilityInfo info) {
         if (info.visibleFraction < 0.1 && mounted) {
-          isVideoPlaying();
+          closeVideo();
         }
       },
       child: OlukoVideoPreview(
@@ -534,8 +534,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
+  void closeVideo() {
+    if (_isVideoPlaying) {
+      setState(() {
+        _isVideoPlaying = !_isVideoPlaying;
+      });
+    }
+  }
+
   void isVideoPlaying() {
-    return setState(() {
+    setState(() {
       _isVideoPlaying = !_isVideoPlaying;
     });
   }
