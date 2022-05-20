@@ -1,0 +1,39 @@
+
+name: Deploy to Firebase Hosting on merge
+on:
+  push:
+    branches:
+      - feature/jira-integration
+
+env:
+  JIRA_API_TOKEN: "${{secrets.JIRA_API_TOKEN}}"
+  JIRA_USER_EMAIL: "${{secrets.JIRA_USER_EMAIL}}"
+  JIRA_BASE_URL: "https://jeminc.atlassian.net"
+
+jobs:
+  build_and_deploy:
+    name: Link jira issues
+    environment: develop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Parse Jira Keys from Commit
+        id: jira_keys
+        uses: HighwayThree/jira-extract-issue-keys@master
+        with:
+          is-pull-request: ${{ github.event_name == 'pull_request' }}
+          parse-all-commits: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Link jira issues
+        if: steps.jira_keys.outputs.jira-keys != ''
+        uses: pineapple-lab/link-to-jira-issues@v1.0
+        with:
+          jira-api-token: "${{ env.JIRA_API_TOKEN }}"
+          jira-email: "${{env.JIRA_USER_EMAIL}}"
+          jira-base-url: "${{env.JIRA_BASE_URL}}"
+          issues: ${{steps.jira_keys.outputs.jira-keys}}
+          title: 'Merged into ${GITHUB_REF##*/}'
+
