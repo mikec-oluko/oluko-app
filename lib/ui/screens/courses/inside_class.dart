@@ -269,19 +269,23 @@ class _InsideClassesState extends State<InsideClass> {
     List<Widget> challengesCard = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
-        for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
-          if (widget.courseEnrollment.classes[j].id == _class.id) {
-            for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
-              if (widget.courseEnrollment.classes[j].segments[k].id == segment.id) {
-                if (k - 1 > 1) {
-                  segmentChallenge.previousSegmentFinish = widget.courseEnrollment.classes[j].segments[k - 1].completedAt != null;
-                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
-                  segmentChallenge.segmentIndex = k;
+        for (int classIndex = 0; classIndex < widget.courseEnrollment.classes.length; classIndex++) {
+          if (widget.courseEnrollment.classes[classIndex].id == _class.id) {
+            for (int segmentIndex = 0; segmentIndex < widget.courseEnrollment.classes[classIndex].segments.length; segmentIndex++) {
+              if (widget.courseEnrollment.classes[classIndex].segments[segmentIndex].id == segment.id) {
+                if (segmentIndex - 1 > 1) {
+                  segmentChallenge.previousSegmentFinish =
+                      widget.courseEnrollment.classes[classIndex].segments[segmentIndex - 1].completedAt != null;
+                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[classIndex].segments[segmentIndex];
+                  segmentChallenge.segmentIndex = segmentIndex;
                   segmentChallenge.challengeSegment.image ??= segment.image;
+                  segmentChallenge.segmentId = segment.id;
                 } else {
-                  segmentChallenge.segmentIndex = k;
-                  segmentChallenge.previousSegmentFinish = true;
-                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
+                  segmentChallenge.segmentIndex = segmentIndex;
+                  segmentChallenge.segmentId = segment.id;
+                  segmentChallenge.previousSegmentFinish =
+                      widget.courseEnrollment.classes[classIndex].segments[segmentIndex].completedAt != null;
+                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[classIndex].segments[segmentIndex];
                   segmentChallenge.challengeSegment.image ??= segment.image;
                 }
               }
@@ -293,6 +297,7 @@ class _InsideClassesState extends State<InsideClass> {
           segmentChallenge: segmentChallenge,
           navigateToSegment: true,
           audioIcon: false,
+          checkUnlockedChallenge: true
         ));
       }
     });

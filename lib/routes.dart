@@ -676,6 +676,7 @@ class Routes {
           challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
+          userRequested: argumentsToAdd['userRequested'] as UserResponse,
         );
         break;
       case RouteEnum.profileTransformationJourney:

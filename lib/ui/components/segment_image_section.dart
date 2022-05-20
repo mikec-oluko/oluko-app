@@ -97,7 +97,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     _canStartSegment = canStartSegment();
     if (widget.segment.isChallenge) {
-      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(widget.segment.id, widget.userId);
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(segmentId: widget.segment.id,userId: widget.userId);
     }
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;

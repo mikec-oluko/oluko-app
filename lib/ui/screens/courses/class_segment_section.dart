@@ -53,10 +53,10 @@ class _State extends State<ClassSegmentSection> {
                         padding: const EdgeInsets.only(bottom: 35.0),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           ChallengesCard(
-                            segmentChallenge: widget.segmentChallenge,
-                            navigateToSegment: true,
-                            audioIcon: false,
-                          ),
+                              segmentChallenge: widget.segmentChallenge,
+                              navigateToSegment: true,
+                              audioIcon: false,
+                              checkUnlockedChallenge: true),
                           SizedBox(width: 30.0),
                           Padding(
                             padding: const EdgeInsets.only(top: 15.0),

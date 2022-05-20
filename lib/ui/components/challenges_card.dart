@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/recorder_view.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChallengesCard extends StatefulWidget {
   final ChallengeNavigation segmentChallenge;
@@ -15,6 +18,8 @@ class ChallengesCard extends StatefulWidget {
   final bool navigateToSegment;
   final bool useAudio;
   final bool audioIcon;
+  final bool checkUnlockedChallenge;
+  final bool customValueForChallenge;
 
   ChallengesCard(
       {this.routeToGo,
@@ -22,6 +27,8 @@ class ChallengesCard extends StatefulWidget {
       this.userRequested,
       this.useAudio = true,
       this.navigateToSegment = false,
+      this.checkUnlockedChallenge = false,
+      this.customValueForChallenge = false,
       this.audioIcon = true});
 
   @override
@@ -30,42 +37,89 @@ class ChallengesCard extends StatefulWidget {
 
 class _State extends State<ChallengesCard> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
+  bool isChallengeFinishedBefore = false;
+  Widget challengeCardWidget = SizedBox.shrink();
+  Widget widgetContentToReturn = SizedBox.shrink();
+  @override
+  void initState() {
+    widget.checkUnlockedChallenge
+        ? BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
+            .completedChallengeBefore(segmentId: widget.segmentChallenge.segmentId, userId: widget.segmentChallenge.enrolledCourse.userId)
+        : null;
+    challengeCardWidget = OlukoCircularProgressIndicator();
+    widgetContentToReturn = OlukoCircularProgressIndicator();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SizedBox(height: 10),
-      widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context),
-      if (widget.useAudio && widget.audioIcon)
-        Row(
-        children: [
-          if (widget.useAudio && widget.audioIcon)
-            Padding(
-                padding: EdgeInsets.only(top: 13),
-                child: GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
-                    arguments: {'challenge': widget.segmentChallenge.challengeForAudio, 'userRequested': widget.userRequested}),
-                    child: Stack(alignment: Alignment.center, children: [
-                      Image.asset(
-                        'assets/courses/green_circle.png',
-                        scale: 7,
-                      ),
-                      Icon(Icons.mic, size: 20, color: OlukoColors.black)
-                    ])))
+    if (widget.checkUnlockedChallenge) {
+      widgetContentToReturn = challengeCardWithBuilder();
+    } else {
+      if (widget.customValueForChallenge) {
+        widgetContentToReturn = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(height: 10),
+          unlockedCard(context),
+          if (widget.useAudio && widget.audioIcon) audioElementForChallengeCard(context)
+        ]);
+      } else {
+        widgetContentToReturn = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(height: 10),
+          challengeCardWidget = widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context),
+          if (widget.useAudio && widget.audioIcon) audioElementForChallengeCard(context)
+        ]);
+      }
+    }
+    return widgetContentToReturn;
+  }
+
+  BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState> challengeCardWithBuilder() {
+    return BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
+      if (state is ChallengeHistoricalResult) {
+        isChallengeFinishedBefore = state.wasCompletedBefore;
+        challengeCardWidget = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(height: 10),
+          if (isChallengeFinishedBefore)
+            unlockedCard(context)
           else
-            SizedBox.shrink(),
-          if (widget.useAudio && widget.audioIcon)
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: SizedBox(
-                  width: 85,
-                  child: Text(
-                    '${OlukoLocalizations.get(context, 'saveFor')}${widget.userRequested.firstName}',
-                    style: OlukoFonts.olukoSmallFont(),
-                  )),
-            )
-        ],
-      )
-    ]);
+            challengeCardWidget = widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context),
+          if (widget.useAudio && widget.audioIcon) audioElementForChallengeCard(context)
+        ]);
+      }
+      return challengeCardWidget;
+    });
+  }
+
+  Row audioElementForChallengeCard(BuildContext context) {
+    return Row(
+      children: [
+        if (widget.useAudio && widget.audioIcon)
+          Padding(
+              padding: EdgeInsets.only(top: 13),
+              child: GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
+                      arguments: {'challenge': widget.segmentChallenge.challengeForAudio, 'userRequested': widget.userRequested}),
+                  child: Stack(alignment: Alignment.center, children: [
+                    Image.asset(
+                      'assets/courses/green_circle.png',
+                      scale: 7,
+                    ),
+                    Icon(Icons.mic, size: 20, color: OlukoColors.black)
+                  ])))
+        else
+          SizedBox.shrink(),
+        if (widget.useAudio && widget.audioIcon)
+          Padding(
+            padding: const EdgeInsets.only(left: 5.0),
+            child: SizedBox(
+                width: 75,
+                child: Text(
+                  '${OlukoLocalizations.get(context, 'saveFor')}${widget.userRequested.firstName}',
+                  style: OlukoFonts.olukoSmallFont(),
+                )),
+          )
+      ],
+    );
   }
 
   Widget lockedCard(BuildContext context) {
