@@ -18,7 +18,7 @@ class TagRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('tags')
-        .where('is_deleted', isNotEqualTo: true)
+        //.where('is_deleted', isEqualTo: false)
         .get();
     List<Tag> response = [];
     docRef.docs.forEach((doc) {
