@@ -37,7 +37,7 @@ jobs:
 
       - name: Link jira issues
         if: steps.jira_keys.outputs.jira-keys != ''
-        uses: pineapple-lab/link-to-jira-issues@v1.0
+        uses: pineapple-lab/link-to-jira-issues@v1.1
         with:
           jira-api-token: "${{ env.JIRA_API_TOKEN }}"
           jira-email: "${{env.JIRA_USER_EMAIL}}"
