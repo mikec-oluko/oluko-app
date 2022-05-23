@@ -13,7 +13,7 @@ import 'package:oluko_app/models/user_response.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
   ProfileChallengesPage({this.challengeSegments, this.isCurrentUser, this.userRequested});
-  final List<ChallengeNavigation> challengeSegments;
+  final List<Widget> challengeSegments;
   final bool isCurrentUser;
   final UserResponse userRequested;
   @override
@@ -25,7 +25,9 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
   List<Widget> challengesCards = [];
   @override
   void initState() {
-    challengesCards = buildListOfChallenges(widget.challengeSegments);
+    // BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
+    //     .returnChallengeCards(userId: widget.userRequested.id, listOfChallenges: widget.challengeSegments);
+    // challengesCards = buildListOfChallenges(widget.challengeSegments);
     super.initState();
   }
 
@@ -67,7 +69,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                           child: ListView(
                             padding: const EdgeInsets.all(0),
                             scrollDirection: Axis.horizontal,
-                            children: challengesCards.take(3).toList(),
+                            children: widget.challengeSegments.take(3).toList(),
                           ),
                         ),
                       ],
@@ -91,11 +93,8 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                           Expanded(
                             child: GridView.builder(
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.55),
-                              itemCount: challengesCards.length,
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: challengesCards[index],
-                              ),
+                              itemCount: widget.challengeSegments.length,
+                              itemBuilder: (context, index) => widget.challengeSegments[index],
                             ),
                           ),
                         ],

@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChallengesCard extends StatefulWidget {
   final ChallengeNavigation segmentChallenge;
@@ -15,7 +13,6 @@ class ChallengesCard extends StatefulWidget {
   final bool navigateToSegment;
   final bool useAudio;
   final bool audioIcon;
-  final bool checkUnlockedChallenge;
   final bool customValueForChallenge;
 
   ChallengesCard(
@@ -24,7 +21,6 @@ class ChallengesCard extends StatefulWidget {
       this.userRequested,
       this.useAudio = true,
       this.navigateToSegment = false,
-      this.checkUnlockedChallenge = false,
       this.customValueForChallenge = false,
       this.audioIcon = true});
 
@@ -34,72 +30,35 @@ class ChallengesCard extends StatefulWidget {
 
 class _State extends State<ChallengesCard> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
-  bool isChallengeFinishedBefore = false;
   Widget challengeCardWidget = SizedBox.shrink();
-  Widget _finalContentToReturn = SizedBox.shrink();
   final Widget _cardSpacer = const SizedBox(height: 10);
-
-  @override
-  void initState() {
-    widget.checkUnlockedChallenge
-        ? BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
-            .completedChallengeBefore(segmentId: widget.segmentChallenge.segmentId, userId: widget.segmentChallenge.enrolledCourse.userId)
-        : null;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (widget.checkUnlockedChallenge) {
-      _finalContentToReturn = challengeCardWithBuilder();
-    } else {
-      _finalContentToReturn = staticChallengeCard(context);
-    }
-    return _finalContentToReturn;
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: _challengeCard(context),
+    );
+    ;
   }
 
-  Widget staticChallengeCard(BuildContext context) {
-    Widget _challengeCardWidget = SizedBox.shrink();
-    if (widget.customValueForChallenge) {
-      _challengeCardWidget = _unlockedCardByCustomValue(context);
-    } else {
-      _challengeCardWidget = _unlockedCardByPreviousSegment(context);
-    }
-    return _challengeCardWidget;
-  }
+  Widget _challengeCard(BuildContext context) =>
+      widget.customValueForChallenge ? _unlockedCardByCustomValue(context) : _unlockedCardByPreviousSegment(context);
 
   Column _unlockedCardByPreviousSegment(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _cardSpacer,
-      if (widget.segmentChallenge.previousSegmentFinish) unlockedCard(context) else lockedCard(context),
-      if (needAudioComponent) audioElementForChallengeCard(context)
+      if (widget.segmentChallenge.previousSegmentFinish) _unlockedCard(context) else _lockedCard(context),
+      if (needAudioComponent) _audioElementForChallengeCard(context)
     ]);
   }
 
   Column _unlockedCardByCustomValue(BuildContext context) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_cardSpacer, unlockedCard(context), if (needAudioComponent) audioElementForChallengeCard(context)]);
+        children: [_cardSpacer, _unlockedCard(context), if (needAudioComponent) _audioElementForChallengeCard(context)]);
   }
 
-  BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState> challengeCardWithBuilder() {
-    return BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
-      if (state is ChallengeHistoricalResult) {
-        isChallengeFinishedBefore = state.wasCompletedBefore;
-        challengeCardWidget = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _cardSpacer,
-          if (isChallengeFinishedBefore)
-            unlockedCard(context)
-          else
-            challengeCardWidget = widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context),
-          if (needAudioComponent) audioElementForChallengeCard(context)
-        ]);
-      }
-      return challengeCardWidget;
-    });
-  }
-
-  Row audioElementForChallengeCard(BuildContext context) {
+  Row _audioElementForChallengeCard(BuildContext context) {
     return Row(
       children: [
         if (needAudioComponent)
@@ -133,7 +92,7 @@ class _State extends State<ChallengesCard> {
 
   bool get needAudioComponent => widget.useAudio && widget.audioIcon;
 
-  Widget lockedCard(BuildContext context) {
+  Widget _lockedCard(BuildContext context) {
     return GestureDetector(
       onTap: !widget.useAudio && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
@@ -182,7 +141,7 @@ class _State extends State<ChallengesCard> {
     );
   }
 
-  Widget unlockedCard(BuildContext context) {
+  Widget _unlockedCard(BuildContext context) {
     return GestureDetector(
       onTap: !widget.useAudio && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {

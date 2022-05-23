@@ -625,7 +625,9 @@ class Routes {
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:
-        providers = [BlocProvider<FAQBloc>.value(value: _fAQBloc),];
+        providers = [
+          BlocProvider<FAQBloc>.value(value: _fAQBloc),
+        ];
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
@@ -677,7 +679,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
-          challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+          challengeSegments: argumentsToAdd['challengeSegments'] as List<Widget>,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,

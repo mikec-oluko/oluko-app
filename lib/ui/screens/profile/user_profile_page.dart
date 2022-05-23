@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
@@ -393,6 +394,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             _activeChallenges = state.challenges;
             listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
           }
+          if (state is LoadingChallengeStream) {
+            _activeChallenges = [];
+            listOfChallenges = [];
+          }
           return buildChallengeSection(
               listOfChallenges: listOfChallenges,
               context: context,
@@ -684,28 +689,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
+    List<Widget> challengeList = [];
+    if (listOfChallenges.isNotEmpty) {
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
+          .returnChallengeCards(userId: _userProfileToDisplay.id, listOfChallenges: listOfChallenges);
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-      child: CarouselSection(
-          height: 280,
-          width: MediaQuery.of(context).size.width,
-          title: OlukoLocalizations.get(context, 'upcomingChallenges'),
-          optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-          onOptionTap: () {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
-              'challengeSegments': listOfChallenges,
-              'isCurrentUser': _isCurrentUser,
-              'userRequested': _userProfileToDisplay
-            });
-          },
-          children: content.isNotEmpty
-              ? content
-              : [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 150),
-                    child: OlukoCircularProgressIndicator(),
-                  )
-                ]),
+      child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+        builder: (context, state) {
+          if (state is ChallengeListSuccess) {
+            challengeList = state.challenges;
+          }
+          if (state is LoadingChallenges) {
+            challengeList = [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: OlukoCircularProgressIndicator(),
+              )
+            ];
+          }
+          return CarouselSection(
+              height: 280,
+              width: MediaQuery.of(context).size.width,
+              title: OlukoLocalizations.get(context, 'upcomingChallenges'),
+              optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+              onOptionTap: () {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
+                  'challengeSegments': challengeList,
+                  'isCurrentUser': _isCurrentUser,
+                  'userRequested': _userProfileToDisplay
+                });
+              },
+              children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
+        },
+      ),
     );
   }
 
