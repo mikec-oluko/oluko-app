@@ -354,5 +354,7 @@
     "emailRequired":"Email es requerido",
     "countryRequired":"Pais es requerido",
     "stateRequired":"Estado es requerido",
-    "infoUpdateSuccess":"Información actualizada con éxito"
+    "infoUpdateSuccess":"Información actualizada con éxito",
+    "about":"Acerca de",
+    "memberships":"Membresías"
 }

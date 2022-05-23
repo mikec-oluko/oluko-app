@@ -403,7 +403,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             )
           else
             GestureDetector(
-              onTap: () => isVideoPlaying(),
+              onTap: () => changeVideoState(),
               child: SizedBox(
                 height: 46,
                 width: 46,
@@ -520,7 +520,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       key: Key('videoPlayer'),
       onVisibilityChanged: (VisibilityInfo info) {
         if (info.visibleFraction < 0.1 && mounted) {
-          isVideoPlaying();
+          closeVideo();
         }
       },
       child: OlukoVideoPreview(
@@ -528,14 +528,22 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         image: widget.segment.image,
         video: widget.segment.video,
         onBackPressed: () => Navigator.pop(context),
-        onPlay: () => isVideoPlaying(),
+        onPlay: () => changeVideoState(),
         videoVisibilty: _isVideoPlaying,
       ),
     );
   }
 
-  void isVideoPlaying() {
-    return setState(() {
+  void closeVideo() {
+    if (_isVideoPlaying) {
+      setState(() {
+        _isVideoPlaying = !_isVideoPlaying;
+      });
+    }
+  }
+
+  void changeVideoState() {
+    setState(() {
       _isVideoPlaying = !_isVideoPlaying;
     });
   }
@@ -642,7 +650,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   _onStartPressed() {
-    isVideoPlaying();
+    changeVideoState();
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
       showCoachDialog();
