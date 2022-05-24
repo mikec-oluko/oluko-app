@@ -33,8 +33,12 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
           title: Text(
             widget.titleForAppBar,
             style: OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                ? ScreenUtils.smallScreen(context)
+                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                : ScreenUtils.smallScreen(context)
+                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
+                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
           ),
           actions: [],
           elevation: 0.0,
@@ -85,8 +89,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
     if (recommendedContent.length ==
         recommendedContent
             .where(
-              (contentRecommended) =>
-                  contentRecommended.contentType == TimelineInteractionType.movement,
+              (contentRecommended) => contentRecommended.contentType == TimelineInteractionType.movement,
             )
             .length) {
       recommendedContent.forEach((movementRecommended) {
@@ -99,8 +102,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
     } else if (recommendedContent.length ==
         recommendedContent
             .where(
-              (contentRecommended) =>
-                  contentRecommended.contentType == TimelineInteractionType.course,
+              (contentRecommended) => contentRecommended.contentType == TimelineInteractionType.course,
             )
             .length) {
       recommendedContent.forEach((recommendedCourses) {
