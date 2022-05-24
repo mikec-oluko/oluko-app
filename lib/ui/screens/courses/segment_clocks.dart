@@ -250,7 +250,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                                     context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
-                                topBarIcon = SizedBox();
+
                                 _segmentSubmission = state?.segmentSubmission;
                               }
                             }
@@ -300,6 +300,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget form() {
+    setTopBarIcon();
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
@@ -828,10 +829,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
     Wakelock.disable();
 
+    setTopBarIcon();
+  }
+
+  void setTopBarIcon() {
     if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
-      setState(() {
-        topBarIcon = SegmentClocksUtils.uploadingIcon();
-      });
+      topBarIcon = SegmentClocksUtils.uploadingIcon();
+    } else {
+      topBarIcon = const SizedBox();
     }
   }
 
