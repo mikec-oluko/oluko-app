@@ -25,9 +25,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
   List<Widget> challengesCards = [];
   @override
   void initState() {
-    // BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
-    //     .returnChallengeCards(userId: widget.userRequested.id, listOfChallenges: widget.challengeSegments);
-    // challengesCards = buildListOfChallenges(widget.challengeSegments);
+    challengesCards = widget.challengeSegments;
     super.initState();
   }
 
@@ -69,7 +67,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                           child: ListView(
                             padding: const EdgeInsets.all(0),
                             scrollDirection: Axis.horizontal,
-                            children: widget.challengeSegments.take(3).toList(),
+                            children: challengesCards.take(3).toList(),
                           ),
                         ),
                       ],
@@ -91,10 +89,17 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                           Expanded(
-                            child: GridView.builder(
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.55),
-                              itemCount: widget.challengeSegments.length,
-                              itemBuilder: (context, index) => widget.challengeSegments[index],
+                            child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+                              builder: (BuildContext context, state) {
+                                if (state is ChallengeListSuccess) {
+                                  challengesCards = state.challenges;
+                                }
+                                return GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.55),
+                                  itemCount: challengesCards.length,
+                                  itemBuilder: (context, index) => challengesCards[index],
+                                );
+                              },
                             ),
                           ),
                         ],

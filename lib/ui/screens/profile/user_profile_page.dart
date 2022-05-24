@@ -86,6 +86,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _friendsRequested = false;
   bool canHidePanel = true;
   Widget defaultWidgetNoContent = const SizedBox.shrink();
+  List<Widget> challengeList = [];
 
   @override
   void initState() {
@@ -360,9 +361,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 _courseEnrollmentList = state.courseEnrollments;
                 listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
               }
-              listOfChallenges = _courseEnrollmentList != null && _courseEnrollmentList.isNotEmpty
-                  ? ProfileHelperFunctions.getChallenges(_courseEnrollmentList)
-                  : [];
               return listOfChallenges.isNotEmpty ? buildActiveChallengesForUser() : defaultWidgetNoContent;
             },
           )
@@ -372,16 +370,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 _courseEnrollmentList = state.courseEnrollments;
                 listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
               }
-
-              listOfChallenges = _courseEnrollmentList != null && _courseEnrollmentList.isNotEmpty
-                  ? ProfileHelperFunctions.getChallenges(_courseEnrollmentList)
-                  : [];
               return listOfChallenges.isNotEmpty ? buildActiveChallengesForUser() : defaultWidgetNoContent;
             },
           );
   }
 
   Padding buildActiveChallengesForUser() {
+    Widget contentToReturn = SizedBox.shrink();
     return Padding(
       padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
       child: BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(
@@ -393,10 +388,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
           if (state is ChallengesForUserRequested) {
             _activeChallenges = state.challenges;
             listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
-          }
-          if (state is LoadingChallengeStream) {
-            _activeChallenges = [];
-            listOfChallenges = [];
           }
           return buildChallengeSection(
               listOfChallenges: listOfChallenges,
@@ -689,10 +680,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
-    List<Widget> challengeList = [];
     if (listOfChallenges.isNotEmpty) {
-      BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
-          .returnChallengeCards(userId: _userProfileToDisplay.id, listOfChallenges: listOfChallenges);
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).returnChallengeCards(
+          userId: _userProfileToDisplay.id,
+          listOfChallenges: listOfChallenges,
+          isCurrentUser: _isCurrentUser,
+          userRequested: _userProfileToDisplay);
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),

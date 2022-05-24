@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/challenge_repository.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -56,7 +56,8 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
     }
   }
 
-  Future<void> returnChallengeCards({@required String userId, List<ChallengeNavigation> listOfChallenges}) async {
+  Future<void> returnChallengeCards(
+      {@required String userId, List<ChallengeNavigation> listOfChallenges, bool isCurrentUser = true, UserResponse userRequested}) async {
     List<Widget> challengesCards = [];
     try {
       emit(LoadingChallenges());
@@ -66,10 +67,11 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
           bool challengeWasCompletedBefore =
               challengeHistory != null ? challengeHistory.where((element) => element.completedAt != null).toList().isNotEmpty : false;
           challengesCards.add(ChallengesCard(
-              useAudio: false,
+              userRequested: !isCurrentUser ? userRequested : null,
+              useAudio: !isCurrentUser,
               segmentChallenge: challenge,
-              navigateToSegment: true,
-              audioIcon: false,
+              navigateToSegment: isCurrentUser,
+              audioIcon: !isCurrentUser,
               customValueForChallenge: challengeWasCompletedBefore));
         }
         emit(ChallengeListSuccess(challenges: challengesCards));
