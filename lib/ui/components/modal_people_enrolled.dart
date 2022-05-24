@@ -126,7 +126,9 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
             BlocProvider.of<HiFiveSendBloc>(context),
             BlocProvider.of<HiFiveReceivedBloc>(context),
             BlocProvider.of<UserStatisticsBloc>(context),
-            BlocProvider.of<FavoriteFriendBloc>(context)),
+            BlocProvider.of<FavoriteFriendBloc>(context),
+            BlocProvider.of<UserProgressStreamBloc>(context)
+            ),
         context: context,
       );
     }

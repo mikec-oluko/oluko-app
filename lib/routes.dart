@@ -891,6 +891,7 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
           BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
