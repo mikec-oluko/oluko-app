@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/enums/personal_record_param.dart';
 
-class PersonalRecord extends Base{
+class PersonalRecord extends Base {
   String challengeId;
   DocumentReference challengeReference;
   String courseImage;
@@ -11,6 +11,8 @@ class PersonalRecord extends Base{
   PersonalRecordParam parameter;
   String courseEnrollmentId;
   DocumentReference courseEnrollmentReference;
+  String segmentImage;
+  bool doneFromProfile;
 
   PersonalRecord(
       {this.challengeId,
@@ -21,6 +23,8 @@ class PersonalRecord extends Base{
       this.parameter,
       this.courseEnrollmentId,
       this.courseEnrollmentReference,
+      this.segmentImage,
+      this.doneFromProfile,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -42,6 +46,8 @@ class PersonalRecord extends Base{
         challengeId: json['challenge_id']?.toString(),
         challengeReference: json['challenge_reference'] as DocumentReference,
         courseImage: json['course_image'] as String,
+        segmentImage: json['segment_image'] as String,
+        doneFromProfile: json['donde_from_profile'] as bool,
         userId: json['user_id']?.toString(),
         value: json['value'] as int,
         parameter: json['parameter'] == null ? null : PersonalRecordParam.values[json['parameter'] as int],
@@ -56,6 +62,8 @@ class PersonalRecord extends Base{
       'challenge_id': challengeId,
       'challenge_reference': challengeReference,
       'course_image': courseImage,
+      'segment_image': segmentImage,
+      'donde_from_profile': doneFromProfile,
       'user_id': userId,
       'value': value,
       'parameter': parameter == null ? null : parameter.index,
