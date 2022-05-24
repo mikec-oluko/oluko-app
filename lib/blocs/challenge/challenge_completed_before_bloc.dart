@@ -57,7 +57,10 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
   }
 
   Future<void> returnChallengeCards(
-      {@required String userId, List<ChallengeNavigation> listOfChallenges, bool isCurrentUser = true, UserResponse userRequested}) async {
+      {@required String userId,
+      @required List<ChallengeNavigation> listOfChallenges,
+      bool isCurrentUser = true,
+      UserResponse userRequested}) async {
     List<Widget> challengesCards = [];
     try {
       emit(LoadingChallenges());
@@ -82,31 +85,6 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
-      rethrow;
-    }
-  }
-
-  Future<bool> checkChallengeWasCompleted({@required String segmentId, @required String userId}) async {
-    bool _completedBefore = false;
-    try {
-      if (segmentId != null && userId != null) {
-        final List<Challenge> challenges = await ChallengeRepository.getUserChallengesBySegmentId(segmentId, userId);
-        if (challenges == null) {
-          _completedBefore = false;
-        } else {
-          if (challenges.where((element) => element.completedAt != null).toList().isNotEmpty) {
-            _completedBefore = true;
-          }
-        }
-      } else {
-        _completedBefore = false;
-      }
-      return _completedBefore;
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
       rethrow;
     }
   }

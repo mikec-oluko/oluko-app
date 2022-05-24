@@ -30,7 +30,7 @@ class ChallengesCard extends StatefulWidget {
 
 class _State extends State<ChallengesCard> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
-  Widget challengeCardWidget = SizedBox.shrink();
+  Widget challengeCardWidget = const SizedBox.shrink();
   final Widget _cardSpacer = const SizedBox(height: 10);
   @override
   Widget build(BuildContext context) {

@@ -323,7 +323,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: ScreenUtils.height(context) < 700 ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
+            height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -378,7 +378,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Padding buildActiveChallengesForUser() {
     Widget contentToReturn = SizedBox.shrink();
     return Padding(
-      padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
+      padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
       child: BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(
         builder: (context, state) {
           if (state is GetChallengeStreamSuccess) {
