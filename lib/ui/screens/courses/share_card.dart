@@ -35,6 +35,7 @@ class _State extends State<ShareCard> {
       child: Padding(
         padding: const EdgeInsets.only(right: 15.0, left: 25.0, top: 12, bottom: 12.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               child: Column(
@@ -80,7 +81,6 @@ class _State extends State<ShareCard> {
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(5)),
       child: Container(
-        height: ScreenUtils.height(context) * 0.14,
         child: Image.asset(
           'assets/assessment/task_response_thumbnail.png',
           scale: 17,
