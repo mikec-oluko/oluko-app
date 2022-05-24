@@ -61,17 +61,25 @@ class CourseEnrollmentRepository {
   }
 
   static Future<List<CourseEnrollment>> getByCourse(String courseId, String userId) async {
-    final CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
+    try {
+      final QuerySnapshot qs = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('courseEnrollments')
+          .where('course.id', isEqualTo: courseId)
+          .where('created_by', isNotEqualTo: userId)
+          .get();
 
-    final QuerySnapshot qs = await reference.where('course.id', isEqualTo: courseId).where('created_by', isNotEqualTo: userId).get();
-
-    if (qs.docs.isNotEmpty) {
-      return qs.docs.map((courseData) {
-        final data = courseData.data() as Map<String, dynamic>;
-        return CourseEnrollment.fromJson(data);
-      }).toList();
+      if (qs != null && qs.docs != null && qs.docs.isNotEmpty) {
+        return qs.docs.map((courseData) {
+          final data = courseData.data() as Map<String, dynamic>;
+          return CourseEnrollment.fromJson(data);
+        }).toList();
+      }
+    } catch (e) {
+      return [];
     }
+
     return [];
   }
 
@@ -347,7 +355,7 @@ class CourseEnrollmentRepository {
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 
-    static Future<List<CourseEnrollment>> getByActiveCourse(String courseId, String userId) async {
+  static Future<List<CourseEnrollment>> getByActiveCourse(String courseId, String userId) async {
     final CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
 
