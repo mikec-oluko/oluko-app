@@ -66,3 +66,11 @@ enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFai
 enum ExceptionTypeSourceEnum { invalidFormat, invalidDuration, invalidValue, noFileSelected }
 
 enum NoInternetContentEnum { fullscreen, widget }
+
+enum FAQCategoriesEnum { myAccount, memberships, about }
+
+Map<FAQCategoriesEnum, String> fAQCategories = {
+  FAQCategoriesEnum.myAccount: 'myAccount', 
+  FAQCategoriesEnum.memberships: 'about',
+  FAQCategoriesEnum.about:'memberships',
+};

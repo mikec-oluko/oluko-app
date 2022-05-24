@@ -61,9 +61,9 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
   Widget personalRecordGrid(List<PersonalRecord> personalRecords) {
     if (personalRecords.isNotEmpty) {
       return Container(
-        height: ScreenUtils.height(context)/1.8,
-        width: ScreenUtils.width(context),
-        child: ListView(children: getPRWidgets(personalRecords)));
+          height: ScreenUtils.height(context) / 1.8,
+          width: ScreenUtils.width(context),
+          child: ListView(children: getPRWidgets(personalRecords)));
     } else {
       return Padding(
         padding: const EdgeInsets.only(bottom: 20, top: 10),
@@ -92,16 +92,24 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: record.courseImage != null
-                            ? Image(image: CachedNetworkImageProvider(record.courseImage), fit: BoxFit.cover, width: 65, height: 90)
-                            : SizedBox.shrink()),
+                    child: ClipRRect(borderRadius: BorderRadius.circular(4), child: getPRImage(record)),
                   ),
                 ])
               ],
             ))
         .toList();
     return PRWidgets;
+  }
+
+  Widget getPRImage(PersonalRecord record) {
+    if (record.doneFromProfile!=null && record.doneFromProfile) {
+      return record.segmentImage != null
+          ? Image(image: CachedNetworkImageProvider(record.segmentImage), fit: BoxFit.cover, width: 65, height: 90)
+          : SizedBox.shrink();
+    } else {
+      return record.courseImage != null
+          ? Image(image: CachedNetworkImageProvider(record.courseImage), fit: BoxFit.cover, width: 65, height: 90)
+          : SizedBox.shrink();
+    }
   }
 }

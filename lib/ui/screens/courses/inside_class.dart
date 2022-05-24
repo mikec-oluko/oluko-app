@@ -1,8 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
@@ -52,7 +50,6 @@ import 'package:oluko_app/utils/class_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum PanelEnum { audios, classDetail }
@@ -98,42 +95,49 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {
-          BlocProvider.of<DownloadAssetBloc>(context).getVideo();
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        if (authState is AuthSuccess) {
+          if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {
+            BlocProvider.of<DownloadAssetBloc>(context).getVideo();
+          }
+          BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
+          BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
+          return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(
+            builder: (context, enrollmentAudioState) {
+              return BlocBuilder<ClassBloc, ClassState>(
+                builder: (context, classState) {
+                  if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
+                    _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
+                    _class = classState.classObj;
+                    BlocProvider.of<MovementBloc>(context).getByClass(_class);
+                    final List<Audio> classAudios = AudioService.getClassAudios(
+                        enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
+                    _audios = AudioService.getNotDeletedAudios(classAudios);
+                    _audioQty = _audios == null ? 0 : _audios.length;
+                    BlocProvider.of<SegmentBloc>(context).getAll(_class);
+                    BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
+                    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
+                    return WillPopScope(
+                      onWillPop: () {
+                        _buttonController.close();
+                        Navigator.pop(context);
+                        return Future(() => false);
+                      },
+                      child: form(),
+                    );
+                  } else {
+                    return OlukoCircularProgressIndicator();
+                  }
+                },
+              );
+            },
+          );
+        } else {
+          return const SizedBox();
         }
-        BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
-        BlocProvider.of<MovementBloc>(context).getAll();
-        BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
-        return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
-          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-            if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
-              _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
-              _class = classState.classObj;
-              List<Audio> classAudios =
-                  AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
-              _audios = AudioService.getNotDeletedAudios(classAudios);
-              _audioQty = _audios == null ? 0 : _audios.length;
-              BlocProvider.of<SegmentBloc>(context).getAll(_class);
-              BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
-              BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
-              return WillPopScope(
-                  onWillPop: () {
-                    _buttonController.close();
-                    Navigator.pop(context);
-                    return Future(() => false);
-                  },
-                  child: form());
-            } else {
-              return OlukoCircularProgressIndicator();
-            }
-          });
-        });
-      } else {
-        return const SizedBox();
-      }
-    });
+      },
+    );
   }
 
   Widget form() {
@@ -181,7 +185,7 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
+    final List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
@@ -189,7 +193,7 @@ class _InsideClassesState extends State<InsideClass> {
       OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
+        whenInitialized: (ChewieController chewieController) => setState(() {
           _controller = chewieController;
         }),
       ),
@@ -254,7 +258,7 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   List<SegmentSubmodel> getChallenges() {
-    List<SegmentSubmodel> challenges = [];
+    final List<SegmentSubmodel> challenges = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
         challenges.add(segment);
@@ -264,9 +268,9 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   List<Widget> getChallengesCard() {
-    ChallengeNavigation segmentChallenge =
+    final ChallengeNavigation segmentChallenge =
         ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
-    List<Widget> challengesCard = [];
+    final List<Widget> challengesCard = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
         for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
@@ -286,12 +290,14 @@ class _InsideClassesState extends State<InsideClass> {
             }
           }
         }
-        challengesCard.add(ChallengesCard(
-          useAudio: false,
-          segmentChallenge: segmentChallenge,
-          navigateToSegment: true,
-          audioIcon: false,
-        ));
+        challengesCard.add(
+          ChallengesCard(
+            useAudio: false,
+            segmentChallenge: segmentChallenge,
+            navigateToSegment: true,
+            audioIcon: false,
+          ),
+        );
       }
     });
 
@@ -312,13 +318,17 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classDetailSection() {
-    ChallengeNavigation segmentChallenge =
+    final ChallengeNavigation segmentChallenge =
         ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     return BlocBuilder<SegmentBloc, SegmentState>(
       builder: (context, segmentState) {
         if (segmentState is GetSegmentsSuccess) {
           return ClassDetailSection(
-              segmentChallenge: segmentChallenge, classObj: _class, movements: _movements, segments: segmentState.segments);
+            segmentChallenge: segmentChallenge,
+            classObj: _class,
+            movements: _movements,
+            segments: segmentState.segments,
+          );
         } else {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -542,41 +552,44 @@ class _InsideClassesState extends State<InsideClass> {
         maxHeight: 450, //TODO
         collapsed: const SizedBox(),
         controller: _buttonController,
-        panel: BlocBuilder<InsideClassContentBloc, InsideClassContentState>(builder: (context, state) {
-          Widget _contentForPanel = const SizedBox();
-          if (state is InsideClassContentDefault) {
-            if (_buttonController.isPanelOpen) {
-              _buttonController.close();
+        panel: BlocBuilder<InsideClassContentBloc, InsideClassContentState>(
+          builder: (context, state) {
+            Widget _contentForPanel = const SizedBox();
+            if (state is InsideClassContentDefault) {
+              if (_buttonController.isPanelOpen) {
+                _buttonController.close();
+              }
+              _contentForPanel = const SizedBox();
             }
-            _contentForPanel = const SizedBox();
-          }
-          if (state is InsideClassContentPeopleOpen) {
-            _buttonController.open();
-            _contentForPanel =
-                ModalPeopleEnrolled(userId: widget.courseEnrollment.createdBy, users: state.users, favorites: state.favorites);
-          }
-          if (state is InsideClassContentAudioOpen) {
-            _buttonController.open();
+            if (state is InsideClassContentPeopleOpen) {
+              _buttonController.open();
+              _contentForPanel =
+                  ModalPeopleEnrolled(userId: widget.courseEnrollment.createdBy, users: state.users, favorites: state.favorites);
+            }
+            if (state is InsideClassContentAudioOpen) {
+              _buttonController.open();
 
-            _contentForPanel = ModalAudio(
+              _contentForPanel = ModalAudio(
                 panelController: _buttonController,
                 users: _coaches,
                 audios: _audios,
                 onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
-                audioPlayer: audioPlayer);
-          }
-          if (state is InsideClassContentLoading) {
-            _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
-          }
-          return _contentForPanel;
-        }),
+                audioPlayer: audioPlayer,
+              );
+            }
+            if (state is InsideClassContentLoading) {
+              _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
+            }
+            return _contentForPanel;
+          },
+        ),
       ),
     );
   }
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
     _audios[audioIndex].deleted = true;
-    List<Audio> audiosUpdated = _audios.toList();
+    final List<Audio> audiosUpdated = _audios.toList();
     _audios.removeAt(audioIndex);
     BlocProvider.of<CourseEnrollmentAudioBloc>(context)
         .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, widget.courseEnrollment.classes[widget.classIndex].id, _audios);
