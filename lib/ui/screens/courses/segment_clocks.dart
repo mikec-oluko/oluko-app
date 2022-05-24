@@ -250,7 +250,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                                     context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
-
                                 _segmentSubmission = state?.segmentSubmission;
                               }
                             }
@@ -300,12 +299,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget form() {
-    setTopBarIcon();
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar:
-            SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
+        appBar: SegmentClocksUtils.getAppBar(
+            context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
@@ -828,16 +826,22 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
 
     Wakelock.disable();
-
-    setTopBarIcon();
   }
 
-  void setTopBarIcon() {
-    if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
-      topBarIcon = SegmentClocksUtils.uploadingIcon();
-    } else {
-      topBarIcon = const SizedBox();
-    }
+  Widget setTopBarIcon() {
+    return BlocBuilder<VideoBloc, VideoState>(
+      builder: (context, state) {
+        if (state is VideoSuccess || state is VideoFailure) {
+          return const SizedBox();
+        } else {
+          if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+            return SegmentClocksUtils.uploadingIcon();
+          } else {
+            return const SizedBox();
+          }
+        }
+      },
+    );
   }
 
   int getPersonalRecordValue() {
