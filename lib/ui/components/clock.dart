@@ -102,9 +102,7 @@ class _State extends State<Clock> {
       return BlocListener<StopwatchBloc, StopwatchState>(
           listener: (context, stopwatchState) {
             if (stopwatchState is UpdateStopwatchSuccess) {
-              setState(() {
                 stopwatch = stopwatchState.duration;
-              });
             }
           },
           child: BlocListener<TimerTaskBloc, TimerTaskState>(

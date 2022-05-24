@@ -177,6 +177,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   @override
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    //TODO: for screen rotation
     /*if (widget.workoutType == WorkoutType.segmentWithRecording) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeRight,
@@ -298,7 +299,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget orientatedClock(bool keyboardVisibilty) {
-    if (MediaQuery.of(context).orientation == Orientation.portrait){
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
       return getClock(keyboardVisibilty);
     } else {
       return RotationTransition(turns: AlwaysStoppedAnimation(90 / 360), child: getClock(keyboardVisibilty));
@@ -349,7 +350,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       createStory: _createStory,
       workoutType: workoutType,
       originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
-      //shareDone: shareDone,
       segmentSubmission: _segmentSubmission,
       scores: scores,
       totalScore: totalScore,
@@ -396,7 +396,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         appBar:
             SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: Colors.black,
-        body: /*NativeDeviceOrientationReader(builder: (context) {
+        body:
+            //TODO: for screen rotation
+            /*NativeDeviceOrientationReader(builder: (context) {
           NativeDeviceOrientation orientation = NativeDeviceOrientationReader.orientation(context);
 
           int turns;
@@ -417,8 +419,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
               //turns = 0;
               break;
           }
-          return*/ scaffoldBody()
-        );
+          return*/
+            scaffoldBody());
   }
 
   Widget scaffoldBody() {
@@ -770,10 +772,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       _setupCameras();
     }
 
-    /*if (isSegmentWithoutRecording() && timerTaskIndex == 1 && _coachRequest != null) {
-      BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
-    }*/
-
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
@@ -997,6 +995,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   void dispose() {
+    //TODO: for screen rotation
     /*SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
