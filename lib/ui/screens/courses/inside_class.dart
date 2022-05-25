@@ -170,11 +170,15 @@ class _InsideClassesState extends State<InsideClass> {
                         slidingUpPanelComponent(context)
                       ],
                     );
+                  } else if (coachState is CoachUserLoading) {
+                    return OlukoCircularProgressIndicator();
                   } else {
                     return const SizedBox();
                   }
                 },
               );
+            } else if (movementState is LoadingMovementState) {
+              return OlukoCircularProgressIndicator();
             } else {
               return const SizedBox();
             }
