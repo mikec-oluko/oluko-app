@@ -76,29 +76,35 @@ class CourseUtils {
     return collection.where((course) => course.name.toLowerCase().indexOf(query.toLowerCase()) == 0).toList();
   }
 
-  static Widget searchSuggestions(SearchResults<Course> search, GlobalKey<SearchState<dynamic>> searchBarKey) {
-    return SearchSuggestions<Course>(
-        textInput: search.query,
-        itemList: search.suggestedItems,
-        onPressed: (dynamic item) => {searchBarKey.currentState.updateSearchResults(item.name.toString())},
-        keyNameList: search.suggestedItems.map((e) => e.name).toList());
+  static Widget searchSuggestions(SearchResults<Course> search, GlobalKey<SearchState<dynamic>> searchBarKey, BuildContext context) {
+    return search.suggestedItems.isEmpty
+        ? noCourseText(context)
+        : SearchSuggestions<Course>(
+            textInput: search.query,
+            itemList: search.suggestedItems,
+            onPressed: (dynamic item) => {searchBarKey.currentState.updateSearchResults(item.name.toString())},
+            keyNameList: search.suggestedItems.map((e) => e.name).toList());
   }
 
   static Widget searchResults(BuildContext context, SearchResults<Course> search, double cardsAspectRatio, int searchResultsToShowPortrait,
       int searchResultsToShowLandscape) {
     return search.searchResults.isEmpty
-        ? Padding(
-          padding: EdgeInsets.only(left:30,top:20),
-          child: Text(
-            OlukoLocalizations.get(context, 'noCourseFound'),
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
-          ))
+        ? noCourseText(context)
         : SearchResultsGrid<Course>(
             childAspectRatio: cardsAspectRatio,
             crossAxisCount:
                 MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
             textInput: search.query,
             itemList: search.searchResults);
+  }
+
+  static Widget noCourseText(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(left: 30, top: 20),
+        child: Text(
+          OlukoLocalizations.get(context, 'noCourseFound'),
+          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+        ));
   }
 
   static Widget filterSelector(TagSuccess state,
