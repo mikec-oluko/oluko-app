@@ -175,7 +175,9 @@ class _InsideClassesState extends State<InsideClass> {
                   }
                 },
               );
-            } else {
+            } else if (movementState is LoadingMovementState){
+              return OlukoCircularProgressIndicator();
+            }else{
               return const SizedBox();
             }
           },
