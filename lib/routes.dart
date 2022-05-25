@@ -622,7 +622,9 @@ class Routes {
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:
-        providers = [BlocProvider<FAQBloc>.value(value: _fAQBloc),];
+        providers = [
+          BlocProvider<FAQBloc>.value(value: _fAQBloc),
+        ];
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
@@ -1081,6 +1083,7 @@ class Routes {
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
