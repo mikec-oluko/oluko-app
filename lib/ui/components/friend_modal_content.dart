@@ -46,14 +46,14 @@ class FriendModalContent extends StatefulWidget {
 class _FriendModalContentState extends State<FriendModalContent> {
   @override
   void initState() {
+    widget.blocFriends.getFriendsByUserId(widget.currentUserId);
+    widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
+    widget.blocUserStatistics.getUserStatistics(widget.user.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.blocFriends.getFriendsByUserId(widget.currentUserId);
-    widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
-    widget.blocUserStatistics.getUserStatistics(widget.user.id);
     return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
       bloc: widget.blocFavoriteFriend,
       listener: (favoriteFriendContext, favoriteState) {
@@ -197,8 +197,9 @@ class _FriendModalContentState extends State<FriendModalContent> {
               ),
             ),
             BlocBuilder<FriendBloc, FriendState>(
-              bloc: widget.blocFriends,
+              // bloc: widget.blocFriends,
               builder: (context, friendState) {
+                if (friendState is GetFriendsSuccess) {}
                 final bool userIsFriend =
                     friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(widget.user.id);
                 final bool connectionRequested = friendState is GetFriendsSuccess &&
