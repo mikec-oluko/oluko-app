@@ -29,10 +29,8 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
-import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/time_converter.dart';
 
 class EnrolledCourse extends StatefulWidget {
   final Course course;
@@ -71,16 +69,16 @@ class EnrolledCourse extends StatefulWidget {
     final int index = courseIndex ?? outsideCourseIndex;
 
     final List<Class> _coursesClases = CourseService.getCourseClasses(course ?? outsideCourse, classes);
-    final List<ClassItem> _classItemsToUseCompleted = [];
-    final List<ClassItem> _classItemsToUseIncomplete = [];
+    final List<ClassItem> _classItems = [];
     for (final element in _coursesClases) {
-      final enrolledClass = enrollment.classes.firstWhere((enrolledClass) => enrolledClass.id == element.id, orElse: () => null);
-      if (enrolledClass != null) {
-        final ClassItem classItem = ClassItem(classObj: element, expanded: false);
-        if (enrolledClass.completedAt == null) {
-          _classItemsToUseIncomplete.add(classItem);
-        } else {
-          _classItemsToUseCompleted.add(classItem);
+      final ClassItem classItem = ClassItem(classObj: element, expanded: false);
+      _classItems.add(classItem);
+    }
+    final List<ClassItem> _classItemsToUse = [];
+    for (final enrolledClass in enrollment.classes) {
+      for (final courseClass in _classItems) {
+        if (enrolledClass.id == courseClass.classObj.id) {
+          _classItemsToUse.add(courseClass);
         }
       }
     }
@@ -89,50 +87,86 @@ class EnrolledCourse extends StatefulWidget {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
-        ..._classItemsToUseIncomplete
-            .map((item) => mapIncompletedItems(context, enrollment, _classItemsToUseIncomplete, item, outSideCloseVideo, index)),
-        ..._classItemsToUseCompleted.map((item) => mapCompletedItems(context, enrollment, _classItemsToUseCompleted, item, index))
+        ..._classItemsToUse.map(
+          (item) => getIncompletedClasses(_classItemsToUse, enrollment, outSideCloseVideo, closeVideo, context, index, item),
+        ),
+        ..._classItemsToUse.map(
+          (item) => getCompletedClasses(enrollment, _classItemsToUse, item, context, index),
+        )
       ],
     );
   }
 
-  GestureDetector mapCompletedItems(
-      BuildContext context, CourseEnrollment enrollment, List<ClassItem> classItemsToUseCompleted, ClassItem item, int index) {
-    final classIndex = classItemsToUseCompleted.indexOf(item);
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        routeLabels[RouteEnum.insideClass],
-        arguments: {
-          'courseEnrollment': enrollment,
-          'classIndex': classIndex,
-          'courseIndex': index,
-        },
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: ClassSection(
-          classProgress: 1,
-          isCourseEnrolled: true,
-          index: classIndex,
-          total: classItemsToUseCompleted.length,
-          classObj: item.classObj,
-        ),
-      ),
-    );
-  }
-
-  Widget mapIncompletedItems(BuildContext context, CourseEnrollment enrollment, List<ClassItem> classItemsToUseIncomplete, ClassItem item,
-      Function outSideCloseVideo, int index) {
-    final classProgress = CourseEnrollmentService.getClassProgress(enrollment, classItemsToUseIncomplete.indexOf(item));
-    final classIndex = classItemsToUseIncomplete.indexOf(item);
-    return classProgress == 0
-        ? Neumorphic(
-            margin: const EdgeInsets.all(15),
-            style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
-              classProgress > 0,
+  Widget getCompletedClasses(
+      CourseEnrollment enrollment, List<ClassItem> _classItemsToUse, ClassItem item, BuildContext context, int index) {
+    final classIndex = _classItemsToUse.indexOf(item);
+    return enrollment.classes[classIndex] != null && enrollment.classes[classIndex].completedAt != null
+        ? GestureDetector(
+            onTap: () => Navigator.pushNamed(
+              context,
+              routeLabels[RouteEnum.insideClass],
+              arguments: {
+                'courseEnrollment': enrollment,
+                'classIndex': classIndex,
+                'courseIndex': index,
+              },
             ),
-            child: GestureDetector(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: ClassSection(
+                classProgress: 1,
+                isCourseEnrolled: true,
+                index: classIndex,
+                total: _classItemsToUse.length,
+                classObj: item.classObj,
+              ),
+            ),
+          )
+        : const SizedBox();
+  }
+}
+
+Widget getIncompletedClasses(List<ClassItem> _classItemsToUse, CourseEnrollment enrollment, Function outSideCloseVideo, Function closeVideo,
+    BuildContext context, int index, ClassItem item) {
+  final classIndex = _classItemsToUse.indexOf(item);
+  final classProgress = CourseEnrollmentService.getClassProgress(enrollment, classIndex);
+  return enrollment.classes[classIndex].completedAt == null
+      ? classProgress == 0
+          ? Neumorphic(
+              margin: const EdgeInsets.all(15),
+              style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
+                classProgress > 0,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  if (closeVideo != null) {
+                    closeVideo();
+                  } else {
+                    outSideCloseVideo();
+                  }
+                  Navigator.pushNamed(
+                    context,
+                    routeLabels[RouteEnum.insideClass],
+                    arguments: {
+                      'courseEnrollment': enrollment,
+                      'classIndex': classIndex,
+                      'courseIndex': index,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: ClassSection(
+                    classProgress: classProgress,
+                    isCourseEnrolled: true,
+                    index: classIndex,
+                    total: _classItemsToUse.length,
+                    classObj: item.classObj,
+                  ),
+                ),
+              ),
+            )
+          : GestureDetector(
               onTap: () {
                 if (closeVideo != null) {
                   closeVideo();
@@ -150,46 +184,17 @@ class EnrolledCourse extends StatefulWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5.0),
                 child: ClassSection(
                   classProgress: classProgress,
                   isCourseEnrolled: true,
                   index: classIndex,
-                  total: classItemsToUseIncomplete.length,
+                  total: _classItemsToUse.length,
                   classObj: item.classObj,
                 ),
               ),
-            ),
-          )
-        : GestureDetector(
-            onTap: () {
-              if (closeVideo != null) {
-                closeVideo();
-              } else {
-                outSideCloseVideo();
-              }
-              Navigator.pushNamed(
-                context,
-                routeLabels[RouteEnum.insideClass],
-                arguments: {
-                  'courseEnrollment': enrollment,
-                  'classIndex': classIndex,
-                  'courseIndex': index,
-                },
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: ClassSection(
-                classProgress: classProgress,
-                isCourseEnrolled: true,
-                index: classIndex,
-                total: classItemsToUseIncomplete.length,
-                classObj: item.classObj,
-              ),
-            ),
-          );
-  }
+            )
+      : const SizedBox();
 }
 
 class _EnrolledCourseState extends State<EnrolledCourse> {
@@ -286,7 +291,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                         showEnrollButton(enrollmentState.courseEnrollment, context),
                                         Padding(
                                           padding: const EdgeInsets.only(right: 15, left: 15, top: 5),
-                                          child: SizedBox(
+                                          child: Container(
                                             width: MediaQuery.of(context).size.width,
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,7 +343,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                         showEnrollButton(enrollmentState.courseEnrollment, context),
                                         Padding(
                                           padding: const EdgeInsets.only(right: 15, left: 15, top: 0),
-                                          child: SizedBox(
+                                          child: Container(
                                             width: MediaQuery.of(context).size.width,
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,

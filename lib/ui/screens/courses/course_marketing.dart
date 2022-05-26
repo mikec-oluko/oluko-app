@@ -331,8 +331,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           if (courseEnrollmentState is CreateEnrollmentSuccess) {
             BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
             await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
-            Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
-            Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root]);
+            Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
           }
         },
         child: Padding(
