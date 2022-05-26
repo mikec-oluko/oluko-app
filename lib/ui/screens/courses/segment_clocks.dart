@@ -1031,15 +1031,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) return;
     final isPausedInactive = state == AppLifecycleState.paused;
-    if (isPausedInactive) {
-      playPauseSegment();
-      if (cameraController != null) {
-        cameraController.pauseVideoRecording();
-      }
-    } else {
-      if (cameraController != null) {
-        cameraController.resumeVideoRecording();
-        _resume();
+       if (!isWorkStateFinished()) {
+      if (isPausedInactive) {
+        playPauseSegment();
+        if (cameraController != null) {
+          cameraController.pauseVideoRecording();
+        }
+      } else {
+        if (cameraController != null) {
+          cameraController.resumeVideoRecording();
+          _resume();
+        }
       }
     }
   }
