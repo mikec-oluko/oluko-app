@@ -13,7 +13,7 @@ class PersonalRecordRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static PersonalRecord create(int totalScore, PersonalRecordParam parameter, CourseEnrollment courseEnrollment, Segment segment) {
+  static PersonalRecord create(int totalScore, PersonalRecordParam parameter, CourseEnrollment courseEnrollment, Segment segment, bool doneFromProfile) {
     DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
 
     CollectionReference personalRecordReference = projectReference.collection("personalRecords");
@@ -28,6 +28,8 @@ class PersonalRecordRepository {
         challengeId: segment.id,
         challengeReference: segmentReference,
         value: totalScore,
+        segmentImage: segment.image,
+        doneFromProfile: doneFromProfile,
         parameter: parameter,
         courseEnrollmentId: courseEnrollment.id,
         courseEnrollmentReference: courseEnrollmentReference);

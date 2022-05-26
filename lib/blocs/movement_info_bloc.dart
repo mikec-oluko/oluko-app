@@ -17,8 +17,7 @@ class MovementInfoSuccess extends MovementInfoState {
   MovementRelation movementRelation;
   List<Course> relatedCourses;
   List<Movement> relatedMovements;
-  MovementInfoSuccess(
-      {this.movement, this.movementVariants, this.movementRelation, this.relatedMovements, this.relatedCourses});
+  MovementInfoSuccess({this.movement, this.movementVariants, this.movementRelation, this.relatedMovements, this.relatedCourses});
 }
 
 class MovementInfoFailure extends MovementInfoState {
@@ -37,16 +36,17 @@ class MovementInfoBloc extends Cubit<MovementInfoState> {
 
       MovementRelation movementRelation = await MovementRepository.getRelations(movementId);
 
-      List<List<Movement>> relatedMovementsData = await Future.wait(
-          movementRelation.relatedMovements.map((movementSubmodel) => MovementRepository.get(movementSubmodel.id)));
+      List<List<Movement>> relatedMovementsData =
+          await Future.wait(movementRelation.relatedMovements.map((movementSubmodel) => MovementRepository.get(movementSubmodel.id)));
 
-      List<Course> relatedCourses = await Future.wait(
-          movementRelation.relatedCourses.map((courseSubmodel) => CourseRepository.get(courseSubmodel.id)));
+      List<Course> relatedCourses =
+          await Future.wait(movementRelation.relatedCourses.map((courseSubmodel) => CourseRepository.get(courseSubmodel.id)));
 
       List<Movement> relatedMovements = [];
 
-      relatedMovementsData.forEach(
-          (List<Movement> movementList) => movementList.length > 0 ? relatedMovements.add(movementList[0]) : null);
+      relatedMovementsData.forEach((List<Movement> movementList) => movementList.length > 0 ? relatedMovements.add(movementList[0]) : null);
+
+      _sortVariantsByIndex(movementVariants);
 
       emit(MovementInfoSuccess(
           movement: movements[0],
@@ -62,5 +62,9 @@ class MovementInfoBloc extends Cubit<MovementInfoState> {
       emit(MovementInfoFailure(exception: exception));
       rethrow;
     }
+  }
+
+  void _sortVariantsByIndex(List<Movement> movementVariants) {
+    movementVariants.sort((a, b) => a.index.compareTo(b.index));
   }
 }

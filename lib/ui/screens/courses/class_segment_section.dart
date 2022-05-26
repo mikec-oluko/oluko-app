@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -26,6 +28,7 @@ class ClassSegmentSection extends StatefulWidget {
 }
 
 class _State extends State<ClassSegmentSection> {
+  List<Widget> _challengeCard = [];
   @override
   Widget build(BuildContext context) {
     if (widget.segment == null) {
@@ -52,10 +55,13 @@ class _State extends State<ClassSegmentSection> {
                     Padding(
                         padding: const EdgeInsets.only(bottom: 35.0),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          ChallengesCard(
-                            segmentChallenge: widget.segmentChallenge,
-                            navigateToSegment: true,
-                            audioIcon: false,
+                          BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+                            builder: (context, state) {
+                              if (state is ChallengeListSuccess) {
+                                _challengeCard = state.challenges;
+                              }
+                              return Row(children: _challengeCard);
+                            },
                           ),
                           SizedBox(width: 30.0),
                           Padding(

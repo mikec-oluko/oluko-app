@@ -198,7 +198,6 @@ class _State extends State<Clock> {
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
       return BlocBuilder<KeyboardBloc, KeyboardState>(
         builder: (context, state) {
-          BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
           return TimerUtils.repsTimer(() => widget.goToNextStep(), context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
               widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
         },

@@ -54,10 +54,10 @@ class PersonalRecordBloc extends Cubit<PersonalRecordState> {
     }
   }
 
-  void create(Segment segment, CourseEnrollment courseEnrollment, int totalScore, PersonalRecordParam parameter) async {
+  void create(Segment segment, CourseEnrollment courseEnrollment, int totalScore, PersonalRecordParam parameter, bool doneFromProfile) async {
     try {
       if (totalScore > 0) {
-        await PersonalRecordRepository.create(totalScore, parameter, courseEnrollment, segment);
+        await PersonalRecordRepository.create(totalScore, parameter, courseEnrollment, segment, doneFromProfile);
       }
       emit(CreatePRSuccess());
     } catch (exception, stackTrace) {

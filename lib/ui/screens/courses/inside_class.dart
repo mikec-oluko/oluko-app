@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
@@ -23,6 +24,8 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enrollment_audio.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -166,11 +169,15 @@ class _InsideClassesState extends State<InsideClass> {
                         slidingUpPanelComponent(context)
                       ],
                     );
+                  } else if (coachState is CoachUserLoading) {
+                    return OlukoCircularProgressIndicator();
                   } else {
                     return const SizedBox();
                   }
                 },
               );
+            } else if (movementState is LoadingMovementState) {
+              return OlukoCircularProgressIndicator();
             } else {
               return const SizedBox();
             }
@@ -243,59 +250,78 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget buildChallengeSection() {
-    final List<SegmentSubmodel> challenges = getChallenges();
+    List<Widget> challengeCards = [];
+    final List<ChallengeNavigation> challenges = getChallenges();
     if (challenges.isNotEmpty) {
-      return ChallengeSection(
-        challengesCard: getChallengesCard(),
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
+          .returnChallengeCards(userId: widget.courseEnrollment.userId, listOfChallenges: challenges);
+      return BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+        builder: (context, state) {
+          if (state is ChallengeListSuccess) {
+            challengeCards = state.challenges;
+          }
+          return ChallengeSection(
+            challengesCard: challengeCards,
+          );
+        },
       );
     } else {
       return const SizedBox();
     }
   }
 
-  List<SegmentSubmodel> getChallenges() {
+  List<ChallengeNavigation> getChallenges() {
     List<SegmentSubmodel> challenges = [];
+    List<ChallengeNavigation> challengesForNavigation = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
-        challenges.add(segment);
-      }
-    });
-    return challenges;
-  }
+        SegmentSubmodel previousSegment = _class.segments.elementAt(_class.segments.indexOf(segment) - 1);
+        EnrollmentClass classWithSegment =
+            widget.courseEnrollment.classes.where((actualClass) => actualClass.id == _class.id).toList().first;
+        EnrollmentSegment segmentFromClass =
+            classWithSegment.segments.where((segmentElement) => segmentElement.id == segment.id).toList().first;
+        setChallengeImageIfNotFound(segmentFromClass, segment);
 
-  List<Widget> getChallengesCard() {
-    ChallengeNavigation segmentChallenge =
-        ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
-    List<Widget> challengesCard = [];
-    _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.image != null && segment.isChallenge) {
-        for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
-          if (widget.courseEnrollment.classes[j].id == _class.id) {
-            for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
-              if (widget.courseEnrollment.classes[j].segments[k].id == segment.id) {
-                if (k - 1 > 1) {
-                  segmentChallenge.previousSegmentFinish = widget.courseEnrollment.classes[j].segments[k - 1].completedAt != null;
-                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
-                  segmentChallenge.segmentIndex = k;
-                } else {
-                  segmentChallenge.segmentIndex = k;
-                  segmentChallenge.previousSegmentFinish = true;
-                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
-                }
-              }
-            }
-          }
-        }
-        challengesCard.add(ChallengesCard(
-          useAudio: false,
-          segmentChallenge: segmentChallenge,
-          navigateToSegment: true,
-          audioIcon: false,
+        EnrollmentSegment lastSegment = previousSegment != null
+            ? classWithSegment.segments.where((segmentElement) => segmentElement.id == previousSegment.id).toList().first
+            : null;
+
+        challengesForNavigation.add(createChallengeForNavigation(
+          segmentFromCourseEnrollment: segmentFromClass,
+          classFromCourseEnrollment: classWithSegment,
+          previousSegmentFinished: previousSegment != null ? lastSegment.completedAt != null : true,
+          segmentIndex: classWithSegment.segments.indexOf(segmentFromClass),
+          segmentId: segmentFromClass.id,
+          classId: classWithSegment.id,
         ));
       }
     });
+    return challengesForNavigation;
+  }
 
-    return challengesCard;
+  void setChallengeImageIfNotFound(EnrollmentSegment segmentFromClass, SegmentSubmodel segment) {
+    segmentFromClass.image ??= segment.image;
+  }
+
+  ChallengeNavigation createChallengeForNavigation({
+    @required EnrollmentSegment segmentFromCourseEnrollment,
+    @required EnrollmentClass classFromCourseEnrollment,
+    @required bool previousSegmentFinished,
+    @required int segmentIndex,
+    @required String segmentId,
+    @required String classId,
+  }) {
+    ChallengeNavigation _newChallengeNavigation = ChallengeNavigation(
+        enrolledCourse: widget.courseEnrollment,
+        challengeSegment: segmentFromCourseEnrollment,
+        segmentIndex: segmentIndex,
+        segmentId: segmentId,
+        classIndex: widget.classIndex,
+        classId: classId,
+        courseIndex: widget.courseIndex,
+        previousSegmentFinish: previousSegmentFinished);
+
+    return _newChallengeNavigation;
   }
 
   Widget classMovementSection() {

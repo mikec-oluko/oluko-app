@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/movement_relation.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -61,6 +62,7 @@ class MovementRepository {
         .collection('movements')
         .doc(id)
         .collection('movementVariants')
+        .where('is_deleted', isNotEqualTo: true)
         .get();
 
     var items = mapQueryToMovement(querySnapshot);
@@ -93,5 +95,9 @@ class MovementRepository {
         .collection('movements')
         .snapshots();
     return movementsStream;
+  }
+
+  static Movement getByClass(Class classObj) {
+    return null;
   }
 }
