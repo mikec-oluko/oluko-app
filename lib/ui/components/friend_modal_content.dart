@@ -85,7 +85,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                   child: StoriesItem(
                     showUserProgress: true,
                     itemUserId: widget.user.id,
-                    userProgress: widget.usersProgess[widget.user.id],
+                    userProgress: widget.usersProgess != null ? widget.usersProgess[widget.user.id] : null,
                     maxRadius: 40,
                     imageUrl: widget.user.avatar,
                     name: widget.user.firstName,

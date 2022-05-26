@@ -725,6 +725,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _goToNextStep() {
+    BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
+
     if (alertTimer != null) {
       alertTimer.cancel();
     }
