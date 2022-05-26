@@ -141,7 +141,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             return Scaffold(
               backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
               body: Padding(
-                padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
+                padding: _isBottomTabActive && this.tabController.index != 3
+                    ? const EdgeInsets.only(bottom: 75)
+                    : const EdgeInsets.only(bottom: 0),
                 child: TabBarView(
                   //physics this is setup to stop swiping from tab to tab
                   physics: const NeverScrollableScrollPhysics(),
