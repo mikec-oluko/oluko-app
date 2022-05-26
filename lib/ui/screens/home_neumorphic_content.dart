@@ -66,6 +66,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget homeContainer() {
+    if (mounted) {
+      BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, courseIndex);
+    }
     if (widget.courseEnrollments.isNotEmpty) {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(
         builder: (context, courseState) {
