@@ -250,7 +250,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                                     context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
-                                topBarIcon = SizedBox();
                                 _segmentSubmission = state?.segmentSubmission;
                               }
                             }
@@ -303,8 +302,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar:
-            SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
+        appBar: SegmentClocksUtils.getAppBar(
+            context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: Colors.black,
         body: isSegmentWithRecording() && widget.showPanel
             ? SlidingUpPanel(
@@ -827,12 +826,22 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
 
     Wakelock.disable();
+  }
 
-    if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
-      setState(() {
-        topBarIcon = SegmentClocksUtils.uploadingIcon();
-      });
-    }
+  Widget setTopBarIcon() {
+    return BlocBuilder<VideoBloc, VideoState>(
+      builder: (context, state) {
+        if (state is VideoSuccess || state is VideoFailure) {
+          return const SizedBox();
+        } else {
+          if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+            return SegmentClocksUtils.uploadingIcon();
+          } else {
+            return const SizedBox();
+          }
+        }
+      },
+    );
   }
 
   int getPersonalRecordValue() {

@@ -107,7 +107,7 @@ class _State extends State<ClocksLowerSection> {
         ),
         Positioned(
           bottom: 15,
-          child: Container(width: ScreenUtils.width(context) - 40, height: 140, child: getCard()),
+          child: Container(width: ScreenUtils.width(context) - 40, height: 170, child: getCard()),
         ),
       ]),
     );
@@ -138,10 +138,10 @@ class _State extends State<ClocksLowerSection> {
     return SizedBox(
         height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 6.4 : ScreenUtils.height(context) / 5.2,
         child: ListView(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                children: SegmentClocksUtils.getScoresByRound(context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore,
-                    widget.scores, widget.areDiferentMovsWithRepCouter)));
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            children: SegmentClocksUtils.getScoresByRound(context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore,
+                widget.scores, widget.areDiferentMovsWithRepCouter)));
   }
 
   Widget getTitle() {
