@@ -133,7 +133,9 @@ class _State extends State<ShareCard> {
 
   Widget neumorphicWhistleButton() {
     return GestureDetector(
-        /*  onTap: () {
+        /* 
+        commented for now, because segments are uploaded automatically to coach
+         onTap: () {
           if (!_whistleEnabled) {
             widget.whistleAction(true);
           } else {
