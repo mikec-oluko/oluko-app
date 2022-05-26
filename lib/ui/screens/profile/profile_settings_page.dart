@@ -108,7 +108,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   MergeSemantics olukoSwitch() {
     return MergeSemantics(
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         title: Text(ProfileViewConstants.profileSettingsNotification, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
         trailing: BlocListener<NotificationSettingsBloc, NotificationSettingsState>(
           listener: (context, state) {
@@ -208,6 +208,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       child: Row(
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 OlukoLocalizations.get(context, returnOption(option.title.toString())),
@@ -251,8 +252,8 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       setState(() {
         _privacyNewValue = index;
       });
-    } 
-    if(_privacyNewValue != _authUser.privacy) {
+    }
+    if (_privacyNewValue != _authUser.privacy) {
       BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue);
     }
   }
