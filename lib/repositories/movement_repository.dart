@@ -62,6 +62,7 @@ class MovementRepository {
         .collection('movements')
         .doc(id)
         .collection('movementVariants')
+        .where('is_deleted', isNotEqualTo: true)
         .get();
 
     var items = mapQueryToMovement(querySnapshot);

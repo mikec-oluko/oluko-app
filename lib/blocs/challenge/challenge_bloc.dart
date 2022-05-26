@@ -10,7 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class ChallengeStreamState {}
 
-class Loading extends ChallengeStreamState {}
+class LoadingChallengeStream extends ChallengeStreamState {}
 
 class Failure extends ChallengeStreamState {
   final dynamic exception;
@@ -28,7 +28,7 @@ class ChallengesForUserRequested extends ChallengeStreamState {
 }
 
 class ChallengeStreamBloc extends Cubit<ChallengeStreamState> {
-  ChallengeStreamBloc() : super(Loading());
+  ChallengeStreamBloc() : super(LoadingChallengeStream());
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
@@ -41,6 +41,7 @@ class ChallengeStreamBloc extends Cubit<ChallengeStreamState> {
 
   void getStream(String userId) async {
     try {
+      emit(LoadingChallengeStream());
       subscription ??= CourseEnrollmentRepository.getUserChallengesByUserIdSubscription(userId).listen((snapshot) async {
         List<Challenge> userChallenges = [];
         snapshot.docs.forEach((doc) {
@@ -61,8 +62,8 @@ class ChallengeStreamBloc extends Cubit<ChallengeStreamState> {
 
   void getChallengesForUserRequested(String userRequestedId) async {
     try {
+      emit(LoadingChallengeStream());
       final List<Challenge> challenges = await ChallengeRepository.getChallengesForUserRequested(userRequestedId);
-
       emit(ChallengesForUserRequested(challenges: challenges));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

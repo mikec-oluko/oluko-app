@@ -1,15 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/annotation.dart';
-import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class MentoredVideosPage extends StatefulWidget {
   final List<Annotation> coachAnnotation;
@@ -58,8 +57,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
             title: Text(
               OlukoLocalizations.get(context, 'personalizedVideos'),
               style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                  : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                  ? ScreenUtils.smallScreen(context)
+                      ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                      : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                  : ScreenUtils.smallScreen(context)
+                      ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
+                      : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
             ),
             actions: [
               Row(

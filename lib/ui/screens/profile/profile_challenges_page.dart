@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/models/user_response.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
-  ProfileChallengesPage({this.challengeSegments, this.isCurrentUser});
-  final List<ChallengeNavigation> challengeSegments;
+  ProfileChallengesPage({this.challengeSegments, this.isCurrentUser, this.userRequested});
+  final List<Widget> challengeSegments;
   final bool isCurrentUser;
+  final UserResponse userRequested;
   @override
   _ProfileChallengesPageState createState() => _ProfileChallengesPageState();
 }
 
 class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
   List<Challenge> challenges;
+  List<Widget> challengesCards = [];
+  @override
+  void initState() {
+    challengesCards = widget.challengeSegments;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +65,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                           child: ListView(
                             padding: const EdgeInsets.all(0),
                             scrollDirection: Axis.horizontal,
-                            children: buildListOfChallenges(widget.challengeSegments).take(3).toList(),
+                            children: challengesCards.take(3).toList(),
                           ),
                         ),
                       ],
@@ -80,17 +87,17 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                           Expanded(
-                            child: GridView.builder(
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.6),
-                              itemCount: buildListOfChallenges(widget.challengeSegments).length,
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.only(right: 5),
-                                child: ChallengesCard(
-                                  segmentChallenge: widget.challengeSegments[index],
-                                  useAudio: false,
-                                  navigateToSegment: widget.isCurrentUser,
-                                ),
-                              ),
+                            child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+                              builder: (BuildContext context, state) {
+                                if (state is ChallengeListSuccess) {
+                                  challengesCards = state.challenges;
+                                }
+                                return GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.55),
+                                  itemCount: challengesCards.length,
+                                  itemBuilder: (context, index) => challengesCards[index],
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -104,20 +111,5 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
         );
       },
     );
-  }
-
-  List<Widget> buildListOfChallenges(List<ChallengeNavigation> listOfChallenges) {
-    List<Widget> contentToReturn = [];
-    listOfChallenges.forEach((challenge) {
-      contentToReturn.add(Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: ChallengesCard(
-          segmentChallenge: challenge,
-          useAudio: false,
-          navigateToSegment: widget.isCurrentUser,
-        ),
-      ));
-    });
-    return contentToReturn;
   }
 }

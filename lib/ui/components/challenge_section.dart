@@ -1,11 +1,7 @@
-import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
-import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -66,7 +62,7 @@ class _State extends State<ChallengeSection> {
           SizedBox(height: widget.addTitle || widget.addName ? 20 : 0),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children:widget.challengesCard?? getChallengesCards()),
+            child: Row(children: widget.challengesCard ?? getChallengesCards()),
           )
         ],
       ),
