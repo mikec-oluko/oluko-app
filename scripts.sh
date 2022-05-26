@@ -33,10 +33,6 @@ SetupQAEnv () {
     flutter pub run flutter_launcher_icons:main
 }
 
-IncrementBuildNumber () {
-    echo "increasing build number" && perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
-}
-
 # --------- Script Start
 if [ -z "$1" ]
   then
@@ -58,7 +54,7 @@ if [ "$1" = "appbundle" ]
     then flutter build appbundle
 fi
 if [ "$1" = "increment_build" ]
-    then IncrementBuildNumber
+    then perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
 fi
 if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]] && [[ "$1" != "deepclean" ]]
     then
@@ -78,7 +74,7 @@ if [ "$1" = "deploy" ]
             then
                 SetupProdEnv
         fi
-        if [ "$2" = "qa" ]§
+        if [ "$2" = "qa" ]
             then 
                 SetupQAEnv
         fi
@@ -90,8 +86,8 @@ if [ "$1" = "deploy" ]
         fi
         if [ "$3" = "ios" ]
             then 
-                echo "Starting iOS deploy..." && IncrementBuildNumber && \
-                cd ios && pod install &&  bundle exec fastlane beta
+                echo "Starting iOS deploy..." && \
+                cd ios && pod install && bundle exec fastlane beta
         fi
         if [ "$3" = "android" ]
             then 
