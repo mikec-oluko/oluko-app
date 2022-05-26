@@ -75,6 +75,7 @@ class VideoBloc extends Cubit<VideoState> {
       AssessmentAssignment assessmentAssignment,
       Assessment assessment,
       TaskSubmission taskSubmission]) async {
+    emit(Loading());
     try {
       final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
       String thumbnailFilePath;

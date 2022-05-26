@@ -18,6 +18,7 @@ class _SelfRecordingContentState extends State<SelfRecordingContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        height: 350,
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
