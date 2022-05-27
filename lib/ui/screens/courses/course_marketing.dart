@@ -327,11 +327,24 @@ class _CourseMarketingState extends State<CourseMarketing> {
         (courseEnrollment == null || courseEnrollment.completion >= 1);
     if (showEnorollButton) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-        listener: (context, courseEnrollmentState) async {
+        listener: (context, courseEnrollmentState) {
           if (courseEnrollmentState is CreateEnrollmentSuccess) {
             BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
-            await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
-            Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+            if (ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root]) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                routeLabels[RouteEnum.root],
+                (route) => false,
+                arguments: {
+                  'tab': 0,
+                },
+              );
+            } else {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(routeLabels[RouteEnum.root]),
+              );
+            }
           }
         },
         child: Padding(
@@ -344,27 +357,14 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   thinPadding: true,
                   title: OlukoLocalizations.get(context, 'enroll'),
                   onPressed: () {
-                    if (_disableAction == false) {
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
-                    }
-                    _disableAction = true;
+                    enrollAction(context);
                   },
                 )
               else
                 OlukoPrimaryButton(
                   title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () async {
-                    if (_disableAction == false) {
-                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
-                    }
-                    _disableAction = true;
+                  onPressed: () {
+                    enrollAction(context);
                   },
                 ),
             ],
@@ -374,6 +374,17 @@ class _CourseMarketingState extends State<CourseMarketing> {
     } else {
       return const SizedBox();
     }
+  }
+
+  Future<void> enrollAction(BuildContext context) async {
+    if (_disableAction == false) {
+      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+      if (!widget.isCoachRecommendation) {
+        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+      }
+      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+    }
+    _disableAction = true;
   }
 
   Widget enrollButton() {
