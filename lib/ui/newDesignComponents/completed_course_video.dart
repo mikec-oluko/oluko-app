@@ -23,11 +23,12 @@ class CompletedCourseVideo extends StatefulWidget {
 class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
   VideoPlayerController _videoPlayerController;
   Future<ChewieController> getChewieWithVideo(BuildContext context) async {
-    if(widget.isDownloaded){ _videoPlayerController = VideoPlayerController.file(widget.file);}
-    else{
-     VideoPlayerController.network(widget.mediaURL); 
+    if (widget.isDownloaded) {
+      _videoPlayerController = VideoPlayerController.file(widget.file);
+    } else {
+      VideoPlayerController.network(widget.mediaURL);
     }
-   
+
     await _videoPlayerController.initialize();
     final ChewieController chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
@@ -50,42 +51,48 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ChewieController>(
-      future: getChewieWithVideo(context),
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<ChewieController> snapshot,
-      ) {
-        if (snapshot != null && snapshot.hasData && (snapshot.hasError == null || !snapshot.hasError)) {
-          return Stack(children: [
-            Chewie(
-              controller: snapshot.data,
-            ),
-            Positioned(
-              top: 25,
-              right: 10,
-              child: GestureDetector(
-                onTap: () async {
-                  await _videoPlayerController.dispose();
-                  Navigator.popUntil(context, ModalRoute.withName('/'));
-                },
-                child: SizedBox(
-                  height: 46,
-                  width: 46,
-                  child: OlukoBlurredButton(
-                    childContent: Image.asset(
-                      'assets/courses/white_cross.png',
-                      scale: 3.5,
+    return WillPopScope(
+      onWillPop: () async {
+        _videoPlayerController.pause();
+        return true;
+      },
+      child: FutureBuilder<ChewieController>(
+        future: getChewieWithVideo(context),
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<ChewieController> snapshot,
+        ) {
+          if (snapshot != null && snapshot.hasData && (snapshot.hasError == null || !snapshot.hasError)) {
+            return Stack(children: [
+              Chewie(
+                controller: snapshot.data,
+              ),
+              Positioned(
+                top: 25,
+                right: 10,
+                child: GestureDetector(
+                  onTap: () async {
+                    await _videoPlayerController.dispose();
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                  child: SizedBox(
+                    height: 46,
+                    width: 46,
+                    child: OlukoBlurredButton(
+                      childContent: Image.asset(
+                        'assets/courses/white_cross.png',
+                        scale: 3.5,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ]);
-        } else {
-          return const SizedBox();
-        }
-      },
+            ]);
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
     );
   }
 }
