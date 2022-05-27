@@ -33,7 +33,7 @@ class CoachHelperFunctions {
               ),
               videoHLS: coachAssignment.videoHLS ??
                   (coachAssignment.video != null ? coachAssignment.video.url : coachAssignment.introductionVideo),
-            )
+              notificationViewed: false)
           : null;
     }
     return null;

@@ -113,7 +113,6 @@ class _CoachPageState extends State<CoachPage> {
         );
       }
     });
-
     super.initState();
   }
 
@@ -207,6 +206,11 @@ class _CoachPageState extends State<CoachPage> {
                                           if (timelineItemsUpdateListener is CoachTimelineItemsUpdate) {
                                             _timelineItemsContent = CoachHelperFunctions.checkTimelineItemsUpdate(
                                                 timelineItemsUpdateListener.timelineItems, _timelineItemsContent);
+                                            // _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
+                                            //   context: context,
+                                            //   timelineItems: _timelineItemsContent,
+                                            //   welcomeVideo: _introductionVideo,
+                                            // );
                                           }
                                           if (timelineItemsUpdateListener is CoachTimelineItemsDispose) {
                                             _timelineItemsContent = timelineItemsUpdateListener.timelineItemsDisposeValue;
@@ -222,13 +226,6 @@ class _CoachPageState extends State<CoachPage> {
                                         builder: (context, timelineState) {
                                           if (timelineState is CoachTimelineItemsSuccess) {
                                             _timelineItemsContent = timelineState.timelineItems;
-                                            if (_introductionVideo != null && _introductionVideo.video.url != null) {
-                                              _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
-                                                context: context,
-                                                timelineItems: _timelineItemsContent,
-                                                welcomeVideo: _introductionVideo,
-                                              );
-                                            }
                                           }
                                           return BlocConsumer<CoachRecommendationsBloc, CoachRecommendationsState>(
                                             listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
@@ -247,8 +244,14 @@ class _CoachPageState extends State<CoachPage> {
                                             builder: (context, state) {
                                               if (state is CoachRecommendationsSuccess) {
                                                 _coachRecommendations = state.coachRecommendationList;
-
                                                 coachRecommendationsTimelineItems();
+                                              }
+                                              if (_introductionVideo != null && _introductionVideo.video.url != null) {
+                                                _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
+                                                  context: context,
+                                                  timelineItems: _timelineItemsContent,
+                                                  welcomeVideo: _introductionVideo,
+                                                );
                                               }
                                               timelineContentBuilding(context);
                                               if (_timelinePanelContent == null) {

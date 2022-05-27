@@ -359,5 +359,6 @@
     "infoUpdateSuccess": "Information updated successfully",
     "updateEmailUserNameMsg": "Are you sure you want to update your email/username? This will log you out of the system.",
     "about": "About",
-    "memberships": "Memberships"
+    "memberships": "Memberships",
+    "introductionVideo": "Introduction video"
 }

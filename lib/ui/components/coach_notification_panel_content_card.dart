@@ -119,6 +119,21 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
               });
               updateRecommendationViewedProperty(content);
             });
+      case TimelineInteractionType.introductionVideo:
+        return CoachNotificationVideoCard(
+            cardImage: content.contentImage,
+            fileType: CoachFileTypeEnum.introductionVideo,
+            onCloseCard: () {
+              updateAnnotationNotificationAsViewed(content);
+            },
+            onOpenCard: () {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
+                'aspectRatio': content.mentoredContent.video.aspectRatio,
+                'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
+              });
+              updateAnnotationNotificationAsViewed(content);
+            });
       default:
         return Container();
     }
