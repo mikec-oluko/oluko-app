@@ -564,9 +564,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   Widget notEnrolledStoriesHeader(bool showStories) {
     if (showStories) {
-      return StoriesHeader(
-        widget.user.uid,
-        maxRadius: 30,
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: StoriesHeader(
+          widget.user.uid,
+          maxRadius: 30,
+        ),
       );
     } else {
       return const SizedBox();
