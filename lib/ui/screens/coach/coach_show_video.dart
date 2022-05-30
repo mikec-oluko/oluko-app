@@ -66,6 +66,8 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
+                isOlukoControls: true,
+                showOptions: true,
                 videoUrl: videoUrl,
                 aspectRatio: aspectRatio,
                 autoPlay: false,
