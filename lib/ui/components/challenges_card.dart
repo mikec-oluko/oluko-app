@@ -5,6 +5,7 @@ import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ChallengesCard extends StatefulWidget {
   final ChallengeNavigation segmentChallenge;
@@ -63,7 +64,7 @@ class _State extends State<ChallengesCard> {
       children: [
         if (needAudioComponent)
           Padding(
-              padding: const EdgeInsets.only(top: 13),
+              padding: const EdgeInsets.only(top: 5),
               child: GestureDetector(
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
                       arguments: {'challenge': widget.segmentChallenge.challengeForAudio, 'userRequested': widget.userRequested}),
@@ -80,7 +81,7 @@ class _State extends State<ChallengesCard> {
           Padding(
             padding: const EdgeInsets.only(left: 5.0),
             child: SizedBox(
-                width: 75,
+                width: ScreenUtils.smallScreen(context) ? 65 : 75,
                 child: Text(
                   '${OlukoLocalizations.get(context, 'saveFor')}${widget.userRequested.firstName}',
                   style: OlukoFonts.olukoSmallFont(),
