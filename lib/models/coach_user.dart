@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/utils/json_utils.dart';
 
 class CoachUser extends UserResponse {
   String bannerVideo;
@@ -78,15 +79,9 @@ class CoachUser extends UserResponse {
       showRecordingAlert: json['show_recording_alert'] == null ? true : json['show_recording_alert'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num)?.toString()),
-      assessmentsCompletedAt: json['assessments_completed_at'] is Timestamp
-          ? json['assessments_completed_at'] as Timestamp
-          : json['assessments_completed_at'] is Map
-              ? Timestamp(json['assessments_completed_at']['_seconds'] as int, json['created_at']['_nanoseconds'] as int)
-              : json['assessments_completed_at'] is int
-                  ? Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
-                  : null,
+      assessmentsCompletedAt: getTimestamp(json['assessments_completed_at']),
     );
-    // Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
+
     coachResponse.setBase(json);
     return coachResponse;
   }
