@@ -368,7 +368,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           }
         },
         child: Padding(
-          padding: EdgeInsets.only(top: 75),
+          padding: EdgeInsets.only(
+              top: ScreenUtils.mediumScreen(context) ? ScreenUtils.height(context) * 0.12 : ScreenUtils.height(context) * 0.11),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
