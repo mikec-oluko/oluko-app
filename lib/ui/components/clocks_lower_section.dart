@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -102,7 +103,11 @@ class _State extends State<ClocksLowerSection> {
           children: [
             getTitle(),
             const SizedBox(height: 5),
-            if (widget.counter || widget.segments[widget.segmentIndex].isChallenge) getScores() else getWorkouts(),
+            if (widget.counter ||
+                (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds))
+              getScores()
+            else
+              getWorkouts(),
           ],
         ),
         Positioned(
