@@ -453,12 +453,13 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                       maxHeight: 185.0,
                       collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
                       panel: MovementVideosSection(
-                        action: getPlayPauseAction(),
-                        segment: widget.segments[widget.segmentIndex],
-                        movements: _movements,
-                        onPressedMovement: (BuildContext context, Movement movement) =>
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
-                      ),
+                          action: getPlayPauseAction(),
+                          segment: widget.segments[widget.segmentIndex],
+                          movements: _movements,
+                          onPressedMovement: (BuildContext context, Movement movement) {
+                            playPauseSegment();
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+                          }),
                       body: _body(keyboardVisibilty),
                     )
                   : _body(keyboardVisibilty);
