@@ -496,6 +496,16 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       if (isPlaying) {
         if (isSegmentWithoutRecording()) {
           panelController.open();
+        } else {
+          workState = lastWorkStateBeforePause;
+          if (isCurrentTaskTimed) {
+            BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
+          } else {
+            if (alertTimerPlaying) {
+              _playAlertTimer();
+            }
+          }
+          _startStopwatch();
         }
         if (isCurrentTaskTimed) {
           BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
