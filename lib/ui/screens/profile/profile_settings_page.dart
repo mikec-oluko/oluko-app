@@ -12,6 +12,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   final UserResponse profileInfo;
@@ -215,9 +216,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
               ),
               option.showSubtitle
-                  ? Text(
-                      OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
-                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                  ? Container(
+                      width: ScreenUtils.width(context) / 1.25,
+                      child: Text(
+                        OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
+                        style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                      ),
                     )
                   : SizedBox(),
             ],
