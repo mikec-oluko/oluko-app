@@ -15,6 +15,7 @@ class CoachAssignment extends Base {
       this.videoState,
       this.videoHLS,
       this.isFavorite,
+      this.welcomeVideoSeen,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -34,7 +35,7 @@ class CoachAssignment extends Base {
   String userId, coachId, introductionVideo;
   DocumentReference coachReference;
   num coachAssignmentStatus;
-  bool introductionCompleted, isFavorite;
+  bool introductionCompleted, isFavorite, welcomeVideoSeen;
   Video video;
   String videoHLS;
   VideoState videoState;
@@ -48,6 +49,7 @@ class CoachAssignment extends Base {
       introductionVideo: json['introduction_video'] as String,
       introductionCompleted: json['introduction_completed'] == null ? false : json['introduction_completed'] as bool,
       isFavorite: json['is_favorite'] == null ? false : json['is_favorite'] as bool,
+      welcomeVideoSeen: json['welcome_video_seen'] == null ? false : json['welcome_video_seen'] as bool,
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
       videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
       videoHLS: json['video_hls'] as String,
@@ -67,7 +69,8 @@ class CoachAssignment extends Base {
       'video': video == null ? null : video.toJson(),
       'video_state': videoState == null ? null : videoState.toJson(),
       'video_hls': videoHLS,
-      'is_favorite': isFavorite
+      'is_favorite': isFavorite,
+      'welcome_video_seen': welcomeVideoSeen
     };
     coachAssignmentJson.addEntries(super.toJson().entries);
     return coachAssignmentJson;

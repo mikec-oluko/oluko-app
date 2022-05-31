@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/coach_notification_card.dart';
+import 'package:oluko_app/ui/components/coach_notification_video_card.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import '../../routes.dart';
-import 'coach_notification_card.dart';
-import 'coach_notification_video_card.dart';
 
 class CoachNotificationPanelContentCard extends StatefulWidget {
   final CoachNotificationContent content;
@@ -124,7 +125,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             cardImage: content.contentImage,
             fileType: CoachFileTypeEnum.introductionVideo,
             onCloseCard: () {
-              updateAnnotationNotificationAsViewed(content);
+              introductionVideoSeen(content);
             },
             onOpenCard: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
@@ -132,7 +133,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
                 'aspectRatio': content.mentoredContent.video.aspectRatio,
                 'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
               });
-              updateAnnotationNotificationAsViewed(content);
+              introductionVideoSeen(content);
             });
       default:
         return Container();
@@ -147,5 +148,9 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
   void updateRecommendationViewedProperty(CoachNotificationContent content) {
     BlocProvider.of<CoachRecommendationsBloc>(context).setRecommendationNotificationAsViewed(
         content.coachRecommendation.id, content.coachRecommendation.originUserId, content.coachRecommendation.destinationUserId, true);
+  }
+
+  void introductionVideoSeen(CoachNotificationContent content) {
+    BlocProvider.of<CoachAssignmentBloc>(context).introductionVideoAsSeen(content.mentoredContent.userId);
   }
 }

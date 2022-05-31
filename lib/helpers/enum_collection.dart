@@ -36,7 +36,8 @@ enum CoachFileTypeEnum {
   recommendedSegment,
   faqVideo,
   recommendedVideo,
-  introductionVideo
+  introductionVideo,
+  welcomeVideo
 }
 
 enum StoriesItemFrom { friends, friendsModal, home, neumorphicHome, longPressHome }
