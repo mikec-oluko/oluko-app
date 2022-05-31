@@ -238,6 +238,8 @@ class _TaskDetailsState extends State<TaskDetails> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
+        isOlukoControls: true,
+        showOptions: true,
         videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) {

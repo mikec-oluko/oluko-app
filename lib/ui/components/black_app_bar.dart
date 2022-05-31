@@ -76,27 +76,27 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
 
   PreferredSize olukoAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
           backgroundColor: Colors.black,
           leading: backButton(),
           title: getTitle(),
           actions: widget.actions,
           bottom: PreferredSize(
-              preferredSize: Size.fromHeight(kToolbarHeight),
+              preferredSize: const Size.fromHeight(kToolbarHeight),
               child: widget.showSearchBar
                   ? getSearchBar()
                   : Column(
                       children: [
                         widget.showDivider
-                            ? Divider(
+                            ? const Divider(
                                 height: 1,
                                 color: OlukoColors.divider,
                                 thickness: 1.5,
                                 indent: 0,
                                 endIndent: 0,
                               )
-                            : SizedBox()
+                            : const SizedBox()
                       ],
                     ))),
     );
@@ -106,7 +106,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
     return Column(
       children: [
         Padding(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             child: SearchBar<T>(
               key: widget.searchKey,
               items: widget.searchResultItems,
@@ -117,7 +117,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                   widget.searchMethod(query, collection as List<T>, tags as List<Tag>),
               suggestionMethod: (String query, List<dynamic> collection) => widget.suggestionMethod(query, collection as List<T>),
             )),
-        Divider(
+        const Divider(
           height: 1,
           color: OlukoColors.divider,
           thickness: 1,
@@ -130,13 +130,14 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
 
   PreferredSize neumorphicAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: SafeArea(
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          bottom:
-              widget.showDivider ? PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)) : null,
+          bottom: widget.showDivider
+              ? PreferredSize(preferredSize: const Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context))
+              : null,
           flexibleSpace: widget.showLogo
               ? widget.showBackButton
                   ? Row(
@@ -160,13 +161,11 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                               getNeumorphicBackButton(),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(right: widget.centerTitle ? 40 : 0),
+                                  padding:
+                                      EdgeInsets.only(right: widget.centerTitle || (widget.showBackButton && !widget.showActions) ? 40 : 0),
                                   child: Align(
-                                    alignment: Alignment.center,
                                     child: TitleHeader(
                                       widget.title,
-                                      //reduceFontSize: true,
-                                      bold: false,
                                       isNeumorphic: true,
                                     ),
                                   ),
@@ -174,7 +173,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                               ),
                               if (widget.showActions)
                                 Padding(
-                                  padding: EdgeInsets.only(right: 10, left: 20),
+                                  padding: const EdgeInsets.only(right: 10, left: 20),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: widget.actions,
@@ -192,24 +191,27 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Expanded(
-                                    child: Align(
-                                      child: TitleHeader(
-                                        widget.title,
-                                        bold: false,
-                                        isNeumorphic: true,
-                                        //reduceFontSize: true,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: widget.showActions ? 40 : 0),
+                                      child: Align(
+                                        child: TitleHeader(
+                                          widget.title,
+                                          isNeumorphic: true,
+                                          //reduceFontSize: true,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  widget.showActions
-                                      ? Padding(
-                                          padding: EdgeInsets.only(right: 10, left: 20),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: widget.actions,
-                                          ),
-                                        )
-                                      : SizedBox.shrink(),
+                                  if (widget.showActions)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10, left: 20),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: widget.actions,
+                                      ),
+                                    )
+                                  else
+                                    const SizedBox.shrink(),
                                 ],
                               ),
                             )
@@ -232,7 +234,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
   Widget backButton() {
     return widget.showBackButton
         ? IconButton(
-            icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+            icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
             onPressed: () => {
                   if (this.widget.onPressed == null) {Navigator.pop(context)} else {this.widget.onPressed()}
                 })
@@ -266,27 +268,27 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                 fit: BoxFit.fitWidth, child: TitleHeader(widget.title, bold: true, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign)));
   }
 
-  Widget getNeumorphicBackButton(){
+  Widget getNeumorphicBackButton() {
     return Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: Align(
-                                  alignment: widget.centerTitle ? Alignment.center : Alignment.centerLeft,
-                                  child: Container(
-                                    //TODO: light behind
-                                    height: 55,
-                                    width: 55,
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.pop(context),
-                                      child: OlukoBlurredButton(
-                                        childContent: Image.asset(
-                                          'assets/courses/left_back_arrow.png',
-                                          scale: 3.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
+      padding: const EdgeInsets.only(right: 5.0),
+      child: Align(
+        alignment: widget.centerTitle ? Alignment.center : Alignment.centerLeft,
+        child: SizedBox(
+          //TODO: light behind
+          height: 55,
+          width: 55,
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: OlukoBlurredButton(
+              childContent: Image.asset(
+                'assets/courses/left_back_arrow.png',
+                scale: 3.5,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget getNeumorphicSearchBar() {
@@ -353,7 +355,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
             child: Center(
               child: TitleHeader(
                 widget.title,
-                bold: false,
                 isNeumorphic: true,
               ),
             ),

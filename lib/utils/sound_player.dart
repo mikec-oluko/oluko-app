@@ -43,7 +43,7 @@ class SoundPlayer {
         assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
       }
       if (assetToPlay != null && assetToPlay != 'null') {
-        await player.play(assetToPlay);
+        await player.play(assetToPlay, mode: PlayerMode.LOW_LATENCY);
       }
     }
   }
