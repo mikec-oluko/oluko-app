@@ -44,16 +44,24 @@ class FriendModalContent extends StatefulWidget {
 }
 
 class _FriendModalContentState extends State<FriendModalContent> {
+  bool userIsFriend = false;
+  bool connectionRequested = false;
+  List<UserResponse> friendUsers = [];
+  List<FriendModel> friendModelList = [];
+  FriendModel friendModel;
+  Friend friend;
+  String _buttonTextContent = '';
+  Widget friendButtons = const SizedBox.shrink();
   @override
   void initState() {
+    widget.blocFriends.getFriendsByUserId(widget.currentUserId);
+    widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
+    widget.blocUserStatistics.getUserStatistics(widget.user.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.blocFriends.getFriendsByUserId(widget.currentUserId);
-    widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
-    widget.blocUserStatistics.getUserStatistics(widget.user.id);
     return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
       bloc: widget.blocFavoriteFriend,
       listener: (favoriteFriendContext, favoriteState) {
@@ -199,18 +207,23 @@ class _FriendModalContentState extends State<FriendModalContent> {
             BlocBuilder<FriendBloc, FriendState>(
               bloc: widget.blocFriends,
               builder: (context, friendState) {
-                final bool userIsFriend =
-                    friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(widget.user.id);
-                final bool connectionRequested = friendState is GetFriendsSuccess &&
-                    friendState.friendData.friendRequestSent.map((f) => f.id).toList().contains(widget.user.id);
+                if (friendState is GetFriendsSuccess) {
+                  friendUsers = friendState.friendUsers;
+                  friend = friendState.friendData;
+                  userIsFriend = friendUsers.where((friend) => friend.id == widget.user.id).toList().isNotEmpty;
+                  friendModelList = friend.friends.where((element) => element.id == widget.user.id).toList();
+                  friendModel = friendModelList.isNotEmpty ? friendModelList.first : null;
+                  connectionRequested =
+                      friend.friendRequestSent.where((friendRequest) => friendRequest.id == widget.user.id).toList().isNotEmpty;
+                  friendButtons = _getButtons(connectionRequested, friendState, userIsFriend);
+                }
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Visibility(
-                        visible:
-                            friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(widget.user.id),
+                        visible: userIsFriend,
                         child: SizedBox(
                           height: 50,
                           width: 50,
@@ -218,31 +231,22 @@ class _FriendModalContentState extends State<FriendModalContent> {
                             title: '',
                             isExpanded: false,
                             onPressed: () {
-                              if (friendState is GetFriendsSuccess) {
-                                final bool userIsFriend = friendState.friendUsers.map((e) => e.id).toList().contains(widget.user.id);
-                                final FriendModel friendModel =
-                                    friendState.friendData.friends.where((element) => element.id == widget.user.id).first;
-                                if (userIsFriend) {
-                                  widget.blocFavoriteFriend.favoriteFriend(context, friendState.friendData, friendModel);
-                                }
+                              if (userIsFriend && friendModel != null) {
+                                widget.blocFavoriteFriend.favoriteFriend(context, friend, friendModel);
                               }
                             },
                             icon: SizedBox(
                               height: 25,
                               width: 25,
                               child: Image.asset(
-                                friendState is GetFriendsSuccess &&
-                                        friendState.friendData.friends.where((e) => e.id == widget.user.id).toList().isNotEmpty &&
-                                        friendState.friendData.friends.where((e) => e.id == widget.user.id).toList()[0].isFavorite
-                                    ? 'assets/icon/heart_filled.png'
-                                    : 'assets/icon/heart.png',
+                                friendModel != null && friendModel.isFavorite ? 'assets/icon/heart_filled.png' : 'assets/icon/heart.png',
                               ),
                             ),
                             onlyIcon: true,
                           ),
                         ),
                       ),
-                      _getButtons(connectionRequested, friendState, userIsFriend),
+                      friendButtons,
                       _getViewProfileButton(userIsFriend),
                     ],
                   ),
@@ -425,7 +429,6 @@ class _FriendModalContentState extends State<FriendModalContent> {
   }
 
   Widget _getButtons(bool connectionRequested, FriendState friendState, bool userIsFriend) {
-    String _buttonTextContent = '';
     if (connectionRequested) {
       _buttonTextContent = OlukoLocalizations.of(context).find('cancel');
       return Container(

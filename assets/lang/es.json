@@ -130,7 +130,7 @@
     "country": "País",
     "toACourse": "a un Curso",
     "public": "Público",
-    "publicSubtitle": "Perfil Público",
+    "publicSubtitle": "Todos los demás usuarios pueden ver los detalles completos del perfil, el historial de entrenamiento y las estadísticas.",
     "assessment": "Evaluación",
     "private": "Privado",
     "done": "Hecho",
@@ -144,9 +144,9 @@
     "goBack": "Volver",
     "ok": "Ok",
     "restricted": "Privado",
-    "restrictedSubtitle": "Perfil Restringido",
+    "restrictedSubtitle": "El nombre y la foto de perfil son visibles para todos los usuarios.",
     "anonymous": "Anónimo",
-    "anonymousSubtitle": "Perfil Anónimo",
+    "anonymousSubtitle": "El perfil, el historial de entrenamiento y las interacciones se mantienen privados para todos los demás usuarios.",
     "helpAndSupport": "Ayuda y Soporte",
     "myAccount": "Mi Perfil",
     "subscription": "Subscripción",
@@ -357,5 +357,6 @@
     "stateRequired": "Estado es requerido",
     "infoUpdateSuccess": "Información actualizada con éxito",
     "about": "Acerca de",
-    "memberships": "Membresías"
+    "memberships": "Membresías",
+    "introductionVideo": "Video de introducción"
 }

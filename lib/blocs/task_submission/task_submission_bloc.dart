@@ -10,7 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskSubmissionState {}
 
-class Loading extends TaskSubmissionState {}
+class TaskSubmissionLoading extends TaskSubmissionState {}
 
 class CreateSuccess extends TaskSubmissionState {
   TaskSubmission taskSubmission;
@@ -46,10 +46,10 @@ class Failure extends TaskSubmissionState {
 }
 
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
-  TaskSubmissionBloc() : super(Loading());
+  TaskSubmissionBloc() : super(TaskSubmissionLoading());
 
   Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
-    emit(Loading());
+    emit(TaskSubmissionLoading());
     try {
       TaskSubmission newTaskSubmission =
           await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic, isLastTask);
@@ -80,6 +80,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
 
   void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, String taskId) async {
     try {
+      emit(TaskSubmissionLoading());
       TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, taskId);
       emit(GetSuccess(taskSubmission: taskSubmission));
     } catch (e, stackTrace) {
@@ -93,11 +94,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   }
 
   void setLoaderTaskSubmissionOfTask() {
-    emit(Loading());
+    emit(TaskSubmissionLoading());
   }
 
   void getTaskSubmissionByUserId(String userId) async {
-    emit(Loading());
+    emit(TaskSubmissionLoading());
     try {
       List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
       emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));

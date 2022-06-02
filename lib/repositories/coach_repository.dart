@@ -39,9 +39,9 @@ class CoachRepository {
     return coachAssignmentResponse;
   }
 
-  Future<CoachAssignment> updateIntroductionStatus(CoachAssignment coachAssignment) async {
+  Future<CoachAssignment> welcomeVideoMarkAsSeen(CoachAssignment coachAssignment) async {
     try {
-      coachAssignment.introductionCompleted = true;
+      coachAssignment.welcomeVideoSeen = true;
       await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
@@ -56,6 +56,18 @@ class CoachRepository {
       );
       rethrow;
     }
+  }
+
+  Future<CoachAssignment> introductionVideoMarkAsSeen(String userId) async {
+    CoachAssignment coachAssignment = await getCoachAssignmentByUserId(userId);
+    coachAssignment.introductionCompleted = true;
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachAssignments')
+        .doc(coachAssignment.id);
+    reference.set(coachAssignment.toJson());
+    return coachAssignment;
   }
 
   Future<CoachAssignment> updateIntroductionVideoFavoriteStatus(String userId) async {

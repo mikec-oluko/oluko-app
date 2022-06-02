@@ -43,9 +43,23 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
     }
   }
 
-  void updateIntroductionVideoState(CoachAssignment coachAssignment) async {
+  void welcomeVideoAsSeen(CoachAssignment coachAssignment) async {
     try {
-      final CoachAssignment coachAssignmentUpdated = await CoachRepository().updateIntroductionStatus(coachAssignment);
+      final CoachAssignment coachAssignmentUpdated = await CoachRepository().welcomeVideoMarkAsSeen(coachAssignment);
+      emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentUpdated));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachAssignmentFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void introductionVideoAsSeen(String userId) async {
+    try {
+      final CoachAssignment coachAssignmentUpdated = await CoachRepository().introductionVideoMarkAsSeen(userId);
       emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
