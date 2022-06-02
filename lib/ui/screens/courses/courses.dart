@@ -161,7 +161,7 @@ class _State extends State<Courses> {
                 : searchResults.query.isEmpty && selectedTags.isEmpty
                     ? _mainPage(context)
                     : showSearchSuggestions
-                        ? CourseUtils.searchSuggestions(searchResults, searchKey)
+                        ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
                         : CourseUtils.searchResults(
                             context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
           );

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/models/utils/json_utils.dart';
 import 'base.dart';
 
 class UserResponse extends Base {
@@ -29,13 +30,7 @@ class UserResponse extends Base {
       bool isHidden,
       bool isDeleted})
       : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+            id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   String firstName, lastName, email, username, firebaseId, avatar, avatarThumbnail, coverImage, city, state, country;
   double currentPlan;
@@ -66,13 +61,7 @@ class UserResponse extends Base {
         showRecordingAlert: json['show_recording_alert'] == null ? true : json['show_recording_alert'] as bool,
         privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
         currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num)?.toString()),
-        assessmentsCompletedAt: json['assessments_completed_at'] is Timestamp
-            ? json['assessments_completed_at'] as Timestamp
-            : json['assessments_completed_at'] is Map
-                ? Timestamp(json['assessments_completed_at']['_seconds'] as int, json['created_at']['_nanoseconds'] as int)
-                : json['assessments_completed_at'] is int
-                    ? Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
-                    : null,
+        assessmentsCompletedAt: getTimestamp(json['assessments_completed_at']),
       );
       // Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
       userResponse.setBase(json);
