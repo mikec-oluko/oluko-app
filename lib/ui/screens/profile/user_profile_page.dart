@@ -45,6 +45,7 @@ import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/screens/profile/challenge_courses_panel_content.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
@@ -80,6 +81,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<CourseEnrollment> _courseEnrollmentList = [];
   UserStatistics userStats;
   final PanelController _panelController = PanelController();
+  final PanelController _coursesPanelController = PanelController();
   double _panelMaxHeight = 100.0;
   double _panelExtendedMaxHeight = 300.0;
   bool _isNewCoverImage = false;
@@ -118,8 +120,24 @@ class _UserProfilePageState extends State<UserProfilePage> {
           BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
           _friendsRequested = true;
         }
-        return _buildUserProfileView(
-            profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser);
+        return SlidingUpPanel(
+            backdropEnabled: canHidePanel,
+            isDraggable: true,
+            margin: EdgeInsets.zero,
+            header: defaultWidgetNoContent,
+            padding: EdgeInsets.zero,
+            color: OlukoColors.black,
+            minHeight: 0,
+            maxHeight: (ScreenUtils.height(context) / 4) * 3,
+            collapsed: defaultWidgetNoContent,
+            controller: _coursesPanelController,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            panel: ChallengeCoursesPanelContent(),
+            body: _buildUserProfileView(
+                profileViewContext: context,
+                authUser: _currentAuthUser,
+                userRequested: widget.userRequested,
+                isOwnProfile: _isCurrentUser));
       } else {
         return Container(
           color: OlukoColors.black,

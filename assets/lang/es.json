@@ -357,5 +357,6 @@
     "stateRequired": "Estado es requerido",
     "infoUpdateSuccess": "Información actualizada con éxito",
     "about": "Acerca de",
-    "memberships": "Membresías"
+    "memberships": "Membresías",
+    "cousesPanelText": "Encontrarás este desafío en los siguientes cursos"
 }

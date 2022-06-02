@@ -360,5 +360,6 @@
     "updateEmailUserNameMsg": "Are you sure you want to update your email/username? This will log you out of the system.",
     "about": "About",
     "memberships": "Memberships",
-    "shareYourVideo":"Share your video."
+    "shareYourVideo":"Share your video.",
+    "cousesPanelText": "You will encounter this challenge in the following Courses"
 }    

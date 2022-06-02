@@ -88,4 +88,42 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
       rethrow;
     }
   }
+
+  /*Future<void> getUniqueChallengeCards(
+      {@required String userId,
+      @required List<ChallengeNavigation> listOfChallenges,
+      bool isCurrentUser = true,
+      UserResponse userRequested}) async {
+    List<Widget> challengesCards = [];
+    Map<String, List<ChallengeNavigation>> challengeMap = {};
+    try {
+      emit(LoadingChallenges());
+      if (listOfChallenges.isNotEmpty) {
+        for (var challenge in listOfChallenges) {
+          challengeMap[challenge.segmentId].add(challenge);
+        }
+        for (String id in challengeMap.keys) {
+          List<Challenge> challengeHistory = await ChallengeRepository.getUserChallengesBySegmentId(id, userId);
+          bool challengeWasCompletedBefore =
+              challengeHistory != null ? challengeHistory.where((element) => element.completedAt != null).toList().isNotEmpty : false;
+          challengesCards.add(ChallengesCard(
+              userRequested: !isCurrentUser ? userRequested : null,
+              useAudio: !isCurrentUser,
+              segmentChallenge: challenge,
+              navigateToSegment: isCurrentUser,
+              audioIcon: !isCurrentUser,
+              customValueForChallenge: challengeWasCompletedBefore));
+        }
+
+        emit(ChallengeListSuccess(challenges: challengesCards));
+      }
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }*/
 }
