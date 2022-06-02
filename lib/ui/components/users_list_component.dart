@@ -14,7 +14,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class UserListComponent extends StatefulWidget {
-  final AuthSuccess authUser;
+  final UserResponse authUser;
   final List<UserResponse> users;
   final Function(UserResponse friendUser) onTapUser;
   final Function() onTopScroll;
@@ -112,7 +112,7 @@ class _UserListComponentState extends State<UserListComponent> {
                     imageUrl: friendElement.avatar,
                     name: friendElement.firstName,
                     lastname: friendElement.lastName,
-                    currentUserId: widget.authUser.user.id,
+                    currentUserId: widget.authUser.id,
                     itemUserId: friendElement.id,
                     addUnseenStoriesRing: true,
                     bloc: BlocProvider.of<StoryListBloc>(context),

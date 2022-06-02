@@ -122,6 +122,7 @@ import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
 import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
 import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
+import 'package:oluko_app/ui/screens/courses/course_share_view.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
@@ -242,7 +243,8 @@ enum RouteEnum {
   assessmentNeumorphicDone,
   coachRecommendedContentGallery,
   aboutCoach,
-  noInternetConnection
+  noInternetConnection,
+  courseShareView
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -302,7 +304,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.assessmentNeumorphicDone: '/assessment_neumorphic_done',
   RouteEnum.coachRecommendedContentGallery: '/coach-recommended-content-gallery',
   RouteEnum.aboutCoach: '/coach-about-coach-view',
-  RouteEnum.noInternetConnection: '/no-internet-connection'
+  RouteEnum.noInternetConnection: '/no-internet-connection',
+  RouteEnum.courseShareView: '/course-share-view',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -1238,6 +1241,44 @@ class Routes {
         break;
       case RouteEnum.noInternetConnection:
         newRouteView = const OlukoNoInternetConnectionPage();
+        break;
+      case RouteEnum.courseShareView:
+        providers = [
+          // BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
+          // BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
+          // BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          // BlocProvider<MovementBloc>.value(value: _movementBloc),
+          // BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          // BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          // BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          // BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          // BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          // BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          // BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
+          // BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          // BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          // BlocProvider<VideoBloc>.value(value: _videoBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        // newRouteView = CourseMarketing(
+        //   course: argumentsToAdd['course'] as Course,
+        //   fromCoach: argumentsToAdd['fromCoach'] as bool,
+        //   isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+        //   courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+        //   courseIndex: argumentsToAdd['courseIndex'] as int,
+        // );
+        newRouteView = CourseShareView(
+          currentUser: argumentsToAdd['currentUser'] as UserResponse,
+        );
         break;
       default:
         newRouteView = MainPage();

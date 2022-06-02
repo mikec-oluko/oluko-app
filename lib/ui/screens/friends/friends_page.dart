@@ -85,7 +85,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
                                 controller: _tabController,
                                 children: [
                                   FriendsListPage(
-                                    authUser: _authStateData,
+                                    currentUser: _authStateData.user,
                                   ),
                                   FriendsRequestPage(
                                     authUser: _authStateData,

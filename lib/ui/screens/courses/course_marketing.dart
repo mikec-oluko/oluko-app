@@ -487,49 +487,53 @@ class _CourseMarketingState extends State<CourseMarketing> {
           ),
         ));
   }
-}
 
-Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
-  return Padding(
-      padding: EdgeInsets.only(top: 15),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0),
-            child: GestureDetector(
-                onTap: onBackPressed,
-                child: topButtonsBackground(
-                  Image.asset(
-                    'assets/courses/left_back_arrow.png',
-                    scale: 3.5,
-                  ),
-                )),
-          ),
-          Expanded(child: SizedBox()),
-          _isVideoPlaying ? SizedBox() : topButtonsBackground(Image.asset('assets/courses/grey_heart_outlined.png', scale: 3.5)),
-          _isVideoPlaying
-              ? SizedBox()
-              : Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 15),
-                  child: topButtonsBackground(Image.asset(
-                    'assets/courses/grey_share_outlined.png',
-                    scale: 3.5,
+  Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
+    return Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: GestureDetector(
+                  onTap: onBackPressed,
+                  child: topButtonsBackground(
+                    Image.asset(
+                      'assets/courses/left_back_arrow.png',
+                      scale: 3.5,
+                    ),
                   )),
-                )
-        ],
-      ));
-}
+            ),
+            Expanded(child: SizedBox()),
+            _isVideoPlaying ? SizedBox() : topButtonsBackground(Image.asset('assets/courses/grey_heart_outlined.png', scale: 3.5)),
+            _isVideoPlaying
+                ? SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 15),
+                    child: GestureDetector(
+                      onTap: () =>
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView], arguments: {'currentUser': _userState.user}),
+                      child: topButtonsBackground(Image.asset(
+                        'assets/courses/grey_share_outlined.png',
+                        scale: 3.5,
+                      )),
+                    ),
+                  )
+          ],
+        ));
+  }
 
-Widget topButtonsBackground(Widget child) {
-  return Neumorphic(
-    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-    child: Container(
-        decoration: const BoxDecoration(
-          color: OlukoNeumorphismColors.finalGradientColorDark,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-        ),
-        height: 55,
-        width: 55,
-        child: child),
-  );
+  Widget topButtonsBackground(Widget child) {
+    return Neumorphic(
+      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+      child: Container(
+          decoration: const BoxDecoration(
+            color: OlukoNeumorphismColors.finalGradientColorDark,
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+          height: 55,
+          width: 55,
+          child: child),
+    );
+  }
 }
