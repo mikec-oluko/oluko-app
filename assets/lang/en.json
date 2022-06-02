@@ -130,7 +130,7 @@
     "country": "Country",
     "toACourse": "to a Course",
     "public": "Public",
-    "publicSubtitle": "Public Profile",
+    "publicSubtitle": "Full profile details, workout history and statistics are visible to all other users.",
     "assessment": "Assessment",
     "private": "Private",
     "done": "Done",
@@ -144,10 +144,10 @@
     "goBack": "Go Back",
     "ok": "Ok",
     "restricted": "Restricted",
-    "restrictedSubtitle": "Restricted Profile",
+    "restrictedSubtitle": "First name and profile photo are visible to all users.",
     "privateProfile": "Private Profile",
     "anonymous": "Anonymous",
-    "anonymousSubtitle": "Anonymous Profile",
+    "anonymousSubtitle": "Profile, workout history, and interactions are kept private from all other users.",
     "helpAndSupport": "Help and Support",
     "myAccount": "My Account",
     "subscription": "Subscription",
@@ -361,5 +361,7 @@
     "about": "About",
     "memberships": "Memberships",
     "shareYourVideo":"Share your video.",
-    "cousesPanelText": "You will encounter this challenge in the following Courses"
-}    
+    "cousesPanelText": "You will encounter this challenge in the following Courses",
+    "introductionVideo": "Introduction video"
+}
+
