@@ -144,13 +144,7 @@ class _CoachPageState extends State<CoachPage> {
                         builder: (context, state) {
                           if (state is CoachAssignmentResponse) {
                             coachAssignment = state.coachAssignmentResponse;
-                            if (state.coachAssignmentResponse.video?.url != null) {
-                              _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
-                                coachAssignment: coachAssignment,
-                                userId: widget.userId,
-                                defaultIntroVideoId: _defaultIntroductionVideoId,
-                              );
-                            }
+                            welcomeVideoProccess(state);
                           }
                           return BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(
                             builder: (context, challengeState) {
@@ -161,9 +155,7 @@ class _CoachPageState extends State<CoachPage> {
                                       challengeState is GetChallengeStreamSuccess) {
                                     _activeChallenges = challengeState.challenges;
                                     _courseEnrollmentList = courseEnrollmentState.courseEnrollments;
-                                    _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-                                    _allSegmentsForUser = TransformListOfItemsToWidget.createSegmentContentInforamtion(
-                                        _segmentsFromCourseEnrollmentClasses, _activeChallenges);
+                                    getActiveChallenges();
                                   }
                                   return BlocConsumer<CoachMentoredVideosBloc, CoachMentoredVideosState>(
                                     listenWhen: (CoachMentoredVideosState previous, CoachMentoredVideosState current) =>
@@ -196,13 +188,7 @@ class _CoachPageState extends State<CoachPage> {
                                             _sentVideosContent = sentVideosState.sentVideos
                                                 .where((sentVideo) => sentVideo.video != null && sentVideo.coachId == _coachUser.id)
                                                 .toList();
-
-                                            _sentVideosContent.forEach((sentVideo) {
-                                              segmentsWithReview = CoachHelperFunctions.checkPendingReviewsForSentVideos(
-                                                  sentVideo: sentVideo,
-                                                  annotationVideosContent: _annotationVideosContent,
-                                                  segmentsWithReview: segmentsWithReview);
-                                            });
+                                            pendingReviewProccess();
                                             updateReviewPendingOnCoachAppBar(context);
                                           }
                                           return BlocConsumer<CoachTimelineItemsBloc, CoachTimelineItemsState>(
@@ -214,14 +200,7 @@ class _CoachPageState extends State<CoachPage> {
                                                     timelineItemsUpdateListener.timelineItems, _timelineItemsContent);
                                               }
                                               if (timelineItemsUpdateListener is CoachTimelineItemsDispose) {
-                                                _timelineItemsContent = timelineItemsUpdateListener.timelineItemsDisposeValue;
-                                                _allContent.clear();
-                                                _coachRecommendationTimelineContent.clear();
-                                                _mentoredVideoTimelineContent.clear();
-                                                _coachRecommendationTimelineContent.clear();
-                                                _timelinePanelContent.clear();
-                                                _introductionVideo ??= CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
-                                                    coachAssignment: coachAssignment, userId: widget.userId);
+                                                disposeView(timelineItemsUpdateListener);
                                               }
                                             },
                                             builder: (context, timelineState) {
@@ -246,13 +225,7 @@ class _CoachPageState extends State<CoachPage> {
                                                     _coachRecommendations = state.coachRecommendationList;
                                                     coachRecommendationsTimelineItems();
                                                   }
-                                                  if (_introductionVideo != null && _introductionVideo.video.url != null) {
-                                                    _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
-                                                      context: context,
-                                                      timelineItems: _timelineItemsContent,
-                                                      welcomeVideo: _introductionVideo,
-                                                    );
-                                                  }
+                                                  insertWelcomeVideoOnTimeline(context);
                                                   timelineContentBuilding(context);
                                                   if (_timelinePanelContent == null) {
                                                     return Container(
@@ -303,6 +276,50 @@ class _CoachPageState extends State<CoachPage> {
         }
       },
     );
+  }
+
+  void pendingReviewProccess() {
+    _sentVideosContent.forEach((sentVideo) {
+      segmentsWithReview = CoachHelperFunctions.checkPendingReviewsForSentVideos(
+          sentVideo: sentVideo, annotationVideosContent: _annotationVideosContent, segmentsWithReview: segmentsWithReview);
+    });
+  }
+
+  void insertWelcomeVideoOnTimeline(BuildContext context) {
+    if (_introductionVideo != null && _introductionVideo.video.url != null) {
+      _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
+        context: context,
+        timelineItems: _timelineItemsContent,
+        welcomeVideo: _introductionVideo,
+      );
+    }
+  }
+
+  void disposeView(CoachTimelineItemsDispose timelineItemsUpdateListener) {
+    _timelineItemsContent = timelineItemsUpdateListener.timelineItemsDisposeValue;
+    _allContent.clear();
+    _coachRecommendationTimelineContent.clear();
+    _mentoredVideoTimelineContent.clear();
+    _coachRecommendationTimelineContent.clear();
+    _timelinePanelContent.clear();
+    _introductionVideo ??=
+        CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(coachAssignment: coachAssignment, userId: widget.userId);
+  }
+
+  void getActiveChallenges() {
+    _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
+    _allSegmentsForUser =
+        TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses, _activeChallenges);
+  }
+
+  void welcomeVideoProccess(CoachAssignmentResponse state) {
+    if (state.coachAssignmentResponse.video?.url != null) {
+      _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
+        coachAssignment: coachAssignment,
+        userId: widget.userId,
+        defaultIntroVideoId: _defaultIntroductionVideoId,
+      );
+    }
   }
 
   void updateReviewPendingOnCoachAppBar(BuildContext context) {
