@@ -98,7 +98,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              getLogo(),
+              showLogo ? getLogo() : SliverToBoxAdapter(),
               if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
             ];
           },
@@ -152,9 +152,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         ),
                       ),
                       Positioned(
-                          top: 0,
-                          right: ScreenUtils.width(context) * 0.45,
-                          child: getStepCircles(widget.courseEnrollments.length + 1, index + 1)),
+                          top: showLogo ? 0 : 20,
+                          child: Row(
+                            children: [
+                              getStepCircles(widget.courseEnrollments.length + 1, index + 1),
+                            ],
+                          )),
                     ],
                   ),
                 );
@@ -178,7 +181,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     });
                   }
                 } else {
-                  courseIndex = widget.courses.length+1;
+                  courseIndex = widget.courses.length + 1;
                   setState(() {
                     showLogo = false;
                   });
@@ -200,25 +203,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   SliverAppBar getLogo() {
     return SliverAppBar(
-        automaticallyImplyLeading: false,
-        stretch: true,
-        pinned: true,
-        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        title: showLogo
-            ? Container(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      'assets/home/mvt.png',
-                      scale: 4,
-                    ),
-                    HandWidget(authState: widget.authState),
-                  ],
-                ),
-              )
-            : const SizedBox());
+      automaticallyImplyLeading: false,
+      stretch: true,
+      pinned: true,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      title: Container(
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset(
+              'assets/home/mvt.png',
+              scale: 4,
+            ),
+            HandWidget(authState: widget.authState),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget getStoriesBar(BuildContext context) {
@@ -306,8 +308,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       ),
                       Positioned(
                           top: 0,
-                          right: ScreenUtils.width(context) * 0.45,
-                          child: getStepCircles(widget.courseEnrollments.length + 1, index + 1)),
+                          child: SizedBox(
+                            width: ScreenUtils.width(context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                getStepCircles(widget.courseEnrollments.length + 1, index + 1),
+                              ],
+                            ),
+                          )),
                     ],
                   ),
                 ),
