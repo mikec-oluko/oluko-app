@@ -25,9 +25,11 @@ class CourseShareView extends StatefulWidget {
 
 class _CourseShareViewState extends State<CourseShareView> {
   List<UserResponse> _friendUsersList = [];
+  List<UserResponse> userSelectedList = [];
   Map<String, UserProgress> _usersProgess = {};
   List<FriendModel> _friends = [];
   Widget usersWidget = SizedBox.shrink();
+  bool isSelected = true;
   @override
   void initState() {
     BlocProvider.of<UserProgressListBloc>(context).get();
@@ -39,8 +41,6 @@ class _CourseShareViewState extends State<CourseShareView> {
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-          // width: ScreenUtils.width(context),
-          // height: ScreenUtils.height(context),
           color: OlukoNeumorphismColors.appBackgroundColor,
           child: ListView(children: [
             topAppBarBackButton(context),
@@ -69,66 +69,43 @@ class _CourseShareViewState extends State<CourseShareView> {
                         if (friendState is GetFriendsSuccess) {
                           _friendUsersList = friendState.friendUsers;
                           _friends = friendState.friendData != null ? friendState.friendData.friends : [];
-                          usersWidget = UserListComponent(
-                              usersProgess: _usersProgess,
-                              authUser: widget.currentUser,
-                              users: _filterFriendUsers(friends: _friends, friendUsersList: _friendUsersList),
-                              onTapUser: (UserResponse friendUser) {},
-                              onTopScroll: () {});
                         }
-                        // return SizedBox();
                         return Container(
-                            // color: Colors.red,
-                            child: GridView.count(
-                                padding: const EdgeInsets.only(top: 10),
-                                childAspectRatio: 0.7,
-                                crossAxisCount: 4,
-                                physics: const BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                children: _filterFriendUsers(friends: _friends, friendUsersList: _friendUsersList)
-                                    .map(
-                                      (e) => Column(
-                                        children: [
-                                          StoriesItem(
-                                            showUserProgress: true,
-                                            userProgress: _usersProgess[e.id],
-                                            progressValue: 0.5,
-                                            maxRadius: 30,
-                                            imageUrl: e.avatar,
-                                            name: e.firstName,
-                                            lastname: e.lastName,
-                                            currentUserId: widget.currentUser.id,
-                                            itemUserId: e.id,
-                                            addUnseenStoriesRing: true,
-                                            bloc: BlocProvider.of<StoryListBloc>(context),
-                                            from: StoriesItemFrom.friends,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
-                                            child: Text(
-                                              '${e.firstName} ${e.lastName}',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
-                                            child: Text(
-                                              UserHelper.printUsername(e.username, e.id) ?? '',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: OlukoFonts.olukoSmallFont(customColor: Colors.grey),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 10),
-                                            child: Container(width: 25, height: 25, color: Colors.red),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                    .toList()));
+                            child: Column(
+                          children: [
+                            Container(
+                              height: 50,
+                              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Send recommendation',
+                                      // OlukoLocalizations.get(context, 'noUsers'),
+                                      textAlign: TextAlign.start,
+                                      style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                                    ),
+                                    Container(
+                                        width: 50,
+                                        height: 50,
+                                        child: IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.send_rounded,
+                                              color: userSelectedList.isEmpty
+                                                  ? OlukoNeumorphismColors.finalGradientColorDark
+                                                  : OlukoColors.primary,
+                                            )))
+                                  ],
+                                ),
+                              ),
+                            ),
+                            _listOfUsers(contextToUse: context, favorite: true),
+                            _listOfUsers(contextToUse: context),
+                          ],
+                        ));
                       },
                     );
                   },
@@ -136,6 +113,103 @@ class _CourseShareViewState extends State<CourseShareView> {
               },
             )
           ])),
+    );
+  }
+
+  Column _listOfUsers({BuildContext contextToUse, bool favorite = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+          child: Text(
+            favorite ? 'Favorites' : 'Friends',
+            // OlukoLocalizations.get(context, 'noUsers'),
+            textAlign: TextAlign.start,
+            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500),
+          ),
+        ),
+        GridView.count(
+            padding: const EdgeInsets.only(top: 10),
+            childAspectRatio: 0.7,
+            crossAxisCount: 4,
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            children: _getFriendList(favoriteUsers: favorite, friends: _friends, friendUsersList: _friendUsersList)
+                .map(
+                  (friendUserElement) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (userSelectedList.contains(friendUserElement)) {
+                          userSelectedList.remove(friendUserElement);
+                        } else {
+                          userSelectedList.add(friendUserElement);
+                        }
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        StoriesItem(
+                          showUserProgress: true,
+                          userProgress: _usersProgess[friendUserElement.id],
+                          progressValue: 0.5,
+                          maxRadius: 30,
+                          imageUrl: friendUserElement.avatar,
+                          name: friendUserElement.firstName,
+                          lastname: friendUserElement.lastName,
+                          currentUserId: widget.currentUser.id,
+                          itemUserId: friendUserElement.id,
+                          addUnseenStoriesRing: true,
+                          bloc: BlocProvider.of<StoryListBloc>(context),
+                          from: StoriesItemFrom.friends,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+                          child: Text(
+                            '${friendUserElement.firstName} ${friendUserElement.lastName}',
+                            overflow: TextOverflow.ellipsis,
+                            style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+                          child: Text(
+                            UserHelper.printUsername(friendUserElement.username, friendUserElement.id) ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            style: OlukoFonts.olukoSmallFont(customColor: Colors.grey),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Container(
+                            width: 25,
+                            height: 25,
+                            child: userSelectedList.contains(friendUserElement)
+                                ? Stack(alignment: Alignment.center, children: [
+                                    Image.asset(
+                                      'assets/assessment/green_ellipse.png',
+                                      scale: 4,
+                                    ),
+                                    Image.asset(
+                                      'assets/assessment/gray_check.png',
+                                      scale: 10,
+                                    )
+                                  ])
+                                : Image.asset(
+                                    'assets/courses/grey_circle.png',
+                                    scale: 4,
+                                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                                  ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+                .toList()),
+      ],
     );
   }
 
@@ -185,8 +259,9 @@ class _CourseShareViewState extends State<CourseShareView> {
     );
   }
 
-  List<UserResponse> _filterFriendUsers({List<FriendModel> friends, List<UserResponse> friendUsersList}) {
+  List<UserResponse> _getFriendList({bool favoriteUsers = false, List<FriendModel> friends, List<UserResponse> friendUsersList}) {
     List<UserResponse> _friendsUsers = [];
+    List<UserResponse> _favoriteFriendUsers = [];
 
     friends.forEach((friend) {
       UserResponse friendUser = friendUsersList
@@ -194,8 +269,12 @@ class _CourseShareViewState extends State<CourseShareView> {
             (friendUser) => friendUser != null && friendUser?.id == friend.id,
           )
           .first;
-      friendUser != null ? _friendsUsers.add(friendUser) : null;
+      friendUser != null
+          ? friend.isFavorite
+              ? _favoriteFriendUsers.add(friendUser)
+              : _friendsUsers.add(friendUser)
+          : null;
     });
-    return _friendsUsers;
+    return favoriteUsers ? _favoriteFriendUsers : _friendsUsers;
   }
 }
