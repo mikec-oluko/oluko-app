@@ -341,14 +341,16 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget challengeCarouselSection(int i) {
-    return SlidingUpPanel(
-        controller: panelController,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        minHeight: 90,
-        maxHeight: 185,
-        collapsed: CollapsedMovementVideosSection(action: getAction()),
-        panel: movementsPanel(i),
-        body: getSegmentImageSection(i));
+    return Container(
+        height: ScreenUtils.height(context),
+        child: SlidingUpPanel(
+            controller: panelController,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            minHeight: 90,
+            maxHeight: 185,
+            collapsed: CollapsedMovementVideosSection(action: getAction()),
+            panel: movementsPanel(i),
+            body: getSegmentImageSection(i)));
   }
 
   Widget getSegmentImageSection(int i) {
@@ -414,9 +416,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
       child: Column(
         children: [
           () {
-            if (_segments.length - 1 >= segmentIndexToUse) {
+              if (_segments.length - 1 >= segmentIndexToUse) {
                 return getCarouselSlider();
-            }
+              }
             return const SizedBox();
           }(),
         ],

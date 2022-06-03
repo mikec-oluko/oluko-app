@@ -26,6 +26,12 @@ class ChallengeListSuccess extends ChallengeCompletedBeforeState {
   ChallengeListSuccess({this.challenges});
 }
 
+class UniqueChallengesSuccess extends ChallengeCompletedBeforeState {
+  final Map<String, List<ChallengeNavigation>> challengeMap;
+  final Map<String, bool> lockedChallenges;
+  UniqueChallengesSuccess({this.challengeMap, this.lockedChallenges});
+}
+
 class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> {
   ChallengeCompletedBeforeBloc() : super(LoadingChallenges());
 
@@ -89,33 +95,30 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
     }
   }
 
-  /*Future<void> getUniqueChallengeCards(
+  Future<void> getUniqueChallengeCards(
       {@required String userId,
       @required List<ChallengeNavigation> listOfChallenges,
       bool isCurrentUser = true,
       UserResponse userRequested}) async {
     List<Widget> challengesCards = [];
     Map<String, List<ChallengeNavigation>> challengeMap = {};
+    Map<String, bool> lockedChallenges = {};
     try {
       emit(LoadingChallenges());
       if (listOfChallenges.isNotEmpty) {
         for (var challenge in listOfChallenges) {
+          if (challengeMap[challenge.segmentId] == null) {
+            challengeMap[challenge.segmentId] = [];
+          }
           challengeMap[challenge.segmentId].add(challenge);
         }
         for (String id in challengeMap.keys) {
           List<Challenge> challengeHistory = await ChallengeRepository.getUserChallengesBySegmentId(id, userId);
           bool challengeWasCompletedBefore =
               challengeHistory != null ? challengeHistory.where((element) => element.completedAt != null).toList().isNotEmpty : false;
-          challengesCards.add(ChallengesCard(
-              userRequested: !isCurrentUser ? userRequested : null,
-              useAudio: !isCurrentUser,
-              segmentChallenge: challenge,
-              navigateToSegment: isCurrentUser,
-              audioIcon: !isCurrentUser,
-              customValueForChallenge: challengeWasCompletedBefore));
+          lockedChallenges[id] = challengeWasCompletedBefore;
         }
-
-        emit(ChallengeListSuccess(challenges: challengesCards));
+        emit(UniqueChallengesSuccess(challengeMap: challengeMap, lockedChallenges: lockedChallenges));
       }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -125,5 +128,5 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
       emit(Failure(exception: exception));
       rethrow;
     }
-  }*/
+  }
 }

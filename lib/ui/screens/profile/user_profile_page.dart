@@ -35,6 +35,7 @@ import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_exception_message.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
@@ -88,7 +89,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _friendsRequested = false;
   bool canHidePanel = true;
   Widget defaultWidgetNoContent = const SizedBox.shrink();
-  List<Widget> challengeList = [];
 
   @override
   void initState() {
@@ -700,7 +700,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
     if (listOfChallenges.isNotEmpty) {
-      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).returnChallengeCards(
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).getUniqueChallengeCards(
           userId: _userProfileToDisplay.id,
           listOfChallenges: listOfChallenges,
           isCurrentUser: _isCurrentUser,
@@ -710,33 +710,42 @@ class _UserProfilePageState extends State<UserProfilePage> {
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
       child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
         builder: (context, state) {
-          if (state is ChallengeListSuccess) {
-            challengeList = state.challenges;
-          }
-          if (state is LoadingChallenges) {
-            challengeList = [
+          if (state is UniqueChallengesSuccess) {
+            List<Widget> challengeList = [];
+            for (String id in state.challengeMap.keys) {
+              challengeList.add(ChallengesCard(
+                  userRequested: !_isCurrentUser ? _userProfileToDisplay : null,
+                  useAudio: !_isCurrentUser,
+                  segmentChallenge: state.challengeMap[id][0],
+                  navigateToSegment: _isCurrentUser,
+                  audioIcon: !_isCurrentUser,
+                  customValueForChallenge: state.lockedChallenges[id]));
+            }
+            return getCarouselSection(challengeList);
+          } else {
+            return getCarouselSection([
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: OlukoCircularProgressIndicator(),
               )
-            ];
+            ]);
           }
-          return CarouselSection(
-              height: 280,
-              width: MediaQuery.of(context).size.width,
-              title: OlukoLocalizations.get(context, 'upcomingChallenges'),
-              optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-              onOptionTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
-                  'challengeSegments': challengeList,
-                  'isCurrentUser': _isCurrentUser,
-                  'userRequested': _userProfileToDisplay
-                });
-              },
-              children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
         },
       ),
     );
+  }
+
+  Widget getCarouselSection(List<Widget> challengeList) {
+    return CarouselSection(
+        height: 280,
+        width: MediaQuery.of(context).size.width,
+        title: OlukoLocalizations.get(context, 'upcomingChallenges'),
+        optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+        onOptionTap: () {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
+              arguments: {'challengeSegments': challengeList, 'isCurrentUser': _isCurrentUser, 'userRequested': _userProfileToDisplay});
+        },
+        children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
   }
 
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
