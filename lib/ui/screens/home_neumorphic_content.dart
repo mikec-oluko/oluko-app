@@ -151,13 +151,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                           ),
                         ),
                       ),
-                      Positioned(
-                          top: showLogo ? 0 : 20,
-                          child: Row(
-                            children: [
-                              getStepCircles(widget.courseEnrollments.length + 1, index + 1),
-                            ],
-                          )),
                     ],
                   ),
                 );
@@ -256,72 +249,40 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             routeLabels[RouteEnum.homeLongPress],
             arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index},
           ),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3),
-                child: VisibilityDetector(
-                  key: Key('video${index}'),
-                  onVisibilityChanged: (VisibilityInfo info) {
-                    if (info.visibleFraction < 0.1 &&
-                        mounted &&
-                        courseIndex == index &&
-                        !_isVideoPlaying &&
-                        courseIndex <= widget.courses.length) {
-                      BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
-                    } else {
-                      if (mounted) {
-                        BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
-                      }
-                    }
-                  },
-                  child: Stack(
-                    children: [
-                      ShaderMask(
-                        shaderCallback: (rect) {
-                          return LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.center,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black,
-                            ],
-                          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height * 0.4));
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: OlukoVideoPreview(
-                          image: widget.courses[index].image,
-                          video: widget.courses[index].video,
-                          onBackPressed: () => Navigator.pop(context),
-                          onPlay: () => isVideoPlaying(),
-                          videoVisibilty: _isVideoPlaying,
-                          bottomWidgets: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              child: Text(
-                                widget.courses[index].name,
-                                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                          top: 0,
-                          child: SizedBox(
-                            width: ScreenUtils.width(context),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                getStepCircles(widget.courseEnrollments.length + 1, index + 1),
-                              ],
-                            ),
-                          )),
-                    ],
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: VisibilityDetector(
+              key: Key('video${index}'),
+              onVisibilityChanged: (VisibilityInfo info) {
+                if (info.visibleFraction < 0.1 &&
+                    mounted &&
+                    courseIndex == index &&
+                    !_isVideoPlaying &&
+                    courseIndex <= widget.courses.length) {
+                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+                } else {
+                  if (mounted) {
+                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                  }
+                }
+              },
+              child: OlukoVideoPreview(
+                image: widget.courses[index].image,
+                video: widget.courses[index].video,
+                onBackPressed: () => Navigator.pop(context),
+                onPlay: () => isVideoPlaying(),
+                videoVisibilty: _isVideoPlaying,
+                bottomWidgets: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Text(
+                      widget.courses[index].name,
+                      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+                    ),
                   ),
-                ),
-              )
-            ],
+                ],
+              ),
+            ),
           ),
         ),
         Padding(
@@ -693,50 +654,4 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   bool isSelected(int selected, int index) => (index != null && selected == index) || (index == null && selected == 0);
-
-  Widget getStepCircles(int totalDots, int currentDot) {
-    final List<Widget> circles = [];
-    for (var i = 1; i <= totalDots; i++) {
-      circles.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
-          child: Center(child: createCircleIcon(i == currentDot)),
-        ),
-      );
-    }
-    return Row(children: circles);
-  }
-
-  Widget createCircleIcon(bool selected) {
-    if (OlukoNeumorphism.isNeumorphismDesign) {
-      if (selected) {
-        return const Icon(
-          Icons.radio_button_checked,
-          color: OlukoColors.primary,
-          size: 15,
-        );
-      } else {
-        return const Padding(
-          padding: EdgeInsets.only(top: 1),
-          child: Icon(
-            Icons.circle,
-            color: OlukoColors.primary,
-            size: 10,
-          ),
-        );
-      }
-    } else {
-      if (selected) {
-        return Image.asset(
-          'assets/courses/selected.png',
-          scale: 2.5,
-        );
-      } else {
-        return Image.asset(
-          'assets/courses/unselected.png',
-          scale: 2.5,
-        );
-      }
-    }
-  }
 }
