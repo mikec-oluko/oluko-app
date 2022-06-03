@@ -67,7 +67,7 @@ class CoachTimelineFunctions {
                         welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'mentoredVideo'),
                     contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
                     contentThumbnail: welcomeVideo.video.thumbUrl,
-                    contentType: TimelineInteractionType.values[4],
+                    contentType: TimelineInteractionType.mentoredVideo,
                     mentoredVideosForNavigation: [welcomeVideo],
                     course: CourseTimelineSubmodel(),
                     id: defaultIdForAllContentTimeline,
@@ -94,7 +94,7 @@ class CoachTimelineFunctions {
                 element.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
             contentName: element.id == defaultIntroVideoId ? defaultIntroVideoTitle : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: TimelineInteractionType.values[4],
+            contentType: TimelineInteractionType.mentoredVideo,
             mentoredVideosForNavigation: annotationContent,
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
@@ -113,7 +113,7 @@ class CoachTimelineFunctions {
             contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
             contentName: element.segmentId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: TimelineInteractionType.values[5],
+            contentType: TimelineInteractionType.sentVideo,
             sentVideosForNavigation: segmentSubmittedContent,
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
@@ -151,17 +151,24 @@ class CoachTimelineFunctions {
   }
 
   static List<CoachNotificationContent> mentoredVideoForInteraction({List<Annotation> annotationContent, BuildContext context}) {
+    String _defaultIntroductionVideoId = 'introVideo';
     List<CoachNotificationContent> mentoredVideosAsNotification = [];
     if (annotationContent != null) {
       annotationContent.forEach((annotation) {
         if (annotation.notificationViewed == false) {
           CoachNotificationContent newItem = CoachNotificationContent(
-              contentTitle: OlukoLocalizations.get(context, 'personalizedVideo'),
-              contentSubtitle: OlukoLocalizations.get(context, 'personalizedVideo'),
+              contentTitle: annotation.id != _defaultIntroductionVideoId
+                  ? OlukoLocalizations.get(context, 'personalizedVideo')
+                  : OlukoLocalizations.get(context, 'introductionVideo'),
+              contentSubtitle: annotation.id != _defaultIntroductionVideoId
+                  ? OlukoLocalizations.get(context, 'personalizedVideo')
+                  : OlukoLocalizations.get(context, 'introductionVideo'),
               contentDescription: '',
               contentImage: annotation.video.thumbUrl,
               videoUrl: annotation.videoHLS ?? annotation.video.url,
-              contentType: TimelineInteractionType.values[4],
+              contentType: annotation.id != _defaultIntroductionVideoId
+                  ? TimelineInteractionType.mentoredVideo
+                  : TimelineInteractionType.introductionVideo,
               createdAt: annotation.createdAt,
               mentoredContent: annotation);
 

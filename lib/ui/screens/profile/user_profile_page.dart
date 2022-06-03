@@ -376,6 +376,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Padding buildActiveChallengesForUser() {
+    List<Challenge> _activeChallenges = [];
     Widget contentToReturn = SizedBox.shrink();
     return Padding(
       padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
