@@ -68,3 +68,5 @@ Map<FAQCategoriesEnum, String> fAQCategories = {
   FAQCategoriesEnum.memberships: 'about',
   FAQCategoriesEnum.about: 'memberships',
 };
+
+enum EntityTypeEnum { course, classes, segment, movement, mentoredVideo, sentVideo }

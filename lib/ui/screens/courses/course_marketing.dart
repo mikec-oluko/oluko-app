@@ -7,6 +7,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
+import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart' as CourseEnrollmentBlocLoading show Loading;
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
@@ -78,6 +79,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   List<Movement> _movements;
   bool _disableAction = false;
   bool _isVideoPlaying = false;
+  bool _courseLiked = false;
 
   @override
   void initState() {
@@ -91,6 +93,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
             _isVideoPlaying = !_isVideoPlaying;
           }
         });
+    _courseLiked = false;
   }
 
   @override
@@ -110,6 +113,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<MovementBloc>(context).getStream();
           BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
+          BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         }
 
         return form();
@@ -505,7 +509,29 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   )),
             ),
             Expanded(child: SizedBox()),
-            _isVideoPlaying ? SizedBox() : topButtonsBackground(Image.asset('assets/courses/grey_heart_outlined.png', scale: 3.5)),
+            if (_isVideoPlaying)
+              const SizedBox()
+            else
+              BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
+                builder: (context, state) {
+                  if (state is CourseLikedSuccess) {
+                    _courseLiked = state.courseLiked != null;
+                  }
+                  return GestureDetector(
+                    onTap: () {
+                      if (_courseLiked) {
+                        // BlocProvider.of<CourseUserIteractionBloc>(context)
+                        //     .isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
+                      } else {
+                        BlocProvider.of<CourseUserIteractionBloc>(context)
+                            .markCourseAsLiked(userId: _userState.user.id, courseId: widget.course.id);
+                      }
+                    },
+                    child: topButtonsBackground(
+                        Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
+                  );
+                },
+              ),
             _isVideoPlaying
                 ? SizedBox()
                 : Padding(

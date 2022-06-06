@@ -22,6 +22,7 @@ import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
+import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -417,6 +418,7 @@ class Routes {
   final ChallengeCompletedBeforeBloc _challengeCompletedBeforeBloc = ChallengeCompletedBeforeBloc();
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final FAQBloc _fAQBloc = FAQBloc();
+  final CourseUserIteractionBloc _courseInteractionBloc = CourseUserIteractionBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -491,7 +493,8 @@ class Routes {
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
           BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
-          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -864,6 +867,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -884,6 +888,7 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -1066,6 +1071,7 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
