@@ -35,14 +35,16 @@ enum CoachFileTypeEnum {
   recommendedMovement,
   recommendedSegment,
   faqVideo,
-  recommendedVideo
+  recommendedVideo,
+  introductionVideo,
+  welcomeVideo
 }
 
 enum StoriesItemFrom { friends, friendsModal, home, neumorphicHome, longPressHome }
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
 
-enum IntroductionMediaTypeEnum { introVideo, homeVideo, completedCourseVideo,coachTabCorePlan }
+enum IntroductionMediaTypeEnum { introVideo, homeVideo, completedCourseVideo, coachTabCorePlan }
 
 Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.introVideo: 'intro video',
@@ -51,15 +53,7 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.coachTabCorePlan: 'coach tab core plan',
 };
 
-enum TimelineInteractionType {
-  course,
-  classes,
-  segment,
-  movement,
-  mentoredVideo,
-  sentVideo,
-  recommendedVideo,
-}
+enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo, recommendedVideo, introductionVideo }
 
 enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }
 
@@ -70,7 +64,7 @@ enum NoInternetContentEnum { fullscreen, widget }
 enum FAQCategoriesEnum { myAccount, memberships, about }
 
 Map<FAQCategoriesEnum, String> fAQCategories = {
-  FAQCategoriesEnum.myAccount: 'myAccount', 
+  FAQCategoriesEnum.myAccount: 'myAccount',
   FAQCategoriesEnum.memberships: 'about',
-  FAQCategoriesEnum.about:'memberships',
+  FAQCategoriesEnum.about: 'memberships',
 };
