@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -114,36 +115,28 @@ class CourseRepository {
     return statisticsStream;
   }
 
-  Future<Like> courseIsLiked(String courseId, String userId) async {
-    final Query<Map<String, dynamic>> docRef =
-        _courseCollectionInstance.doc(courseId).collection('likes').where('user_id', isEqualTo: userId).where('is_active', isEqualTo: true);
+  Future<Like> courseIsLiked({@required String courseId, @required String userId, bool isCheck = false}) async {
+    final _likedCourseQuery = _courseCollectionInstance.doc(courseId).collection('likes').where('user_id', isEqualTo: userId);
+
+    final Query<Map<String, dynamic>> docRef = isCheck ? _likedCourseQuery : _likedCourseQuery.where('is_active', isEqualTo: true);
+
     final QuerySnapshot courseLikeSnapshot = await docRef.get();
     if (courseLikeSnapshot.docs == null || courseLikeSnapshot.docs.isEmpty) {
       return null;
     }
-    final courseLikeDoc = courseLikeSnapshot.docs.first.data() as Map<String, dynamic>;
-    final courseLikeResponse = Like.fromJson(courseLikeDoc);
-    return courseLikeResponse;
+    final _courseLikeDoc = courseLikeSnapshot.docs.first.data() as Map<String, dynamic>;
+    final _courseLikeResponse = Like.fromJson(_courseLikeDoc);
+    return _courseLikeResponse;
   }
 
-  Future<Like> markCourseAsLiked(String userId, String courseId) async {
+  Future<Like> updateCourseLike(String userId, String courseId) async {
     try {
-      final CollectionReference courseLikesReference = _courseCollectionInstance.doc(courseId).collection('likes');
-      final DocumentReference docRef = courseLikesReference.doc();
-      final DocumentReference userReference = getUserReference(userId);
-      final DocumentReference courseReference = getCourseReference(courseId);
-
-      Like newLikeElement = Like(
-          id: docRef.id,
-          userId: userId,
-          userReference: userReference,
-          entityId: courseId,
-          entityReference: courseReference,
-          entityType: EntityTypeEnum.course,
-          isActive: true);
-
-      docRef.set(newLikeElement.toJson());
-      return newLikeElement;
+      Like _courseLiked = await courseIsLiked(courseId: courseId, userId: userId, isCheck: true);
+      if (_courseLiked != null) {
+        return _updateLikedCourse(courseId, _courseLiked);
+      } else {
+        return _createNewLikedCourse(courseId, userId);
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -151,6 +144,41 @@ class CourseRepository {
       );
       rethrow;
     }
+  }
+
+  Like _createNewLikedCourse(String courseId, String userId) {
+    final CollectionReference _courseLikesReference = _courseCollectionInstance.doc(courseId).collection('likes');
+    final DocumentReference _docRef = _courseLikesReference.doc();
+    final DocumentReference _userReference = _getUserReference(userId);
+    final DocumentReference _courseReference = _getCourseReference(courseId);
+
+    final Like _newLikeElement = Like(
+        id: _docRef.id,
+        userId: userId,
+        userReference: _userReference,
+        entityId: courseId,
+        entityReference: _courseReference,
+        entityType: EntityTypeEnum.course,
+        isActive: true);
+
+    _docRef.set(_newLikeElement.toJson());
+    return _newLikeElement;
+  }
+
+  Like _updateLikedCourse(String courseId, Like courseLiked) {
+    final DocumentReference _courseLikedReference = _courseCollectionInstance.doc(courseId).collection('likes').doc(courseLiked.id);
+    if (courseLiked.isActive) {
+      courseLiked.isActive = false;
+      _updateLikeValue(_courseLikedReference, courseLiked);
+    } else {
+      courseLiked.isActive = true;
+      _updateLikeValue(_courseLikedReference, courseLiked);
+    }
+    return courseLiked;
+  }
+
+  void _updateLikeValue(DocumentReference<Object> courseLikedReference, Like courseLiked) {
+    courseLikedReference.update({'updated_at': FieldValue.serverTimestamp(), 'is_active': courseLiked.isActive});
   }
 
   getCourseRecommendations(String userId, String courseId) async {
@@ -169,13 +197,13 @@ class CourseRepository {
 
   setCourseRecommendedByUser(String originUserId, List<String> destinationUsers, Course courseRecommended) {}
 
-  DocumentReference<Object> getUserReference(String userRequestedId) {
+  DocumentReference<Object> _getUserReference(String userRequestedId) {
     final DocumentReference userReference =
         firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userRequestedId);
     return userReference;
   }
 
-  DocumentReference<Object> getCourseReference(String courseId) {
+  DocumentReference<Object> _getCourseReference(String courseId) {
     final DocumentReference courseReference =
         firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').doc(courseId);
     return courseReference;

@@ -515,36 +515,32 @@ class _CourseMarketingState extends State<CourseMarketing> {
               BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
                 builder: (context, state) {
                   if (state is CourseLikedSuccess) {
-                    _courseLiked = state.courseLiked != null;
+                    _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
                   }
                   return GestureDetector(
                     onTap: () {
-                      if (_courseLiked) {
-                        // BlocProvider.of<CourseUserIteractionBloc>(context)
-                        //     .isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
-                      } else {
-                        BlocProvider.of<CourseUserIteractionBloc>(context)
-                            .markCourseAsLiked(userId: _userState.user.id, courseId: widget.course.id);
-                      }
+                      BlocProvider.of<CourseUserIteractionBloc>(context)
+                          .updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
                     },
                     child: topButtonsBackground(
                         Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
                   );
                 },
               ),
-            _isVideoPlaying
-                ? SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.only(left: 10.0, right: 15),
-                    child: GestureDetector(
-                      onTap: () =>
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView], arguments: {'currentUser': _userState.user}),
-                      child: topButtonsBackground(Image.asset(
-                        'assets/courses/grey_share_outlined.png',
-                        scale: 3.5,
-                      )),
-                    ),
-                  )
+            if (_isVideoPlaying)
+              const SizedBox()
+            else
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 15),
+                child: GestureDetector(
+                  onTap: () =>
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView], arguments: {'currentUser': _userState.user}),
+                  child: topButtonsBackground(Image.asset(
+                    'assets/courses/grey_share_outlined.png',
+                    scale: 3.5,
+                  )),
+                ),
+              )
           ],
         ));
   }

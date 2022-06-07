@@ -31,7 +31,8 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
   Future<Like> isCourseLiked({@required String courseId, @required String userId}) async {
     try {
       emit(CourseInteractionLoading());
-      final Like likedCourse = await _courseRepository.courseIsLiked(courseId, userId);
+      final Like likedCourse = await _courseRepository.courseIsLiked(courseId: courseId, userId: userId);
+      emit(CourseLikedSuccess(courseLiked: likedCourse));
       return likedCourse;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -43,9 +44,9 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
     }
   }
 
-  Future<Like> markCourseAsLiked({@required String userId, @required String courseId}) async {
+  Future<Like> updateCourseLikeValue({@required String userId, @required String courseId}) async {
     try {
-      final Like likedContent = await _courseRepository.markCourseAsLiked(userId, courseId);
+      final Like likedContent = await _courseRepository.updateCourseLike(userId, courseId);
       emit(CourseLikedSuccess(courseLiked: likedContent));
       return likedContent;
     } catch (exception, stackTrace) {
