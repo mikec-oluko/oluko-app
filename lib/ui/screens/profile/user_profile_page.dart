@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
+import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
@@ -701,7 +702,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
     if (listOfChallenges.isNotEmpty) {
-      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).getUniqueChallengeCards(
+      BlocProvider.of<UpcomingChallengesBloc>(context).getUniqueChallengeCards(
           userId: _userProfileToDisplay.id,
           listOfChallenges: listOfChallenges,
           isCurrentUser: _isCurrentUser,
@@ -709,23 +710,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-      child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+      child: BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
         builder: (context, state) {
           if (state is UniqueChallengesSuccess) {
             _challengeMap = state.challengeMap;
-            List<Widget> challengeList = [];
-            for (String id in state.challengeMap.keys) {
-              challengeList.add(ChallengesCard(
-                  panelController: _coursesPanelController,
-                  challengeNavigations: state.challengeMap[id],
-                  userRequested: !_isCurrentUser ? _userProfileToDisplay : null,
-                  useAudio: !_isCurrentUser,
-                  segmentChallenge: state.challengeMap[id][0],
-                  navigateToSegment: _isCurrentUser,
-                  audioIcon: !_isCurrentUser,
-                  customValueForChallenge: state.lockedChallenges[id]));
-            }
-            return getCarouselSection(challengeList);
+            return getCarouselSection(buildChallengeCards(state));
           } else {
             return getCarouselSection([
               Padding(
@@ -737,6 +726,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
         },
       ),
     );
+  }
+
+  List<Widget> buildChallengeCards(UniqueChallengesSuccess state) {
+    List<Widget> challengeList = [];
+    for (String id in state.challengeMap.keys) {
+      challengeList.add(ChallengesCard(
+          panelController: _coursesPanelController,
+          challengeNavigations: state.challengeMap[id],
+          userRequested: !_isCurrentUser ? _userProfileToDisplay : null,
+          useAudio: !_isCurrentUser,
+          segmentChallenge: state.challengeMap[id][0],
+          navigateToSegment: _isCurrentUser,
+          audioIcon: !_isCurrentUser,
+          customValueForChallenge: state.lockedChallenges[id]));
+    }
+    ;
+    return challengeList;
   }
 
   Widget getCarouselSection(List<Widget> challengeList) {
