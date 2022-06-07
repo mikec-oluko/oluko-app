@@ -1,14 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ChallengesCard extends StatefulWidget {
   final ChallengeNavigation segmentChallenge;
+  final List<ChallengeNavigation> challengeNavigations;
+  final PanelController panelController;
   final String routeToGo;
   final UserResponse userRequested;
   final bool navigateToSegment;
@@ -19,6 +24,8 @@ class ChallengesCard extends StatefulWidget {
   ChallengesCard(
       {this.routeToGo,
       this.segmentChallenge,
+      this.panelController,
+      this.challengeNavigations,
       this.userRequested,
       this.useAudio = true,
       this.navigateToSegment = false,
@@ -96,13 +103,9 @@ class _State extends State<ChallengesCard> {
   Widget _lockedCard(BuildContext context) {
     return GestureDetector(
       onTap: !widget.useAudio && widget.navigateToSegment
-          ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                'segmentIndex': widget.segmentChallenge.segmentIndex,
-                'classIndex': widget.segmentChallenge.classIndex,
-                'courseEnrollment': widget.segmentChallenge.enrolledCourse,
-                'courseIndex': widget.segmentChallenge.courseIndex,
-                'fromChallenge': true
-              })
+          ? () {
+              navigate();
+            }
           : () {},
       child: Container(
         decoration: const BoxDecoration(
@@ -142,16 +145,41 @@ class _State extends State<ChallengesCard> {
     );
   }
 
+  void navigate() {
+    if (widget.challengeNavigations.length == 1) {
+      navigateToSegmentDetail();
+    } else {
+      navigateToPanel();
+    }
+  }
+
+  void navigateToPanel() {
+    widget.panelController.open();
+    BlocProvider.of<CoursePanelBloc>(context).setPanelChallenges(widget.challengeNavigations);
+  }
+
+  void navigateToSegmentDetail([ChallengeNavigation challengeNavigation]) {
+    ChallengeNavigation challengeToUse;
+    if (challengeNavigation != null) {
+      challengeToUse = challengeNavigation;
+    } else {
+      challengeToUse = widget.segmentChallenge;
+    }
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+      'segmentIndex': challengeToUse.segmentIndex,
+      'classIndex': challengeToUse.classIndex,
+      'courseEnrollment': challengeToUse.enrolledCourse,
+      'courseIndex': challengeToUse.courseIndex,
+      'fromChallenge': true
+    });
+  }
+
   Widget _unlockedCard(BuildContext context) {
     return GestureDetector(
       onTap: !widget.useAudio && widget.navigateToSegment
-          ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                'segmentIndex': widget.segmentChallenge.segmentIndex,
-                'classIndex': widget.segmentChallenge.classIndex,
-                'courseEnrollment': widget.segmentChallenge.enrolledCourse,
-                'courseIndex': widget.segmentChallenge.courseIndex,
-                'fromChallenge': true
-              })
+          ? () {
+              navigate();
+            }
           : () {},
       child: Container(
         decoration: const BoxDecoration(

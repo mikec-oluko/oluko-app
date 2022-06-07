@@ -89,6 +89,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _friendsRequested = false;
   bool canHidePanel = true;
   Widget defaultWidgetNoContent = const SizedBox.shrink();
+  Map<String, List<ChallengeNavigation>> _challengeMap;
 
   @override
   void initState() {
@@ -711,9 +712,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
       child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
         builder: (context, state) {
           if (state is UniqueChallengesSuccess) {
+            _challengeMap = state.challengeMap;
             List<Widget> challengeList = [];
             for (String id in state.challengeMap.keys) {
               challengeList.add(ChallengesCard(
+                  panelController: _coursesPanelController,
+                  challengeNavigations: state.challengeMap[id],
                   userRequested: !_isCurrentUser ? _userProfileToDisplay : null,
                   useAudio: !_isCurrentUser,
                   segmentChallenge: state.challengeMap[id][0],

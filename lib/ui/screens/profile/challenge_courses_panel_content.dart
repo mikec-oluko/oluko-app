@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -48,28 +52,32 @@ class _State extends State<ChallengeCoursesPanelContent> {
         ]));
   }
 
-    Padding getCourseCards(BuildContext context, Course course) {
-    return Padding(
-      padding: const EdgeInsets.only(right: OlukoNeumorphism.isNeumorphismDesign ? 12 : 8.0),
-      child: GestureDetector(
-        onTap: () {},
-        child: _getCourseCard(_generateImageCourse(course.image), width: ScreenUtils.width(context) /*/ (padding + _cardsToShow())*/),
-      ),
+  Widget courseGridView(List<Widget> courseCards) {
+    return Container(
+        height: (ScreenUtils.height(context) / 4) * 2.36,
+        width: ScreenUtils.width(context),
+        child:
+            GridView.count(childAspectRatio: 3.3 / 5, mainAxisSpacing: 15, crossAxisSpacing: 15, crossAxisCount: 3, children: courseCards));
+  }
+
+  Widget getCourseCard(List<ChallengeNavigation> challengeNavigations) {
+    return GestureDetector(
+      onTap: () {
+        if (challengeNavigations.length == 1) {
+          navigateToSegmentDetail(challengeNavigations[0]);
+        }
+      },
+      child: CourseCard(
+          challengeNavigations: challengeNavigations,
+          imageCover: _generateImageCourse(challengeNavigations[0].enrolledCourse.course.image)),
     );
   }
 
-  Widget _getCourseCard(Image image, {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
-    return CourseCard(
-        width: width, height: height, imageCover: image, progress: progress, userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
-  }
-
-    Image _generateImageCourse(String imageUrl) {
+  Image _generateImageCourse(String imageUrl) {
     if (imageUrl != null) {
       return Image(
         image: CachedNetworkImageProvider(imageUrl),
         fit: BoxFit.cover,
-        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
       );
     }
     return Image.asset("assets/courses/course_sample_7.png");
@@ -80,8 +88,30 @@ class _State extends State<ChallengeCoursesPanelContent> {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(children: [
           Text(OlukoLocalizations.of(context).find('cousesPanelText'),
-              textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white))
+              textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
+          const SizedBox(height: 15),
+          BlocBuilder<CoursePanelBloc, CoursePanelState>(builder: (context, state) {
+            if (state is CoursePanelSuccess) {
+              List<Widget> courseCards = [];
+              for (List<ChallengeNavigation> challenges in state.challengeNavigations.values) {
+                courseCards.add(getCourseCard(challenges));
+              }
+              return courseGridView(courseCards);
+            } else {
+              return SizedBox();
+            }
+          })
         ]));
+  }
+
+  void navigateToSegmentDetail(ChallengeNavigation challenge) {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+      'segmentIndex': challenge.segmentIndex,
+      'classIndex': challenge.classIndex,
+      'courseEnrollment': challenge.enrolledCourse,
+      'courseIndex': challenge.courseIndex,
+      'fromChallenge': true
+    });
   }
 
   BoxDecoration decorationImage() {

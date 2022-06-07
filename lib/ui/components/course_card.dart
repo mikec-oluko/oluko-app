@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/ui/components/classes_menu.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/unenroll_menu.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -17,9 +19,11 @@ class CourseCard extends StatefulWidget {
   final CourseEnrollment actualCourse;
   final bool canUnenrollCourse;
   final Function() unrolledFunction;
+  final List<ChallengeNavigation> challengeNavigations;
 
   CourseCard(
       {this.imageCover,
+      this.challengeNavigations,
       this.progress,
       this.width,
       this.height,
@@ -65,7 +69,7 @@ class _State extends State<CourseCard> {
                           unrolledFunction: widget.unrolledFunction,
                         )),
                   ),
-                )
+                ),
               ],
             )),
         if (widget.actualCourse.completion != null)
@@ -98,24 +102,7 @@ class _State extends State<CourseCard> {
         Neumorphic(
           style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
           child: Stack(
-            children: [
-              widget.imageCover,
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? Positioned(
-                      top: 0,
-                      right: -15,
-                      child: Visibility(
-                        visible: widget.canUnenrollCourse,
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: UnenrollCourse(
-                              actualCourse: widget.actualCourse,
-                              unrolledFunction: widget.unrolledFunction,
-                            )),
-                      ),
-                    )
-                  : SizedBox.shrink()
-            ],
+            children: [widget.imageCover, unenrollMenu(), classesMenu()],
           ),
         ),
         if (widget.progress != null)
@@ -134,6 +121,33 @@ class _State extends State<CourseCard> {
         else
           SizedBox()
       ]),
+    );
+  }
+
+  Widget unenrollMenu() {
+    return Positioned(
+      top: 0,
+      right: -15,
+      child: Visibility(
+        visible: widget.canUnenrollCourse,
+        child: Align(
+            alignment: Alignment.topRight,
+            child: UnenrollCourse(
+              actualCourse: widget.actualCourse,
+              unrolledFunction: widget.unrolledFunction,
+            )),
+      ),
+    );
+  }
+
+  Widget classesMenu() {
+    return Positioned(
+      top: 0,
+      right: -15,
+      child: Visibility(
+        visible: widget.challengeNavigations != null && widget.challengeNavigations.length > 1,
+        child: Align(alignment: Alignment.topRight, child: ClassesMenu(challengeNavigations: widget.challengeNavigations)),
+      ),
     );
   }
 
