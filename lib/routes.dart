@@ -1205,6 +1205,7 @@ class Routes {
         providers = [
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc),
         ];
         newRouteView = const HiFivePage();
         break;
