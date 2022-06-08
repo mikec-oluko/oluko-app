@@ -20,6 +20,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
+import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
@@ -67,7 +68,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   Widget homeContainer() {
     if (mounted) {
-      BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, courseIndex);
+      BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: courseIndex);
     }
     if (widget.courseEnrollments.isNotEmpty) {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(
@@ -97,7 +98,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              getLogo(),
+              showLogo ? getLogo() : SliverToBoxAdapter(),
               if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
             ];
           },
@@ -149,7 +150,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 );
@@ -165,7 +166,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 if (index <= widget.courses.length - 1) {
                   courseIndex = index;
                   if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, index);
+                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
                   }
                   if (!showLogo) {
                     setState(() {
@@ -173,6 +174,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     });
                   }
                 } else {
+                  courseIndex = widget.courses.length + 1;
                   setState(() {
                     showLogo = false;
                   });
@@ -194,25 +196,24 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   SliverAppBar getLogo() {
     return SliverAppBar(
-        automaticallyImplyLeading: false,
-        stretch: true,
-        pinned: true,
-        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        title: showLogo
-            ? Container(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      'assets/home/mvt.png',
-                      scale: 4,
-                    ),
-                    HandWidget(authState: widget.authState),
-                  ],
-                ),
-              )
-            : const SizedBox());
+      automaticallyImplyLeading: false,
+      stretch: true,
+      pinned: true,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      title: Container(
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset(
+              'assets/home/mvt.png',
+              scale: 4,
+            ),
+            HandWidget(authState: widget.authState),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget getStoriesBar(BuildContext context) {
@@ -253,11 +254,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             child: VisibilityDetector(
               key: Key('video${index}'),
               onVisibilityChanged: (VisibilityInfo info) {
-                if (info.visibleFraction < 0.1 && mounted && courseIndex == index && !_isVideoPlaying) {
-                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, index);
+                if (info.visibleFraction < 0.1 &&
+                    mounted &&
+                    courseIndex == index &&
+                    !_isVideoPlaying &&
+                    courseIndex <= widget.courses.length) {
+                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
                 } else {
                   if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, index);
+                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
                   }
                 }
               },
@@ -368,7 +373,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           }
         },
         child: Padding(
-          padding: EdgeInsets.only(top: 75),
+          padding: EdgeInsets.only(
+              top: ScreenUtils.mediumScreen(context) ? ScreenUtils.height(context) * 0.12 : ScreenUtils.height(context) * 0.11),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
