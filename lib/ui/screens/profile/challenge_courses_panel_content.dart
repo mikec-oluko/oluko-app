@@ -5,22 +5,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
-import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
-import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ChallengeCoursesPanelContent extends StatefulWidget {
-  final List<Movement> movements;
-  final Segment segment;
-  final Function(BuildContext, Movement) onPressedMovement;
-  final Widget action;
+  final PanelController panelController;
 
-  ChallengeCoursesPanelContent({this.segment, this.movements, this.onPressedMovement, this.action});
+  ChallengeCoursesPanelContent({this.panelController});
 
   @override
   _State createState() => _State();
@@ -65,9 +60,11 @@ class _State extends State<ChallengeCoursesPanelContent> {
       onTap: () {
         if (challengeNavigations.length == 1) {
           navigateToSegmentDetail(challengeNavigations[0]);
+          widget.panelController.close();
         }
       },
       child: CourseCard(
+          closePanelFunction: () => widget.panelController.close(),
           challengeNavigations: challengeNavigations,
           imageCover: _generateImageCourse(challengeNavigations[0].enrolledCourse.course.image)),
     );

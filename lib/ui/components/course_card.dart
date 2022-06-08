@@ -20,10 +20,12 @@ class CourseCard extends StatefulWidget {
   final bool canUnenrollCourse;
   final Function() unrolledFunction;
   final List<ChallengeNavigation> challengeNavigations;
+  final Function() closePanelFunction;
 
   CourseCard(
       {this.imageCover,
       this.challengeNavigations,
+      this.closePanelFunction,
       this.progress,
       this.width,
       this.height,
@@ -146,7 +148,7 @@ class _State extends State<CourseCard> {
       right: -15,
       child: Visibility(
         visible: widget.challengeNavigations != null && widget.challengeNavigations.length > 1,
-        child: Align(alignment: Alignment.topRight, child: ClassesMenu(challengeNavigations: widget.challengeNavigations)),
+        child: Align(alignment: Alignment.topRight, child: ClassesMenu(challengeNavigations: widget.challengeNavigations, closePanelFunction: widget.closePanelFunction)),
       ),
     );
   }

@@ -3,10 +3,13 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ClassesMenu extends StatefulWidget {
-  ClassesMenu({this.challengeNavigations}) : super();
+  ClassesMenu({this.challengeNavigations, this.closePanelFunction}) : super();
+
   final List<ChallengeNavigation> challengeNavigations;
+  final Function() closePanelFunction;
 
   @override
   _ClassesMenuState createState() => _ClassesMenuState();
@@ -21,7 +24,10 @@ class _ClassesMenuState extends State<ClassesMenu> {
         return widget.challengeNavigations
             .map((item) => PopupMenuItem<String>(
                   onTap: () => Future(
-                    () => navigateToSegmentDetail(item),
+                    () {
+                      widget.closePanelFunction();
+                      navigateToSegmentDetail(item);
+                    },
                   ),
                   value: widget.challengeNavigations[0].segmentId,
                   child: Center(

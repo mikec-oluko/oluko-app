@@ -134,7 +134,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             collapsed: defaultWidgetNoContent,
             controller: _coursesPanelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-            panel: ChallengeCoursesPanelContent(),
+            panel: ChallengeCoursesPanelContent(panelController: _coursesPanelController),
             body: _buildUserProfileView(
                 profileViewContext: context,
                 authUser: _currentAuthUser,
