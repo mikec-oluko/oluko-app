@@ -17,10 +17,10 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
-  ProfileChallengesPage({this.listOfChallenges, this.isCurrentUser, this.userRequested});
-  final List<ChallengeNavigation> listOfChallenges;
+  ProfileChallengesPage({this.challengesCardsState, this.isCurrentUser, this.userRequested});
   final bool isCurrentUser;
   final UserResponse userRequested;
+  final UniqueChallengesSuccess challengesCardsState;
 
   @override
   _ProfileChallengesPageState createState() => _ProfileChallengesPageState();
@@ -37,22 +37,8 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.listOfChallenges.isNotEmpty) {
-      BlocProvider.of<UpcomingChallengesBloc>(context).getUniqueChallengeCards(
-          userId: widget.userRequested.id,
-          listOfChallenges: widget.listOfChallenges,
-          isCurrentUser: widget.isCurrentUser,
-          userRequested: widget.userRequested);
-    }
-    return BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
-      builder: (context, state) {
-        if (state is UniqueChallengesSuccess) {
-          return _body(buildChallengeCards(state));
-        } else {
-          return OlukoCircularProgressIndicator();
-        }
-      },
-    );
+return
+    _body(buildChallengeCards(widget.challengesCardsState));
   }
 
   Widget _body(List<Widget> challengesCards) {

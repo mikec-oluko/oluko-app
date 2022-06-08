@@ -687,7 +687,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
-          listOfChallenges: argumentsToAdd['listOfChallenges'] as List<ChallengeNavigation>,
+        challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,
