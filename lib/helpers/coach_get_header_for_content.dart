@@ -23,6 +23,8 @@ class CoachHeders {
         return OlukoLocalizations.of(context).find('timelineFaqVideo');
       case CoachFileTypeEnum.recommendedVideo:
         return OlukoLocalizations.of(context).find('recommendedVideos');
+      case CoachFileTypeEnum.messageVideo:
+        return OlukoLocalizations.of(context).find('coachMessageVideo');
     }
     return '';
   }

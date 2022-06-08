@@ -301,7 +301,8 @@ class CoachTimelineFunctions {
     if (timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).isEmpty) {
       timelineGroup.timelineElements.add(newContent);
       timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-    } else if (newContent.contentType == TimelineInteractionType.mentoredVideo) {
+    } else if (newContent.contentType == TimelineInteractionType.mentoredVideo ||
+        newContent.contentType == TimelineInteractionType.messageVideo) {
       timelineGroup.timelineElements.add(newContent);
     }
   }

@@ -499,7 +499,8 @@ class Routes {
           BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
