@@ -26,25 +26,25 @@ class _State extends State<ChallengeCoursesPanelContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        // padding: EdgeInsets.only(left: 18),
-        decoration: OlukoNeumorphism.isNeumorphismDesign
-            ? BoxDecoration(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(19), topRight: Radius.circular(19)))
-            : decorationImage(),
-        child: Column(children: [
-          SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
-          !OlukoNeumorphism.isNeumorphismDesign
-              ? SizedBox.shrink()
-              : Center(
-                  child: Container(
-                    width: 50,
-                    child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
-                  ),
-                ),
-          _content()
-        ]));
+    return Material(
+        child: Container(
+            decoration: OlukoNeumorphism.isNeumorphismDesign
+                ? BoxDecoration(
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(19), topRight: Radius.circular(19)))
+                : decorationImage(),
+            child: Column(children: [
+              SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
+              !OlukoNeumorphism.isNeumorphismDesign
+                  ? SizedBox.shrink()
+                  : Center(
+                      child: Container(
+                        width: 50,
+                        child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
+                      ),
+                    ),
+              _content()
+            ])));
   }
 
   Widget courseGridView(List<Widget> courseCards) {
