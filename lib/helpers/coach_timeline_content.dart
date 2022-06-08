@@ -20,6 +20,8 @@ class TimelineContentOption {
     TimelineContentOption(option: TimelineInteractionType.mentoredVideo),
     TimelineContentOption(option: TimelineInteractionType.recommendedVideo),
     TimelineContentOption(option: TimelineInteractionType.sentVideo),
+    TimelineContentOption(option: TimelineInteractionType.introductionVideo),
+    TimelineContentOption(option: TimelineInteractionType.messageVideo),
   ];
   static TimelineInteractionType getTimelineOption(int contentOption) => timelineContentType.elementAt(contentOption).option;
 }

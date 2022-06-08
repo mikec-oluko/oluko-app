@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -20,6 +22,7 @@ import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
@@ -169,6 +172,7 @@ import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
+import 'models/coach_media_message.dart';
 import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
@@ -412,6 +416,7 @@ class Routes {
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarouselBloc _carouselBloc = CarouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
+  final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
   final UserInformationBloc _userInformationBloc = UserInformationBloc();
@@ -1138,6 +1143,7 @@ class Routes {
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1163,7 +1169,8 @@ class Routes {
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
-          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         newRouteView = CoachPage();
         break;
@@ -1177,9 +1184,12 @@ class Routes {
       case RouteEnum.mentoredVideos:
         providers = [
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
-        final Map<String, List<Annotation>> argumentsToAdd = arguments as Map<String, List<Annotation>>;
-        newRouteView = MentoredVideosPage(coachAnnotation: argumentsToAdd['coachAnnotation']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = MentoredVideosPage(
+            coachAnnotation: argumentsToAdd['coachAnnotation'] as List<Annotation>,
+            coachVideoMessage: argumentsToAdd['coachVideoMessages'] as List<CoachMediaMessage>);
         break;
       case RouteEnum.coachShowVideo:
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

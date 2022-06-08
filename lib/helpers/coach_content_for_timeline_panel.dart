@@ -5,6 +5,7 @@ import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -67,7 +68,10 @@ class CoachTimelineFunctions {
                         welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'mentoredVideo'),
                     contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
                     contentThumbnail: welcomeVideo.video.thumbUrl,
-                    contentType: TimelineInteractionType.mentoredVideo,
+                    contentType: welcomeVideo.id == defaultIntroVideoId
+                        ? TimelineInteractionType.introductionVideo
+                        : TimelineInteractionType.mentoredVideo,
+                    // contentType: TimelineInteractionType.mentoredVideo,
                     mentoredVideosForNavigation: [welcomeVideo],
                     course: CourseTimelineSubmodel(),
                     id: defaultIdForAllContentTimeline,
@@ -94,7 +98,9 @@ class CoachTimelineFunctions {
                 element.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
             contentName: element.id == defaultIntroVideoId ? defaultIntroVideoTitle : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
-            contentType: TimelineInteractionType.mentoredVideo,
+            contentType:
+                element.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
+            // contentType: TimelineInteractionType.mentoredVideo,
             mentoredVideosForNavigation: annotationContent,
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
@@ -181,6 +187,30 @@ class CoachTimelineFunctions {
     return mentoredVideosAsNotification;
   }
 
+  static List<CoachNotificationContent> messageVideoForInteraction({List<CoachMediaMessage> messageVideoContent, BuildContext context}) {
+    List<CoachNotificationContent> messageVideoAsNotification = [];
+    if (messageVideoContent != null) {
+      messageVideoContent.forEach((messageVideo) {
+        // if (messageVideo.notificationViewed == false) {
+        CoachNotificationContent newItem = CoachNotificationContent(
+            contentTitle: OlukoLocalizations.get(context, 'coachMessageVideo'),
+            contentSubtitle: OlukoLocalizations.get(context, 'coachMessageVideo'),
+            contentDescription: '',
+            contentImage: messageVideo.video.thumbUrl,
+            videoUrl: messageVideo.videoHls ?? messageVideo.video.url,
+            contentType: TimelineInteractionType.messageVideo,
+            createdAt: messageVideo.createdAt,
+            coachMediaMessage: messageVideo);
+
+        if (messageVideoAsNotification.where((element) => element.videoUrl == newItem.videoUrl).isEmpty) {
+          messageVideoAsNotification.add(newItem);
+        }
+        // }
+      });
+    }
+    return messageVideoAsNotification;
+  }
+
   static List<CoachNotificationContent> requiredSegmentsForInteraction({List<CoachSegmentContent> requiredSegments, BuildContext context}) {
     List<CoachNotificationContent> requiredSegmentAsNotification = [];
 
@@ -192,7 +222,7 @@ class CoachTimelineFunctions {
               contentSubtitle: segment.className,
               contentDescription: '',
               contentImage: segment.classImage,
-              contentType: TimelineInteractionType.values[2],
+              contentType: TimelineInteractionType.segment,
               coachRequest: segment.coachRequest);
 
           if (requiredSegmentAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
@@ -271,6 +301,8 @@ class CoachTimelineFunctions {
     if (timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).isEmpty) {
       timelineGroup.timelineElements.add(newContent);
       timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+    } else if (newContent.contentType == TimelineInteractionType.mentoredVideo) {
+      timelineGroup.timelineElements.add(newContent);
     }
   }
 }

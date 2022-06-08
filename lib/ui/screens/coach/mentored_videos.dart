@@ -4,30 +4,39 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/coach_helper_functions.dart';
+import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/coach_personalized_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MentoredVideosPage extends StatefulWidget {
   final List<Annotation> coachAnnotation;
-  const MentoredVideosPage({this.coachAnnotation});
+  final List<CoachMediaMessage> coachVideoMessage;
+  const MentoredVideosPage({this.coachAnnotation, this.coachVideoMessage});
 
   @override
   _MentoredVideosPageState createState() => _MentoredVideosPageState();
 }
 
 class _MentoredVideosPageState extends State<MentoredVideosPage> {
-  List<Annotation> content = [];
-  List<Annotation> filteredContent;
+  List<CoachPersonalizedVideo> content = [];
+  List<CoachPersonalizedVideo> filteredContent;
   bool isFavoriteSelected = false;
   bool isContentFilteredByDate = false;
+  List<CoachPersonalizedVideo> _personalizedVideosList = [];
 
   @override
   void initState() {
+    _personalizedVideosList = CoachHelperFunctions.createPersonalizedVideoFromContent(
+        mentoredVideos: widget.coachAnnotation, videoMessages: widget.coachVideoMessage);
+
     setState(() {
-      content.addAll(widget.coachAnnotation);
+      content.addAll(_personalizedVideosList);
       filteredContent = content;
       filteredContent = contentSortedByDate();
     });
@@ -45,10 +54,10 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       builder: (context, state) {
         if (state is CoachMentoredVideosSuccess) {
           state.mentoredVideos.forEach((mentoredVideo) {
-            final sameElement = content.where((contentElement) => contentElement.id == mentoredVideo.id).toList();
-            if (sameElement.isEmpty) {
-              content.insert(0, mentoredVideo);
-            }
+            // final sameElement = content.where((contentElement) => contentElement.id == mentoredVideo.id).toList();
+            // if (sameElement.isEmpty) {
+            //   // content.insert(0, mentoredVideo);
+            // }
           });
         }
 
@@ -94,10 +103,10 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                       icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
-                          isFavoriteSelected = !isFavoriteSelected;
-                          isFavoriteSelected
-                              ? filteredContent = content.where((element) => element.favorite == true).toList()
-                              : filteredContent = widget.coachAnnotation;
+                          // isFavoriteSelected = !isFavoriteSelected;
+                          // isFavoriteSelected
+                          //     ? filteredContent = content.where((element) => element.favorite == true).toList()
+                          //     : filteredContent = widget.coachAnnotation;
                         });
                         //sort List items favorite = true;
                       }),
@@ -132,18 +141,20 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
           body: Container(
             width: MediaQuery.of(context).size.width,
             color: OlukoNeumorphismColors.appBackgroundColor,
-            child: ListView(children: segmentCard(coachAnnotation: filteredContent)),
+            child: ListView(children: segmentCard(videoContent: filteredContent)),
           ),
         );
       },
     );
   }
 
-  List<Widget> segmentCard({List<Annotation> coachAnnotation}) {
+  List<Widget> segmentCard({List<CoachPersonalizedVideo> videoContent}) {
     List<Widget> contentForSection = [];
 
-    coachAnnotation.forEach((annotation) {
-      contentForSection.add(returnCardForSegment(annotation));
+    videoContent.forEach((video) {
+      contentForSection.add(CoachPersonalizedVideoComponent(
+        personalizedVideo: video,
+      ));
     });
 
     return contentForSection;
@@ -267,7 +278,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         : AssetImage("assets/home/mvtthumbnail.png") as ImageProvider;
   }
 
-  List<Annotation> contentSortedByDate() {
+  List<CoachPersonalizedVideo> contentSortedByDate() {
     isContentFilteredByDate
         ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
         : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));

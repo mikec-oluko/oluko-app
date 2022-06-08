@@ -104,12 +104,16 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
         return OlukoLocalizations.of(context).find('personalizedVideo');
+      case CoachFileTypeEnum.introductionVideo:
+        return OlukoLocalizations.of(context).find('welcomeVideo');
       case CoachFileTypeEnum.recommendedVideo:
         return OlukoLocalizations.of(context).find('recommendedVideos');
       case CoachFileTypeEnum.introductionVideo:
         return OlukoLocalizations.of(context).find('introductionVideo');
       case CoachFileTypeEnum.welcomeVideo:
         return OlukoLocalizations.of(context).find('welcomeVideo');
+      case CoachFileTypeEnum.messageVideo:
+        return OlukoLocalizations.of(context).find('coachMessageVideo');
       default:
         return '';
     }

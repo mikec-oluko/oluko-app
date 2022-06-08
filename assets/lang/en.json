@@ -344,6 +344,7 @@
     "noInternetConnectionHeaderText": "No internet conection",
     "noInternetConnectionBodyText": "Make sure wi-fi or mobile data is turned on and then retry.",
     "retry": "Retry",
+    "coachMessageVideo": "Video Message",
     "exitOnButtonBack": "Press Back button again to Exit",
     "noRequests": "No requests",
     "badVideoFormat": "This video format is not allowed.",

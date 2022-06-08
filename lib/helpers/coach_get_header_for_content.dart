@@ -7,6 +7,8 @@ class CoachHeders {
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
         return OlukoLocalizations.of(context).find('timelinePersonalizedVideo');
+      case CoachFileTypeEnum.introductionVideo:
+        return OlukoLocalizations.of(context).find('welcomeVideo');
       case CoachFileTypeEnum.sentVideo:
         return OlukoLocalizations.of(context).find('timelineSentVideo');
       case CoachFileTypeEnum.recommendedCourse:

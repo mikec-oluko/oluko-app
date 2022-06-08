@@ -3,6 +3,7 @@ import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -27,6 +28,7 @@ class CoachNotificationContent extends CoachRecommendationDefault {
       Annotation mentoredContent,
       RecommendationMedia recommendationMediaContent,
       Course courseContent,
+      CoachMediaMessage coachMediaMessage,
       this.videoUrl})
       : super(
             coachRecommendation: coachRecommendation,
@@ -42,5 +44,6 @@ class CoachNotificationContent extends CoachRecommendationDefault {
             movementContent: movementContent,
             mentoredContent: mentoredContent,
             recommendationMedia: recommendationMediaContent,
-            courseContent: courseContent);
+            courseContent: courseContent,
+            coachMediaMessage: coachMediaMessage);
 }
