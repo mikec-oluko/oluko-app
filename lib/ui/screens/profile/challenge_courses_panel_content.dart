@@ -69,7 +69,7 @@ class _State extends State<ChallengeCoursesPanelContent> {
         }
       },
       child: CourseCard(
-        audioNavigation: audioNavigation,
+          audioNavigation: audioNavigation,
           closePanelFunction: () => widget.panelController.close(),
           challengeNavigations: challengeNavigations,
           imageCover: _generateImageCourse(challengeNavigations[0].enrolledCourse.course.image)),

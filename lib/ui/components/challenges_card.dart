@@ -77,7 +77,7 @@ class _State extends State<ChallengesCard> {
                     if (widget.challengeNavigations.length == 1) {
                       navigateToAudioSegment(widget.challengeNavigations[0]);
                     } else {
-                      navigateToPanel();
+                      navigateToPanel(true);
                     }
                   },
                   child: Stack(alignment: Alignment.center, children: [
@@ -163,9 +163,10 @@ class _State extends State<ChallengesCard> {
     }
   }
 
-  void navigateToPanel() {
+  void navigateToPanel([bool navigateToAudio=false]) {
     widget.panelController.open();
-    BlocProvider.of<CoursePanelBloc>(context).setPanelChallenges(widget.challengeNavigations,(challenge) => navigateToAudioSegment(challenge));
+    BlocProvider.of<CoursePanelBloc>(context)
+        .setPanelChallenges(widget.challengeNavigations, navigateToAudio ? (challenge) => navigateToAudioSegment(challenge) : null);
   }
 
   void navigateToSegmentDetail([ChallengeNavigation challengeNavigation]) {
