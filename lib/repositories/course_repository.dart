@@ -1,15 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/course/course_bloc.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
-import 'package:oluko_app/models/like.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseRepository {
   FirebaseFirestore firestoreInstance;
@@ -113,99 +108,5 @@ class CourseRepository {
         .collection('courseStatistics')
         .snapshots();
     return statisticsStream;
-  }
-
-  Future<Like> courseIsLiked({@required String courseId, @required String userId, bool isCheck = false}) async {
-    final _likedCourseQuery = _courseCollectionInstance.doc(courseId).collection('likes').where('user_id', isEqualTo: userId);
-
-    final Query<Map<String, dynamic>> docRef = isCheck ? _likedCourseQuery : _likedCourseQuery.where('is_active', isEqualTo: true);
-
-    final QuerySnapshot courseLikeSnapshot = await docRef.get();
-    if (courseLikeSnapshot.docs == null || courseLikeSnapshot.docs.isEmpty) {
-      return null;
-    }
-    final _courseLikeDoc = courseLikeSnapshot.docs.first.data() as Map<String, dynamic>;
-    final _courseLikeResponse = Like.fromJson(_courseLikeDoc);
-    return _courseLikeResponse;
-  }
-
-  Future<Like> updateCourseLike(String userId, String courseId) async {
-    try {
-      Like _courseLiked = await courseIsLiked(courseId: courseId, userId: userId, isCheck: true);
-      if (_courseLiked != null) {
-        return _updateLikedCourse(courseId, _courseLiked);
-      } else {
-        return _createNewLikedCourse(courseId, userId);
-      }
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      rethrow;
-    }
-  }
-
-  Like _createNewLikedCourse(String courseId, String userId) {
-    final CollectionReference _courseLikesReference = _courseCollectionInstance.doc(courseId).collection('likes');
-    final DocumentReference _docRef = _courseLikesReference.doc();
-    final DocumentReference _userReference = _getUserReference(userId);
-    final DocumentReference _courseReference = _getCourseReference(courseId);
-
-    final Like _newLikeElement = Like(
-        id: _docRef.id,
-        userId: userId,
-        userReference: _userReference,
-        entityId: courseId,
-        entityReference: _courseReference,
-        entityType: EntityTypeEnum.course,
-        isActive: true);
-
-    _docRef.set(_newLikeElement.toJson());
-    return _newLikeElement;
-  }
-
-  Like _updateLikedCourse(String courseId, Like courseLiked) {
-    final DocumentReference _courseLikedReference = _courseCollectionInstance.doc(courseId).collection('likes').doc(courseLiked.id);
-    if (courseLiked.isActive) {
-      courseLiked.isActive = false;
-      _updateLikeValue(_courseLikedReference, courseLiked);
-    } else {
-      courseLiked.isActive = true;
-      _updateLikeValue(_courseLikedReference, courseLiked);
-    }
-    return courseLiked;
-  }
-
-  void _updateLikeValue(DocumentReference<Object> courseLikedReference, Like courseLiked) {
-    courseLikedReference.update({'updated_at': FieldValue.serverTimestamp(), 'is_active': courseLiked.isActive});
-  }
-
-  getCourseRecommendations(String userId, String courseId) async {
-    try {
-      final Query<Map<String, dynamic>> docRef =
-          _courseCollectionInstance.doc(courseId).collection('recommendations').where('destination_user_id', isEqualTo: userId);
-      final QuerySnapshot courseRecommendationsForUser = await docRef.get();
-      if (courseRecommendationsForUser.docs == null || courseRecommendationsForUser.docs.isEmpty) {
-        return null;
-      }
-      // final courseLikeDoc = courseLikeSnapshot.docs.first.data() as Map<String, dynamic>;
-      // final courseLikeResponse = Like.fromJson(courseLikeDoc);
-      // return courseLikeResponse;
-    } catch (e) {}
-  }
-
-  setCourseRecommendedByUser(String originUserId, List<String> destinationUsers, Course courseRecommended) {}
-
-  DocumentReference<Object> _getUserReference(String userRequestedId) {
-    final DocumentReference userReference =
-        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userRequestedId);
-    return userReference;
-  }
-
-  DocumentReference<Object> _getCourseReference(String courseId) {
-    final DocumentReference courseReference =
-        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').doc(courseId);
-    return courseReference;
   }
 }

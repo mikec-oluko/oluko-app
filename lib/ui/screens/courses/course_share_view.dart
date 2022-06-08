@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
@@ -7,17 +8,20 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/users_list_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseShareView extends StatefulWidget {
   final UserResponse currentUser;
-  const CourseShareView({this.currentUser}) : super();
+  final Course courseToShare;
+  const CourseShareView({this.currentUser, this.courseToShare}) : super();
 
   @override
   State<CourseShareView> createState() => _CourseShareViewState();
@@ -82,22 +86,33 @@ class _CourseShareViewState extends State<CourseShareView> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Send recommendation',
-                                      // OlukoLocalizations.get(context, 'noUsers'),
+                                      OlukoLocalizations.get(context, 'sendFriendRecommendation'),
                                       textAlign: TextAlign.start,
                                       style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                                     ),
-                                    Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(
-                                              Icons.send_rounded,
-                                              color: userSelectedList.isEmpty
-                                                  ? OlukoNeumorphismColors.finalGradientColorDark
-                                                  : OlukoColors.primary,
-                                            )))
+                                    IgnorePointer(
+                                      ignoring: userSelectedList.isEmpty,
+                                      child: Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                if (userSelectedList.isNotEmpty) {
+                                                  BlocProvider.of<CourseUserIteractionBloc>(context).recommendCourseToFriends(
+                                                    originUserId: widget.currentUser.id,
+                                                    courseRecommendedId: widget.courseToShare.id,
+                                                    usersRecommended: userSelectedList,
+                                                  );
+                                                }
+                                                Navigator.pop(context);
+                                              },
+                                              icon: Icon(
+                                                Icons.send_rounded,
+                                                color: userSelectedList.isEmpty
+                                                    ? OlukoNeumorphismColors.finalGradientColorDark
+                                                    : OlukoColors.primary,
+                                              ))),
+                                    )
                                   ],
                                 ),
                               ),
@@ -123,8 +138,7 @@ class _CourseShareViewState extends State<CourseShareView> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
           child: Text(
-            favorite ? 'Favorites' : 'Friends',
-            // OlukoLocalizations.get(context, 'noUsers'),
+            favorite ? OlukoLocalizations.get(context, 'favorites') : OlukoLocalizations.get(context, 'friends'),
             textAlign: TextAlign.start,
             style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500),
           ),

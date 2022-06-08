@@ -1250,19 +1250,7 @@ class Routes {
         break;
       case RouteEnum.courseShareView:
         providers = [
-          // BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
-          // BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
-          // BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
-          // BlocProvider<MovementBloc>.value(value: _movementBloc),
-          // BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
-          // BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          // BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
-          // BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          // BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
-          // BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          // BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
-          // BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -1270,20 +1258,13 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
-          // BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
-          // BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        // newRouteView = CourseMarketing(
-        //   course: argumentsToAdd['course'] as Course,
-        //   fromCoach: argumentsToAdd['fromCoach'] as bool,
-        //   isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
-        //   courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-        //   courseIndex: argumentsToAdd['courseIndex'] as int,
-        // );
         newRouteView = CourseShareView(
           currentUser: argumentsToAdd['currentUser'] as UserResponse,
+          courseToShare: argumentsToAdd['courseToShare'] as Course,
         );
         break;
       default:

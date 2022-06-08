@@ -533,8 +533,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 15),
                 child: GestureDetector(
-                  onTap: () =>
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView], arguments: {'currentUser': _userState.user}),
+                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView],
+                      arguments: {'currentUser': _userState.user, 'courseToShare': widget.course}),
                   child: topButtonsBackground(Image.asset(
                     'assets/courses/grey_share_outlined.png',
                     scale: 3.5,

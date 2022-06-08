@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/like.dart';
-import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/course_user_interaction_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseUserInteractionState {}
@@ -26,12 +27,12 @@ class CourseInteractionFailure extends CourseUserInteractionState {
 class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
   CourseUserIteractionBloc() : super(CourseInteractionLoading());
 
-  final CourseRepository _courseRepository = CourseRepository();
+  final CourseUserInteractionRepository _courseUserInteractionRepository = CourseUserInteractionRepository();
 
   Future<Like> isCourseLiked({@required String courseId, @required String userId}) async {
     try {
       emit(CourseInteractionLoading());
-      final Like likedCourse = await _courseRepository.courseIsLiked(courseId: courseId, userId: userId);
+      final Like likedCourse = await _courseUserInteractionRepository.courseIsLiked(courseId: courseId, userId: userId);
       emit(CourseLikedSuccess(courseLiked: likedCourse));
       return likedCourse;
     } catch (exception, stackTrace) {
@@ -46,7 +47,7 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
 
   Future<Like> updateCourseLikeValue({@required String userId, @required String courseId}) async {
     try {
-      final Like likedContent = await _courseRepository.updateCourseLike(userId, courseId);
+      final Like likedContent = await _courseUserInteractionRepository.updateCourseLike(userId, courseId);
       emit(CourseLikedSuccess(courseLiked: likedContent));
       return likedContent;
     } catch (exception, stackTrace) {
@@ -57,5 +58,16 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
       emit(CourseInteractionFailure(exception: exception));
       rethrow;
     }
+  }
+
+  recommendCourseToFriends(
+      {@required String originUserId, @required String courseRecommendedId, @required List<UserResponse> usersRecommended}) async {
+    List<String> friendUsersIdCollection = [];
+    if (usersRecommended.isNotEmpty) {
+      friendUsersIdCollection.addAll(usersRecommended.map((friendToRecommend) => friendToRecommend.id).toList());
+    }
+    bool sentRecommendation = await _courseUserInteractionRepository.setCourseRecommendedByUser(
+        originUserId: originUserId, courseToShareId: courseRecommendedId, usersIdsToShareCourse: friendUsersIdCollection);
+    return sentRecommendation;
   }
 }
