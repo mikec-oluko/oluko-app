@@ -73,8 +73,13 @@ class _State extends State<ChallengesCard> {
           Padding(
               padding: const EdgeInsets.only(top: 5),
               child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
-                      arguments: {'challenge': widget.segmentChallenge.challengeForAudio, 'userRequested': widget.userRequested}),
+                  onTap: () {
+                    if (widget.challengeNavigations.length == 1) {
+                      navigateToAudioSegment(widget.challengeNavigations[0]);
+                    } else {
+                      navigateToPanel();
+                    }
+                  },
                   child: Stack(alignment: Alignment.center, children: [
                     Image.asset(
                       'assets/courses/green_circle.png',
@@ -99,6 +104,11 @@ class _State extends State<ChallengesCard> {
   }
 
   bool get needAudioComponent => widget.useAudio && widget.audioIcon;
+
+  void navigateToAudioSegment(ChallengeNavigation challengeNavigation) {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
+        arguments: {'challenge': challengeNavigation.challengeForAudio, 'userRequested': widget.userRequested});
+  }
 
   Widget _lockedCard(BuildContext context) {
     return GestureDetector(
@@ -155,7 +165,7 @@ class _State extends State<ChallengesCard> {
 
   void navigateToPanel() {
     widget.panelController.open();
-    BlocProvider.of<CoursePanelBloc>(context).setPanelChallenges(widget.challengeNavigations);
+    BlocProvider.of<CoursePanelBloc>(context).setPanelChallenges(widget.challengeNavigations,(challenge) => navigateToAudioSegment(challenge));
   }
 
   void navigateToSegmentDetail([ChallengeNavigation challengeNavigation]) {

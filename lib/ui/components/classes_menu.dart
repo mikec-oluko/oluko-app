@@ -6,10 +6,11 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ClassesMenu extends StatefulWidget {
-  ClassesMenu({this.challengeNavigations, this.closePanelFunction}) : super();
+  ClassesMenu({this.challengeNavigations, this.closePanelFunction, this.audioNavigation}) : super();
 
   final List<ChallengeNavigation> challengeNavigations;
   final Function() closePanelFunction;
+  final Function(ChallengeNavigation) audioNavigation;
 
   @override
   _ClassesMenuState createState() => _ClassesMenuState();
@@ -26,7 +27,11 @@ class _ClassesMenuState extends State<ClassesMenu> {
                   onTap: () => Future(
                     () {
                       widget.closePanelFunction();
-                      navigateToSegmentDetail(item);
+                      if (widget.audioNavigation != null) {
+                        widget.audioNavigation(item);
+                      } else {
+                        navigateToSegmentDetail(item);
+                      }
                     },
                   ),
                   value: widget.challengeNavigations[0].segmentId,

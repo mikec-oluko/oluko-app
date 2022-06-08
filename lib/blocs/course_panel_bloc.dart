@@ -12,13 +12,14 @@ class Failure extends CoursePanelState {
 
 class CoursePanelSuccess extends CoursePanelState {
   final Map<String, List<ChallengeNavigation>> challengeNavigations;
-  CoursePanelSuccess({this.challengeNavigations});
+  final Function(ChallengeNavigation) audioNavigation;
+  CoursePanelSuccess({this.challengeNavigations, this.audioNavigation});
 }
 
 class CoursePanelBloc extends Cubit<CoursePanelState> {
   CoursePanelBloc() : super(LoadingCoursePanel());
 
-  void setPanelChallenges(List<ChallengeNavigation> challengeNavigations) {
+  void setPanelChallenges(List<ChallengeNavigation> challengeNavigations, [Function(ChallengeNavigation) audioNavigation]) {
     Map<String, List<ChallengeNavigation>> challengeCourseMap = {};
     for (var challenge in challengeNavigations) {
       String courseId = challenge.enrolledCourse.course.id;
@@ -27,6 +28,6 @@ class CoursePanelBloc extends Cubit<CoursePanelState> {
       }
       challengeCourseMap[courseId].add(challenge);
     }
-    emit(CoursePanelSuccess(challengeNavigations: challengeCourseMap));
+    emit(CoursePanelSuccess(challengeNavigations: challengeCourseMap, audioNavigation: audioNavigation));
   }
 }

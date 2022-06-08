@@ -21,10 +21,12 @@ class CourseCard extends StatefulWidget {
   final Function() unrolledFunction;
   final List<ChallengeNavigation> challengeNavigations;
   final Function() closePanelFunction;
+  final Function(ChallengeNavigation) audioNavigation;
 
   CourseCard(
       {this.imageCover,
       this.challengeNavigations,
+      this.audioNavigation,
       this.closePanelFunction,
       this.progress,
       this.width,
@@ -148,7 +150,7 @@ class _State extends State<CourseCard> {
       right: -15,
       child: Visibility(
         visible: widget.challengeNavigations != null && widget.challengeNavigations.length > 1,
-        child: Align(alignment: Alignment.topRight, child: ClassesMenu(challengeNavigations: widget.challengeNavigations, closePanelFunction: widget.closePanelFunction)),
+        child: Align(alignment: Alignment.topRight, child: ClassesMenu(challengeNavigations: widget.challengeNavigations, closePanelFunction: widget.closePanelFunction, audioNavigation: widget.audioNavigation)),
       ),
     );
   }

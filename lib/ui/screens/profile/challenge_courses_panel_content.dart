@@ -23,6 +23,7 @@ class ChallengeCoursesPanelContent extends StatefulWidget {
 
 class _State extends State<ChallengeCoursesPanelContent> {
   List<Movement> segmentMovements;
+  Function(ChallengeNavigation) audioNavigation;
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +60,16 @@ class _State extends State<ChallengeCoursesPanelContent> {
     return GestureDetector(
       onTap: () {
         if (challengeNavigations.length == 1) {
-          navigateToSegmentDetail(challengeNavigations[0]);
+          if (audioNavigation != null) {
+            audioNavigation(challengeNavigations[0]);
+          } else {
+            navigateToSegmentDetail(challengeNavigations[0]);
+          }
           widget.panelController.close();
         }
       },
       child: CourseCard(
+        audioNavigation: audioNavigation,
           closePanelFunction: () => widget.panelController.close(),
           challengeNavigations: challengeNavigations,
           imageCover: _generateImageCourse(challengeNavigations[0].enrolledCourse.course.image)),
@@ -90,6 +96,7 @@ class _State extends State<ChallengeCoursesPanelContent> {
           BlocBuilder<CoursePanelBloc, CoursePanelState>(builder: (context, state) {
             if (state is CoursePanelSuccess) {
               List<Widget> courseCards = [];
+              audioNavigation = state.audioNavigation;
               for (List<ChallengeNavigation> challenges in state.challengeNavigations.values) {
                 courseCards.add(getCourseCard(challenges));
               }
