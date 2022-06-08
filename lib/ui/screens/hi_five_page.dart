@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
@@ -34,6 +35,7 @@ class _HiFivePageState extends State<HiFivePage> {
           return BlocConsumer<HiFiveBloc, HiFiveState>(
             builder: (context, hiFiveState) {
               if (hiFiveState is HiFiveSuccess && hiFiveState.users != null && hiFiveState.users.isNotEmpty) {
+                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
                 _hiFiveState = hiFiveState;
                 return Scaffold(
                   appBar: _appBar(),
@@ -51,6 +53,7 @@ class _HiFivePageState extends State<HiFivePage> {
                   ),
                 );
               } else {
+                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
                 return const SizedBox();
               }
             },

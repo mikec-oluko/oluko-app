@@ -96,7 +96,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
   WorkState workState;
-  WorkState lastWorkStateBeforePause;
+  WorkState lastWorkStateBeforePause = WorkState.countdown;
 
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
@@ -509,7 +509,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           stopwatchTimer.cancel();
         }
       } else {
-        panelController.close();
+        if (isSegmentWithoutRecording()) {
+          panelController.close();
+        }
         workState = lastWorkStateBeforePause;
         if (isCurrentTaskTimed) {
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
@@ -1040,8 +1042,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     } else {
       if (cameraController != null) {
         cameraController.resumeVideoRecording();
-        _resume();
       }
+      _resume();
     }
   }
 
@@ -1107,7 +1109,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _resume() {
     setState(() {
-      workState = WorkState.exercising;
+      workState = lastWorkStateBeforePause;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });

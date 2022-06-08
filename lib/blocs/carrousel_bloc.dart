@@ -15,11 +15,11 @@ class CarouselSuccess extends CarouselState {
 class CarouselBloc extends Cubit<CarouselState> {
   CarouselBloc() : super(CarouselLoading());
 
-  void widgetIsHiden(bool isHiden, int widgetIndex) {
+  void widgetIsHiden(bool isHiden, {int widgetIndex}) {
     if (isHiden) {
       emit(CarouselSuccess(widgetIndex: widgetIndex));
     } else {
-      emit(CarouselLoading());
+      emit( CarouselLoading());
     }
   }
 }
