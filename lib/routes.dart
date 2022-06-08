@@ -680,12 +680,14 @@ class Routes {
         break;
       case RouteEnum.profileChallenges:
         providers = [
+          BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
-          challengeSegments: argumentsToAdd['challengeSegments'] as List<Widget>,
+          listOfChallenges: argumentsToAdd['listOfChallenges'] as List<ChallengeNavigation>,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,

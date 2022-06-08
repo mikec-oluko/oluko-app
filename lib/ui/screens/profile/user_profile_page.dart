@@ -90,7 +90,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _friendsRequested = false;
   bool canHidePanel = true;
   Widget defaultWidgetNoContent = const SizedBox.shrink();
-  Map<String, List<ChallengeNavigation>> _challengeMap;
 
   @override
   void initState() {
@@ -713,7 +712,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
       child: BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
         builder: (context, state) {
           if (state is UniqueChallengesSuccess) {
-            _challengeMap = state.challengeMap;
             return getCarouselSection(buildChallengeCards(state));
           } else {
             return getCarouselSection([
@@ -753,7 +751,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),
         onOptionTap: () {
           Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
-              arguments: {'challengeSegments': challengeList, 'isCurrentUser': _isCurrentUser, 'userRequested': _userProfileToDisplay});
+              arguments: {'listOfChallenges': listOfChallenges, 'isCurrentUser': _isCurrentUser, 'userRequested': _userProfileToDisplay});
         },
         children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
   }
