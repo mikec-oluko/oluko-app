@@ -92,6 +92,8 @@ class _NoCoachPageState extends State<NoCoachPage> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
+                isOlukoControls: true,
+                showOptions: true,
                 videoUrl: videoUrl,
                 autoPlay: false,
                 whenInitialized: (ChewieController chewieController) => setState(() {
