@@ -1,10 +1,5 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -14,7 +9,6 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
-import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -127,6 +121,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget neumorphicForm() {
+    Widget _panelContent = startRecordingButton();
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -151,6 +146,11 @@ class _TaskDetailsState extends State<TaskDetails> {
           builder: (context, state) {
             if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission.task.id == _task.id) {
               isAssessmentDone = true;
+              _panelContent = isAssessmentDone ? recordAgainButtons(_taskSubmission) : startRecordingButton();
+            } else if (state is TaskSubmissionLoading) {
+              _panelContent = const SizedBox.shrink();
+            } else {
+              _panelContent = startRecordingButton();
             }
             return recordAgainRequested
                 ? SlidingUpPanel(
@@ -176,7 +176,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                               child: isAssessmentDone || widget.taskCompleted
                                   ? recordAgainButtons(_taskSubmission)
                                   : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                      Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
+                                      Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: _panelContent)
                                     ]),
                             ),
                           ),
@@ -238,11 +238,13 @@ class _TaskDetailsState extends State<TaskDetails> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
+        isOlukoControls: true,
+        showOptions: true,
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => setState(() {
-              _controller = chewieController;
-            })));
+        whenInitialized: (ChewieController chewieController) {
+          _controller = chewieController;
+        }));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
@@ -257,7 +259,6 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget formSection([TaskSubmission taskSubmission]) {
     return Container(
-        //height: MediaQuery.of(context).size.height / 1.75,
         child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -271,15 +272,19 @@ class _TaskDetailsState extends State<TaskDetails> {
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicSwitch(
                     value: _makePublic ?? false,
-                    onSwitchChange: (bool value) => setState(() {
+                    onSwitchChange: (bool value) {
                       if (taskSubmission != null) {
-                        _makePublic = value;
-                        BlocProvider.of<TaskSubmissionBloc>(context)
-                            .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                        setState(() {
+                          _makePublic = value;
+                          //BlocProvider.of<TaskPrivacityBloc>(context).set(value);
+                          BlocProvider.of<TaskSubmissionBloc>(context)
+                              .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                        });
                       } else {
                         AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
                       }
-                    }),
+                      ;
+                    },
                   )
                 : Switch(
                     value: _makePublic ?? false,
@@ -328,11 +333,25 @@ class _TaskDetailsState extends State<TaskDetails> {
       }
       return true;
     }, builder: (context, state) {
+      if (state is TaskSubmissionLoading) {
+        return Stack(
+          children: [
+            ListView(
+              children: [
+                const SizedBox(height: 20),
+                showVideoPlayer(_task.video),
+                formSection(),
+              ],
+            ),
+            if (!OlukoNeumorphism.isNeumorphismDesign) const Positioned(bottom: 25, left: 0, right: 0, child: SizedBox.shrink()),
+          ],
+        );
+      }
+
       if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission?.task?.id == _task.id) {
         _taskSubmission = state.taskSubmission;
         _makePublic ??= _taskSubmission.isPublic;
         isAssessmentDone = true;
-
         return ListView(
           children: [
             const SizedBox(height: 20),
@@ -395,6 +414,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                 });
               } else if (state is PermissionsRequired) {
                 PermissionsUtils.showSettingsMessage(context);
+              } else if (state is UploadFailure && state.badFormat) {
+                AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
               }
             },
             child: GestureDetector(

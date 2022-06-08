@@ -19,6 +19,7 @@ class TagCategoryRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('tagsCategories')
+        .where('is_deleted', isNotEqualTo: true)
         .get();
     List<TagCategory> response = [];
     docRef.docs.forEach((doc) {

@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +11,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
@@ -73,12 +76,15 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
@@ -90,6 +96,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
@@ -403,11 +410,15 @@ class Routes {
   final CurrentTimeBloc _currentTimeBloc = CurrentTimeBloc();
   final AmrapRoundBloc _amrapRoundBloc = AmrapRoundBloc();
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
-  final CarrouselBloc _carrouselBloc = CarrouselBloc();
+  final CarouselBloc _carouselBloc = CarouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
   final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
+  final UserInformationBloc _userInformationBloc = UserInformationBloc();
+  final ChallengeCompletedBeforeBloc _challengeCompletedBeforeBloc = ChallengeCompletedBeforeBloc();
+  final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
+  final FAQBloc _fAQBloc = FAQBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -421,6 +432,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
           BlocProvider<SelectedTagsBloc>.value(value: _selectedTagsBloc),
@@ -479,9 +491,9 @@ class Routes {
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
-          BlocProvider<CarrouselBloc>.value(value: _carrouselBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
-          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -551,6 +563,7 @@ class Routes {
         break;
       case RouteEnum.friends:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -565,6 +578,8 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -590,7 +605,24 @@ class Routes {
           ),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
-          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc)
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<UserInformationBloc>.value(value: _userInformationBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
+          BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
+          BlocProvider<NotificationBloc>.value(value: _notificationBloc),
+          BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
+          BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
+          BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
@@ -598,6 +630,9 @@ class Routes {
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:
+        providers = [
+          BlocProvider<FAQBloc>.value(value: _fAQBloc),
+        ];
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
@@ -605,6 +640,8 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
@@ -633,19 +670,24 @@ class Routes {
           ),
           BlocProvider<HiFiveSendBloc>.value(
             value: _hiFiveSendBloc,
-          )
+          ),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView =
             UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
-        providers = [BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc)];
+        providers = [
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
-          challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+          challengeSegments: argumentsToAdd['challengeSegments'] as List<Widget>,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
+          userRequested: argumentsToAdd['userRequested'] as UserResponse,
         );
         break;
       case RouteEnum.profileTransformationJourney:
@@ -727,6 +769,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -821,6 +865,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -840,6 +885,7 @@ class Routes {
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -861,6 +907,7 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
           BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
@@ -879,6 +926,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -905,6 +954,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(
@@ -1049,6 +1099,7 @@ class Routes {
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
@@ -1081,6 +1132,8 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         newRouteView = CoachMainPage();
@@ -1107,6 +1160,7 @@ class Routes {
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         newRouteView = CoachPage();
@@ -1142,6 +1196,7 @@ class Routes {
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView =
@@ -1151,11 +1206,14 @@ class Routes {
         providers = [
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc),
         ];
         newRouteView = const HiFivePage();
         break;
       case RouteEnum.homeLongPress:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),

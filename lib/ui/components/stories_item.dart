@@ -1,17 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/user_utils.dart';
-
-import '../../routes.dart';
 
 class StoriesItem extends StatefulWidget {
   StoryListBloc bloc;
@@ -29,18 +28,24 @@ class StoriesItem extends StatefulWidget {
   List<Story> stories;
   bool _hasUnseenStories = false;
   StoriesItemFrom from;
+  UserProgressStreamBloc userProgressStreamBloc;
+  UserProgress userProgress;
+  bool showUserProgress;
 
   StoriesItem(
       {this.maxRadius,
       this.imageUrl,
+      this.userProgress,
       this.name,
       this.lastname,
       this.stories,
       this.progressValue = 0,
       this.showName = false,
+      this.showUserProgress = false,
       this.getStories = false,
       this.addUnseenStoriesRing = false,
       this.currentUserId,
+      this.userProgressStreamBloc,
       this.itemUserId,
       this.bloc,
       this.from = StoriesItemFrom.home,
@@ -83,8 +88,21 @@ class StoriesItem extends StatefulWidget {
 }
 
 class _State extends State<StoriesItem> {
+  UserProgress _userProgress;
+
+  @override
+  void initState() {
+    if (widget.userProgress != null) {
+      _userProgress = widget.userProgress;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.userProgress != null && _userProgress == null) {
+      _userProgress = widget.userProgress;
+    }
     return BlocListener<StoryListBloc, StoryListState>(
         bloc: widget.bloc ?? StoryListBloc(),
         listener: (context, state) {
@@ -100,7 +118,7 @@ class _State extends State<StoriesItem> {
           }
         },
         child: Padding(
-          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.fromLTRB(10, 0, 10, 0) : const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(10) : const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -109,17 +127,7 @@ class _State extends State<StoriesItem> {
                 children: [
                   if (widget._hasUnseenStories)
                     Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
-                  Positioned(
-                    bottom: 0,
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: CircularProgressIndicator(
-                      value: widget.progressValue,
-                      strokeWidth: 6,
-                      valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
-                    ),
-                  ),
+                  widget.showUserProgress ? Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()) : SizedBox(),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
                       widget.currentUserId != null &&
@@ -227,5 +235,48 @@ class _State extends State<StoriesItem> {
       default:
         return 7;
     }
+  }
+
+  Widget userProgressIndicator() {
+    if (widget.userProgressStreamBloc != null) {
+      return BlocConsumer<UserProgressStreamBloc, UserProgressStreamState>(
+          bloc: widget.userProgressStreamBloc,
+          listener: (context, userProgressStreamState) {
+            blocConsumerCondition(userProgressStreamState);
+          },
+          builder: (context, userProgressStreamState) {
+            return greenCircle();
+          });
+    } else {
+      return BlocConsumer<UserProgressStreamBloc, UserProgressStreamState>(listener: (context, userProgressStreamState) {
+        blocConsumerCondition(userProgressStreamState);
+      }, builder: (context, userProgressStreamState) {
+        return greenCircle();
+      });
+    }
+  }
+
+  void blocConsumerCondition(UserProgressStreamState userProgressStreamState) {
+    if (userProgressStreamState is UserProgressUpdate && userProgressStreamState.obj.id == widget.itemUserId) {
+      setState(() {
+        _userProgress = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressAdd && userProgressStreamState.obj.id == widget.itemUserId) {
+      setState(() {
+        _userProgress = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressRemove && userProgressStreamState.obj.id == widget.itemUserId) {
+      setState(() {
+        _userProgress.progress = 0;
+      });
+    }
+  }
+
+  Widget greenCircle() {
+    return CircularProgressIndicator(
+      value: _userProgress != null ? _userProgress.progress : 0,
+      strokeWidth: 7,
+      valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
+    );
   }
 }

@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/course_helper.dart';
 import 'package:oluko_app/models/class.dart';
@@ -108,6 +109,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<MovementBloc>(context).getStream();
+          BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
         }
 
         return form();
@@ -120,7 +122,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   Widget form() {
     return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
       if (movementState is LoadingMovementState) {
-        return nil;
+        return const Center(child: CircularProgressIndicator());
       }
       if (movementState is GetAllSuccess) {
         _movements = movementState.movements;
@@ -233,6 +235,26 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
+                  bottomWidgets: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Text(
+                          widget.course.name,
+                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
+                            widget.course.classes != null ? widget.course.classes.length : 0, context),
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SliverPersistentHeader(
@@ -243,35 +265,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
                   )),
             ]),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: SliverAppBarDelegate(
-                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
-                CourseHelper.getAdaptiveSizeForTitle(widget.course.name.length, context),
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  color: OlukoNeumorphismColors.finalGradientColorDark,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      widget.course.name,
-                      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Text(
-                  CourseUtils.toCourseDuration(
-                      int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                ),
-              ),
-            ])),
             if (courseEnrollmentState is GetEnrollmentSuccess)
               SliverVisibility(
                 visible: (courseEnrollmentState.courseEnrollment != null && courseEnrollmentState.courseEnrollment.isUnenrolled == true) ||
@@ -337,7 +330,21 @@ class _CourseMarketingState extends State<CourseMarketing> {
         listener: (context, courseEnrollmentState) {
           if (courseEnrollmentState is CreateEnrollmentSuccess) {
             BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(_user.uid);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+            if (ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root]) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                routeLabels[RouteEnum.root],
+                (route) => false,
+                arguments: {
+                  'tab': 0,
+                },
+              );
+            } else {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(routeLabels[RouteEnum.root]),
+              );
+            }
           }
         },
         child: Padding(
@@ -349,29 +356,15 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 OlukoNeumorphicPrimaryButton(
                   thinPadding: true,
                   title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () async {
-                    if (_disableAction == false) {
-                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
-                    }
-                    _disableAction = true;
+                  onPressed: () {
+                    enrollAction(context);
                   },
                 )
               else
                 OlukoPrimaryButton(
                   title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () async {
-                    if (_disableAction == false) {
-                      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
-                    }
-                    _disableAction = true;
+                  onPressed: () {
+                    enrollAction(context);
                   },
                 ),
             ],
@@ -381,6 +374,17 @@ class _CourseMarketingState extends State<CourseMarketing> {
     } else {
       return const SizedBox();
     }
+  }
+
+  Future<void> enrollAction(BuildContext context) async {
+    if (_disableAction == false) {
+      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+      if (!widget.isCoachRecommendation) {
+        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+      }
+      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+    }
+    _disableAction = true;
   }
 
   Widget enrollButton() {

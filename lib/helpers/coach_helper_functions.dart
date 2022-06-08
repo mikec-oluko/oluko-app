@@ -35,7 +35,7 @@ class CoachHelperFunctions {
               ),
               videoHLS: coachAssignment.videoHLS ??
                   (coachAssignment.video != null ? coachAssignment.video.url : coachAssignment.introductionVideo),
-            )
+              notificationViewed: coachAssignment.introductionCompleted)
           : null;
     }
     return null;

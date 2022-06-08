@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/movement_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -78,5 +82,36 @@ class MovementBloc extends Cubit<MovementState> {
       emit(GetAllSuccess(movements: movements));
     });
     return subscription;
+  }
+
+  Future<void> getByClass(Class classObj) async {
+    try {
+      emit(LoadingMovementState());
+      final List<Movement> movements = [];
+      for (final SegmentSubmodel segment in classObj.segments) {
+        if (segment.sections != null) {
+          for (final SectionSubmodel section in segment?.sections) {
+            if (section.movements != null) {
+              for (final MovementSubmodel movement in section.movements) {
+                if (!movement.isRestTime) {
+                  final List<Movement> move = await MovementRepository.get(movement.id);
+                  if(move != null && move.isNotEmpty) {
+                    movements.add(move.first);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      emit(GetAllSuccess(movements: movements));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
   }
 }

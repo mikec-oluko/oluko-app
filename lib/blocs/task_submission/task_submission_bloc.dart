@@ -1,20 +1,16 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
-import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
-import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskSubmissionState {}
 
-class Loading extends TaskSubmissionState {}
+class TaskSubmissionLoading extends TaskSubmissionState {}
 
 class CreateSuccess extends TaskSubmissionState {
   TaskSubmission taskSubmission;
@@ -50,10 +46,10 @@ class Failure extends TaskSubmissionState {
 }
 
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
-  TaskSubmissionBloc() : super(Loading());
+  TaskSubmissionBloc() : super(TaskSubmissionLoading());
 
   Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
-    emit(Loading());
+    emit(TaskSubmissionLoading());
     try {
       TaskSubmission newTaskSubmission =
           await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic, isLastTask);
@@ -71,7 +67,6 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String taskSubmissionId, bool isPublic) async {
     try {
       await TaskSubmissionRepository.updateTaskSubmissionPrivacity(assessmentA, taskSubmissionId, isPublic);
-      emit(PrivacyUpdatedSuccess(isPublic: isPublic));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -85,6 +80,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
 
   void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, String taskId) async {
     try {
+      emit(TaskSubmissionLoading());
       TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, taskId);
       emit(GetSuccess(taskSubmission: taskSubmission));
     } catch (e, stackTrace) {
@@ -98,11 +94,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   }
 
   void setLoaderTaskSubmissionOfTask() {
-    emit(Loading());
+    emit(TaskSubmissionLoading());
   }
 
   void getTaskSubmissionByUserId(String userId) async {
-    emit(Loading());
+    emit(TaskSubmissionLoading());
     try {
       List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
       emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));

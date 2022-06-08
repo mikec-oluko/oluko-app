@@ -218,7 +218,7 @@ class _CoachProfileState extends State<CoachProfile> {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        if (widget.coachUser.bannerVideo != null)
+        if (true)
           coachBannerVideo(context)
         else
           CoachCoverImage(
@@ -380,7 +380,7 @@ class _CoachProfileState extends State<CoachProfile> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 3,
         child: OlukoVideoPreview(
-          video: widget.coachUser.bannerVideo,
+          video:widget.coachUser.bannerVideo,
           showBackButton: true,
           onBackPressed: () => Navigator.pop(context),
           onPlay: () => isVideoPlaying(),

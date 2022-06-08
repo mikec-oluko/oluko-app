@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -36,9 +37,11 @@ class ClocksLowerSection extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final String segmentId;
+  final bool areDiferentMovsWithRepCouter;
 
   ClocksLowerSection(
       {this.workState,
+      this.areDiferentMovsWithRepCouter,
       this.segments,
       this.originalWorkoutType,
       this.segmentIndex,
@@ -100,12 +103,16 @@ class _State extends State<ClocksLowerSection> {
           children: [
             getTitle(),
             const SizedBox(height: 5),
-            if (widget.counter || widget.segments[widget.segmentIndex].isChallenge) getScores() else getWorkouts(),
+            if (widget.counter ||
+                (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds))
+              getScores()
+            else
+              getWorkouts(),
           ],
         ),
         Positioned(
           bottom: 15,
-          child: Container(width: ScreenUtils.width(context) - 40, height: 140, child: getCard()),
+          child: Container(width: ScreenUtils.width(context) - 40, height: 170, child: getCard()),
         ),
       ]),
     );
@@ -116,7 +123,7 @@ class _State extends State<ClocksLowerSection> {
         ? Padding(
             padding: const EdgeInsets.all(10),
             child: SizedBox(
-                height: ScreenUtils.height(context) * 0.12,
+                height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
                 width: ScreenUtils.width(context),
                 child: ListView(
                   padding: EdgeInsets.zero,
@@ -134,12 +141,12 @@ class _State extends State<ClocksLowerSection> {
 
   Widget getScores() {
     return SizedBox(
-        height: ScreenUtils.height(context) * 0.15,
+        height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 6.4 : ScreenUtils.height(context) / 5.2,
         child: ListView(
             padding: EdgeInsets.zero,
             shrinkWrap: true,
-            children: SegmentClocksUtils.getScoresByRound(
-                context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores)));
+            children: SegmentClocksUtils.getScoresByRound(context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore,
+                widget.scores, widget.areDiferentMovsWithRepCouter)));
   }
 
   Widget getTitle() {
@@ -148,14 +155,16 @@ class _State extends State<ClocksLowerSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FittedBox(
-            fit: BoxFit.fitWidth,
-            child: MovementUtils.movementTitle(
-              widget.segments[widget.segmentIndex].isChallenge
-                  ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
-                  : widget.segments[widget.segmentIndex].name,
-            ),
-          ),
+          Padding(
+              padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 5 : 15),
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: MovementUtils.movementTitle(
+                  widget.segments[widget.segmentIndex].isChallenge
+                      ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                      : widget.segments[widget.segmentIndex].name,
+                ),
+              )),
         ],
       ),
     );

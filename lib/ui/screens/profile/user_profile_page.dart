@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
@@ -85,6 +86,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _friendsRequested = false;
   bool canHidePanel = true;
   Widget defaultWidgetNoContent = const SizedBox.shrink();
+  List<Widget> challengeList = [];
 
   @override
   void initState() {
@@ -321,7 +323,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: ScreenUtils.height(context) < 700 ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
+            height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -359,9 +361,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 _courseEnrollmentList = state.courseEnrollments;
                 listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
               }
-              listOfChallenges = _courseEnrollmentList != null && _courseEnrollmentList.isNotEmpty
-                  ? ProfileHelperFunctions.getChallenges(_courseEnrollmentList)
-                  : [];
               return listOfChallenges.isNotEmpty ? buildActiveChallengesForUser() : defaultWidgetNoContent;
             },
           )
@@ -371,18 +370,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 _courseEnrollmentList = state.courseEnrollments;
                 listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
               }
-
-              listOfChallenges = _courseEnrollmentList != null && _courseEnrollmentList.isNotEmpty
-                  ? ProfileHelperFunctions.getChallenges(_courseEnrollmentList)
-                  : [];
               return listOfChallenges.isNotEmpty ? buildActiveChallengesForUser() : defaultWidgetNoContent;
             },
           );
   }
 
   Padding buildActiveChallengesForUser() {
+    List<Challenge> _activeChallenges = [];
+    Widget contentToReturn = SizedBox.shrink();
     return Padding(
-      padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
+      padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
       child: BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(
         builder: (context, state) {
           if (state is GetChallengeStreamSuccess) {
@@ -547,7 +544,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           height: OlukoNeumorphism.isNeumorphismDesign
               ? ScreenUtils.height(context) < 700
                   ? ScreenUtils.height(context) / 2.5
-                  : ScreenUtils.height(context) / 3
+                  : ScreenUtils.height(context) / 2.8
               : ScreenUtils.height(context) / 5,
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
@@ -584,7 +581,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 });
                 BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
               },
-              child: Image.asset('assets/profile/uploadImage.png')),
+              child: Image.asset('assets/profile/upload_icon.png')),
         ),
       ),
     );
@@ -684,25 +681,43 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
+    if (listOfChallenges.isNotEmpty) {
+      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).returnChallengeCards(
+          userId: _userProfileToDisplay.id,
+          listOfChallenges: listOfChallenges,
+          isCurrentUser: _isCurrentUser,
+          userRequested: _userProfileToDisplay);
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-      child: CarouselSection(
-          height: 280,
-          width: MediaQuery.of(context).size.width,
-          title: OlukoLocalizations.get(context, 'upcomingChallenges'),
-          optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-          onOptionTap: () {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
-                arguments: {'challengeSegments': listOfChallenges, 'isCurrentUser': _isCurrentUser});
-          },
-          children: content.isNotEmpty
-              ? content
-              : [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 150),
-                    child: OlukoCircularProgressIndicator(),
-                  )
-                ]),
+      child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+        builder: (context, state) {
+          if (state is ChallengeListSuccess) {
+            challengeList = state.challenges;
+          }
+          if (state is LoadingChallenges) {
+            challengeList = [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: OlukoCircularProgressIndicator(),
+              )
+            ];
+          }
+          return CarouselSection(
+              height: 280,
+              width: MediaQuery.of(context).size.width,
+              title: OlukoLocalizations.get(context, 'upcomingChallenges'),
+              optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+              onOptionTap: () {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
+                  'challengeSegments': challengeList,
+                  'isCurrentUser': _isCurrentUser,
+                  'userRequested': _userProfileToDisplay
+                });
+              },
+              children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
+        },
+      ),
     );
   }
 

@@ -8,6 +8,8 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -74,7 +76,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.initState();
     tabs = getTabs();
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
-
+    BlocProvider.of<UserProgressStreamBloc>(context).getStream();
     tabController = TabController(length: this.tabs.length, vsync: this);
     tabController.addListener(() {
       setState(() {});
@@ -139,7 +141,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             return Scaffold(
               backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
               body: Padding(
-                padding: _isBottomTabActive ? const EdgeInsets.only(bottom: 75) : const EdgeInsets.only(bottom: 0),
+                padding: _isBottomTabActive && this.tabController.index != 3
+                    ? const EdgeInsets.only(bottom: 75)
+                    : const EdgeInsets.only(bottom: 0),
                 child: TabBarView(
                   //physics this is setup to stop swiping from tab to tab
                   physics: const NeverScrollableScrollPhysics(),

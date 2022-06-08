@@ -16,12 +16,12 @@ class OlukoBottomNavigationBar extends StatefulWidget {
   final List<Widget> actions;
   final int selectedIndex;
 
-
   OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
+
 class _State extends State<OlukoBottomNavigationBar> {
   UserInformationBottomBar userInformation;
   @override
@@ -103,8 +103,11 @@ class _State extends State<OlukoBottomNavigationBar> {
                                 ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName)
                                 : OlukoColors.black,
                             radius: 15.0,
-                            child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
-                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
+                                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                            ),
                           )
                       else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
                         ImageIcon(

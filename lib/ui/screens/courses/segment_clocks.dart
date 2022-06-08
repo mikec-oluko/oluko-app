@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -57,6 +58,7 @@ import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:native_device_orientation/native_device_orientation.dart';
 
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
@@ -94,7 +96,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
   WorkState workState;
-  WorkState lastWorkStateBeforePause;
+  WorkState lastWorkStateBeforePause = WorkState.countdown;
 
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
@@ -137,6 +139,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool shareDone = false;
   WorkoutType workoutType;
   List<String> scores = [];
+  List<int> scoresInt = [];
   int totalScore = 0;
   bool counter = false;
   bool _wantsToCreateStory = false;
@@ -151,6 +154,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   int durationPR = 0;
   bool _recordingPaused = false;
   bool _progressCreated = false;
+  bool _areDiferentMovsWithRepCouter = false;
 
   @override
   void initState() {
@@ -161,6 +165,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
+      scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
 
     setState(() {
@@ -171,6 +176,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    //TODO: for screen rotation
+    /*if (widget.workoutType == WorkoutType.segmentWithRecording) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }*/
+
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
@@ -236,7 +252,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                                     context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                               } else {
                                 _isVideoUploaded = true;
-                                topBarIcon = SizedBox();
                                 _segmentSubmission = state?.segmentSubmission;
                               }
                             }
@@ -256,6 +271,94 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           }
         },
       ),
+    );
+  }
+
+  Widget topSection(bool keyboardVisibilty) {
+    return SizedBox(
+      height: clockScreenProportion(keyboardVisibilty, true),
+      child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
+        builder: (context, state) {
+          if (state is CurrentTimeValue) {
+            currentTime = state.timerTask;
+          }
+          return Padding(
+              padding: EdgeInsets.only(
+                  top: ScreenUtils.smallScreen(context)
+                      ? 30
+                      : ScreenUtils.mediumScreen(context)
+                          ? 44
+                          : 55),
+              child: OrientationBuilder(builder: (context, orientation) {
+                return orientatedClock(keyboardVisibilty);
+              }));
+        },
+      ),
+    );
+  }
+
+  Widget orientatedClock(bool keyboardVisibilty) {
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      return getClock(keyboardVisibilty);
+    } else {
+      return RotationTransition(turns: AlwaysStoppedAnimation(90 / 360), child: getClock(keyboardVisibilty));
+    }
+  }
+
+  Widget getClock(bool keyboardVisibilty) {
+    return Clock(
+      workState: workState,
+      segments: widget.segments,
+      segmentIndex: widget.segmentIndex,
+      timerEntries: timerEntries,
+      textController: textController,
+      goToNextStep: _goToNextStep,
+      actionAMRAP: actionAMRAP,
+      setPaused: setPaused,
+      workoutType: workoutType,
+      keyboardVisibilty: keyboardVisibilty,
+      timerTaskIndex: timerTaskIndex,
+      timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
+    );
+  }
+
+  Widget bottomSection(bool keyboardVisibilty) {
+    return SizedBox(
+        height: lowerSectionScreenProportion(keyboardVisibilty, true),
+        child: OrientationBuilder(builder: (context, orientation) {
+          return orientatedLowerSection();
+        }));
+  }
+
+  Widget orientatedLowerSection() {
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      return getLowerSection();
+    } else {
+      return RotationTransition(turns: AlwaysStoppedAnimation(90 / 360), child: getLowerSection());
+    }
+  }
+
+  Widget getLowerSection() {
+    return ClocksLowerSection(
+      areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
+      workState: workState,
+      segments: widget.segments,
+      segmentIndex: widget.segmentIndex,
+      timerEntries: timerEntries,
+      timerTaskIndex: timerTaskIndex,
+      createStory: _createStory,
+      workoutType: workoutType,
+      originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
+      segmentSubmission: _segmentSubmission,
+      scores: scores,
+      totalScore: totalScore,
+      counter: counter,
+      isCameraReady: _isCameraReady,
+      cameraController: cameraController,
+      pauseButton: pauseButton(),
+      classIndex: widget.classIndex,
+      courseEnrollment: widget.courseEnrollment,
+      segmentId: widget.segments[widget.segmentIndex].id,
     );
   }
 
@@ -289,22 +392,50 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar:
-            SegmentClocksUtils.getAppBar(context, topBarIcon, isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
+        appBar: SegmentClocksUtils.getAppBar(
+            context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: Colors.black,
-        body: isSegmentWithRecording() && widget.showPanel
-            ? SlidingUpPanel(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(21), topRight: Radius.circular(21)),
-                controller: recordingPanelController,
-                minHeight: 0,
-                maxHeight: 310,
-                collapsed: Container(color: Colors.black),
-                panel: InitialTimerPanel(
-                  panelController: recordingPanelController,
-                  onShowAgainPressed: widget.onShowAgainPressed,
-                ),
-                body: bodyWithPlayPausePanel())
-            : bodyWithPlayPausePanel());
+        body:
+            //TODO: for screen rotation
+            /*NativeDeviceOrientationReader(builder: (context) {
+          NativeDeviceOrientation orientation = NativeDeviceOrientationReader.orientation(context);
+
+          int turns;
+          switch (orientation) {
+            case NativeDeviceOrientation.landscapeLeft:
+              print("ORIENTATION: landscapeLeft");
+              turns = -1;
+              break;
+            case NativeDeviceOrientation.landscapeRight:
+              print("ORIENTATION: landscapeRight");
+              turns = 1;
+              break;
+            case NativeDeviceOrientation.portraitDown:
+              print("ORIENTATION: portraitDown");
+              turns = 2;
+              break;
+            default:
+              //turns = 0;
+              break;
+          }
+          return*/
+            scaffoldBody());
+  }
+
+  Widget scaffoldBody() {
+    return isSegmentWithRecording() && widget.showPanel
+        ? SlidingUpPanel(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(21), topRight: Radius.circular(21)),
+            controller: recordingPanelController,
+            minHeight: 0,
+            maxHeight: 310,
+            collapsed: Container(color: Colors.black),
+            panel: InitialTimerPanel(
+              panelController: recordingPanelController,
+              onShowAgainPressed: widget.onShowAgainPressed,
+            ),
+            body: bodyWithPlayPausePanel())
+        : bodyWithPlayPausePanel();
   }
 
   Widget bodyWithPlayPausePanel() {
@@ -322,12 +453,13 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                       maxHeight: 185.0,
                       collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
                       panel: MovementVideosSection(
-                        action: getPlayPauseAction(),
-                        segment: widget.segments[widget.segmentIndex],
-                        movements: _movements,
-                        onPressedMovement: (BuildContext context, Movement movement) =>
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
-                      ),
+                          action: getPlayPauseAction(),
+                          segment: widget.segments[widget.segmentIndex],
+                          movements: _movements,
+                          onPressedMovement: (BuildContext context, Movement movement) {
+                            playPauseSegment();
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+                          }),
                       body: _body(keyboardVisibilty),
                     )
                   : _body(keyboardVisibilty);
@@ -351,39 +483,47 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         title: '',
         onlyIcon: true,
         onPressed: () {
-          final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
-          setState(() {
-            if (isPlaying) {
-              panelController.open();
-              if (isCurrentTaskTimed) {
-                BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
-              } else {
-                setPaused();
-              }
-              if (alertTimerPlaying) {
-                alertTimer.cancel();
-              }
-              if (stopwatchTimer != null) {
-                stopwatchTimer.cancel();
-              }
-            } else {
-              panelController.close();
-              workState = lastWorkStateBeforePause;
-              if (isCurrentTaskTimed) {
-                BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
-              } else {
-                if (alertTimerPlaying) {
-                  _playAlertTimer();
-                }
-              }
-              _startStopwatch();
-            }
-            isPlaying = !isPlaying;
-          });
+          playPauseSegment();
         },
         icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
       ),
     );
+  }
+
+  void playPauseSegment() {
+    final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
+    setState(() {
+      if (isPlaying) {
+        if (isSegmentWithoutRecording()) {
+          panelController.open();
+        }
+        if (isCurrentTaskTimed) {
+          BlocProvider.of<ClocksTimerBloc>(context).pauseCountdown(setPaused);
+        } else {
+          setPaused();
+        }
+        if (alertTimerPlaying) {
+          alertTimer.cancel();
+        }
+        if (stopwatchTimer != null) {
+          stopwatchTimer.cancel();
+        }
+      } else {
+        if (isSegmentWithoutRecording()) {
+          panelController.close();
+        }
+        workState = lastWorkStateBeforePause;
+        if (isCurrentTaskTimed) {
+          BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
+        } else {
+          if (alertTimerPlaying) {
+            _playAlertTimer();
+          }
+        }
+        _startStopwatch();
+      }
+      isPlaying = !isPlaying;
+    });
   }
 
   Widget playPauseAction() {
@@ -427,65 +567,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       child: Stack(children: [
         Column(
           children: [
-            SizedBox(
-              height: keyboardVisibilty
-                  ? ScreenUtils.height(context)
-                  : isWorkStateFinished()
-                      ? ScreenUtils.height(context) * 0.4
-                      : isSegmentWithoutRecording()
-                          ? ScreenUtils.height(context)
-                          : ScreenUtils.height(context) * 0.6,
-              child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
-                builder: (context, state) {
-                  if (state is CurrentTimeValue) {
-                    currentTime = state.timerTask;
-                  }
-                  return Clock(
-                    workState: workState,
-                    segments: widget.segments,
-                    segmentIndex: widget.segmentIndex,
-                    timerEntries: timerEntries,
-                    textController: textController,
-                    goToNextStep: _goToNextStep,
-                    actionAMRAP: actionAMRAP,
-                    setPaused: setPaused,
-                    workoutType: workoutType,
-                    keyboardVisibilty: keyboardVisibilty,
-                    timerTaskIndex: timerTaskIndex,
-                    timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
-                  );
-                },
-              ),
-            ),
-            SizedBox(
-                height: keyboardVisibilty
-                    ? 0
-                    : isWorkStateFinished()
-                        ? ScreenUtils.height(context) * 0.46
-                        : isSegmentWithoutRecording()
-                            ? 0
-                            : ScreenUtils.height(context) * 0.4,
-                child: ClocksLowerSection(
-                  workState: workState,
-                  segments: widget.segments,
-                  segmentIndex: widget.segmentIndex,
-                  timerEntries: timerEntries,
-                  timerTaskIndex: timerTaskIndex,
-                  createStory: _createStory,
-                  workoutType: workoutType,
-                  originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
-                  //shareDone: shareDone,
-                  segmentSubmission: _segmentSubmission,
-                  scores: scores,
-                  totalScore: totalScore,
-                  counter: counter,
-                  isCameraReady: _isCameraReady,
-                  cameraController: cameraController,
-                  pauseButton: pauseButton(),
-                  classIndex: widget.classIndex,
-                  courseEnrollment: widget.courseEnrollment,
-                  segmentId: widget.segments[widget.segmentIndex].id,
-                )),
+            topSection(keyboardVisibilty),
+            bottomSection(keyboardVisibilty),
           ],
         ),
         if (isWorkStateFinished())
@@ -644,6 +727,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _goToNextStep() {
+    BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
+
     if (alertTimer != null) {
       alertTimer.cancel();
     }
@@ -691,10 +776,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       _setupCameras();
     }
 
-    /*if (isSegmentWithoutRecording() && timerTaskIndex == 1 && _coachRequest != null) {
-      BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
-    }*/
-
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
@@ -718,7 +799,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       int currentDuration = stopwatchDuration.inSeconds;
       durationPR += currentDuration;
       totalScore += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] = currentDuration.toString() + ' s';
+      scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
+      scores[timerEntries[timerTaskIndex].round] = scoresInt[timerEntries[timerTaskIndex].round].toString() + ' s';
+
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
         widget.courseEnrollment,
@@ -761,12 +844,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     setState(() {
       totalScore += int.parse(textController.text);
     });
-    scores[timerEntries[timerTaskIndex - 1].round] = textController.text + ' ' + timerEntries[timerTaskIndex - 1].movement.getLabel();
+    scoresInt[timerEntries[timerTaskIndex - 1].round] += int.parse(textController.text);
+    scores[timerEntries[timerTaskIndex - 1].round] = scoresInt[timerEntries[timerTaskIndex - 1].round].toString() +
+        ' ' +
+        (_areDiferentMovsWithRepCouter ? 'reps' : timerEntries[timerTaskIndex - 1].movement.getLabel());
   }
 
   WorkState getCurrentTaskWorkState() {
     if (isCurrentMovementRest()) {
       return WorkState.resting;
+    } else if (isInitialTimer()) {
+      return WorkState.countdown;
     } else {
       return WorkState.exercising;
     }
@@ -800,16 +888,27 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           widget.segments[widget.segmentIndex],
           widget.courseEnrollment,
           getPersonalRecordValue(),
-          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]));
+          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]),
+          widget.fromChallenge);
     }
 
     Wakelock.disable();
+  }
 
-    if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
-      setState(() {
-        topBarIcon = SegmentClocksUtils.uploadingIcon();
-      });
-    }
+  Widget setTopBarIcon() {
+    return BlocBuilder<VideoBloc, VideoState>(
+      builder: (context, state) {
+        if (state is VideoSuccess || state is VideoFailure) {
+          return const SizedBox();
+        } else {
+          if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
+            return SegmentClocksUtils.uploadingIcon();
+          } else {
+            return const SizedBox();
+          }
+        }
+      },
+    );
   }
 
   int getPersonalRecordValue() {
@@ -891,6 +990,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    _areDiferentMovsWithRepCouter = SegmentClocksUtils.diferentMovsWithRepCouter(timerEntries);
     if (timerEntries.isEmpty) {
       _finishWorkout();
       return;
@@ -909,6 +1009,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   @override
   void dispose() {
+    //TODO: for screen rotation
+    /*SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);*/
     Wakelock.disable();
     WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
@@ -927,10 +1032,18 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached || state == AppLifecycleState.paused) return;
-    final isInactive = state == AppLifecycleState.inactive;
-    if (isInactive) {
-      Navigator.pop(context);
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) return;
+    final isPausedInactive = state == AppLifecycleState.paused;
+    if (isPausedInactive) {
+      playPauseSegment();
+      if (cameraController != null) {
+        cameraController.pauseVideoRecording();
+      }
+    } else {
+      if (cameraController != null) {
+        cameraController.resumeVideoRecording();
+      }
+      _resume();
     }
   }
 
@@ -996,9 +1109,35 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _resume() {
     setState(() {
-      workState = WorkState.exercising;
+      workState = lastWorkStateBeforePause;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
+  }
+
+  bool isInitialTimer() {
+    return timerEntries[timerTaskIndex].isInitialTimer != null && timerEntries[timerTaskIndex].isInitialTimer;
+  }
+
+  double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty || getCurrentTaskWorkState() == WorkState.countdown
+        ? screenProportion
+        : isWorkStateFinished()
+            ? screenProportion * 0.4
+            : isSegmentWithoutRecording()
+                ? screenProportion
+                : screenProportion * 0.6;
+  }
+
+  double lowerSectionScreenProportion(bool keyboardVisibilty, bool isHeight) {
+    double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
+    return keyboardVisibilty || getCurrentTaskWorkState() == WorkState.countdown
+        ? 0
+        : isWorkStateFinished()
+            ? screenProportion * 0.46
+            : isSegmentWithoutRecording()
+                ? 0
+                : screenProportion * 0.4;
   }
 }

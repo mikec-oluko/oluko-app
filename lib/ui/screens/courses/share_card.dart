@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ShareCard extends StatefulWidget {
   final Function() createStory;
@@ -28,60 +30,60 @@ class _State extends State<ShareCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
       child: Padding(
-        padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 18, bottom: 12.0),
+        padding: const EdgeInsets.only(right: 15.0, left: 25.0, top: 12, bottom: 12.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
-                  Expanded(
-                      flex: 2,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(Radius.circular(5)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              'assets/assessment/task_response_thumbnail.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                      )),
-                  Expanded(
-                    flex: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, top: 0),
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              OlukoLocalizations.of(context).find('share'),
-                              style: OlukoFonts.olukoBigFont(),
-                              textAlign: TextAlign.start,
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                storyButton(),
-                                whistleButton(),
-                              ],
-                            )
-                          ],
-                        ),
+                  Row(
+                    children: [
+                      Text(
+                        OlukoLocalizations.of(context).find('shareYourVideo'),
+                        style: OlukoFonts.olukoBigFont(),
+                        textAlign: TextAlign.start,
                       ),
-                    ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      thumbnailImage(),
+                      SizedBox(
+                        width: 40,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          neumorphicStoryButton(),
+                          SizedBox(
+                            width: 40,
+                          ),
+                          neumorphicWhistleButton(),
+                        ],
+                      ),
+                    ],
                   )
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget thumbnailImage() {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(5)),
+      child: Container(
+        child: Image.asset(
+          'assets/assessment/task_response_thumbnail.png',
+          scale: 17,
         ),
       ),
     );
@@ -117,7 +119,7 @@ class _State extends State<ShareCard> {
                     color: _whistleEnabled ? null : Colors.grey,
                   )),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
                 child: Row(children: [
                   Text('Coach',
                       style: _whistleEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
@@ -127,6 +129,54 @@ class _State extends State<ShareCard> {
             ],
           ),
         ));
+  }
+
+  Widget neumorphicWhistleButton() {
+    return GestureDetector(
+        /* 
+        commented for now, because segments are uploaded automatically to coach
+         onTap: () {
+          if (!_whistleEnabled) {
+            widget.whistleAction(true);
+          } else {
+            widget.whistleAction(false);
+          }
+
+          setState(() => _whistleEnabled = !_whistleEnabled);
+        },*/
+        child: Column(
+      children: [
+        Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
+            lightSource: LightSource.bottom,
+            intensity: 1,
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            border: NeumorphicBorder(width: 1, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              children: [
+                if (_whistleEnabled)
+                  Image.asset(
+                    'assets/bottom_navigation_bar/selected_coach.png',
+                    scale: 2.6,
+                  )
+                else
+                  Image.asset(
+                    'assets/bottom_navigation_bar/coach_neumorphic.png',
+                    scale: 3,
+                  )
+              ],
+            ),
+          ),
+        ),
+        Row(children: [
+          Text('Coach', style: _whistleEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
+          if (!_whistleEnabled) doubleCheck()
+        ])
+      ],
+    ));
   }
 
   Widget storyButton() {
@@ -142,7 +192,7 @@ class _State extends State<ShareCard> {
               color: _storyEnabled ? null : Colors.grey,
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
               child: Row(
                 children: [
                   Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
@@ -152,6 +202,48 @@ class _State extends State<ShareCard> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget neumorphicStoryButton() {
+    return GestureDetector(
+      onTap: _storyEnabled ? _onTap : null,
+      child: Column(
+        children: [
+          Neumorphic(
+            style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
+              lightSource: LightSource.bottom,
+              intensity: 1,
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              border: NeumorphicBorder(width: 1, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  if (_storyEnabled)
+                    Image.asset(
+                      'assets/courses/neumorphic_story.png',
+                      scale: 3,
+                    )
+                  else
+                    Image.asset(
+                      'assets/courses/story.png',
+                      scale: 9,
+                      color: Colors.grey,
+                    ),
+                ],
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
+              if (!_storyEnabled && GlobalConfiguration().getValue('showStories') == 'true') doubleCheck() else SizedBox()
+            ],
+          ),
+        ],
       ),
     );
   }

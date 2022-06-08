@@ -71,6 +71,7 @@ class CoachTimelineFunctions {
                     contentType: welcomeVideo.id == defaultIntroVideoId
                         ? TimelineInteractionType.introductionVideo
                         : TimelineInteractionType.mentoredVideo,
+                    // contentType: TimelineInteractionType.mentoredVideo,
                     mentoredVideosForNavigation: [welcomeVideo],
                     course: CourseTimelineSubmodel(),
                     id: defaultIdForAllContentTimeline,
@@ -99,6 +100,7 @@ class CoachTimelineFunctions {
             contentThumbnail: element.video.thumbUrl,
             contentType:
                 element.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
+            // contentType: TimelineInteractionType.mentoredVideo,
             mentoredVideosForNavigation: annotationContent,
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
@@ -155,17 +157,24 @@ class CoachTimelineFunctions {
   }
 
   static List<CoachNotificationContent> mentoredVideoForInteraction({List<Annotation> annotationContent, BuildContext context}) {
+    String _defaultIntroductionVideoId = 'introVideo';
     List<CoachNotificationContent> mentoredVideosAsNotification = [];
     if (annotationContent != null) {
       annotationContent.forEach((annotation) {
         if (annotation.notificationViewed == false) {
           CoachNotificationContent newItem = CoachNotificationContent(
-              contentTitle: OlukoLocalizations.get(context, 'personalizedVideo'),
-              contentSubtitle: OlukoLocalizations.get(context, 'personalizedVideo'),
+              contentTitle: annotation.id != _defaultIntroductionVideoId
+                  ? OlukoLocalizations.get(context, 'personalizedVideo')
+                  : OlukoLocalizations.get(context, 'introductionVideo'),
+              contentSubtitle: annotation.id != _defaultIntroductionVideoId
+                  ? OlukoLocalizations.get(context, 'personalizedVideo')
+                  : OlukoLocalizations.get(context, 'introductionVideo'),
               contentDescription: '',
               contentImage: annotation.video.thumbUrl,
               videoUrl: annotation.videoHLS ?? annotation.video.url,
-              contentType: TimelineInteractionType.mentoredVideo,
+              contentType: annotation.id != _defaultIntroductionVideoId
+                  ? TimelineInteractionType.mentoredVideo
+                  : TimelineInteractionType.introductionVideo,
               createdAt: annotation.createdAt,
               mentoredContent: annotation);
 

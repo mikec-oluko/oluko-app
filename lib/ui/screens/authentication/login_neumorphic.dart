@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -26,11 +28,17 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   final _formKey = GlobalKey<FormState>();
   final LoginRequest _requestData = LoginRequest();
   bool _peekPassword = false;
+  DateTime pre_backpress = DateTime.now();
 
   @override
   void initState() {
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -41,26 +49,40 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   Widget loginForm() {
     return Form(
       key: _formKey,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(6.0)),
-            image: DecorationImage(
-              image: AssetImage('assets/login/login_neumorphic_background.jpg'),
-              fit: BoxFit.cover,
+      child: WillPopScope(
+        onWillPop: () async {
+          final timegap = DateTime.now().difference(pre_backpress);
+          final cantExit = timegap >= Duration(seconds: 2);
+          pre_backpress = DateTime.now();
+          if (cantExit) {
+            AppMessages.clearAndShowSnackbarTranslated(context, 'exitOnButtonBack');
+            return false;
+          } else {
+            SystemNavigator.pop();
+            return true;
+          }
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              image: DecorationImage(
+                image: AssetImage('assets/login/login_neumorphic_background.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: ListView(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(children: formFields()),
-                ),
-              )
-            ],
+            child: ListView(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Column(children: formFields()),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

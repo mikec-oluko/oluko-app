@@ -12,6 +12,7 @@ import 'package:oluko_app/ui/components/coach_personalized_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/models/coach_media_message.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class MentoredVideosPage extends StatefulWidget {
   final List<Annotation> coachAnnotation;
@@ -65,8 +66,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
             title: Text(
               OlukoLocalizations.get(context, 'personalizedVideos'),
               style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                  : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                  ? ScreenUtils.smallScreen(context)
+                      ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                      : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                  : ScreenUtils.smallScreen(context)
+                      ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
+                      : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
             ),
             actions: [
               Row(

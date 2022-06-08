@@ -10,14 +10,19 @@ abstract class UserProgressStreamState {}
 
 class UserProgressLoading extends UserProgressStreamState {}
 
-class GetUserProgressSuccess extends UserProgressStreamState {
-  GetUserProgressSuccess({this.usersProgress});
-  final List<UserProgress> usersProgress;
+class UserProgressUpdate extends UserProgressStreamState {
+  UserProgressUpdate({this.obj});
+  final UserProgress obj;
 }
 
-class UserProgressUpdate extends UserProgressStreamState {
-  UserProgressUpdate({this.event});
-  final DatabaseEvent event;
+class UserProgressRemove extends UserProgressStreamState {
+  UserProgressRemove({this.obj});
+  final UserProgress obj;
+}
+
+class UserProgressAdd extends UserProgressStreamState {
+  UserProgressAdd({this.obj});
+  final UserProgress obj;
 }
 
 class UserProgressFailure extends UserProgressStreamState {
@@ -38,25 +43,21 @@ class UserProgressStreamBloc extends Cubit<UserProgressStreamState> {
     }
   }
 
-  void get(String userId) async {
+  void getStream() {
+    final DatabaseReference ref = UserProgressRepository.getReference();
+    UserProgress userProgress;
     try {
-      List<UserProgress> usersProgress = await UserProgressRepository.getAll(userId);
-      emit(GetUserProgressSuccess(usersProgress: usersProgress as List<UserProgress>));
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(UserProgressFailure(exception: exception));
-      rethrow;
-    }
-  }
-
-  StreamSubscription<DatabaseEvent> getStream() {
-    try {
-      return usersProgressStream ??= UserProgressRepository.getSubscription().listen((event) {
-        print(event.snapshot.value);
-        emit(UserProgressUpdate(event: event));
+      ref.onChildChanged.listen((event) {
+        userProgress = getUserProgressFromObj(event.snapshot.value);
+        emit(UserProgressUpdate(obj: userProgress));
+      });
+      ref.onChildAdded.listen((event) {
+        userProgress = getUserProgressFromObj(event.snapshot.value);
+        emit(UserProgressAdd(obj: userProgress));
+      });
+      ref.onChildRemoved.listen((event) {
+        userProgress = getUserProgressFromObj(event.snapshot.value);
+        emit(UserProgressRemove(obj: userProgress));
       });
     } catch (exception, stackTrace) {
       Sentry.captureException(
@@ -66,5 +67,13 @@ class UserProgressStreamBloc extends Cubit<UserProgressStreamState> {
       emit(UserProgressFailure(exception: exception));
       rethrow;
     }
+  }
+
+  UserProgress getUserProgressFromObj(Object value) {
+    if (value != null) {
+      Map<String, dynamic> obj = Map<String, dynamic>.from(value as Map);
+      return UserProgress(id: obj['id'].toString(), progress: double.parse(obj['progress'].toString()));
+    }
+    return null;
   }
 }

@@ -56,7 +56,10 @@ class _State extends State<MovementVideosSection> {
                   style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
             ),
             SizedBox(width: 10),
-            Icon(Icons.directions_run, color: Colors.white, size: 30),
+            Image.asset(
+              'assets/courses/person_running.png',
+              scale: 4,
+            ),
             Expanded(child: SizedBox()),
             widget.action
           ]),
@@ -71,6 +74,7 @@ class _State extends State<MovementVideosSection> {
               : Image.asset(
                   'assets/courses/horizontal_vector.png',
                   scale: 2,
+                  color: Colors.red,
                 )
         ]));
   }
@@ -94,7 +98,7 @@ class _State extends State<MovementVideosSection> {
         }
       });
     });
-    
+
     movementIds = movementIds.toSet().toList(); //remove duplicates
 
     List<Movement> movements = List<Movement>.filled(movementIds.length, null);

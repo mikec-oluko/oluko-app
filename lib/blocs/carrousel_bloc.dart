@@ -3,23 +3,23 @@ import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/repositories/assessment_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-abstract class CarrouselState {}
+abstract class CarouselState {}
 
-class CarrouselLoading extends CarrouselState {}
+class CarouselLoading extends CarouselState {}
 
-class CarrouselSuccess extends CarrouselState {
+class CarouselSuccess extends CarouselState {
   final int widgetIndex;
-  CarrouselSuccess({this.widgetIndex});
+  CarouselSuccess({this.widgetIndex});
 }
 
-class CarrouselBloc extends Cubit<CarrouselState> {
-  CarrouselBloc() : super(CarrouselLoading());
+class CarouselBloc extends Cubit<CarouselState> {
+  CarouselBloc() : super(CarouselLoading());
 
-  void widgetIsHiden(bool isHiden, int widgetIndex) {
+  void widgetIsHiden(bool isHiden, {int widgetIndex}) {
     if (isHiden) {
-      emit(CarrouselSuccess(widgetIndex: widgetIndex));
+      emit(CarouselSuccess(widgetIndex: widgetIndex));
     } else {
-      emit(CarrouselLoading());
+      emit( CarouselLoading());
     }
   }
 }

@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_format_validator.dart';
 import 'package:oluko_app/services/content_from_gallery_service.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
+import 'package:path/path.dart' as p;
 
 abstract class GalleryVideoState {}
 
@@ -16,15 +18,16 @@ class Success extends GalleryVideoState {
   Uint8List firstVideo;
   Uint8List firstImage;
   XFile pickedFile;
-  Success({this.pickedFile, this.firstVideo,this.firstImage});
+  Success({this.pickedFile, this.firstVideo, this.firstImage});
 }
 
 class PermissionsRequired extends GalleryVideoState {}
 
-class Failure extends GalleryVideoState {
+class UploadFailure extends GalleryVideoState {
   final dynamic exception;
+  final bool badFormat;
 
-  Failure({this.exception});
+  UploadFailure({this.exception, this.badFormat});
 }
 
 class GalleryVideoBloc extends Cubit<GalleryVideoState> {
@@ -37,9 +40,14 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       }
       final imagePicker = ImagePicker();
       XFile video = await imagePicker.pickVideo(source: ImageSource.gallery);
+      final extension = p.extension(video.path);
+      if (!VideoFormatValidator.formatValidator(extension)) {
+        emit(UploadFailure(badFormat: true));
+        return;
+      }
       emit(Success(pickedFile: video));
     } catch (e) {
-      emit(Failure(exception: e));
+      emit(UploadFailure(exception: e));
     }
   }
 
@@ -50,13 +58,13 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
         return;
       }
       Uint8List pickedVideo = await ContentFromGalleyService.getFirstVideoGallery();
-       if (pickedVideo != null) {
-        emit(Success(firstVideo:pickedVideo ));
+      if (pickedVideo != null) {
+        emit(Success(firstVideo: pickedVideo));
       } else {
         emit(NoContent());
       }
     } catch (e) {
-      emit(Failure(exception: e));
+      emit(UploadFailure(exception: e));
     }
   }
 
@@ -73,7 +81,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
         emit(NoContent());
       }
     } catch (e) {
-      emit(Failure(exception: e));
+      emit(UploadFailure(exception: e));
     }
   }
 }

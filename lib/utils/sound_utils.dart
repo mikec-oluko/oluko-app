@@ -16,7 +16,7 @@ class SoundUtils {
       if (segmentClockSounds.isNotEmpty) {
         final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
           if (sound.clockState.index == workState) {
-            if (sound.type.index == SoundTypeEnum.calculated.index) {
+            if (sound.type.index == SoundTypeEnum.calculated.index && (workState != ClockStateEnum.segmentStart.index)) {
               if (totalTime != null && totalTime > 0 && timeLeft != null) {
                 return sound.value == (timeLeft / totalTime);
               } else {
