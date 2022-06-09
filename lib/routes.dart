@@ -537,7 +537,8 @@ class Routes {
         providers = [
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc)
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = StoryPage(
