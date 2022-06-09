@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/routes.dart';
@@ -159,5 +160,9 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
 
   void introductionVideoSeen(CoachNotificationContent content) {
     BlocProvider.of<CoachAssignmentBloc>(context).introductionVideoAsSeen(content.mentoredContent.userId);
+  }
+
+  void messageVideoAsViewed(CoachNotificationContent content) {
+    BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageNotificationAsSeen();
   }
 }

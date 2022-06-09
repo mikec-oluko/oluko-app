@@ -298,12 +298,21 @@ class CoachTimelineFunctions {
   }
 
   static void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {
-    if (timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).isEmpty) {
+    final existingContent =
+        timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).toList();
+    if (existingContent.isEmpty) {
       timelineGroup.timelineElements.add(newContent);
       timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
     } else if (newContent.contentType == TimelineInteractionType.mentoredVideo ||
         newContent.contentType == TimelineInteractionType.messageVideo) {
-      timelineGroup.timelineElements.add(newContent);
+      existingContent.forEach((content) {
+        if ((content.createdAt.toDate() != newContent.createdAt.toDate()) && content.contentType == newContent.contentType) {
+          if (!timelineGroup.timelineElements.contains(newContent)) {
+            timelineGroup.timelineElements.add(newContent);
+          }
+        }
+      });
+      timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
     }
   }
 }

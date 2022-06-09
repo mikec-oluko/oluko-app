@@ -73,4 +73,6 @@ class CoachVideoMessageBloc extends Cubit<CoachVideoMessageState> {
       rethrow;
     }
   }
+
+  void markVideoMessageNotificationAsSeen() {}
 }

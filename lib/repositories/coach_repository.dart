@@ -278,6 +278,7 @@ class CoachRepository {
         case TimelineInteractionType.messageVideo:
           CoachMediaMessage coachMediaMessage = CoachMediaMessage.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.coachMediaMessage = coachMediaMessage;
+          timelineItem.contentName = coachMediaMessage.video.name;
           break;
         default:
       }

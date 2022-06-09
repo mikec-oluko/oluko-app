@@ -9,6 +9,7 @@ class CoachMediaMessage extends Base {
   int mediaType;
   Video video;
   VideoState videoState;
+  bool viewed;
   CoachMediaMessage(
       {this.coachId,
       this.coachReference,
@@ -18,6 +19,7 @@ class CoachMediaMessage extends Base {
       this.mediaType,
       this.image,
       this.audio,
+      this.viewed,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -44,6 +46,7 @@ class CoachMediaMessage extends Base {
       mediaType: json['type'] as int,
       image: json['image']?.toString(),
       audio: json['audio']?.toString(),
+      viewed: json['viewed'] == null ? false : json['viewed'] as bool,
     );
     coachMediaMessage.setBase(json);
     return coachMediaMessage;
@@ -59,6 +62,7 @@ class CoachMediaMessage extends Base {
       'type': mediaType,
       'image': image,
       'audio': audio,
+      'viewed': viewed
     };
     coachMediaMessage.addEntries(super.toJson().entries);
     return coachMediaMessage;
