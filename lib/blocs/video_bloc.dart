@@ -41,7 +41,14 @@ class VideoSuccess extends VideoState {
   TaskSubmission taskSubmission;
   int taskIndex;
   double aspectRatio;
-  VideoSuccess({this.video, this.segmentSubmission, this.assessment, this.assessmentAssignment, this.taskSubmission, this.taskIndex,this.aspectRatio});
+  VideoSuccess(
+      {this.video,
+      this.segmentSubmission,
+      this.assessment,
+      this.assessmentAssignment,
+      this.taskSubmission,
+      this.taskIndex,
+      this.aspectRatio});
 }
 
 class VideoProcessing extends VideoState {
@@ -230,18 +237,20 @@ class VideoBloc extends Cubit<VideoState> {
 
     return video;
   }
+
   void getAspectRatio(String videoUrl) async {
-    double aspectRatio;
-    VideoPlayerController _controller = await VideoPlayerController.network(videoUrl);
-    if (_controller != null) {
-      _controller.initialize().then((value) {
-        aspectRatio=_controller.value.aspectRatio;
-      emit(VideoSuccess(aspectRatio: aspectRatio));
-      });
+    if (videoUrl != null) {
+      double aspectRatio;
+      VideoPlayerController _controller = await VideoPlayerController.network(videoUrl);
+      if (_controller != null) {
+        _controller.initialize().then((value) {
+          aspectRatio = _controller.value.aspectRatio;
+          emit(VideoSuccess(aspectRatio: aspectRatio));
+        });
+      }
     } else {
       return emit(VideoSuccess(aspectRatio: 0.6));
     }
-  
   }
 
   Future<Video> uploadVideoWithoutProcessing(Video video, String thumbFilePath, String filePath, BuildContext context) async {
