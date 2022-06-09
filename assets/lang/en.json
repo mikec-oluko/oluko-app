@@ -139,7 +139,7 @@
     "makeThisPublic": "Make this public",
     "retake": "Retake",
     "done!": "Done!",
-    "assessmentMessagePart1": "Thank you for completing the assessment",
+    "assessmentMessagePart1": "Thanks you for completing the assessment.",
     "assessmentMessagePart2": "We'll review and assign you a coach shortly!",
     "goBack": "Go Back",
     "ok": "Ok",
@@ -226,7 +226,7 @@
     "nextSegment": "Next Segment",
     "errorLoadingImage": "Error loading image!",
     "friendAdded": "Friend added",
-    "exitConfirmationTitle": "Are you Sure?",
+    "exitConfirmationTitle": "Are you sure?",
     "exitConfirmationBody": "Do you want to exit?",
     "pleaseCheckYourEmail": "Please check your email for account confirmation.",
     "pleaseSubscribe": "Please subscribe",
@@ -308,7 +308,7 @@
     "deleteVoiceMessage": "Delete voice message?",
     "typeScore": "Tap here to type the score",
     "cancelMssg": "Clear Filters?",
-    "cancelTxt": "Cancelling would remove all the selected filters, please confirm the action.",
+    "cancelTxt": "Pressing yes will remove all filters.",
     "recordingConfirmation": "Are you sure you want to record this segment?",
     "goToCoach": "Go to coach",
     "updateRecording": "Are you sure you want to update your recording? Doing so will erase your previous recording.",
@@ -361,5 +361,8 @@
     "about": "About",
     "memberships": "Memberships",
     "introductionVideo": "Introduction video",
-    "shareYourVideo": "Share your video."
+    "shareYourVideo": "Share your video.",
+    "save": "save",
+    "changes": "changes"
+
 }
