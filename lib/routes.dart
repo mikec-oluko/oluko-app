@@ -687,7 +687,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
-        challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
+          challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,
@@ -1202,6 +1202,8 @@ class Routes {
         break;
       case RouteEnum.hiFivePage:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<CarouselBloc>.value(value: _carouselBloc),
