@@ -401,9 +401,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
                 if (_coachRequest != null) {
                   showCoachDialog();
-                } else {
-                  if (widget.coach != null) {
+                } else {                      
+                  
                     if (widget.segment.isChallenge && !_canStartSegment) {
+
                     } else {
                       BottomDialogUtils.showBottomDialog(
                         context: context,
@@ -412,7 +413,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                         ),
                       );
                     }
-                  }
+                  
                 }
               },
               child: getCameraIcon(),
