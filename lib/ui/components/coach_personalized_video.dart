@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_personalized_video.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
@@ -107,6 +109,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                               )
                             ],
                           ),
+                        getLikeButton(widget.personalizedVideo)
                         // IconButton(
                         //     icon: OlukoNeumorphism.isNeumorphismDesign
                         //         ? Icon(
@@ -135,5 +138,32 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
     return personalizedVideo.videoContent.thumbUrl != null
         ? CachedNetworkImageProvider(personalizedVideo.videoContent.thumbUrl)
         : AssetImage("assets/home/mvtthumbnail.png") as ImageProvider;
+  }
+
+  Widget getLikeButton(CoachPersonalizedVideo personalizedVideo) {
+    bool isFavoriteContent = false;
+    if (personalizedVideo.annotationContent != null) {
+      isFavoriteContent = personalizedVideo.annotationContent.favorite;
+    } else if (personalizedVideo.videoMessageContent != null) {
+      isFavoriteContent = personalizedVideo.videoMessageContent.favorite;
+    }
+    return IconButton(
+        icon: OlukoNeumorphism.isNeumorphismDesign
+            ? Icon(
+                isFavoriteContent ? Icons.favorite : Icons.favorite_outline,
+                color: OlukoColors.primary,
+                size: 30,
+              )
+            : Icon(isFavoriteContent ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
+        onPressed: () {
+          if (personalizedVideo.annotationContent != null) {
+            BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
+              coachAnnotation: personalizedVideo.annotationContent,
+              // currentMentoredVideosContent: Set.from(content),
+            );
+          } else if (personalizedVideo.videoMessageContent != null) {
+            // BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageAsFavorite()
+          }
+        });
   }
 }

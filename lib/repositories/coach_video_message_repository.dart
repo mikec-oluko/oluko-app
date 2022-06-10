@@ -36,4 +36,15 @@ class CoachVideoMessageRepository {
         .doc(messageVideoContent.id);
     reference.update({'viewed': true});
   }
+
+  Future<void> markVideoMessageAsFavorite({String userId, CoachMediaMessage messageVideoContent}) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachAssignments')
+        .doc(userId)
+        .collection('mediaMessages')
+        .doc(messageVideoContent.id);
+    reference.update({'favorite': true});
+  }
 }

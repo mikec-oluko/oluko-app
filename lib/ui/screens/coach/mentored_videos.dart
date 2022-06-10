@@ -103,10 +103,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                       icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
-                          // isFavoriteSelected = !isFavoriteSelected;
-                          // isFavoriteSelected
-                          //     ? filteredContent = content.where((element) => element.favorite == true).toList()
-                          //     : filteredContent = widget.coachAnnotation;
+                          isFavoriteSelected = !isFavoriteSelected;
+                          isFavoriteSelected ? filteredContent = getFavoriteContent(content) : filteredContent = content;
                         });
                         //sort List items favorite = true;
                       }),
@@ -259,7 +257,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             onPressed: () {
                               BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
                                 coachAnnotation: coachAnnotation,
-                                currentMentoredVideosContent: Set.from(content),
+                                // currentMentoredVideosContent: Set.from(content),
                               );
                             })
                       ],
@@ -283,5 +281,24 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
         : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
     return filteredContent;
+  }
+
+  List<CoachPersonalizedVideo> getFavoriteContent(List<CoachPersonalizedVideo> videoContent) {
+    List<CoachPersonalizedVideo> favoriteContent = [];
+    if (videoContent.isNotEmpty) {
+      videoContent.forEach((personalizedVideo) {
+        if (personalizedVideo.annotationContent != null) {
+          if (personalizedVideo.annotationContent.favorite) {
+            favoriteContent.add(personalizedVideo);
+          }
+        } else if (personalizedVideo.videoMessageContent != null) {
+          if (personalizedVideo.videoMessageContent.favorite) {
+            favoriteContent.add(personalizedVideo);
+          }
+        }
+      });
+    }
+    return favoriteContent;
+    // content.where((element) => element. == true).toList()
   }
 }

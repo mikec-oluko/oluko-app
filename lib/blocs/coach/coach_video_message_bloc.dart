@@ -86,4 +86,17 @@ class CoachVideoMessageBloc extends Cubit<CoachVideoMessageState> {
       rethrow;
     }
   }
+
+  Future<void> markVideoMessageAsFavorite({String userId, CoachMediaMessage messageVideoContent}) async {
+    try {
+      await _coachVideoMessageRepository.markVideoMessageAsSeeen(userId: userId, messageVideoContent: messageVideoContent);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachVideoMessagesFailure(exception: exception));
+      rethrow;
+    }
+  }
 }

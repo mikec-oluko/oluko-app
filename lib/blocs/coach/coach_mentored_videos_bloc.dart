@@ -106,11 +106,13 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     }
   }
 
-  void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation, Set<Annotation> currentMentoredVideosContent}) async {
+  void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation}) async {
+    // Set<Annotation> currentMentoredVideosContent
     try {
-      final Set<Annotation> coachAnnotationsUpdated =
-          await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
-      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated.toList()));
+      // final Set<Annotation> coachAnnotationsUpdated =
+      await _coachRepository.setAnnotationAsFavorite(coachAnnotation);
+      // , currentMentoredVideosContent
+      // emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated.toList()));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

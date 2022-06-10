@@ -140,7 +140,9 @@ class CoachRepository {
     }
   }
 
-  Future<Set<Annotation>> setAnnotationAsFavorite(Annotation coachAnnotation, Set<Annotation> actualMentoredVideosContent) async {
+  // Future<Set<Annotation>>
+  // Set<Annotation> actualMentoredVideosContent
+  setAnnotationAsFavorite(Annotation coachAnnotation) async {
     try {
       coachAnnotation.favorite = !coachAnnotation.favorite;
 
@@ -157,12 +159,12 @@ class CoachRepository {
             .set(coachAnnotation.toJson());
       }
 
-      for (var mentoredVideo in actualMentoredVideosContent) {
-        if (mentoredVideo.id == coachAnnotation.id) {
-          mentoredVideo = coachAnnotation;
-        }
-      }
-      return actualMentoredVideosContent;
+      // for (var mentoredVideo in actualMentoredVideosContent) {
+      //   if (mentoredVideo.id == coachAnnotation.id) {
+      //     mentoredVideo = coachAnnotation;
+      //   }
+      // }
+      // return actualMentoredVideosContent;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(
         e,
