@@ -110,8 +110,17 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
         return CoachNotificationVideoCard(
           cardImage: content.contentImage,
           fileType: CoachFileTypeEnum.messageVideo,
-          onCloseCard: () {},
-          onOpenCard: () {},
+          onCloseCard: () {
+            messageVideoAsViewed(content: content, userId: widget.userId);
+          },
+          onOpenCard: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.coachMediaMessage.video.url,
+              'aspectRatio': content.coachMediaMessage.video.aspectRatio,
+              'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
+            });
+            messageVideoAsViewed(content: content, userId: widget.userId);
+          },
         );
       case TimelineInteractionType.recommendedVideo:
         return CoachNotificationVideoCard(
@@ -162,7 +171,8 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
     BlocProvider.of<CoachAssignmentBloc>(context).introductionVideoAsSeen(content.mentoredContent.userId);
   }
 
-  void messageVideoAsViewed(CoachNotificationContent content) {
-    BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageNotificationAsSeen();
+  void messageVideoAsViewed({CoachNotificationContent content, String userId}) {
+    BlocProvider.of<CoachVideoMessageBloc>(context)
+        .markVideoMessageNotificationAsSeen(userId: userId, messageVideoContent: content.coachMediaMessage);
   }
 }

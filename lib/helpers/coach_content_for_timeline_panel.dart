@@ -191,21 +191,21 @@ class CoachTimelineFunctions {
     List<CoachNotificationContent> messageVideoAsNotification = [];
     if (messageVideoContent != null) {
       messageVideoContent.forEach((messageVideo) {
-        // if (messageVideo.notificationViewed == false) {
-        CoachNotificationContent newItem = CoachNotificationContent(
-            contentTitle: OlukoLocalizations.get(context, 'coachMessageVideo'),
-            contentSubtitle: OlukoLocalizations.get(context, 'coachMessageVideo'),
-            contentDescription: '',
-            contentImage: messageVideo.video.thumbUrl,
-            videoUrl: messageVideo.videoHls ?? messageVideo.video.url,
-            contentType: TimelineInteractionType.messageVideo,
-            createdAt: messageVideo.createdAt,
-            coachMediaMessage: messageVideo);
+        if (messageVideo.viewed == false) {
+          CoachNotificationContent newItem = CoachNotificationContent(
+              contentTitle: OlukoLocalizations.get(context, 'coachMessageVideo'),
+              contentSubtitle: OlukoLocalizations.get(context, 'coachMessageVideo'),
+              contentDescription: '',
+              contentImage: messageVideo.video.thumbUrl,
+              videoUrl: messageVideo.videoHls ?? messageVideo.video.url,
+              contentType: TimelineInteractionType.messageVideo,
+              createdAt: messageVideo.createdAt,
+              coachMediaMessage: messageVideo);
 
-        if (messageVideoAsNotification.where((element) => element.videoUrl == newItem.videoUrl).isEmpty) {
-          messageVideoAsNotification.add(newItem);
+          if (messageVideoAsNotification.where((element) => element.videoUrl == newItem.videoUrl).isEmpty) {
+            messageVideoAsNotification.add(newItem);
+          }
         }
-        // }
       });
     }
     return messageVideoAsNotification;
