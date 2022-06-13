@@ -142,7 +142,6 @@ class _HiFivePageState extends State<HiFivePage> {
               children: [
                 StoriesItem(
                   showUserProgress: true,
-                  progressValue: 0.6,
                   userProgress: _usersProgess[targetUser.id],
                   imageUrl: targetUser.avatar,
                   name: targetUser.firstName,
