@@ -261,9 +261,22 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             children: [
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'welcomeVideo'),
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'introductionVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.introductionVideo),
+            ],
+          ),
+        );
+      case TimelineInteractionType.welcomeVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'welcomeVideo'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.welcomeVideo),
             ],
           ),
         );

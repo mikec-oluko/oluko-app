@@ -63,7 +63,8 @@ enum TimelineInteractionType {
   sentVideo,
   recommendedVideo,
   introductionVideo,
-  messageVideo
+  messageVideo,
+  welcomeVideo
 }
 
 enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }

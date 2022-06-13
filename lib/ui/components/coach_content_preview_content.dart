@@ -40,7 +40,8 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
     if (widget.segmentSubmissionContent != null && widget.segmentSubmissionContent.isNotEmpty) {
       return segmentSubmissionWidget();
     }
-    if (widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) {
+    if ((widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) &&
+        (widget.coachMediaMessages != null && widget.coachMediaMessages.isNotEmpty)) {
       return mentoredVideosWidget();
     }
     if (widget.recommendedVideoContent != null && widget.recommendedVideoContent.isNotEmpty) {
@@ -112,7 +113,10 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
                   height: 120,
                   color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.coachAnnotationContent.isNotEmpty
-                      ? CoachVideoContent(videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent), isForGallery: false)
+                      ? CoachVideoContent(
+                          videoThumbnail:
+                              getThumbnails(annotations: widget.coachAnnotationContent, coachMediaMessages: widget.coachMediaMessages),
+                          isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
                 ),
               ),
@@ -180,7 +184,10 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
   }
 
   List<String> getThumbnails(
-      {List<SegmentSubmission> segments, List<Annotation> annotations, List<RecommendationMedia> recommendedVideoContent}) {
+      {List<SegmentSubmission> segments,
+      List<Annotation> annotations,
+      List<RecommendationMedia> recommendedVideoContent,
+      final List<CoachMediaMessage> coachMediaMessages}) {
     List<String> thumbnailsList = [];
     if (segments != null && segments.isNotEmpty) {
       List<SegmentSubmission> limitSegments = [];
@@ -195,18 +202,43 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
       });
     }
 
-    if (annotations != null && annotations.isNotEmpty) {
-      List<Annotation> limitAnnotations = [];
-      annotations.length >= 3
-          ? limitAnnotations = annotations.getRange(annotations.length - 3, annotations.length).toList()
-          : limitAnnotations = annotations;
-      limitAnnotations.forEach((annotation) {
-        if (annotation.video.thumbUrl != null) {
-          thumbnailsList.add(annotation.video.thumbUrl);
-        } else {
-          thumbnailsList.insert(0, _useDefaultImage);
-        }
-      });
+    if (annotations != null && coachMediaMessages != null) {
+      List<String> personalizedVideosThumbnails = [];
+      if (annotations.isNotEmpty) {
+        annotations.forEach((annotationItem) {
+          if (annotationItem.video.thumbUrl != null) {
+            personalizedVideosThumbnails.add(annotationItem.video.thumbUrl);
+          } else {
+            personalizedVideosThumbnails.insert(0, _useDefaultImage);
+          }
+        });
+      }
+      if (coachMediaMessages.isNotEmpty) {
+        coachMediaMessages.forEach((mediaMessage) {
+          if (mediaMessage.video.thumbUrl != null) {
+            personalizedVideosThumbnails.add(mediaMessage.video.thumbUrl);
+          } else {
+            personalizedVideosThumbnails.insert(0, _useDefaultImage);
+          }
+        });
+      }
+      personalizedVideosThumbnails.reversed;
+      thumbnailsList = personalizedVideosThumbnails.isEmpty
+          ? [_useDefaultImage]
+          : personalizedVideosThumbnails.length >= 3
+              ? personalizedVideosThumbnails.getRange(0, 3).toList()
+              : personalizedVideosThumbnails;
+      // List<Annotation> limitAnnotations = [];
+      // annotations.length >= 3
+      //     ? limitAnnotations = annotations.getRange(annotations.length - 3, annotations.length).toList()
+      //     : limitAnnotations = annotations;
+      // limitAnnotations.forEach((annotation) {
+      //   if (annotation.video.thumbUrl != null) {
+      //     thumbnailsList.add(annotation.video.thumbUrl);
+      //   } else {
+      //     thumbnailsList.insert(0, _useDefaultImage);
+      //   }
+      // });
     }
 
     if (recommendedVideoContent != null && recommendedVideoContent.isNotEmpty) {

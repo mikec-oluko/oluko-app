@@ -8,7 +8,7 @@ class CoachHeders {
       case CoachFileTypeEnum.mentoredVideo:
         return OlukoLocalizations.of(context).find('timelinePersonalizedVideo');
       case CoachFileTypeEnum.introductionVideo:
-        return OlukoLocalizations.of(context).find('welcomeVideo');
+        return OlukoLocalizations.of(context).find('introductionVideo');
       case CoachFileTypeEnum.sentVideo:
         return OlukoLocalizations.of(context).find('timelineSentVideo');
       case CoachFileTypeEnum.recommendedCourse:
@@ -25,6 +25,8 @@ class CoachHeders {
         return OlukoLocalizations.of(context).find('recommendedVideos');
       case CoachFileTypeEnum.messageVideo:
         return OlukoLocalizations.of(context).find('coachMessageVideo');
+      case CoachFileTypeEnum.welcomeVideo:
+        return OlukoLocalizations.of(context).find('welcomeVideo');
     }
     return '';
   }
