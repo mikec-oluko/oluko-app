@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
+import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -30,6 +31,7 @@ import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/course_panel_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
@@ -424,6 +426,8 @@ class Routes {
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final FAQBloc _fAQBloc = FAQBloc();
   final CourseUserIteractionBloc _courseInteractionBloc = CourseUserIteractionBloc();
+  final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
+  final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -647,6 +651,8 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -686,12 +692,14 @@ class Routes {
         break;
       case RouteEnum.profileChallenges:
         providers = [
+          BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
-          challengeSegments: argumentsToAdd['challengeSegments'] as List<Widget>,
+          challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
           isCurrentUser:
               argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,

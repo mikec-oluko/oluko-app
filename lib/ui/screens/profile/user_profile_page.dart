@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
+import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
@@ -35,6 +36,7 @@ import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_exception_message.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
@@ -45,6 +47,7 @@ import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/screens/profile/challenge_courses_panel_content.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
@@ -80,13 +83,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<CourseEnrollment> _courseEnrollmentList = [];
   UserStatistics userStats;
   final PanelController _panelController = PanelController();
+  final PanelController _coursesPanelController = PanelController();
   double _panelMaxHeight = 100.0;
   double _panelExtendedMaxHeight = 300.0;
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
   bool canHidePanel = true;
   Widget defaultWidgetNoContent = const SizedBox.shrink();
-  List<Widget> challengeList = [];
+  UniqueChallengesSuccess _challengesCardsState;
 
   @override
   void initState() {
@@ -118,8 +122,24 @@ class _UserProfilePageState extends State<UserProfilePage> {
           BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
           _friendsRequested = true;
         }
-        return _buildUserProfileView(
-            profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser);
+        return SlidingUpPanel(
+            backdropEnabled: canHidePanel,
+            isDraggable: true,
+            margin: EdgeInsets.zero,
+            header: defaultWidgetNoContent,
+            padding: EdgeInsets.zero,
+            color: OlukoColors.black,
+            minHeight: 0,
+            maxHeight: (ScreenUtils.height(context) / 4) * 3,
+            collapsed: defaultWidgetNoContent,
+            controller: _coursesPanelController,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            panel: ChallengeCoursesPanelContent(panelController: _coursesPanelController),
+            body: _buildUserProfileView(
+                profileViewContext: context,
+                authUser: _currentAuthUser,
+                userRequested: widget.userRequested,
+                isOwnProfile: _isCurrentUser));
       } else {
         return Container(
           color: OlukoColors.black,
@@ -682,7 +702,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
     if (listOfChallenges.isNotEmpty) {
-      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).returnChallengeCards(
+      BlocProvider.of<UpcomingChallengesBloc>(context).getUniqueChallengeCards(
           userId: _userProfileToDisplay.id,
           listOfChallenges: listOfChallenges,
           isCurrentUser: _isCurrentUser,
@@ -690,35 +710,55 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-      child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
+      child: BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
         builder: (context, state) {
-          if (state is ChallengeListSuccess) {
-            challengeList = state.challenges;
-          }
-          if (state is LoadingChallenges) {
-            challengeList = [
+          if (state is UniqueChallengesSuccess) {
+            _challengesCardsState = state;
+            return getCarouselSection(buildChallengeCards(state));
+          } else {
+            return getCarouselSection([
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: OlukoCircularProgressIndicator(),
               )
-            ];
+            ]);
           }
-          return CarouselSection(
-              height: 280,
-              width: MediaQuery.of(context).size.width,
-              title: OlukoLocalizations.get(context, 'upcomingChallenges'),
-              optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-              onOptionTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
-                  'challengeSegments': challengeList,
-                  'isCurrentUser': _isCurrentUser,
-                  'userRequested': _userProfileToDisplay
-                });
-              },
-              children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
         },
       ),
     );
+  }
+
+  List<Widget> buildChallengeCards(UniqueChallengesSuccess state) {
+    List<Widget> challengeList = [];
+    for (String id in state.challengeMap.keys) {
+      challengeList.add(ChallengesCard(
+          panelController: _coursesPanelController,
+          challengeNavigations: state.challengeMap[id],
+          userRequested: !_isCurrentUser ? _userProfileToDisplay : null,
+          useAudio: !_isCurrentUser,
+          segmentChallenge: state.challengeMap[id][0],
+          navigateToSegment: _isCurrentUser,
+          audioIcon: !_isCurrentUser,
+          customValueForChallenge: state.lockedChallenges[id]));
+    }
+    ;
+    return challengeList;
+  }
+
+  Widget getCarouselSection(List<Widget> challengeList) {
+    return CarouselSection(
+        height: 280,
+        width: MediaQuery.of(context).size.width,
+        title: OlukoLocalizations.get(context, 'upcomingChallenges'),
+        optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+        onOptionTap: () {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
+            'isCurrentUser': _isCurrentUser,
+            'userRequested': _userProfileToDisplay,
+            'challengesCardsState': _challengesCardsState
+          });
+        },
+        children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
   }
 
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {

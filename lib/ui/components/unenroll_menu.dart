@@ -31,7 +31,7 @@ class _UnenrollCourseState extends State<UnenrollCourse> {
             value: Unenroll.unenroll,
             child: Center(child: Text('Unenroll', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white))),
             padding: EdgeInsets.zero,
-          )
+          ),
         ];
       },
       color: OlukoColors.black,
