@@ -13,6 +13,8 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -75,7 +77,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,false);
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, false);
     recorder.init();
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.challenge.segmentId, widget.userRequested.id);
   }
@@ -165,7 +167,12 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPeopleEnrolled(userId: _user.id, favorites: state.favorites, users: state.users);
+            _contentForPanel = ModalPeopleEnrolled(
+                userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+                userId: _user.id,
+                favorites: state.favorites,
+                users: state.users);
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();

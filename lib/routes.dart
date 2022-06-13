@@ -751,6 +751,8 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
@@ -910,6 +912,7 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
@@ -941,6 +944,8 @@ class Routes {
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),

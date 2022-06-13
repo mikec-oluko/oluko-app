@@ -5,10 +5,12 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
@@ -22,13 +24,24 @@ class ModalPeopleEnrolled extends StatefulWidget {
   String userId;
   List<dynamic> users;
   List<dynamic> favorites;
-  ModalPeopleEnrolled({this.userId, this.users, this.favorites});
+  UserProgressListBloc userProgressListBloc;
+    UserProgressStreamBloc userProgressStreamBloc;
+
+  ModalPeopleEnrolled({this.userId, this.userProgressListBloc, this.userProgressStreamBloc, this.users, this.favorites});
 
   @override
   _ModalPeopleEnrolledState createState() => _ModalPeopleEnrolledState();
 }
 
 class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
+  Map<String, UserProgress> _usersProgess = {};
+
+  @override
+  void initState() {
+    widget.userProgressListBloc.get();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,31 +53,46 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       width: MediaQuery.of(context).size.width,
       height: 150,
-      child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: ListView(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: TitleBody(OlukoLocalizations.get(context, 'favorites')),
-                  ),
-                ],
-              ),
-              usersGrid(widget.favorites),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: TitleBody(OlukoLocalizations.get(context, 'everyoneElse')),
-                  ),
-                ],
-              ),
-              usersGrid(widget.users)
-            ],
-          )),
+      child: BlocConsumer<UserProgressListBloc, UserProgressListState>(
+          bloc: widget.userProgressListBloc,
+          listener: (context, userProgressListState) {
+            if (userProgressListState is GetUserProgressSuccess) {
+              setState(() {
+                _usersProgess = userProgressListState.usersProgress;
+              });
+            }
+          },
+          builder: (context, userProgressListState) {
+            return body();
+          }),
     );
+  }
+
+  Widget body() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: ListView(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 20),
+                  child: TitleBody(OlukoLocalizations.get(context, 'favorites')),
+                ),
+              ],
+            ),
+            usersGrid(widget.favorites),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 20),
+                  child: TitleBody(OlukoLocalizations.get(context, 'everyoneElse')),
+                ),
+              ],
+            ),
+            usersGrid(widget.users)
+          ],
+        ));
   }
 
   Widget usersGrid(List<dynamic> users) {
@@ -81,6 +109,9 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                       child: Column(
                         children: [
                           StoriesItem(
+                            showUserProgress: true,
+                            userProgressStreamBloc: widget.userProgressStreamBloc,
+                            userProgress: _usersProgess[user.id],
                             itemUserId: user.id?.toString() ?? '',
                             name: (() {
                               if (user.username != null) {
@@ -127,8 +158,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
             BlocProvider.of<HiFiveReceivedBloc>(context),
             BlocProvider.of<UserStatisticsBloc>(context),
             BlocProvider.of<FavoriteFriendBloc>(context),
-            BlocProvider.of<UserProgressStreamBloc>(context)
-            ),
+            BlocProvider.of<UserProgressStreamBloc>(context)),
         context: context,
       );
     }

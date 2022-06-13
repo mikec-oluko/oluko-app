@@ -14,6 +14,8 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/course_helper.dart';
@@ -473,19 +475,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
       },
     );
-  }
-
-  _peopleAction(List<dynamic> users, List<dynamic> favorites, BuildContext context) {
-    BottomDialogUtils.showBottomDialog(
-        context: context,
-        content: SizedBox(
-          height: ScreenUtils.height(context) * 0.5,
-          child: ModalPeopleEnrolled(
-            userId: _user.uid,
-            users: users,
-            favorites: favorites,
-          ),
-        ));
   }
 }
 
