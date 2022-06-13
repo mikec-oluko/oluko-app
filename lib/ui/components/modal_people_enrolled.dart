@@ -25,7 +25,7 @@ class ModalPeopleEnrolled extends StatefulWidget {
   List<dynamic> users;
   List<dynamic> favorites;
   UserProgressListBloc userProgressListBloc;
-    UserProgressStreamBloc userProgressStreamBloc;
+  UserProgressStreamBloc userProgressStreamBloc;
 
   ModalPeopleEnrolled({this.userId, this.userProgressListBloc, this.userProgressStreamBloc, this.users, this.favorites});
 
@@ -151,7 +151,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
         content: FriendModalContent(
             friendUser,
             widget.userId,
-            null,
+            _usersProgess,
             BlocProvider.of<FriendBloc>(context),
             BlocProvider.of<FriendRequestBloc>(context),
             BlocProvider.of<HiFiveSendBloc>(context),
