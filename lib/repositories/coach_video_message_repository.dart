@@ -45,6 +45,6 @@ class CoachVideoMessageRepository {
         .doc(userId)
         .collection('mediaMessages')
         .doc(messageVideoContent.id);
-    reference.update({'favorite': true});
+    reference.update({'favorite': !messageVideoContent.favorite});
   }
 }

@@ -9,6 +9,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -16,7 +17,8 @@ import 'package:oluko_app/models/coach_media_message.dart';
 
 class CoachPersonalizedVideoComponent extends StatefulWidget {
   final CoachPersonalizedVideo personalizedVideo;
-  const CoachPersonalizedVideoComponent({@required this.personalizedVideo}) : super();
+  final UserResponse currentUser;
+  const CoachPersonalizedVideoComponent({@required this.personalizedVideo, @required this.currentUser}) : super();
 
   @override
   State<CoachPersonalizedVideoComponent> createState() => _CoachPersonalizedVideoComponentState();
@@ -58,17 +60,12 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                       });
                     },
                     child: OlukoNeumorphism.isNeumorphismDesign
-                        ? SizedBox(
-                            width: 70,
-                            height: 70,
+                        ? Container(
+                            width: 50,
+                            height: 50,
                             child: OlukoBlurredButton(
-                              childContent: Image.asset(
-                                'assets/self_recording/white_play_arrow.png',
-                                color: Colors.white,
-                                height: 50,
-                                width: 50,
-                              ),
-                            ),
+                                childContent:
+                                    Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
                           )
                         : Image.asset(
                             'assets/self_recording/play_button.png',
@@ -110,20 +107,6 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                             ],
                           ),
                         getLikeButton(widget.personalizedVideo)
-                        // IconButton(
-                        //     icon: OlukoNeumorphism.isNeumorphismDesign
-                        //         ? Icon(
-                        //             coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline,
-                        //             color: OlukoColors.primary,
-                        //             size: 30,
-                        //           )
-                        //         : Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
-                        //     onPressed: () {
-                        //       BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
-                        //         coachAnnotation: coachAnnotation,
-                        //         currentMentoredVideosContent: Set.from(content),
-                        //       );
-                        //     })
                       ],
                     ),
                   ),
@@ -162,7 +145,8 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
               // currentMentoredVideosContent: Set.from(content),
             );
           } else if (personalizedVideo.videoMessageContent != null) {
-            // BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageAsFavorite()
+            BlocProvider.of<CoachVideoMessageBloc>(context)
+                .markVideoMessageAsFavorite(widget.currentUser.id, personalizedVideo.videoMessageContent);
           }
         });
   }

@@ -2,11 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_helper_functions.dart';
 import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_personalized_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
@@ -29,6 +32,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   bool isFavoriteSelected = false;
   bool isContentFilteredByDate = false;
   List<CoachPersonalizedVideo> _personalizedVideosList = [];
+  UserResponse _currentUser;
+  List<Annotation> _updatedAnnotations = [];
+  List<CoachMediaMessage> _updatedMessageVideos = [];
 
   @override
   void initState() {
@@ -39,6 +45,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       content.addAll(_personalizedVideosList);
       filteredContent = content;
       filteredContent = contentSortedByDate();
+      _updatedMessageVideos = widget.coachVideoMessage;
+      _updatedAnnotations = widget.coachAnnotation;
     });
     super.initState();
   }
@@ -50,73 +58,102 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
-      builder: (context, state) {
-        if (state is CoachMentoredVideosSuccess) {
-          state.mentoredVideos.forEach((mentoredVideo) {
-            // final sameElement = content.where((contentElement) => contentElement.id == mentoredVideo.id).toList();
-            // if (sameElement.isEmpty) {
-            //   // content.insert(0, mentoredVideo);
-            // }
+    return BlocBuilder<CoachVideoMessageBloc, CoachVideoMessageState>(builder: (context, state) {
+      if (state is CoachVideoMessageSuccess) {
+        _updatedMessageVideos = state.coachVideoMessages;
+        if (_personalizedVideosList.isNotEmpty) {
+          _updatedMessageVideos.forEach((videoMessage) {
+            _personalizedVideosList[_personalizedVideosList.indexOf(_personalizedVideosList
+                    .where((videoElement) =>
+                        videoElement.videoMessageContent != null && videoElement.videoMessageContent.id == videoMessage.id)
+                    .first)]
+                .videoMessageContent = videoMessage;
           });
+          content = _personalizedVideosList;
         }
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              OlukoLocalizations.get(context, 'personalizedVideos'),
-              style: OlukoNeumorphism.isNeumorphismDesign
-                  ? ScreenUtils.smallScreen(context)
-                      ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                      : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                  : ScreenUtils.smallScreen(context)
-                      ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
-                      : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
-            ),
-            actions: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: IconButton(
-                        icon: OlukoNeumorphism.isNeumorphismDesign
-                            ? Image.asset(
-                                'assets/courses/vector_neumorphism.png',
-                                color: isContentFilteredByDate ? Colors.white : Colors.grey,
-                                height: 20,
-                                width: 20,
-                              )
-                            : Image.asset(
-                                'assets/courses/vector.png',
-                                color: isContentFilteredByDate ? Colors.white : Colors.grey,
-                                height: 20,
-                                width: 20,
-                              ),
+      }
+      return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
+        builder: (context, state) {
+          if (state is CoachMentoredVideosSuccess) {
+            _updatedAnnotations = state.mentoredVideos;
+            if (_personalizedVideosList.isNotEmpty) {
+              _updatedAnnotations.forEach((annotation) {
+                _personalizedVideosList[_personalizedVideosList.indexOf(_personalizedVideosList
+                        .where(
+                            (videoElement) => videoElement.annotationContent != null && videoElement.annotationContent.id == annotation.id)
+                        .first)]
+                    .annotationContent = annotation;
+              });
+              content = _personalizedVideosList;
+            }
+          }
+          filteredContent = contentSortedByDate();
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                OlukoLocalizations.get(context, 'personalizedVideos'),
+                style: OlukoNeumorphism.isNeumorphismDesign
+                    ? ScreenUtils.smallScreen(context)
+                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                    : ScreenUtils.smallScreen(context)
+                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
+                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
+              ),
+              actions: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: IconButton(
+                          icon: OlukoNeumorphism.isNeumorphismDesign
+                              ? Image.asset(
+                                  'assets/courses/vector_neumorphism.png',
+                                  color: isContentFilteredByDate ? Colors.white : Colors.grey,
+                                  height: 20,
+                                  width: 20,
+                                )
+                              : Image.asset(
+                                  'assets/courses/vector.png',
+                                  color: isContentFilteredByDate ? Colors.white : Colors.grey,
+                                  height: 20,
+                                  width: 20,
+                                ),
+                          onPressed: () {
+                            setState(() {
+                              isContentFilteredByDate = !isContentFilteredByDate;
+                              contentSortedByDate();
+                            });
+                          }),
+                    ),
+                    IconButton(
+                        icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                         onPressed: () {
                           setState(() {
-                            isContentFilteredByDate = !isContentFilteredByDate;
-                            contentSortedByDate();
+                            isFavoriteSelected = !isFavoriteSelected;
+                            isFavoriteSelected ? filteredContent = getFavoriteContent(content) : filteredContent = content;
                           });
+                          //sort List items favorite = true;
                         }),
-                  ),
-                  IconButton(
-                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
-                      onPressed: () {
-                        setState(() {
-                          isFavoriteSelected = !isFavoriteSelected;
-                          isFavoriteSelected ? filteredContent = getFavoriteContent(content) : filteredContent = content;
-                        });
-                        //sort List items favorite = true;
-                      }),
-                ],
-              )
-            ],
-            elevation: 0.0,
-            backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-            leading: OlukoNeumorphism.isNeumorphismDesign
-                ? Neumorphic(
-                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                    child: IconButton(
+                  ],
+                )
+              ],
+              elevation: 0.0,
+              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+              leading: OlukoNeumorphism.isNeumorphismDesign
+                  ? Neumorphic(
+                      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    )
+                  : IconButton(
                       icon: const Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
@@ -125,34 +162,30 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         Navigator.pop(context);
                       },
                     ),
-                  )
-                : IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-          ),
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            color: OlukoNeumorphismColors.appBackgroundColor,
-            child: ListView(children: segmentCard(videoContent: filteredContent)),
-          ),
-        );
-      },
-    );
+            ),
+            body: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthSuccess) {
+                  _currentUser = state.user;
+                }
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: OlukoNeumorphismColors.appBackgroundColor,
+                  child: ListView(children: segmentCard(videoContent: filteredContent)),
+                );
+              },
+            ),
+          );
+        },
+      );
+    });
   }
 
   List<Widget> segmentCard({List<CoachPersonalizedVideo> videoContent}) {
     List<Widget> contentForSection = [];
 
     videoContent.forEach((video) {
-      contentForSection.add(CoachPersonalizedVideoComponent(
-        personalizedVideo: video,
-      ));
+      contentForSection.add(CoachPersonalizedVideoComponent(personalizedVideo: video, currentUser: _currentUser));
     });
 
     return contentForSection;
@@ -299,6 +332,5 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       });
     }
     return favoriteContent;
-    // content.where((element) => element. == true).toList()
   }
 }
