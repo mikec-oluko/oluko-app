@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
@@ -14,6 +14,7 @@ import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/dto/verify_token_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 class AuthRepository {
   Client http;
@@ -123,6 +124,48 @@ class AuthRepository {
       }
     } else {
       return null;
+    }
+  }
+
+  Future<User> signInWithApple() async {
+    await firebaseAuthInstance.signOut();
+    final AuthorizationResult result = await TheAppleSignIn.performRequests([
+      const AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        final appleIdCredential = result.credential;
+        final oAuthProvider = OAuthProvider('apple.com');
+        final credential = oAuthProvider.credential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+          accessToken: String.fromCharCodes(appleIdCredential.authorizationCode),
+        );
+        final userCredential = await firebaseAuthInstance.signInWithCredential(credential);
+        final firebaseUser = userCredential.user;
+        if (appleIdCredential?.fullName != null) {
+          final fullName = appleIdCredential.fullName;
+          if (fullName != null && fullName.givenName != null && fullName.familyName != null) {
+            final displayName = '${fullName.givenName} ${fullName.familyName}';
+            await firebaseUser.updateDisplayName(displayName);
+          }
+        }
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('apiToken', String.fromCharCodes(appleIdCredential.identityToken));
+        return firebaseUser;
+      case AuthorizationStatus.error:
+        throw PlatformException(
+          code: 'ERROR_AUTHORIZATION_DENIED',
+          message: result.error.toString(),
+        );
+
+      case AuthorizationStatus.cancelled:
+        throw PlatformException(
+          code: 'ERROR_ABORTED_BY_USER',
+          message: 'Sign in aborted by user',
+        );
+      default:
+        throw UnimplementedError();
     }
   }
 
