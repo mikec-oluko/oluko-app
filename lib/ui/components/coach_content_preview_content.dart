@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -15,12 +16,14 @@ class CoachContentPreviewComponent extends StatefulWidget {
   final List<SegmentSubmission> segmentSubmissionContent;
   final List<Annotation> coachAnnotationContent;
   final List<RecommendationMedia> recommendedVideoContent;
+  final List<CoachMediaMessage> coachMediaMessages;
   final Function() onNavigation;
   const CoachContentPreviewComponent(
       {this.contentFor,
       this.titleForSection,
       this.segmentSubmissionContent,
       this.coachAnnotationContent,
+      this.coachMediaMessages,
       this.onNavigation,
       this.recommendedVideoContent});
 
@@ -31,13 +34,13 @@ class CoachContentPreviewComponent extends StatefulWidget {
 class _CoachContentPreviewComponentState extends State<CoachContentPreviewComponent> {
   final String _useDefaultImage = 'defaultImage';
   Widget imageAndVideoContainer;
-  //TODO: CHECK UPDATE TO USE IT ON CAROUSEL COACH
   @override
   Widget build(BuildContext context) {
     if (widget.segmentSubmissionContent != null && widget.segmentSubmissionContent.isNotEmpty) {
       return segmentSubmissionWidget();
     }
-    if (widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) {
+    if ((widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) ||
+        (widget.coachMediaMessages != null && widget.coachMediaMessages.isNotEmpty)) {
       return mentoredVideosWidget();
     }
     if (widget.recommendedVideoContent != null && widget.recommendedVideoContent.isNotEmpty) {
@@ -109,7 +112,10 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
                   height: 120,
                   color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.coachAnnotationContent.isNotEmpty
-                      ? CoachVideoContent(videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent), isForGallery: false)
+                      ? CoachVideoContent(
+                          videoThumbnail:
+                              getThumbnails(annotations: widget.coachAnnotationContent, coachMediaMessages: widget.coachMediaMessages),
+                          isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
                 ),
               ),
@@ -162,7 +168,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
     switch (contentFor) {
       case CoachContentSection.mentoredVideos:
         return Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos],
-            arguments: {'coachAnnotation': widget.coachAnnotationContent});
+            arguments: {'coachAnnotation': widget.coachAnnotationContent, 'coachVideoMessages': widget.coachMediaMessages});
       case CoachContentSection.sentVideos:
         return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
             arguments: {'sentVideosContent': widget.segmentSubmissionContent});
@@ -177,7 +183,10 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
   }
 
   List<String> getThumbnails(
-      {List<SegmentSubmission> segments, List<Annotation> annotations, List<RecommendationMedia> recommendedVideoContent}) {
+      {List<SegmentSubmission> segments,
+      List<Annotation> annotations,
+      List<RecommendationMedia> recommendedVideoContent,
+      final List<CoachMediaMessage> coachMediaMessages}) {
     List<String> thumbnailsList = [];
     if (segments != null && segments.isNotEmpty) {
       List<SegmentSubmission> limitSegments = [];
@@ -192,25 +201,39 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
       });
     }
 
-    if (annotations != null && annotations.isNotEmpty) {
-      List<Annotation> limitAnnotations = [];
-      annotations.length >= 3
-          ? limitAnnotations = annotations.getRange(annotations.length - 3, annotations.length).toList()
-          : limitAnnotations = annotations;
-      limitAnnotations.forEach((annotation) {
-        if (annotation.video.thumbUrl != null) {
-          thumbnailsList.add(annotation.video.thumbUrl);
-        } else {
-          thumbnailsList.insert(0, _useDefaultImage);
-        }
-      });
+    if (annotations != null || coachMediaMessages != null) {
+      List<String> personalizedVideosThumbnails = [];
+      if (annotations.isNotEmpty) {
+        annotations.forEach((annotationItem) {
+          if (annotationItem.video.thumbUrl != null) {
+            personalizedVideosThumbnails.add(annotationItem.video.thumbUrl);
+          } else {
+            personalizedVideosThumbnails.insert(0, _useDefaultImage);
+          }
+        });
+      }
+      if (coachMediaMessages.isNotEmpty) {
+        coachMediaMessages.forEach((mediaMessage) {
+          if (mediaMessage.video.thumbUrl != null) {
+            personalizedVideosThumbnails.add(mediaMessage.video.thumbUrl);
+          } else {
+            personalizedVideosThumbnails.insert(0, _useDefaultImage);
+          }
+        });
+      }
+
+      thumbnailsList = personalizedVideosThumbnails.isEmpty
+          ? thumbnailsList = [_useDefaultImage]
+          : personalizedVideosThumbnails.length >= 3
+              ? thumbnailsList = personalizedVideosThumbnails.getRange(0, 3).toList()
+              : thumbnailsList = personalizedVideosThumbnails;
     }
 
     if (recommendedVideoContent != null && recommendedVideoContent.isNotEmpty) {
       List<RecommendationMedia> limitVideoRecommendation = [];
       recommendedVideoContent.length >= 3
           ? limitVideoRecommendation =
-              recommendedVideoContent.getRange(recommendedVideoContent.length-3, recommendedVideoContent.length).toList()
+              recommendedVideoContent.getRange(recommendedVideoContent.length - 3, recommendedVideoContent.length).toList()
           : limitVideoRecommendation = recommendedVideoContent;
 
       limitVideoRecommendation.forEach((videoRecommended) {

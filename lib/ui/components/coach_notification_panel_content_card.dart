@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/routes.dart';
@@ -105,6 +106,22 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
           onCloseCard: () {},
           onOpenCard: () {},
         );
+      case TimelineInteractionType.messageVideo:
+        return CoachNotificationVideoCard(
+          cardImage: content.contentImage,
+          fileType: CoachFileTypeEnum.messageVideo,
+          onCloseCard: () {
+            messageVideoAsViewed(content: content, userId: widget.userId);
+          },
+          onOpenCard: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.coachMediaMessage.video.url,
+              'aspectRatio': content.coachMediaMessage.video.aspectRatio,
+              'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
+            });
+            messageVideoAsViewed(content: content, userId: widget.userId);
+          },
+        );
       case TimelineInteractionType.recommendedVideo:
         return CoachNotificationVideoCard(
             cardImage: content.contentImage,
@@ -152,5 +169,10 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
 
   void introductionVideoSeen(CoachNotificationContent content) {
     BlocProvider.of<CoachAssignmentBloc>(context).introductionVideoAsSeen(content.mentoredContent.userId);
+  }
+
+  void messageVideoAsViewed({CoachNotificationContent content, String userId}) {
+    BlocProvider.of<CoachVideoMessageBloc>(context)
+        .markVideoMessageNotificationAsSeen(userId: userId, messageVideoContent: content.coachMediaMessage);
   }
 }

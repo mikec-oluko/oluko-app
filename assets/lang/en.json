@@ -345,6 +345,7 @@
     "noInternetConnectionHeaderText": "No internet conection",
     "noInternetConnectionBodyText": "Make sure wi-fi or mobile data is turned on and then retry.",
     "retry": "Retry",
+    "coachMessageVideo": "Video Message",
     "exitOnButtonBack": "Press Back button again to Exit",
     "noRequests": "No requests",
     "badVideoFormat": "This video format is not allowed.",
@@ -363,9 +364,9 @@
     "memberships": "Memberships",
     "introductionVideo": "Introduction video",
     "shareYourVideo": "Share your video.",
+    "sendFriendRecommendation": "Send recommendation",
+    "cousesPanelText": "You will encounter this challenge in the following Courses",
     "save": "save",
     "changes": "changes",
     "cousesPanelText": "You will encounter this challenge in the following Courses",
     "messageRequired": "Message required"
-}
-
