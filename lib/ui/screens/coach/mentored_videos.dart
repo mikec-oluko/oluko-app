@@ -63,11 +63,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         _updatedMessageVideos = state.coachVideoMessages;
         if (_personalizedVideosList.isNotEmpty) {
           _updatedMessageVideos.forEach((videoMessage) {
-            _personalizedVideosList[_personalizedVideosList.indexOf(_personalizedVideosList
-                    .where((videoElement) =>
-                        videoElement.videoMessageContent != null && videoElement.videoMessageContent.id == videoMessage.id)
-                    .first)]
-                .videoMessageContent = videoMessage;
+            final _videoMatch = _personalizedVideosList.where(
+                (videoElement) => videoElement.videoMessageContent != null && videoElement.videoMessageContent.id == videoMessage.id);
+            CoachPersonalizedVideo previousContent = _videoMatch.isNotEmpty ? _videoMatch.first : null;
+            if (previousContent != null) {
+              _personalizedVideosList[_personalizedVideosList.indexOf(previousContent)].videoMessageContent = videoMessage;
+            }
           });
           content = _personalizedVideosList;
         }
@@ -78,11 +79,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
             _updatedAnnotations = state.mentoredVideos;
             if (_personalizedVideosList.isNotEmpty) {
               _updatedAnnotations.forEach((annotation) {
-                _personalizedVideosList[_personalizedVideosList.indexOf(_personalizedVideosList
-                        .where(
-                            (videoElement) => videoElement.annotationContent != null && videoElement.annotationContent.id == annotation.id)
-                        .first)]
-                    .annotationContent = annotation;
+                final _videoMatch = _personalizedVideosList
+                    .where((videoElement) => videoElement.annotationContent != null && videoElement.annotationContent.id == annotation.id);
+                CoachPersonalizedVideo previousContent = _videoMatch.isNotEmpty ? _videoMatch.first : null;
+                if (previousContent != null) {
+                  _personalizedVideosList[_personalizedVideosList.indexOf(previousContent)].annotationContent = annotation;
+                }
               });
               content = _personalizedVideosList;
             }
@@ -221,9 +223,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                         'videoUrl': videoUrl,
                         'aspectRatio': coachAnnotation.video.aspectRatio,
-                        // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
-                        // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/04ZUOE5pWwPlVtBsE47q/master.m3u8",
-                        // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
                         'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
                       });
                     },
