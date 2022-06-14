@@ -62,10 +62,13 @@ class _NoCoachPageState extends State<NoCoachPage> {
                     SizedBox(
                       height: 80,
                     ),
-                    Text(
-                      OlukoLocalizations.get(context, 'tapHere'),
-                      textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.profileHelpAndSupport]),
+                      child: Text(
+                        OlukoLocalizations.get(context, 'tapHere'),
+                        textAlign: TextAlign.center,
+                        style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      ),
                     ),
                     const SizedBox(
                       height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
