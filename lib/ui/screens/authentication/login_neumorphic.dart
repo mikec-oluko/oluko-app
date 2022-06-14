@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,6 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/user_utils.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
   LoginNeumorphicPage({this.dontShowWelcomeTest, Key key}) : super(key: key);
@@ -249,12 +249,16 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       const SizedBox(
         height: 15,
       ),
-      //getExternalLoginButtons(),
-      getOnlyGoogleButton(),
+      //getExternalLoginButtonsWithFacebook(),
+      SizedBox(
+        width: ScreenUtils.width(context),
+        height: 50,
+        child: getExternalLoginButtons(),
+      ),
     ];
   }
 
-  Widget getExternalLoginButtons() {
+  Widget getExternalLoginButtonsWithFacebook() {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       SizedBox(
         width: 120,
@@ -317,27 +321,51 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
     }
   }
 
-  Widget getOnlyGoogleButton() {
-    return SizedBox(
-      width: ScreenUtils.width(context),
-      height: 50,
-      child: OlukoNeumorphicSecondaryButton(
-        title: '',
-        useBorder: true,
-        isExpanded: false,
-        thinPadding: true,
-        onlyIcon: true,
-        onPressed: () {
-          BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
-        },
-        icon: Align(
-          child: Image.asset(
-            'assets/login/google-logo.png',
-            width: 25,
-            color: Colors.white,
-          ),
+  Widget getExternalLoginButtons() {
+    final Widget googleButton = OlukoNeumorphicSecondaryButton(
+      title: '',
+      useBorder: true,
+      thinPadding: true,
+      onlyIcon: true,
+      onPressed: () {
+        BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
+      },
+      icon: Align(
+        child: Image.asset(
+          'assets/login/google-logo.png',
+          width: 25,
+          color: Colors.white,
         ),
       ),
     );
+
+    if (Platform.isIOS) {
+      return Row(
+        children: [
+          googleButton,
+          const SizedBox(width: 10),
+          OlukoNeumorphicSecondaryButton(
+            title: '',
+            useBorder: true,
+            thinPadding: true,
+            onlyIcon: true,
+            onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithApple(context),
+            icon: Align(
+              child: Image.asset(
+                'assets/login/apple-logo.png',
+                width: 43,
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          googleButton,
+        ],
+      );
+    }
   }
 }

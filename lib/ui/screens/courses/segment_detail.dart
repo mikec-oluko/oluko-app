@@ -335,68 +335,79 @@ class _SegmentDetailState extends State<SegmentDetail> {
   List<Widget> getSegmentList() {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
-      Challenge challenge = getSegmentChallenge(_segments[i].id);
-      segmentWidgets.add(SlidingUpPanel(
-          controller: panelController,
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          minHeight: 90,
-          maxHeight: 185,
-          collapsed: CollapsedMovementVideosSection(action: getAction()),
-          panel: () {
-            if (_segments.length - 1 >= segmentIndexToUse) {
-              return MovementVideosSection(
-                  action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
-                  segment: _segments[i],
-                  movements: _movements,
-                  onPressedMovement: (BuildContext context, Movement movement) =>
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
-            }
-            return const SizedBox();
-          }(),
-          body: SegmentImageSection(
-            onPressed: () {
-              if (widget.fromChallenge) {
-                return;
-              } else {
-                Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
-                final arguments = {
-                  'courseEnrollment': widget.courseEnrollment,
-                  'classIndex': widget.classIndex,
-                  'courseIndex': widget.courseIndex
-                };
-                if (Navigator.canPop(context)) {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    routeLabels[RouteEnum.insideClass],
-                    arguments: arguments,
-                  );
-                } else {
-                  Navigator.pushNamed(
-                    context,
-                    routeLabels[RouteEnum.insideClass],
-                    arguments: arguments,
-                  );
-                }
-              }
-            },
-            segment: _segments[i],
-            challenge: challenge,
-            currentSegmentStep: i + 1,
-            totalSegmentStep: totalSegmentStep,
-            userId: _user.id,
-            audioAction: _audioAction,
-            peopleAction: _peopleAction,
-            clockAction: _clockAction,
-            courseEnrollment: widget.courseEnrollment,
-            courseIndex: widget.courseIndex,
-            segments: _segments,
-            classIndex: widget.classIndex,
-            coachRequests: _coachRequests,
-            coach: _coach,
-            fromChallenge: widget.fromChallenge,
-          )));
+      segmentWidgets.add(challengeCarouselSection(i));
     }
     return segmentWidgets;
+  }
+
+  Widget challengeCarouselSection(int i) {
+    return Container(
+        height: ScreenUtils.height(context),
+        child: SlidingUpPanel(
+            controller: panelController,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            minHeight: 90,
+            maxHeight: 185,
+            collapsed: CollapsedMovementVideosSection(action: getAction()),
+            panel: movementsPanel(i),
+            body: getSegmentImageSection(i)));
+  }
+
+  Widget getSegmentImageSection(int i) {
+    Challenge challenge = getSegmentChallenge(_segments[i].id);
+    return SegmentImageSection(
+      onPressed: () => onPressedAction(),
+      segment: _segments[i],
+      challenge: challenge,
+      currentSegmentStep: i + 1,
+      totalSegmentStep: totalSegmentStep,
+      userId: _user.id,
+      audioAction: _audioAction,
+      peopleAction: _peopleAction,
+      clockAction: _clockAction,
+      courseEnrollment: widget.courseEnrollment,
+      courseIndex: widget.courseIndex,
+      segments: _segments,
+      classIndex: widget.classIndex,
+      coachRequests: _coachRequests,
+      coach: _coach,
+      fromChallenge: widget.fromChallenge,
+    );
+  }
+
+  void onPressedAction() {
+    if (widget.fromChallenge) {
+      return;
+    } else {
+      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+      final arguments = {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex};
+      if (Navigator.canPop(context)) {
+        Navigator.pushReplacementNamed(
+          context,
+          routeLabels[RouteEnum.insideClass],
+          arguments: arguments,
+        );
+      } else {
+        Navigator.pushNamed(
+          context,
+          routeLabels[RouteEnum.insideClass],
+          arguments: arguments,
+        );
+      }
+    }
+    ;
+  }
+
+  Widget movementsPanel(int i) {
+    if (_segments.length - 1 >= segmentIndexToUse) {
+      return MovementVideosSection(
+          action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
+          segment: _segments[i],
+          movements: _movements,
+          onPressedMovement: (BuildContext context, Movement movement) =>
+              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
+    }
+    return const SizedBox();
   }
 
   Widget _viewBody() {
@@ -405,9 +416,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
       child: Column(
         children: [
           () {
-            if (_segments.length - 1 >= segmentIndexToUse) {
-              return getCarouselSlider();
-            }
+              if (_segments.length - 1 >= segmentIndexToUse) {
+                return getCarouselSlider();
+              }
             return const SizedBox();
           }(),
         ],

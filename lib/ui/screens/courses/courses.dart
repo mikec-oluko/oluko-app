@@ -226,13 +226,13 @@ class _State extends State<Courses> {
               height: carouselSectionHeight,
               title: _coursesByCategories.keys.elementAt(index).name,
               optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-              children: coursesList.map((course) => getcurseCategoriesCards(context, course)).toList(),
+              children: coursesList.map((course) => getCourseCategoriesCards(context, course)).toList(),
             );
           }
         });
   }
 
-  Padding getcurseCategoriesCards(BuildContext context, Course course) {
+  Padding getCourseCategoriesCards(BuildContext context, Course course) {
     return Padding(
       padding: const EdgeInsets.only(right: OlukoNeumorphism.isNeumorphismDesign ? 12 : 8.0),
       child: GestureDetector(

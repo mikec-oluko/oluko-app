@@ -58,7 +58,7 @@ import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:native_device_orientation/native_device_orientation.dart';
+//import 'package:native_device_orientation/native_device_orientation.dart';
 
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;

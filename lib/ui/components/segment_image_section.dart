@@ -206,7 +206,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         ),
         SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: SegmentUtils.getSegmentSummary(

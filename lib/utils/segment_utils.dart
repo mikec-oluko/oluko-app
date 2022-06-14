@@ -71,6 +71,16 @@ class SegmentUtils {
     }
   }
 
+  static bool hasTitle(Segment segment) {
+    if (isEMOM(segment)) {
+      return true;
+    } else if (isAMRAP(segment)) {
+      return true;
+    } else {
+      return segment.rounds > 1 ? true : false;
+    }
+  }
+
   static String getEMOMTitle(Segment segment, BuildContext context) {
     return 'EMOM: ${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${segment.totalTime} ${OlukoLocalizations.get(context, 'seconds')}';
   }
@@ -208,7 +218,7 @@ class SegmentUtils {
     if (movement.parameter != null) {
       switch (movement.parameter) {
         case ParameterEnum.duration:
-        label = TimeConverter.durationToString(Duration(seconds: movement.value));
+          label = TimeConverter.durationToString(Duration(seconds: movement.value));
           //label += 's';
           parameter = 's';
           break;
@@ -270,16 +280,20 @@ class SegmentUtils {
   static Column workouts(Segment segment, BuildContext context, Color color) {
     final List<String> workoutWidgets = getWorkouts(segment);
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-              Text(
-                getRoundTitle(segment, context),
-                style: OlukoNeumorphism.isNeumorphismDesign
-                    ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-                    : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
-              )
-            ] +
-            workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
+        crossAxisAlignment: CrossAxisAlignment.start, children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
+  }
+
+  static List<Widget> titleList(Segment segment, BuildContext context) {
+    return hasTitle(segment)
+        ? [
+            Text(
+              getRoundTitle(segment, context),
+              style: OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+            )
+          ]
+        : [];
   }
 
   static CoachRequest getSegmentCoachRequest(
