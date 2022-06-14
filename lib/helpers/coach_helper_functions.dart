@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
+import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -12,8 +14,8 @@ import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_notification_panel_content_card.dart';
+import 'package:oluko_app/ui/components/coach_personalized_video.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-
 import 'coach_recommendation_default.dart';
 
 class CoachHelperFunctions {
@@ -158,13 +160,74 @@ class CoachHelperFunctions {
   }
 
   static Widget mentoredVideosSection(
-      {BuildContext context, List<Annotation> annotation, bool introFinished, Function onNavigation, bool isForCarousel}) {
+      {BuildContext context,
+      List<Annotation> annotation,
+      @required List<CoachMediaMessage> coachMediaMessages,
+      bool introFinished,
+      Function onNavigation,
+      bool isForCarousel}) {
     return annotation != null && annotation.isNotEmpty
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.mentoredVideos,
             titleForSection: OlukoLocalizations.get(context, 'personalizedVideos'),
             coachAnnotationContent: annotation,
+            coachMediaMessages: coachMediaMessages,
             onNavigation: () => !introFinished ? onNavigation() : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'personalizedVideos'));
+  }
+
+  static List<CoachPersonalizedVideo> createPersonalizedVideoFromContent(
+      {@required List<Annotation> mentoredVideos, @required List<CoachMediaMessage> videoMessages}) {
+    List<CoachPersonalizedVideo> personalizedContent = [];
+    try {
+      _mentoredVideosToPersonalizedVideos(mentoredVideos, personalizedContent);
+      _videoMessageToPersonalizedVideo(videoMessages, personalizedContent);
+    } catch (e) {}
+
+    return personalizedContent;
+  }
+
+  static void _videoMessageToPersonalizedVideo(List<CoachMediaMessage> videoMessages, List<CoachPersonalizedVideo> personalizedContent) {
+    if (videoMessages != null && videoMessages.isNotEmpty) {
+      videoMessages.forEach((coachMessage) {
+        CoachPersonalizedVideo newPersonalizedVideo = CoachPersonalizedVideo(
+            createdAt: coachMessage.createdAt,
+            videoContent: coachMessage.video,
+            videoHls: coachMessage.videoHls,
+            videoMessageContent: coachMessage);
+        if (personalizedContent.isNotEmpty) {
+          if (personalizedContent
+              .where((content) => content.videoMessageContent != null
+                  ? content.videoMessageContent.id == newPersonalizedVideo.videoMessageContent.id
+                  : false)
+              .toList()
+              .isEmpty) {
+            personalizedContent.add(newPersonalizedVideo);
+          }
+        } else {
+          personalizedContent.add(newPersonalizedVideo);
+        }
+      });
+    }
+  }
+
+  static void _mentoredVideosToPersonalizedVideos(List<Annotation> mentoredVideos, List<CoachPersonalizedVideo> personalizedContent) {
+    if (mentoredVideos != null && mentoredVideos.isNotEmpty) {
+      mentoredVideos.forEach((annotation) {
+        CoachPersonalizedVideo newPersonalizedVideo = CoachPersonalizedVideo(
+            createdAt: annotation.createdAt, videoContent: annotation.video, videoHls: annotation.videoHLS, annotationContent: annotation);
+        if (personalizedContent.isNotEmpty) {
+          if (personalizedContent
+              .where((content) =>
+                  content.annotationContent != null ? content.annotationContent.id == newPersonalizedVideo.annotationContent.id : false)
+              .toList()
+              .isEmpty) {
+            personalizedContent.add(newPersonalizedVideo);
+          }
+        } else {
+          personalizedContent.add(newPersonalizedVideo);
+        }
+      });
+    }
   }
 }

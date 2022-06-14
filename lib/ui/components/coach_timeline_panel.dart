@@ -241,6 +241,45 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             ],
           ),
         );
+      case TimelineInteractionType.messageVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'coachMessageVideo'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.messageVideo),
+            ],
+          ),
+        );
+      case TimelineInteractionType.introductionVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'introductionVideo'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.introductionVideo),
+            ],
+          ),
+        );
+      case TimelineInteractionType.welcomeVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'welcomeVideo'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.welcomeVideo),
+            ],
+          ),
+        );
       //   break;
       default:
         return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
