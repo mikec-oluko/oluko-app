@@ -33,9 +33,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class FriendsListPage extends StatefulWidget {
-  final AuthSuccess authUser;
+  final UserResponse currentUser;
   final String userImage;
-  const FriendsListPage({this.userImage, @required this.authUser});
+  const FriendsListPage({this.userImage, @required this.currentUser});
   @override
   _FriendsListPageState createState() => _FriendsListPageState();
 }
@@ -59,7 +59,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void initState() {
     BlocProvider.of<UserProgressListBloc>(context).get();
-    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.authUser.user.id);
+    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     super.initState();
   }
 
@@ -85,7 +85,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   _friends = friendState.friendData != null ? friendState.friendData.friends : [];
                   _friendUsersWidget = UserListComponent(
                     usersProgess: _usersProgess,
-                    authUser: widget.authUser,
+                    authUser: widget.currentUser,
                     users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
                     onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
                     onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
@@ -96,7 +96,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
                   _appUsersWidget = UserListComponent(
                     usersProgess: _usersProgess,
-                    authUser: widget.authUser,
+                    authUser: widget.currentUser,
                     users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
                     onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
                     onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
@@ -201,7 +201,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
       return _appUsers = users
           .where((appUser) =>
               appUser.privacy != 2 &&
-              (appUser.id != widget.authUser.user.id &&
+              (appUser.id != widget.currentUser.id &&
                   ((friendUsersList == null) || (friendUsersList.indexWhere((friend) => friend != null && friend.id == appUser.id) == -1))))
           .toList();
     }
@@ -212,7 +212,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
       content: OlukoNeumorphism.isNeumorphismDesign
           ? FriendModalContent(
               friendUser,
-              widget.authUser.user.id,
+              widget.currentUser.id,
               _usersProgess,
               BlocProvider.of<FriendBloc>(context),
               BlocProvider.of<FriendRequestBloc>(context),
@@ -261,7 +261,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   handleFriendFavoriteState(FavoriteFriendState favoriteState) {
     if (favoriteState is FavoriteFriendSuccess) {
-      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.authUser.user.id);
+      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
       AppMessages.clearAndShowSnackbar(context, 'Friend updated.');
     } else if (favoriteState is FavoriteFriendFailure) {
       AppMessages.clearAndShowSnackbar(context, 'Error updating Friend.');
@@ -271,7 +271,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget dialogContainer({BuildContext context, UserResponse user, FriendState friendState}) {
     bool connectionRequested =
         friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
-    BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.authUser.user.id, user.id);
+    BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.currentUser.id, user.id);
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(user.id);
     return BlocBuilder<FriendBloc, FriendState>(
       bloc: BlocProvider.of<FriendBloc>(context),
@@ -312,7 +312,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             name: user.firstName,
                             lastname: user.lastName,
                             getStories: true,
-                            currentUserId: widget.authUser.user.id,
+                            currentUserId: widget.currentUser.id,
                             itemUserId: user.id,
                           ),
                         Expanded(
@@ -380,7 +380,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                         padding: const EdgeInsets.only(right: 16.0),
                                         child: GestureDetector(
                                           onTap: () {
-                                            BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.authUser.user.id, user.id);
+                                            BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.currentUser.id, user.id);
                                             AppMessages().showHiFiveSentDialog(context);
                                           },
                                           child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
@@ -395,7 +395,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                 );
                                               }
                                               if (hiFiveSendState is HiFiveSendSuccess) {
-                                                BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.authUser.user.id, user.id);
+                                                BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.currentUser.id, user.id);
                                               }
                                             },
                                             child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
@@ -466,7 +466,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             onPressed: () {
                               if (friendState is GetFriendsSuccess) {
                                 BlocProvider.of<FriendRequestBloc>(context)
-                                    .removeRequestSent(widget.authUser.user.id, friendState.friendData, user.id);
+                                    .removeRequestSent(widget.currentUser.id, friendState.friendData, user.id);
                               }
                             },
                           )
@@ -480,9 +480,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               if (friendState is GetFriendsSuccess) {
                                 userIsFriend
                                     ? BlocProvider.of<FriendBloc>(context)
-                                        .removeFriend(widget.authUser.user.id, friendState.friendData, user.id)
+                                        .removeFriend(widget.currentUser.id, friendState.friendData, user.id)
                                     : BlocProvider.of<FriendRequestBloc>(context)
-                                        .sendRequestOfConnect(widget.authUser.user.id, friendState.friendData, user.id);
+                                        .sendRequestOfConnect(widget.currentUser.id, friendState.friendData, user.id);
                               }
                             },
                           ),

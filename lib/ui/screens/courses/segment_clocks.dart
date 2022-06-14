@@ -457,7 +457,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           segment: widget.segments[widget.segmentIndex],
                           movements: _movements,
                           onPressedMovement: (BuildContext context, Movement movement) {
-                            playPauseSegment();
+                            if (workState != WorkState.paused) {
+                              changeSegmentState();
+                            }
                             Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                           }),
                       body: _body(keyboardVisibilty),
@@ -483,14 +485,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         title: '',
         onlyIcon: true,
         onPressed: () {
-          playPauseSegment();
+          changeSegmentState();
         },
         icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
       ),
     );
   }
 
-  void playPauseSegment() {
+  void changeSegmentState() {
     final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
     setState(() {
       if (isPlaying) {
@@ -1035,15 +1037,19 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) return;
     final isPausedInactive = state == AppLifecycleState.paused;
     if (isPausedInactive) {
-      playPauseSegment();
-      if (cameraController != null) {
-        cameraController.pauseVideoRecording();
+      if (workState != WorkState.paused) {
+        changeSegmentState();
+        if (cameraController != null) {
+          cameraController.pauseVideoRecording();
+        }
       }
     } else {
-      if (cameraController != null) {
-        cameraController.resumeVideoRecording();
+      if (isSegmentWithRecording()) {
+        if (cameraController != null) {
+          cameraController.resumeVideoRecording();
+        }
+        _resume();
       }
-      _resume();
     }
   }
 
@@ -1086,7 +1092,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
     BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex],
-        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
+        videoRecorded.path, widget.coach!=null?widget.coach.id:null, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
   }
 
 //STOPWATCH FUNCTIONS

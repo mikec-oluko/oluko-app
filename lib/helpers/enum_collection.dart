@@ -7,6 +7,14 @@ Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.restricted: 'restrictedSubtitle',
   SettingsPrivacyOptions.anonymous: 'anonymousSubtitle',
 };
+enum EmailTemplateEnum { contactUs }
+Map<EmailTemplateEnum, String> emailTemplates = {
+  EmailTemplateEnum.contactUs: 'ContactUs',
+};
+enum MailEnum { support }
+Map<MailEnum, String> mailsEnum = {
+  MailEnum.support: 'hello@mvtfitnessapp.com',
+};
 
 enum ProgressArea { courses, classes, challenges }
 
@@ -37,7 +45,8 @@ enum CoachFileTypeEnum {
   faqVideo,
   recommendedVideo,
   introductionVideo,
-  welcomeVideo
+  welcomeVideo,
+  messageVideo
 }
 
 enum StoriesItemFrom { friends, friendsModal, home, neumorphicHome, longPressHome }
@@ -53,11 +62,24 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.coachTabCorePlan: 'coach tab core plan',
 };
 
-enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo, recommendedVideo, introductionVideo }
+enum TimelineInteractionType {
+  course,
+  classes,
+  segment,
+  movement,
+  mentoredVideo,
+  sentVideo,
+  recommendedVideo,
+  introductionVideo,
+  messageVideo,
+  welcomeVideo
+}
 
 enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }
 
 enum ExceptionTypeSourceEnum { invalidFormat, invalidDuration, invalidValue, noFileSelected }
+
+enum MediaType { video, image, audio }
 
 enum NoInternetContentEnum { fullscreen, widget }
 
@@ -68,3 +90,5 @@ Map<FAQCategoriesEnum, String> fAQCategories = {
   FAQCategoriesEnum.memberships: 'about',
   FAQCategoriesEnum.about: 'memberships',
 };
+
+enum EntityTypeEnum { course, classes, segment, movement, mentoredVideo, sentVideo }

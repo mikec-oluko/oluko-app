@@ -460,7 +460,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     buttonShape: NeumorphicShape.flat,
                     useBorder: true,
                     thinPadding: true,
-                    textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    textColor: OlukoColors.grayColor,
                     onPressed: () {
                       if (OlukoNeumorphism.isNeumorphismDesign) {
                         _panelController.animatePanelToPosition(1.0);

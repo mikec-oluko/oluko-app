@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/helpers/text_helper.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -227,7 +228,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Container(
           child: OlukoNeumorphicPrimaryButton(
-            title: OlukoLocalizations.get(context, 'saveChanges'),
+            title:
+                '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'save'))} ${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'changes'))}',
             onPressed: () async {
               formKey.currentState.save();
               FocusScope.of(context).unfocus();

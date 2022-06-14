@@ -7,6 +7,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
+import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart' as CourseEnrollmentBlocLoading show Loading;
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
@@ -80,6 +81,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   List<Movement> _movements;
   bool _disableAction = false;
   bool _isVideoPlaying = false;
+  bool _courseLiked = false;
 
   @override
   void initState() {
@@ -93,6 +95,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
             _isVideoPlaying = !_isVideoPlaying;
           }
         });
+    _courseLiked = false;
   }
 
   @override
@@ -112,6 +115,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<MovementBloc>(context).getStream();
           BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
+          BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         }
 
         return form();
@@ -476,49 +480,85 @@ class _CourseMarketingState extends State<CourseMarketing> {
       },
     );
   }
-}
-
-Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
-  return Padding(
-      padding: EdgeInsets.only(top: 15),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0),
-            child: GestureDetector(
-                onTap: onBackPressed,
-                child: topButtonsBackground(
-                  Image.asset(
-                    'assets/courses/left_back_arrow.png',
-                    scale: 3.5,
-                  ),
-                )),
+  
+  _peopleAction(List<dynamic> users, List<dynamic> favorites, BuildContext context) {
+    BottomDialogUtils.showBottomDialog(
+        context: context,
+        content: SizedBox(
+          height: ScreenUtils.height(context) * 0.5,
+          child: ModalPeopleEnrolled(
+            userId: _user.uid,
+            users: users,
+            favorites: favorites,
           ),
-          Expanded(child: SizedBox()),
-          _isVideoPlaying ? SizedBox() : topButtonsBackground(Image.asset('assets/courses/grey_heart_outlined.png', scale: 3.5)),
-          _isVideoPlaying
-              ? SizedBox()
-              : Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 15),
+        ));
+  }
+
+
+  Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
+    return Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: GestureDetector(
+                  onTap: onBackPressed,
+                  child: topButtonsBackground(
+                    Image.asset(
+                      'assets/courses/left_back_arrow.png',
+                      scale: 3.5,
+                    ),
+                  )),
+            ),
+            Expanded(child: SizedBox()),
+            if (_isVideoPlaying)
+              const SizedBox()
+            else
+              BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
+                builder: (context, state) {
+                  if (state is CourseLikedSuccess) {
+                    _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
+                  }
+                  return GestureDetector(
+                    onTap: () {
+                      BlocProvider.of<CourseUserIteractionBloc>(context)
+                          .updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+                    },
+                    child: topButtonsBackground(
+                        Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
+                  );
+                },
+              ),
+            if (_isVideoPlaying)
+              const SizedBox()
+            else
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 15),
+                child: GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView],
+                      arguments: {'currentUser': _userState.user, 'courseToShare': widget.course}),
                   child: topButtonsBackground(Image.asset(
                     'assets/courses/grey_share_outlined.png',
                     scale: 3.5,
                   )),
-                )
-        ],
-      ));
-}
+                ),
+              )
+          ],
+        ));
+  }
 
-Widget topButtonsBackground(Widget child) {
-  return Neumorphic(
-    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-    child: Container(
-        decoration: const BoxDecoration(
-          color: OlukoNeumorphismColors.finalGradientColorDark,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-        ),
-        height: 55,
-        width: 55,
-        child: child),
-  );
+  Widget topButtonsBackground(Widget child) {
+    return Neumorphic(
+      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+      child: Container(
+          decoration: const BoxDecoration(
+            color: OlukoNeumorphismColors.finalGradientColorDark,
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+          height: 55,
+          width: 55,
+          child: child),
+    );
+  }
 }
