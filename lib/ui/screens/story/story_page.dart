@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
@@ -58,6 +59,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
             _currentIndex += 1;
             _loadStory(story: widget.stories[_currentIndex]);
           } else {
+            BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
             Navigator.of(context).pop();
           }
         });
@@ -227,6 +229,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
           _currentIndex += 1;
           _loadStory(story: widget.stories[_currentIndex]);
         } else {
+          BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
           Navigator.of(context).pop();
         }
       });
@@ -491,6 +494,7 @@ class UserInfo extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: () {
+            BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
             Navigator.of(context).pop();
           },
         ),
