@@ -7,6 +7,14 @@ Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.restricted: 'restrictedSubtitle',
   SettingsPrivacyOptions.anonymous: 'anonymousSubtitle',
 };
+enum EmailTemplateEnum { contactUs }
+Map<EmailTemplateEnum, String> emailTemplates = {
+  EmailTemplateEnum.contactUs: 'ContactUs',
+};
+enum MailEnum { support }
+Map<MailEnum, String> mailsEnum = {
+  MailEnum.support: 'hello@mvtfitnessapp.com',
+};
 
 enum ProgressArea { courses, classes, challenges }
 

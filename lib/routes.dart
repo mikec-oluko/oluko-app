@@ -41,6 +41,7 @@ import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/profile/mail_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
@@ -414,6 +415,7 @@ class Routes {
   final ChallengeCompletedBeforeBloc _challengeCompletedBeforeBloc = ChallengeCompletedBeforeBloc();
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final FAQBloc _fAQBloc = FAQBloc();
+  final MailBloc _mailBloc = MailBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -632,6 +634,9 @@ class Routes {
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
+        providers = [
+          BlocProvider<MailBloc>.value(value: _mailBloc),
+        ];
         newRouteView = ProfileContacUsPage();
         break;
       case RouteEnum.profileViewOwnProfile:
