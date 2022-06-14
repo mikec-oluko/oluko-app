@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/repositories/user_progress_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -26,6 +27,7 @@ class UserProgressListBloc extends Cubit<UserProgressListState> {
   StreamSubscription<DatabaseEvent> usersProgressStream;
 
   void get() async {
+    //emit(UserProgressListLoading());
     try {
       Map<String, UserProgress> usersProgress = await UserProgressRepository.getAll();
       emit(GetUserProgressSuccess(usersProgress: usersProgress));

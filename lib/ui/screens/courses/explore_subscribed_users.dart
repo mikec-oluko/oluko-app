@@ -138,6 +138,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                           StoriesItem(
                             showUserProgress: true,
                             userProgress: _usersProgess[user.id],
+                            itemUserId: user.id,
                             userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                             maxRadius: 30,
                             imageUrl: user.avatar,

@@ -51,12 +51,10 @@ class _HiFivePageState extends State<HiFivePage> {
                   appBar: _appBar(),
                   backgroundColor: Colors.black,
                   body: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
-                    if (userProgressListState is GetUserProgressSuccess) {
-                      setState(() {
-                        _usersProgess = userProgressListState.usersProgress;
-                      });
-                    }
                   }, builder: (context, userProgressListState) {
+                    if (userProgressListState is GetUserProgressSuccess) {
+                      _usersProgess = userProgressListState.usersProgress;
+                    }
                     return ListView(
                       children: hiFiveState.users
                           .map(
@@ -143,6 +141,7 @@ class _HiFivePageState extends State<HiFivePage> {
                 StoriesItem(
                   showUserProgress: true,
                   userProgress: _usersProgess[targetUser.id],
+                  itemUserId: targetUser.id,
                   imageUrl: targetUser.avatar,
                   name: targetUser.firstName,
                   lastname: targetUser.lastName,
