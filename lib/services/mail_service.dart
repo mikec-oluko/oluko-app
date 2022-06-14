@@ -10,14 +10,11 @@ class MailService {
     Map<String, dynamic> mail = {
       'projectId': GlobalConfiguration().getValue('projectId'),
       'template': {
-        'data': {
-          'userName': username,
-          'email': email,
-          'message': '$message - Phone: $phone - Email: $email',
-        },
+        'data': {'userName': username, 'email': email, 'message': '$message - Phone: $phone - Email: $email', 'from': email},
         'name': emailTemplates[EmailTemplateEnum.contactUs],
       },
       'to': mailsEnum[MailEnum.support],
+      'replyTo': email,
     };
     reference.add(mail);
   }
