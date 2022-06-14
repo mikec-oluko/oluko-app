@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
@@ -18,12 +17,11 @@ class CourseRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
+  static final CollectionReference _courseCollectionInstance =
+      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses');
+
   Future<List<Course>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courses')
-        .get();
+    QuerySnapshot docRef = await _courseCollectionInstance.get();
     List<Course> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
@@ -33,19 +31,13 @@ class CourseRepository {
   }
 
   static Future<Course> get(String courseId) async {
-    DocumentReference docRef = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courses')
-        .doc(courseId);
+    DocumentReference docRef = _courseCollectionInstance.doc(courseId);
     DocumentSnapshot ds = await docRef.get();
     return Course.fromJson(ds.data() as Map<String, dynamic>);
   }
 
   static Course create(Course course) {
-    CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses');
-    final DocumentReference docRef = reference.doc();
+    final DocumentReference docRef = _courseCollectionInstance.doc();
     course.id = docRef.id;
     docRef.set(course.toJson());
     return course;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/profile/mail_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -8,6 +9,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileContacUsPage extends StatefulWidget {
@@ -18,6 +20,8 @@ class ProfileContacUsPage extends StatefulWidget {
 }
 
 class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
+  TextEditingController messageController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   UserResponse profileInfo;
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,14 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
         profileInfo = state.user;
         return Scaffold(
           appBar: OlukoAppBar(title: ProfileViewConstants.profileHelpAndSupportButtonText, showTitle: true, showBackButton: true),
-          body: buildFormContactUs(context),
+          body: BlocListener<MailBloc, MailState>(
+            listener: (context, state) {
+              if (state is MailSuccess) {
+                AppMessages.clearAndShowSnackbarTranslated(context, 'submitted');
+              }
+            },
+            child: buildFormContactUs(context),
+          ),
         );
       } else {
         return Container(
@@ -59,14 +70,15 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                 SizedBox(
                   height: 20,
                 ),
-                buildInput(
-                  context: context,
-                  titleForLabel: OlukoLocalizations.get(context, 'phone'),
-                ),
+                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'phone'), controller: phoneController),
                 SizedBox(
                   height: 20,
                 ),
-                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'message'), isTextMaxLine: true),
+                buildInput(
+                    context: context,
+                    titleForLabel: OlukoLocalizations.get(context, 'message'),
+                    isTextMaxLine: true,
+                    controller: messageController),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 60, 10, 10),
                   child: Container(
@@ -76,13 +88,15 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                             isExpanded: false,
                             title: OlukoLocalizations.get(context, 'submit'),
                             onPressed: () {
-                              print("SUBMITTED");
+                              BlocProvider.of<MailBloc>(context)
+                                  .sendEmail(profileInfo.username, profileInfo.email, messageController.text, phoneController.text);
                             },
                           )
                         : OlukoPrimaryButton(
                             title: OlukoLocalizations.get(context, 'submit'),
                             onPressed: () {
-                              print("SUBMITTED");
+                              BlocProvider.of<MailBloc>(context)
+                                  .sendEmail(profileInfo.username, profileInfo.email, messageController.text, phoneController.text);
                             },
                           ),
                   ),
@@ -95,7 +109,8 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
     );
   }
 
-  Container buildInput({BuildContext context, String titleForLabel, String contentForInput, bool isTextMaxLine = false}) {
+  Container buildInput(
+      {BuildContext context, String titleForLabel, String contentForInput, bool isTextMaxLine = false, TextEditingController controller}) {
     return Container(
       decoration: BoxDecoration(
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : OlukoColors.black,
@@ -116,6 +131,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: TextFormField(
+              controller: controller ?? null,
               maxLines: isTextMaxLine ? 10 : 1,
               initialValue: contentForInput,
               style: TextStyle(color: Colors.white),

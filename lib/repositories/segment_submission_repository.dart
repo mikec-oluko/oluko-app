@@ -33,7 +33,11 @@ class SegmentSubmissionRepository {
 
     DocumentReference segmentReference = projectReference.collection("segments").doc(segment.id);
 
-    DocumentReference coachReference = projectReference.collection("users").doc(coachId);
+    DocumentReference coachReference;
+
+    if (coachId != null) {
+      coachReference = projectReference.collection("users").doc(coachId);
+    }
 
     final DocumentReference docRef = segmentSubmissionReference.doc();
 

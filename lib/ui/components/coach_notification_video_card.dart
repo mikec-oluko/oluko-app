@@ -110,6 +110,8 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
         return OlukoLocalizations.of(context).find('introductionVideo');
       case CoachFileTypeEnum.welcomeVideo:
         return OlukoLocalizations.of(context).find('welcomeVideo');
+      case CoachFileTypeEnum.messageVideo:
+        return OlukoLocalizations.of(context).find('coachMessageVideo');
       default:
         return '';
     }

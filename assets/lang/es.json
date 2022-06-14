@@ -344,6 +344,7 @@
     "noInternetConnectionHeaderText": "No hay conexión a internet",
     "noInternetConnectionBodyText": "Asegúrate de que el wifi o los datos móviles estén activados y vuelve a intentarlo.",
     "retry": "Reintentar",
+    "coachMessageVideo": "Video Mensaje",
     "exitOnButtonBack": "Pulsa el botón atrás para Salir",
     "noRequests": "No hay solicitudes",
     "saveChanges": "Guardar cambios.",
@@ -358,5 +359,7 @@
     "infoUpdateSuccess": "Información actualizada con éxito",
     "about": "Acerca de",
     "memberships": "Membresías",
-    "introductionVideo": "Video de introducción"
+    "introductionVideo": "Video de introducción",
+    "sendFriendRecommendation": "Enviar recomendación",
+    "cousesPanelText": "Encontrarás este desafío en los siguientes cursos"
 }

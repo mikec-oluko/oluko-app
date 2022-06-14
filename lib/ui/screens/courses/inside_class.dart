@@ -275,7 +275,8 @@ class _InsideClassesState extends State<InsideClass> {
     List<ChallengeNavigation> challengesForNavigation = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
-        SegmentSubmodel previousSegment = _class.segments.elementAt(_class.segments.indexOf(segment) - 1);
+        int segmentPos = _class.segments.indexOf(segment);
+        SegmentSubmodel previousSegment = segmentPos > 0 ? _class.segments.elementAt(segmentPos - 1) : null;
         EnrollmentClass classWithSegment =
             widget.courseEnrollment.classes.where((actualClass) => actualClass.id == _class.id).toList().first;
         EnrollmentSegment segmentFromClass =

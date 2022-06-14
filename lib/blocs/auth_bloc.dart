@@ -6,6 +6,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
@@ -30,17 +31,14 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'coach/coach_interaction_timeline_bloc.dart';
-import 'coach/coach_mentored_videos_bloc.dart';
-import 'coach/coach_recommendations_bloc.dart';
-import 'coach/coach_request_bloc.dart';
-import 'coach/coach_request_stream_bloc.dart';
-import 'coach/coach_review_pending_bloc.dart';
-import 'coach/coach_sent_videos_bloc.dart';
-import 'course/course_subscrption_bloc.dart';
-import 'course_enrollment/course_enrollment_list_bloc.dart';
-import 'course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 
 abstract class AuthState {}
 
@@ -235,6 +233,57 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
+  Future<void> loginWithApple(BuildContext context) async {
+    if (!_globalService.hasInternetConnection) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
+      return;
+    }
+    emit(AuthLoading());
+    User result;
+    try {
+      try {
+        result = await _authRepository.signInWithApple();
+      } on FirebaseAuthException catch (error) {
+        AppMessages.clearAndShowSnackbar(
+            context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        rethrow;
+      } catch (error) {
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+        rethrow;
+      }
+      if (result == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+        emit(AuthGuest());
+        return;
+      }
+      UserResponse userResponse = await UserRepository().get(result?.email);
+
+      //If there is no associated user for this account
+      if (userResponse == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFound'));
+        emit(AuthGuest());
+        return;
+      }
+
+      AuthRepository().storeLoginData(userResponse);
+      if (result != null) {
+        emit(AuthSuccess(user: userResponse, firebaseUser: result));
+        AppMessages.clearAndShowSnackbar(
+            context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
+        navigateToNextScreen(context, result.uid);
+      }
+      // ignore: avoid_catching_errors
+    } on NoSuchMethodError catch (e) {
+      if (OlukoNeumorphism.isNeumorphismDesign) {
+        Navigator.pushNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
+      } else {
+        Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
+      }
+    }
+  }
+
   Future<UserResponse> retrieveLoginData() {
     return AuthRepository().retrieveLoginData();
   }
@@ -281,6 +330,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachMediaBloc>(context).dispose();
       BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
+      BlocProvider.of<CoachVideoMessageBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false,

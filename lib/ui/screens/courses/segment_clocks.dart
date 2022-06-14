@@ -58,7 +58,7 @@ import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:native_device_orientation/native_device_orientation.dart';
+//import 'package:native_device_orientation/native_device_orientation.dart';
 
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
@@ -96,7 +96,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
   WorkState workState;
-  WorkState lastWorkStateBeforePause;
+  WorkState lastWorkStateBeforePause = WorkState.countdown;
 
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
@@ -457,7 +457,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           segment: widget.segments[widget.segmentIndex],
                           movements: _movements,
                           onPressedMovement: (BuildContext context, Movement movement) {
-                            playPauseSegment();
+                            if (workState != WorkState.paused) {
+                              changeSegmentState();
+                            }
                             Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                           }),
                       body: _body(keyboardVisibilty),
@@ -483,14 +485,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         title: '',
         onlyIcon: true,
         onPressed: () {
-          playPauseSegment();
+          changeSegmentState();
         },
         icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
       ),
     );
   }
 
-  void playPauseSegment() {
+  void changeSegmentState() {
     final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
     setState(() {
       if (isPlaying) {
@@ -509,7 +511,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           stopwatchTimer.cancel();
         }
       } else {
-        panelController.close();
+        if (isSegmentWithoutRecording()) {
+          panelController.close();
+        }
         workState = lastWorkStateBeforePause;
         if (isCurrentTaskTimed) {
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
@@ -1033,13 +1037,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) return;
     final isPausedInactive = state == AppLifecycleState.paused;
     if (isPausedInactive) {
-      playPauseSegment();
-      if (cameraController != null) {
-        cameraController.pauseVideoRecording();
+      if (workState != WorkState.paused) {
+        changeSegmentState();
+        if (cameraController != null) {
+          cameraController.pauseVideoRecording();
+        }
       }
     } else {
-      if (cameraController != null) {
-        cameraController.resumeVideoRecording();
+      if (isSegmentWithRecording()) {
+        if (cameraController != null) {
+          cameraController.resumeVideoRecording();
+        }
         _resume();
       }
     }
@@ -1084,7 +1092,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
     BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex],
-        videoRecorded.path, widget.coach.id, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
+        videoRecorded.path, widget.coach!=null?widget.coach.id:null, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
   }
 
 //STOPWATCH FUNCTIONS
@@ -1107,7 +1115,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _resume() {
     setState(() {
-      workState = WorkState.exercising;
+      workState = lastWorkStateBeforePause;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });

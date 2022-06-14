@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
@@ -23,6 +24,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
   RecommendationMedia recommendationMedia;
   List<Annotation> mentoredVideosForNavigation;
   List<SegmentSubmission> sentVideosForNavigation;
+  CoachMediaMessage coachMediaMessage;
 
   CoachTimelineItem(
       {this.coachId,
@@ -37,6 +39,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
       this.movementForNavigation,
       this.mentoredVideosForNavigation,
       this.sentVideosForNavigation,
+      this.coachMediaMessage,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -100,6 +103,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
         movementForNavigation,
         mentoredVideosForNavigation,
         sentVideosForNavigation,
+        coachMediaMessage,
         id,
         createdBy,
         createdAt,
