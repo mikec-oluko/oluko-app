@@ -47,6 +47,7 @@ import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/profile/mail_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
@@ -426,6 +427,7 @@ class Routes {
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final FAQBloc _fAQBloc = FAQBloc();
   final CourseUserIteractionBloc _courseInteractionBloc = CourseUserIteractionBloc();
+  final MailBloc _mailBloc = MailBloc();
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
 
@@ -553,7 +555,8 @@ class Routes {
         providers = [
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc)
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = StoryPage(
@@ -647,6 +650,9 @@ class Routes {
         newRouteView = ProfileHelpAndSupportPage();
         break;
       case RouteEnum.profileContactUs:
+        providers = [
+          BlocProvider<MailBloc>.value(value: _mailBloc),
+        ];
         newRouteView = ProfileContacUsPage();
         break;
       case RouteEnum.profileViewOwnProfile:

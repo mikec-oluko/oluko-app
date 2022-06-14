@@ -62,10 +62,16 @@ class _NoCoachPageState extends State<NoCoachPage> {
                     SizedBox(
                       height: 80,
                     ),
-                    Text(
-                      OlukoLocalizations.get(context, 'tapHere'),
-                      textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileHelpAndSupport]);
+                        _controller.pause();
+                      },
+                      child: Text(
+                        OlukoLocalizations.get(context, 'tapHere'),
+                        textAlign: TextAlign.center,
+                        style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      ),
                     ),
                     const SizedBox(
                       height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
@@ -92,6 +98,8 @@ class _NoCoachPageState extends State<NoCoachPage> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
+                isOlukoControls: true,
+                showOptions: true,
                 videoUrl: videoUrl,
                 autoPlay: false,
                 whenInitialized: (ChewieController chewieController) => setState(() {

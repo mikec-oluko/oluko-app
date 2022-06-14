@@ -336,7 +336,7 @@ class OlukoFonts {
 
   static TextStyle olukoMediumFont({FontWeight custoFontWeight, Color customColor, TextDecoration decoration}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoMediumFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white,
@@ -345,7 +345,7 @@ class OlukoFonts {
 
   static TextStyle olukoTitleFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoTitleFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
@@ -353,7 +353,7 @@ class OlukoFonts {
 
   static TextStyle olukoSubtitleFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoSubtitleFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
@@ -361,7 +361,7 @@ class OlukoFonts {
 
   static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoBigFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
@@ -369,7 +369,7 @@ class OlukoFonts {
 
   static TextStyle olukoSuperBigFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoSuperBigFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
@@ -377,7 +377,7 @@ class OlukoFonts {
 
   static TextStyle olukoSmallFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoSmallFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
@@ -385,7 +385,7 @@ class OlukoFonts {
 
   static TextStyle olukoBiggestFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
-        fontFamily: OlukoNeumorphism.isNeumorphismDesign ? 'Gilroy' : 'Roboto',
+        fontFamily: 'Roboto',
         fontSize: olukoBiggestFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
