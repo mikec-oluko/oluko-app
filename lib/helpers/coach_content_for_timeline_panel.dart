@@ -71,7 +71,6 @@ class CoachTimelineFunctions {
                     contentType: welcomeVideo.id == defaultIntroVideoId
                         ? TimelineInteractionType.introductionVideo
                         : TimelineInteractionType.mentoredVideo,
-                    // contentType: TimelineInteractionType.mentoredVideo,
                     mentoredVideosForNavigation: [welcomeVideo],
                     course: CourseTimelineSubmodel(),
                     id: defaultIdForAllContentTimeline,
@@ -100,7 +99,6 @@ class CoachTimelineFunctions {
             contentThumbnail: element.video.thumbUrl,
             contentType:
                 element.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
-            // contentType: TimelineInteractionType.mentoredVideo,
             mentoredVideosForNavigation: annotationContent,
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,

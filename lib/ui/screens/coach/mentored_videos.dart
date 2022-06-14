@@ -135,7 +135,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             isFavoriteSelected = !isFavoriteSelected;
                             isFavoriteSelected ? filteredContent = getFavoriteContent(content) : filteredContent = content;
                           });
-                          //sort List items favorite = true;
                         }),
                   ],
                 )
@@ -289,7 +288,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             onPressed: () {
                               BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
                                 coachAnnotation: coachAnnotation,
-                                // currentMentoredVideosContent: Set.from(content),
                               );
                             })
                       ],

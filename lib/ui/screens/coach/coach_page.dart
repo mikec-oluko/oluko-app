@@ -488,8 +488,6 @@ class _CoachPageState extends State<CoachPage> {
       recommendedCoursesSection(),
       _separatorBox,
       recommendedMovementsSection(),
-      // _separatorBox,
-      // CoachContentSectionCard(title: OlukoLocalizations.get(context, 'voiceMessages')),
     ];
   }
 

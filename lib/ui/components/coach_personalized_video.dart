@@ -44,77 +44,81 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
         height: 200,
         child: Stack(
           children: [
-            Align(
-                child: TextButton(
-                    onPressed: () {
-                      var videoUrl = null;
-                      if (widget.personalizedVideo.videoHls != null) {
-                        videoUrl = widget.personalizedVideo.videoHls;
-                      } else {
-                        videoUrl = widget.personalizedVideo.videoContent.url;
-                      }
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                        'videoUrl': videoUrl,
-                        'aspectRatio': widget.personalizedVideo.videoContent.aspectRatio,
-                        'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
-                      });
-                    },
-                    child: OlukoNeumorphism.isNeumorphismDesign
-                        ? Container(
-                            width: 50,
-                            height: 50,
-                            child: OlukoBlurredButton(
-                                childContent:
-                                    Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
-                          )
-                        : Image.asset(
-                            'assets/self_recording/play_button.png',
-                            color: Colors.white,
-                            height: 40,
-                            width: 40,
-                          ))),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  color: OlukoColors.blackColorSemiTransparent,
-                  width: MediaQuery.of(context).size.width,
-                  height: 45,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (OlukoNeumorphism.isNeumorphismDesign)
-                          Text(
-                            DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
-                          )
-                        else
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                OlukoLocalizations.get(context, 'date'),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                              )
-                            ],
-                          ),
-                        getLikeButton(widget.personalizedVideo)
-                      ],
-                    ),
-                  ),
-                ))
+            Align(child: _playButtonComponent(context)),
+            Align(alignment: Alignment.bottomCenter, child: _carcContentText(context))
           ],
         ),
       ),
     );
+  }
+
+  Container _carcContentText(BuildContext context) {
+    return Container(
+      color: OlukoColors.blackColorSemiTransparent,
+      width: MediaQuery.of(context).size.width,
+      height: 45,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              Text(
+                DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+              )
+            else
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    OlukoLocalizations.get(context, 'date'),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                  )
+                ],
+              ),
+            _getLikeButton(widget.personalizedVideo)
+          ],
+        ),
+      ),
+    );
+  }
+
+  TextButton _playButtonComponent(BuildContext context) {
+    return TextButton(
+        onPressed: () {
+          var videoUrl = null;
+          if (widget.personalizedVideo.videoHls != null) {
+            videoUrl = widget.personalizedVideo.videoHls;
+          } else {
+            videoUrl = widget.personalizedVideo.videoContent.url;
+          }
+          Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+            'videoUrl': videoUrl,
+            'aspectRatio': widget.personalizedVideo.videoContent.aspectRatio,
+            'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
+          });
+        },
+        child: OlukoNeumorphism.isNeumorphismDesign
+            ? Container(
+                width: 50,
+                height: 50,
+                child: OlukoBlurredButton(
+                    childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
+              )
+            : Image.asset(
+                'assets/self_recording/play_button.png',
+                color: Colors.white,
+                height: 40,
+                width: 40,
+              ));
   }
 
   ImageProvider getImage(CoachPersonalizedVideo personalizedVideo) {
@@ -123,7 +127,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
         : AssetImage("assets/home/mvtthumbnail.png") as ImageProvider;
   }
 
-  Widget getLikeButton(CoachPersonalizedVideo personalizedVideo) {
+  Widget _getLikeButton(CoachPersonalizedVideo personalizedVideo) {
     bool isFavoriteContent = false;
     if (personalizedVideo.annotationContent != null) {
       isFavoriteContent = personalizedVideo.annotationContent.favorite;

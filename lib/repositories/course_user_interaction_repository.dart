@@ -118,7 +118,7 @@ class CourseUserInteractionRepository {
                 createdBy: originUserId);
 
             _docRef.set(newFriendRecommendedCourse.toJson());
-          } else {}
+          }
         });
       }
     } catch (e, stackTrace) {
