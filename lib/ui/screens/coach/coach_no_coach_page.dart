@@ -63,7 +63,10 @@ class _NoCoachPageState extends State<NoCoachPage> {
                       height: 80,
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.profileHelpAndSupport]),
+                      onTap: () {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileHelpAndSupport]);
+                        _controller.pause();
+                      },
                       child: Text(
                         OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
