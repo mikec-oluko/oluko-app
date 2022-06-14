@@ -142,7 +142,6 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
           if (personalizedVideo.annotationContent != null) {
             BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
               coachAnnotation: personalizedVideo.annotationContent,
-              // currentMentoredVideosContent: Set.from(content),
             );
           } else if (personalizedVideo.videoMessageContent != null) {
             BlocProvider.of<CoachVideoMessageBloc>(context)

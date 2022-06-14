@@ -55,7 +55,6 @@ class _CourseShareViewState extends State<CourseShareView> {
                     _usersProgess = userProgressListState.usersProgress;
                   });
                 }
-                // TODO: implement listener
               },
               builder: (context, state) {
                 return BlocConsumer<UserProgressStreamBloc, UserProgressStreamState>(
