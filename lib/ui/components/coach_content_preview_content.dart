@@ -40,7 +40,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
     if (widget.segmentSubmissionContent != null && widget.segmentSubmissionContent.isNotEmpty) {
       return segmentSubmissionWidget();
     }
-    if ((widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) &&
+    if ((widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) ||
         (widget.coachMediaMessages != null && widget.coachMediaMessages.isNotEmpty)) {
       return mentoredVideosWidget();
     }
@@ -202,7 +202,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
       });
     }
 
-    if (annotations != null && coachMediaMessages != null) {
+    if (annotations != null || coachMediaMessages != null) {
       List<String> personalizedVideosThumbnails = [];
       if (annotations.isNotEmpty) {
         annotations.forEach((annotationItem) {
@@ -222,12 +222,12 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
           }
         });
       }
-      personalizedVideosThumbnails.reversed;
+
       thumbnailsList = personalizedVideosThumbnails.isEmpty
-          ? [_useDefaultImage]
+          ? thumbnailsList = [_useDefaultImage]
           : personalizedVideosThumbnails.length >= 3
-              ? personalizedVideosThumbnails.getRange(0, 3).toList()
-              : personalizedVideosThumbnails;
+              ? thumbnailsList = personalizedVideosThumbnails.getRange(0, 3).toList()
+              : thumbnailsList = personalizedVideosThumbnails;
       // List<Annotation> limitAnnotations = [];
       // annotations.length >= 3
       //     ? limitAnnotations = annotations.getRange(annotations.length - 3, annotations.length).toList()
