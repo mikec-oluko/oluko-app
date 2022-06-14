@@ -4,8 +4,6 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 
 class MailService {
   static void send(String username, String email, String message, String phone) {
-    var a = emailTemplates[EmailTemplateEnum.contactUs];
-    var b = mailsEnum[MailEnum.support];
     CollectionReference reference = FirebaseFirestore.instance.collection('emails');
     Map<String, dynamic> mail = {
       'projectId': GlobalConfiguration().getValue('projectId'),
