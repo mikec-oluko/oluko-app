@@ -22,8 +22,12 @@ class MailBloc extends Cubit<MailState> {
 
   Future<void> sendEmail(String username, String email, String message, String phone) async {
     try {
-      MailService.send(username,email,message,phone);
-      emit(MailSuccess());
+      if (message != null) {
+        MailService.send(username, email, message, phone);
+        emit(MailSuccess());
+      } else {
+        emit(MailFailure());
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

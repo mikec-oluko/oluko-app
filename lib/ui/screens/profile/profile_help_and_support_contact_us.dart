@@ -35,6 +35,9 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
               if (state is MailSuccess) {
                 AppMessages.clearAndShowSnackbarTranslated(context, 'submitted');
               }
+              else{
+                AppMessages.clearAndShowSnackbarTranslated(context, 'messageRequired');
+              }
             },
             child: buildFormContactUs(context),
           ),
@@ -62,16 +65,25 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                 buildInput(
                     context: context,
                     titleForLabel: OlukoLocalizations.get(context, 'name'),
-                    contentForInput: profileInfo.firstName + " " + profileInfo.lastName),
-                SizedBox(
+                    contentForInput: profileInfo.firstName + " " + profileInfo.lastName,
+                    enableInput: false),
+                const SizedBox(
                   height: 20,
                 ),
-                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'email'), contentForInput: profileInfo.email),
-                SizedBox(
+                buildInput(
+                    context: context,
+                    titleForLabel: OlukoLocalizations.get(context, 'email'),
+                    contentForInput: profileInfo.email,
+                    enableInput: false),
+                const SizedBox(
                   height: 20,
                 ),
-                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'phone'), controller: phoneController),
-                SizedBox(
+                buildInput(
+                    context: context,
+                    titleForLabel: OlukoLocalizations.get(context, 'phone'),
+                    controller: phoneController,
+                    inputType: TextInputType.phone),
+                const SizedBox(
                   height: 20,
                 ),
                 buildInput(
@@ -110,13 +122,20 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
   }
 
   Container buildInput(
-      {BuildContext context, String titleForLabel, String contentForInput, bool isTextMaxLine = false, TextEditingController controller}) {
+      {BuildContext context,
+      String titleForLabel,
+      String contentForInput,
+      bool isTextMaxLine = false,
+      TextEditingController controller,
+      bool enableInput = true,
+      TextInputType inputType = TextInputType.text}) {
     return Container(
       decoration: BoxDecoration(
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : OlukoColors.black,
-          borderRadius:
-              OlukoNeumorphism.isNeumorphismDesign ? BorderRadius.all(Radius.circular(15.0)) : BorderRadius.all(Radius.circular(5.0)),
-          border: OlukoNeumorphism.isNeumorphismDesign ? Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.primary)),
+          borderRadius: OlukoNeumorphism.isNeumorphismDesign
+              ? const BorderRadius.all(const Radius.circular(15.0))
+              : const BorderRadius.all(const Radius.circular(5.0)),
+          border: OlukoNeumorphism.isNeumorphismDesign ? const Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.primary)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -131,17 +150,19 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: TextFormField(
+              keyboardType: inputType,
+              enabled: enableInput,
               controller: controller ?? null,
               maxLines: isTextMaxLine ? 10 : 1,
               initialValue: contentForInput,
-              style: TextStyle(color: Colors.white),
-              decoration: new InputDecoration(
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
                   focusColor: OlukoColors.primary,
                   filled: false,
-                  hintStyle: new TextStyle(color: Colors.grey[800]),
+                  hintStyle: TextStyle(color: Colors.grey[800]),
                   // hintText: OlukoLocalizations.get(context, ''),
                   fillColor: OlukoColors.primary,
-                  labelStyle: new TextStyle(color: Colors.grey[800])),
+                  labelStyle: TextStyle(color: Colors.grey[800])),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return OlukoLocalizations.get(context, 'required');
