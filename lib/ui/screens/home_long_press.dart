@@ -53,11 +53,6 @@ class _HomeLongPressState extends State<HomeLongPress> {
 
   Widget body() {
     return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
-      /*if (userProgressListState is GetUserProgressSuccess) {
-        //setState(() {
-          _usersProgress = userProgressListState.usersProgress;
-       // });
-      }*/
     }, builder: (context, userProgressListState) {
       if (userProgressListState is GetUserProgressSuccess) {
         _usersProgress = userProgressListState.usersProgress;
