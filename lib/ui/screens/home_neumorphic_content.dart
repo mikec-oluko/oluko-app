@@ -453,7 +453,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
+                      padding: EdgeInsets.only(left: 20, top: 20, bottom: showStories ? 0 : 20),
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Image.asset(
