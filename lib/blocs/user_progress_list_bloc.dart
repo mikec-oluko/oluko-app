@@ -27,7 +27,6 @@ class UserProgressListBloc extends Cubit<UserProgressListState> {
   StreamSubscription<DatabaseEvent> usersProgressStream;
 
   void get() async {
-    //emit(UserProgressListLoading());
     try {
       Map<String, UserProgress> usersProgress = await UserProgressRepository.getAll();
       emit(GetUserProgressSuccess(usersProgress: usersProgress));

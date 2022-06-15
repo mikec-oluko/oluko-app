@@ -25,12 +25,12 @@ class _HomeLongPressState extends State<HomeLongPress> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<UserProgressListBloc>(context).get();
     if (widget.index != null &&
         widget.index is int &&
         widget.courseEnrollments != null &&
@@ -53,12 +53,15 @@ class _HomeLongPressState extends State<HomeLongPress> {
 
   Widget body() {
     return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
-      if (userProgressListState is GetUserProgressSuccess) {
-        setState(() {
+      /*if (userProgressListState is GetUserProgressSuccess) {
+        //setState(() {
           _usersProgress = userProgressListState.usersProgress;
-        });
-      }
+       // });
+      }*/
     }, builder: (context, userProgressListState) {
+      if (userProgressListState is GetUserProgressSuccess) {
+        _usersProgress = userProgressListState.usersProgress;
+      }
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
@@ -109,6 +112,7 @@ class _HomeLongPressState extends State<HomeLongPress> {
                         height: 10,
                       ),
                       UserItemBubbles(
+                        userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
                         usersProgess: _usersProgress,
                         content: state.users,
                         currentUserId: widget.courseEnrollments[widget.index].createdBy,
