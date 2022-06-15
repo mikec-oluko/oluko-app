@@ -909,7 +909,7 @@ packages:
       name: package_config
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.1.0"
   package_info_plus:
     dependency: transitive
     description:
