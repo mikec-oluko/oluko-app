@@ -37,7 +37,7 @@ class ExploreSubscribedUsers extends StatefulWidget {
 class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   List<UserResponse> allEnrolledUsers;
   AuthSuccess loggedUser;
-  Map<String, UserProgress> _usersProgess = {};
+  Map<String, UserProgress> _usersProgress = {};
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                 child: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
                   if (userProgressListState is GetUserProgressSuccess) {
                     setState(() {
-                      _usersProgess = userProgressListState.usersProgress;
+                      _usersProgress = userProgressListState.usersProgress;
                     });
                   }
                 }, builder: (context, userProgressListState) {
@@ -90,7 +90,11 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
               ),
             ),
             if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
-              usersGrid(subscribedCourseUsersState.favoriteUsers, true)
+              BlocListener<UserProgressStreamBloc, UserProgressStreamState>(
+                  listener: (context, userProgressStreamState) {
+                    blocConsumerCondition(userProgressStreamState);
+                  },
+                  child: usersGrid(subscribedCourseUsersState.favoriteUsers, true))
             else
               const SizedBox(),
             Padding(
@@ -108,6 +112,22 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     );
   }
 
+  void blocConsumerCondition(UserProgressStreamState userProgressStreamState) {
+    if (userProgressStreamState is UserProgressUpdate) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressAdd) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressRemove) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id].progress = 0;
+      });
+    }
+  }
+
   Widget usersGrid(List<UserResponse> users, bool areFriends) {
     if (users.isNotEmpty) {
       return GridView.count(
@@ -123,7 +143,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         if (areFriends)
                           StoriesItem(
                             showUserProgress: true,
-                            userProgress: _usersProgess[user.id],
+                            userProgress: _usersProgress[user.id],
                             maxRadius: 30,
                             imageUrl: user.avatar,
                             bloc: BlocProvider.of<StoryListBloc>(context),
@@ -137,7 +157,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         else
                           StoriesItem(
                             showUserProgress: true,
-                            userProgress: _usersProgess[user.id],
+                            userProgress: _usersProgress[user.id],
                             itemUserId: user.id,
                             userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                             maxRadius: 30,
@@ -178,7 +198,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       content: FriendModalContent(
           friendUser,
           loggedUser.user.id,
-          _usersProgess,
+          _usersProgress,
           BlocProvider.of<FriendBloc>(context),
           BlocProvider.of<FriendRequestBloc>(context),
           BlocProvider.of<HiFiveSendBloc>(context),

@@ -30,7 +30,7 @@ class CourseShareView extends StatefulWidget {
 class _CourseShareViewState extends State<CourseShareView> {
   List<UserResponse> _friendUsersList = [];
   List<UserResponse> userSelectedList = [];
-  Map<String, UserProgress> _usersProgess = {};
+  Map<String, UserProgress> _usersProgress = {};
   List<FriendModel> _friends = [];
   Widget usersWidget = SizedBox.shrink();
   bool isSelected = true;
@@ -52,7 +52,7 @@ class _CourseShareViewState extends State<CourseShareView> {
               listener: (context, userProgressListState) {
                 if (userProgressListState is GetUserProgressSuccess) {
                   setState(() {
-                    _usersProgess = userProgressListState.usersProgress;
+                    _usersProgress = userProgressListState.usersProgress;
                   });
                 }
               },
@@ -63,11 +63,11 @@ class _CourseShareViewState extends State<CourseShareView> {
                     return BlocBuilder<FriendBloc, FriendState>(
                       builder: (context, friendState) {
                         if (userProgressStreamState is UserProgressUpdate) {
-                          _usersProgess[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+                          _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
                         } else if (userProgressStreamState is UserProgressAdd) {
-                          _usersProgess[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+                          _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
                         } else if (userProgressStreamState is UserProgressRemove) {
-                          _usersProgess[userProgressStreamState.obj.id].progress = 0;
+                          _usersProgress[userProgressStreamState.obj.id].progress = 0;
                         }
                         if (friendState is GetFriendsSuccess) {
                           _friendUsersList = friendState.friendUsers;
@@ -164,7 +164,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                       children: [
                         StoriesItem(
                           showUserProgress: true,
-                          userProgress: _usersProgess[friendUserElement.id],
+                          userProgress: _usersProgress[friendUserElement.id],
                           progressValue: 0.5,
                           maxRadius: 30,
                           imageUrl: friendUserElement.avatar,

@@ -34,7 +34,7 @@ class ModalPeopleEnrolled extends StatefulWidget {
 }
 
 class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
-  Map<String, UserProgress> _usersProgess = {};
+  Map<String, UserProgress> _usersProgress = {};
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
           listener: (context, userProgressListState) {
             if (userProgressListState is GetUserProgressSuccess) {
               setState(() {
-                _usersProgess = userProgressListState.usersProgress;
+                _usersProgress = userProgressListState.usersProgress;
               });
             }
           },
@@ -90,7 +90,11 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                 ),
               ],
             ),
-            usersGrid(widget.users)
+            BlocListener<UserProgressStreamBloc, UserProgressStreamState>(
+                listener: (context, userProgressStreamState) {
+                  blocConsumerCondition(userProgressStreamState);
+                },
+                child: usersGrid(widget.users))
           ],
         ));
   }
@@ -111,7 +115,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                           StoriesItem(
                             showUserProgress: true,
                             userProgressStreamBloc: widget.userProgressStreamBloc,
-                            userProgress: _usersProgess[user.id],
+                            userProgress: _usersProgress[user.id],
                             itemUserId: user.id?.toString() ?? '',
                             name: (() {
                               if (user.username != null) {
@@ -151,7 +155,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
         content: FriendModalContent(
             friendUser,
             widget.userId,
-            _usersProgess,
+            _usersProgress,
             BlocProvider.of<FriendBloc>(context),
             BlocProvider.of<FriendRequestBloc>(context),
             BlocProvider.of<HiFiveSendBloc>(context),
@@ -161,6 +165,22 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
             BlocProvider.of<UserProgressStreamBloc>(context)),
         context: context,
       );
+    }
+  }
+
+  void blocConsumerCondition(UserProgressStreamState userProgressStreamState) {
+    if (userProgressStreamState is UserProgressUpdate) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressAdd) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressRemove) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id].progress = 0;
+      });
     }
   }
 }

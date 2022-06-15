@@ -48,7 +48,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   GetFriendsSuccess _friendState;
   List<FriendModel> _friends = [];
   final _viewScrollController = ScrollController();
-  Map<String, UserProgress> _usersProgess = {};
+  Map<String, UserProgress> _usersProgress = {};
 
   @override
   void dispose() {
@@ -71,7 +71,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
       return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
         if (userProgressListState is GetUserProgressSuccess) {
           setState(() {
-            _usersProgess = userProgressListState.usersProgress;
+            _usersProgress = userProgressListState.usersProgress;
           });
         }
       }, builder: (context, userProgressListState) {
@@ -84,7 +84,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   _friendUsersList = friendState.friendUsers;
                   _friends = friendState.friendData != null ? friendState.friendData.friends : [];
                   _friendUsersWidget = UserListComponent(
-                    usersProgess: _usersProgess,
+                    usersProgess: _usersProgress,
                     authUser: widget.currentUser,
                     users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
                     onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
@@ -95,7 +95,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   _appUsersList = userListState.users;
                   _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
                   _appUsersWidget = UserListComponent(
-                    usersProgess: _usersProgess,
+                    usersProgess: _usersProgress,
                     authUser: widget.currentUser,
                     users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
                     onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
@@ -147,15 +147,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
   void blocConsumerCondition(UserProgressStreamState userProgressStreamState) {
     if (userProgressStreamState is UserProgressUpdate) {
       setState(() {
-        _usersProgess[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
       });
     } else if (userProgressStreamState is UserProgressAdd) {
       setState(() {
-        _usersProgess[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
       });
     } else if (userProgressStreamState is UserProgressRemove) {
       setState(() {
-        _usersProgess[userProgressStreamState.obj.id].progress = 0;
+        _usersProgress[userProgressStreamState.obj.id].progress = 0;
       });
     }
   }
@@ -213,7 +213,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           ? FriendModalContent(
               friendUser,
               widget.currentUser.id,
-              _usersProgess,
+              _usersProgress,
               BlocProvider.of<FriendBloc>(context),
               BlocProvider.of<FriendRequestBloc>(context),
               BlocProvider.of<HiFiveSendBloc>(context),

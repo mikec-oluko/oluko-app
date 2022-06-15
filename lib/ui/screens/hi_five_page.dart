@@ -25,7 +25,7 @@ class HiFivePage extends StatefulWidget {
 class _HiFivePageState extends State<HiFivePage> {
   HiFiveSuccess _hiFiveState;
   AuthSuccess _authState;
-  Map<String, UserProgress> _usersProgess = {};
+  Map<String, UserProgress> _usersProgress = {};
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _HiFivePageState extends State<HiFivePage> {
                   body: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
                   }, builder: (context, userProgressListState) {
                     if (userProgressListState is GetUserProgressSuccess) {
-                      _usersProgess = userProgressListState.usersProgress;
+                      _usersProgress = userProgressListState.usersProgress;
                     }
                     return ListView(
                       children: hiFiveState.users
@@ -140,7 +140,7 @@ class _HiFivePageState extends State<HiFivePage> {
               children: [
                 StoriesItem(
                   showUserProgress: true,
-                  userProgress: _usersProgess[targetUser.id],
+                  userProgress: _usersProgress[targetUser.id],
                   itemUserId: targetUser.id,
                   imageUrl: targetUser.avatar,
                   name: targetUser.firstName,
