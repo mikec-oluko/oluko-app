@@ -15,6 +15,8 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -255,7 +257,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPeopleEnrolled(userId: _user.id, favorites: state.favorites, users: state.users);
+            _contentForPanel = ModalPeopleEnrolled(
+                userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+                userId: _user.id,
+                favorites: state.favorites,
+                users: state.users);
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
@@ -416,9 +423,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
       child: Column(
         children: [
           () {
-              if (_segments.length - 1 >= segmentIndexToUse) {
-                return getCarouselSlider();
-              }
+            if (_segments.length - 1 >= segmentIndexToUse) {
+              return getCarouselSlider();
+            }
             return const SizedBox();
           }(),
         ],

@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -22,13 +23,23 @@ class UserItemBubbles extends StatefulWidget {
   final double width;
   final String currentUserId;
   final Map<String, UserProgress> usersProgess;
+  UserProgressListBloc userProgressListBloc;
 
-  UserItemBubbles({this.content, this.width, this.currentUserId, this.usersProgess});
+  UserItemBubbles({this.userProgressListBloc, this.content, this.width, this.currentUserId, this.usersProgess});
   @override
   _UserItemBubblesState createState() => _UserItemBubblesState();
 }
 
 class _UserItemBubblesState extends State<UserItemBubbles> {
+  Map<String, UserProgress> _usersProgress = {};
+
+  @override
+  void initState() {
+    _usersProgress = widget.usersProgess;
+    widget.userProgressListBloc.get();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -78,46 +89,65 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String username, {String currentUserId, UserResponse itemUser}) {
-    return SizedBox(
-      width: 85,
-      height: 100,
-      child: GestureDetector(
-        onTap: () => BottomDialogUtils.showBottomDialog(
-          content: FriendModalContent(
-            itemUser,
-            currentUserId,
-            null,
-            BlocProvider.of<FriendBloc>(context),
-            BlocProvider.of<FriendRequestBloc>(context),
-            BlocProvider.of<HiFiveSendBloc>(context),
-            BlocProvider.of<HiFiveReceivedBloc>(context),
-            BlocProvider.of<UserStatisticsBloc>(context),
-            BlocProvider.of<FavoriteFriendBloc>(context),
-            BlocProvider.of<UserProgressStreamBloc>(context)
-          ),
-          context: context,
-        ),
-        child: Column(
-          children: [
-            StoriesItem(
-              showUserProgress: true,
-              userProgress: widget.usersProgess[itemUser?.id],
-              from: StoriesItemFrom.longPressHome,
-              maxRadius: 25,
-              imageUrl: imageUrl,
-              currentUserId: currentUserId,
-              itemUserId: itemUser?.id,
-              name: itemUser?.firstName,
+    return BlocListener<UserProgressStreamBloc, UserProgressStreamState>(
+        listener: (context, userProgressStreamState) {
+          blocConsumerCondition(userProgressStreamState);
+        },
+        child: SizedBox(
+          width: 85,
+          height: 100,
+          child: GestureDetector(
+            onTap: () => BottomDialogUtils.showBottomDialog(
+              content: FriendModalContent(
+                  itemUser,
+                  currentUserId,
+                  _usersProgress,
+                  BlocProvider.of<FriendBloc>(context),
+                  BlocProvider.of<FriendRequestBloc>(context),
+                  BlocProvider.of<HiFiveSendBloc>(context),
+                  BlocProvider.of<HiFiveReceivedBloc>(context),
+                  BlocProvider.of<UserStatisticsBloc>(context),
+                  BlocProvider.of<FavoriteFriendBloc>(context),
+                  BlocProvider.of<UserProgressStreamBloc>(context)),
+              context: context,
             ),
-            Text(
-              username ?? itemUser?.username ?? '',
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-            )
-          ],
-        ),
-      ),
-    );
+            child: Column(
+              children: [
+                StoriesItem(
+                  showUserProgress: true,
+                  userProgress: _usersProgress[itemUser?.id],
+                  from: StoriesItemFrom.longPressHome,
+                  maxRadius: 25,
+                  imageUrl: imageUrl,
+                  currentUserId: currentUserId,
+                  itemUserId: itemUser?.id,
+                  name: itemUser?.firstName,
+                ),
+                Text(
+                  username ?? itemUser?.username ?? '',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                )
+              ],
+            ),
+          ),
+        ));
+  }
+
+  void blocConsumerCondition(UserProgressStreamState userProgressStreamState) {
+    if (userProgressStreamState is UserProgressUpdate) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressAdd) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressRemove) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id].progress = 0;
+      });
+    }
   }
 }

@@ -15,6 +15,8 @@ import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -575,8 +577,12 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentPeopleOpen) {
             _buttonController.open();
-            _contentForPanel =
-                ModalPeopleEnrolled(userId: widget.courseEnrollment.createdBy, users: state.users, favorites: state.favorites);
+            _contentForPanel = ModalPeopleEnrolled(
+                userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                userId: widget.courseEnrollment.createdBy,
+                users: state.users,
+                favorites: state.favorites,
+                userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context));
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
