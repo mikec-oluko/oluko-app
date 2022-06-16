@@ -1,15 +1,12 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
@@ -142,7 +139,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
               _challenges = challengeSegmentState.challenges;
               totalSegments = _segments.length - 1;
               if (totalSegments < segmentIndexToUse) {
-                segmentIndexToUse = 0; //TODO: restarts if segment wanted doesn't exists
+                segmentIndexToUse = 0;
                 currentSegmentStep = 1;
                 totalSegmentStep = totalSegments + 1;
               } else if (totalSegments < totalSegmentStep - 1) {
@@ -153,16 +150,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
                     BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
-                    // BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
-                    //     userId: _user.id,
-                    //     coachId: _coachAssignment?.coachId,
-                    //     courseEnrollmentId: widget.courseEnrollment.id,
-                    //     classId: widget.courseEnrollment.classes[widget.classIndex].id);
                     BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
                   }
                   return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
                     return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
-                      // return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
                       if (coachUserState is CoachUserSuccess &&
                           (coachRequestStreamState is CoachRequestStreamSuccess ||
                               coachRequestStreamState is GetCoachRequestStreamUpdate)) {
@@ -187,7 +178,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       } else {
                         return OlukoCircularProgressIndicator();
                       }
-                      // });
                     });
                   });
                 },
@@ -230,7 +220,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         padding: EdgeInsets.zero,
         color: OlukoNeumorphismColors.appBackgroundColor,
         minHeight: 0.0,
-        maxHeight: MediaQuery.of(context).size.height / 1.5, //TODO: dynamic size, for content
+        maxHeight: MediaQuery.of(context).size.height / 1.5,
         collapsed: const SizedBox(),
         controller: _challengePanelController,
         panel: BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
