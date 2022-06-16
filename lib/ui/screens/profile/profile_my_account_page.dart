@@ -179,7 +179,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                         border: InputBorder.none,
                       ),
                       style: OlukoFonts.olukoBigFont(
-                          custoFontWeight: FontWeight.w500, customColor: !isGoogleAuth ? OlukoColors.white : OlukoColors.grayColor),
+                          customFontWeight: FontWeight.w500, customColor: !isGoogleAuth ? OlukoColors.white : OlukoColors.grayColor),
                     ),
                   ),
                 ],

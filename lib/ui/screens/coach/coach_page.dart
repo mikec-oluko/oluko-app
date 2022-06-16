@@ -273,7 +273,7 @@ class _CoachPageState extends State<CoachPage> {
                       child: Text(
                         'No internet connection....',
                         style: OlukoFonts.olukoBiggestFont(
-                            customColor: OlukoColors.grayColor.withOpacity(0.5), custoFontWeight: FontWeight.w500),
+                            customColor: OlukoColors.grayColor.withOpacity(0.5), customFontWeight: FontWeight.w500),
                       ),
                     );
             },
