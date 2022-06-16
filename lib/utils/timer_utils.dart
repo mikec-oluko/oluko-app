@@ -57,8 +57,8 @@ class TimerUtils {
             )),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(OlukoLocalizations.get(context, 'round') + "  ",
-              textAlign: TextAlign.center, style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold)),
-          Text((round + 1).toString(), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold))
+              textAlign: TextAlign.center, style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold)),
+          Text((round + 1).toString(), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold))
         ]),
         SizedBox(height: 2),
         Padding(
@@ -66,14 +66,14 @@ class TimerUtils {
             child: Text(getRepsTimerText(type, context),
                 textAlign: TextAlign.center,
                 style: OlukoFonts.olukoMediumFont(
-                    custoFontWeight: FontWeight.bold,
+                    customFontWeight: FontWeight.bold,
                     customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
       ])
     ]);
   }
 
   static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => RotationTransition(
-      turns: AlwaysStoppedAnimation(3/360),
+      turns: AlwaysStoppedAnimation(3 / 360),
       child: Container(
           //TODO: CHECK RESOLUTIONS WITH KEYBOARD
           height: () {
@@ -205,7 +205,7 @@ class TimerUtils {
                       Text(OlukoLocalizations.get(context, 'completed'),
                           textAlign: TextAlign.center,
                           style: OlukoFonts.olukoSubtitleFont(
-                              custoFontWeight: FontWeight.bold,
+                              customFontWeight: FontWeight.bold,
                               customColor: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                   : Colors.white)),
@@ -330,7 +330,7 @@ class TimerUtils {
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
                         style: OlukoFonts.olukoBigFont(
-                            custoFontWeight: FontWeight.w400,
+                            customFontWeight: FontWeight.w400,
                             customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
                     SizedBox(height: 5),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
@@ -413,11 +413,11 @@ class TimerUtils {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(OlukoLocalizations.get(context, 'round') + "  ",
                 textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.primary)),
+                style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary)),
             Text((round + 1).toString(),
                 textAlign: TextAlign.center,
                 style: OlukoFonts.olukoBigFont(
-                  custoFontWeight: FontWeight.bold,
+                  customFontWeight: FontWeight.bold,
                 ))
           ]),
         SizedBox(height: 2),
@@ -442,7 +442,7 @@ class TimerUtils {
       child: Text(duration,
           textAlign: TextAlign.center,
           style: OlukoFonts.olukoSubtitleFont(
-              custoFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? color : OlukoColors.white)),
+              customFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? color : OlukoColors.white)),
     );
   }
 
@@ -468,7 +468,7 @@ class TimerUtils {
         child: Text(text,
             textAlign: TextAlign.center,
             style: OlukoFonts.olukoMediumFont(
-                custoFontWeight: FontWeight.w300,
+                customFontWeight: FontWeight.w300,
                 customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
   }
 

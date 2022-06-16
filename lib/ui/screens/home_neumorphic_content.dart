@@ -277,7 +277,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
                       widget.courses[index].name,
-                      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+                      style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
@@ -290,7 +290,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           child: Text(
             widget.courses[index].description ?? '',
             style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.normal,
+              customFontWeight: FontWeight.normal,
               customColor: OlukoColors.grayColor,
             ),
           ),
@@ -403,7 +403,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                                 child: Text(
                                   course.course.name,
                                   style: OlukoFonts.olukoBigFont(
-                                    custoFontWeight: FontWeight.normal,
+                                    customFontWeight: FontWeight.normal,
                                     customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
                                   ),
                                 ),
@@ -607,7 +607,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         ),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
-          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+          style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
         ),
         const SizedBox(height: 15),
         Image.asset(

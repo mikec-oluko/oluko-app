@@ -283,7 +283,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                               padding: const EdgeInsets.symmetric(horizontal: 15.0),
                                               child: Text(
                                                 widget.course.name,
-                                                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                                style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                                               ),
                                             ),
                                           ],
@@ -300,14 +300,14 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                   padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                   child: Text(
                                                     widget.course.description ?? '',
-                                                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal),
+                                                    style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal),
                                                   ),
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets.only(top: 25.0),
                                                   child: Text(
                                                     OlukoLocalizations.get(context, 'classes'),
-                                                    style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                                    style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
                                                   ),
                                                 ),
                                                 widget.buildClassEnrolledCards(context, _classes)
@@ -350,7 +350,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                               children: [
                                                 Text(
                                                   widget.course.name,
-                                                  style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                                  style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets.only(top: 10.0, right: 10),
@@ -362,7 +362,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                       context,
                                                     ),
                                                     style: OlukoFonts.olukoBigFont(
-                                                      custoFontWeight: FontWeight.normal,
+                                                      customFontWeight: FontWeight.normal,
                                                       customColor: OlukoColors.grayColor,
                                                     ),
                                                   ),
@@ -373,7 +373,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                   child: Text(
                                                     widget.course.description ?? '',
                                                     style: OlukoFonts.olukoBigFont(
-                                                      custoFontWeight: FontWeight.normal,
+                                                      customFontWeight: FontWeight.normal,
                                                       customColor: OlukoColors.grayColor,
                                                     ),
                                                   ),
@@ -382,7 +382,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                                   padding: const EdgeInsets.only(top: 25.0),
                                                   child: Text(
                                                     OlukoLocalizations.get(context, 'classes'),
-                                                    style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                                    style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
                                                   ),
                                                 ),
                                                 buildClassExpansionPanels()

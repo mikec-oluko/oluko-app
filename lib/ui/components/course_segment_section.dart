@@ -42,7 +42,7 @@ class _State extends State<CourseSegmentSection> {
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: Text(
                         widget.segment.name,
-                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                       ),
                     ),
                     SegmentSubmodelUtils.getRoundTitle(widget.segment, context, OlukoColors.white),
@@ -59,13 +59,13 @@ class _State extends State<CourseSegmentSection> {
                             width: ScreenUtils.width(context) / 1,
                             isSegmentSection: true,
                           )
-                        ])),            
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: OlukoNeumorphicDivider(
-                          isFadeOut: true,
-                        ),
-                      )
+                        ])),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.0),
+                      child: OlukoNeumorphicDivider(
+                        isFadeOut: true,
+                      ),
+                    )
                   ],
                 ),
               )
@@ -84,7 +84,7 @@ class _State extends State<CourseSegmentSection> {
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: Text(
                         widget.segment.name,
-                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                       ),
                     ),
                     SingleChildScrollView(

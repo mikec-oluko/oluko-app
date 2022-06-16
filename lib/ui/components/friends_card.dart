@@ -61,7 +61,7 @@ class _FriendCardState extends State<FriendCard> {
                           widget.friendUser.firstName.characters.first.toString().toUpperCase(),
                           style: OlukoFonts.olukoBigFont(
                             customColor: OlukoColors.white,
-                            custoFontWeight: FontWeight.w500,
+                            customFontWeight: FontWeight.w500,
                           ),
                           textAlign: TextAlign.center,
                         )

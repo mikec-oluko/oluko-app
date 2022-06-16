@@ -26,7 +26,7 @@ class SegmentUtils {
             getRoundTitle(segment, context),
             style: OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-                : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                : OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
           ),
           SizedBox(height: 12.0)
         ] +
@@ -43,7 +43,7 @@ class SegmentUtils {
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
                   ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                  : OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12.0)
           ] +
@@ -144,8 +144,8 @@ class SegmentUtils {
         child: Text(
           text,
           style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color)
-              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
+              ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: color)
+              : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: color),
         ));
   }
 
@@ -290,7 +290,7 @@ class SegmentUtils {
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
                   ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
             )
           ]
         : [];

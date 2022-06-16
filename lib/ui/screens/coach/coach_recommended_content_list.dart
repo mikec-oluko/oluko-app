@@ -34,11 +34,11 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
             widget.titleForAppBar,
             style: OlukoNeumorphism.isNeumorphismDesign
                 ? ScreenUtils.smallScreen(context)
-                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
+                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
                 : ScreenUtils.smallScreen(context)
-                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
-                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
+                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400)
+                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400),
           ),
           actions: [],
           elevation: 0.0,
@@ -257,7 +257,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                           if (OlukoNeumorphism.isNeumorphismDesign)
                             Text(
                               DateFormat.yMMMd().format(videoRecommended.createdAt.toDate()),
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
                             )
                           else
                             Column(
@@ -265,14 +265,14 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                               children: [
                                 Text(
                                   OlukoLocalizations.get(context, 'date'),
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                                 ),
                                 const SizedBox(
                                   height: 5,
                                 ),
                                 Text(
                                   DateFormat.yMMMd().format(videoRecommended.createdAt.toDate()),
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                                 )
                               ],
                             ),
@@ -291,11 +291,11 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
 
   Widget getTitleCardWidget(String value) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Text('$value:', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+        child: Text('$value:', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
       );
 
   Widget getRecommendationTitleWidget(String value) =>
-      Text(value, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500));
+      Text(value, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500));
 
   String addDurationUnit() => ' ${OlukoLocalizations.of(context).find('weeks')}';
 }

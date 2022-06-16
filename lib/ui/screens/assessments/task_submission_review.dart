@@ -8,6 +8,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:video_player/video_player.dart';
+import '../../../helpers/video_player_helper.dart';
 
 class TaskSubmissionReview extends StatefulWidget {
   TaskSubmissionReview({this.taskSubmission, Key key}) : super(key: key);
@@ -49,7 +50,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
   }
 
   void initializeVideo() {
-    _videoController = VideoPlayerController.network(
+    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
       widget.taskSubmission.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();

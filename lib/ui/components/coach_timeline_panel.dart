@@ -69,7 +69,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                               width: MediaQuery.of(context).size.width / _timelineContentItems.length,
                               child: Text(content.courseName.toUpperCase(),
                                   textAlign: TextAlign.center,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                             ),
                           ))
                       .toList()),
@@ -96,7 +96,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                         child: Center(
                           child: Text(
                             OlukoLocalizations.get(context, 'noContent'),
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                           ),
                         ),
                       ));
@@ -293,7 +293,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         Padding(
           padding: const EdgeInsets.only(left: 5),
           child: Text(date == DateFormat.yMMMd().format(DateTime.now()) ? OlukoLocalizations.get(context, 'today') : date,
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
         ),
         Column(children: contentList.map((content) => switchTypeWidget(content)).toList()),
       ],

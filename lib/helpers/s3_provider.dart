@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:http/http.dart';
 import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
@@ -11,12 +14,16 @@ import 'package:oluko_app/helpers/s3_policy.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 
+import '../services/connectivity_service.dart';
+
 class S3Provider {
   String accessKeyId = GlobalConfiguration().getValue('accessKeyID');
   String secretKeyId = GlobalConfiguration().getValue('secretAccessKey');
   String endpoint = GlobalConfiguration().getValue('bucket');
   String region = GlobalConfiguration().getValue('region');
   bool isConfigLoaded = false;
+
+  StreamSubscription<ConnectivityResult> connectivityListener;
 
   S3Provider();
   //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
@@ -77,17 +84,34 @@ class S3Provider {
   Future<String> putFile(Uint8List bodyBytes, String path, String fileName) async {
     isConfigLoaded == false ? loadConfig() : null;
     final uri = Uri.parse('$endpoint/$path/$fileName');
-    http.Response res;
-
+    Response res;
+    ConnectivityResult originalConnectivity = null;
+    this.connectivityListener = ConnectivityService.getConnectivityStatusSubscription((ConnectivityResult result) {
+      if (originalConnectivity == null || originalConnectivity == ConnectivityResult.none) {
+        originalConnectivity = result;
+      } else {
+        print('ConnectivityChanged');
+        res.request.finalize();
+        connectivityListener.cancel();
+      }
+    });
     try {
       res = await http.put(uri, body: bodyBytes, headers: {'x-amz-acl': 'bucket-owner-full-control'});
+      // .timeout(const Duration(seconds: 25));
+      connectivityListener.cancel();
       return res.request.url.toString();
+    } on TimeoutException catch (_) {
+      print('TimeoutException');
+      res.request.finalize();
+      connectivityListener.cancel();
+      rethrow;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       print(e.toString());
+      connectivityListener.cancel();
       rethrow;
     }
   }

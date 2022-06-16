@@ -62,7 +62,8 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child: Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
+          child:
+              Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400)),
         ),
         const SizedBox(height: 12),
         Text(OlukoLocalizations.get(context, 'loginSubtitle'), style: OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
@@ -146,10 +147,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                   _formKey.currentState.save();
                   BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
                     context,
-                    ForgotPasswordDto(
-                      email: data,
-                      projectId: GlobalConfiguration().getValue('projectId')
-                    ),
+                    ForgotPasswordDto(email: data, projectId: GlobalConfiguration().getValue('projectId')),
                   );
                 },
               ),

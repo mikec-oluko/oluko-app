@@ -190,7 +190,7 @@ class _HomeContentState extends State<HomeContent> {
         const SizedBox(height: 85),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
-          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+          style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
         ),
         const SizedBox(height: 25),
         Image.asset(
@@ -206,7 +206,7 @@ class _HomeContentState extends State<HomeContent> {
               Navigator.of(context).push(
                 PageRouteBuilder(
                   opaque: false,
-                   pageBuilder: (_, __, ___) => VideoOverlay(
+                  pageBuilder: (_, __, ___) => VideoOverlay(
                     videoUrl: mediaURL,
                   ),
                 ),

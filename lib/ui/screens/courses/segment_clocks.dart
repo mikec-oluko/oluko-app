@@ -60,6 +60,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 //import 'package:native_device_orientation/native_device_orientation.dart';
 
+import '../../../services/video_service.dart';
+
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
   final CourseEnrollment courseEnrollment;
@@ -229,16 +231,19 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           FocusScope.of(context).unfocus();
                         },
                         child: BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
-                          listener: (context, state) {
+                          listener: (context, state) async {
                             if (state is CreateSuccess) {
                               if (_segmentSubmission == null) {
                                 _segmentSubmission = state.segmentSubmission;
+                                int durationInMilliseconds =
+                                    await VideoService.getVideoDuration(File(_segmentSubmission.videoState.stateInfo));
                                 BlocProvider.of<VideoBloc>(context).createVideo(
                                   context,
                                   File(_segmentSubmission.videoState.stateInfo),
                                   3.0 / 4.0,
                                   _segmentSubmission.id,
-                                  _segmentSubmission,
+                                  segmentSubmission: _segmentSubmission,
+                                  durationInMilliseconds: durationInMilliseconds,
                                 );
 
                                 _globalService.videoProcessing = true;

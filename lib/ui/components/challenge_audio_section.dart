@@ -208,7 +208,7 @@ class _State extends State<ChallengeAudioSection> {
             if (isRecording)
               Text(
                 TimeConverter.durationToString(duration),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.bold),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.bold),
               )
             else
               SizedBox(),
@@ -217,7 +217,7 @@ class _State extends State<ChallengeAudioSection> {
                   ? OlukoLocalizations.get(context, 'pressToCancel')
                   : OlukoLocalizations.get(context, 'recordAMessage') + widget.userFirstName,
               textAlign: TextAlign.left,
-              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
             ),
             isRecording
                 ? GestureDetector(
@@ -251,6 +251,7 @@ class _State extends State<ChallengeAudioSection> {
       _timer = Timer.periodic(oneSec, (_) => addTime());
     }
   }
+
   addTime() {
     final addSeconds = 1;
     setState(() {

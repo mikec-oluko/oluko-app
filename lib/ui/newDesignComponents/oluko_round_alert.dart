@@ -27,10 +27,9 @@ class _OlukoRoundAlertState extends State<OlukoRoundAlert> {
       Container(
           width: 160,
           child: Center(
-              child:
-                  Text(widget.text, 
+              child: Text(widget.text,
                   textAlign: TextAlign.center,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))))
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))))
     ]);
   }
 }

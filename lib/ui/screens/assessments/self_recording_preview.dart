@@ -27,6 +27,7 @@ import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
+import '../../../services/video_service.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.taskId})
@@ -100,9 +101,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     });
   }
 
-  createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) {
-    BlocProvider.of<VideoBloc>(context)
-        .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id, null, assessmentAssignment, assessment, taskSubmission);
+  createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) async {
+    final int durationInMilliseconds = await VideoService.getVideoDuration(File(widget.filePath));
+    BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id,
+        assessmentAssignment: assessmentAssignment,
+        assessment: assessment,
+        taskSubmission: taskSubmission,
+        durationInMilliseconds: durationInMilliseconds);
     _globalService.videoProcessing = true;
     BlocProvider.of<TaskCardBloc>(context).taskLoading(widget.taskIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -178,8 +183,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                             ? Padding(
                                 padding: const EdgeInsets.only(left: 20),
                                 child: Text('${TimeConverter.durationToString(_controller.videoPlayerController.value.duration)} min',
-                                    style:
-                                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal)),
+                                    style: OlukoFonts.olukoMediumFont(
+                                        customColor: OlukoColors.grayColor, customFontWeight: FontWeight.normal)),
                               )
                             : SizedBox.shrink(),
                         Padding(
@@ -216,7 +221,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         ));
   }
 
-  showDialog() {
+  Future showDialog() {
     return DialogUtils.getDialog(
         context,
         [
@@ -245,6 +250,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+        autoPlay: false,
         isOlukoControls: true,
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
@@ -252,7 +258,15 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             })));
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
+    } else {
+      if (!_controller.isPlaying) {
+        //This is done because of an issue on IOS pausing the video with autoplay
+        Future.delayed(Duration(milliseconds: 100), () {
+          _controller.play();
+        });
+      }
     }
+
     return widgets;
   }
 

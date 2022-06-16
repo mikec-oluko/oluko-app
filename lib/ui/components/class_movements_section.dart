@@ -48,8 +48,8 @@ class _State extends State<ClassMovementSection> {
         Text(
           OlukoLocalizations.get(context, 'movesInThisClass'),
           style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white)
-              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+              ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)
+              : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
         ),
         Expanded(child: SizedBox()),
         GestureDetector(
@@ -60,7 +60,7 @@ class _State extends State<ClassMovementSection> {
                 fit: BoxFit.fitWidth,
                 child: Text(
                   OlukoLocalizations.get(context, 'viewDetails'),
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                 ),
               ),
             ))

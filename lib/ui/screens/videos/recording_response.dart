@@ -12,6 +12,7 @@ import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import '../../../helpers/video_player_helper.dart';
 
 typedef OnCameraCallBack = void Function();
 
@@ -21,13 +22,7 @@ class RecordingResponse extends StatefulWidget {
   final CollectionReference parentVideoReference;
   final OnCameraCallBack onCamera;
 
-  const RecordingResponse(
-      {Key key,
-      this.user,
-      @required this.parentVideoInfo,
-      this.parentVideoReference,
-      this.onCamera})
-      : super(key: key);
+  const RecordingResponse({Key key, this.user, @required this.parentVideoInfo, this.parentVideoReference, this.onCamera}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _RecordingResponseState();
@@ -53,7 +48,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
     super.initState();
     _setupCameras();
 
-    _controller = VideoPlayerController.network(
+    _controller = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
       widget.parentVideoInfo.video.url,
     );
     _initializeVideoPlayerFuture = _controller.initialize();
@@ -65,8 +60,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
       // initialize cameras.
       cameras = await availableCameras();
       // initialize camera controllers.
-      cameraController =
-          new CameraController(cameras[0], ResolutionPreset.medium);
+      cameraController = new CameraController(cameras[0], ResolutionPreset.medium);
       await cameraController.initialize();
     } on CameraException catch (_) {
       // do something on error.
@@ -104,8 +98,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                       child: FutureBuilder(
                         future: _initializeVideoPlayerFuture,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                          if (snapshot.connectionState == ConnectionState.done) {
                             return AspectRatio(
                               aspectRatio: _controller.value.aspectRatio,
                               child: VideoPlayer(_controller),
@@ -124,9 +117,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                       width: MediaQuery.of(context).size.width / 2,
                       child: (!_isReady)
                           ? Container()
-                          : AspectRatio(
-                              aspectRatio: cameraController.value.aspectRatio,
-                              child: CameraPreview(cameraController)),
+                          : AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController)),
                     )),
                 Positioned(
                   bottom: 200,
@@ -136,19 +127,15 @@ class _RecordingResponseState extends State<RecordingResponse> {
                     child: InkWell(
                       onTap: () async {
                         if (this._recording) {
-                          XFile videopath =
-                              await cameraController.stopVideoRecording();
+                          XFile videopath = await cameraController.stopVideoRecording();
                           _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                           setState(() {
                             _recording = false;
                           });
                           File videoFile = File(videopath.path);
                           BlocProvider.of<VideoInfoBloc>(context)
-                            ..processVideo(widget.user, videoFile,
-                                widget.parentVideoReference, true,
-                                givenAspectRatio:
-                                    cameraController.value.aspectRatio,
-                                events: this.videoEvents);
+                            ..processVideo(widget.user, videoFile, widget.parentVideoReference, true,
+                                givenAspectRatio: cameraController.value.aspectRatio, events: this.videoEvents);
                           Navigator.pop(context);
                         } else {
                           await cameraController.startVideoRecording();
@@ -187,12 +174,9 @@ class _RecordingResponseState extends State<RecordingResponse> {
                 padding: EdgeInsets.all(8.0),
                 child: Container(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.green),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.green),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -226,20 +210,14 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                     ? IconButton(
                                         color: Colors.white,
                                         icon: Icon(
-                                          _controller.value.isPlaying
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
+                                          _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
                                         ),
                                         onPressed: () async {
-                                          _stopWatchTimer.onExecute
-                                              .add(StopWatchExecute.lap);
+                                          _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
                                           EventType eventType;
-                                          List<StopWatchRecord> records =
-                                              _stopWatchTimer.records.value;
-                                          StopWatchRecord lastRecord =
-                                              records[records.length - 1];
-                                          int milliseconds =
-                                              lastRecord.rawValue;
+                                          List<StopWatchRecord> records = _stopWatchTimer.records.value;
+                                          StopWatchRecord lastRecord = records[records.length - 1];
+                                          int milliseconds = lastRecord.rawValue;
 
                                           if (_controller.value.isPlaying) {
                                             await _controller.pause();
@@ -249,9 +227,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                             eventType = EventType.play;
                                           }
                                           setState(() {
-                                            this.videoEvents.add(Event(
-                                                eventType: eventType,
-                                                recordingPosition: milliseconds));
+                                            this.videoEvents.add(Event(eventType: eventType, recordingPosition: milliseconds));
                                           });
                                         })
                                     : Text(""),
@@ -277,7 +253,6 @@ class _RecordingResponseState extends State<RecordingResponse> {
   Widget buildIndicator() => VideoProgressIndicator(
         _controller,
         allowScrubbing: true,
-        colors:
-            VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
+        colors: VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
       );
 }

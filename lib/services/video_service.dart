@@ -10,6 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
 
+import '../helpers/video_player_helper.dart';
 import '../helpers/video_thumbnail.dart';
 import '../models/submodels/video.dart';
 import '../utils/oluko_localizations.dart';
@@ -76,14 +77,21 @@ class VideoService {
   }
 
   static Future<int> getVideoDuration(File videoFile) async {
-    VideoPlayerController controller = VideoPlayerController.file(videoFile);
-    await controller.initialize();
-    double durationInSeconds = controller.value.duration.inSeconds.toDouble(); //EncodingProvider.getDuration(info.getMediaProperties());
+    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(videoFile);
+    double durationInSeconds = 0;
+    try {
+      await controller.initialize();
+    } catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+    durationInSeconds = controller.value.duration.inSeconds.toDouble(); //EncodingProvider.getDuration(info.getMediaProperties());
+    controller.dispose();
     int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
     return durationInMilliseconds;
   }
 
-  static Future<String>  createVideoThumbnail(String videoPath) async {
+  static Future<String> createVideoThumbnail(String videoPath) async {
     String thumbFilePath = null;
     try {
       final String outDirPath = path.dirname(videoPath);

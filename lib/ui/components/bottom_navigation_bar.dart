@@ -106,7 +106,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                             child: FittedBox(
                               fit: BoxFit.fitWidth,
                               child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
-                                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                             ),
                           )
                       else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)

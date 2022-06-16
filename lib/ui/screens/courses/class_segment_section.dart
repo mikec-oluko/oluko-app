@@ -48,7 +48,7 @@ class _State extends State<ClassSegmentSection> {
                     padding: const EdgeInsets.only(bottom: 20.0),
                     child: Text(
                       widget.segment?.name ?? "",
-                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white),
                     ),
                   ),
                   if (widget.segment != null && widget.segment.isChallenge)
@@ -150,7 +150,7 @@ class _State extends State<ClassSegmentSection> {
       SegmentUtils.getRoundTitle(widget.segment, context),
       style: OlukoNeumorphism.isNeumorphismDesign
           ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.bold)
-          : OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.bold),
+          : OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.bold),
     );
   }
 }
