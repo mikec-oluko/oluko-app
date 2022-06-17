@@ -38,7 +38,7 @@ class _State extends State<InitialTimerPanel> {
           Text(
             OlukoLocalizations.get(context, 'pauseWarning'),
             textAlign: TextAlign.left,
-            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white),
           ),
           startButton(),
           const SizedBox(height: 25),
