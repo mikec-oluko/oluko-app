@@ -437,7 +437,10 @@ class Routes {
     //Providers used for the new route.
     List<BlocProvider> providers = [];
     //Providers used across the whole app.
-    final List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
+    final List<BlocProvider> commonProviders = [
+      BlocProvider<AuthBloc>.value(value: _authBloc),
+      BlocProvider<FAQBloc>.value(value: _fAQBloc),
+    ];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
