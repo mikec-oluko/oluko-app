@@ -113,7 +113,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
-          BlocProvider.of<MovementBloc>(context).getStream();
           BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
           BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         }

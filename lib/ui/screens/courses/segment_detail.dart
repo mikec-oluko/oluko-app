@@ -133,7 +133,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 }
               }
             }
-
             _challenges = challengeSegmentState.challenges;
             totalSegments = _segments.length - 1;
             if (totalSegments < segmentIndexToUse) {
@@ -157,8 +156,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       List<CoachRequest> coachRequests;
                       if (coachRequestStreamState is CoachRequestStreamSuccess) {
                         coachRequests = coachRequestStreamState.values;
-                      }
-                      if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
+                      } else if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
                         coachRequests = coachRequestStreamState.values;
                       }
                       _coach = coachUserState.coach;
@@ -405,14 +403,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       color: OlukoNeumorphismColors.appBackgroundColor,
       child: Column(
-        children: [
-          () {
-            if (_segments.length - 1 >= segmentIndexToUse) {
-              return getCarouselSlider();
-            }
-            return const SizedBox();
-          }(),
-        ],
+        children: [(_segments.length - 1 >= segmentIndexToUse) ? getCarouselSlider() : const SizedBox()],
       ),
     );
   }
