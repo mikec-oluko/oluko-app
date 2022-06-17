@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/carrousel_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -22,6 +25,13 @@ class HiFivePage extends StatefulWidget {
 class _HiFivePageState extends State<HiFivePage> {
   HiFiveSuccess _hiFiveState;
   AuthSuccess _authState;
+  Map<String, UserProgress> _usersProgress = {};
+
+  @override
+  void initState() {
+    BlocProvider.of<UserProgressListBloc>(context).get();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +50,23 @@ class _HiFivePageState extends State<HiFivePage> {
                 return Scaffold(
                   appBar: _appBar(),
                   backgroundColor: Colors.black,
-                  body: ListView(
-                    children: hiFiveState.users
-                        .map(
-                          (targetUser) => _listItem(
-                            authState.user,
-                            targetUser,
-                            hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  body: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
+                  }, builder: (context, userProgressListState) {
+                    if (userProgressListState is GetUserProgressSuccess) {
+                      _usersProgress = userProgressListState.usersProgress;
+                    }
+                    return ListView(
+                      children: hiFiveState.users
+                          .map(
+                            (targetUser) => _listItem(
+                              authState.user,
+                              targetUser,
+                              hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                            ),
+                          )
+                          .toList(),
+                    );
+                  }),
                 );
               } else {
                 BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
@@ -123,11 +139,14 @@ class _HiFivePageState extends State<HiFivePage> {
             Row(
               children: [
                 StoriesItem(
-                  progressValue: 0.6,
+                  showUserProgress: true,
+                  userProgress: _usersProgress[targetUser.id],
+                  itemUserId: targetUser.id,
                   imageUrl: targetUser.avatar,
                   name: targetUser.firstName,
                   lastname: targetUser.lastName,
                   maxRadius: 30,
+                  userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
@@ -181,8 +200,7 @@ class _HiFivePageState extends State<HiFivePage> {
           visible: _hiFiveState != null && _hiFiveState.users.length > 1,
           child: GestureDetector(
             onTap: () {
-              BlocProvider.of<HiFiveBloc>(context)
-                  .sendHiFiveToAll(context, _authState.user.id, _hiFiveState);
+              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState);
             },
             child: OlukoNeumorphism.isNeumorphismDesign
                 ? Padding(

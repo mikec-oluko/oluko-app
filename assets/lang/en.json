@@ -367,5 +367,7 @@
     "sendFriendRecommendation": "Send recommendation",
     "cousesPanelText": "You will encounter this challenge in the following Courses",
     "save": "save",
-    "changes": "changes"
+    "changes": "changes",
+    "cousesPanelText": "You will encounter this challenge in the following Courses",
+    "messageRequired": "Message required"
 }
