@@ -34,21 +34,17 @@ class _State extends State<ClassDetailSection> {
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
           Padding(
-              padding: EdgeInsets.only(top: 20, bottom: 10),
+              padding: EdgeInsets.only(top: 10, bottom: 10),
               child: Image.asset(
                 'assets/courses/horizontal_vector.png',
-                scale: 3,
+                scale: 5,
               )),
           Container(height: 448, child: ListView(children: getClassWidgets()))
         ]));
   }
 
   List<Widget> getClassWidgets() {
-    List<Widget> widgets = [
-      Container(
-        height: 20,
-      )
-    ];
+    List<Widget> widgets = [];
     for (int i = 0; i < widget.classObj.segments.length; i++) {
       List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, widget.movements);
       for (int j = 0; j < widget.segments.length; j++) {
@@ -60,13 +56,12 @@ class _State extends State<ClassDetailSection> {
                     widget.segmentChallenge.enrolledCourse.classes[k].segments[i - 1].completedAt != null;
                 widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
                 widget.segmentChallenge.segmentIndex = i;
+              } else {
+                widget.segmentChallenge.segmentIndex = i;
+                widget.segmentChallenge.previousSegmentFinish = true;
+                widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
               }
-              else {
-              widget.segmentChallenge.segmentIndex = i;
-              widget.segmentChallenge.previousSegmentFinish = true;
-              widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
             }
-            } 
           }
         }
       }
