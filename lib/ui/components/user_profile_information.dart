@@ -44,7 +44,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   PrivacyOptions _privacyOptions = PrivacyOptions();
   HiFiveReceivedSuccess _hiFiveReceivedState;
   AuthSuccess _authState;
-  Map<String, UserProgress> _usersProgess = {};
+  Map<String, UserProgress> _usersProgress = {};
 
   @override
   void initState() {
@@ -117,7 +117,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
       if (userProgressListState is GetUserProgressSuccess) {
         setState(() {
-          _usersProgess = userProgressListState.usersProgress;
+          _usersProgress = userProgressListState.usersProgress;
         });
       }
     }, builder: (context, userProgressListState) {
@@ -132,7 +132,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               Stack(children: [
                 StoriesItem(
                   showUserProgress: true,
-                  userProgress: _usersProgess[widget.userToDisplayInformation.id],
+                  userProgress: _usersProgress[widget.userToDisplayInformation.id],
                   itemUserId: widget.userToDisplayInformation.id,
                   maxRadius: 40,
                   imageUrl: widget.userToDisplayInformation.avatar,
