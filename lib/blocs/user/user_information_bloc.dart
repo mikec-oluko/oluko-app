@@ -70,12 +70,12 @@ class UserInformationBloc extends Cubit<UserInformationState> {
 
     final Response response = await _userRepository.updateUserInformation(userInformation, userId);
     List<String> messageList;
-    if (response.statusCode == 200) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');
-      return true;
-    } else if (response == null) {
+    if (response == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'tokenExpired');
       return false;
+    } else if (response.statusCode == 200) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');
+      return true;
     } else {
       AppMessages.clearAndShowSnackbarTranslated(context, 'errorMessage');
       return false;
