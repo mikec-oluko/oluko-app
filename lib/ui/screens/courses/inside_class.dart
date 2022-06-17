@@ -25,6 +25,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enrollment_audio.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
@@ -48,6 +49,7 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -96,6 +98,7 @@ class _InsideClassesState extends State<InsideClass> {
   bool _isVideoPlaying = false;
   Widget panelContent;
   PanelEnum panelState;
+  List<Segment> _classSegments;
 
   @override
   void initState() {
@@ -109,6 +112,7 @@ class _InsideClassesState extends State<InsideClass> {
         if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {
           BlocProvider.of<DownloadAssetBloc>(context).getVideo();
         }
+        BlocProvider.of<SegmentBloc>(context).getAll(widget.courseEnrollment.classes[widget.classIndex]);
         BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context).getAll();
         BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
@@ -121,7 +125,6 @@ class _InsideClassesState extends State<InsideClass> {
                   AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
               _audios = AudioService.getNotDeletedAudios(classAudios);
               _audioQty = _audios == null ? 0 : _audios.length;
-              BlocProvider.of<SegmentBloc>(context).getAll(_class);
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
               BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
               return WillPopScope(
@@ -186,66 +189,44 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(
-      OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
-          _controller = chewieController;
-        }),
-      ),
-    );
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-            ? ScreenUtils.height(context) / 4
-            : ScreenUtils.height(context) / 1.5,
-        minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-            ? ScreenUtils.height(context) / 4
-            : ScreenUtils.height(context) / 1.5,
-      ),
-      child: SizedBox(height: 400, child: Stack(children: widgets)),
-    );
-  }
-
   void closeVideo() {
-    setState(() {
-      if (_isVideoPlaying) {
+    if (_isVideoPlaying) {
+      setState(() {
         _isVideoPlaying = !_isVideoPlaying;
-      }
-    });
+      });
+    }
   }
 
   Widget _startButton() {
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: ScreenUtils.width(context) - 40,
-                child: OlukoNeumorphicPrimaryButton(
-                  isExpanded: false,
-                  thinPadding: true,
-                  title: OlukoLocalizations.get(context, 'start'),
-                  onPressed: () => goToSegmentDetail(),
-                ),
+    return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+      if (segmentState is GetSegmentsSuccess) {
+        return OlukoNeumorphism.isNeumorphismDesign
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: ScreenUtils.width(context) - 40,
+                    child: OlukoNeumorphicPrimaryButton(
+                      isExpanded: false,
+                      thinPadding: true,
+                      title: OlukoLocalizations.get(context, 'start'),
+                      onPressed: () => goToSegmentDetail(),
+                    ),
+                  )
+                ],
               )
-            ],
-          )
-        : Row(
-            children: [
-              OlukoPrimaryButton(
-                title: OlukoLocalizations.get(context, 'start'),
-                onPressed: () => goToSegmentDetail(),
-              ),
-            ],
-          );
+            : Row(
+                children: [
+                  OlukoPrimaryButton(
+                    title: OlukoLocalizations.get(context, 'start'),
+                    onPressed: () => goToSegmentDetail(),
+                  ),
+                ],
+              );
+      } else {
+        return OlukoCircularProgressIndicator();
+      }
+    });
   }
 
   Widget buildChallengeSection() {
@@ -258,14 +239,23 @@ class _InsideClassesState extends State<InsideClass> {
         builder: (context, state) {
           if (state is ChallengeListSuccess) {
             challengeCards = state.challenges;
+            return ChallengeSection(
+              challengesCard: challengeCards,
+            );
+          } else {
+            return Column(children: [
+              const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: OlukoNeumorphicDivider(
+                    isFadeOut: true,
+                  )),
+              OlukoCircularProgressIndicator()
+            ]);
           }
-          return ChallengeSection(
-            challengesCard: challengeCards,
-          );
         },
       );
     } else {
-      return const SizedBox();
+      return OlukoCircularProgressIndicator();
     }
   }
 
@@ -343,6 +333,7 @@ class _InsideClassesState extends State<InsideClass> {
     return BlocBuilder<SegmentBloc, SegmentState>(
       builder: (context, segmentState) {
         if (segmentState is GetSegmentsSuccess) {
+          _classSegments = segmentState.segments;
           return ClassDetailSection(
               segmentChallenge: segmentChallenge, classObj: _class, movements: _movements, segments: segmentState.segments);
         } else {
@@ -363,180 +354,186 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classInfoSection(List<UserResponse> coaches) {
-    final String _classImage = widget.courseEnrollment.classes[widget.classIndex].image;
     return ListView(
       children: [
-        if (OlukoNeumorphism.isNeumorphismDesign)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: OlukoVideoPreview(
-              randomImages: _class.userSelfies,
-              video: _class.video,
-              showBackButton: true,
-              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
-              bottomWidgets: [_getCourseInfoSection(_classImage)],
-              onBackPressed: () => Navigator.pop(context),
-              onPlay: () => isVideoPlaying(),
-              videoVisibilty: _isVideoPlaying,
-            ),
-          )
-        else
-          Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: OverlayVideoPreview(
-              video: _class.video,
-              showBackButton: true,
-              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
-              bottomWidgets: [_getCourseInfoSection(_classImage)],
-              onBackPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
+        if (OlukoNeumorphism.isNeumorphismDesign) getNeumorphicVideoPreview() else getVideoPreview(),
         Padding(
           padding: const EdgeInsets.only(right: 15, left: 15, top: 25),
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
-            child: OlukoNeumorphism.isNeumorphismDesign
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: Text(
-                          _class.name,
-                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: Text(
-                          widget.courseEnrollment.course.name,
-                          style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.yellow),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
-                            builder: (context, subscribedCourseUsersState) {
-                              if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
-                                final int favorites =
-                                    subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
-                                final int normalUsers =
-                                    subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
-                                final int qty = favorites + normalUsers;
-                                return GestureDetector(
-                                  onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                                  child: Text(
-                                    '$qty+',
-                                    textAlign: TextAlign.center,
-                                    style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
-                                  ),
-                                );
-                              } else {
-                                return Text(
-                                  '0+',
-                                  textAlign: TextAlign.center,
-                                  style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
-                                );
-                              }
-                            },
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: Text(
-                              widget.courseEnrollment.course.name,
-                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: _startButton(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0, right: 10),
-                        child: Text(
-                          ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-                          style: OlukoFonts.olukoMediumFont(
-                            custoFontWeight: FontWeight.normal,
-                            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: CourseProgressBar(
-                          value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
-                        ),
-                      ),
-                      (() {
-                        // your code here
-                        if (_class.description != null) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(
-                              _class.description,
-                              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                            ),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      }()),
-                      buildChallengeSection(),
-                      classMovementSection(),
-                    ],
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _startButton(),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: Text(
-                          _class.name,
-                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0, right: 10),
-                        child: Text(
-                          ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-                          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: CourseProgressBar(
-                          value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
-                        ),
-                      ),
-                      (() {
-                        // your code here
-                        if (_class.description != null) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(
-                              _class.description,
-                              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                            ),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      }()),
-                      buildChallengeSection(),
-                      classMovementSection(),
-                    ],
-                  ),
+            child: OlukoNeumorphism.isNeumorphismDesign ? neumorphicBody() : body(),
           ),
         ),
       ],
+    );
+  }
+
+  Widget body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _startButton(),
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0),
+          child: Text(
+            _class.name,
+            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0, right: 10),
+          child: Text(
+            ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: CourseProgressBar(
+            value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
+          ),
+        ),
+        (() {
+          // your code here
+          if (_class.description != null) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                _class.description,
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+              ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        }()),
+        buildChallengeSection(),
+        classMovementSection(),
+      ],
+    );
+  }
+
+  Widget neumorphicBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0),
+          child: Text(
+            _class.name,
+            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Text(
+            widget.courseEnrollment.course.name,
+            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.yellow),
+          ),
+        ),
+        Row(
+          children: [
+            BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+              builder: (context, subscribedCourseUsersState) {
+                if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+                  final int favorites =
+                      subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+                  final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
+                  final int qty = favorites + normalUsers;
+                  return GestureDetector(
+                    onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
+                    child: Text(
+                      '$qty+',
+                      textAlign: TextAlign.center,
+                      style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
+                    ),
+                  );
+                } else {
+                  return Text(
+                    '0+',
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
+                  );
+                }
+              },
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                widget.courseEnrollment.course.name,
+                style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: _startButton(),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0, right: 10),
+          child: Text(
+            ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+            style: OlukoFonts.olukoMediumFont(
+              custoFontWeight: FontWeight.normal,
+              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: CourseProgressBar(
+            value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
+          ),
+        ),
+        _class.description != null
+            ? Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Text(
+                  _class.description,
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                ),
+              )
+            : const SizedBox(),
+        buildChallengeSection(),
+        classMovementSection(),
+      ],
+    );
+  }
+
+  Widget getVideoPreview() {
+    final String _classImage = widget.courseEnrollment.classes[widget.classIndex].image;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 3),
+      child: OverlayVideoPreview(
+        video: _class.video,
+        showBackButton: true,
+        audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+        bottomWidgets: [_getCourseInfoSection(_classImage)],
+        onBackPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  Widget getNeumorphicVideoPreview() {
+    final String _classImage = widget.courseEnrollment.classes[widget.classIndex].image;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 3),
+      child: OlukoVideoPreview(
+        randomImages: _class.userSelfies,
+        video: _class.video,
+        showBackButton: true,
+        audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+        bottomWidgets: [_getCourseInfoSection(_classImage)],
+        onBackPressed: () => Navigator.pop(context),
+        onPlay: () => isVideoPlaying(),
+        videoVisibilty: _isVideoPlaying,
+      ),
     );
   }
 
@@ -706,41 +703,49 @@ class _InsideClassesState extends State<InsideClass> {
     int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
     if (segmentIndex == -1 || widget.courseEnrollment.classes[widget.classIndex].completedAt != null) {
       segmentIndex = 0;
-      if (OlukoNeumorphism.isNeumorphismDesign) {
-        BottomDialogUtils.showBottomDialog(
-          content: Container(
-            height: ScreenUtils.height(context) * 0.35,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
-              image: DecorationImage(
-                image: AssetImage('assets/courses/dialog_background.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: confirmationContent(),
-          ),
-          context: context,
-        );
-      } else {
-        DialogUtils.getDialog(context, [confirmationContent()]);
-      }
+      showRedoDialog();
     } else {
-      pushNamed(segmentIndex);
+      navigateToSegmentDetail(segmentIndex);
     }
   }
 
-  void pushNamed(int segmentIndex) {
-    Navigator.pushNamed(
-      context,
-      routeLabels[RouteEnum.segmentDetail],
-      arguments: {
-        'segmentIndex': segmentIndex,
-        'classIndex': widget.classIndex,
-        'courseEnrollment': widget.courseEnrollment,
-        'courseIndex': widget.courseIndex,
-        'fromChallenge': false
-      },
-    );
+  void showRedoDialog() {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      BottomDialogUtils.showBottomDialog(
+        content: Container(
+          height: ScreenUtils.height(context) * 0.35,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
+            image: DecorationImage(
+              image: AssetImage('assets/courses/dialog_background.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: confirmationContent(),
+        ),
+        context: context,
+      );
+    } else {
+      DialogUtils.getDialog(context, [confirmationContent()]);
+    }
+    ;
+  }
+
+  void navigateToSegmentDetail(int segmentIndex) {
+    if (_classSegments != null) {
+      Navigator.pushNamed(
+        context,
+        routeLabels[RouteEnum.segmentDetail],
+        arguments: {
+          'classSegments': _classSegments,
+          'segmentIndex': segmentIndex,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+          'fromChallenge': false
+        },
+      );
+    }
   }
 
   Widget confirmationContent() {
@@ -813,7 +818,7 @@ class _InsideClassesState extends State<InsideClass> {
             thinPadding: true,
             onPressed: () {
               Navigator.pop(context);
-              pushNamed(0);
+              navigateToSegmentDetail(0);
             },
             title: OlukoLocalizations.get(context, 'yes'),
           ),
@@ -823,7 +828,7 @@ class _InsideClassesState extends State<InsideClass> {
           title: OlukoLocalizations.get(context, 'yes'),
           onPressed: () {
             Navigator.pop(context);
-            pushNamed(0);
+            navigateToSegmentDetail(0);
           },
         ),
     ];

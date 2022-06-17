@@ -4,6 +4,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class SegmentRepository {
@@ -17,9 +18,9 @@ class SegmentRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<List<Segment>> getAll(Class classObj) async {
+  static Future<List<Segment>> getAll(EnrollmentClass classObj) async {
     List<Segment> segments = [];
-    for (SegmentSubmodel segment in classObj.segments) {
+    for (EnrollmentSegment segment in classObj.segments) {
       QuerySnapshot qs = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))

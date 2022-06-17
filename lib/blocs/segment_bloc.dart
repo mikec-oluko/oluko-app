@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -27,7 +28,7 @@ class Failure extends SegmentState {
 class SegmentBloc extends Cubit<SegmentState> {
   SegmentBloc() : super(LoadingSegment());
 
-  void getAll(Class classObj) async {
+  void getAll(EnrollmentClass classObj) async {
     emit(LoadingSegment());
     try {
       List<Segment> segments = await SegmentRepository.getAll(classObj);
