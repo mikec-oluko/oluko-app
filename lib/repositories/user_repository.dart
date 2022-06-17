@@ -245,14 +245,19 @@ class UserRepository {
   }
 
   Future<Response> updateUserInformation(ChangeUserInformation user, String userId) async {
-    Client http = Client();
-    final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/user';
-    var body = user.toJson();
     final apiToken = await AuthRepository().getApiToken();
-    final headers = {
-      'Authorization': 'Bearer $apiToken',
-    };
-    Response response = await http.put(Uri.parse('$url/${userId}'), headers: headers, body: body);
-    return response;
+    if (apiToken != null) {
+      Client http = Client();
+      final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/user';
+      var body = user.toJson();
+      final headers = {
+        'Authorization': 'Bearer $apiToken',
+      };
+      Response response = await http.put(Uri.parse('$url/${userId}'), headers: headers, body: body);
+      return response;
+    } else {
+      return null;
+    }
+
   }
 }
