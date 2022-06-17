@@ -29,13 +29,13 @@ class GlobalService with ChangeNotifier {
 
   set setInternetConnection(bool value) {
     _hasInternetConnection = value;
-    // notifyListeners();
+    notifyListeners();
   }
 
   ConnectivityResult get getConnectivityType => _connectivityType;
 
   set setConnectivityType(ConnectivityResult connectivityResult) {
     _connectivityType = connectivityResult;
-    // notifyListeners();
+    notifyListeners();
   }
 }

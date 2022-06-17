@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
@@ -22,10 +23,12 @@ class S3Provider {
   String endpoint = GlobalConfiguration().getValue('bucket');
   String region = GlobalConfiguration().getValue('region');
   bool isConfigLoaded = false;
+  final GlobalService _globalService = GlobalService();
 
   StreamSubscription<ConnectivityResult> connectivityListener;
 
   S3Provider();
+
   //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
   void postFile(String accessKeyId, String secretKeyId) async {
     final file = File(path.join('/path/to/file', 'square-cinnamon.jpg'));
@@ -82,28 +85,38 @@ class S3Provider {
   }
 
   Future<String> putFile(Uint8List bodyBytes, String path, String fileName) async {
+    Response res;
+    bool _networkChangedConnection = false;
+    bool _hasInternetConnection = _globalService.hasInternetConnection;
+    ConnectivityResult _connectivityType = _globalService.getConnectivityType;
+
+    if (!_globalService.hasListeners) {
+      _globalService.addListener(() {
+        _hasInternetConnection = _globalService.hasInternetConnection;
+        if ((_connectivityType == ConnectivityResult.wifi && _globalService.getConnectivityType == ConnectivityResult.mobile) ||
+            (_connectivityType == ConnectivityResult.mobile && _globalService.getConnectivityType == ConnectivityResult.mobile)) {
+          _networkChangedConnection = true;
+          _connectivityType = _globalService.getConnectivityType;
+        }
+      });
+    }
+
     isConfigLoaded == false ? loadConfig() : null;
     final uri = Uri.parse('$endpoint/$path/$fileName');
-    Response res;
-    ConnectivityResult originalConnectivity = null;
-    this.connectivityListener = ConnectivityService.getConnectivityStatusSubscription((ConnectivityResult result) {
-      if (originalConnectivity == null || originalConnectivity == ConnectivityResult.none) {
-        originalConnectivity = result;
-      } else {
-        print('ConnectivityChanged');
-        res.request.finalize();
-        connectivityListener.cancel();
-      }
-    });
     try {
-      res = await http.put(uri, body: bodyBytes, headers: {'x-amz-acl': 'bucket-owner-full-control'});
+      if (_hasInternetConnection && !_networkChangedConnection) {
+        res = await http.put(uri, body: bodyBytes, headers: {'x-amz-acl': 'bucket-owner-full-control'});
+      } else {
+        print('VIDEO_UPLOAD: No Internet Connection');
+        res.request.finalize();
+      }
       // .timeout(const Duration(seconds: 25));
-      connectivityListener.cancel();
+      // connectivityListener.cancel();
       return res.request.url.toString();
     } on TimeoutException catch (_) {
       print('TimeoutException');
       res.request.finalize();
-      connectivityListener.cancel();
+      // connectivityListener.cancel();
       rethrow;
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -111,7 +124,6 @@ class S3Provider {
         stackTrace: stackTrace,
       );
       print(e.toString());
-      connectivityListener.cancel();
       rethrow;
     }
   }
