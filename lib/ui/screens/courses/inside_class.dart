@@ -28,6 +28,7 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -86,7 +87,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<Movement> _movements;
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
-  List<Movement> _classMovements;
+  List<MovementSubmodel> _classMovements;
   List<UserResponse> _coaches;
   List<Audio> _audios = [];
   AudioPlayer audioPlayer = AudioPlayer();
@@ -324,14 +325,14 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classMovementSection() {
-    _classMovements = ClassService.getClassMovements(_class, _movements);
+    _classMovements = ClassService.getClassMovementSubmodels(_class);
     return ClassMovementSection(
       panelController: panelController,
       movements: _classMovements,
       classObj: _class,
-      onPressedMovement: (BuildContext context, Movement movement) {
+      onPressedMovement: (BuildContext context, MovementSubmodel movement) {
         closeVideo();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
   }

@@ -100,6 +100,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -808,9 +809,10 @@ class Routes {
           BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
-        final Map<String, Movement> argumentsToAdd = arguments as Map<String, Movement>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MovementIntro(
-          movement: argumentsToAdd['movement'],
+          movement: argumentsToAdd['movement'] as Movement,
+          movementSubmodel: argumentsToAdd['movementSubmodel'] as MovementSubmodel,
         );
         break;
       case RouteEnum.segmentClocks:

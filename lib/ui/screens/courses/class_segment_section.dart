@@ -6,6 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/ui/components/challenge_card.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
@@ -17,11 +18,12 @@ import 'package:oluko_app/utils/segment_utils.dart';
 class ClassSegmentSection extends StatefulWidget {
   final Segment segment;
   final List<Movement> movements;
+    final List<MovementSubmodel> movementSubmodels;
   final bool showTopDivider;
-  final Function(BuildContext, Movement) onPressedMovement;
+  final Function(BuildContext, MovementSubmodel) onPressedMovement;
   final ChallengeNavigation segmentChallenge;
 
-  ClassSegmentSection({this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true, this.segmentChallenge});
+  ClassSegmentSection({this.movementSubmodels, this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true, this.segmentChallenge});
 
   @override
   _State createState() => _State();
@@ -120,7 +122,7 @@ class _State extends State<ClassSegmentSection> {
                       SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: MovementItemBubbles(
-                              onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1)),
+                              onPressed: widget.onPressedMovement, movements: widget.movementSubmodels, width: ScreenUtils.width(context) / 1)),
                     ],
                   ),
                   (widget.segment != null && !widget.segment.isChallenge)

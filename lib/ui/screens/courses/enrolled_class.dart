@@ -13,6 +13,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
@@ -48,7 +49,6 @@ class _EnrolledClassState extends State<EnrolledClass> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-        BlocProvider.of<MovementBloc>(context)..getAll();
         BlocProvider.of<CourseEnrollmentBloc>(context)..get(authState.firebaseUser, widget.course);
         return form(authState.firebaseUser);
       } else {
@@ -83,11 +83,6 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                 },
                               ),
                             ),
-                            /*existsEnrollment
-                                ? CourseProgressBar(
-                                    value: enrollmentState
-                                        .courseEnrollment.completion)
-                                : SizedBox(),*/
                             showButton(enrollmentState.courseEnrollment, context, user, widget.course, classState.classes),
                             Padding(
                                 padding: EdgeInsets.only(right: 15, left: 15, top: 0),
@@ -123,64 +118,12 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                           style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
                                         ),
                                       ),
-                                      BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
-                                        if (movementState is GetAllSuccess) {
-                                          return ClassExpansionPanels(
-                                            classes: classState.classes,
-                                            movements: movementState.movements,
-                                            onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(
-                                                context, routeLabels[RouteEnum.movementIntro],
-                                                arguments: {'movement': movement}),
-                                          );
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      }),
-                                      /*Column(
-                                            children: [
-                                              ListView.builder(
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  itemCount:
-                                                      classState.classes != null
-                                                          ? classState
-                                                              .classes.length
-                                                          : 0,
-                                                  shrinkWrap: true,
-                                                  itemBuilder:
-                                                      (context, num index) {
-                                                    Class classObj = classState
-                                                        .classes[index];
-                                                    double classProgress =
-                                                        CourseEnrollmentService
-                                                            .getClassProgress(
-                                                                enrollmentState
-                                                                    .courseEnrollment,
-                                                                index);
-                                                    return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                vertical: 5.0),
-                                                        child: ClassSection(
-                                                          classProgresss:
-                                                              classProgress,
-                                                          index: index,
-                                                          total: classState
-                                                              .classes.length,
-                                                          classObj: classObj,
-                                                          onPressed: () {
-                                                            if (!existsEnrollment) {
-                                                              MovementUtils
-                                                                  .movementDialog(
-                                                                      context,
-                                                                      _confirmDialogContent());
-                                                            }
-                                                          },
-                                                        ));
-                                                  }),
-                                            ],
-                                          )*/
+                                      ClassExpansionPanels(
+                                        classes: classState.classes,
+                                        onPressedMovement: (BuildContext context, MovementSubmodel movement) => Navigator.pushNamed(
+                                            context, routeLabels[RouteEnum.movementIntro],
+                                            arguments: {'movementSubmodel': movement}),
+                                      )                            
                                     ]))),
                             SizedBox(
                               height: 150,
@@ -215,51 +158,6 @@ class _EnrolledClassState extends State<EnrolledClass> {
         : SizedBox(
             height: 15,
           );
-
-    /*String buttonText;
-    int index;
-    double classProgress;
-
-    if (courseEnrollment != null) {
-      buttonText = OlukoLocalizations.get(context, 'start');
-      index = CourseEnrollmentService.getFirstUncompletedClassIndex(
-          courseEnrollment);
-      if (index != -1) {
-        classProgress =
-            CourseEnrollmentService.getClassProgress(courseEnrollment, index);
-      }
-    } else {
-      buttonText = OlukoLocalizations.get(context, 'enroll');
-    }
-    return index == -1
-        ? SizedBox()
-        : Padding(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                OlukoPrimaryButton(
-                  title: buttonText,
-                  onPressed: () {
-                    if (courseEnrollment != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => InsideClasses(
-                                    user: user,
-                                    courseEnrollment: courseEnrollment,
-                                    classIndex: index,
-                                    classProgress: classProgress,
-                                    actualClass: classes[index],
-                                    courseName: course.name,
-                                  )));
-                    } else {
-                      _courseEnrollmentBloc..create(user, course);
-                    }
-                  },
-                ),
-              ],
-            ));*/
   }
 
   Widget showVideoPlayer(String videoUrl) {

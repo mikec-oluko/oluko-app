@@ -4,6 +4,7 @@ import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/screens/courses/class_segment_section.dart';
 
@@ -11,7 +12,7 @@ class ClassDetailSection extends StatefulWidget {
   final Class classObj;
   final List<Segment> segments;
   final List<Movement> movements;
-  final Function(BuildContext, Movement) onPressedMovement;
+  final Function(BuildContext, MovementSubmodel) onPressedMovement;
   final ChallengeNavigation segmentChallenge;
 
   ClassDetailSection({this.classObj, this.onPressedMovement, this.movements, this.segments, this.segmentChallenge});
@@ -74,6 +75,7 @@ class _State extends State<ClassDetailSection> {
           showTopDivider: i != 0,
           segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
           movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
+          movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
           onPressedMovement: widget.onPressedMovement)); //TODO:check null value
     }
     return widgets;

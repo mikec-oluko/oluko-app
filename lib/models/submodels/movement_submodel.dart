@@ -6,13 +6,15 @@ class MovementSubmodel {
   DocumentReference reference;
   String id;
   String name;
+  String image;
   ParameterEnum parameter;
   int value;
   CounterEnum counter;
   bool isRestTime;
   bool isBothSide;
 
-  MovementSubmodel({this.isBothSide, this.id, this.name, this.reference, this.counter, this.parameter, this.value, this.isRestTime});
+  MovementSubmodel(
+      {this.isBothSide, this.image, this.id, this.name, this.reference, this.counter, this.parameter, this.value, this.isRestTime});
 
   factory MovementSubmodel.fromJson(Map<String, dynamic> json) {
     return MovementSubmodel(
@@ -20,6 +22,7 @@ class MovementSubmodel {
       id: json['id']?.toString(),
       name: json['name']?.toString(),
       value: json['value'] as int,
+      image: json['image'] == null ? null : json['image']?.toString(),
       isRestTime: json['is_rest_time'] == null ? false : json['is_rest_time'] as bool,
       isBothSide: json['is_both_side'] == null ? false : json['is_both_side'] as bool,
       counter: json['counter'] == null ? null : CounterEnum.values[json['counter'] as int],
@@ -31,6 +34,7 @@ class MovementSubmodel {
         'reference': reference,
         'id': id,
         'name': name,
+        'image': image,
         'value': value,
         'counter': counter == null ? null : counter.index,
         'parameter': parameter == null ? null : parameter.index,
