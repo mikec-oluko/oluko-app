@@ -224,47 +224,46 @@ class _SegmentDetailState extends State<SegmentDetail> {
         collapsed: const SizedBox(),
         controller: _challengePanelController,
         panel: BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
-          Widget _contentForPanel = const SizedBox();
-
-          if (state is SegmentDetailContentDefault) {
-            if (_challengePanelController.isPanelOpen) {
-              _challengePanelController.close();
-            }
-            _contentForPanel = const SizedBox();
-          }
-          if (state is SegmentDetailContentAudioOpen) {
-            _currentAudios = state.audios;
-            if (_currentAudios != null && _currentAudios.length > 0) {
-              _challengePanelController.open();
-              _contentForPanel = ModalAudio(
-                  comesFromSegmentDetail: true,
-                  challenge: state.challenge,
-                  audioPlayer: audioPlayer,
-                  audios: _currentAudios,
-                  panelController: _challengePanelController,
-                  onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
-            }
-          }
-          if (state is SegmentDetailContentPeopleOpen) {
-            _challengePanelController.open();
-            _contentForPanel = ModalPeopleEnrolled(
-                userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
-                userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
-                userId: _user.id,
-                favorites: state.favorites,
-                users: state.users);
-          }
-          if (state is SegmentDetailContentClockOpen) {
-            _challengePanelController.open();
-            _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
-          }
-          if (state is SegmentDetailContentLoading) {
-            _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
-          }
-          return _contentForPanel;
+          return manageSegmentDetailContentState(state);
         }),
       ),
     );
+  }
+
+  Widget manageSegmentDetailContentState(SegmentDetailContentState state) {
+    Widget _contentForPanel = const SizedBox();
+    if (state is SegmentDetailContentDefault) {
+      if (_challengePanelController.isPanelOpen) {
+        _challengePanelController.close();
+      }
+      _contentForPanel = const SizedBox();
+    } else if (state is SegmentDetailContentAudioOpen) {
+      _currentAudios = state.audios;
+      if (_currentAudios != null && _currentAudios.length > 0) {
+        _challengePanelController.open();
+        _contentForPanel = ModalAudio(
+            comesFromSegmentDetail: true,
+            challenge: state.challenge,
+            audioPlayer: audioPlayer,
+            audios: _currentAudios,
+            panelController: _challengePanelController,
+            onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+      }
+    } else if (state is SegmentDetailContentPeopleOpen) {
+      _challengePanelController.open();
+      _contentForPanel = ModalPeopleEnrolled(
+          userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+          userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+          userId: _user.id,
+          favorites: state.favorites,
+          users: state.users);
+    } else if (state is SegmentDetailContentClockOpen) {
+      _challengePanelController.open();
+      _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
+    } else if (state is SegmentDetailContentLoading) {
+      _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
+    }
+    return _contentForPanel;
   }
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
