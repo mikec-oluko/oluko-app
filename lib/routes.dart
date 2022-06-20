@@ -419,7 +419,6 @@ class Routes {
   final InternetConnectionBloc _internetConnectionBloc = InternetConnectionBloc();
   final CarouselBloc _carouselBloc = CarouselBloc();
   final RemainSelectedTagsBloc _remainSelectedTagsBloc = RemainSelectedTagsBloc();
-  final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
   final UserProgressBloc _userProgressBloc = UserProgressBloc();
   final UserProgressStreamBloc _userProgressStreamBloc = UserProgressStreamBloc();
   final UserInformationBloc _userInformationBloc = UserInformationBloc();
@@ -430,6 +429,7 @@ class Routes {
   final MailBloc _mailBloc = MailBloc();
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
+  final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -437,7 +437,10 @@ class Routes {
     //Providers used for the new route.
     List<BlocProvider> providers = [];
     //Providers used across the whole app.
-    final List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
+    final List<BlocProvider> commonProviders = [
+      BlocProvider<AuthBloc>.value(value: _authBloc),
+      BlocProvider<FAQBloc>.value(value: _fAQBloc),
+    ];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
@@ -769,6 +772,8 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
@@ -930,6 +935,7 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
@@ -961,6 +967,8 @@ class Routes {
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
@@ -1123,6 +1131,7 @@ class Routes {
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
@@ -1228,6 +1237,8 @@ class Routes {
         break;
       case RouteEnum.hiFivePage:
         providers = [
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<CarouselBloc>.value(value: _carouselBloc),

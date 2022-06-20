@@ -1046,7 +1046,13 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     } else {
       if (isSegmentWithRecording()) {
         if (cameraController != null) {
-          cameraController.resumeVideoRecording();
+          try {
+           await cameraController.resumeVideoRecording();
+          } catch (e) {
+          resetAMRAPRound();
+          deleteUserProgress();
+          SegmentClocksUtils.segmentClockOnWillPop(context);
+          }
         }
         _resume();
       }
@@ -1091,8 +1097,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
-    BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex],
-        videoRecorded.path, widget.coach!=null?widget.coach.id:null, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
+    BlocProvider.of<SegmentSubmissionBloc>(context).create(
+        _user,
+        widget.courseEnrollment,
+        widget.segments[widget.segmentIndex],
+        videoRecorded.path,
+        widget.coach != null ? widget.coach.id : null,
+        widget.courseEnrollment.classes[widget.classIndex].id,
+        _coachRequest);
   }
 
 //STOPWATCH FUNCTIONS
