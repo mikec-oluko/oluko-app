@@ -64,13 +64,13 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>To record user workouts</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Need access to camera</string>
+	<string>To upload training images so that the coach can validate the training.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>This app requires access to contacts.</string>
+	<string>So that the user can share with his friends his progress in the app and invite them to it.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Need access to mic</string>
+	<string>So that a client can send audios to their coach asking for instructions.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
+	<string>To upload files for coach approval, profile pictures and documents usage in the app.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
