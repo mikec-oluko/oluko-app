@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -11,7 +8,6 @@ import 'package:oluko_app/ui/components/challenge_card.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
@@ -21,17 +17,16 @@ class ClassSegmentSection extends StatefulWidget {
   final List<MovementSubmodel> movementSubmodels;
   final bool showTopDivider;
   final Function(BuildContext, MovementSubmodel) onPressedMovement;
-  final ChallengeNavigation segmentChallenge;
+  final ChallengeNavigation challengeNavigation;
 
   ClassSegmentSection(
-      {this.movementSubmodels, this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true, this.segmentChallenge});
+      {this.movementSubmodels, this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true, this.challengeNavigation});
 
   @override
   _State createState() => _State();
 }
 
 class _State extends State<ClassSegmentSection> {
-  List<Widget> _challengeCard = [];
   @override
   Widget build(BuildContext context) {
     if (widget.segment == null) {
@@ -103,20 +98,15 @@ class _State extends State<ClassSegmentSection> {
 
   Widget challengeSection() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
-        builder: (context, state) {
-          if (state is ChallengeListSuccess) {
-            _challengeCard = state.challenges;
-          }
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(children: _challengeCard),
-          );
-        },
-      ),
-      const SizedBox(width: 45.0),
+      ChallengesCard(
+          userRequested: null,
+          useAudio: false,
+          segmentChallenge: widget.challengeNavigation,
+          navigateToSegment: true,
+          audioIcon: false,
+          customValueForChallenge: widget.challengeNavigation.previousSegmentFinish),
+      const SizedBox(height: 25.0),
       getRoundTitle(),
-      const SizedBox(width: 10),
       getNeumorphicSegmentSummary(restTime: false, roundTitle: false, movements: widget.movements),
       const SizedBox(width: 35.0),
     ]);
@@ -127,7 +117,6 @@ class _State extends State<ClassSegmentSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getRoundTitle(),
-        const SizedBox(height: 15),
         getNeumorphicSegmentSummary(restTime: false, roundTitle: false, movements: widget.movements),
       ],
     );
@@ -165,9 +154,15 @@ class _State extends State<ClassSegmentSection> {
   }
 
   Widget getRoundTitle() {
-    return Text(
-      SegmentUtils.getRoundTitle(widget.segment, context),
-      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
-    );
+    if (widget.segment.rounds == null || widget.segment.rounds > 1) {
+      return Padding(
+          padding: EdgeInsets.only(bottom: 15),
+          child: Text(
+            SegmentUtils.getRoundTitle(widget.segment, context),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+          ));
+    } else {
+      return const SizedBox();
+    }
   }
 }

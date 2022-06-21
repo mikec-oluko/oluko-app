@@ -1,8 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
@@ -12,7 +10,6 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.d
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
-import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
@@ -24,7 +21,6 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enrollment_audio.dart';
-import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
@@ -47,7 +43,6 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -60,7 +55,6 @@ import 'package:oluko_app/utils/class_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum PanelEnum { audios, classDetail }
@@ -86,7 +80,6 @@ class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   Class _class;
-  List<Movement> _movements;
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
   List<MovementSubmodel> _classMovements;
@@ -99,6 +92,8 @@ class _InsideClassesState extends State<InsideClass> {
   Widget panelContent;
   PanelEnum panelState;
   List<Segment> _classSegments;
+  List<ChallengeNavigation> _challengeNavigations = [];
+  List<bool> _completedBefore = [];
 
   @override
   void initState() {
@@ -114,7 +109,7 @@ class _InsideClassesState extends State<InsideClass> {
         }
         BlocProvider.of<SegmentBloc>(context).getAll(widget.courseEnrollment.classes[widget.classIndex]);
         BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
-        BlocProvider.of<MovementBloc>(context).getAll();
+
         BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
         return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
@@ -148,44 +143,33 @@ class _InsideClassesState extends State<InsideClass> {
   Widget form() {
     return Form(
       key: _formKey,
-      child: Scaffold(
-        body: BlocBuilder<MovementBloc, MovementState>(
-          builder: (context, movementState) {
-            if (movementState is GetAllSuccess) {
-              _movements = movementState.movements;
-              return BlocBuilder<CoachAudioBloc, CoachAudioState>(
-                builder: (context, coachState) {
-                  if (coachState is CoachesByAudiosSuccess) {
-                    _coaches = coachState.coaches;
-                    return Stack(
-                      children: [
-                        SlidingUpPanel(
-                          controller: panelController,
-                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                          minHeight: 5,
-                          collapsed: Container(
-                            color: Colors.black,
-                          ),
-                          panel: classDetailSection(),
-                          body: Container(
-                            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
-                            child: classInfoSection(coachState.coaches),
-                          ),
-                        ),
-                        slidingUpPanelComponent(context)
-                      ],
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              );
-            } else {
-              return const SizedBox();
-            }
-          },
-        ),
-      ),
+      child: Scaffold(body: BlocBuilder<CoachAudioBloc, CoachAudioState>(
+        builder: (context, coachState) {
+          if (coachState is CoachesByAudiosSuccess) {
+            _coaches = coachState.coaches;
+            return Stack(
+              children: [
+                SlidingUpPanel(
+                  controller: panelController,
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                  minHeight: 5,
+                  collapsed: Container(
+                    color: Colors.black,
+                  ),
+                  panel: classDetailSection(),
+                  body: Container(
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
+                    child: classInfoSection(coachState.coaches),
+                  ),
+                ),
+                slidingUpPanelComponent(context)
+              ],
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      )),
     );
   }
 
@@ -230,18 +214,15 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget buildChallengeSection() {
-    List<Widget> challengeCards = [];
-    final List<ChallengeNavigation> challenges = getChallenges();
-    if (challenges.isNotEmpty) {
+    _challengeNavigations = getChallenges();
+    if (_challengeNavigations.isNotEmpty) {
       BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
-          .returnChallengeCards(userId: widget.courseEnrollment.userId, listOfChallenges: challenges);
+          .getChallengesAndCompletedBefore(userId: widget.courseEnrollment.userId, listOfChallenges: _challengeNavigations);
       return BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(
         builder: (context, state) {
-          if (state is ChallengeListSuccess) {
-            challengeCards = state.challenges;
-            return ChallengeSection(
-              challengesCard: challengeCards,
-            );
+          if (state is ChallengeCompletedSuccess) {
+            _completedBefore = state.completedBefore;
+            return ChallengeSection(challengesCard: buildChallengeCards(_challengeNavigations));
           } else {
             return Column(children: [
               const Padding(
@@ -257,6 +238,20 @@ class _InsideClassesState extends State<InsideClass> {
     } else {
       return const SizedBox();
     }
+  }
+
+  List<Widget> buildChallengeCards(List<ChallengeNavigation> challenges) {
+    List<Widget> challengeCards = [];
+    for (int i = 0; i < _completedBefore.length; i++) {
+      challengeCards.add(ChallengesCard(
+          userRequested: null,
+          useAudio: false,
+          segmentChallenge: challenges[i],
+          navigateToSegment: true,
+          audioIcon: false,
+          customValueForChallenge: _completedBefore[i]));
+    }
+    return challengeCards;
   }
 
   List<ChallengeNavigation> getChallenges() {
@@ -328,14 +323,12 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classDetailSection() {
-    ChallengeNavigation segmentChallenge =
-        ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     return BlocBuilder<SegmentBloc, SegmentState>(
       builder: (context, segmentState) {
         if (segmentState is GetSegmentsSuccess) {
           _classSegments = segmentState.segments;
-          return ClassDetailSection(
-              segmentChallenge: segmentChallenge, classObj: _class, movements: _movements, segments: segmentState.segments);
+          setCompletedBefore();
+          return ClassDetailSection(challengeNavigations: _challengeNavigations, classObj: _class, segments: segmentState.segments);
         } else {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -351,6 +344,12 @@ class _InsideClassesState extends State<InsideClass> {
         }
       },
     );
+  }
+
+  void setCompletedBefore() {
+    for (int i = 0; i < _completedBefore.length; i++) {
+      _challengeNavigations[i].previousSegmentFinish = _completedBefore[i];
+    }
   }
 
   Widget classInfoSection(List<UserResponse> coaches) {

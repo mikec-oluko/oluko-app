@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -11,11 +13,10 @@ import 'package:oluko_app/ui/screens/courses/class_segment_section.dart';
 class ClassDetailSection extends StatefulWidget {
   final Class classObj;
   final List<Segment> segments;
-  final List<Movement> movements;
   final Function(BuildContext, MovementSubmodel) onPressedMovement;
-  final ChallengeNavigation segmentChallenge;
+  final List<ChallengeNavigation> challengeNavigations;
 
-  ClassDetailSection({this.classObj, this.onPressedMovement, this.movements, this.segments, this.segmentChallenge});
+  ClassDetailSection({this.challengeNavigations, this.classObj, this.onPressedMovement, this.segments});
 
   @override
   _State createState() => _State();
@@ -23,7 +24,57 @@ class ClassDetailSection extends StatefulWidget {
 
 class _State extends State<ClassDetailSection> {
   @override
+  void initState() {
+    BlocProvider.of<MovementBloc>(context).getAll();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    List<Movement> _movements = [];
+
+    ChallengeNavigation getChallengeNavigation(int i, String segmentId) {
+      for (var c in widget.challengeNavigations) {
+        if (c.segmentId == segmentId) {
+          return c;
+        }
+      }
+      return null;
+    }
+
+    List<Widget> getClassWidgets() {
+      List<Widget> widgets = [];
+      for (int i = 0; i < widget.classObj.segments.length; i++) {
+        List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, _movements);
+        /*for (int j = 0; j < widget.segments.length; j++) {
+          if (widget.segments[j].id == widget.classObj.segments[i].id && widget.segments[j].isChallenge == true) {
+            for (int k = 0; k < widget.challengeNavigations[0].enrolledCourse.classes.length; k++) {
+              if (widget.challengeNavigations[0].enrolledCourse.classes[k].id == widget.classObj.id) {
+                if (i - 1 > 0) {
+                  widget.challengeNavigations[0].previousSegmentFinish =
+                      widget.challengeNavigations[0].enrolledCourse.classes[k].segments[i - 1].completedAt != null;
+                  widget.challengeNavigations[0].challengeSegment = widget.challengeNavigations[0].enrolledCourse.classes[k].segments[i];
+                  widget.challengeNavigations[0].segmentIndex = i;
+                } else {
+                  widget.challengeNavigations[0].segmentIndex = i;
+                  widget.challengeNavigations[0].previousSegmentFinish = true;
+                  widget.challengeNavigations[0].challengeSegment = widget.challengeNavigations[0].enrolledCourse.classes[k].segments[i];
+                }
+              }
+            }
+          }
+        }*/
+        widgets.add(ClassSegmentSection(
+            challengeNavigation: getChallengeNavigation(i, widget.segments[i].id),
+            showTopDivider: i != 0,
+            segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
+            movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
+            movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
+            onPressedMovement: widget.onPressedMovement)); //TODO:check null value
+      }
+      return widgets;
+    }
+
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
@@ -39,40 +90,16 @@ class _State extends State<ClassDetailSection> {
                 'assets/courses/horizontal_vector.png',
                 scale: 5,
               )),
-          Container(height: 448, child: ListView(children: getClassWidgets()))
+          Container(
+              height: 448,
+              child: BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+                if (movementState is GetAllSuccess) {
+                  _movements = movementState.movements;
+                  return ListView(children: getClassWidgets());
+                } else {
+                  return SizedBox();
+                }
+              }))
         ]));
-  }
-
-  List<Widget> getClassWidgets() {
-    List<Widget> widgets = [];
-    for (int i = 0; i < widget.classObj.segments.length; i++) {
-      List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, widget.movements);
-      for (int j = 0; j < widget.segments.length; j++) {
-        if (widget.segments[j].id == widget.classObj.segments[i].id && widget.segments[j].isChallenge == true) {
-          for (int k = 0; k < widget.segmentChallenge.enrolledCourse.classes.length; k++) {
-            if (widget.segmentChallenge.enrolledCourse.classes[k].id == widget.classObj.id) {
-              if (i - 1 > 0) {
-                widget.segmentChallenge.previousSegmentFinish =
-                    widget.segmentChallenge.enrolledCourse.classes[k].segments[i - 1].completedAt != null;
-                widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
-                widget.segmentChallenge.segmentIndex = i;
-              } else {
-                widget.segmentChallenge.segmentIndex = i;
-                widget.segmentChallenge.previousSegmentFinish = true;
-                widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
-              }
-            }
-          }
-        }
-      }
-      widgets.add(ClassSegmentSection(
-          segmentChallenge: widget.segmentChallenge,
-          showTopDivider: i != 0,
-          segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
-          movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
-          movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
-          onPressedMovement: widget.onPressedMovement)); //TODO:check null value
-    }
-    return widgets;
   }
 }
