@@ -67,7 +67,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
               child: Scaffold(
                   appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'class')),
                   body: Container(
-                      color: Colors.black,
+                      color:OlukoColors.black,
                       child: Stack(
                         children: [
                           ListView(children: [

@@ -133,7 +133,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
 
   Container cameraContent() {
     return Container(
-      color: Colors.black,
+      color:OlukoColors.black,
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: ListView(
@@ -182,7 +182,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
   Container neumorphicCameraContent() {
     final size = MediaQuery.of(context).size;
     return Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height / 1.1,
@@ -386,7 +386,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       child: BottomAppBar(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : Colors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth :OlukoColors.black,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(

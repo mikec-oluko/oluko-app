@@ -316,7 +316,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           ),
                         )
                       : Container(
-                          color: Colors.black,
+                          color:OlukoColors.black,
                           child: Stack(
                             children: [
                               ListView(

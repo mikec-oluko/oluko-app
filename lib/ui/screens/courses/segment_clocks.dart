@@ -387,7 +387,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         resizeToAvoidBottomInset: false,
         appBar: SegmentClocksUtils.getAppBar(
             context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
-        backgroundColor: Colors.black,
+        backgroundColor:OlukoColors.black,
         body:
             //TODO: for screen rotation
             /*NativeDeviceOrientationReader(builder: (context) {
@@ -422,7 +422,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             controller: recordingPanelController,
             minHeight: 0,
             maxHeight: 310,
-            collapsed: Container(color: Colors.black),
+            collapsed: Container(color: OlukoColors.black),
             panel: InitialTimerPanel(
               panelController: recordingPanelController,
               onShowAgainPressed: widget.onShowAgainPressed,

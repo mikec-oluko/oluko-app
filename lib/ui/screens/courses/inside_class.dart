@@ -153,11 +153,11 @@ class _InsideClassesState extends State<InsideClass> {
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                   minHeight: 5,
                   collapsed: Container(
-                    color: Colors.black,
+                    color:OlukoColors.black,
                   ),
                   panel: panelDetail(),
                   body: Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom :OlukoColors.black,
                     child: classInfoSection(coachState.coaches),
                   ),
                 ),

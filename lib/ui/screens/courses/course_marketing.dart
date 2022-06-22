@@ -136,7 +136,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   body: OlukoNeumorphism.isNeumorphismDesign
                       ? customScrollView(enrollmentState)
                       : Container(
-                          color: Colors.black,
+                          color:OlukoColors.black,
                           child: Stack(
                             children: [
                               ListView(children: [

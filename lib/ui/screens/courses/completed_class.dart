@@ -91,7 +91,7 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget form() {
     return Scaffold(
-        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : Colors.black,
+        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker :OlukoColors.black,
         body: Stack(
           children: [
             Padding(

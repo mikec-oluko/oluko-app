@@ -210,7 +210,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form() {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor:OlukoColors.black,
       body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),

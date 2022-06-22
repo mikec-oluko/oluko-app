@@ -494,7 +494,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
+        backgroundColor:OlukoColors.black,
         content: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(

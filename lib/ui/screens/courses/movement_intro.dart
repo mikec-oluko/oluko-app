@@ -102,7 +102,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       appBar: OlukoNeumorphism.isNeumorphismDesign
           ? null
           : OlukoImageBar(actions: [], movements: [_movementSubmodel], onPressedMovement: (context, movement) => {}),
-      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : Colors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker :OlukoColors.black,
       body: Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
@@ -561,7 +561,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   : tabController.index == index
                       ? OlukoNeumorphism.isNeumorphismDesign
                           ? Colors.white
-                          : Colors.black
+                          : OlukoColors.black
                       : OlukoNeumorphism.isNeumorphismDesign
                           ? Colors.grey
                           : Colors.white),

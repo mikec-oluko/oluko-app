@@ -42,7 +42,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                           shadowLightColorEmboss: OlukoColors.black,
                           surfaceIntensity: 1,
                           shadowLightColor: OlukoColors.grayColor,
-                          shadowDarkColor: Colors.black),
+                          shadowDarkColor:OlukoColors.black),
                       child: Container(
                         width: 60,
                         height: 60,

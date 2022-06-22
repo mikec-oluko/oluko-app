@@ -82,7 +82,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                     child: IconButton(
                         icon: Icon(
                           Icons.more_vert,
-                          color: Colors.black,
+                          color:OlukoColors.black,
                           size: 25,
                         ),
                         onPressed: () => {/* TODO Implement 'More' action functionality */}),

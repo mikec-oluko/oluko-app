@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 
@@ -43,7 +44,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoColors.black,
       body: Stack(
         children: <Widget>[
           Opacity(

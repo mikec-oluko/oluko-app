@@ -262,7 +262,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
       ),
     );
     return Container(
-      color: Colors.black,
+      color:OlukoColors.black,
       child: Stack(
               children: widgets +
                   [

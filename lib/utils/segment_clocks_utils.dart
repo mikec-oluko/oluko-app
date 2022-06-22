@@ -132,7 +132,7 @@ class SegmentClocksUtils {
           return const LinearGradient(
             begin: Alignment.center,
             end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.transparent],
+            colors: [OlukoColors.black, Colors.transparent],
           ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
         },
         blendMode: BlendMode.dstIn,
@@ -153,7 +153,7 @@ class SegmentClocksUtils {
     (await showDialog(
       context: contextWBloc,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
+        backgroundColor: OlukoColors.black,
         title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
         content: Text(
           isRecording

@@ -78,7 +78,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
-          backgroundColor: Colors.black,
+          backgroundColor:OlukoColors.black,
           leading: backButton(),
           title: getTitle(),
           actions: widget.actions,

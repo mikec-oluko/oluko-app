@@ -49,7 +49,7 @@ class _HiFivePageState extends State<HiFivePage> {
                 _hiFiveState = hiFiveState;
                 return Scaffold(
                   appBar: _appBar(),
-                  backgroundColor: Colors.black,
+                  backgroundColor:OlukoColors.black,
                   body: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
                   }, builder: (context, userProgressListState) {
                     if (userProgressListState is GetUserProgressSuccess) {

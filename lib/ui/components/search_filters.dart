@@ -52,9 +52,9 @@ class _State<T extends Base> extends State<SearchFilters> {
       side: BorderSide(color: OlukoColors.primary),
       label: Text(
         courseName.value,
-        style: TextStyle(color: selected[courseName.key.id] ? Colors.black : OlukoColors.primary, fontSize: 15),
+        style: TextStyle(color: selected[courseName.key.id] ?OlukoColors.black : OlukoColors.primary, fontSize: 15),
       ),
-      backgroundColor: selected[courseName.key.id] ? OlukoColors.primary : Colors.black,
+      backgroundColor: selected[courseName.key.id] ? OlukoColors.primary : OlukoColors.black,
     );
   }
 
