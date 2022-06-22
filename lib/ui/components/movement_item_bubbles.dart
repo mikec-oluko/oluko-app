@@ -48,7 +48,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         .map(
           (movement) => movement != null
               ? Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(top: 0),
                   child: _imageItem(context, movement.image == null ? image : movement.image, movement.name,
                       onPressed: (context) => widget.onPressed(context, movement)),
                 )
@@ -73,7 +73,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   }
 
   Widget buildBubbleGrid() {
-    return GridView.count(mainAxisSpacing: 15, crossAxisCount: 4, children: buildMovementItems());
+    return GridView.count(mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {
@@ -87,14 +87,14 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               StoriesItem(
-                maxRadius: widget.isSegmentSection ? 30 : 23,
+                maxRadius: widget.isSegmentSection ? 30 : 22,
                 imageUrl: imageUrl,
                 isSegmentSection: widget.isSegmentSection,
               )
             else
               StoriesItem(maxRadius: 23, imageUrl: imageUrl),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 4.0),
               child: Text(
                 name ?? '',
                 textAlign: TextAlign.center,
