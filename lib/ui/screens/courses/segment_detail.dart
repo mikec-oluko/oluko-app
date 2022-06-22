@@ -115,6 +115,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
                 if (segmentState is GetSegmentsSuccess) {
                   _segments = segmentState.segments;
+                  setTotalSegments();
                   return _body();
                 } else {
                   return OlukoCircularProgressIndicator();
@@ -150,10 +151,13 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
         }
       }*/
+      setTotalSegments();
     } else {
       BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     }
+  }
 
+  void setTotalSegments() {
     totalSegments = _segments.length - 1;
     if (totalSegments < segmentIndexToUse) {
       segmentIndexToUse = 0;
@@ -210,7 +214,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form() {
     return Scaffold(
-      backgroundColor:OlukoColors.black,
+      backgroundColor: OlukoColors.black,
       body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
