@@ -606,6 +606,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   void nextSegmentAction() {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     if (widget.segmentIndex < widget.segments.length - 1) {
+      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.segmentDetail],

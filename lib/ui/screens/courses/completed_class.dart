@@ -1,35 +1,21 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
-import 'package:oluko_app/blocs/introduction_media_bloc.dart';
-import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/completed_course_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/class_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class CompletedClass extends StatefulWidget {
@@ -132,7 +118,8 @@ class _CompletedClassState extends State<CompletedClass> {
                             title: OlukoLocalizations.get(context, 'done'),
                             onPressed: () {
                               if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
-                                Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                                Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root])); 
+                                Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root], arguments: {
                                   'index': widget.courseIndex,
                                   'classIndex': widget.classIndex + 1,
                                 });
