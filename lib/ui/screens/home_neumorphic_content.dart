@@ -129,7 +129,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       Padding(
                         padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.15),
                         child: Image.asset(
-                          'assets/home/mvt.png',
+                          OlukoNeumorphism.mvtLogo,
                           scale: 2,
                         ),
                       ),
@@ -206,7 +206,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
-              'assets/home/mvt.png',
+              OlukoNeumorphism.mvtLogo,
               scale: 4,
             ),
             HandWidget(authState: widget.authState),
@@ -458,7 +458,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Image.asset(
-                          'assets/home/mvt.png',
+                         OlukoNeumorphism.mvtLogo,
                           scale: 4,
                         ),
                       ),
@@ -613,7 +613,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         ),
         const SizedBox(height: 15),
         Image.asset(
-          'assets/home/mvt.png',
+          OlukoNeumorphism.mvtLogo,
           scale: 2,
         ),
         SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),

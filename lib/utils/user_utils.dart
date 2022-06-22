@@ -23,7 +23,7 @@ class UserUtils {
               textAlign: TextAlign.center,
             )
           : Image.asset(
-              'assets/home/mvt.png',
+              OlukoNeumorphism.mvtLogo,
               scale: 3,
             ),
     );
