@@ -107,7 +107,7 @@ class _InsideClassesState extends State<InsideClass> {
         if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {
           BlocProvider.of<DownloadAssetBloc>(context).getVideo();
         }
-        BlocProvider.of<SegmentBloc>(context).getAll(widget.courseEnrollment.classes[widget.classIndex]);
+        BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
         BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
 
         BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
