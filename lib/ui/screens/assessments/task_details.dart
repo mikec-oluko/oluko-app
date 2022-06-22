@@ -53,7 +53,7 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  bool _makePublic;
+  bool _makePublic = false;
   AssessmentAssignment _assessmentAssignment;
   TaskSubmission _taskSubmission;
   Task _task;
@@ -146,6 +146,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           builder: (context, state) {
             if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission.task.id == _task.id) {
               isAssessmentDone = true;
+              _makePublic = state.taskSubmission.isPublic;
               _panelContent = isAssessmentDone ? recordAgainButtons(_taskSubmission) : startRecordingButton();
             } else if (state is TaskSubmissionLoading) {
               _panelContent = const SizedBox.shrink();
@@ -552,7 +553,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       Navigator.pop(context);
     } else {
       Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
-          arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
+          arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1});
     }
   }
 
