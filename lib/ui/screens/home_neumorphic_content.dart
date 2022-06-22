@@ -234,6 +234,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ? StoriesHeader(
               widget.user.uid,
               maxRadius: 30,
+              color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
             )
           : const SizedBox(),
     ));
@@ -374,7 +375,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         },
         child: Padding(
           padding: EdgeInsets.only(
-              top: ScreenUtils.smallScreen(context)?ScreenUtils.height(context)*0.08:ScreenUtils.height(context)*0.06),
+              top: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.08 : ScreenUtils.height(context) * 0.06),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
@@ -575,6 +576,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         child: StoriesHeader(
           widget.user.uid,
           maxRadius: 30,
+          color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
         ),
       );
     } else {

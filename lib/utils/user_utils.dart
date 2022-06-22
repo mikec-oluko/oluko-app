@@ -7,10 +7,10 @@ class UserUtils {
   String defaultAvatarImageUrl =
       'https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/avatar.png?alt=media&token=c16925c3-e2be-47fb-9d15-8cd1469d9790';
 
-  static CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname}) {
+  static CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname,Color circleColor}) {
     return CircleAvatar(
       maxRadius: maxRadius ?? 30,
-      backgroundColor: name == null || lastname == null || name == 'null' || lastname == 'null'
+      backgroundColor: circleColor!=null?circleColor:name == null || lastname == null || name == 'null' || lastname == 'null'
           ? OlukoColors.userColor(null, null)
           : OlukoColors.userColor(name, lastname),
       child: name != null && name.isNotEmpty
