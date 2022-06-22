@@ -47,12 +47,8 @@ class SegmentBloc extends Cubit<SegmentState> {
   void getSegmentsInClass(EnrollmentClass classObj) async {
     emit(LoadingSegment());
     try {
-      List<String> segmentIds = [];
-
       List<Segment> segments = await SegmentRepository.getAll();
-      for (EnrollmentSegment segment in classObj.segments) {
-        segmentIds.add(segment.id);
-      }
+      final List segmentIds = classObj.segments.map((segment) => segment.id).toList();
       List<Segment> retSegments = List<Segment>.filled(segmentIds.length, null);
       for (int i = 0; i < segments.length - 1; i++) {
         int index = segmentIds.indexOf(segments[i].id);
