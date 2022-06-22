@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
-import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
-import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
-import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -53,7 +52,16 @@ class _State extends State<ClassMovementSection> {
               : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
         ),
         Expanded(child: SizedBox()),
-        GestureDetector(
+        getViewDetails()
+      ]),
+      buildMovementBubbles(),
+    ]);
+  }
+
+  Widget getViewDetails() {
+    return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+      if (segmentState is GetSegmentsSuccess) {
+        return GestureDetector(
             onTap: () => widget.panelController.open(),
             child: SizedBox(
               width: 85,
@@ -64,10 +72,16 @@ class _State extends State<ClassMovementSection> {
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                 ),
               ),
-            ))
-      ]),
-      buildMovementBubbles(),
-    ]);
+            ));
+      } else {
+        return Padding(
+          padding: EdgeInsets.only(top: 3, right: 6),
+          child: Container(
+          height: 15,
+          width: 15,
+          child: OlukoCircularProgressIndicator(personalized: true, width: 2)));
+      }
+    });
   }
 
   Widget buildMovementBubbles() {

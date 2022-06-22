@@ -156,7 +156,7 @@ class _InsideClassesState extends State<InsideClass> {
                   collapsed: Container(
                     color: Colors.black,
                   ),
-                  panel: classDetailSection(),
+                  panel: panelDetail(),
                   body: Container(
                     color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
                     child: classInfoSection(coachState.coaches),
@@ -322,7 +322,7 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  Widget classDetailSection() {
+  Widget panelDetail() {
     return BlocBuilder<SegmentBloc, SegmentState>(
       builder: (context, segmentState) {
         if (segmentState is GetSegmentsSuccess) {
