@@ -111,30 +111,49 @@ class _SegmentDetailState extends State<SegmentDetail> {
         widget.fromChallenge ? BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id) : null;
         BlocProvider.of<ChallengeSegmentBloc>(context)
             .getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
-        return widget.fromChallenge
-            ? BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-                if (classState is GetByIdSuccess) {
-                  _class = classState.classObj;
-                  return _segmentDetailView();
+        return widget.classSegments == null
+            ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+                if (segmentState is GetSegmentsSuccess) {
+                  _segments = segmentState.segments;
+                  return _body();
                 } else {
-                  return const SizedBox.shrink();
+                  return OlukoCircularProgressIndicator();
                 }
               })
-            : _segmentDetailView();
+            : _body();
       } else {
         return OlukoCircularProgressIndicator();
       }
     });
   }
 
+  Widget _body() {
+    return widget.fromChallenge
+        ? BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
+            if (classState is GetByIdSuccess) {
+              _class = classState.classObj;
+              return _segmentDetailView();
+            } else {
+              return const SizedBox.shrink();
+            }
+          })
+        : _segmentDetailView();
+  }
+
   void setSegments() {
-    for (var segment in widget.classSegments) {
-      for (var enrolledSegment in widget.courseEnrollment.classes[widget.classIndex].segments) {
-        if (segment.id == enrolledSegment.id && _segments.length < widget.courseEnrollment.classes[widget.classIndex].segments.length) {
-          _segments.add(segment);
+    if (widget.classSegments != null) {
+      _segments = widget.classSegments;
+      /*for (var segment in widget.classSegments) {
+        for (var enrolledSegment in widget.courseEnrollment.classes[widget.classIndex].segments) {
+          if (segment.id == enrolledSegment.id && _segments.length < widget.courseEnrollment.classes[widget.classIndex].segments.length) {
+            _segments.add(segment);
+          }
         }
-      }
+      }*/
+    } else {
+      BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     }
+
     totalSegments = _segments.length - 1;
     if (totalSegments < segmentIndexToUse) {
       segmentIndexToUse = 0;
