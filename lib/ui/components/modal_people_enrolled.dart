@@ -70,7 +70,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
 
   Widget body() {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView(
           children: [
             Row(
