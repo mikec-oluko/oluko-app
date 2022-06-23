@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -550,7 +551,8 @@ class Routes {
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,
+            selfie: argumentsToAdd['selfie'] as XFile);
         break;
       case RouteEnum.story:
         providers = [
@@ -1040,6 +1042,7 @@ class Routes {
           fromCompletedClass: argumentsToAdd['fromCompletedClass'] as bool,
           courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
           classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
         );
         break;
       case RouteEnum.selfRecordingPreview:
