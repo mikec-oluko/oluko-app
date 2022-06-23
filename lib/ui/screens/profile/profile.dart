@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
+import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/profile_options.dart';
 import 'package:oluko_app/helpers/profile_routes.dart';
@@ -45,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     _globalService.comesFromCoach = false;
-
+    BlocProvider.of<FAQBloc>(context).get();
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         profileInfo = state.user;

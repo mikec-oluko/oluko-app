@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
@@ -35,6 +36,10 @@ class AuthRepository {
   Future<String> getApiToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String apiToken = prefs.getString('apiToken');
+    final bool hasExpired = JwtDecoder.isExpired(apiToken);
+    if (hasExpired) {
+      return null;
+    }
     return apiToken;
   }
 

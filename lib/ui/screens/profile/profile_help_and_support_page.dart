@@ -22,7 +22,6 @@ class ProfileHelpAndSupportPage extends StatefulWidget {
 class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<FAQBloc>(context).get();
     return Scaffold(
       appBar: OlukoAppBar(
         title: ProfileViewConstants.profileOptionsHelpAndSupport,
