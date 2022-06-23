@@ -17,7 +17,7 @@ class _State extends State<PeekPassword> {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(
-        !peekPassword ? Icons.visibility : Icons.visibility_off,
+        peekPassword ? Icons.visibility : Icons.visibility_off,
         color: Theme.of(context).primaryColorDark,
       ),
       onPressed: () {

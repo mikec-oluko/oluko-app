@@ -365,8 +365,10 @@
     "introductionVideo": "Introduction video",
     "shareYourVideo": "Share your video.",
     "sendFriendRecommendation": "Send recommendation",
-    "cousesPanelText": "You will encounter this challenge in the following Courses",
     "save": "save",
     "changes": "changes",
+    "tokenExpired": "Token has expired, please logout to get a new one.",
+    "errorMessage": "Your information was not updated. Please try again.",
+    "cousesPanelText": "You will encounter this challenge in the following Courses",
     "messageRequired": "Message required"
 }

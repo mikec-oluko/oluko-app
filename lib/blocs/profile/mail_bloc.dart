@@ -22,7 +22,7 @@ class MailBloc extends Cubit<MailState> {
 
   Future<void> sendEmail(String username, String email, String message, String phone) async {
     try {
-      if (message != null) {
+      if (message != '') {
         MailService.send(username, email, message, phone);
         emit(MailSuccess());
       } else {

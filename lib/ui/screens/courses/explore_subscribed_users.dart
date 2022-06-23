@@ -9,11 +9,13 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
@@ -35,6 +37,13 @@ class ExploreSubscribedUsers extends StatefulWidget {
 class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   List<UserResponse> allEnrolledUsers;
   AuthSuccess loggedUser;
+  Map<String, UserProgress> _usersProgress = {};
+
+  @override
+  void initState() {
+    BlocProvider.of<UserProgressListBloc>(context).get();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,43 +60,72 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
           width: ScreenUtils.width(context),
           child: ListView(children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                child: BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, subscribedCourseUsersState) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Row(
-                          children: [
-                            TitleBody(OlukoLocalizations.get(context, "favorites")),
-                          ],
-                        ),
-                      ),
-                      if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
-                        usersGrid(subscribedCourseUsersState.favoriteUsers, true)
-                      else
-                        const SizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Row(
-                          children: [
-                            TitleBody(OlukoLocalizations.get(context, "everyoneElse")),
-                          ],
-                        ),
-                      ),
-                      subscribedCourseUsersState is SubscribedCourseUsersSuccess
-                          ? usersGrid(subscribedCourseUsersState.users, false)
-                          : SizedBox()
-                    ],
-                  );
-                }),
-              ),
-            ),
+                padding: const EdgeInsets.all(16.0),
+                child: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
+                  if (userProgressListState is GetUserProgressSuccess) {
+                    setState(() {
+                      _usersProgress = userProgressListState.usersProgress;
+                    });
+                  }
+                }, builder: (context, userProgressListState) {
+                  return body();
+                })),
           ]),
         ),
       );
     });
+  }
+
+  Widget body() {
+    return Container(
+      child: BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, subscribedCourseUsersState) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Row(
+                children: [
+                  TitleBody(OlukoLocalizations.get(context, "favorites")),
+                ],
+              ),
+            ),
+            if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
+              BlocListener<UserProgressStreamBloc, UserProgressStreamState>(
+                  listener: (context, userProgressStreamState) {
+                    blocConsumerCondition(userProgressStreamState);
+                  },
+                  child: usersGrid(subscribedCourseUsersState.favoriteUsers, true))
+            else
+              const SizedBox(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Row(
+                children: [
+                  TitleBody(OlukoLocalizations.get(context, "everyoneElse")),
+                ],
+              ),
+            ),
+            subscribedCourseUsersState is SubscribedCourseUsersSuccess ? usersGrid(subscribedCourseUsersState.users, false) : SizedBox()
+          ],
+        );
+      }),
+    );
+  }
+
+  void blocConsumerCondition(UserProgressStreamState userProgressStreamState) {
+    if (userProgressStreamState is UserProgressUpdate) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressAdd) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
+      });
+    } else if (userProgressStreamState is UserProgressRemove) {
+      setState(() {
+        _usersProgress[userProgressStreamState.obj.id].progress = 0;
+      });
+    }
   }
 
   Widget usersGrid(List<UserResponse> users, bool areFriends) {
@@ -104,6 +142,8 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                       children: [
                         if (areFriends)
                           StoriesItem(
+                            showUserProgress: true,
+                            userProgress: _usersProgress[user.id],
                             maxRadius: 30,
                             imageUrl: user.avatar,
                             bloc: BlocProvider.of<StoryListBloc>(context),
@@ -112,9 +152,14 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                             currentUserId: loggedUser.user.id,
                             name: user.firstName,
                             from: StoriesItemFrom.friends,
+                            userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                           )
                         else
                           StoriesItem(
+                            showUserProgress: true,
+                            userProgress: _usersProgress[user.id],
+                            itemUserId: user.id,
+                            userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                             maxRadius: 30,
                             imageUrl: user.avatar,
                             name: user.firstName,
@@ -153,7 +198,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       content: FriendModalContent(
           friendUser,
           loggedUser.user.id,
-          null,
+          _usersProgress,
           BlocProvider.of<FriendBloc>(context),
           BlocProvider.of<FriendRequestBloc>(context),
           BlocProvider.of<HiFiveSendBloc>(context),

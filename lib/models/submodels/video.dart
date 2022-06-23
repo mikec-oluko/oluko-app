@@ -13,7 +13,7 @@ class Video extends Equatable {
     return Video(
         url: json['url']?.toString(),
         thumbUrl: json['thumb_url']?.toString(),
-        aspectRatio: json['aspect_ratio'] as double,
+        aspectRatio: json['aspect_ratio'] is int ? (json['aspect_ratio'] as int).toDouble() : json['aspect_ratio'] as double,
         name: json['name']?.toString(),
         duration: json['duration'] as int);
   }

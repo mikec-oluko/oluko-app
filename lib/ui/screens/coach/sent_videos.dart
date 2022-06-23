@@ -231,7 +231,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
   ImageProvider getImage(SegmentSubmission segmentSubmitted) {
     return segmentSubmitted.video.thumbUrl != null
         ? CachedNetworkImageProvider(segmentSubmitted.video.thumbUrl)
-        : const AssetImage('assets/home/mvt.png') as ImageProvider;
+        : const AssetImage(OlukoNeumorphism.mvtLogo) as ImageProvider;
   }
 
   Widget _getDateWidget(SegmentSubmission segmentSubmitted) {

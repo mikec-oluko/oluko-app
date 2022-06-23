@@ -5,6 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 class OlukoNeumorphism {
   static const bool isNeumorphismDesign = true;
   static const Radius radiusValue = Radius.circular(15.0);
+  static const String mvtLogo = 'assets/home/mvt.png';
 
   static NeumorphicStyle primaryButtonStyleDisable(
       {bool useBorder = false,
@@ -359,7 +360,7 @@ class OlukoFonts {
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor, FontWeight customFontWeight}) {
     return TextStyle(
         fontFamily: 'Roboto',
         fontSize: olukoBigFontSize,
