@@ -57,6 +57,7 @@ import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 //import 'package:native_device_orientation/native_device_orientation.dart';
@@ -794,7 +795,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       durationPR += currentDuration;
       totalScore += currentDuration;
       scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] = scoresInt[timerEntries[timerTaskIndex].round].toString() + ' s';
+      scores[timerEntries[timerTaskIndex].round] = TimeConverter.durationToString(Duration(seconds:scoresInt[timerEntries[timerTaskIndex].round]));
 
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
