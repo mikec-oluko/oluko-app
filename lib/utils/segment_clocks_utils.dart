@@ -517,7 +517,6 @@ class SegmentClocksUtils {
                 children: [
                   OlukoNeumorphicSecondaryButton(
                     title: OlukoLocalizations.get(context, 'goToClass'),
-                    textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     thinPadding: true,
                     onPressed: () {
                       goToClass();

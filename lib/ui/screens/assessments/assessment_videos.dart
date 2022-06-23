@@ -174,14 +174,14 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
                                       child: Text(
                                         OlukoLocalizations.get(context, 'coachPageAssessmentsText'),
-                                        textAlign: TextAlign.justify,
+                                        textAlign: TextAlign.left,
                                         style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
                                       ),
                                     ),
                                   )
                                 : Text(
                                     _assessment.description,
-                                    textAlign: TextAlign.justify,
+                                    textAlign: TextAlign.left,
                                     style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
                                   )),
                         BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {

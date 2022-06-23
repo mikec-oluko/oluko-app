@@ -1039,7 +1039,13 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     } else {
       if (isSegmentWithRecording()) {
         if (cameraController != null) {
-          cameraController.resumeVideoRecording();
+          try {
+           await cameraController.resumeVideoRecording();
+          } catch (e) {
+          resetAMRAPRound();
+          deleteUserProgress();
+          SegmentClocksUtils.segmentClockOnWillPop(context);
+          }
         }
         _resume();
       }

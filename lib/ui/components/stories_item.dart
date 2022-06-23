@@ -31,6 +31,7 @@ class StoriesItem extends StatefulWidget {
   UserProgressStreamBloc userProgressStreamBloc;
   UserProgress userProgress;
   bool showUserProgress;
+  Color color;
 
   StoriesItem(
       {this.maxRadius,
@@ -49,7 +50,8 @@ class StoriesItem extends StatefulWidget {
       this.itemUserId,
       this.bloc,
       this.from = StoriesItemFrom.home,
-      this.isSegmentSection = false}) {
+      this.isSegmentSection = false,
+      this.color}) {
     if (getStories == true &&
         currentUserId != null &&
         itemUserId != null &&
@@ -209,7 +211,7 @@ class _State extends State<StoriesItem> {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname),
+              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname,circleColor: widget.color)
             )
           : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
     }

@@ -138,28 +138,30 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             if (authState is AuthSuccess) {
               BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
             }
-            return Scaffold(
-              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-              body: Padding(
-                padding: _isBottomTabActive && this.tabController.index != 3
-                    ? const EdgeInsets.only(bottom: 75)
-                    : const EdgeInsets.only(bottom: 0),
-                child: TabBarView(
-                  //physics this is setup to stop swiping from tab to tab
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: this.tabController,
-                  children: tabs,
+            return SafeArea(
+              child: Scaffold(
+                backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+                body: Padding(
+                  padding: _isBottomTabActive && this.tabController.index != 3
+                      ? const EdgeInsets.only(bottom: 75)
+                      : const EdgeInsets.only(bottom: 0),
+                  child: TabBarView(
+                    //physics this is setup to stop swiping from tab to tab
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: this.tabController,
+                    children: tabs,
+                  ),
                 ),
+                extendBody: true,
+                bottomNavigationBar: _isBottomTabActive
+                    ? OlukoBottomNavigationBar(
+                        selectedIndex: this.tabController.index,
+                        onPressed: (index) => this.setState(() {
+                          this.tabController.animateTo(index as int);
+                        }),
+                      )
+                    : const SizedBox(),
               ),
-              extendBody: true,
-              bottomNavigationBar: _isBottomTabActive
-                  ? OlukoBottomNavigationBar(
-                      selectedIndex: this.tabController.index,
-                      onPressed: (index) => this.setState(() {
-                        this.tabController.animateTo(index as int);
-                      }),
-                    )
-                  : const SizedBox(),
             );
           },
         ));

@@ -247,7 +247,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Image.asset(
-          'assets/home/mvt.png',
+          OlukoNeumorphism.mvtLogo,
           scale: 4,
         ),
       ),
@@ -259,7 +259,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
         ? Align(
             alignment: Alignment.centerLeft,
             child: Image.asset(
-              'assets/home/mvt.png',
+              OlukoNeumorphism.mvtLogo,
               scale: 4,
             ))
         : Align(
