@@ -14,7 +14,7 @@ class _TabContentListState extends State<TabContentList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView(children: buildContentToShow()),
+      child: ListView(physics: const BouncingScrollPhysics(), children: buildContentToShow()),
     );
   }
 
