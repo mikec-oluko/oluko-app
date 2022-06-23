@@ -360,7 +360,7 @@ class OlukoFonts {
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor, FontWeight customFontWeight}) {
     return TextStyle(
         fontFamily: 'Roboto',
         fontSize: olukoBigFontSize,
