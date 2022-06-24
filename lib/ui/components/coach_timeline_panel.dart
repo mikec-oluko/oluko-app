@@ -83,7 +83,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                             .map((widgetCollection) => Container(
                                   color: OlukoNeumorphism.isNeumorphismDesign
                                       ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                                      : Colors.black,
+                                      : OlukoColors.black,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: TabContentList(contentToDisplay: widgetCollection),

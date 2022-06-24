@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class SearchbarDelegate extends SearchDelegate<String> {
   SearchbarDelegate();
@@ -48,7 +49,7 @@ class SearchbarDelegate extends SearchDelegate<String> {
             Text(
               query,
               style: TextStyle(
-                color: Colors.black,
+                color:OlukoColors.black,
                 fontSize: 64,
                 fontWeight: FontWeight.bold,
               ),
@@ -102,7 +103,7 @@ class SearchbarDelegate extends SearchDelegate<String> {
               text: TextSpan(
                 text: queryText,
                 style: TextStyle(
-                  color: Colors.black,
+                  color: OlukoColors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

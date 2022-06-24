@@ -42,7 +42,7 @@ class _GalleryCarouselState extends State<GalleryCarousel> {
                                 imageUrl: item['img'],
                                 fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
-                                color: Colors.black,
+                                color:OlukoColors.black,
                                 colorBlendMode: BlendMode.softLight,
                               ),
                             ),

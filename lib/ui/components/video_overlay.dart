@@ -34,10 +34,10 @@ class _VideoOverlayState extends State<VideoOverlay> {
   @override
   Widget build(BuildContext context) {
     if (OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls) {
-      return Scaffold(backgroundColor: Colors.black, body: showVideoPlayer(widget.videoUrl));
+      return Scaffold(backgroundColor:OlukoColors.black, body: showVideoPlayer(widget.videoUrl));
     } else {
       return Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.5),
+          backgroundColor: OlukoColors.black.withOpacity(0.5),
           body: Stack(
             children: [
               Positioned(top: ScreenUtils.height(context) / 4, left: 0, right: 0, child: showVideoPlayer(widget.videoUrl)),
