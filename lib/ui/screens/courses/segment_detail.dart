@@ -16,7 +16,6 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
-import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -104,14 +103,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _segmentDetailView() {
-    return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(builder: (context, state) {
-      if (state is CoachAssignmentResponse) {
-        _coachAssignment = state.coachAssignmentResponse;
-        BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
-        BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
-      }
-      return form();
-    });
+    return BlocListener<CoachAssignmentBloc, CoachAssignmentState>(
+        listener: (context, state) {
+          if (state is CoachAssignmentResponse) {
+            _coachAssignment = state.coachAssignmentResponse;
+            BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
+            BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
+          }
+        },
+        child: form());
   }
 
   Widget form() {
@@ -122,22 +122,26 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: Stack(
           children: [
-            widget.classSegments == null
-                ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-                    if (segmentState is GetSegmentsSuccess) {
-                      _segments = segmentState.segments;
-                      setTotalSegments();
-                      return _viewBody();
-                    } else {
-                      return OlukoCircularProgressIndicator();
-                    }
-                  })
-                : _viewBody(),
-            slidingUpPanelComponent(context),
+            _body(),
+            slidingUpPanelComponent(),
           ],
         ),
       ),
     );
+  }
+
+  Widget _body() {
+    return widget.classSegments == null
+        ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+            if (segmentState is GetSegmentsSuccess) {
+              _segments = segmentState.segments;
+              setTotalSegments();
+              return _viewBody();
+            } else {
+              return OlukoCircularProgressIndicator();
+            }
+          })
+        : _viewBody();
   }
 
   Widget _viewBody() {
@@ -154,24 +158,21 @@ class _SegmentDetailState extends State<SegmentDetail> {
     });
   }
 
-  Widget slidingUpPanelComponent(BuildContext context) {
-    return BlocListener<SegmentDetailContentBloc, SegmentDetailContentState>(
-      listener: (context, state) {},
-      child: SlidingUpPanel(
-        onPanelClosed: () {
-          BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
-        },
-        backdropEnabled: true,
-        isDraggable: false,
-        header: const SizedBox(),
-        padding: EdgeInsets.zero,
-        color: OlukoNeumorphismColors.appBackgroundColor,
-        minHeight: 0.0,
-        maxHeight: MediaQuery.of(context).size.height / 1.5,
-        collapsed: const SizedBox(),
-        controller: _challengePanelController,
-        panel: manageSegmentDetailContentState(),
-      ),
+  Widget slidingUpPanelComponent() {
+    return SlidingUpPanel(
+      onPanelClosed: () {
+        BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
+      },
+      backdropEnabled: true,
+      isDraggable: false,
+      header: const SizedBox(),
+      padding: EdgeInsets.zero,
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      minHeight: 0.0,
+      maxHeight: MediaQuery.of(context).size.height / 1.5,
+      collapsed: const SizedBox(),
+      controller: _challengePanelController,
+      panel: manageSegmentDetailContentState(),
     );
   }
 
