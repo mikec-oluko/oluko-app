@@ -20,7 +20,6 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -31,12 +30,10 @@ import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -76,7 +73,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
   final PanelController _challengePanelController = PanelController();
   CoachAssignment _coachAssignment;
   List<Challenge> _challenges = [];
-  Class _class;
   int segmentIndexToUse;
   List<Audio> _currentAudios;
   AudioPlayer audioPlayer = AudioPlayer();
@@ -91,17 +87,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     super.initState();
   }
 
-  Challenge getSegmentChallenge(String segmentId) {
-    if (_challenges != null) {
-      for (var i = 0; i < _challenges.length; i++) {
-        if (_challenges[i].segmentId == segmentId) {
-          return _challenges[i];
-        }
-      }
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
@@ -111,104 +96,21 @@ class _SegmentDetailState extends State<SegmentDetail> {
         widget.fromChallenge ? BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id) : null;
         BlocProvider.of<ChallengeSegmentBloc>(context)
             .getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
-        return widget.classSegments == null
-            ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-                if (segmentState is GetSegmentsSuccess) {
-                  _segments = segmentState.segments;
-                  setTotalSegments();
-                  return _body();
-                } else {
-                  return OlukoCircularProgressIndicator();
-                }
-              })
-            : _body();
+        return _segmentDetailView();
       } else {
         return OlukoCircularProgressIndicator();
       }
     });
   }
 
-  Widget _body() {
-    return widget.fromChallenge
-        ? BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-            if (classState is GetByIdSuccess) {
-              _class = classState.classObj;
-              return _segmentDetailView();
-            } else {
-              return const SizedBox.shrink();
-            }
-          })
-        : _segmentDetailView();
-  }
-
-  void setSegments() {
-    if (widget.classSegments != null) {
-      _segments = widget.classSegments;
-      /*for (var segment in widget.classSegments) {
-        for (var enrolledSegment in widget.courseEnrollment.classes[widget.classIndex].segments) {
-          if (segment.id == enrolledSegment.id && _segments.length < widget.courseEnrollment.classes[widget.classIndex].segments.length) {
-            _segments.add(segment);
-          }
-        }
-      }*/
-      setTotalSegments();
-    } else {
-      BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
-    }
-  }
-
-  void setTotalSegments() {
-    totalSegments = _segments.length - 1;
-    if (totalSegments < segmentIndexToUse) {
-      segmentIndexToUse = 0;
-      currentSegmentStep = 1;
-      totalSegmentStep = totalSegments + 1;
-    } else if (totalSegments < totalSegmentStep - 1) {
-      totalSegmentStep = totalSegments + 1;
-    }
-  }
-
   Widget _segmentDetailView() {
-    return BlocBuilder<ChallengeSegmentBloc, ChallengeSegmentState>(builder: (context, challengeSegmentState) {
-      if (challengeSegmentState is ChallengesSuccess) {
-        _challenges = challengeSegmentState.challenges;
+    return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(builder: (context, state) {
+      if (state is CoachAssignmentResponse) {
+        _coachAssignment = state.coachAssignmentResponse;
+        BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
+        BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
       }
-
-      return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
-        builder: (context, state) {
-          if (state is CoachAssignmentResponse) {
-            _coachAssignment = state.coachAssignmentResponse;
-            BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
-            BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
-          }
-          return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
-            return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
-              if (coachUserState is CoachUserSuccess &&
-                  (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
-                List<CoachRequest> coachRequests;
-                if (coachRequestStreamState is CoachRequestStreamSuccess) {
-                  coachRequests = coachRequestStreamState.values;
-                } else if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
-                  coachRequests = coachRequestStreamState.values;
-                }
-                _coach = coachUserState.coach;
-                _coachRequests = coachRequests
-                    .where((coachRequest) =>
-                        (_coach == null &&
-                            coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
-                            coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
-                        (coachRequest.coachId == _coach.id &&
-                            coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
-                            coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
-                    .toList();
-                return form();
-              } else {
-                return OlukoCircularProgressIndicator();
-              }
-            });
-          });
-        },
-      );
+      return form();
     });
   }
 
@@ -220,7 +122,17 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: Stack(
           children: [
-            _viewBody(),
+            widget.classSegments == null
+                ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+                    if (segmentState is GetSegmentsSuccess) {
+                      _segments = segmentState.segments;
+                      setTotalSegments();
+                      return _viewBody();
+                    } else {
+                      return OlukoCircularProgressIndicator();
+                    }
+                  })
+                : _viewBody(),
             slidingUpPanelComponent(context),
           ],
         ),
@@ -228,7 +140,21 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
-  BlocListener<SegmentDetailContentBloc, SegmentDetailContentState> slidingUpPanelComponent(BuildContext context) {
+  Widget _viewBody() {
+    return BlocBuilder<ChallengeSegmentBloc, ChallengeSegmentState>(builder: (context, challengeSegmentState) {
+      if (challengeSegmentState is ChallengesSuccess) {
+        _challenges = challengeSegmentState.challenges;
+      }
+      return Container(
+        color: OlukoNeumorphismColors.appBackgroundColor,
+        child: Column(
+          children: [(_segments.length - 1 >= segmentIndexToUse) ? getCarouselSlider() : const SizedBox()],
+        ),
+      );
+    });
+  }
+
+  Widget slidingUpPanelComponent(BuildContext context) {
     return BlocListener<SegmentDetailContentBloc, SegmentDetailContentState>(
       listener: (context, state) {},
       child: SlidingUpPanel(
@@ -244,47 +170,47 @@ class _SegmentDetailState extends State<SegmentDetail> {
         maxHeight: MediaQuery.of(context).size.height / 1.5,
         collapsed: const SizedBox(),
         controller: _challengePanelController,
-        panel: BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
-          return manageSegmentDetailContentState(state);
-        }),
+        panel: manageSegmentDetailContentState(),
       ),
     );
   }
 
-  Widget manageSegmentDetailContentState(SegmentDetailContentState state) {
+  Widget manageSegmentDetailContentState() {
     Widget _contentForPanel = const SizedBox();
-    if (state is SegmentDetailContentDefault) {
-      if (_challengePanelController.isPanelOpen) {
-        _challengePanelController.close();
-      }
-      _contentForPanel = const SizedBox();
-    } else if (state is SegmentDetailContentAudioOpen) {
-      _currentAudios = state.audios;
-      if (_currentAudios != null && _currentAudios.length > 0) {
+    return BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
+      if (state is SegmentDetailContentDefault) {
+        if (_challengePanelController.isPanelOpen) {
+          _challengePanelController.close();
+        }
+        _contentForPanel = const SizedBox();
+      } else if (state is SegmentDetailContentAudioOpen) {
+        _currentAudios = state.audios;
+        if (_currentAudios != null && _currentAudios.length > 0) {
+          _challengePanelController.open();
+          _contentForPanel = ModalAudio(
+              comesFromSegmentDetail: true,
+              challenge: state.challenge,
+              audioPlayer: audioPlayer,
+              audios: _currentAudios,
+              panelController: _challengePanelController,
+              onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+        }
+      } else if (state is SegmentDetailContentPeopleOpen) {
         _challengePanelController.open();
-        _contentForPanel = ModalAudio(
-            comesFromSegmentDetail: true,
-            challenge: state.challenge,
-            audioPlayer: audioPlayer,
-            audios: _currentAudios,
-            panelController: _challengePanelController,
-            onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+        _contentForPanel = ModalPeopleEnrolled(
+            userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+            userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+            userId: _user.id,
+            favorites: state.favorites,
+            users: state.users);
+      } else if (state is SegmentDetailContentClockOpen) {
+        _challengePanelController.open();
+        _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
+      } else if (state is SegmentDetailContentLoading) {
+        _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
       }
-    } else if (state is SegmentDetailContentPeopleOpen) {
-      _challengePanelController.open();
-      _contentForPanel = ModalPeopleEnrolled(
-          userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
-          userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
-          userId: _user.id,
-          favorites: state.favorites,
-          users: state.users);
-    } else if (state is SegmentDetailContentClockOpen) {
-      _challengePanelController.open();
-      _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
-    } else if (state is SegmentDetailContentLoading) {
-      _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
-    }
-    return _contentForPanel;
+      return _contentForPanel;
+    });
   }
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
@@ -348,7 +274,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
-  //TODO: CONTENT PARA IR AL SEGMENT/CHALLENGE
   List<Widget> getSegmentList() {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
@@ -371,25 +296,54 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getSegmentImageSection(int i) {
-    Challenge challenge = getSegmentChallenge(_segments[i].id);
-    return SegmentImageSection(
-      onPressed: () => onPressedAction(),
-      segment: _segments[i],
-      challenge: challenge,
-      currentSegmentStep: i + 1,
-      totalSegmentStep: totalSegmentStep,
-      userId: _user.id,
-      audioAction: _audioAction,
-      peopleAction: _peopleAction,
-      clockAction: _clockAction,
-      courseEnrollment: widget.courseEnrollment,
-      courseIndex: widget.courseIndex,
-      segments: _segments,
-      classIndex: widget.classIndex,
-      coachRequests: _coachRequests,
-      coach: _coach,
-      fromChallenge: widget.fromChallenge,
-    );
+    return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
+      return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
+        if (coachUserState is CoachUserSuccess &&
+            (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
+          coachLogic(coachUserState, coachRequestStreamState);
+          Challenge challenge = getSegmentChallenge(_segments[i].id);
+          return SegmentImageSection(
+            onPressed: () => onPressedAction(),
+            segment: _segments[i],
+            challenge: challenge,
+            currentSegmentStep: i + 1,
+            totalSegmentStep: totalSegmentStep,
+            userId: _user.id,
+            audioAction: _audioAction,
+            peopleAction: _peopleAction,
+            clockAction: _clockAction,
+            courseEnrollment: widget.courseEnrollment,
+            courseIndex: widget.courseIndex,
+            segments: _segments,
+            classIndex: widget.classIndex,
+            coachRequests: _coachRequests,
+            coach: _coach,
+            fromChallenge: widget.fromChallenge,
+          );
+        } else {
+          return OlukoCircularProgressIndicator();
+        }
+      });
+    });
+  }
+
+  void coachLogic(CoachUserSuccess coachUserState, CoachRequestStreamState coachRequestStreamState) {
+    List<CoachRequest> coachRequests;
+    if (coachRequestStreamState is CoachRequestStreamSuccess) {
+      coachRequests = coachRequestStreamState.values;
+    } else if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
+      coachRequests = coachRequestStreamState.values;
+    }
+    _coach = coachUserState.coach;
+    _coachRequests = coachRequests
+        .where((coachRequest) =>
+            (_coach == null &&
+                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
+            (coachRequest.coachId == _coach.id &&
+                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
+        .toList();
   }
 
   void onPressedAction() {
@@ -426,58 +380,46 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return const SizedBox();
   }
 
-  Widget _viewBody() {
-    return Container(
-      color: OlukoNeumorphismColors.appBackgroundColor,
-      child: Column(
-        children: [(_segments.length - 1 >= segmentIndexToUse) ? getCarouselSlider() : const SizedBox()],
-      ),
-    );
+  Challenge getSegmentChallenge(String segmentId) {
+    if (_challenges != null) {
+      for (var i = 0; i < _challenges.length; i++) {
+        if (_challenges[i].segmentId == segmentId) {
+          return _challenges[i];
+        }
+      }
+    }
+    return null;
   }
 
-  List<Widget> _confirmDialogContent() {
-    return [
-      const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(OlukoLocalizations.get(context, 'coachRecommendsRecording'),
-            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: Row(
-          children: [
-            OlukoPrimaryButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              color: Colors.white,
-              title: OlukoLocalizations.get(context, 'recordAndStartSegment'),
-            ),
-          ],
-        ),
-      ),
-      TextButton(
-        onPressed: () {
-          Navigator.of(context).pop(false);
-        },
-        child: Text(
-          OlukoLocalizations.get(context, 'continueWithoutRecording'),
-          style: OlukoFonts.olukoMediumFont(),
-        ),
-      )
-    ];
+  void setSegments() {
+    if (widget.classSegments != null) {
+      _segments = widget.classSegments;
+      setTotalSegments();
+    } else {
+      BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
+    }
   }
 
-  _audioAction(List<Audio> audios, Challenge challenge) {
+  void setTotalSegments() {
+    totalSegments = _segments.length - 1;
+    if (totalSegments < segmentIndexToUse) {
+      segmentIndexToUse = 0;
+      currentSegmentStep = 1;
+      totalSegmentStep = totalSegments + 1;
+    } else if (totalSegments < totalSegmentStep - 1) {
+      totalSegmentStep = totalSegments + 1;
+    }
+  }
+
+  void _audioAction(List<Audio> audios, Challenge challenge) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
-  _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+  void _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
-  _clockAction(String segmentId) {
+  void _clockAction(String segmentId) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
   }
 }
