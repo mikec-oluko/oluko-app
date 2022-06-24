@@ -52,7 +52,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
       key: _formKey,
       child: Scaffold(
         body: Container(
-          color: Colors.black,
+          color:OlukoColors.black,
           child: ListView(
             children: [
               Padding(

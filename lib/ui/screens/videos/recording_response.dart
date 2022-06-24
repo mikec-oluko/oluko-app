@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
@@ -88,7 +89,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoColors.black,
       body: Stack(
         children: <Widget>[
           Opacity(

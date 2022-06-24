@@ -129,11 +129,11 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                 maxHeight: 250,
                 minHeight: 5,
                 collapsed: Container(
-                  color: Colors.black,
+                  color:OlukoColors.black,
                 ),
                 panel: DeleteAudioPanel(panelController: panelController),
                 body: Container(
-                  color: Colors.black,
+                  color: OlukoColors.black,
                   child: classInfoSection(),
                 )),
             slidingUpPanelComponent(context),

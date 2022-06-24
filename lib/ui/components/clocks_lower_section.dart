@@ -83,7 +83,7 @@ class _State extends State<ClocksLowerSection> {
   Widget _lowerSection() {
     if (widget.workState != WorkState.finished) {
       return Container(
-          color: Colors.black,
+          color: OlukoColors.black,
           child: isSegmentWithRecording() && widget.timerTaskIndex > 0
               ? SegmentClocksUtils.cameraSection(
                   context, isWorkStateFinished(), widget.isCameraReady, widget.cameraController, widget.pauseButton)

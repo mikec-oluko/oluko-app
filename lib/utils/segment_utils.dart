@@ -143,9 +143,7 @@ class SegmentUtils {
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
-          style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color)
-              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
+          style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: color),
         ));
   }
 

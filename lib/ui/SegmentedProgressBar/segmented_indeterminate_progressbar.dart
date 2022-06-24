@@ -182,7 +182,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
         startAngle: 270,
         endAngle: 270,
         radiusFactor: 0.6,
-        majorTickStyle: MajorTickStyle(length: 0.1, thickness: 5, lengthUnit: GaugeSizeUnit.factor, color: Colors.black),
+        majorTickStyle: MajorTickStyle(length: 0.1, thickness: 5, lengthUnit: GaugeSizeUnit.factor, color: OlukoColors.black),
       )
     ]);
   }

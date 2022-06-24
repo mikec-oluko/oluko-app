@@ -267,7 +267,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
+        backgroundColor: OlukoColors.black,
         content: Text(
           OlukoLocalizations.get(context, 'updateEmailUserNameMsg'),
           style: OlukoFonts.olukoBigFont(),
