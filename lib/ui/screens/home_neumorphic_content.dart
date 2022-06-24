@@ -459,7 +459,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         alignment: Alignment.topLeft,
                         child: Image.asset(
                          OlukoNeumorphism.mvtLogo,
-                          scale: 4,
+                          scale: 4.5,
                         ),
                       ),
                     ),
@@ -506,7 +506,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    height: ScreenUtils.height(context) - (showStories ? 240 : 181),
+                    height: ScreenUtils.height(context) - (showStories ?ScreenUtils.smallScreen(context)? ScreenUtils.height(context)*0.43:ScreenUtils.height(context)*0.35 : 181),
                     width: ScreenUtils.width(context),
                   ),
                 ),
@@ -605,7 +605,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return Column(
       children: [
         SizedBox(
-          height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.05,
+          height: showStories ? ScreenUtils.smallScreen(context)?0: ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.05,
         ),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
@@ -614,7 +614,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         const SizedBox(height: 15),
         Image.asset(
           OlukoNeumorphism.mvtLogo,
-          scale: 2,
+          scale: 2.5,
         ),
         SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),
         GestureDetector(
