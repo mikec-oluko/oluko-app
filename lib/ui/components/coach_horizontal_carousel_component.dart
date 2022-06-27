@@ -36,7 +36,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
       );
     } else if (widget.isAssessmentContent) {
       contentToReturn = Container(
-          color: Colors.black,
+          color:OlukoColors.black,
           width: MediaQuery.of(context).size.width,
           height: 200,
           child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [

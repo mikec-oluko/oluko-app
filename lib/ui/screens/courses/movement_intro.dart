@@ -1,17 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/movement_info_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
-import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_image_bar.dart';
-import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
@@ -22,9 +20,10 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementIntro extends StatefulWidget {
+  MovementSubmodel movementSubmodel;
   Movement movement;
 
-  MovementIntro({Key key, this.movement}) : super(key: key);
+  MovementIntro({Key key, this.movementSubmodel, this.movement}) : super(key: key);
 
   @override
   _MovementIntroState createState() => _MovementIntroState();
@@ -36,14 +35,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   Map<String, bool> coursesBookmarked = {};
 
   //TODO Make Dynamic
-  Movement movement2 = Movement(
-      image:
-          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',
-      video:
-          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
-      description:
-          'Learn practical exercises to gain confidence in yourself, improve your core and focus on strengthening and toning your midsection. You wont regret after these 6 weeks and everybody will notice your effort and your selflove. ',
-      name: "Airsquats");
   String backgroundImageUrl = 'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
   String _secondTabVideoUrl =
       'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03';
@@ -88,22 +79,26 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   List<ChewieController> _videoControllers = [null];
   List<Key> _videoKeys = [GlobalKey()];
   MovementInfoSuccess _movementInfoSuccess;
+  MovementSubmodel _movementSubmodel;
 
   @override
   void initState() {
-    // tabController =
-    //     TabController(initialIndex: 0, length: tabs.length, vsync: this);
+    if (widget.movementSubmodel != null) {
+      _movementSubmodel = widget.movementSubmodel;
+    } else if (widget.movement != null) {
+      _movementSubmodel = MovementSubmodel(id: widget.movement.id, name: widget.movement.name);
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
+    BlocProvider.of<MovementInfoBloc>(context).get(_movementSubmodel.id);
     return Scaffold(
       appBar: OlukoNeumorphism.isNeumorphismDesign
           ? null
-          : OlukoImageBar(actions: [], movements: [widget.movement], onPressedMovement: (context, movement) => {}),
-      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : Colors.black,
+          : OlukoImageBar(actions: [], movements: [_movementSubmodel], onPressedMovement: (context, movement) => {}),
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker :OlukoColors.black,
       body: Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
@@ -121,7 +116,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   Widget _viewBody() {
     return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      if (movementInfoState is MovementInfoSuccess && widget.movement.id == movementInfoState.movement.id) {
+      if (movementInfoState is MovementInfoSuccess && _movementSubmodel.id == movementInfoState.movement.id) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
           movementInfoState.movementVariants.forEach((element) {
@@ -146,7 +141,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: MovementUtils.movementTitle(widget.movement.name),
+                            child: MovementUtils.movementTitle(_movementSubmodel.name),
                           ),
                           SizedBox(height: 25),
                           Column(
@@ -171,7 +166,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           ),
                           Builder(builder: (context) {
                             if (tabController.index == 0) {
-                              return _firstTab(widget.movement);
+                              return _firstTab(_movementInfoSuccess.movement);
                             } else {
                               return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
                             }
@@ -186,16 +181,14 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
           ),
         );
       } else {
-        return SizedBox();
+        return OlukoCircularProgressIndicator();
       }
     });
   }
 
   Widget _viewBodyNeumorphic() {
     return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      // if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
-      // }
-      if (movementInfoState is MovementInfoSuccess && widget.movement.id == movementInfoState.movement.id) {
+      if (movementInfoState is MovementInfoSuccess && _movementSubmodel.id == movementInfoState.movement.id) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
           movementInfoState.movementVariants.forEach((element) {
@@ -225,7 +218,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10.0),
                                   child: Container(
-                                    //TODO: light behind
                                     height: 55,
                                     width: 55,
                                     child: GestureDetector(
@@ -243,7 +235,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                   width: ScreenUtils.width(context) * 0.77,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: MovementUtils.movementTitle(widget.movement.name),
+                                    child: MovementUtils.movementTitle(_movementSubmodel.name),
                                   ),
                                 ),
                               ],
@@ -275,7 +267,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           ),
                           Builder(builder: (context) {
                             if (tabController.index == 0) {
-                              return _firstTab(widget.movement);
+                              return _firstTab(_movementInfoSuccess.movement);
                             } else {
                               return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
                             }
@@ -290,7 +282,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
           ),
         );
       } else {
-        return SizedBox();
+        return OlukoCircularProgressIndicator();
       }
     });
   }
@@ -423,7 +415,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   Widget _firstTab(Movement movement) {
     return Container(
       child: Column(children: [
-        //getVideoWidget(movement.video),
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: OlukoNeumorphism.isNeumorphismDesign
@@ -459,8 +450,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
                   children: [
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? MovementItemBubblesNeumorphic(
+                    MovementItemBubblesNeumorphic(
                             referenceMovementsSection: true,
                             onPressed: (context, movement) {
                               if (_videoControllers[tabController.index] != null) {
@@ -471,16 +461,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                             },
                             content: _movementInfoSuccess.relatedMovements,
                             width: ScreenUtils.width(context) / 1.2)
-                        : MovementItemBubbles(
-                            onPressed: (context, movement) {
-                              if (_videoControllers[tabController.index] != null) {
-                                _videoControllers[tabController.index].pause();
-                              }
-                              Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro],
-                                  arguments: {'movement': movement});
-                            },
-                            content: _movementInfoSuccess.relatedMovements,
-                            width: ScreenUtils.width(context) / 1.2),
+                        ,
                   ],
                 ),
               ),
@@ -525,7 +506,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  widget.movement.description,
+                  _movementInfoSuccess.movement.description,
                   style: OlukoFonts.olukoMediumFont(),
                 ),
               ),
@@ -537,14 +518,14 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   ),
                 ],
               ),
-              Padding(
+              /*Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
                   children: [
                     MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
-              ),
+              ),*/
               Row(
                 children: [
                   Padding(
@@ -576,7 +557,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   : tabController.index == index
                       ? OlukoNeumorphism.isNeumorphismDesign
                           ? Colors.white
-                          : Colors.black
+                          : OlukoColors.black
                       : OlukoNeumorphism.isNeumorphismDesign
                           ? Colors.grey
                           : Colors.white),

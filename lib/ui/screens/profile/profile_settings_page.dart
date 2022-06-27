@@ -132,7 +132,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                       shadowLightColorEmboss: OlukoColors.black,
                       surfaceIntensity: 1,
                       shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      shadowDarkColor: Colors.black),
+                      shadowDarkColor: OlukoColors.black),
                   child: Container(
                     width: 50,
                     height: 30,

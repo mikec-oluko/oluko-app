@@ -120,9 +120,9 @@ class _State extends State<ChallengesCard> {
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-              end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
+              end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black, Colors.black, Colors.red]),
           borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-          color: Colors.black,
+          color:OlukoColors.black,
         ),
         child: Padding(
           padding: const EdgeInsets.all(2),
@@ -195,7 +195,7 @@ class _State extends State<ChallengesCard> {
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-              end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
+              end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black,OlukoColors.black, Colors.red]),
           borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
           color: Colors.black,
         ),

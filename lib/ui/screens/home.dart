@@ -53,11 +53,11 @@ class _HomeState extends State<Home> {
                 ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
                 : HomeContent(widget.classIndex, widget.index, _courseEnrollments, _authState, _courses, _user);
           } else {
-            return Container(color: Colors.black, child: const Center(child: CircularProgressIndicator()));
+            return Container(color:OlukoColors.black, child: const Center(child: CircularProgressIndicator()));
           }
         });
       } else {
-        return Container(color: Colors.black, child: const Center(child: CircularProgressIndicator()));
+        return Container(color: OlukoColors.black, child: const Center(child: CircularProgressIndicator()));
       }
     });
   }

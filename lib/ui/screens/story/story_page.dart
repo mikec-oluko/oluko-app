@@ -89,7 +89,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     var loading = false;
     final Story story = widget.stories[_currentIndex];
     return Scaffold(
-      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       body: GestureDetector(
         onTapDown: (details) => _onTapDown(details, story),
         child: Stack(

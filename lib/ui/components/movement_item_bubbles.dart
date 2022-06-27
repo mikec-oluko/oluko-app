@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 
 class MovementItemBubbles extends StatefulWidget {
-  final List<Movement> content;
+  final List<MovementSubmodel> movements;
   final double width;
   final bool showAsGrid;
-  final Function(BuildContext, Movement) onPressed;
+  final Function(BuildContext, MovementSubmodel) onPressed;
   final bool isSegmentSection;
-  MovementItemBubbles({this.content, this.width, this.onPressed, this.showAsGrid = false, this.isSegmentSection = false});
+  MovementItemBubbles({this.movements, this.width, this.onPressed, this.showAsGrid = false, this.isSegmentSection = false});
   @override
   _MovementItemBubblesState createState() => _MovementItemBubblesState();
 }
 
 class _MovementItemBubblesState extends State<MovementItemBubbles> {
+  //TODO: change this
+  String image =
+      'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,12 +44,13 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   }
 
   List<Widget> buildMovementItems() {
-    List<Widget> movements = widget.content
+    List<Widget> movements = widget.movements
         .map(
           (movement) => movement != null
               ? Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: _imageItem(context, movement.image, movement.name, onPressed: (context) => widget.onPressed(context, movement)),
+                  padding: const EdgeInsets.only(top: 0),
+                  child: _imageItem(context, movement.image == null ? image : movement.image, movement.name,
+                      onPressed: (context) => widget.onPressed(context, movement)),
                 )
               : const SizedBox(),
         )
@@ -67,7 +73,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   }
 
   Widget buildBubbleGrid() {
-    return GridView.count(mainAxisSpacing: 15, crossAxisCount: 4, children: buildMovementItems());
+    return GridView.count(mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {
@@ -81,14 +87,14 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               StoriesItem(
-                maxRadius: widget.isSegmentSection ? 30 : 23,
+                maxRadius: widget.isSegmentSection ? 30 : 22,
                 imageUrl: imageUrl,
                 isSegmentSection: widget.isSegmentSection,
               )
             else
               StoriesItem(maxRadius: 23, imageUrl: imageUrl),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 4.0),
               child: Text(
                 name ?? '',
                 textAlign: TextAlign.center,

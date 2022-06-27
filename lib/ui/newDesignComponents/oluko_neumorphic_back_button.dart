@@ -27,7 +27,7 @@ class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButto
           shadowLightColorEmboss: OlukoColors.black,
           surfaceIntensity: 1,
           shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-          shadowDarkColor: Colors.black),
+          shadowDarkColor:OlukoColors.black),
       child: IconButton(
           padding: widget.customIcon != null ? EdgeInsets.zero : const EdgeInsets.only(left: 10),
           icon: widget.customIcon != null ? widget.customIcon : Icon(Icons.arrow_back_ios, size: 24, color: OlukoColors.grayColor),

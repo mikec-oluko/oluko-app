@@ -19,9 +19,9 @@ class LockedChallenge extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
+            end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black,OlukoColors.black, Colors.red]),
         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-        color: Colors.black,
+        color: OlukoColors.black,
       ),
       child: Padding(
         padding: const EdgeInsets.all(2),

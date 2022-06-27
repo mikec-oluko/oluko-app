@@ -116,9 +116,9 @@ class _State extends State<Courses> {
                         primaryButtonAction: cancelAction,
                         textButtonAction: () => panelController.close()),
                     body: Container(
-                        color: Colors.black,
+                        color:OlukoColors.black,
                         child: Scaffold(
-                            backgroundColor: Colors.black,
+                            backgroundColor: OlukoColors.black,
                             appBar: _appBar(widget.homeEnrollTocourse ?? false),
                             body: _courseWidget(context, tagState))));
               });
