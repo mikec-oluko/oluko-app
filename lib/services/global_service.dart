@@ -14,7 +14,7 @@ class GlobalService with ChangeNotifier {
   GlobalService._internal() {
     _videoProcessing = false;
     _comesFromCoach = false;
-    _hasInternetConnection = false;
+    _hasInternetConnection = true;
   }
 
   bool get videoProcessing => _videoProcessing;

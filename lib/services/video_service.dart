@@ -27,7 +27,7 @@ class VideoService {
       var _processPhase = '';
       var _progress = 0.0;
       //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-      //port.send({'processPhase': _processPhase, 'progress': _progress});
+      port.send({'processPhase': _processPhase, 'progress': _progress});
       //
       final Directory extDir = Directory(directory);
       final outDirPath = '${extDir.path}/Videos/$videoName';
@@ -41,13 +41,13 @@ class VideoService {
       // num _unitOfProgress;
       // _progress += _unitOfProgress;
       //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-      // port.send({'processPhase': _processPhase, 'progress': _progress});
+      port.send({'processPhase': _processPhase, 'progress': _progress});
       //
 
-      // _processPhase = 'uploadingThumbnail';
+      _processPhase = 'uploadingThumbnail';
       // _progress += _unitOfProgress;
       //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-      // port.send({'processPhase': _processPhase, 'progress': _progress});
+      port.send({'processPhase': _processPhase, 'progress': _progress});
       //
 
       return video = await uploadVideoWithoutProcessing(video, thumbnailPath, videoPath, port);
