@@ -53,7 +53,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
                 controller: panelController,
                 minHeight: 0,
                 maxHeight: 330,
-                collapsed: Container(color: Colors.black),
+                collapsed: Container(color: OlukoColors.black),
                 panel: InitialTimerPanel(
                   panelController: panelController,
                   onShowAgainPressed: widget.onShowAgainPressed,

@@ -26,6 +26,11 @@ class ChallengeListSuccess extends ChallengeCompletedBeforeState {
   ChallengeListSuccess({this.challenges});
 }
 
+class ChallengeCompletedSuccess extends ChallengeCompletedBeforeState {
+  final List<bool> completedBefore;
+  ChallengeCompletedSuccess({this.completedBefore});
+}
+
 class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> {
   ChallengeCompletedBeforeBloc() : super(LoadingChallenges());
 
@@ -78,6 +83,34 @@ class ChallengeCompletedBeforeBloc extends Cubit<ChallengeCompletedBeforeState> 
               customValueForChallenge: challengeWasCompletedBefore));
         }
         emit(ChallengeListSuccess(challenges: challengesCards));
+      }
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  Future<void> getChallengesAndCompletedBefore(
+      {@required String userId,
+      @required List<ChallengeNavigation> listOfChallenges,
+      bool isCurrentUser = true,
+      UserResponse userRequested}) async {
+    List<Widget> challengesCards = [];
+    List<bool> completedBefore = [];
+    try {
+      emit(LoadingChallenges());
+      if (listOfChallenges.isNotEmpty) {
+        for (var challenge in listOfChallenges) {
+          List<Challenge> challengeHistory = await ChallengeRepository.getUserChallengesBySegmentId(challenge.segmentId, userId);
+          bool challengeWasCompletedBefore =
+              challengeHistory != null ? challengeHistory.where((element) => element.completedAt != null).toList().isNotEmpty : false;
+          completedBefore.add(challengeWasCompletedBefore);
+        }
+        emit(ChallengeCompletedSuccess(completedBefore: completedBefore));
       }
     } catch (exception, stackTrace) {
       await Sentry.captureException(

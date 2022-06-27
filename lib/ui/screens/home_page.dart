@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
                 builder: (context, tagState) {
                   return Scaffold(
-                      backgroundColor: Colors.black,
+                      backgroundColor:OlukoColors.black,
                       appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'home'), showBackButton: false),
                       body: courseState is CourseSuccess && tagState is TagSuccess
                           ? WillPopScope(

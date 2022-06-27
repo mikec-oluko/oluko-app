@@ -27,6 +27,22 @@ class ClassService {
     return movements;
   }
 
+    static List<MovementSubmodel> getClassSegmentMovementSubmodels(List<SectionSubmodel> sections) {
+    List<MovementSubmodel> movements = [];
+    if (sections == null) {
+      return movements;
+    }
+    for (SectionSubmodel section in sections) {
+      for (MovementSubmodel movement in section.movements) {
+        if (!movement.isRestTime) {
+          movements.add(movement);
+        }
+      }
+    }
+
+    return movements;
+  }
+
   static List<Movement> getClassMovements(Class classObj, List<Movement> allMovements) {
     List<Movement> movements = [];
     List<String> movementIds = [];
@@ -46,6 +62,22 @@ class ClassService {
         movements.add(movement);
       }
     });
+    return movements;
+  }
+
+    static List<MovementSubmodel> getClassMovementSubmodels(Class classObj) {
+    List<MovementSubmodel> movements = [];
+    for (SegmentSubmodel segment in classObj.segments) {
+      if (segment.sections != null) {
+        for (SectionSubmodel section in segment?.sections) {
+          for (MovementSubmodel movement in section.movements) {
+            if (!movement.isRestTime) {
+              movements.add(movement);
+            }
+          }
+        }
+      }
+    }
     return movements;
   }
 }
