@@ -149,13 +149,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
                       depth: 2,
                       intensity: 1,
-                      color: Colors.black,
+                      color:OlukoColors.black,
                       lightSource: LightSource.bottomRight,
-                      shadowDarkColorEmboss: Colors.black,
+                      shadowDarkColorEmboss:OlukoColors.black,
                       shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                       surfaceIntensity: 1,
                       shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      shadowDarkColor: Colors.black), // color: Colors.black,
+                      shadowDarkColor:OlukoColors.black),
                   child: IntrinsicHeight(
                     child: ShaderMask(
                       shaderCallback: (rect) {
@@ -164,7 +164,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black,
+                           OlukoColors.black,
                             Colors.transparent,
                           ],
                         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));

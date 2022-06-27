@@ -129,7 +129,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       Padding(
                         padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.15),
                         child: Image.asset(
-                          'assets/home/mvt.png',
+                          OlukoNeumorphism.mvtLogo,
                           scale: 2,
                         ),
                       ),
@@ -206,7 +206,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
-              'assets/home/mvt.png',
+              OlukoNeumorphism.mvtLogo,
               scale: 4,
             ),
             HandWidget(authState: widget.authState),
@@ -234,6 +234,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ? StoriesHeader(
               widget.user.uid,
               maxRadius: 30,
+              color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
             )
           : const SizedBox(),
     ));
@@ -374,7 +375,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         },
         child: Padding(
           padding: EdgeInsets.only(
-              top: ScreenUtils.mediumScreen(context) ? ScreenUtils.height(context) * 0.12 : ScreenUtils.height(context) * 0.11),
+              top: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.08 : ScreenUtils.height(context) * 0.06),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
@@ -453,11 +454,11 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
+                      padding: EdgeInsets.only(left: 20, top: 20, bottom: showStories ? 0 : 20),
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Image.asset(
-                          'assets/home/mvt.png',
+                         OlukoNeumorphism.mvtLogo,
                           scale: 4,
                         ),
                       ),
@@ -575,6 +576,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         child: StoriesHeader(
           widget.user.uid,
           maxRadius: 30,
+          color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
         ),
       );
     } else {
@@ -611,7 +613,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         ),
         const SizedBox(height: 15),
         Image.asset(
-          'assets/home/mvt.png',
+          OlukoNeumorphism.mvtLogo,
           scale: 2,
         ),
         SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/newDesignComponents/locked_challenge.dart';
@@ -16,8 +17,8 @@ import 'movement_item_bubbles.dart';
 
 class CourseSegmentSection extends StatefulWidget {
   final SegmentSubmodel segment;
-  final List<Movement> movements;
-  final Function(BuildContext, Movement) onPressedMovement;
+  final List<MovementSubmodel> movements;
+  final Function(BuildContext, MovementSubmodel) onPressedMovement;
 
   CourseSegmentSection({this.movements, this.onPressedMovement, this.segment});
 
@@ -55,7 +56,7 @@ class _State extends State<CourseSegmentSection> {
                             const SizedBox(),
                           MovementItemBubbles(
                             onPressed: widget.onPressedMovement,
-                            content: widget.movements,
+                            movements: widget.movements,
                             width: ScreenUtils.width(context) / 1,
                             isSegmentSection: true,
                           )
@@ -92,7 +93,7 @@ class _State extends State<CourseSegmentSection> {
                         child: Row(children: [
                           widget.segment.isChallenge ? challengeCard() : SizedBox(),
                           MovementItemBubbles(
-                              onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1)
+                              onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context) / 1)
                         ])),
                   ],
                 ),

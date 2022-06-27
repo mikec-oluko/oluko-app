@@ -26,6 +26,7 @@ class SelfRecording extends StatefulWidget {
       this.fromCompletedClass = false,
       this.isLastTask = false,
       Key key,
+      this.courseIndex,
       this.classIndex,
       this.courseEnrollment,
       this.taskId})
@@ -34,6 +35,7 @@ class SelfRecording extends StatefulWidget {
   final String taskId;
   final int taskIndex;
   final int classIndex;
+  final int courseIndex;
   final bool isPublic;
   final bool isLastTask;
   final bool fromCompletedClass;
@@ -84,7 +86,6 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
@@ -134,7 +135,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
 
   Container cameraContent() {
     return Container(
-      color: Colors.black,
+      color: OlukoColors.black,
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: ListView(
@@ -183,7 +184,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
   Container neumorphicCameraContent() {
     final size = MediaQuery.of(context).size;
     return Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height / 1.1,
@@ -387,7 +388,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       child: BottomAppBar(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : Colors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.black,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -421,10 +422,16 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                 onTap: () async {
                   if (widget.fromCompletedClass) {
                     final XFile selfie = await cameraController.takePicture();
-                    if (selfie != null) {
-                      BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, selfie);
-                    }
-                    Navigator.pop(context);
+                    Navigator.popAndPushNamed(
+                      context,
+                      routeLabels[RouteEnum.completedClass],
+                      arguments: {
+                        'classIndex': widget.classIndex,
+                        'courseEnrollment': widget.courseEnrollment,
+                        'courseIndex': widget.courseIndex,
+                        'selfie': selfie,
+                      },
+                    );
                   } else if (!_buttonBlocked) {
                     if (_recording) {
                       final XFile videopath = await cameraController.stopVideoRecording();
@@ -470,8 +477,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                       );
                     } else if (state is PermissionsRequired) {
                       PermissionsUtils.showSettingsMessage(context);
-                    }
-                    else if(state is UploadFailure && state.badFormat){
+                    } else if (state is UploadFailure && state.badFormat) {
                       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
                     }
                   },

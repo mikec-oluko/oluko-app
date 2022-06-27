@@ -85,7 +85,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
       //TODO:Change IOS controls
       OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
           ? controls = OlukoCupertinoControls()
-          : controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black);
+          : controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor:OlukoColors.black);
     }
     if (_controller != null) {
       _controller.initialize().then((value) {
@@ -106,16 +106,16 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
             DeviceOrientation.landscapeRight
           ],
           cupertinoProgressColors: ChewieProgressColors(
-            handleColor: Colors.black,
-            backgroundColor: Colors.black,
-            bufferedColor: Colors.black,
-            playedColor: Colors.black,
+            handleColor: OlukoColors.black,
+            backgroundColor: OlukoColors.black,
+            bufferedColor: OlukoColors.black,
+            playedColor: OlukoColors.black,
           ),
           materialProgressColors: ChewieProgressColors(
-            handleColor: Colors.black,
-            backgroundColor: Colors.black,
-            bufferedColor: Colors.black,
-            playedColor: Colors.black,
+            handleColor: OlukoColors.black,
+            backgroundColor: OlukoColors.black,
+            bufferedColor: OlukoColors.black,
+            playedColor: OlukoColors.black,
           ),
         );
         if (widget.whenInitialized != null) {

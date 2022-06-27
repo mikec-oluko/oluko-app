@@ -194,7 +194,7 @@ class _HomeContentState extends State<HomeContent> {
         ),
         const SizedBox(height: 25),
         Image.asset(
-          'assets/home/mvt.png',
+          OlukoNeumorphism.mvtLogo,
           scale: 2,
         ),
         const SizedBox(height: 50),

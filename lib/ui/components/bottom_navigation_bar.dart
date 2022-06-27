@@ -54,7 +54,7 @@ class _State extends State<OlukoBottomNavigationBar> {
         currentIndex: widget.selectedIndex,
         showUnselectedLabels: true,
         unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.black,
+        selectedItemColor:OlukoColors.black,
         type: BottomNavigationBarType.fixed,
         backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         selectedFontSize: 0,
@@ -140,7 +140,7 @@ class _State extends State<OlukoBottomNavigationBar> {
         : Container(
             decoration: BoxDecoration(
               border: Border(top: BorderSide(color: Colors.white24, width: 1)),
-              color: olukoBottomNavigationBarItem.selected ? OlukoColors.primary : Colors.black,
+              color: olukoBottomNavigationBarItem.selected ? OlukoColors.primary :OlukoColors.black,
             ),
             width: blockSize,
             height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
@@ -157,7 +157,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                         color: olukoBottomNavigationBarItem.disabled
                             ? Colors.grey.shade800
                             : olukoBottomNavigationBarItem.selected
-                                ? Colors.black
+                                ? OlukoColors.black
                                 : Colors.white),
                   ),
                 )

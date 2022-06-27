@@ -38,9 +38,11 @@ class AppMessages {
               Image.asset('assets/profile/hiFive_primary.png'),
               const Padding(
                 padding: EdgeInsets.all(10.0),
-                child: Text(
-                  'Hi5 Sent!',
-                  style: TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
+                child: Material(
+                  child: Text(
+                    'Hi5 Sent!',
+                    style: TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
+                  ),
                 ),
               )
             ],
@@ -61,9 +63,11 @@ class AppMessages {
               //Image.asset('assets/profile/hiFive_primary.png'),
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  message,
-                  style: const TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
+                child: Material(
+                  child: Text(
+                    message,
+                    style: const TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
+                  ),
                 ),
               )
             ],

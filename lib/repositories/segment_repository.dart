@@ -4,6 +4,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class SegmentRepository {
@@ -17,9 +18,9 @@ class SegmentRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<List<Segment>> getAll(Class classObj) async {
+  static Future<List<Segment>> getByClass(EnrollmentClass classObj) async {
     List<Segment> segments = [];
-    for (SegmentSubmodel segment in classObj.segments) {
+    for (EnrollmentSegment segment in classObj.segments) {
       QuerySnapshot qs = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
@@ -48,6 +49,15 @@ class SegmentRepository {
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('segments').doc(id);
     DocumentSnapshot ds = await reference.get();
     return Segment.fromJson(ds.data() as Map<String, dynamic>);
+  }
+
+    static Future<List<Segment>> getAll() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('segments')
+        .get();
+    return mapQueryToSegment(querySnapshot);
   }
 
   static Future<void> addLike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {

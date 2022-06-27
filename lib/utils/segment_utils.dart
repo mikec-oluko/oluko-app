@@ -143,9 +143,7 @@ class SegmentUtils {
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
-          style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: color)
-              : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: color),
+          style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: color),
         ));
   }
 
@@ -280,7 +278,8 @@ class SegmentUtils {
   static Column workouts(Segment segment, BuildContext context, Color color) {
     final List<String> workoutWidgets = getWorkouts(segment);
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start, children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
   }
 
   static List<Widget> titleList(Segment segment, BuildContext context) {

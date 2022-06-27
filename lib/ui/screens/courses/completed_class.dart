@@ -1,43 +1,32 @@
-import 'dart:math';
-
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
-import 'package:oluko_app/blocs/introduction_media_bloc.dart';
-import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/completed_course_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/class_utils.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class CompletedClass extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int courseIndex;
+  final XFile selfie;
 
-  CompletedClass({Key key, this.courseEnrollment, this.classIndex, this.courseIndex}) : super(key: key);
+  CompletedClass({Key key, this.selfie, this.courseEnrollment, this.classIndex, this.courseIndex}) : super(key: key);
 
   @override
   _CompletedClassState createState() => _CompletedClassState();
@@ -45,16 +34,13 @@ class CompletedClass extends StatefulWidget {
 
 class _CompletedClassState extends State<CompletedClass> {
   User _user;
-  XFile _image;
-  final imagePicker = ImagePicker();
-  String _imageUrl;
   DateTime _date;
   bool newSelfieUploaded;
   bool showVideo = false;
 
   @override
   void initState() {
-    newSelfieUploaded = false;
+    newSelfieUploaded = widget.selfie != null;
     super.initState();
   }
 
@@ -91,7 +77,7 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget form() {
     return Scaffold(
-        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : Colors.black,
+        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
         body: Stack(
           children: [
             Padding(
@@ -131,6 +117,10 @@ class _CompletedClassState extends State<CompletedClass> {
                             customHeight: 60,
                             title: OlukoLocalizations.get(context, 'done'),
                             onPressed: () {
+                              if (widget.selfie != null) {
+                                BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+                                    .saveSelfie(widget.courseEnrollment, widget.classIndex, widget.selfie);
+                              }
                               if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
                                 Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
                                   'index': widget.courseIndex,
@@ -155,18 +145,13 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   Widget showPhotoFrame() {
-    return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
-      if (newSelfieUploaded) {
-        if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
-          _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
-          newSelfieUploaded = false;
-        }
-        _date = DateTime.now();
-        return getPhotoFrame();
-      } else {
-        return OlukoNeumorphism.isNeumorphismDesign ? getAddPhotoFrameNeumorphic() : getAddPhotoFrame();
-      }
-    });
+    if (newSelfieUploaded) {
+      newSelfieUploaded = false;
+      _date = DateTime.now();
+      return getPhotoFrame();
+    } else {
+      return OlukoNeumorphism.isNeumorphismDesign ? getAddPhotoFrameNeumorphic() : getAddPhotoFrame();
+    }
   }
 
   Widget getCameraIcon() {
@@ -204,12 +189,12 @@ class _CompletedClassState extends State<CompletedClass> {
                           ));
                     } else {
                       return Container(
-                          height: 153,
-                          width: 153,
+                          height: 169,
+                          width: 169,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
+                              image: FileImage(File(widget.selfie.path)),
                             ),
                           ));
                     }
@@ -253,8 +238,12 @@ class _CompletedClassState extends State<CompletedClass> {
 
   showCameraAndSaveSelfie() async {
     newSelfieUploaded = true;
-    return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording],
-        arguments: {'fromCompletedClass': true, 'classIndex': widget.classIndex, 'courseEnrollment': widget.courseEnrollment});
+    return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+      'fromCompletedClass': true,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex
+    });
   }
 
   Widget getAddPhotoFrame() {

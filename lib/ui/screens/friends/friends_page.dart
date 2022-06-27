@@ -115,11 +115,11 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
           border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           lightSource: LightSource.topLeft,
-          shadowDarkColorEmboss: Colors.black,
+          shadowDarkColorEmboss:OlukoColors.black,
           shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           surfaceIntensity: 1,
           shadowLightColor: Colors.white,
-          shadowDarkColor: Colors.black),
+          shadowDarkColor:OlukoColors.black),
       child: friendsTabs(),
     );
   }

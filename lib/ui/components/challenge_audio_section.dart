@@ -76,7 +76,7 @@ class _State extends State<ChallengeAudioSection> {
               ),
             ),
             child: _recordedContent())
-        : Container(height: !submitted ? _maxHeight : 76, color: Colors.black, child: _recordedContent());
+        : Container(height: !submitted ? _maxHeight : 76, color:OlukoColors.black, child: _recordedContent());
   }
 
   Widget _recordedContent() {

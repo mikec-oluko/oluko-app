@@ -732,7 +732,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   left: 10,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(150),
+                      color:OlukoColors.black.withAlpha(150),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Padding(
@@ -781,7 +781,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   left: 10,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(150),
+                      color:OlukoColors.black.withAlpha(150),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Padding(

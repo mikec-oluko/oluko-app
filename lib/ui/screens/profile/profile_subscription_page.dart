@@ -24,7 +24,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
       create: (context) => PlanBloc()..getPlans(),
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: OlukoColors.black,
           appBar: OlukoAppBar(
             title: ProfileViewConstants.profileOptionsSubscription,
             showSearchBar: false,

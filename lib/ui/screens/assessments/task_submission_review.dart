@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
@@ -92,7 +93,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
         child: Scaffold(
             appBar: OlukoAppBar(title: "Record review"),
             bottomNavigationBar: BottomAppBar(
-              color: Colors.black,
+              color:OlukoColors.black,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
@@ -167,7 +168,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                                   child: VideoPlayer(_videoController),
                                 );
                               } else {
-                                return Container(color: Colors.black, child: Center(child: CircularProgressIndicator()));
+                                return Container(color:OlukoColors.black, child: Center(child: CircularProgressIndicator()));
                               }
                             },
                           ),

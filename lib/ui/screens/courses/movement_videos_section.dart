@@ -9,19 +9,18 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementVideosSection extends StatefulWidget {
-  final List<Movement> movements;
   final Segment segment;
-  final Function(BuildContext, Movement) onPressedMovement;
+  final Function(BuildContext, MovementSubmodel) onPressedMovement;
   final Widget action;
 
-  MovementVideosSection({this.segment, this.movements, this.onPressedMovement, this.action});
+  MovementVideosSection({this.segment, this.onPressedMovement, this.action});
 
   @override
   _State createState() => _State();
 }
 
 class _State extends State<MovementVideosSection> {
-  List<Movement> segmentMovements;
+  List<MovementSubmodel> segmentMovements;
 
   @override
   void initState() {
@@ -32,7 +31,6 @@ class _State extends State<MovementVideosSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        // padding: EdgeInsets.only(left: 18),
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(
                 color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
@@ -68,7 +66,7 @@ class _State extends State<MovementVideosSection> {
               child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: MovementItemBubbles(
-                      onPressed: widget.onPressedMovement, content: segmentMovements, width: ScreenUtils.width(context) / 1))),
+                      onPressed: widget.onPressedMovement, movements: segmentMovements, width: ScreenUtils.width(context) / 1))),
           OlukoNeumorphism.isNeumorphismDesign
               ? SizedBox.shrink()
               : Image.asset(
@@ -88,26 +86,15 @@ class _State extends State<MovementVideosSection> {
         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)));
   }
 
-  List<Movement> getSegmentMovements() {
-    List<String> movementIds = [];
-
+  List<MovementSubmodel> getSegmentMovements() {
+    List<MovementSubmodel> movementSubmodels = [];
     widget.segment.sections.forEach((section) {
       section.movements.forEach((MovementSubmodel movement) {
         if (!movement.isRestTime) {
-          movementIds.add(movement.id);
+          movementSubmodels.add(movement);
         }
       });
     });
-
-    movementIds = movementIds.toSet().toList(); //remove duplicates
-
-    List<Movement> movements = List<Movement>.filled(movementIds.length, null);
-    widget.movements.forEach((movement) {
-      int index = movementIds.indexOf(movement.id);
-      if (index > -1) {
-        movements[index] = movement;
-      }
-    });
-    return movements;
+    return movementSubmodels;
   }
 }

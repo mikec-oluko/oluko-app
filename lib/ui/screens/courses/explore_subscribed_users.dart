@@ -53,7 +53,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
         BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseId, loggedUser.user.id);
       }
       return Scaffold(
-        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark :OlukoColors.black,
         appBar: OlukoAppBar(),
         body: SizedBox(
           height: ScreenUtils.height(context),
