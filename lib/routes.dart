@@ -1102,7 +1102,7 @@ class Routes {
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
-        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
+        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true',showBottomTab: args['showBottomTab'] as Function(),);
         break;
 
       case RouteEnum.viewAll:

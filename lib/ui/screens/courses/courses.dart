@@ -179,6 +179,7 @@ class _State extends State<Courses> {
       showTitle: true,
       searchKey: searchKey,
       showBackButton: goBack,
+      showActions: widget.homeEnrollTocourse,
       title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
@@ -193,7 +194,7 @@ class _State extends State<Courses> {
       suggestionMethod: CourseUtils.suggestionMethod,
       searchMethod: CourseUtils.searchMethod,
       searchResultItems: _courses,
-      showSearchBar: true,
+      showSearchBar: !widget.homeEnrollTocourse,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
       actionButton: () => this.setState(() {
         showFilterSelector = false;

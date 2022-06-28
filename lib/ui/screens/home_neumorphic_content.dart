@@ -554,7 +554,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       ),
     );
   }
- 
+
   Widget showVideoPlayer(String videoUrl, bool showStories) {
     final List<Widget> widgets = [];
     if (_controller == null) {
@@ -625,6 +625,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget enrollButton() {
+    bool _isBottomTabActive = true;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 90),
       child: Row(
@@ -634,7 +635,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courses],
-                  arguments: {'homeEnrollTocourse': 'true'});
+                  arguments: {
+                    'homeEnrollTocourse': 'true',
+                    'showBottomTab': () => setState(() {
+                          _isBottomTabActive = !_isBottomTabActive;
+                        })
+                  });
             },
           )
         ],
