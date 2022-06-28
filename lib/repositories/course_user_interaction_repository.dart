@@ -155,6 +155,28 @@ class CourseUserInteractionRepository {
     }
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getLikedCoursesSubscription({@required String userId}) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> timelineItemsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('likes')
+        .snapshots();
+    return timelineItemsStream;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getRecommendedCoursesByFriends({@required String userId}) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> timelineItemsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('recommendations')
+        .snapshots();
+    return timelineItemsStream;
+  }
+
   DocumentReference<Object> _getUserReference(String userRequestedId) {
     final DocumentReference userReference =
         firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userRequestedId);

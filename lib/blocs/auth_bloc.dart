@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
+import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
@@ -95,7 +96,7 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('invalidUsernameOrPw'));
       if (request.password.contains(' ')) {
         AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('passwordSpaceWarning'),
-            backgroundColor: snackBarBackgroud, textColor:OlukoColors.black);
+            backgroundColor: snackBarBackgroud, textColor: OlukoColors.black);
       }
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
@@ -331,6 +332,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
       BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
       BlocProvider.of<CoachVideoMessageBloc>(context).dispose();
+      BlocProvider.of<CourseUserIteractionBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false,
