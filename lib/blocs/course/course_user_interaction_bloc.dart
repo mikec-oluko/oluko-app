@@ -101,17 +101,24 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
   }
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStreamOfCoursesRecommendedByFriends({@required String userId}) async {
+    List<Map<String, List<String>>> _coursesRecommendedListOfIds = [];
+    Map<String, List<String>> courseWithUsers;
+    List<Recommendation> _recommendedCourses = [];
     try {
       return _courseRecommendedSubscription ??=
           _courseUserInteractionRepository.getRecommendedCoursesByFriends(userId: userId).listen((snapshot) {
-        List<Recommendation> _recommendedCourses = [];
         emit(CourseInteractionLoading());
+
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((courseRecommended) {
             final Map<String, dynamic> _courseRecommended = courseRecommended.data();
             _recommendedCourses.add(Recommendation.fromJson(_courseRecommended));
           });
+
+          getMapOfCoursesAndFriendsList(_recommendedCourses, courseWithUsers, _coursesRecommendedListOfIds);
+          print(_coursesRecommendedListOfIds);
         }
+
         emit(CoursesRecommendedByFriendsSuccess(recommendedCourses: _recommendedCourses));
       });
     } catch (exception, stackTrace) {
@@ -122,6 +129,26 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
       emit(CourseInteractionFailure(exception: exception));
       rethrow;
     }
+  }
+
+  void getMapOfCoursesAndFriendsList(List<Recommendation> _recommendedCourses, Map<String, List<String>> courseWithUsers, List<Map<String, List<String>>> _coursesRecommendedListOfIds) {
+     _recommendedCourses.forEach((courseRecommended) {
+      courseWithUsers = {
+        courseRecommended.entityId: [courseRecommended.originUserId]
+      };
+      if (_coursesRecommendedListOfIds.isEmpty) {
+        _coursesRecommendedListOfIds.add(courseWithUsers);
+      } else {
+        if (_coursesRecommendedListOfIds.where((element) => element.keys.first == courseRecommended.entityId).toList().isEmpty) {
+          _coursesRecommendedListOfIds.add(courseWithUsers);
+        } else {
+          final first =
+              _coursesRecommendedListOfIds.where((element) => element.keys.first == courseRecommended.entityId).toList().first;
+          final indexOfElement = _coursesRecommendedListOfIds.indexOf(first);
+          _coursesRecommendedListOfIds[indexOfElement].values.first.add(courseRecommended.originUserId);
+        }
+      }
+    });
   }
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStreamOfLikedCourses({@required String userId}) async {
