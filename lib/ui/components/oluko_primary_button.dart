@@ -17,7 +17,7 @@ class OlukoPrimaryButton extends StatefulWidget {
     this.onPressed,
     this.thinPadding = false,
     this.color,
-    this.textColor = Colors.black,
+    this.textColor =OlukoColors.black,
     this.textAlign = TextAlign.center,
     this.icon,
     this.isDisabled = false,

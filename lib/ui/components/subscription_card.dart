@@ -49,7 +49,7 @@ class _State extends State<SubscriptionCard> {
                     Opacity(
                       opacity: 0.3,
                       child: Container(
-                        decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(9))),
+                        decoration: BoxDecoration(color:OlukoColors.black, borderRadius: BorderRadius.all(Radius.circular(9))),
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                           child: Container(
@@ -101,7 +101,7 @@ class _State extends State<SubscriptionCard> {
                         opacity: 0.3,
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: OlukoColors.black,
                               image: DecorationImage(
                                   fit: BoxFit.cover,
                                   alignment: Alignment.centerRight,

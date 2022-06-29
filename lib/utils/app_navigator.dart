@@ -30,7 +30,7 @@ class AppNavigator {
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: Colors.black,
+            backgroundColor: OlukoColors.black,
             title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
             content: Text(OlukoLocalizations.get(context, 'exitConfirmationBody'), style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[

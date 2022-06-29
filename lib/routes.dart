@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -100,6 +101,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -437,7 +439,10 @@ class Routes {
     //Providers used for the new route.
     List<BlocProvider> providers = [];
     //Providers used across the whole app.
-    final List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
+    final List<BlocProvider> commonProviders = [
+      BlocProvider<AuthBloc>.value(value: _authBloc),
+      BlocProvider<FAQBloc>.value(value: _fAQBloc),
+    ];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
@@ -549,7 +554,8 @@ class Routes {
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,
+            selfie: argumentsToAdd['selfie'] as XFile);
         break;
       case RouteEnum.story:
         providers = [
@@ -797,6 +803,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
+            classSegments: argumentsToAdd['classSegments'] as List<Segment>,
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
@@ -808,9 +815,10 @@ class Routes {
           BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
-        final Map<String, Movement> argumentsToAdd = arguments as Map<String, Movement>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MovementIntro(
-          movement: argumentsToAdd['movement'],
+          movement: argumentsToAdd['movement'] as Movement,
+          movementSubmodel: argumentsToAdd['movementSubmodel'] as MovementSubmodel,
         );
         break;
       case RouteEnum.segmentClocks:
@@ -1037,6 +1045,7 @@ class Routes {
           fromCompletedClass: argumentsToAdd['fromCompletedClass'] as bool,
           courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
           classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
         );
         break;
       case RouteEnum.selfRecordingPreview:

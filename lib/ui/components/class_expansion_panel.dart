@@ -6,6 +6,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/class_item.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
@@ -20,13 +21,11 @@ const SCROLL_DURATION = 600;
 
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
-  final List<Movement> movements;
-  final Function(BuildContext, Movement) onPressedMovement;
+  final Function(BuildContext, MovementSubmodel) onPressedMovement;
 
   const ClassExpansionPanels({
     this.classes,
     this.onPressedMovement,
-    this.movements,
   });
 
   @override
@@ -175,7 +174,7 @@ class _State extends State<ClassExpansionPanels> {
     }
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
-      List<Movement> movements = ClassService.getClassSegmentMovements(segment.sections, widget.movements);
+      List<MovementSubmodel> movements = ClassService.getClassSegmentMovementSubmodels(segment.sections);
       widgets.add(ListTile(
         title: CourseSegmentSection(segment: segment, movements: movements, onPressedMovement: widget.onPressedMovement),
       ));

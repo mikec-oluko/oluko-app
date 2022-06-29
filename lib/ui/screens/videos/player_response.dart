@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/draw_point.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
@@ -85,7 +86,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoColors.black,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           double markerPosition = getCurrentVideoPosition();
@@ -537,7 +538,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
         : 100;
   }
 
-  Container buildMarkerTag(num markerValue, {IconData icon = Icons.location_on, Color color = Colors.black}) {
+  Container buildMarkerTag(num markerValue, {IconData icon = Icons.location_on, Color color = OlukoColors.black}) {
     return Container(
       child: Align(
           alignment: FractionalOffset(markerValue / getSliderMac(), 0),

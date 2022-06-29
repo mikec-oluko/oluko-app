@@ -95,7 +95,7 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('invalidUsernameOrPw'));
       if (request.password.contains(' ')) {
         AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('passwordSpaceWarning'),
-            backgroundColor: snackBarBackgroud, textColor: Colors.black);
+            backgroundColor: snackBarBackgroud, textColor:OlukoColors.black);
       }
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
