@@ -44,15 +44,18 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
 
   final CourseUserInteractionRepository _courseUserInteractionRepository = CourseUserInteractionRepository();
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> _likeSubscription;
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> _CourseRecommendedSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> _courseRecommendedSubscription;
 
   @override
   void dispose() {
-    _likeSubscription != null
-        ? _likeSubscription.cancel()
-        : _CourseRecommendedSubscription != null
-            ? _CourseRecommendedSubscription.cancel()
-            : null;
+    if (_likeSubscription != null) {
+      _likeSubscription.cancel();
+      _likeSubscription = null;
+    }
+    if (_courseRecommendedSubscription != null) {
+      _courseRecommendedSubscription.cancel();
+      _courseRecommendedSubscription = null;
+    }
   }
 
   Future<Like> isCourseLiked({@required String courseId, @required String userId}) async {
@@ -99,10 +102,10 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStreamOfCoursesRecommendedByFriends({@required String userId}) async {
     try {
-      return _CourseRecommendedSubscription ??=
+      return _courseRecommendedSubscription ??=
           _courseUserInteractionRepository.getRecommendedCoursesByFriends(userId: userId).listen((snapshot) {
         List<Recommendation> _recommendedCourses = [];
-        //   emit(Loading());
+        emit(CourseInteractionLoading());
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((courseRecommended) {
             final Map<String, dynamic> _courseRecommended = courseRecommended.data();
@@ -122,12 +125,13 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
   }
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStreamOfLikedCourses({@required String userId}) async {
+    const String _myListTitle = 'My List';
+    CourseCategory _likeCourseCategory;
+    List<Like> _likedCourses = [];
+    List<CourseCategoryItem> _coursesLikedList = [];
     try {
       return _likeSubscription ??= _courseUserInteractionRepository.getLikedCoursesSubscription(userId: userId).listen((snapshot) {
-        CourseCategory _likeCourseCategory;
-        List<Like> _likedCourses = [];
-        List<CourseCategoryItem> _coursesLikedList = [];
-        //   emit(Loading());
+        emit(CourseInteractionLoading());
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((courseLiked) {
             final Map<String, dynamic> _likedCourse = courseLiked.data();
@@ -135,7 +139,6 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
           });
 
           _likedCourses.forEach((courseLiked) {
-            // _coursesLikedList
             if (courseLiked.isActive) {
               CourseCategoryItem _courseLikedItem = CourseCategoryItem(id: courseLiked.entityId, reference: courseLiked.entityReference);
               if (_coursesLikedList.isNotEmpty) {
@@ -147,8 +150,7 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
               }
             }
           });
-          _likeCourseCategory = CourseCategory(name: 'Favorite Courses', courses: _coursesLikedList);
-          print(_likeCourseCategory);
+          _likeCourseCategory = CourseCategory(name: _myListTitle, courses: _coursesLikedList);
         }
         emit(CourseLikedListSuccess(myLikedCourses: _likeCourseCategory));
       });

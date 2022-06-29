@@ -93,6 +93,11 @@ class _State extends State<Courses> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + carSecHeigthPlus;
     return BlocBuilder<AuthBloc, AuthState>(
@@ -316,11 +321,6 @@ class _State extends State<Courses> {
 
 //TODO: CHECK COACH ON ENROLL
   Widget _friendsRecommendedSection() {
-    // return BlocBuilder<AuthBloc, AuthState>(
-    //   builder: (context, authState) {
-    //     if (authState is AuthSuccess) {
-    //       AuthSuccess authSuccess = authState;
-
     return BlocListener<CoachAssignmentBloc, CoachAssignmentState>(
       listenWhen: (CoachAssignmentState previous, CoachAssignmentState current) {
         return current is CoachAssignmentResponse;
@@ -364,26 +364,17 @@ class _State extends State<Courses> {
                           ),
                         );
                       } else {
-                        return const SizedBox();
+                        return const SizedBox.shrink();
                       }
                     }).toList(),
                   )
-                : SizedBox();
+                : const SizedBox.shrink();
+            ;
           }),
     );
-    // } else {
-    //   return SizedBox();
-    // }
-    //   },
-    // );
   }
 
   Widget _friendsRecommendedCoursesSection() {
-    // return BlocBuilder<AuthBloc, AuthState>(
-    //   builder: (context, authState) {
-    //     if (authState is AuthSuccess) {
-    //       AuthSuccess authSuccess = authState;
-
     return BlocListener<CoachAssignmentBloc, CoachAssignmentState>(
       listenWhen: (CoachAssignmentState previous, CoachAssignmentState current) {
         return current is CoachAssignmentResponse;
@@ -427,24 +418,16 @@ class _State extends State<Courses> {
                           ),
                         );
                       } else {
-                        return const SizedBox();
+                        return const SizedBox.shrink();
                       }
                     }).toList(),
                   )
-                : SizedBox();
+                : const SizedBox.shrink();
           }),
     );
-    //     } else {
-    //       return SizedBox();
-    //     }
-    //   },
-    // );
   }
 
   Widget _activeCoursesSection() {
-    // return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-    //   if (authState is AuthSuccess) {
-    //     AuthSuccess authSuccess = authState;
     List<Course> enrolledCourses = [];
     return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
         bloc: BlocProvider.of<CourseEnrollmentListStreamBloc>(context)..getStream(_currentAuthUser.id),
@@ -491,40 +474,43 @@ class _State extends State<Courses> {
             return nil;
           }
         });
-    //   } else {
-    //     return SizedBox();
-    //   }
-    // });
   }
 
   Widget _myListSection() {
     return Container(child: BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
       builder: (context, state) {
-        Map<CourseCategory, List<Course>> myList = {};
+        Map<CourseCategory, List<Course>> myListOfCourses = {};
         if (state is CourseLikedListSuccess) {
-          CourseCategory likeCategory = state.myLikedCourses;
-          myList = CourseUtils.mapCoursesByCategories(_courses, [likeCategory]);
+          CourseCategory _myListCategory = state.myLikedCourses;
+          if (_myListCategory != null) {
+            myListOfCourses = CourseUtils.mapCoursesByCategories(_courses, [_myListCategory]);
+          }
         }
-        return CarouselSection(
-            title: OlukoLocalizations.get(context, 'myList'),
-            height: carouselSectionHeight,
-            children: myList.values.isNotEmpty
-                ? myList.values.toList().first.map((courseElement) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
-                        },
-                        child: _getCourseCard(
-                          _generateImageCourse(courseElement.image),
-                          width: ScreenUtils.width(context) / (padding + _cardsToShow()),
-                        ),
-                      ),
-                    );
-                  }).toList()
-                : []);
+        return myListOfCourses != null && myListOfCourses.values.isNotEmpty
+            ? CarouselSection(
+                optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+                onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                    arguments: {'courses': myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
+                title: OlukoLocalizations.get(context, 'myList'),
+                height: carouselSectionHeight,
+                children: myListOfCourses.values.isNotEmpty
+                    ? myListOfCourses.values.toList().first.map((courseElement) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: GestureDetector(
+                            onTap: () async {
+                              Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                                  arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
+                            },
+                            child: _getCourseCard(
+                              _generateImageCourse(courseElement.image),
+                              width: ScreenUtils.width(context) / (padding + _cardsToShow()),
+                            ),
+                          ),
+                        );
+                      }).toList()
+                    : [])
+            : const SizedBox.shrink();
       },
     ));
   }
