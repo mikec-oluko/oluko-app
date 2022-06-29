@@ -61,14 +61,6 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   }
 
   @override
-  void dispose() {
-    if (_controller != null) {
-      _controller.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return widget.bottomWidgets != null
         ? Stack(
@@ -270,7 +262,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
       ),
     );
     return Container(
-      color:OlukoColors.black,
+      color: OlukoColors.black,
       child: Stack(
         children: widgets +
             [
