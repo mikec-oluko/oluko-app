@@ -126,7 +126,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                             })(),
                             currentUserId: widget.userId,
                             maxRadius: 35,
-                            imageUrl: user.avatar.toString(),
+                            imageUrl: user.avatarThumbnail?.toString() ?? user.avatar?.toString(),
                             stories: user is UserSubmodel && user.stories?.stories != null ? user.stories.stories : [],
                           ),
                           Text('${user.firstName ?? ''} ${user.lastName ?? ''}',

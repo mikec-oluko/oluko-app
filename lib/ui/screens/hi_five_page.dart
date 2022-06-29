@@ -142,7 +142,7 @@ class _HiFivePageState extends State<HiFivePage> {
                   showUserProgress: true,
                   userProgress: _usersProgress[targetUser.id],
                   itemUserId: targetUser.id,
-                  imageUrl: targetUser.avatar,
+                  imageUrl: targetUser.avatarThumbnail ?? targetUser.avatar,
                   name: targetUser.firstName,
                   lastname: targetUser.lastName,
                   maxRadius: 30,

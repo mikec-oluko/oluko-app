@@ -42,7 +42,7 @@ class _State extends State<StoriesHeader> {
                         child: StoriesItem(
                           from: StoriesItemFrom.neumorphicHome,
                           stories: userStory.stories,
-                          imageUrl: userStory.avatar_thumbnail,
+                          imageUrl: userStory.avatar_thumbnail ?? userStory.avatar,
                           maxRadius: widget.maxRadius ?? 35,
                           itemUserId: userStory.id,
                           name: userStory.name,

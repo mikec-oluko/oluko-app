@@ -109,7 +109,7 @@ class _UserListComponentState extends State<UserListComponent> {
                     userProgress: widget.usersProgess[friendElement.id],
                     progressValue: 0.5,
                     maxRadius: 30,
-                    imageUrl: friendElement.avatar,
+                    imageUrl: friendElement.avatarThumbnail ?? friendElement.avatar,
                     name: friendElement.firstName,
                     lastname: friendElement.lastName,
                     currentUserId: widget.authUser.id,

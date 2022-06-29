@@ -95,7 +95,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                     itemUserId: widget.user.id,
                     userProgress: widget.usersProgess != null ? widget.usersProgess[widget.user.id] : null,
                     maxRadius: 40,
-                    imageUrl: widget.user.avatar,
+                    imageUrl: widget.user.avatarThumbnail ?? widget.user.avatar,
                     name: widget.user.firstName,
                     lastname: widget.user.lastName,
                     userProgressStreamBloc: widget.userProgressStreamBloc,

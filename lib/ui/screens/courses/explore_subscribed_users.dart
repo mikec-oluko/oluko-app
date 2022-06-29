@@ -145,7 +145,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                             showUserProgress: true,
                             userProgress: _usersProgress[user.id],
                             maxRadius: 30,
-                            imageUrl: user.avatar,
+                            imageUrl: user.avatarThumbnail ?? user.avatar,
                             bloc: BlocProvider.of<StoryListBloc>(context),
                             getStories: true,
                             itemUserId: user.id,
@@ -161,7 +161,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                             itemUserId: user.id,
                             userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                             maxRadius: 30,
-                            imageUrl: user.avatar,
+                            imageUrl: user.avatarThumbnail ?? user.avatar,
                             name: user.firstName,
                           ),
                         Padding(
