@@ -10,7 +10,6 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.d
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
-import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
@@ -44,7 +43,6 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -144,13 +142,9 @@ class _InsideClassesState extends State<InsideClass> {
     BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     return Form(
       key: _formKey,
-      child: Scaffold(
-        body: BlocBuilder<MovementBloc, MovementState>(
-          builder: (context, movementState) {
-            if (movementState is GetAllSuccess) {
-              return BlocBuilder<CoachAudioBloc, CoachAudioState>(
-                builder: (context, coachState) {
-                  if (coachState is CoachesByAudiosSuccess) {
+      child: Scaffold(body: BlocBuilder<CoachAudioBloc, CoachAudioState>(
+        builder: (context, coachState) {
+          if (coachState is CoachesByAudiosSuccess) {
             _coaches = coachState.coaches;
             return Stack(
               children: [
@@ -170,49 +164,11 @@ class _InsideClassesState extends State<InsideClass> {
                 slidingUpPanelComponent(context)
               ],
             );
-          } else if (coachState is CoachUserLoading) {
-                    return OlukoCircularProgressIndicator();
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              );
-            } else if (movementState is LoadingMovementState) {
-              return OlukoCircularProgressIndicator();
-            } else {
-              return const SizedBox();
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(
-      OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
-          _controller = chewieController;
-        }),
-      ),
-    );
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-            ? ScreenUtils.height(context) / 4
-            : ScreenUtils.height(context) / 1.5,
-        minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-            ? ScreenUtils.height(context) / 4
-            : ScreenUtils.height(context) / 1.5,
-      ),
-      child: SizedBox(height: 400, child: Stack(children: widgets)),
+          } else {
+            return const SizedBox();
+          }
+        },
+      )),
     );
   }
 
