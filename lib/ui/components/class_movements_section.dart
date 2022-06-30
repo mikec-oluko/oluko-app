@@ -32,39 +32,35 @@ class _State extends State<ClassMovementSection> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (OlukoNeumorphism.isNeumorphismDesign)
-        const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: OlukoNeumorphicDivider(
-            isFadeOut: true,
-          ),
-        )
-      else
+       if (!OlukoNeumorphism.isNeumorphismDesign)
         const Divider(
           color: OlukoColors.grayColor,
           height: 50,
         ),
-      Row(children: [
-        Text(
-          OlukoLocalizations.get(context, 'movesInThisClass'),
-          style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white)
-              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
-        ),
-        Expanded(child: SizedBox()),
-        GestureDetector(
-            onTap: () => widget.panelController.open(),
-            child: SizedBox(
-              width: 85,
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  OlukoLocalizations.get(context, 'viewDetails'),
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+      Padding(
+        padding: const EdgeInsets.only(top:20.0),
+        child: Row(children: [
+          Text(
+            OlukoLocalizations.get(context, 'movesInThisClass'),
+            style: OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white)
+                : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+          ),
+          Expanded(child: SizedBox()),
+          GestureDetector(
+              onTap: () => widget.panelController.open(),
+              child: SizedBox(
+                width: 85,
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    OlukoLocalizations.get(context, 'viewDetails'),
+                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                  ),
                 ),
-              ),
-            ))
-      ]),
+              ))
+        ]),
+      ),
       buildMovementBubbles(),
     ]);
   }
