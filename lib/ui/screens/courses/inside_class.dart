@@ -788,6 +788,7 @@ class _InsideClassesState extends State<InsideClass> {
         SizedBox(
           width: 80,
           child: OlukoNeumorphicSecondaryButton(
+            lighterButton: true,
             isExpanded: false,
             thinPadding: true,
             textColor: Colors.grey,

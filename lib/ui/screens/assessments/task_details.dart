@@ -458,6 +458,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           children: [
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicSecondaryButton(
+                  lighterButton: true,
                     buttonShape: NeumorphicShape.flat,
                     useBorder: true,
                     thinPadding: true,

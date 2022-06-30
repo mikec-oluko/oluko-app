@@ -276,6 +276,7 @@ class SegmentClocksUtils {
         return SizedBox(
           width: 200,
           child: OlukoNeumorphicSecondaryButton(
+            lighterButton: true,
             thinPadding: true,
             isExpanded: false,
             icon: Icon(
@@ -514,6 +515,7 @@ class SegmentClocksUtils {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   OlukoNeumorphicSecondaryButton(
+                    lighterButton: true,
                     title: OlukoLocalizations.get(context, 'goToClass'),
                     thinPadding: true,
                     onPressed: () {
