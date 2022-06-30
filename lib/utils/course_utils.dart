@@ -125,4 +125,8 @@ class CourseUtils {
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
     return "$weeks ${OlukoLocalizations.get(context, 'weeks')}, $classes ${OlukoLocalizations.get(context, 'classes')}";
   }
+
+  static Course getCourseById(String courseId, List<Course> courses) {
+    return courses.where((course) => course.id == courseId).first;
+  }
 }
