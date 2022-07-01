@@ -51,8 +51,8 @@ class _SentVideosPageState extends State<SentVideosPage> {
             title: Text(
               OlukoLocalizations.get(context, 'sentVideos'),
               style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                  : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                  ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
+                  : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
             ),
             actions: [
               Row(
@@ -167,7 +167,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                         context,
                         routeLabels[RouteEnum.coachShowVideo],
                         arguments: {
-                          'aspectRatio':segmentSubmitted.video.aspectRatio,
+                          'aspectRatio': segmentSubmitted.video.aspectRatio,
                           'videoUrl': segmentSubmitted.video.url,
                           'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
                         },
@@ -238,7 +238,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     if (OlukoNeumorphism.isNeumorphismDesign) {
       return Text(
         DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
       );
     } else {
       return Column(
@@ -246,14 +246,14 @@ class _SentVideosPageState extends State<SentVideosPage> {
         children: [
           Text(
             OlukoLocalizations.get(context, 'date'),
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
           ),
           const SizedBox(
             height: 5,
           ),
           Text(
             DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
           )
         ],
       );

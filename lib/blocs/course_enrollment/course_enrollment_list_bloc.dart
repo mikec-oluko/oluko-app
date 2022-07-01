@@ -42,10 +42,10 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
     }
   }
 
-  void unenrollCourseForUser(CourseEnrollment courseToUnenroll, bool isUnenrolledValue) async {
+  void unenrollCourseForUser(CourseEnrollment courseToUnenroll, {bool isUnenrolledValue}) async {
     try {
       CourseEnrollment courseEnrollmentUpdated =
-          await CourseEnrollmentRepository.markCourseEnrollmentAsUnenrolled(courseToUnenroll, isUnenrolledValue);
+          await CourseEnrollmentRepository.markCourseEnrollmentAsUnenrolled(courseToUnenroll, isUnenrolled: isUnenrolledValue);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

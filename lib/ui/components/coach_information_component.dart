@@ -92,7 +92,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
                     OlukoLocalizations.get(context, 'coach'),
                     style: OlukoFonts.olukoBigFont(
                         customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                        custoFontWeight: FontWeight.w500),
+                        customFontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
                     width: 5.0,
@@ -102,7 +102,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
                       widget.coachUser.firstName,
                       style: OlukoFonts.olukoBigFont(
                           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                          custoFontWeight: FontWeight.w500),
+                          customFontWeight: FontWeight.w500),
                     )
                   else
                     const SizedBox.shrink()
@@ -114,7 +114,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Text(
                   _userLocation,
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
                 ),
               )
             else
@@ -149,7 +149,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
           widget.coachUser != null
               ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
               : defaultCoachPic,
-          style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, custoFontWeight: FontWeight.w500)),
+          style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, customFontWeight: FontWeight.w500)),
     );
   }
 

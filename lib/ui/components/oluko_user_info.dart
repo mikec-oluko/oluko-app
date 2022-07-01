@@ -47,7 +47,7 @@ class _OlukoUserInfoWidgetState extends State<OlukoUserInfoWidget> {
                     child: Text(
                       widget.value != 'null' ? widget.value : '-',
                       style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.w500,
+                        customFontWeight: FontWeight.w500,
                       ),
                     ),
                   ),

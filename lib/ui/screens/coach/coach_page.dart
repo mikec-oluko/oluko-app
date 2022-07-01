@@ -334,7 +334,7 @@ class _CoachPageState extends State<CoachPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor.withOpacity(0.5), custoFontWeight: FontWeight.w500),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor.withOpacity(0.5), customFontWeight: FontWeight.w500),
                 ),
               ),
             ],

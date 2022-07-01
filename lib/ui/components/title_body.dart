@@ -14,7 +14,7 @@ class TitleBody extends StatelessWidget {
       title,
       textAlign: TextAlign.start,
       overflow: TextOverflow.ellipsis,
-      style: OlukoFonts.olukoBigFont(custoFontWeight: bold ? FontWeight.w700 : FontWeight.w400),
+      style: OlukoFonts.olukoBigFont(customFontWeight: bold ? FontWeight.w700 : FontWeight.w400),
     );
   }
 }

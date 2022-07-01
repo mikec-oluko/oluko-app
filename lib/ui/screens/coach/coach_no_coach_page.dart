@@ -70,7 +70,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
                       child: Text(
                         OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                       ),
                     ),
                     const SizedBox(
@@ -79,7 +79,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
                     Text(
                       OlukoLocalizations.get(context, 'noCoachMessage'),
                       textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                     ),
                   ],
                 )),

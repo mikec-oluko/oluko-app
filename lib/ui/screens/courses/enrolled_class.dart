@@ -91,7 +91,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                       Text(
                                         widget.course.name,
-                                        style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                        style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(top: 10.0, right: 10),
@@ -100,7 +100,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                           CourseUtils.toCourseDuration(
                                               6, widget.course.classes != null ? widget.course.classes.length : 0, context),
                                           style: OlukoFonts.olukoBigFont(
-                                              custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                              customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                         ),
                                       ),
                                       Padding(
@@ -108,14 +108,14 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                         child: Text(
                                           widget.course.description,
                                           style: OlukoFonts.olukoBigFont(
-                                              custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                              customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                         ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(top: 25.0),
                                         child: Text(
                                           OlukoLocalizations.get(context, 'classes'),
-                                          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                          style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       ClassExpansionPanels(

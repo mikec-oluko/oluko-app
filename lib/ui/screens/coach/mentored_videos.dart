@@ -96,11 +96,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                 OlukoLocalizations.get(context, 'personalizedVideos'),
                 style: OlukoNeumorphism.isNeumorphismDesign
                     ? ScreenUtils.smallScreen(context)
-                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
-                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
+                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
                     : ScreenUtils.smallScreen(context)
-                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400)
-                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w400),
+                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400)
+                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400),
               ),
               actions: [
                 Row(
@@ -258,7 +258,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         if (OlukoNeumorphism.isNeumorphismDesign)
                           Text(
                             DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
                           )
                         else
                           Column(
@@ -266,14 +266,14 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'date'),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                               ),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                               )
                             ],
                           ),

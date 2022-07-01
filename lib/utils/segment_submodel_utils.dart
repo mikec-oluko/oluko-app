@@ -15,7 +15,7 @@ import 'oluko_localizations.dart';
 
 class SegmentSubmodelUtils {
   static bool isAMRAPforSubmodel(SegmentSubmodel segment) {
-    if (segment != null&&segment.totalTime!=null) {
+    if (segment != null && segment.totalTime != null) {
       if (segment.type != null) {
         return segment.type == SegmentTypeEnum.Duration;
       } else {
@@ -27,7 +27,7 @@ class SegmentSubmodelUtils {
   }
 
   static bool isEMOMforSubmodel(SegmentSubmodel segment) {
-    if (segment != null&&segment.rounds!=null&&segment.totalTime!=null) {
+    if (segment != null && segment.rounds != null && segment.totalTime != null) {
       if (segment.sections != null && segment.type != null) {
         return segment.sections.length == 1 && segment.type == SegmentTypeEnum.RoundsAndDuration;
       } else {
@@ -50,18 +50,18 @@ class SegmentSubmodelUtils {
             (segmentSubmodel.totalTime).toString() +
             " " +
             OlukoLocalizations.get(context, 'seconds'),
-        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
       );
     } else if (isAMRAPforSubmodel(segmentSubmodel)) {
       return Text(
         segmentSubmodel.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
       );
     } else {
-      return (segmentSubmodel.rounds!=null && segmentSubmodel.rounds > 1)
+      return (segmentSubmodel.rounds != null && segmentSubmodel.rounds > 1)
           ? Text(
               segmentSubmodel.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
             )
           : SizedBox();
     }

@@ -18,7 +18,7 @@ class UserUtils {
               getAvatarText(name, lastname),
               style: OlukoFonts.olukoBigFont(
                 customColor: OlukoColors.white,
-                custoFontWeight: FontWeight.w500,
+                customFontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
             )
@@ -32,10 +32,10 @@ class UserUtils {
   static String getAvatarText(String name, String lastname) {
     String text = '';
     if (name != null && name != 'null' && name.isNotEmpty) {
-      text += name.characters?.first?.toString()?.toUpperCase();
+      text += name.characters?.first?.toUpperCase();
     }
     if (lastname != null && lastname != 'null' && lastname.isNotEmpty) {
-      text += lastname.characters?.first?.toString()?.toUpperCase();
+      text += lastname.characters?.first?.toUpperCase();
     }
     return text;
   }

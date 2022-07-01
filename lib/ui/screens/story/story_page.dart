@@ -13,6 +13,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
+import '../../../helpers/video_player_helper.dart';
 
 class StoryPage extends StatefulWidget {
   List<Story> stories;
@@ -265,7 +266,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         break;
       case 'video':
         _videoController = null;
-        _videoController = VideoPlayerController.network(story.url);
+        _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(story.url);
         _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
           setState(() {});
           if (_videoController.value.isInitialized) {

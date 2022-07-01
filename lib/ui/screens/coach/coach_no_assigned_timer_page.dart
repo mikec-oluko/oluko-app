@@ -80,8 +80,8 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       child: Text(
                         OlukoLocalizations.get(context, 'hello'),
                         style: OlukoNeumorphism.isNeumorphismDesign
-                            ? OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)
-                            : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            ? OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)
+                            : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                       ),
                     ),
                     Padding(
@@ -89,7 +89,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       child: Text(
                         OlukoLocalizations.get(context, 'coachText'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -114,7 +114,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
       child: Center(
         child: Text(
           'Time Expired...',
-          style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.error, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.error, customFontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -253,13 +253,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                             : difference.inHours.toString().length == 1
                                 ? '0${difference.inHours.remainder(60)}'
                                 : difference.inHours.remainder(60).toString(),
-                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                       ),
                       _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('hours'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -269,7 +269,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Text(
                     OlukoLocalizations.of(context).find('twoDots'),
                     textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                   ),
                 ),
                 Padding(
@@ -282,13 +282,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                             : difference.inMinutes.remainder(60).toString().length == 1
                                 ? '0' + difference.inMinutes.remainder(60).toString()
                                 : difference.inMinutes.remainder(60).toString(),
-                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                       ),
                       _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('minute'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -298,7 +298,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Text(
                     OlukoLocalizations.of(context).find('twoDots'),
                     textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                   ),
                 ),
                 Padding(
@@ -311,13 +311,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                             : difference.inSeconds.remainder(60).toString().length == 1
                                 ? '0${difference.inSeconds.remainder(60)}'
                                 : difference.inSeconds.remainder(60).toString(),
-                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                       ),
                       _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('second'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -346,17 +346,17 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
         Text(
           OlukoLocalizations.of(context).find('hoursAlt'),
           textAlign: TextAlign.center,
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
         ),
         Text(
           OlukoLocalizations.of(context).find('minuteAlt'),
           textAlign: TextAlign.center,
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
         ),
         Text(
           OlukoLocalizations.of(context).find('secondAlt'),
           textAlign: TextAlign.center,
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
         ),
       ]),
     );
@@ -366,7 +366,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     return Text(
       OlukoLocalizations.of(context).find('twoDots'),
       textAlign: TextAlign.center,
-      style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+      style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
     );
   }
 

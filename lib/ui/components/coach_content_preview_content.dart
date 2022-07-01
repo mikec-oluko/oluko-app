@@ -60,7 +60,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
               ),
             ),
             Padding(
@@ -97,7 +97,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
               ),
             ),
             Padding(
@@ -137,7 +137,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
               ),
             ),
             Padding(

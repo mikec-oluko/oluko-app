@@ -52,7 +52,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.name,
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                   ),
                   checkAssessmentSubmitted(widget.task, widget.assessmentVideos) == false
                       ? Image.asset(
@@ -79,7 +79,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.description,
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -88,7 +88,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     OlukoLocalizations.get(context, 'public'),
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(
@@ -159,7 +159,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                         customColor: checkAssessmentSubmitted(widget.task, widget.assessmentVideos)
                             ? OlukoColors.grayColor
                             : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                        custoFontWeight: FontWeight.w300),
+                        customFontWeight: FontWeight.w300),
                   ),
                 ],
               ),
@@ -177,7 +177,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                                   isTaskPublic(widget.task, widget.assessmentVideos)
                                       ? OlukoLocalizations.get(context, 'public').toUpperCase()
                                       : OlukoLocalizations.get(context, 'private').toUpperCase(),
-                                  style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                                  style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
