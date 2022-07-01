@@ -99,11 +99,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -141,7 +136,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   body: OlukoNeumorphism.isNeumorphismDesign
                       ? customScrollView(enrollmentState)
                       : Container(
-                          color:OlukoColors.black,
+                          color: OlukoColors.black,
                           child: Stack(
                             children: [
                               ListView(children: [
