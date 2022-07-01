@@ -112,7 +112,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                               : '',
                       style: OlukoFonts.olukoSmallFont(
                           customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
-                          custoFontWeight: FontWeight.w500),
+                          customFontWeight: FontWeight.w500),
                     ),
                     const SizedBox(),
                     Row(
@@ -126,7 +126,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                                   : '',
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
-                              custoFontWeight: FontWeight.w500),
+                              customFontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 10),
                         if (!widget.isPreviewContent)

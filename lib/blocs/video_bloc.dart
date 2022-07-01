@@ -23,6 +23,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
+import '../helpers/video_player_helper.dart';
 import '../isolate/isolate_manager.dart';
 
 import '../isolate/video_upload_service.dart';
@@ -77,14 +78,23 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id,
-      [SegmentSubmission segmentSubmission,
-      AssessmentAssignment assessmentAssignment,
-      Assessment assessment,
-      TaskSubmission taskSubmission]) async {
-    emit(Loading());
+  Future<void> createVideo(
+    BuildContext context,
+    File videoFile,
+    double aspectRatio,
+    String id, {
+    SegmentSubmission segmentSubmission,
+    AssessmentAssignment assessmentAssignment,
+    Assessment assessment,
+    TaskSubmission taskSubmission,
+    int tries = 0,
+    int durationInMilliseconds = 0,
+  }) async {
     try {
-      final int durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
+      if (durationInMilliseconds == 0) {
+        // ignore: parameter_assignments
+        durationInMilliseconds = await VideoService.getVideoDuration(videoFile);
+      }
       String thumbnailFilePath;
       try {
         thumbnailFilePath = await VideoService.createVideoThumbnail(videoFile.path);
@@ -161,8 +171,24 @@ class VideoBloc extends Cubit<VideoState> {
         e,
         stackTrace: stackTrace,
       );
-      emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission));
-      rethrow;
+      if (tries < 2) {
+        await Future.delayed(const Duration(seconds: 5), () async {
+          await createVideo(
+            context,
+            videoFile,
+            aspectRatio,
+            id,
+            segmentSubmission: segmentSubmission,
+            assessmentAssignment: assessmentAssignment,
+            assessment: assessment,
+            taskSubmission: taskSubmission,
+            tries: tries + 1,
+          );
+        });
+      } else {
+        emit(VideoFailure(exceptionMessage: e.toString(), segmentSubmission: segmentSubmission));
+        rethrow;
+      }
     }
   }
 
@@ -180,8 +206,10 @@ class VideoBloc extends Cubit<VideoState> {
     final videosDir = new Directory(outDirPath);
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
-    VideoPlayerController controller = new VideoPlayerController.file(videoFile);
+    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(videoFile);
+    controller.initialize();
     var durationInSeconds = controller.value.duration;
+    controller.dispose();
     int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds.inSeconds.roundToDouble()).toInt();
     video.duration = durationInMilliseconds;
 
@@ -317,9 +345,10 @@ class VideoBloc extends Cubit<VideoState> {
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
     // final info = await EncodingProvider.getMediaInformation(videoPath);
-    VideoPlayerController controller = new VideoPlayerController.file(videoFile);
+    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(videoFile);
     await controller.initialize();
     double durationInSeconds = controller.value.duration.inSeconds.toDouble(); //EncodingProvider.getDuration(info.getMediaProperties());
+    controller.dispose();
     int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
     video.duration = durationInMilliseconds;
     _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');

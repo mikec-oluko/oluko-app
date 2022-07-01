@@ -103,7 +103,7 @@ class CourseUtils {
         padding: EdgeInsets.only(left: 30, top: 20),
         child: Text(
           OlukoLocalizations.get(context, 'noCourseFound'),
-          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
         ));
   }
 

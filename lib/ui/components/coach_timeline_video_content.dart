@@ -76,9 +76,9 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
                               Text(widget.videoTitle,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                             ],
                           ),
                         )
@@ -87,10 +87,10 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
                             Text(widget.videoTitle,
                                 overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                           ],
                         ),
                 ),

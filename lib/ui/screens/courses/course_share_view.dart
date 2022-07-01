@@ -87,7 +87,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                                     Text(
                                       OlukoLocalizations.get(context, 'sendFriendRecommendation'),
                                       textAlign: TextAlign.start,
-                                      style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                                     ),
                                     IgnorePointer(
                                       ignoring: userSelectedList.isEmpty,
@@ -139,7 +139,7 @@ class _CourseShareViewState extends State<CourseShareView> {
           child: Text(
             favorite ? OlukoLocalizations.get(context, 'favorites') : OlukoLocalizations.get(context, 'friends'),
             textAlign: TextAlign.start,
-            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500),
           ),
         ),
         GridView.count(

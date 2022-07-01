@@ -107,7 +107,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                               padding: const EdgeInsets.symmetric(vertical: 2),
                               child: Text(
                                 OlukoLocalizations.get(context, "challenge"),
-                                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                               ),
                             ),
                             Padding(
@@ -115,21 +115,21 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                               child: Text(
                                 widget.challenge.segmentName,
                                 overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 2),
                               child: Text(
                                 OlukoLocalizations.of(context).find("challengeBy"),
-                                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 2),
                               child: Text(
                                 OlukoLocalizations.get(context, "coach"),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                               ),
                             ),
                           ],

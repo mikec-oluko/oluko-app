@@ -141,7 +141,7 @@ class _State extends State<TaskCard> {
         public ? OlukoLocalizations.get(context, 'public').toUpperCase() : OlukoLocalizations.get(context, 'private').toUpperCase(),
         style: OlukoFonts.olukoSmallFont(
             customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.grayColorFadeTop,
-            custoFontWeight: FontWeight.bold),
+            customFontWeight: FontWeight.bold),
       ),
     );
   }
@@ -199,7 +199,7 @@ class _State extends State<TaskCard> {
                                           customColor: widget.isCompleted
                                               ? OlukoColors.grayColor
                                               : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                                          custoFontWeight: FontWeight.w300),
+                                          customFontWeight: FontWeight.w300),
                                     ),
                                   ),
                                   getPrivacySection(),

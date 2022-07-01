@@ -64,6 +64,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 //import 'package:native_device_orientation/native_device_orientation.dart';
 
+import '../../../services/video_service.dart';
+
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
   final CourseEnrollment courseEnrollment;
@@ -231,7 +233,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                               File(_segmentSubmission.videoState.stateInfo),
                               3.0 / 4.0,
                               _segmentSubmission.id,
-                              _segmentSubmission,
+                             segmentSubmission: _segmentSubmission,
                             );
 
                             _globalService.videoProcessing = true;
