@@ -71,7 +71,7 @@ class CoachTimelineFunctions {
         coachId: welcomeVideo.coachId,
         coachReference: welcomeVideo.coachReference,
         contentDescription:
-            welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'mentoredVideo'),
+            welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
         contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
         contentThumbnail: welcomeVideo.video.thumbUrl,
         contentType:

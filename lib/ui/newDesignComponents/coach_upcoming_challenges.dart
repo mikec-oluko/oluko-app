@@ -29,7 +29,6 @@ class _CoachUpcomingChallengesState extends State<CoachUpcomingChallenges> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: ListView(
                 physics: const NeverScrollableScrollPhysics(),
-                // physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
