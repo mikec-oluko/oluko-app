@@ -26,36 +26,24 @@ class VideoService {
       Video video = Video(name: videoName, aspectRatio: aspectRatio);
       var _processPhase = '';
       var _progress = 0.0;
-      //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
       if (port != null) {
         port.send({'processPhase': _processPhase, 'progress': _progress});
       }
-      //
       final Directory extDir = Directory(directory);
       final outDirPath = '${extDir.path}/Videos/$videoName';
       final videosDir = new Directory(outDirPath);
       videosDir.createSync(recursive: true);
       final videoPath = videoFilePath;
-      // final info = await EncodingProvider.getMediaInformation(videoPath);
       File videoFile = File(videoPath);
       video.duration = duration;
       _processPhase = 'generatingThumbnail';
-      // num _unitOfProgress;
-      // _progress += _unitOfProgress;
-      //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
       if (port != null) {
         port.send({'processPhase': _processPhase, 'progress': _progress});
       }
-      //
-
       _processPhase = 'uploadingThumbnail';
-      // _progress += _unitOfProgress;
-      //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
       if (port != null) {
         port.send({'processPhase': _processPhase, 'progress': _progress});
       }
-      //
-
       return video = await uploadVideoWithoutProcessing(video, thumbnailPath, videoPath, port);
     } catch (e) {
       print(e.toString());
@@ -68,14 +56,7 @@ class VideoService {
     if (thumbFilePath != null) {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
     }
-
-    //emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
-    // port.send({'processPhase': 'uploadingVideoFile', 'progress': 0});
-    //
     final videoUrl = await VideoProcess.uploadFile(filePath, video.name);
-    //emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-    // port.send({'processPhase': _processPhase, 'progress': _progress});
-    //
     video.url = videoUrl;
     video.thumbUrl = thumbUrl;
 

@@ -29,7 +29,6 @@ class S3Provider {
 
   S3Provider();
 
-  //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
   void postFile(String accessKeyId, String secretKeyId) async {
     final file = File(path.join('/path/to/file', 'square-cinnamon.jpg'));
     final stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
@@ -110,13 +109,10 @@ class S3Provider {
         print('VIDEO_UPLOAD: No Internet Connection');
         res.request.finalize();
       }
-      // .timeout(const Duration(seconds: 25));
-      // connectivityListener.cancel();
       return res.request.url.toString();
     } on TimeoutException catch (_) {
       print('TimeoutException');
       res.request.finalize();
-      // connectivityListener.cancel();
       rethrow;
     } catch (e, stackTrace) {
       await Sentry.captureException(
