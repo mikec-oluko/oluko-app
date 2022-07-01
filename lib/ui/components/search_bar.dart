@@ -81,7 +81,7 @@ class SearchState<T> extends State<SearchBar> {
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: [OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor, Colors.black],
+          colors: [OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor, OlukoColors.black],
         ),
         borderRadius: BorderRadius.all(Radius.circular(25)));
   }

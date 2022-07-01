@@ -18,7 +18,7 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   const OlukoNeumorphicPrimaryButton(
       {@required this.title,
       @required this.onPressed,
-      this.textColor = Colors.black,
+      this.textColor =OlukoColors.black,
       this.textAlign = TextAlign.center,
       this.icon,
       this.thinPadding = false,

@@ -13,15 +13,7 @@ class EnrollmentSegment {
   int dislikes;
 
   EnrollmentSegment(
-      {this.id,
-      this.reference,
-      this.name,
-      this.completedAt,
-      this.sections,
-      this.image,
-      this.isChallenge,
-      this.likes,
-      this.dislikes});
+      {this.id, this.reference, this.name, this.completedAt, this.sections, this.image, this.isChallenge, this.likes, this.dislikes});
 
   factory EnrollmentSegment.fromJson(Map<String, dynamic> json) {
     return EnrollmentSegment(
@@ -33,7 +25,7 @@ class EnrollmentSegment {
           : json['is_challenge'] is bool
               ? json['is_challenge'] as bool
               : false,
-      image: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
+      image: json['image'] == null ? null : json['image']?.toString(),
       completedAt: json['completed_at'] as Timestamp,
       sections: json['sections'] == null
           ? null

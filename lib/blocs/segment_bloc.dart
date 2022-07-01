@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -27,11 +29,34 @@ class Failure extends SegmentState {
 class SegmentBloc extends Cubit<SegmentState> {
   SegmentBloc() : super(LoadingSegment());
 
-  void getAll(Class classObj) async {
+  void getAll(EnrollmentClass classObj) async {
     emit(LoadingSegment());
     try {
-      List<Segment> segments = await SegmentRepository.getAll(classObj);
+      List<Segment> segments = await SegmentRepository.getByClass(classObj);
       emit(GetSegmentsSuccess(segments: segments));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void getSegmentsInClass(EnrollmentClass classObj) async {
+    emit(LoadingSegment());
+    try {
+      List<Segment> segments = await SegmentRepository.getAll();
+      final List segmentIds = classObj.segments.map((segment) => segment.id).toList();
+      List<Segment> retSegments = List<Segment>.filled(segmentIds.length, null);
+      for (int i = 0; i < segments.length - 1; i++) {
+        int index = segmentIds.indexOf(segments[i].id);
+        if (index > -1) {
+          retSegments[index] = segments[i];
+        }
+      }
+      emit(GetSegmentsSuccess(segments: retSegments));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

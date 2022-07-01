@@ -1,18 +1,14 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
-import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
@@ -20,13 +16,12 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
-import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -34,17 +29,22 @@ import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail({this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, this.fromChallenge = false, Key key})
+  SegmentDetail(
+      {this.classSegments,
+      this.courseIndex,
+      this.courseEnrollment,
+      this.segmentIndex,
+      this.classIndex,
+      this.fromChallenge = false,
+      Key key})
       : super(key: key);
 
   final CourseEnrollment courseEnrollment;
@@ -52,6 +52,7 @@ class SegmentDetail extends StatefulWidget {
   final int classIndex;
   final int courseIndex;
   final bool fromChallenge;
+  final List<Segment> classSegments;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -65,14 +66,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
   bool hasCourseStructureDiscrepancies = false;
   UserResponse _user;
   List<Segment> _segments = [];
-  List<Movement> _movements;
   PanelController panelController = PanelController();
   List<CoachRequest> _coachRequests;
   UserResponse _coach;
   final PanelController _challengePanelController = PanelController();
   CoachAssignment _coachAssignment;
-  List<Challenge> _challenges;
-  Class _class;
+  List<Challenge> _challenges = [];
   int segmentIndexToUse;
   List<Audio> _currentAudios;
   AudioPlayer audioPlayer = AudioPlayer();
@@ -83,18 +82,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
     segmentIndexToUse = widget.segmentIndex;
     currentSegmentStep = widget.segmentIndex + 1;
     totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
+    setSegments();
     super.initState();
-  }
-
-  Challenge getSegmentChallenge(String segmentId) {
-    if (_challenges != null) {
-      for (var i = 0; i < _challenges.length; i++) {
-        if (_challenges[i].segmentId == segmentId) {
-          return _challenges[i];
-        }
-      }
-    }
-    return null;
   }
 
   @override
@@ -106,175 +95,123 @@ class _SegmentDetailState extends State<SegmentDetail> {
         widget.fromChallenge ? BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id) : null;
         BlocProvider.of<ChallengeSegmentBloc>(context)
             .getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
-        return widget.fromChallenge
-            ? BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-                if (classState is GetByIdSuccess) {
-                  _class = classState.classObj;
-                  BlocProvider.of<SegmentBloc>(context).getAll(_class);
-                  BlocProvider.of<MovementBloc>(context).getAll();
-                  return segmentDetailView();
-                } else {
-                  return const SizedBox.shrink();
-                }
-              })
-            : segmentDetailView();
+        return _segmentDetailView();
       } else {
         return OlukoCircularProgressIndicator();
       }
     });
   }
 
-  BlocBuilder<SegmentBloc, SegmentState> segmentDetailView() {
-    return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-      return BlocBuilder<ChallengeSegmentBloc, ChallengeSegmentState>(
-        builder: (context, challengeSegmentState) {
-          return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
-            if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess && challengeSegmentState is ChallengesSuccess) {
-              for (var segment in segmentState.segments) {
-                for (var enrolledSegment in widget.courseEnrollment.classes[widget.classIndex].segments) {
-                  if (segment.id == enrolledSegment.id &&
-                      _segments.length < widget.courseEnrollment.classes[widget.classIndex].segments.length) {
-                    _segments.add(segment);
-                  }
-                }
-              }
-              _movements = movementState.movements;
-              _challenges = challengeSegmentState.challenges;
-              totalSegments = _segments.length - 1;
-              if (totalSegments < segmentIndexToUse) {
-                segmentIndexToUse = 0; //TODO: restarts if segment wanted doesn't exists
-                currentSegmentStep = 1;
-                totalSegmentStep = totalSegments + 1;
-              } else if (totalSegments < totalSegmentStep - 1) {
-                totalSegmentStep = totalSegments + 1;
-              }
-              return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
-                builder: (context, state) {
-                  if (state is CoachAssignmentResponse) {
-                    _coachAssignment = state.coachAssignmentResponse;
-                    BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
-                    // BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
-                    //     userId: _user.id,
-                    //     coachId: _coachAssignment?.coachId,
-                    //     courseEnrollmentId: widget.courseEnrollment.id,
-                    //     classId: widget.courseEnrollment.classes[widget.classIndex].id);
-                    BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
-                  }
-                  return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
-                    return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
-                      // return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
-                      if (coachUserState is CoachUserSuccess &&
-                          (coachRequestStreamState is CoachRequestStreamSuccess ||
-                              coachRequestStreamState is GetCoachRequestStreamUpdate)) {
-                        List<CoachRequest> coachRequests;
-                        if (coachRequestStreamState is CoachRequestStreamSuccess) {
-                          coachRequests = coachRequestStreamState.values;
-                        }
-                        if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
-                          coachRequests = coachRequestStreamState.values;
-                        }
-                        _coach = coachUserState.coach;
-                        _coachRequests = coachRequests
-                            .where((coachRequest) =>
-                                (_coach == null &&
-                                    coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
-                                    coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
-                                (coachRequest.coachId == _coach.id &&
-                                    coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
-                                    coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
-                            .toList();
-                        return form();
-                      } else {
-                        return OlukoCircularProgressIndicator();
-                      }
-                      // });
-                    });
-                  });
-                },
-              );
-            } else {
-              return OlukoCircularProgressIndicator();
-            }
-          });
+  Widget _segmentDetailView() {
+    return BlocListener<CoachAssignmentBloc, CoachAssignmentState>(
+        listener: (context, state) {
+          if (state is CoachAssignmentResponse) {
+            _coachAssignment = state.coachAssignmentResponse;
+            BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
+            BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_user.id, _coachAssignment?.coachId);
+          }
         },
-      );
-    });
+        child: form());
   }
 
   Widget form() {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoColors.black,
       body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
         child: Stack(
           children: [
-            _viewBody(),
-            slidingUpPanelComponent(context),
+            _body(),
+            slidingUpPanelComponent(),
           ],
         ),
       ),
     );
   }
 
-  BlocListener<SegmentDetailContentBloc, SegmentDetailContentState> slidingUpPanelComponent(BuildContext context) {
-    return BlocListener<SegmentDetailContentBloc, SegmentDetailContentState>(
-      listener: (context, state) {},
-      child: SlidingUpPanel(
-        onPanelClosed: () {
-          BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
-        },
-        backdropEnabled: true,
-        isDraggable: false,
-        header: const SizedBox(),
-        padding: EdgeInsets.zero,
-        color: OlukoNeumorphismColors.appBackgroundColor,
-        minHeight: 0.0,
-        maxHeight: MediaQuery.of(context).size.height / 1.5, //TODO: dynamic size, for content
-        collapsed: const SizedBox(),
-        controller: _challengePanelController,
-        panel: BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
-          Widget _contentForPanel = const SizedBox();
+  Widget _body() {
+    return widget.classSegments == null
+        ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+            if (segmentState is GetSegmentsSuccess) {
+              _segments = segmentState.segments;
+              setTotalSegments();
+              return _viewBody();
+            } else {
+              return OlukoCircularProgressIndicator();
+            }
+          })
+        : _viewBody();
+  }
 
-          if (state is SegmentDetailContentDefault) {
-            if (_challengePanelController.isPanelOpen) {
-              _challengePanelController.close();
-            }
-            _contentForPanel = const SizedBox();
-          }
-          if (state is SegmentDetailContentAudioOpen) {
-            _currentAudios = state.audios;
-            if (_currentAudios != null && _currentAudios.length > 0) {
-              _challengePanelController.open();
-              _contentForPanel = ModalAudio(
-                  comesFromSegmentDetail: true,
-                  challenge: state.challenge,
-                  audioPlayer: audioPlayer,
-                  audios: _currentAudios,
-                  panelController: _challengePanelController,
-                  onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
-            }
-          }
-          if (state is SegmentDetailContentPeopleOpen) {
-            _challengePanelController.open();
-            _contentForPanel = ModalPeopleEnrolled(
-                userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
-                userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
-                userId: _user.id,
-                favorites: state.favorites,
-                users: state.users);
-          }
-          if (state is SegmentDetailContentClockOpen) {
-            _challengePanelController.open();
-            _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
-          }
-          if (state is SegmentDetailContentLoading) {
-            _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
-          }
-          return _contentForPanel;
-        }),
-      ),
+  Widget _viewBody() {
+    return BlocBuilder<ChallengeSegmentBloc, ChallengeSegmentState>(builder: (context, challengeSegmentState) {
+      if (challengeSegmentState is ChallengesSuccess) {
+        _challenges = challengeSegmentState.challenges;
+      }
+      return Container(
+        color: OlukoNeumorphismColors.appBackgroundColor,
+        child: Column(
+          children: [(_segments.length - 1 >= segmentIndexToUse) ? getCarouselSlider() : const SizedBox()],
+        ),
+      );
+    });
+  }
+
+  Widget slidingUpPanelComponent() {
+    return SlidingUpPanel(
+      onPanelClosed: () {
+        BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
+      },
+      backdropEnabled: true,
+      isDraggable: false,
+      header: const SizedBox(),
+      padding: EdgeInsets.zero,
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      minHeight: 0.0,
+      maxHeight: MediaQuery.of(context).size.height / 1.5,
+      collapsed: const SizedBox(),
+      controller: _challengePanelController,
+      panel: manageSegmentDetailContentState(),
     );
+  }
+
+  Widget manageSegmentDetailContentState() {
+    Widget _contentForPanel = const SizedBox();
+    return BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
+      if (state is SegmentDetailContentDefault) {
+        if (_challengePanelController.isPanelOpen) {
+          _challengePanelController.close();
+        }
+        _contentForPanel = const SizedBox();
+      } else if (state is SegmentDetailContentAudioOpen) {
+        _currentAudios = state.audios;
+        if (_currentAudios != null && _currentAudios.length > 0) {
+          _challengePanelController.open();
+          _contentForPanel = ModalAudio(
+              comesFromSegmentDetail: true,
+              challenge: state.challenge,
+              audioPlayer: audioPlayer,
+              audios: _currentAudios,
+              panelController: _challengePanelController,
+              onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+        }
+      } else if (state is SegmentDetailContentPeopleOpen) {
+        _challengePanelController.open();
+        _contentForPanel = ModalPeopleEnrolled(
+            userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+            userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+            userId: _user.id,
+            favorites: state.favorites,
+            users: state.users);
+      } else if (state is SegmentDetailContentClockOpen) {
+        _challengePanelController.open();
+        _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
+      } else if (state is SegmentDetailContentLoading) {
+        _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
+      }
+      return _contentForPanel;
+    });
   }
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
@@ -338,7 +275,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
-  //TODO: CONTENT PARA IR AL SEGMENT/CHALLENGE
   List<Widget> getSegmentList() {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
@@ -361,25 +297,54 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getSegmentImageSection(int i) {
-    Challenge challenge = getSegmentChallenge(_segments[i].id);
-    return SegmentImageSection(
-      onPressed: () => onPressedAction(),
-      segment: _segments[i],
-      challenge: challenge,
-      currentSegmentStep: i + 1,
-      totalSegmentStep: totalSegmentStep,
-      userId: _user.id,
-      audioAction: _audioAction,
-      peopleAction: _peopleAction,
-      clockAction: _clockAction,
-      courseEnrollment: widget.courseEnrollment,
-      courseIndex: widget.courseIndex,
-      segments: _segments,
-      classIndex: widget.classIndex,
-      coachRequests: _coachRequests,
-      coach: _coach,
-      fromChallenge: widget.fromChallenge,
-    );
+    return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
+      return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
+        if (coachUserState is CoachUserSuccess &&
+            (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
+          coachLogic(coachUserState, coachRequestStreamState);
+          Challenge challenge = getSegmentChallenge(_segments[i].id);
+          return SegmentImageSection(
+            onPressed: () => onPressedAction(),
+            segment: _segments[i],
+            challenge: challenge,
+            currentSegmentStep: i + 1,
+            totalSegmentStep: totalSegmentStep,
+            userId: _user.id,
+            audioAction: _audioAction,
+            peopleAction: _peopleAction,
+            clockAction: _clockAction,
+            courseEnrollment: widget.courseEnrollment,
+            courseIndex: widget.courseIndex,
+            segments: _segments,
+            classIndex: widget.classIndex,
+            coachRequests: _coachRequests,
+            coach: _coach,
+            fromChallenge: widget.fromChallenge,
+          );
+        } else {
+          return OlukoCircularProgressIndicator();
+        }
+      });
+    });
+  }
+
+  void coachLogic(CoachUserSuccess coachUserState, CoachRequestStreamState coachRequestStreamState) {
+    List<CoachRequest> coachRequests;
+    if (coachRequestStreamState is CoachRequestStreamSuccess) {
+      coachRequests = coachRequestStreamState.values;
+    } else if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
+      coachRequests = coachRequestStreamState.values;
+    }
+    _coach = coachUserState.coach;
+    _coachRequests = coachRequests
+        .where((coachRequest) =>
+            (_coach == null &&
+                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
+            (coachRequest.coachId == _coach.id &&
+                coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
+                coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
+        .toList();
   }
 
   void onPressedAction() {
@@ -410,72 +375,52 @@ class _SegmentDetailState extends State<SegmentDetail> {
       return MovementVideosSection(
           action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
           segment: _segments[i],
-          movements: _movements,
-          onPressedMovement: (BuildContext context, Movement movement) =>
-              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
+          onPressedMovement: (BuildContext context, MovementSubmodel movementSubmodel) =>
+              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movementSubmodel}));
     }
     return const SizedBox();
   }
 
-  Widget _viewBody() {
-    return Container(
-      color: OlukoNeumorphismColors.appBackgroundColor,
-      child: Column(
-        children: [
-          () {
-            if (_segments.length - 1 >= segmentIndexToUse) {
-              return getCarouselSlider();
-            }
-            return const SizedBox();
-          }(),
-        ],
-      ),
-    );
+  Challenge getSegmentChallenge(String segmentId) {
+    if (_challenges != null) {
+      for (var i = 0; i < _challenges.length; i++) {
+        if (_challenges[i].segmentId == segmentId) {
+          return _challenges[i];
+        }
+      }
+    }
+    return null;
   }
 
-  List<Widget> _confirmDialogContent() {
-    return [
-      const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(OlukoLocalizations.get(context, 'coachRecommendsRecording'),
-            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: Row(
-          children: [
-            OlukoPrimaryButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              color: Colors.white,
-              title: OlukoLocalizations.get(context, 'recordAndStartSegment'),
-            ),
-          ],
-        ),
-      ),
-      TextButton(
-        onPressed: () {
-          Navigator.of(context).pop(false);
-        },
-        child: Text(
-          OlukoLocalizations.get(context, 'continueWithoutRecording'),
-          style: OlukoFonts.olukoMediumFont(),
-        ),
-      )
-    ];
+  void setSegments() {
+    if (widget.classSegments != null) {
+      _segments = widget.classSegments;
+      setTotalSegments();
+    } else {
+      BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
+    }
   }
 
-  _audioAction(List<Audio> audios, Challenge challenge) {
+  void setTotalSegments() {
+    totalSegments = _segments.length - 1;
+    if (totalSegments < segmentIndexToUse) {
+      segmentIndexToUse = 0;
+      currentSegmentStep = 1;
+      totalSegmentStep = totalSegments + 1;
+    } else if (totalSegments < totalSegmentStep - 1) {
+      totalSegmentStep = totalSegments + 1;
+    }
+  }
+
+  void _audioAction(List<Audio> audios, Challenge challenge) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
-  _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+  void _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
-  _clockAction(String segmentId) {
+  void _clockAction(String segmentId) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
   }
 }

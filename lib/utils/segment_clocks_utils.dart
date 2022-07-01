@@ -23,6 +23,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 import 'package:wakelock/wakelock.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
@@ -44,7 +45,8 @@ class SegmentClocksUtils {
       if (!lbls.isEmpty) {
         totalText += lbls[1];
       } else {
-        totalText += 's';
+        String seconds = TimeConverter.durationToString(Duration(seconds: totalScore));
+        totalText = '${OlukoLocalizations.get(context, 'total')}: $seconds ';
       }
     }
 
@@ -132,7 +134,7 @@ class SegmentClocksUtils {
           return const LinearGradient(
             begin: Alignment.center,
             end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.transparent],
+            colors: [OlukoColors.black, Colors.transparent],
           ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
         },
         blendMode: BlendMode.dstIn,
@@ -153,7 +155,7 @@ class SegmentClocksUtils {
     (await showDialog(
       context: contextWBloc,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
+        backgroundColor: OlukoColors.black,
         title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
         content: Text(
           isRecording

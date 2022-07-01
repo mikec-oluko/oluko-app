@@ -136,7 +136,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           showTitle: true,
         ),
         body: Container(
-          color: Colors.black,
+          color:OlukoColors.black,
           child: ListView(
             children: [
               content(),
@@ -170,7 +170,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 100,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : Colors.black,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth :OlukoColors.black,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -235,7 +235,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     return Scaffold(
         appBar: OlukoAppBar(title: _task.name, showBackButton: false, actions: [SizedBox(width: 30)]),
         body: Container(
-          color: Colors.black,
+          color:OlukoColors.black,
           child: Container(
             child: ProgressBar(processPhase: state.processPhase, progress: state.progress),
           ),

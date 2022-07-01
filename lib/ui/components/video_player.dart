@@ -103,16 +103,16 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
             DeviceOrientation.landscapeRight
           ],
           cupertinoProgressColors: ChewieProgressColors(
-            handleColor: Colors.black,
-            backgroundColor: Colors.black,
-            bufferedColor: Colors.black,
-            playedColor: Colors.black,
+            handleColor: OlukoColors.black,
+            backgroundColor: OlukoColors.black,
+            bufferedColor: OlukoColors.black,
+            playedColor: OlukoColors.black,
           ),
           materialProgressColors: ChewieProgressColors(
-            handleColor: Colors.black,
-            backgroundColor: Colors.black,
-            bufferedColor: Colors.black,
-            playedColor: Colors.black,
+            handleColor: OlukoColors.black,
+            backgroundColor: OlukoColors.black,
+            bufferedColor: OlukoColors.black,
+            playedColor: OlukoColors.black,
           ),
         );
         if (widget.whenInitialized != null) {
