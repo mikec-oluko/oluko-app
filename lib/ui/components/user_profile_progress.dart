@@ -139,7 +139,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
         children: [
           Text(
             achievementValue,
-            style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoSuperBigFont(customColor: color, customFontWeight: FontWeight.w500),
           ),
           const SizedBox(
             width: 5,

@@ -174,7 +174,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           : OlukoColors.black,
                       radius: 40.0,
                       child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
-                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                     ),*/
                     StoriesItem(
                       maxRadius: 40,
