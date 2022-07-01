@@ -485,6 +485,13 @@ class _State extends State<Courses> {
         }
         return _coursesRecommendedMap.isNotEmpty
             ? CarouselSection(
+                optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+                onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll], arguments: {
+                      'courses': _coursesRecommendedMap
+                          .map((courseRecommendedMapEntry) => CourseUtils.getCourseById(courseRecommendedMapEntry.keys.first, _courses))
+                          .toList(),
+                      'title': OlukoLocalizations.get(context, 'friendsRecommended')
+                    }),
                 title: OlukoLocalizations.get(context, 'friendsRecommended'),
                 height: carouselSectionHeight + 10,
                 children: _coursesRecommendedMap.map((Map<String, List<UserResponse>> courseRecommendedMapEntry) {
