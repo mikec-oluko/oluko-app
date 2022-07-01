@@ -26,9 +26,9 @@ class UserProgressListBloc extends Cubit<UserProgressListState> {
 
   StreamSubscription<DatabaseEvent> usersProgressStream;
 
-  void get() async {
+  void get(String userId) async {
     try {
-      Map<String, UserProgress> usersProgress = await UserProgressRepository.getAll();
+      Map<String, UserProgress> usersProgress = await UserProgressRepository.getAll(userId);
       emit(GetUserProgressSuccess(usersProgress: usersProgress));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

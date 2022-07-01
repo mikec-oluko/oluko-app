@@ -48,7 +48,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     _userLocation = getUserLocation(widget.userToDisplayInformation);
     _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
     super.initState();

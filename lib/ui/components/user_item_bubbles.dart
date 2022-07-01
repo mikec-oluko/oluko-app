@@ -36,7 +36,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
   @override
   void initState() {
     _usersProgress = widget.usersProgess;
-    widget.userProgressListBloc.get();
+    widget.userProgressListBloc.get(widget.currentUserId);
     super.initState();
   }
 

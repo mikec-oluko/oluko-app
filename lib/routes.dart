@@ -823,6 +823,7 @@ class Routes {
         break;
       case RouteEnum.segmentClocks:
         providers = [
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<UserProgressBloc>.value(value: _userProgressBloc),
           BlocProvider<AmrapRoundBloc>.value(value: _amrapRoundBloc),
           BlocProvider<StopwatchBloc>.value(value: _stopwatchBloc),
@@ -1266,6 +1267,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeLongPress(
+          argumentsToAdd['currentUser'] as UserResponse,
           argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
           argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
         );
