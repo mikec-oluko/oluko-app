@@ -27,7 +27,7 @@ import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
-import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';

@@ -6,7 +6,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
-import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
