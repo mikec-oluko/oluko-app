@@ -181,14 +181,14 @@ class TimerUtils {
                       Text(OlukoLocalizations.get(context, 'completed'),
                           textAlign: TextAlign.center,
                           style: OlukoFonts.olukoSuperBigFont(
-                              custoFontWeight: FontWeight.bold,
+                              customFontWeight: FontWeight.bold,
                               customColor: OlukoNeumorphism.isNeumorphismDesign
                                   ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                   : Colors.white)),
                       const SizedBox(height: 8),
                       if (rounds != null)
                         Text(rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-                            textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                            textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
                     ],
                   )
                 ])))

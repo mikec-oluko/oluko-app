@@ -77,7 +77,7 @@ class _State extends State<AudioPanel> {
                     : EdgeInsets.only(top: 15, bottom: 5),
                 child: Text(
                   OlukoLocalizations.get(context, 'voiceMessages'),
-                  style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white),
                 ),
               ),
               Container(height: 360, child: ListView(key: ValueKey(_audios.length), children: getAudioWidgets(_audios)))

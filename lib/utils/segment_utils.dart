@@ -25,7 +25,7 @@ class SegmentUtils {
           Text(
             getRoundTitle(segment, context),
             style: OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
+                ? OlukoFonts.olukoSuperBigFont(customColor: color, customFontWeight: FontWeight.bold)
                 : OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
           ),
           SizedBox(height: 12.0)
@@ -42,7 +42,7 @@ class SegmentUtils {
             Text(
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
+                  ? OlukoFonts.olukoSuperBigFont(customColor: color, customFontWeight: FontWeight.bold)
                   : OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12.0)
@@ -288,7 +288,7 @@ class SegmentUtils {
             Text(
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+                  ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold)
                   : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
             )
           ]

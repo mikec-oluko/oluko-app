@@ -76,7 +76,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.initState();
     tabs = getTabs();
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
-    BlocProvider.of<UserProgressStreamBloc>(context).getStream();
     tabController = TabController(length: this.tabs.length, vsync: this);
     tabController.addListener(() {
       setState(() {});
@@ -137,6 +136,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           builder: (context, authState) {
             if (authState is AuthSuccess) {
               BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
+              BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
             }
             return SafeArea(
               child: Scaffold(

@@ -132,7 +132,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                   Text(
                     widget.task.name,
                     style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, custoFontWeight: FontWeight.bold),
+                        customColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, customFontWeight: FontWeight.bold),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(

@@ -56,7 +56,7 @@ class _CourseSectionState extends State<CourseSection> {
                 },
               )),
           SizedBox(height: 120),
-          Text(widget.course.name, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+          Text(widget.course.name, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
           SizedBox(height: 15),
           Text(
             //TODO: change weeks number

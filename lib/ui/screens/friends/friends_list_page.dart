@@ -58,7 +58,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     super.initState();
   }

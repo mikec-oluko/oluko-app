@@ -71,7 +71,7 @@ class _State extends State<TaskCard> {
                                       child: Text(
                                         widget.task.name,
                                         style:
-                                            OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                                            OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     Expanded(child: SizedBox()),
@@ -186,7 +186,7 @@ class _State extends State<TaskCard> {
                                           customColor: widget.isCompleted
                                               ? OlukoColors.white
                                               : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                                          custoFontWeight: FontWeight.bold),
+                                          customFontWeight: FontWeight.bold),
                                     ),
                                     Expanded(child: SizedBox()),
                                     getCardCheck(),

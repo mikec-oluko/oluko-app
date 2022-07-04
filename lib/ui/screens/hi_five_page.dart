@@ -29,7 +29,6 @@ class _HiFivePageState extends State<HiFivePage> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
     super.initState();
   }
 
@@ -39,6 +38,7 @@ class _HiFivePageState extends State<HiFivePage> {
       builder: (context, authState) {
         if (authState is AuthSuccess) {
           _authState = authState;
+          BlocProvider.of<UserProgressListBloc>(context).get(_authState.user.id);
           if (_hiFiveState == null) {
             BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
           }
@@ -49,24 +49,25 @@ class _HiFivePageState extends State<HiFivePage> {
                 _hiFiveState = hiFiveState;
                 return Scaffold(
                   appBar: _appBar(),
-                  backgroundColor:OlukoColors.black,
-                  body: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
-                  }, builder: (context, userProgressListState) {
-                    if (userProgressListState is GetUserProgressSuccess) {
-                      _usersProgress = userProgressListState.usersProgress;
-                    }
-                    return ListView(
-                      children: hiFiveState.users
-                          .map(
-                            (targetUser) => _listItem(
-                              authState.user,
-                              targetUser,
-                              hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
-                            ),
-                          )
-                          .toList(),
-                    );
-                  }),
+                  backgroundColor: OlukoColors.black,
+                  body: BlocConsumer<UserProgressListBloc, UserProgressListState>(
+                      listener: (context, userProgressListState) {},
+                      builder: (context, userProgressListState) {
+                        if (userProgressListState is GetUserProgressSuccess) {
+                          _usersProgress = userProgressListState.usersProgress;
+                        }
+                        return ListView(
+                          children: hiFiveState.users
+                              .map(
+                                (targetUser) => _listItem(
+                                  authState.user,
+                                  targetUser,
+                                  hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                                ),
+                              )
+                              .toList(),
+                        );
+                      }),
                 );
               } else {
                 BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
