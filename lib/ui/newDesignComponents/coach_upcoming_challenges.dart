@@ -21,7 +21,7 @@ class _CoachUpcomingChallengesState extends State<CoachUpcomingChallenges> {
           padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
           child: Text(
             OlukoLocalizations.get(context, 'upcomings'),
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
           ),
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
