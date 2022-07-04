@@ -87,7 +87,8 @@ class _CourseShareViewState extends State<CourseShareView> {
                                     Text(
                                       OlukoLocalizations.get(context, 'sendFriendRecommendation'),
                                       textAlign: TextAlign.start,
-                                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                                      style:
+                                          OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                                     ),
                                     IgnorePointer(
                                       ignoring: userSelectedList.isEmpty,
@@ -238,7 +239,6 @@ class _CourseShareViewState extends State<CourseShareView> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Expanded(child: SizedBox()),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
@@ -262,6 +262,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                     ),
                   ),
                 ),
+                const Expanded(child: SizedBox()),
               ],
             ),
           ),
