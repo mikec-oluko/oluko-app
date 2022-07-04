@@ -55,7 +55,7 @@ class _CoachVideoCardState extends State<CoachVideoCard> {
                         ? OlukoBlueHeader(textContent: OlukoLocalizations.get(context, 'welcomeVideo'))
                         : Text(OlukoLocalizations.get(context, 'welcomeVideo'),
                             overflow: TextOverflow.ellipsis,
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                   ),
                   Container(
                     decoration: UserInformationBackground.getContainerGradientDecoration(

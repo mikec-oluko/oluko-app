@@ -107,7 +107,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           children: [
             Text(
               achievementValue,
-              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.w500),
+              style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -119,7 +119,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
             SizedBox(
               width: _textContainerWidth,
               child: Text(OlukoLocalizations.get(context, achievementTitleKey),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300)),
             ),
           ],
         ),
@@ -130,7 +130,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color}) {
     final textElem = Text(
       '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
-      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
+      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
     );
     return Expanded(
       child: Row(

@@ -51,12 +51,12 @@ class _State extends State<ChallengeDetailSection> {
                   widget.segment.isChallenge
                       ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name)
                       : widget.segment.name,
-                  style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                  style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   widget.segment.description,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),

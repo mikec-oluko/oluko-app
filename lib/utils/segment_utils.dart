@@ -26,7 +26,7 @@ class SegmentUtils {
             getRoundTitle(segment, context),
             style: OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-                : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                : OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
           ),
           SizedBox(height: 12.0)
         ] +
@@ -43,7 +43,7 @@ class SegmentUtils {
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
                   ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                  : OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12.0)
           ] +
@@ -143,7 +143,7 @@ class SegmentUtils {
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
-          style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: color),
+          style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: color),
         ));
   }
 
@@ -278,7 +278,8 @@ class SegmentUtils {
   static Column workouts(Segment segment, BuildContext context, Color color) {
     final List<String> workoutWidgets = getWorkouts(segment);
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start, children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
   }
 
   static List<Widget> titleList(Segment segment, BuildContext context) {
@@ -288,7 +289,7 @@ class SegmentUtils {
               getRoundTitle(segment, context),
               style: OlukoNeumorphism.isNeumorphismDesign
                   ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                  : OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
             )
           ]
         : [];

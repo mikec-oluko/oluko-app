@@ -159,7 +159,7 @@ class _State extends State<ClassSegmentSection> {
           padding: EdgeInsets.only(bottom: 15),
           child: Text(
             SegmentUtils.getRoundTitle(widget.segment, context),
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
           ));
     } else {
       return const SizedBox();

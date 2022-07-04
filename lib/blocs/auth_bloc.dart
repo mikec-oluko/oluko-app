@@ -40,7 +40,7 @@ import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
-import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 
 abstract class AuthState {}
@@ -67,9 +67,9 @@ class AuthBloc extends Cubit<AuthState> {
 
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
-  GlobalService _globalService = GlobalService();
+  final GlobalService _globalService = GlobalService();
 
-  Color snackBarBackgroud = const Color.fromRGBO(248, 248, 248, 1);
+  Color snackBarBackground = const Color.fromRGBO(248, 248, 248, 1);
 
   Future<void> login(BuildContext context, LoginRequest request) async {
     if (!_globalService.hasInternetConnection) {
@@ -97,8 +97,12 @@ class AuthBloc extends Cubit<AuthState> {
       //TODO: response should bring key apiResponse.message
       AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('invalidUsernameOrPw'));
       if (request.password.contains(' ')) {
-        AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('passwordSpaceWarning'),
-            backgroundColor: snackBarBackgroud, textColor: OlukoColors.black);
+        AppMessages.showSnackbar(
+          context,
+          OlukoLocalizations.of(context).find('passwordSpaceWarning'),
+          backgroundColor: snackBarBackground,
+          textColor: Colors.black,
+        );
       }
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
@@ -116,7 +120,7 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
       emit(AuthGuest());
       return;
-    } else if (firebaseUser?.emailVerified != null ? !firebaseUser.emailVerified : true) {
+    } else if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
       //TODO: trigger to send another email
       await firebaseUser?.updateEmail(user.email);
       firebaseUser?.sendEmailVerification();
@@ -138,7 +142,7 @@ class AuthBloc extends Cubit<AuthState> {
     if (await UserUtils.isFirstTime()) {
       await Permissions.askForPermissions();
     }
-    AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
+    final AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
     if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
       await AppNavigator().goToAssessmentVideosViaMain(context);
     } else {
@@ -157,9 +161,11 @@ class AuthBloc extends Cubit<AuthState> {
     try {
       try {
         result = await _authRepository.signInWithGoogle();
-      } on FirebaseAuthException catch (error) {
+      } on FirebaseAuthException {
         AppMessages.clearAndShowSnackbar(
-            context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+          context,
+          OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'),
+        );
         rethrow;
       } catch (error) {
         AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -171,8 +177,8 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      User firebaseUser = result.user;
-      UserResponse userResponse = await UserRepository().get(firebaseUser?.email);
+      final User firebaseUser = result.user;
+      final UserResponse userResponse = await UserRepository().get(firebaseUser?.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
@@ -186,11 +192,13 @@ class AuthBloc extends Cubit<AuthState> {
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
         AppMessages.clearAndShowSnackbar(
-            context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
+          context,
+          '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}',
+        );
         navigateToNextScreen(context, firebaseUser.uid);
       }
       // ignore: avoid_catching_errors
-    } on NoSuchMethodError catch (e) {
+    } on NoSuchMethodError {
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamed(context, routeLabels[RouteEnum.loginNeumorphic]);
       } else {
@@ -203,9 +211,11 @@ class AuthBloc extends Cubit<AuthState> {
     UserCredential result;
     try {
       result = await _authRepository.signInWithFacebook();
-    } on FirebaseAuthException catch (error) {
+    } on FirebaseAuthException {
       AppMessages.clearAndShowSnackbar(
-          context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        context,
+        OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'),
+      );
       rethrow;
     } catch (error) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
@@ -219,8 +229,8 @@ class AuthBloc extends Cubit<AuthState> {
     }
 
     if (result != null) {
-      User firebaseUser = result.user;
-      UserResponse user = await UserRepository().get(firebaseUser.email);
+      final User firebaseUser = result.user;
+      final UserResponse user = await UserRepository().get(firebaseUser.email);
 
       //If there is no associated user for this account
       if (user == null) {
@@ -368,14 +378,14 @@ class AuthBloc extends Cubit<AuthState> {
   // }
 
   Future<UserResponse> _signUpWithSSO(User firebaseUser) async {
-    List<String> splitDisplayName = firebaseUser.displayName.split(' ');
-    SignUpRequest signUpRequest = SignUpRequest(
+    final List<String> splitDisplayName = firebaseUser.displayName.split(' ');
+    final SignUpRequest signUpRequest = SignUpRequest(
       email: firebaseUser.email,
       firstName: splitDisplayName[0],
       lastName: splitDisplayName[1],
       projectId: GlobalConfiguration().getValue('projectId'),
     );
-    UserResponse response = await UserRepository().createSSO(signUpRequest);
+    final UserResponse response = await UserRepository().createSSO(signUpRequest);
     return response;
   }
 }

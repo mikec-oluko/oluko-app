@@ -12,7 +12,7 @@ class NoContentWidget extends StatelessWidget {
     return Center(
       child: Text(
         OlukoLocalizations.get(context, 'noContent'),
-        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
       ),
     );
   }

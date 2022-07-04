@@ -43,7 +43,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
                   ? OlukoBlueHeader(textContent: headerForCard(widget.fileType))
                   : Text(headerForCard(widget.fileType),
                       overflow: TextOverflow.ellipsis,
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
             ),
             Expanded(
               child: Container(

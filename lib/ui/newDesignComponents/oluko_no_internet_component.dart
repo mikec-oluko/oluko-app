@@ -89,7 +89,7 @@ class _OlukoNoInternetConectionComponentState extends State<OlukoNoInternetConec
                               child: Text(
                                 OlukoLocalizations.get(context, 'oopsMessage'),
                                 textAlign: TextAlign.center,
-                                style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+                                style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
                               ),
                             ),
                             Text(

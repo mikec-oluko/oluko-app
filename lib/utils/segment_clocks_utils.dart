@@ -69,14 +69,14 @@ class SegmentClocksUtils {
             children: [
               Text(
                 '${OlukoLocalizations.get(context, 'round')} ${i + 1}',
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white),
+                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white),
               ),
               SizedBox(
                 width: ScreenUtils.width(context) * 0.5,
                 child: Text(
                   scores[i],
                   textAlign: TextAlign.end,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.white),
                 ),
               )
             ],
@@ -344,7 +344,7 @@ class SegmentClocksUtils {
           children: [
             Text(
               'Uploading',
-              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w400),
+              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w400),
               textAlign: TextAlign.start,
             ),
             const SizedBox(width: 4),

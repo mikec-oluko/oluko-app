@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/services/video_service.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
@@ -62,12 +63,12 @@ class TransformationJourneyRepository {
           thumbnail = await ImageUtils().getThumbnailForImage(file, 150);
           break;
         case FileTypeEnum.video:
-          thumbnail = await VideoProcess.getThumbnailForVideo(file, 150);
+          thumbnail = await VideoService.createVideoThumbnail(file.path);
           break;
         default:
           //TODO Handle PDF Uploads
           break;
-      } 
+      }
       if (type == FileTypeEnum.image) {
         final thumbNaildownloadUrl = await _uploadFile(thumbnail, '${transformationJourneyUploadsReference.path}/thumbnails');
 

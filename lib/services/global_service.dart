@@ -14,7 +14,7 @@ class GlobalService with ChangeNotifier {
   GlobalService._internal() {
     _videoProcessing = false;
     _comesFromCoach = false;
-    _hasInternetConnection = false;
+    _hasInternetConnection = true;
   }
 
   bool get videoProcessing => _videoProcessing;
@@ -29,13 +29,13 @@ class GlobalService with ChangeNotifier {
 
   set setInternetConnection(bool value) {
     _hasInternetConnection = value;
-    // notifyListeners();
+    notifyListeners();
   }
 
   ConnectivityResult get getConnectivityType => _connectivityType;
 
   set setConnectivityType(ConnectivityResult connectivityResult) {
     _connectivityType = connectivityResult;
-    // notifyListeners();
+    notifyListeners();
   }
 }

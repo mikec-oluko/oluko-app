@@ -120,11 +120,11 @@ class _State extends State<SegmentCameraPreview> {
             child: Column(children: [
               Text(OlukoLocalizations.of(context).find('cameraInfo'),
                   textAlign: TextAlign.left,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
               startButton(),
               Text(OlukoLocalizations.of(context).find('cameraWarning'),
                   textAlign: TextAlign.left,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
             ])));
   }
 

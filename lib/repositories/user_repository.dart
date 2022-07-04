@@ -145,7 +145,7 @@ class UserRepository {
     final DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 500);
-    final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, '${userReference.path}/avatar');
+    final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path,'avatar');
     user.avatar = downloadUrl;
     try {
       await userReference.update(user.toJson());
@@ -164,7 +164,7 @@ class UserRepository {
     final DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(coverImage, 1000);
-    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, '${userReference.path}/coverImage/');
+    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path,'cover_image');
     user.coverImage = coverDownloadImage;
     try {
       await userReference.update(user.toJson());

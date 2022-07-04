@@ -51,7 +51,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                           child: Center(
                               child: Text(
                             OlukoLocalizations.get(context, 'segment'),
-                            style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                           )),
                         )),
               Expanded(
@@ -66,7 +66,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
                               widget.segment.className,
-                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
@@ -74,7 +74,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                             child: Text(
                               widget.segment.segmentName,
                               overflow: TextOverflow.ellipsis,
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                             ),
                           ),
                         ],

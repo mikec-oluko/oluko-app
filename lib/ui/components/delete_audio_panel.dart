@@ -42,7 +42,7 @@ class _State extends State<DeleteAudioPanel> {
               SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
               Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
                   textAlign: !OlukoNeumorphism.isNeumorphismDesign ? TextAlign.center : TextAlign.start,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
               SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 25 : 40),
               Row(
                 children: [
@@ -63,14 +63,14 @@ class _State extends State<DeleteAudioPanel> {
                       ? OlukoPrimaryButton(
                           title: OlukoLocalizations.get(context, 'yes'),
                           onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,true);
+                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, true);
                             widget.panelController.close();
                           },
                         )
                       : OlukoNeumorphicPrimaryButton(
                           title: OlukoLocalizations.get(context, 'allow'),
                           onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false,true);
+                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, true);
                             widget.panelController.close();
                           })
                 ],

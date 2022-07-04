@@ -68,7 +68,7 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
         //Text Fields
         Align(
           alignment: Alignment.topLeft,
-          child: Text(OlukoLocalizations.get(context, 'password'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
+          child: Text(OlukoLocalizations.get(context, 'password'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400)),
         ),
         const SizedBox(
           height: 12,

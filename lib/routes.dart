@@ -2,7 +2,6 @@ import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
@@ -121,7 +120,6 @@ import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_passwor
 import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_username.dart';
 import 'package:oluko_app/ui/screens/authentication/login_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
-import 'package:oluko_app/ui/screens/authentication/loginWithSteps/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/about_coach_page.dart';
@@ -185,7 +183,6 @@ import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
 import 'ui/screens/courses/segment_clocks.dart';
-import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';

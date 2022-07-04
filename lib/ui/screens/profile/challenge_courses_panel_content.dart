@@ -91,7 +91,7 @@ class _State extends State<ChallengeCoursesPanelContent> {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(children: [
           Text(OlukoLocalizations.of(context).find('cousesPanelText'),
-              textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
+              textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
           const SizedBox(height: 15),
           BlocBuilder<CoursePanelBloc, CoursePanelState>(builder: (context, state) {
             if (state is CoursePanelSuccess) {

@@ -1,17 +1,14 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
-import 'package:oluko_app/repositories/class_reopository.dart';
 import 'package:oluko_app/repositories/story_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
+import 'package:oluko_app/repositories/class_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -9,7 +9,7 @@ import 'package:oluko_app/models/submodels/draw_point.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
-
+import '../../../helpers/video_player_helper.dart';
 import 'draw.dart';
 
 typedef OnCameraCallBack = void Function();
@@ -21,13 +21,7 @@ class PlayerDouble extends StatefulWidget {
   final DocumentReference videoReference;
   final OnCameraCallBack onCamera;
 
-  const PlayerDouble(
-      {Key key,
-      this.user,
-      @required this.parentVideoInfo,
-      @required this.videoInfo,
-      this.videoReference,
-      this.onCamera})
+  const PlayerDouble({Key key, this.user, @required this.parentVideoInfo, @required this.videoInfo, this.videoReference, this.onCamera})
       : super(key: key);
 
   @override
@@ -310,14 +304,14 @@ class _PlayerDoubleState extends State<PlayerDouble> {
 
   initializeVideos() {
     //parentVideo
-    _parentVideoController = VideoPlayerController.network(
+    _parentVideoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
       widget.parentVideoInfo.video.url,
     );
     _initializeParentVideoPlayerFuture = _parentVideoController.initialize();
     _parentVideoController.setLooping(true);
 
     //video
-    _videoController = VideoPlayerController.network(
+    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
       widget.videoInfo.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();
@@ -333,10 +327,10 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   //DRAWING FUNCTIONS
 
   playBackCanvas() async {
-    List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
-        this._videoController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
-    List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
-        this._videoController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
+    List<DrawPoint> drawingsUntilTimeStamp =
+        getDrawingsUntilTimestamp(this._videoController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
+    List<DrawPoint> drawingsAfterTimeStamp =
+        getDrawingsAfterTimestamp(this._videoController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
 
     List<DrawingPoints> pointsToSet = [];
     if (_videoController != null && _videoController.value.position.inMilliseconds == 0) {
