@@ -16,7 +16,7 @@ class OlukoBlueHeader extends StatelessWidget {
         padding: const EdgeInsets.all(2.0),
         child: Text(textContent,
             overflow: TextOverflow.ellipsis,
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
       ),
     );
   }

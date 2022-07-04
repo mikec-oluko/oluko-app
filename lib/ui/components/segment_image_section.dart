@@ -188,7 +188,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
           child: Text(
             widget.segment.isChallenge ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name) : widget.segment.name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
             overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
           ),
         ),
@@ -198,7 +198,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           child: Text(
             widget.segment.description,
             style: OlukoFonts.olukoBigFont(
-              custoFontWeight: OlukoNeumorphism.isNeumorphismDesign ? FontWeight.w300 : FontWeight.w400,
+              customFontWeight: OlukoNeumorphism.isNeumorphismDesign ? FontWeight.w300 : FontWeight.w400,
               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
             ),
             overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,

@@ -167,7 +167,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                               widget.viewAllPage
                                   ? ProfileViewConstants.profileOptionsTransformationJourney
                                   : getTitleForContent(uploadListContent: _transformationJourneyContent),
-                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.bold),
+                              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold),
                             ),
                           ),
                         )

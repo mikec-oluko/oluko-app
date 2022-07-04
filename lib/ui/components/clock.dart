@@ -304,7 +304,7 @@ class _State extends State<Clock> {
           Row(
             children: [
               const SizedBox(width: 20),
-              Text(counterTxt[0], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300)),
+              Text(counterTxt[0], style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300)),
               const SizedBox(width: 10),
               SizedBox(
                 width: isCounterByReps ? 40 : 70,
@@ -346,7 +346,7 @@ class _State extends State<Clock> {
                 ),
               ),
               const SizedBox(width: 25),
-              Text(counterTxt[1], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300)),
+              Text(counterTxt[1], style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300)),
             ],
           ),
         ],
@@ -416,7 +416,7 @@ class _State extends State<Clock> {
                     ? OlukoLocalizations.get(
                         context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex - 1].counter))
                     : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w300),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w300),
                 overflow: TextOverflow.ellipsis,
               ),
             ],

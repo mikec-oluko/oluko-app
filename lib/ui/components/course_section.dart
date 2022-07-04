@@ -61,7 +61,7 @@ class _CourseSectionState extends State<CourseSection> {
           Text(
             //TODO: change weeks number
             CourseUtils.toCourseDuration(3, widget.course.classes != null ? widget.course.classes.length : 0, context),
-            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+            style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
           ),
           SizedBox(height: 2),
           CourseStepSection(totalCourseSteps: widget.qtyCourses, currentCourseStep: widget.courseIndex + 1),

@@ -28,7 +28,7 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
               child: widget.needTitle
                   ? Text(
                       widget.title,
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                     )
                   : const SizedBox(),
             ),

@@ -30,7 +30,7 @@ class _State extends State<SegmentStepSection> {
               children: [
                 Text(
                   '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
                 )
               ],
             ),

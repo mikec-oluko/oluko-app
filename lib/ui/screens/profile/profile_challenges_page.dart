@@ -37,8 +37,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
 
   @override
   Widget build(BuildContext context) {
-return
-    _body(buildChallengeCards(widget.challengesCardsState));
+    return _body(buildChallengeCards(widget.challengesCardsState));
   }
 
   Widget _body(List<Widget> challengesCards) {
@@ -79,7 +78,7 @@ return
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Text(
                                 OlukoLocalizations.of(context).find('upcomingChallenges'),
-                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                               ),
                             ),
                             Container(
@@ -107,7 +106,7 @@ return
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'all'),
-                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                               ),
                               Expanded(
                                 child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(

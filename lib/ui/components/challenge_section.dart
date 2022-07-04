@@ -40,23 +40,23 @@ class _State extends State<ChallengeSection> {
             widget.challengesCard.length > 1
                 ? '${widget.challengesCard.length} ${OlukoLocalizations.get(context, 'challenges')}'
                 : '${widget.challengesCard.length} ${OlukoLocalizations.get(context, 'challenge')}',
-            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold),
           ),
           widget.addTitle
               ? OlukoNeumorphism.isNeumorphismDesign
                   ? Text(
                       buildTitle(),
-                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white),
                     )
                   : Text(
                       buildTitle(),
-                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                     )
               : SizedBox(),
           widget.addName != null && widget.addName
               ? Text(
                   widget.challenges[0].name,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                 )
               : SizedBox(),
           SizedBox(height: widget.addTitle || widget.addName ? 20 : 0),

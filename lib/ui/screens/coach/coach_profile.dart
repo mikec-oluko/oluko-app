@@ -271,7 +271,7 @@ class _CoachProfileState extends State<CoachProfile> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.aboutCoach],
                           arguments: {'coachBannerVideo': widget.coachUser != null ? widget.coachUser.bannerVideo : null}),
                       child: Text(OlukoLocalizations.get(context, 'viewAll'),
-                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                     )
                   : const SizedBox.shrink(),
             )
@@ -311,7 +311,7 @@ class _CoachProfileState extends State<CoachProfile> {
                           _getAudioListsDifference >= _audioMessageRangeValue
                               ? _seeMoreAudios(nextRangeValue: _audioMessageRangeValue)
                               : _seeMoreAudios(nextRangeValue: _getAudioListsDifference),
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500))
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500))
                       : const SizedBox.shrink(),
                 )
               : const SizedBox.shrink(),
@@ -406,7 +406,7 @@ class _CoachProfileState extends State<CoachProfile> {
                   ? OlukoColors.primary
                   : OlukoColors.listGrayColor
               : OlukoColors.white,
-          custoFontWeight: FontWeight.w500),
+          customFontWeight: FontWeight.w500),
     );
     return recordAudioElement(audioRecorded, askCoachText);
   }

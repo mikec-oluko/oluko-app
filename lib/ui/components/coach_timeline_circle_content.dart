@@ -46,7 +46,8 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                                     radius: 30,
                                     child: Text(titleForCircle(widget.fileType),
                                         textAlign: TextAlign.center,
-                                        style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                        style:
+                                            OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                                   )),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -56,10 +57,10 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
                               Text(widget.circleTitle,
                                   overflow: TextOverflow.ellipsis,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                             ],
                           ),
                         )

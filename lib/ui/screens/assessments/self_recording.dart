@@ -309,7 +309,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
                       _task.stepsDescription.replaceAll('\\n', '\n'),
-                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
+                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.normal),
                     ))
               else
                 const SizedBox(),
@@ -340,7 +340,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
         return;
       }
       cameras = await availableCameras();
-      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium, imageFormatGroup: ImageFormatGroup.bgra8888);
       await cameraController.initialize();
     } on CameraException catch (e) {
       return;

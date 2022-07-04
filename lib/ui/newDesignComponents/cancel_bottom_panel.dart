@@ -51,7 +51,7 @@ class _State extends State<CancelBottomPanel> {
   Widget getText() {
     return Text(widget.text,
         textAlign: !OlukoNeumorphism.isNeumorphismDesign ? TextAlign.center : TextAlign.start,
-        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor));
+        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor));
   }
 
   Widget bottomButtons() {

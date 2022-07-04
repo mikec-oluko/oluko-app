@@ -10,6 +10,8 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../helpers/video_player_helper.dart';
+
 class CompletedCourseVideo extends StatefulWidget {
   CompletedCourseVideo({Key key, this.mediaURL, this.file, this.isDownloaded}) : super(key: key);
   final String mediaURL;

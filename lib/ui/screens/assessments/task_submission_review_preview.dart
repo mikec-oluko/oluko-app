@@ -16,6 +16,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:video_player/video_player.dart';
+import '../../../helpers/video_player_helper.dart';
 
 class TaskSubmissionReviewPreview extends StatefulWidget {
   TaskSubmissionReviewPreview({this.taskSubmission, this.videoEvents, this.filePath, Key key}) : super(key: key);
@@ -74,15 +75,15 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
   @override
   Widget build(BuildContext context) {
     return BlocListener<TaskReviewBloc, TaskReviewState>(
-            listener: (context, state) {
-              if (state is CreateSuccess) {
-                setState(() {
-                  _taskReviewId = state.taskReviewId;
-                });
-                BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskReviewId);
-              }
-            },
-            child: form());
+        listener: (context, state) {
+          if (state is CreateSuccess) {
+            setState(() {
+              _taskReviewId = state.taskReviewId;
+            });
+            BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskReviewId);
+          }
+        },
+        child: form());
   }
 
   Widget form() {
@@ -246,13 +247,13 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
   }
 
   void initializeVideos() {
-    _videoController = VideoPlayerController.network(
+    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
       widget.taskSubmission.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize().then((value) => _videoController.setVolume(0.0));
     _videoController.setLooping(true);
 
-    _videoRecordedController = VideoPlayerController.file(File(widget.filePath));
+    _videoRecordedController = VideoPlayerHelper.VideoPlayerControllerFromFile(File(widget.filePath));
     _initializeVideoPlayerRecordedFuture = _videoRecordedController.initialize().then((value) => setDuration());
     _videoRecordedController.setLooping(true);
   }

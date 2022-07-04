@@ -66,7 +66,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
           padding: const EdgeInsets.only(left: 10),
           child: Text(
             OlukoLocalizations.get(context, 'myActivityHistory'),
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
           ),
         ),
         const SizedBox(width: 250),
@@ -157,7 +157,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
             padding: const EdgeInsets.only(left: 10, top: 10),
             child: Text(
               OlukoLocalizations.get(context, 'activityHistory'),
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
             ),
           ),
         ],

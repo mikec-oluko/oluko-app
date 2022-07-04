@@ -375,7 +375,7 @@ class _InsideClassesState extends State<InsideClass> {
           padding: const EdgeInsets.only(top: 15.0),
           child: Text(
             _class.name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
           ),
         ),
         Padding(
@@ -419,14 +419,14 @@ class _InsideClassesState extends State<InsideClass> {
           padding: const EdgeInsets.only(top: 15.0),
           child: Text(
             _class.name,
-            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Text(
             widget.courseEnrollment.course.name,
-            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.yellow),
+            style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.yellow),
           ),
         ),
         Row(
@@ -462,7 +462,7 @@ class _InsideClassesState extends State<InsideClass> {
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: Text(
                 widget.courseEnrollment.course.name,
-                style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
               ),
             ),
           ],
@@ -476,7 +476,7 @@ class _InsideClassesState extends State<InsideClass> {
           child: Text(
             ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
             style: OlukoFonts.olukoMediumFont(
-              custoFontWeight: FontWeight.normal,
+              customFontWeight: FontWeight.normal,
               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary,
             ),
           ),
