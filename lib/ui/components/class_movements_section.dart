@@ -37,16 +37,19 @@ class _State extends State<ClassMovementSection> {
           color: OlukoColors.grayColor,
           height: 50,
         ),
-      Row(children: [
-        Text(
-          OlukoLocalizations.get(context, 'movesInThisClass'),
-          style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)
-              : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
-        ),
-        Expanded(child: SizedBox()),
-        getViewDetails()
-      ]),
+      Padding(
+        padding: const EdgeInsets.only(top:15.0),
+        child: Row(children: [
+          Text(
+            OlukoLocalizations.get(context, 'movesInThisClass'),
+            style: OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)
+                : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+          ),
+          Expanded(child: SizedBox()),
+          getViewDetails()
+        ]),
+      ),
       buildMovementBubbles(),
     ]);
   }
