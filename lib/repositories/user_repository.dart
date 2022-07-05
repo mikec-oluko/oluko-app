@@ -148,7 +148,7 @@ class UserRepository {
     final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path,'avatar');
     user.avatar = downloadUrl;
     try {
-      await userReference.update(user.toJson());
+      //await userReference.update(user.toJson()); This will be done by the extesion
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
@@ -167,7 +167,7 @@ class UserRepository {
     final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path,'cover_image');
     user.coverImage = coverDownloadImage;
     try {
-      await userReference.update(user.toJson());
+      //await userReference.update(user.toJson()); This will be done by the extesion
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
