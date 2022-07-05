@@ -20,7 +20,7 @@ class MovementUtils {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               OlukoLocalizations.get(context, 'description') + ":",
-              style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold),
             )),
         Text(
           description,

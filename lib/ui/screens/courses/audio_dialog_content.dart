@@ -64,7 +64,7 @@ class _State extends State<AudioDialogContent> {
               ]),
               SizedBox(height: 15),
               Text(coach == null ? widget.audio.userName : coach.firstName + ' ' + coach.lastName,
-                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),

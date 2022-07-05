@@ -71,7 +71,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
           height: 45,
         ),
         TextFormField(
-          style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.white),
+          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
           onChanged: (value) {
             if (!_isButtonEnabled && value != null && value.isNotEmpty) {
               setState(() {
@@ -87,7 +87,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             filled: false,
-            hintStyle: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
+            hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
             hintText: OlukoLocalizations.get(context, 'usernameOrEmail').toLowerCase(),
             fillColor: Colors.white70,
           ),
