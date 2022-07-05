@@ -38,7 +38,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
 
   @override
   void initState() {
-    widget.userProgressListBloc.get();
+    widget.userProgressListBloc.get(widget.userId);
     super.initState();
   }
 

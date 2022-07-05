@@ -111,7 +111,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                           '${widget.user.firstName} ${widget.user.lastName}',
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
-                          style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w700),
+                          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w700),
                         ),
                         _getUserInfo()
                       ],

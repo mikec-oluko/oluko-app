@@ -51,7 +51,7 @@ class _State extends State<MovementVideosSection> {
             Padding(
               padding: EdgeInsets.only(left: 20),
               child: Text(OlukoLocalizations.get(context, 'movementVideos'),
-                  style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
             ),
             SizedBox(width: 10),
             Image.asset(

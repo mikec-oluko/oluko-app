@@ -12,11 +12,6 @@ class TransformationJourneyUpload extends Base {
   String file;
   bool isPublic;
   String thumbnail;
-  Timestamp createdAt;
-  String createdBy;
-  Timestamp updatedAt;
-  String updatedBy;
-  bool isHidden;
 
   factory TransformationJourneyUpload.fromJson(Map<String, dynamic> json) {
     TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(

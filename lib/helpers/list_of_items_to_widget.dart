@@ -201,7 +201,6 @@ class TransformListOfItemsToWidget {
     final List<CoachSegmentContent> coachSegmentContentList = [];
     for (var challenge in challenges) {
       CoachSegmentContent coachSegmentContent = CoachSegmentContent(
-          segmentName: challenge.challengeName,
           segmentId: challenge.segmentId,
           classImage: challenge.image,
           completedAt: challenge.completedAt,

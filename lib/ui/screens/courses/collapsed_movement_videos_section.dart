@@ -41,7 +41,7 @@ class _State extends State<CollapsedMovementVideosSection> {
             Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: Text(OlukoLocalizations.get(context, 'movementVideos'),
-                    style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold))),
+                    style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold))),
             SizedBox(width: 10),
             Image.asset(
               'assets/courses/person_running.png',

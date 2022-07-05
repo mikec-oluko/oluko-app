@@ -382,7 +382,7 @@ class _InsideClassesState extends State<InsideClass> {
           padding: const EdgeInsets.only(top: 10.0, right: 10),
           child: Text(
             ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
           ),
         ),
         Padding(
@@ -398,7 +398,7 @@ class _InsideClassesState extends State<InsideClass> {
               padding: const EdgeInsets.only(top: 20.0),
               child: Text(
                 _class.description,
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
               ),
             );
           } else {
@@ -443,14 +443,14 @@ class _InsideClassesState extends State<InsideClass> {
                     child: Text(
                       '$qty+',
                       textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
+                      style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold),
                     ),
                   );
                 } else {
                   return Text(
                     '0+',
                     textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
+                    style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold),
                   );
                 }
               },
@@ -492,7 +492,7 @@ class _InsideClassesState extends State<InsideClass> {
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
                   _class.description,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
               )
             : const SizedBox(),

@@ -168,7 +168,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                               CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                                                   widget.course.classes != null ? widget.course.classes.length : 0, context),
                                               style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           buildStatistics(),
@@ -177,7 +177,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             child: Text(
                                               widget.course.description ?? '',
                                               style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           if (!OlukoNeumorphism.isNeumorphismDesign)

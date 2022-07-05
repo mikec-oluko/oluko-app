@@ -13,11 +13,8 @@ class Challenge extends Base {
   Timestamp completedAt;
   List<dynamic> requiredClasses;
   List<dynamic> requiredSegments;
-  int index;
-  String challengeType;
   String result;
   String image; 
-  String challengeName;
   UserSubmodel user;
   List<Audio> audios;
   int indexSegment;
@@ -34,13 +31,10 @@ class Challenge extends Base {
       this.completedAt,
       this.requiredClasses,
       this.requiredSegments,
-      this.index,
       this.indexSegment,
       this.indexClass,
-      this.challengeType,
       this.result,
       this.image,
-      this.challengeName,
       this.user,
       this.isActive,
       this.audios,
@@ -79,10 +73,7 @@ class Challenge extends Base {
       audios: json['audios'] != null
           ? List<Audio>.from((json['audios'] as Iterable).map((audio) => Audio.fromJson(audio as Map<String, dynamic>)))
           : null,
-      index: json['index'] as int,
-      challengeType: json['type']?.toString(),
       image: json['image']?.toString(),
-      challengeName: json['name']?.toString(),
       user: UserSubmodel.fromJson(json['user'] as Map<String, dynamic>),
       indexSegment: json['index_segment'] as int,
       indexClass: json['index_class'] as int,
@@ -105,10 +96,7 @@ class Challenge extends Base {
       'completed_at': completedAt,
       'required_classes': requiredClasses,
       'required_segments': requiredSegments,
-      'index': index,
-      'type': challengeType,
       'image': image,
-      'name': challengeName,
       'audios': audios == null ? null : List<dynamic>.from(audios.map((audio) => audio.toJson())),
       'user': user.toJson()
     };
