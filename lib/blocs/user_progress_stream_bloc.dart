@@ -43,8 +43,8 @@ class UserProgressStreamBloc extends Cubit<UserProgressStreamState> {
     }
   }
 
-  void getStream() {
-    final DatabaseReference ref = UserProgressRepository.getReference();
+  void getStream(String userId) {
+    final DatabaseReference ref = UserProgressRepository.getReference(userId);
     UserProgress userProgress;
     try {
       ref.onChildChanged.listen((event) {

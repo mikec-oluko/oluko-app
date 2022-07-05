@@ -360,7 +360,7 @@ class OlukoFonts {
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor, FontWeight customFontWeight}) {
+  static TextStyle olukoBigFont({FontWeight customFontWeight, Color customColor}) {
     return TextStyle(
         fontFamily: 'Roboto',
         fontSize: olukoBigFontSize,
@@ -368,11 +368,11 @@ class OlukoFonts {
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoSuperBigFont({FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoSuperBigFont({FontWeight customFontWeight, Color customColor}) {
     return TextStyle(
         fontFamily: 'Roboto',
         fontSize: olukoSuperBigFontSize,
-        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        fontWeight: customFontWeight != null ? customFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }
 

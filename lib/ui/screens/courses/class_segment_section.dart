@@ -56,7 +56,7 @@ class _State extends State<ClassSegmentSection> {
           padding: const EdgeInsets.only(bottom: 20.0),
           child: Text(
             widget.segment?.name ?? "",
-            style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+            style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white),
           ),
         ),
         (widget.segment != null && widget.segment.isChallenge)
@@ -136,7 +136,7 @@ class _State extends State<ClassSegmentSection> {
   Widget segmentTitle() {
     return Text(
       widget.segment?.name ?? "",
-      style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white),
+      style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white),
     );
   }
 

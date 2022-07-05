@@ -41,7 +41,7 @@ class _State extends State<StatisticChart> {
                           Text((widget.courseStatistics != null ? widget.courseStatistics.doing.toString() : '0'),
                               style: OlukoFonts.olukoSuperBigFont(
                                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.statisticsChartColor : OlukoColors.white,
-                                  custoFontWeight: FontWeight.bold)),
+                                  customFontWeight: FontWeight.bold)),
                           Text(' ' + OlukoLocalizations.of(context).find('people'), style: OlukoFonts.olukoSuperBigFont())
                         ],
                       ),
@@ -79,7 +79,7 @@ class _State extends State<StatisticChart> {
                           Text((widget.courseStatistics != null ? widget.courseStatistics.completed.toString() : '0'),
                               style: OlukoFonts.olukoSuperBigFont(
                                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.statisticsChartColor : OlukoColors.white,
-                                  custoFontWeight: FontWeight.bold)),
+                                  customFontWeight: FontWeight.bold)),
                           Text(' ' + OlukoLocalizations.get(context, 'people'), style: OlukoFonts.olukoSuperBigFont())
                         ],
                       ),
@@ -122,7 +122,7 @@ class _State extends State<StatisticChart> {
                                           .toString()
                                       : '0'),
                                   style: OlukoFonts.olukoSuperBigFont(
-                                      custoFontWeight: FontWeight.bold)),
+                                      customFontWeight: FontWeight.bold)),
                               Text(
                                   ' ' +
                                       OlukoLocalizations.of(context)
@@ -153,7 +153,7 @@ class _State extends State<StatisticChart> {
                                       : '0') +
                                   '%',
                               style: OlukoFonts.olukoSuperBigFont(
-                                  custoFontWeight: FontWeight.bold)),
+                                  customFontWeight: FontWeight.bold)),
                         ],
                       ),
                       Row(

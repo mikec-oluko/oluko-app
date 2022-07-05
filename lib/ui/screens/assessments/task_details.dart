@@ -268,7 +268,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           children: [
             Text(
               OlukoLocalizations.get(context, 'makeThisPublic'),
-              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
             ),
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicSwitch(
