@@ -34,7 +34,7 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
   Future<Like> isCourseLiked({@required String courseId, @required String userId}) async {
     try {
       emit(CourseInteractionLoading());
-      final Like likedCourse = await _courseUserInteractionRepository.courseIsLiked(courseId: courseId, userId: userId);
+      final Like likedCourse = await _courseUserInteractionRepository.courseIsLiked(courseId: courseId, userId: userId, isCheck: true);
       emit(CourseLikedSuccess(courseLiked: likedCourse));
       return likedCourse;
     } catch (exception, stackTrace) {

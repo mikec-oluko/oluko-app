@@ -36,7 +36,7 @@ class CourseUserInteractionRepository {
 
   Future<Like> updateCourseLike(String userId, String courseId) async {
     try {
-      Like _courseLiked = await courseIsLiked(courseId: courseId, userId: userId, isCheck: true);
+      Like _courseLiked = await courseIsLiked(courseId: courseId, userId: userId);
       if (_courseLiked != null) {
         return _updateLikedCourse(courseId, _courseLiked);
       } else {
@@ -156,25 +156,26 @@ class CourseUserInteractionRepository {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getLikedCoursesSubscription({@required String userId}) {
-    Stream<QuerySnapshot<Map<String, dynamic>>> timelineItemsStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot<Map<String, dynamic>>> _courseLikedStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .doc(userId)
         .collection('likes')
+        .where('is_active', isEqualTo: true)
         .snapshots();
-    return timelineItemsStream;
+    return _courseLikedStream;
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getRecommendedCoursesByFriends({@required String userId}) {
-    Stream<QuerySnapshot<Map<String, dynamic>>> timelineItemsStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot<Map<String, dynamic>>> _friendRecommendationsStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .doc(userId)
         .collection('recommendations')
         .snapshots();
-    return timelineItemsStream;
+    return _friendRecommendationsStream;
   }
 
   DocumentReference<Object> _getUserReference(String userRequestedId) {

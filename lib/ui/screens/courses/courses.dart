@@ -444,7 +444,7 @@ class _State extends State<Courses> {
             myListOfCourses = CourseUtils.mapCoursesByCategories(_courses, [_myListCategory]);
           }
         }
-        return myListOfCourses != null && myListOfCourses.values.isNotEmpty
+        return myListOfCourses != null && myListOfCourses.values.toList().isNotEmpty
             ? CarouselSection(
                 optionLabel: OlukoLocalizations.get(context, 'viewAll'),
                 onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],

@@ -38,15 +38,16 @@ class LikedCoursesBloc extends Cubit<LikedCourseState> {
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getStreamOfLikedCourses({@required String userId}) async {
     const String _myListTitle = 'My List';
+    try {
+      return _likeSubscription ??= _courseUserInteractionRepository.getLikedCoursesSubscription(userId: userId).listen((snapshot) {
     CourseCategory _likeCourseCategory;
     List<Like> _likedCourses = [];
     List<CourseCategoryItem> _coursesLikedList = [];
-    try {
-      return _likeSubscription ??= _courseUserInteractionRepository.getLikedCoursesSubscription(userId: userId).listen((snapshot) {
         emit(LikedCoursesLoading());
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((courseLiked) {
             final Map<String, dynamic> _likedCourse = courseLiked.data();
+            
             _likedCourses.add(Like.fromJson(_likedCourse));
           });
 

@@ -193,12 +193,9 @@ class _State extends State<CourseCard> {
             ..add(Positioned(
               right: 0,
               child: friendRecommended
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Text(
-                        '${userRecommendationImageUrls.length} $_friendsText',
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
-                      ),
+                  ? Text(
+                      '${userRecommendationImageUrls.length} $_friendsText',
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
                     )
                   : Text(
                       //Show ellipsis if there are more than 3 user avatars
