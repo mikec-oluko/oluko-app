@@ -60,6 +60,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool showLogo = true;
   int courseIndex = 0;
   bool _isVideoPlaying = false;
+  bool _isBottomTabActive = true;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +150,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                           onTap: () {
                             Navigator.pushNamed(
                                 context, routeLabels[RouteEnum.courses],
-                                arguments: {'homeEnrollTocourse': 'true'});
+                                arguments: {
+                    'homeEnrollTocourse': 'true',
+                    'showBottomTab': () => setState(() {
+                          _isBottomTabActive = !_isBottomTabActive;
+                        })
+                  });
                           },
                           child: Neumorphic(
                             style: OlukoNeumorphism
@@ -622,7 +628,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget enrollButton() {
-    bool _isBottomTabActive = true;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 90),
       child: Row(
