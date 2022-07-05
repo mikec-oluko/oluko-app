@@ -14,7 +14,8 @@ class ImageUploadService{
       final Reference fileReference =
           FirebaseStorage.instance.ref('${path}/${basename}');
       await fileReference.putFile(file,SettableMetadata(
-    customMetadata: <String, String>{
+        contentType: 'image/jpeg',
+        customMetadata: <String, String>{
           'documentPath': path,
           'documentFieldPath': documentFieldPath,
         },
