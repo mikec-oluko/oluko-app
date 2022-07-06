@@ -5,14 +5,16 @@ import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_carousel_galery.dart';
 import 'package:oluko_app/ui/components/user_item_bubbles.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class HomeLongPress extends StatefulWidget {
-  HomeLongPress(this.courseEnrollments, this.index, {Key key}) : super(key: key);
+  HomeLongPress(this.currentUser, this.courseEnrollments, this.index, {Key key}) : super(key: key);
 
+  final UserResponse currentUser;
   final List<CourseEnrollment> courseEnrollments;
   int index;
 
@@ -30,7 +32,7 @@ class _HomeLongPressState extends State<HomeLongPress> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     if (widget.index != null &&
         widget.index is int &&
         widget.courseEnrollments != null &&

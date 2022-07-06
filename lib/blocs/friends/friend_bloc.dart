@@ -18,6 +18,11 @@ class GetFriendsSuccess extends FriendState {
   GetFriendsSuccess({this.friendData, this.friendUsers});
 }
 
+class GetFriendsDataSuccess extends FriendState {
+  List<FriendModel> friends;
+  GetFriendsDataSuccess({this.friends});
+}
+
 class GetFriendSuggestionSuccess extends FriendState {
   List<UserResponse> friendSuggestionList;
   GetFriendSuggestionSuccess({this.friendSuggestionList});
@@ -100,6 +105,21 @@ class FriendBloc extends Cubit<FriendState> {
         stackTrace: stackTrace,
       );
       emit(FriendFailure(exception: exception));
+    }
+  }
+
+  void getFriendsDataByUserId(String userId) async {
+    try {
+      emit(FriendLoading());
+      Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
+      emit(GetFriendsDataSuccess(friends: friendData.friends));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendFailure(exception: exception));
+      rethrow;
     }
   }
 }

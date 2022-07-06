@@ -59,7 +59,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: Text(OlukoLocalizations.get(context, 'done!'),
-                          style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)),
+                          style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold)),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 20),

@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
@@ -35,6 +36,7 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -158,6 +160,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool _recordingPaused = false;
   bool _progressCreated = false;
   bool _areDiferentMovsWithRepCouter = false;
+  List<FriendModel> _friends = [];
 
   @override
   void initState() {
@@ -203,14 +206,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         builder: (context, authState) {
           if (authState is AuthSuccess) {
             _user = authState.firebaseUser;
-            if (!_progressCreated && _user != null) {
-              BlocProvider.of<UserProgressBloc>(context).create(
-                  _user.uid,
-                  SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) || SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])
-                      ? 1
-                      : 0);
-              _progressCreated = true;
-            }
+            BlocProvider.of<FriendBloc>(context).getFriendsDataByUserId(_user.uid);
             return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
               builder: (context, coachRequestStreamState) {
                 if (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate) {
@@ -254,7 +250,23 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           }
                         }
                       },
-                      child: form(),
+                      child: BlocListener<FriendBloc, FriendState>(
+                          listener: (context, friendState) {
+                            if (friendState is GetFriendsDataSuccess) {
+                              _friends = friendState.friends;
+                              if (!_progressCreated && _user != null) {
+                                BlocProvider.of<UserProgressBloc>(context).create(
+                                    _user.uid,
+                                    SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ||
+                                            SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])
+                                        ? 1
+                                        : 0,
+                                    _friends);
+                                _progressCreated = true;
+                              }
+                            }
+                          },
+                          child: form()),
                     ),
                   );
                 } else {
@@ -364,7 +376,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void deleteUserProgress() {
-    BlocProvider.of<UserProgressBloc>(context).delete(_user.uid);
+    BlocProvider.of<UserProgressBloc>(context).delete(_user.uid, _friends);
   }
 
   CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
@@ -390,7 +402,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         resizeToAvoidBottomInset: false,
         appBar: SegmentClocksUtils.getAppBar(
             context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
-        backgroundColor:OlukoColors.black,
+        backgroundColor: OlukoColors.black,
         body:
             //TODO: for screen rotation
             /*NativeDeviceOrientationReader(builder: (context) {
@@ -758,7 +770,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       setAlert();
       if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
         BlocProvider.of<UserProgressBloc>(context)
-            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds);
+            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds,_friends);
       }
     }
     _playTask();
@@ -797,7 +809,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       durationPR += currentDuration;
       totalScore += currentDuration;
       scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] = TimeConverter.durationToString(Duration(seconds:scoresInt[timerEntries[timerTaskIndex].round]));
+      scores[timerEntries[timerTaskIndex].round] =
+          TimeConverter.durationToString(Duration(seconds: scoresInt[timerEntries[timerTaskIndex].round]));
 
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
@@ -867,7 +880,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _finishWorkout() {
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
-      BlocProvider.of<UserProgressBloc>(context).update(_user.uid, 1);
+      BlocProvider.of<UserProgressBloc>(context).update(_user.uid, 1, _friends);
     }
 
     if (alertTimer != null) {
@@ -1042,11 +1055,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       if (isSegmentWithRecording()) {
         if (cameraController != null) {
           try {
-           await cameraController.resumeVideoRecording();
+            await cameraController.resumeVideoRecording();
           } catch (e) {
-          resetAMRAPRound();
-          deleteUserProgress();
-          SegmentClocksUtils.segmentClockOnWillPop(context);
+            resetAMRAPRound();
+            deleteUserProgress();
+            SegmentClocksUtils.segmentClockOnWillPop(context);
           }
         }
         _resume();

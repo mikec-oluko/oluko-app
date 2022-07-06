@@ -272,10 +272,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           onLongPress: () => Navigator.pushNamed(
             context,
             routeLabels[RouteEnum.homeLongPress],
-            arguments: {
-              'courseEnrollments': widget.courseEnrollments,
-              'index': index
-            },
+            arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index, 'currentUser': widget.authState.user},
           ),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),

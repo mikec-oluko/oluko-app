@@ -21,8 +21,8 @@ class TitleHeader extends StatelessWidget {
       style: reduceFontSize
           ? MediaQuery.of(context).size.width < 400
               ? OlukoFonts.olukoTitleFont(customFontWeight: fontWeight, customColor: fontColor)
-              : OlukoFonts.olukoSuperBigFont(custoFontWeight: fontWeight, customColor: fontColor)
-          : OlukoFonts.olukoSuperBigFont(custoFontWeight: fontWeight, customColor: fontColor),
+              : OlukoFonts.olukoSuperBigFont(customFontWeight: fontWeight, customColor: fontColor)
+          : OlukoFonts.olukoSuperBigFont(customFontWeight: fontWeight, customColor: fontColor),
     );
   }
 }
