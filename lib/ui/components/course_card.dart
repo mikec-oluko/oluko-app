@@ -181,7 +181,7 @@ class _State extends State<CourseCard> {
               .map((index, userUrl) => MapEntry(
                   friendRecommended
                       ? Positioned(
-                          left: (index + (userRecommendationImageUrls.length <= 3 ? 0 : 1)) * (userRadius / 1.5),
+                          left: (index * (userRadius / 1.5)),
                           child: _userAvatar(userUrl),
                         )
                       : Positioned(
@@ -192,10 +192,11 @@ class _State extends State<CourseCard> {
               .toList()
             ..add(Positioned(
               right: 0,
+              bottom: userRadius * 0.5,
               child: friendRecommended
                   ? Text(
                       '${userRecommendationImageUrls.length} $_friendsText',
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
                     )
                   : Text(
                       //Show ellipsis if there are more than 3 user avatars

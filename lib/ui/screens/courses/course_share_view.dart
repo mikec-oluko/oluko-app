@@ -96,9 +96,9 @@ class _CourseShareViewState extends State<CourseShareView> {
                                           width: 50,
                                           height: 50,
                                           child: IconButton(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 if (userSelectedList.isNotEmpty) {
-                                                  BlocProvider.of<CourseUserIteractionBloc>(context).recommendCourseToFriends(
+                                                  await BlocProvider.of<CourseUserIteractionBloc>(context).recommendCourseToFriends(
                                                     originUserId: widget.currentUser.id,
                                                     courseRecommendedId: widget.courseToShare.id,
                                                     usersRecommended: userSelectedList,
@@ -145,7 +145,7 @@ class _CourseShareViewState extends State<CourseShareView> {
         ),
         GridView.count(
             padding: const EdgeInsets.only(top: 10),
-            childAspectRatio: 0.7,
+            childAspectRatio: 0.6,
             crossAxisCount: 4,
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,

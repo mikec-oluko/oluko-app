@@ -121,14 +121,14 @@ class CourseUserInteractionRepository {
           }
         });
       }
+      return true;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      rethrow;
+      return false;
     }
-    return true;
   }
 
   Future<Recommendation> _checkIfRecommendationExists(
