@@ -13,7 +13,6 @@ import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
-import 'package:oluko_app/ui/components/users_list_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -32,7 +31,7 @@ class _CourseShareViewState extends State<CourseShareView> {
   List<UserResponse> userSelectedList = [];
   Map<String, UserProgress> _usersProgress = {};
   List<FriendModel> _friends = [];
-  Widget usersWidget = SizedBox.shrink();
+  Widget usersWidget = const SizedBox.shrink();
   bool isSelected = true;
   @override
   void initState() {
@@ -231,10 +230,9 @@ class _CourseShareViewState extends State<CourseShareView> {
     return Container(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context) / 7,
-      // color: Colors.red,
       child: Column(
         children: [
-          Expanded(child: SizedBox()),
+          const Expanded(child: SizedBox()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -242,7 +240,6 @@ class _CourseShareViewState extends State<CourseShareView> {
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    // color: Colors.blue,
                     width: 60,
                     height: 60,
                     child: Neumorphic(
@@ -266,8 +263,8 @@ class _CourseShareViewState extends State<CourseShareView> {
               ],
             ),
           ),
-          Expanded(child: SizedBox()),
-          OlukoNeumorphicDivider()
+          const Expanded(child: SizedBox()),
+          const OlukoNeumorphicDivider()
         ],
       ),
     );

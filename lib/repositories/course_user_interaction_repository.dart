@@ -72,13 +72,8 @@ class CourseUserInteractionRepository {
 
   Like _updateLikedCourse(String courseId, Like courseLiked) {
     final DocumentReference _courseLikedReference = _courseCollectionInstance.doc(courseId).collection('likes').doc(courseLiked.id);
-    if (courseLiked.isActive) {
-      courseLiked.isActive = false;
-      _updateLikeValue(_courseLikedReference, courseLiked);
-    } else {
-      courseLiked.isActive = true;
-      _updateLikeValue(_courseLikedReference, courseLiked);
-    }
+    courseLiked.isActive = !courseLiked.isActive;
+    _updateLikeValue(_courseLikedReference, courseLiked);
     return courseLiked;
   }
 
