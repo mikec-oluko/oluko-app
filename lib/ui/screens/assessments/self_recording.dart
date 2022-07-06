@@ -263,7 +263,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     _task.stepsTitle,
-                    style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
+                    style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.normal),
                   ),
                 )
               : const SizedBox(),
@@ -273,7 +273,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               _task.stepsDescription.replaceAll('\\n', '\n'),
-              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
+              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.normal),
             ),
           )
         else
@@ -300,7 +300,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           _task.stepsTitle,
-                          style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
+                          style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.normal),
                         ))
                     : const SizedBox(),
               ),
@@ -309,7 +309,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
                       _task.stepsDescription.replaceAll('\\n', '\n'),
-                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
+                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.normal),
                     ))
               else
                 const SizedBox(),
@@ -340,7 +340,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
         return;
       }
       cameras = await availableCameras();
-      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium, imageFormatGroup: ImageFormatGroup.bgra8888);
       await cameraController.initialize();
     } on CameraException catch (e) {
       return;

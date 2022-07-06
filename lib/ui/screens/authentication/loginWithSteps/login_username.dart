@@ -62,7 +62,8 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child: Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
+          child:
+              Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400)),
         ),
         const SizedBox(height: 12),
         Text(OlukoLocalizations.get(context, 'loginSubtitle'), style: OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
@@ -70,7 +71,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
           height: 45,
         ),
         TextFormField(
-          style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.white),
+          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
           onChanged: (value) {
             if (!_isButtonEnabled && value != null && value.isNotEmpty) {
               setState(() {
@@ -86,7 +87,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             filled: false,
-            hintStyle: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
+            hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
             hintText: OlukoLocalizations.get(context, 'usernameOrEmail').toLowerCase(),
             fillColor: Colors.white70,
           ),
@@ -146,10 +147,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                   _formKey.currentState.save();
                   BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
                     context,
-                    ForgotPasswordDto(
-                      email: data,
-                      projectId: GlobalConfiguration().getValue('projectId')
-                    ),
+                    ForgotPasswordDto(email: data, projectId: GlobalConfiguration().getValue('projectId')),
                   );
                 },
               ),

@@ -53,13 +53,13 @@ class _State extends State<ClassSectionExpansionPanel> {
                                   padding: const EdgeInsets.only(left: 15.0),
                                   child: Text(
                                     "${OlukoLocalizations.get(context, 'class').toUpperCase()} ${widget.index + 1}/${widget.total}",
-                                    style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.yellow),
+                                    style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.yellow),
                                   )),
                               Padding(
                                 padding: const EdgeInsets.only(left: 15.0, top: 5, bottom: 0),
                                 child: Text(
                                   widget.classObj.name,
-                                  style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+                                  style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
                                 ),
                               ),
                             ]
@@ -68,14 +68,14 @@ class _State extends State<ClassSectionExpansionPanel> {
                                 padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10),
                                 child: Text(
                                   widget.classObj.name,
-                                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                                 ),
                               ),
                               Padding(
                                   padding: const EdgeInsets.only(left: 15.0),
                                   child: Text(
                                     "${OlukoLocalizations.get(context, 'class').toUpperCase()} ${widget.index + 1}/${widget.total}",
-                                    style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+                                    style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
                                   )),
                             ],
                     ),
@@ -95,7 +95,7 @@ class _State extends State<ClassSectionExpansionPanel> {
                                 if (widget.classObj.description != null) {
                                   return Text(widget.classObj.description,
                                       style: OlukoFonts.olukoMediumFont(
-                                          custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor));
+                                          customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor));
                                 } else {
                                   return const SizedBox();
                                 }

@@ -48,7 +48,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     _userLocation = getUserLocation(widget.userToDisplayInformation);
     _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
     super.initState();
@@ -174,7 +174,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           : OlukoColors.black,
                       radius: 40.0,
                       child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
-                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                     ),*/
                     StoriesItem(
                       maxRadius: 40,
@@ -267,7 +267,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             : OlukoColors.black,
                         radius: 30.0,
                         child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                       ),
                       getVisibility(widget, context, _isOwner),
                     ]),
@@ -376,7 +376,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             children: [
               Text(
                 '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -400,7 +400,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               width: 150,
               height: 25,
               child: Text(OlukoLocalizations.get(context, 'privateProfile'),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300)),
             )
           ],
         )
@@ -420,7 +420,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               UserHelper.getFullName(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
               style: OlukoFonts.olukoBigFont(
                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                  custoFontWeight: FontWeight.w500),
+                  customFontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -442,7 +442,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   Text(
                     UserHelper.printUsername(widget.userToDisplayInformation.username, widget.userToDisplayInformation.id) ?? '',
                     overflow: TextOverflow.ellipsis,
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 3),
@@ -450,7 +450,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   if (_userLocation != null)
                     Text(
                       location.trim(),
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
                     )
                   else
                     const SizedBox.shrink(),

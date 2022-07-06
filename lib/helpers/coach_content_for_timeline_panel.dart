@@ -59,26 +59,27 @@ class CoachTimelineFunctions {
       {@required BuildContext context, @required Annotation welcomeVideo, @required List<CoachTimelineItem> timelineItems}) {
     welcomeVideo != null && timelineItems != null
         ? timelineItems.where((element) => element.contentName == defaultIntroVideoTitle).toList().isEmpty
-            ? timelineItems.insert(
-                0,
-                CoachTimelineItem(
-                    coachId: welcomeVideo.coachId,
-                    coachReference: welcomeVideo.coachReference,
-                    contentDescription:
-                        welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'mentoredVideo'),
-                    contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
-                    contentThumbnail: welcomeVideo.video.thumbUrl,
-                    contentType: welcomeVideo.id == defaultIntroVideoId
-                        ? TimelineInteractionType.introductionVideo
-                        : TimelineInteractionType.mentoredVideo,
-                    mentoredVideosForNavigation: [welcomeVideo],
-                    course: CourseTimelineSubmodel(),
-                    id: defaultIdForAllContentTimeline,
-                    createdAt: welcomeVideo.createdAt))
+            ? timelineItems.insert(0, createTimelineItem(welcomeVideo, context))
             : null
         : null;
 
     return timelineItems;
+  }
+
+  static CoachTimelineItem createTimelineItem(Annotation welcomeVideo, BuildContext context) {
+    return CoachTimelineItem(
+        coachId: welcomeVideo.coachId,
+        coachReference: welcomeVideo.coachReference,
+        contentDescription:
+            welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
+        contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
+        contentThumbnail: welcomeVideo.video.thumbUrl,
+        contentType:
+            welcomeVideo.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
+        mentoredVideosForNavigation: [welcomeVideo],
+        course: CourseTimelineSubmodel(),
+        id: defaultIdForAllContentTimeline,
+        createdAt: welcomeVideo.createdAt);
   }
 
   static void getTimelineVideoContent(

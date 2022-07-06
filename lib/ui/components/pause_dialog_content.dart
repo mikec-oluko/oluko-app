@@ -46,7 +46,7 @@ class _PauseDialogContentState extends State<PauseDialogContent> {
             Text(
               OlukoLocalizations.get(context, 'cancelMessage'),
               textAlign: !OlukoNeumorphism.isNeumorphismDesign ? TextAlign.center : TextAlign.start,
-              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
             ),
             const SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 20 : 40),
             Row(

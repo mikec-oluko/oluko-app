@@ -113,7 +113,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
                   ? goToCoachProfile(context)
                   : Text(
                       '$numberOfReviewPendingItems  ${OlukoLocalizations.get(context, 'reviewsPending').toUpperCase()}',
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                     ),
             ),
             if (showCoachProfle)
@@ -147,7 +147,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
             widget.coachUser != null
                 ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
                 : defaultCoachPic,
-            style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, custoFontWeight: FontWeight.w500)),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphismColors.appBackgroundColor, customFontWeight: FontWeight.w500)),
       ),
     ]);
   }
@@ -180,7 +180,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
       child: Text(
         OlukoLocalizations.get(context, 'hiCoach'),
         style: OlukoFonts.olukoMediumFont(
-            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, custoFontWeight: FontWeight.w500),
+            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, customFontWeight: FontWeight.w500),
       ),
     );
   }

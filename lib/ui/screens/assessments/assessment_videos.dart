@@ -443,7 +443,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
                 child: Text(
                   OlukoLocalizations.get(context, 'done!'),
-                  style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                  style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
                 )),
             Text(
               OlukoLocalizations.get(context, 'assessmentMessagePart1'),
@@ -514,7 +514,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                     padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
                     child: Text(
                       OlukoLocalizations.get(context, 'done!'),
-                      style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                      style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
                     )),
                 Text(
                   OlukoLocalizations.get(context, 'assessmentMessagePart1'),

@@ -8,7 +8,7 @@ class MovementUtils {
     return Text(
       title,
       textAlign: TextAlign.center,
-      style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+      style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
     );
   }
 
@@ -20,11 +20,11 @@ class MovementUtils {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               OlukoLocalizations.get(context, 'description') + ":",
-              style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold),
             )),
         Text(
           description,
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
+          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.white),
         ),
       ],
     );
@@ -33,7 +33,7 @@ class MovementUtils {
   static Widget getTextWidget(String text, bool big) {
     TextStyle style;
     if (big) {
-      style = OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400);
+      style = OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400);
     } else {
       style = OlukoFonts.olukoBigFont();
     }
@@ -49,7 +49,7 @@ class MovementUtils {
       children: [
         Text(
           title,
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
+          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold),
         ),
         Text(
           label,

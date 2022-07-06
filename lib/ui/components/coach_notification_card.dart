@@ -54,7 +54,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                     ? OlukoBlueHeader(textContent: headerForCard(widget.fileType))
                     : Text(headerForCard(widget.fileType),
                         overflow: TextOverflow.ellipsis,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
               ),
               Expanded(
                 child: Container(
@@ -123,7 +123,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                           child: Text(headerForCard(widget.fileType),
                                               overflow: TextOverflow.ellipsis,
                                               style: OlukoFonts.olukoSmallFont(
-                                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                                  customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                                         )
                                       ],
                                     ),
@@ -138,11 +138,11 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                   children: [
                                     Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
                                         style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                            customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
                                     Text(widget.cardTitle,
                                         overflow: TextOverflow.ellipsis,
                                         style:
-                                            OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                            OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                                     const SizedBox(height: 10),
                                     Text(
                                         widget.fileType == CoachFileTypeEnum.recommendedClass
@@ -155,11 +155,11 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                                         ? OlukoLocalizations.of(context).find('class')
                                                         : '',
                                         style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                            customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
                                     Text(widget.cardSubTitle,
                                         overflow: TextOverflow.ellipsis,
                                         style:
-                                            OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                            OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                                     if (widget.fileType == CoachFileTypeEnum.recommendedCourse)
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,14 +169,14 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                                   ? OlukoLocalizations.of(context).find('duration')
                                                   : '',
                                               style: OlukoFonts.olukoMediumFont(
-                                                  customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                                  customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
                                           Text(
                                               widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null
                                                   ? widget.cardDescription + " " + OlukoLocalizations.of(context).find('weeks')
                                                   : '',
                                               overflow: TextOverflow.ellipsis,
                                               style: OlukoFonts.olukoMediumFont(
-                                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500))
+                                                  customColor: OlukoColors.white, customFontWeight: FontWeight.w500))
                                         ],
                                       )
                                     else

@@ -7,15 +7,6 @@ class Course extends Base {
   String video;
   String duration;
   String description;
-  List<String> equipment;
-  List<String> intensity;
-  List<String> categories;
-  List<String> workoutDuration;
-  bool recommendedEngagement;
-  bool recommendedEngagementGap;
-  dynamic engagementGapTime;
-  dynamic engagementTime;
-  bool mandatoryGapTime;
   List<ObjectSubmodel> classes;
   List<ObjectSubmodel> tags;
   String image;
@@ -27,15 +18,6 @@ class Course extends Base {
       {this.name,
       this.statisticsReference,
       this.duration,
-      this.equipment,
-      this.intensity,
-      this.categories,
-      this.workoutDuration,
-      this.recommendedEngagement,
-      this.recommendedEngagementGap,
-      this.engagementGapTime,
-      this.engagementTime,
-      this.mandatoryGapTime,
       this.classes,
       this.tags,
       this.image,
@@ -69,15 +51,6 @@ class Course extends Base {
       video: json['video']?.toString(),
       duration: json['duration'] == null ? '0' : json['duration'].toString(),
       description: json['description']?.toString(),
-      equipment: json['equipment'] == null ? null : json['equipment'] as List<String>,
-      intensity: json['intensity'] == null ? null : json['intensity'] as List<String>,
-      categories: json['categories'] == null ? null : json['categories'] as List<String>,
-      workoutDuration: json['workout_duration'] == null ? null : json['workout_duration'] as List<String>,
-      recommendedEngagement: json['recommended_engagement'] as bool,
-      recommendedEngagementGap: json['recommended_engagementGap'] as bool,
-      engagementGapTime: json['engagement_gap_time'],
-      engagementTime: json['engagement_time'],
-      mandatoryGapTime: json['mandatory_gap_time'] as bool,
       classes: json['classes'] != null
           ? List<ObjectSubmodel>.from((json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
           : null,
@@ -99,15 +72,6 @@ class Course extends Base {
       'video': video,
       'duration': duration,
       'description': description,
-      'equipment': equipment == null ? null : equipment,
-      'intensity': intensity == null ? null : intensity,
-      'categories': categories == null ? null : categories,
-      'workout_duration': workoutDuration == null ? null : workoutDuration,
-      'recommended_engagement': recommendedEngagement,
-      'recommended_engagementGap': recommendedEngagementGap,
-      'engagement_gap_time': engagementGapTime,
-      'engagement_time': engagementTime,
-      'mandatory_gap_time': mandatoryGapTime,
       'tags': tags == null ? null : tags,
       'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
       'image': image,

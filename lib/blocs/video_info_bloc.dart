@@ -16,7 +16,7 @@ import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/repositories/video_info_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:video_player/video_player.dart';
-
+import '../helpers/video_player_helper.dart';
 import '../helpers/video_thumbnail.dart';
 
 abstract class VideoInfoState {
@@ -192,11 +192,8 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     videosDir.createSync(recursive: true);
 
     final rawVideoPath = rawVideoFile.path;
-    //TODO: old code
-    //final info = await EncodingProvider.getMediaInformation(rawVideoPath);
-    //TODO: new code
 
-    VideoPlayerController controller = new VideoPlayerController.file(rawVideoFile);
+    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(rawVideoFile);
     await controller.initialize();
     var controllerAspectRatio = controller.value.aspectRatio;
 
@@ -205,13 +202,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     if (givenAspectRatio != null) {
       aspectRatio = givenAspectRatio;
     } else {
-      //aspectRatio = EncodingProvider.getAspectRatio(info.getAllProperties());
       aspectRatio = controllerAspectRatio;
     }
 
-    //double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
-
     double durationInSeconds = controller.value.duration.inSeconds.roundToDouble();
+    controller.dispose();
     int durationInMilliseconds = (durationInSeconds * 1000).toInt();
 
     _processPhase = 'Generating thumbnail';

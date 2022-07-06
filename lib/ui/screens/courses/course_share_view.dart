@@ -36,7 +36,7 @@ class _CourseShareViewState extends State<CourseShareView> {
   bool isSelected = true;
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     super.initState();
   }
@@ -87,7 +87,8 @@ class _CourseShareViewState extends State<CourseShareView> {
                                     Text(
                                       OlukoLocalizations.get(context, 'sendFriendRecommendation'),
                                       textAlign: TextAlign.start,
-                                      style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                                      style:
+                                          OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                                     ),
                                     IgnorePointer(
                                       ignoring: userSelectedList.isEmpty,
@@ -139,7 +140,7 @@ class _CourseShareViewState extends State<CourseShareView> {
           child: Text(
             favorite ? OlukoLocalizations.get(context, 'favorites') : OlukoLocalizations.get(context, 'friends'),
             textAlign: TextAlign.start,
-            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500),
           ),
         ),
         GridView.count(
@@ -238,7 +239,6 @@ class _CourseShareViewState extends State<CourseShareView> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Expanded(child: SizedBox()),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
@@ -262,6 +262,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                     ),
                   ),
                 ),
+                const Expanded(child: SizedBox()),
               ],
             ),
           ),

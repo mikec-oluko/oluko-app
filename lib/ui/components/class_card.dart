@@ -64,7 +64,7 @@ class _State extends State<ClassCard> {
           child: Align(
               alignment: Alignment.center,
               child: Text(OlukoLocalizations.get(context, 'class') + " " + (widget.classIndex + 1).toString(),
-                  style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.black))),
+                  style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.black))),
         ));
   }
 
