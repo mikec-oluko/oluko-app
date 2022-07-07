@@ -171,7 +171,8 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                       height: _isUserStatisticExpanded ? MediaQuery.of(context).size.height / 12 : 0,
                       duration: const Duration(milliseconds: 200),
                       child: CoachUserProgressComponent(
-                        progressValue: widget.userStats != null ? widget.userStats.appCompleted : 0,
+                        progressValue:
+                            widget.userStats != null && widget.userStats.appCompleted != null ? widget.userStats.appCompleted : 0,
                         nameOfField: OlukoLocalizations.get(context, 'appCompleted'),
                         needPercentage: true,
                       ),
