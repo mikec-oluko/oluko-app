@@ -29,6 +29,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   bool _isTimeExpired = false;
   final Duration _oneDayLimit = const Duration(days: 1);
   final int _hourMinValue = 0;
+  final int _timeMinValue = 0;
   final int _minutesSecondsMaxValue = 59;
   final _spacerWidget = const SizedBox(
     height: 20,
@@ -183,7 +184,11 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                   // color: Colors.blue,
                                   child: buildWatchField(
-                                      valueToUse: _hourValue == _oneDayLimit.inHours ? _hourMinValue : _hourValue,
+                                      valueToUse: _hourValue == _oneDayLimit.inHours
+                                          ? _hourMinValue < _timeMinValue
+                                              ? _timeMinValue
+                                              : _hourMinValue
+                                          : _hourValue,
                                       maxValue: _oneDayLimit.inHours),
                                 ),
                               ],
@@ -200,7 +205,9 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                 Container(
                                     width: ScreenUtils.width(context) * 0.15,
                                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                    child: buildWatchField(valueToUse: _minutesValue, maxValue: _minutesSecondsMaxValue)),
+                                    child: buildWatchField(
+                                        valueToUse: _minutesValue < _timeMinValue ? _timeMinValue : _minutesValue,
+                                        maxValue: _minutesSecondsMaxValue)),
                               ],
                             ),
                           ),
@@ -215,7 +222,9 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                 Container(
                                   width: ScreenUtils.width(context) * 0.15,
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                  child: buildWatchField(valueToUse: _secondsValue, maxValue: _minutesSecondsMaxValue),
+                                  child: buildWatchField(
+                                      valueToUse: _secondsValue < _timeMinValue ? _timeMinValue : _secondsValue,
+                                      maxValue: _minutesSecondsMaxValue),
                                 ),
                               ],
                             ),
