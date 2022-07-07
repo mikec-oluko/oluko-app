@@ -45,6 +45,7 @@ class CourseCard extends StatefulWidget {
 
 class _State extends State<CourseCard> {
   double userRadius = 15.0;
+  final int _imageStackMaxLength = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +170,9 @@ class _State extends State<CourseCard> {
 
   Widget _userRecommendations(List<String> userRecommendationImageUrls, {bool friendRecommended = false}) {
     List<String> userImageList = [];
-    userImageList = userRecommendationImageUrls.length < 3 ? userRecommendationImageUrls : userRecommendationImageUrls.sublist(0, 3);
+    userImageList = userRecommendationImageUrls.length < _imageStackMaxLength
+        ? userRecommendationImageUrls
+        : userRecommendationImageUrls.sublist(0, _imageStackMaxLength);
     String _friendsText =
         userRecommendationImageUrls.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
     return Padding(
@@ -185,7 +188,7 @@ class _State extends State<CourseCard> {
                           child: _userAvatar(userUrl),
                         )
                       : Positioned(
-                          right: (index + (userRecommendationImageUrls.length <= 3 ? 0 : 1)) * (userRadius / 1.5),
+                          right: (index + (userRecommendationImageUrls.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
                           child: _userAvatar(userUrl)),
                   index))
               .keys
@@ -199,8 +202,7 @@ class _State extends State<CourseCard> {
                       style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
                     )
                   : Text(
-                      //Show ellipsis if there are more than 3 user avatars
-                      userRecommendationImageUrls.length > 3 ? '...' : '',
+                      userRecommendationImageUrls.length > _imageStackMaxLength ? '...' : '',
                       style: TextStyle(color: Colors.white),
                     ),
             ))),
