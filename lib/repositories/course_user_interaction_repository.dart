@@ -36,7 +36,7 @@ class CourseUserInteractionRepository {
 
   Future<Like> updateCourseLike(String userId, String courseId) async {
     try {
-      Like _courseLiked = await courseIsLiked(courseId: courseId, userId: userId, isCheck: true);
+      Like _courseLiked = await courseIsLiked(courseId: courseId, userId: userId);
       if (_courseLiked != null) {
         return _updateLikedCourse(courseId, _courseLiked);
       } else {
@@ -72,13 +72,8 @@ class CourseUserInteractionRepository {
 
   Like _updateLikedCourse(String courseId, Like courseLiked) {
     final DocumentReference _courseLikedReference = _courseCollectionInstance.doc(courseId).collection('likes').doc(courseLiked.id);
-    if (courseLiked.isActive) {
-      courseLiked.isActive = false;
-      _updateLikeValue(_courseLikedReference, courseLiked);
-    } else {
-      courseLiked.isActive = true;
-      _updateLikeValue(_courseLikedReference, courseLiked);
-    }
+    courseLiked.isActive = !courseLiked.isActive;
+    _updateLikeValue(_courseLikedReference, courseLiked);
     return courseLiked;
   }
 
@@ -121,14 +116,14 @@ class CourseUserInteractionRepository {
           }
         });
       }
+      return true;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      rethrow;
+      return false;
     }
-    return true;
   }
 
   Future<Recommendation> _checkIfRecommendationExists(
@@ -153,6 +148,29 @@ class CourseUserInteractionRepository {
       );
       rethrow;
     }
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getLikedCoursesSubscription({@required String userId}) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> _courseLikedStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('likes')
+        .where('is_active', isEqualTo: true)
+        .snapshots();
+    return _courseLikedStream;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getRecommendedCoursesByFriends({@required String userId}) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> _friendRecommendationsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('recommendations')
+        .snapshots();
+    return _friendRecommendationsStream;
   }
 
   DocumentReference<Object> _getUserReference(String userRequestedId) {
