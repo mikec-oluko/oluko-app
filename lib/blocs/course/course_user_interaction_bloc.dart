@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/like.dart';
@@ -32,7 +34,7 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
   Future<Like> isCourseLiked({@required String courseId, @required String userId}) async {
     try {
       emit(CourseInteractionLoading());
-      final Like likedCourse = await _courseUserInteractionRepository.courseIsLiked(courseId: courseId, userId: userId);
+      final Like likedCourse = await _courseUserInteractionRepository.courseIsLiked(courseId: courseId, userId: userId, isCheck: true);
       emit(CourseLikedSuccess(courseLiked: likedCourse));
       return likedCourse;
     } catch (exception, stackTrace) {
@@ -60,7 +62,7 @@ class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
     }
   }
 
-  recommendCourseToFriends(
+  Future<bool> recommendCourseToFriends(
       {@required String originUserId, @required String courseRecommendedId, @required List<UserResponse> usersRecommended}) async {
     List<String> friendUsersIdCollection = [];
     if (usersRecommended.isNotEmpty) {

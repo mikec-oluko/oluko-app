@@ -114,12 +114,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
-          BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         }
+        BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
 
         return form();
       } else {
-        return SizedBox();
+        return const SizedBox.shrink();
       }
     });
   }
@@ -153,7 +153,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                 showEnrollButton(
                                     enrollmentState is GetEnrollmentSuccess ? enrollmentState.courseEnrollment : null, context),
                                 Padding(
-                                    padding: EdgeInsets.only(right: 15, left: 15, top: 0),
+                                    padding: const EdgeInsets.only(right: 15, left: 15, top: 0),
                                     child: Container(
                                         width: MediaQuery.of(context).size.width,
                                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
