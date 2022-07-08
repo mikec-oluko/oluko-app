@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -218,6 +219,7 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
     BlocProvider.of<ChallengeStreamBloc>(context).getStream(_currentAuthUser.id);
     BlocProvider.of<CoachVideoMessageBloc>(context).getStream(userId: _currentAuthUser.id, coachId: coachAssignment.coachId);
+    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
   }
 
   Widget _coachViewPageContent(BuildContext context) {

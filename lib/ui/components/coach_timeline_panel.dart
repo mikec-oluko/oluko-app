@@ -1,12 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_timeline_circle_content.dart';
 import 'package:oluko_app/ui/components/coach_timeline_video_content.dart';
@@ -30,6 +34,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   List<List<Widget>> contentWithListNodes = [];
   List<CoachTimelineGroup> _timelineContentItems;
   List<CoachTimelineItem> timelineItems = [];
+  List<UserResponse> _friendUsersList = [];
 
   @override
   void initState() {
@@ -50,17 +55,127 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           _tabController = TabController(length: state.timelineContentItems.length, vsync: this);
           _timelineContentItems = state.timelineContentItems;
         }
-        return Scaffold(
-            appBar: AppBar(
-              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-              flexibleSpace: Container(
-                decoration: UserInformationBackground.getContainerGradientDecoration(
-                    customBorder: false, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
+        return Column(
+          children: [
+            Container(
+              height: 50,
+              // color: Colors.blue
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(2, 5, 2, 5),
+              child: Container(
+                height: 80,
+                // color: Colors.red,
+                child: BlocBuilder<FriendBloc, FriendState>(
+                  builder: (context, friendState) {
+                    if (friendState is GetFriendsSuccess) {
+                      _friendUsersList = friendState.friendUsers;
+                    }
+                    return ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
+                        children: _friendUsersList
+                            .map(
+                              (friend) => GestureDetector(
+                                onTap: () {},
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      child: Container(
+                                        width: 60,
+                                        height: 60,
+                                        child: Neumorphic(
+                                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                                          child: CircleAvatar(
+                                            // backgroundColor: OlukoColors.primary,
+                                            backgroundImage: CachedNetworkImageProvider(friend.avatar),
+                                            radius: 40.0,
+                                            child: SizedBox.shrink(),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Container(
+                                        height: 10,
+                                        child: Text(
+                                          // ${friend.lastName}
+                                          '${friend.username} ',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList()
+                        // [
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        //   CircleAvatar(
+                        //     backgroundColor: OlukoColors.primary,
+                        //     radius: 40.0,
+                        //     child: IconButton(
+                        //         icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black),
+                        //         onPressed: () {}),
+                        //   ),
+                        // ]
+                        );
+                  },
+                ),
               ),
-              automaticallyImplyLeading: false,
-              bottom: TabBar(
+            ),
+            Container(
+              child: TabBar(
                   labelColor: OlukoColors.black,
-                  indicatorColor: OlukoColors.coachTabIndicatorColor,
+                  indicatorColor: OlukoColors.primary,
+                  indicatorWeight: 4,
                   isScrollable: true,
                   controller: _tabController,
                   tabs: _timelineContentItems
@@ -74,32 +189,24 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                           ))
                       .toList()),
             ),
-            body: _timelineContentItems == null
-                ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
-                : _timelineContentItems.isNotEmpty
-                    ? TabBarView(
-                        controller: _tabController,
-                        children: passContentToWidgets()
-                            .map((widgetCollection) => Container(
-                                  color: OlukoNeumorphism.isNeumorphismDesign
-                                      ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                                      : OlukoColors.black,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TabContentList(contentToDisplay: widgetCollection),
-                                  ),
-                                ))
-                            .toList(),
-                      )
-                    : Container(
-                        color: OlukoNeumorphismColors.appBackgroundColor,
-                        child: Center(
-                          child: Text(
-                            OlukoLocalizations.get(context, 'noContent'),
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: passContentToWidgets()
+                    .map((widgetCollection) => Container(
+                          color: OlukoNeumorphism.isNeumorphismDesign
+                              ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
+                              : OlukoColors.black,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TabContentList(contentToDisplay: widgetCollection),
                           ),
-                        ),
-                      ));
+                        ))
+                    .toList(),
+              ),
+            )
+          ],
+        );
       },
     );
   }

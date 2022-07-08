@@ -46,7 +46,7 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
         color: OlukoNeumorphismColors.appBackgroundColor,
         child: TimelineTile(
             lineXY: 0.0,
-            isLast: false,
+            isLast: true,
             indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0, color: OlukoColors.primary),
             beforeLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
             afterLineStyle: const LineStyle(thickness: 1.5, color: OlukoColors.primary),
