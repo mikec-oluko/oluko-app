@@ -446,7 +446,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             builder: (context, state) {
               keyboardVisibilty = state.setVisible;
               textController = state.textEditingController;
-              return !keyboardVisibilty && isSegmentWithoutRecording()
+              return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
                   ? SlidingUpPanel(
                       controller: panelController,
                       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -740,6 +740,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (alertTimer != null) {
       alertTimer.cancel();
     }
+    alertTimerPlaying = false;
 
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
       if ((isLastOne() || nextIsFirstRound()) ||
@@ -932,6 +933,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   //Called each time round change
   void setAlert() {
+    alertDuration = Duration.zero;
     _alertIndex = 0;
     List<RoundsAlerts> roundsAlerts = widget.segments[widget.segmentIndex].roundsAlerts;
     if (roundsAlerts != null && roundsAlerts.isNotEmpty) {
@@ -949,8 +951,15 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   void _playAlert() {
     alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       //new alert to show
-      if (_isIndexInRange()) {
-        if (alertDuration.inSeconds == _currentRoundAlerts[_alertIndex].time) {
+
+      int index1 = _isIndexInRange()
+          ? _alertIndex
+          : _isIndexEqualToLength()
+              ? _alertIndex - 1
+              : _alertIndex;
+
+      if (_isIndexInRange(index1)) {
+        if (alertDuration.inSeconds == _currentRoundAlerts[index1].time) {
           setState(() {
             alertTimerPlaying = true;
           });
@@ -962,7 +971,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
       //alert reached max duration
       int index = _isIndexInRange()
-          ? _alertIndex
+          ? _alertIndex == 0
+              ? _alertIndex
+              : _alertIndex - 1
           : _isIndexEqualToLength()
               ? _alertIndex - 1
               : _alertIndex;
@@ -976,9 +987,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           });
           if (_canIncrementAlert()) {
             _alertIndex++;
-          } else {
-            alertTimer.cancel();
-            return;
           }
         }
       }
