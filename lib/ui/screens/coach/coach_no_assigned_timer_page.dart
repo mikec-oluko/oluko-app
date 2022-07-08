@@ -28,7 +28,8 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   Timestamp _userAssessmentsCompletedAt;
   bool _isTimeExpired = false;
   final Duration _oneDayLimit = const Duration(days: 1);
-  final int _hourMaxValue = 24;
+  final int _hourMinValue = 0;
+  final int _timeMinValue = 0;
   final int _minutesSecondsMaxValue = 59;
   final _spacerWidget = const SizedBox(
     height: 20,
@@ -149,13 +150,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
                       depth: 2,
                       intensity: 1,
-                      color:OlukoColors.black,
+                      color: OlukoColors.black,
                       lightSource: LightSource.bottomRight,
-                      shadowDarkColorEmboss:OlukoColors.black,
+                      shadowDarkColorEmboss: OlukoColors.black,
                       shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                       surfaceIntensity: 1,
                       shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      shadowDarkColor:OlukoColors.black),
+                      shadowDarkColor: OlukoColors.black),
                   child: IntrinsicHeight(
                     child: ShaderMask(
                       shaderCallback: (rect) {
@@ -164,7 +165,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                           OlukoColors.black,
+                            OlukoColors.black,
                             Colors.transparent,
                           ],
                         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
@@ -182,7 +183,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                   width: ScreenUtils.width(context) * 0.15,
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                   // color: Colors.blue,
-                                  child: buildWatchField(valueToUse: _hourValue, maxValue: _hourMaxValue),
+                                  child: buildWatchField(
+                                      valueToUse: _hourValue == _oneDayLimit.inHours
+                                          ? _hourMinValue < _timeMinValue
+                                              ? _timeMinValue
+                                              : _hourMinValue
+                                          : _hourValue,
+                                      maxValue: _oneDayLimit.inHours),
                                 ),
                               ],
                             ),
@@ -198,7 +205,9 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                 Container(
                                     width: ScreenUtils.width(context) * 0.15,
                                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                    child: buildWatchField(valueToUse: _minutesValue, maxValue: _minutesSecondsMaxValue)),
+                                    child: buildWatchField(
+                                        valueToUse: _minutesValue < _timeMinValue ? _timeMinValue : _minutesValue,
+                                        maxValue: _minutesSecondsMaxValue)),
                               ],
                             ),
                           ),
@@ -213,7 +222,9 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                 Container(
                                   width: ScreenUtils.width(context) * 0.15,
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                  child: buildWatchField(valueToUse: _secondsValue, maxValue: _minutesSecondsMaxValue),
+                                  child: buildWatchField(
+                                      valueToUse: _secondsValue < _timeMinValue ? _timeMinValue : _secondsValue,
+                                      maxValue: _minutesSecondsMaxValue),
                                 ),
                               ],
                             ),
