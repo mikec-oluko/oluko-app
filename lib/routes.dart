@@ -24,9 +24,11 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
+import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
-import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
+import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
+import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -425,6 +427,8 @@ class Routes {
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final FAQBloc _fAQBloc = FAQBloc();
   final CourseUserIteractionBloc _courseInteractionBloc = CourseUserIteractionBloc();
+  final CourseRecommendedByFriendBloc _courseRecommendedByFriendBloc = CourseRecommendedByFriendBloc();
+  final LikedCoursesBloc _courseLikedBloc = LikedCoursesBloc();
   final MailBloc _mailBloc = MailBloc();
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
@@ -508,6 +512,8 @@ class Routes {
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
+          BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
@@ -895,7 +901,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -916,7 +922,7 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -1103,7 +1109,9 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
+          BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
@@ -1301,7 +1309,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc)
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseShareView(
