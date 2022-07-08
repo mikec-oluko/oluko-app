@@ -167,7 +167,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
       scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
-
     setState(() {
       _isFromChallenge = widget.fromChallenge ?? false;
     });
@@ -592,7 +591,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   Widget alertWidget() {
     if (alertTimerPlaying) {
-      String alertText = _currentRoundAlerts[_alertIndex].text;
+      String alertText = _currentRoundAlerts[_alertIndex - 1].text;
       return Positioned(
         top: isSegmentWithoutRecording() ? ScreenUtils.height(context) * 0.59 : ScreenUtils.height(context) * 0.55,
         left: ScreenUtils.width(context) / 3.8,
@@ -949,32 +948,43 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _playAlert() {
     alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      int momentAlertStarted = _currentRoundAlerts[_alertIndex].time;
-      int currentAlertDuration = alertDuration.inSeconds - momentAlertStarted;
-      bool existsNextAlert = (_alertIndex + 1) < _currentRoundAlerts.length;
-
       //new alert to show
-      if (alertDuration.inSeconds == _currentRoundAlerts[_alertIndex].time) {
-        setState(() {
-          alertTimerPlaying = true;
-        });
+      if (_isIndexInRange()) {
+        if (alertDuration.inSeconds == _currentRoundAlerts[_alertIndex].time) {
+          setState(() {
+            alertTimerPlaying = true;
+          });
+          if (_canIncrementAlert()) {
+            _alertIndex++;
+          }
+        }
       }
 
-      //alert reached max duration.
-      if (currentAlertDuration == _alertTotalDuration) {
-        setState(() {
-          alertTimerPlaying = false;
-        });
-        if (existsNextAlert) {
-          _alertIndex++;
-        } else {
-          alertTimer.cancel();
-          return;
+      //alert reached max duration
+      int index = _isIndexInRange()
+          ? _alertIndex
+          : _isIndexEqualToLength()
+              ? _alertIndex - 1
+              : _alertIndex;
+
+      if (_isIndexInRange(index)) {
+        int momentAlertStarted = _currentRoundAlerts[index].time;
+        int currentAlertDuration = alertDuration.inSeconds - momentAlertStarted;
+        if (currentAlertDuration == _alertTotalDuration) {
+          setState(() {
+            alertTimerPlaying = false;
+          });
+          if (_canIncrementAlert()) {
+            _alertIndex++;
+          } else {
+            alertTimer.cancel();
+            return;
+          }
         }
       }
 
       //there is another alert and starts before current alert finished
-      if (existsNextAlert) {
+      if (_existsNextAlert()) {
         int nextAlertTime = _currentRoundAlerts[_alertIndex + 1].time;
         if (alertDuration.inSeconds == nextAlertTime) {
           _alertIndex++;
@@ -983,6 +993,23 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       }
       alertDuration = Duration(seconds: alertDuration.inSeconds + 1);
     });
+  }
+
+  bool _canIncrementAlert() {
+    return (_alertIndex + 1) <= _currentRoundAlerts.length;
+  }
+
+  bool _existsNextAlert() {
+    return (_alertIndex + 1) < _currentRoundAlerts.length;
+  }
+
+  bool _isIndexInRange([int index]) {
+    int i = index == null ? _alertIndex : index;
+    return i < _currentRoundAlerts.length;
+  }
+
+  bool _isIndexEqualToLength() {
+    return _alertIndex == _currentRoundAlerts.length;
   }
 
   _startMovement() {
