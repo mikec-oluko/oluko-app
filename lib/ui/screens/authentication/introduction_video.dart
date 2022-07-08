@@ -48,20 +48,25 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
 class _IntroductionVideoState extends State<IntroductionVideo> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ChewieController>(
-      future: getChewieWithVideo(context),
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<ChewieController> snapshot,
-      ) {
-        if (snapshot != null && snapshot.hasData && (snapshot.hasError == null || !snapshot.hasError)) {
-          return Chewie(
-            controller: snapshot.data,
-          );
-        } else {
-          return const SizedBox();
-        }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
       },
+      child: FutureBuilder<ChewieController>(
+        future: getChewieWithVideo(context),
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<ChewieController> snapshot,
+        ) {
+          if (snapshot != null && snapshot.hasData && (snapshot.hasError == null || !snapshot.hasError)) {
+            return Chewie(
+              controller: snapshot.data,
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
     );
   }
 }
