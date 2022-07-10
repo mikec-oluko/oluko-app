@@ -950,57 +950,63 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _playAlert() {
     alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      //new alert to show
-
-      int index1 = _isIndexInRange()
-          ? _alertIndex
-          : _isIndexEqualToLength()
-              ? _alertIndex - 1
-              : _alertIndex;
-
-      if (_isIndexInRange(index1)) {
-        if (alertDuration.inSeconds == _currentRoundAlerts[index1].time) {
-          setState(() {
-            alertTimerPlaying = true;
-          });
-          if (_canIncrementAlert()) {
-            _alertIndex++;
-          }
-        }
-      }
-
-      //alert reached max duration
-      int index = _isIndexInRange()
-          ? _alertIndex == 0
-              ? _alertIndex
-              : _alertIndex - 1
-          : _isIndexEqualToLength()
-              ? _alertIndex - 1
-              : _alertIndex;
-
-      if (_isIndexInRange(index)) {
-        int momentAlertStarted = _currentRoundAlerts[index].time;
-        int currentAlertDuration = alertDuration.inSeconds - momentAlertStarted;
-        if (currentAlertDuration == _alertTotalDuration) {
-          setState(() {
-            alertTimerPlaying = false;
-          });
-          if (_canIncrementAlert()) {
-            _alertIndex++;
-          }
-        }
-      }
-
-      //there is another alert and starts before current alert finished
-      if (_existsNextAlert()) {
-        int nextAlertTime = _currentRoundAlerts[_alertIndex + 1].time;
-        if (alertDuration.inSeconds == nextAlertTime) {
-          _alertIndex++;
-          return;
-        }
-      }
+      checkNewAlertToShow();
+      checkAlertReachedMaxDuration();
+      checkNextAlertStartingBeforeCurrentOneFinished();
       alertDuration = Duration(seconds: alertDuration.inSeconds + 1);
     });
+  }
+
+  void checkNewAlertToShow() {
+    int index = _isIndexInRange()
+        ? _alertIndex
+        : _isIndexEqualToLength()
+            ? _alertIndex - 1
+            : _alertIndex;
+
+    if (_isIndexInRange(index)) {
+      if (alertDuration.inSeconds == _currentRoundAlerts[index].time) {
+        setState(() {
+          alertTimerPlaying = true;
+        });
+        if (_canIncrementAlert()) {
+          _alertIndex++;
+        }
+      }
+    }
+  }
+
+  void checkAlertReachedMaxDuration() {
+    int index = _isIndexInRange()
+        ? _alertIndex == 0
+            ? _alertIndex
+            : _alertIndex - 1
+        : _isIndexEqualToLength()
+            ? _alertIndex - 1
+            : _alertIndex;
+
+    if (_isIndexInRange(index)) {
+      int momentAlertStarted = _currentRoundAlerts[index].time;
+      int currentAlertDuration = alertDuration.inSeconds - momentAlertStarted;
+      if (currentAlertDuration == _alertTotalDuration) {
+        setState(() {
+          alertTimerPlaying = false;
+        });
+        if (_canIncrementAlert()) {
+          _alertIndex++;
+        }
+      }
+    }
+  }
+
+  void checkNextAlertStartingBeforeCurrentOneFinished() {
+    if (_existsNextAlert()) {
+      int nextAlertTime = _currentRoundAlerts[_alertIndex + 1].time;
+      if (alertDuration.inSeconds == nextAlertTime) {
+        _alertIndex++;
+        return;
+      }
+    }
   }
 
   bool _canIncrementAlert() {
