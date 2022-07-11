@@ -89,6 +89,7 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
+import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -433,6 +434,7 @@ class Routes {
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
   final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
+  final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -449,6 +451,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),

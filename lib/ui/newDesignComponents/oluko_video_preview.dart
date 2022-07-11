@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/collage_utils.dart';
@@ -170,7 +171,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                     ? imageSection()
                     : widget.bannerVideo
                         ? imageSection()
-                        : gridSection())),
+                        : SelfiesGrid(images: widget.randomImages))),
         if (widget.video != null)
           AspectRatio(
             aspectRatio: 5 / 3,
@@ -212,7 +213,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                         ? imageSection()
                         : widget.bannerVideo
                             ? imageSection()
-                            : gridSection())),
+                            : SelfiesGrid(images: widget.randomImages))),
             if (widget.video != null)
               Padding(
                   padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
@@ -311,13 +312,5 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   int random(int min, int max) {
     var rn = new Random();
     return min + rn.nextInt(max - min);
-  }
-
-  Widget gridSection() {
-    return GridView.count(
-        physics: NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 1,
-        crossAxisCount: 7,
-        children: CollageUtils.getCollageWidgets(widget.randomImages, 70)); //70 items
   }
 }
