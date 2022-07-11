@@ -48,6 +48,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/profile/mail_bloc.dart';
+import 'package:oluko_app/blocs/profile/my_account_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
@@ -429,6 +430,7 @@ class Routes {
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
   final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
+  final MyAccountBloc _myAccountBloc = MyAccountBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -640,6 +642,7 @@ class Routes {
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
+          BlocProvider<MyAccountBloc>.value(value: _myAccountBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
