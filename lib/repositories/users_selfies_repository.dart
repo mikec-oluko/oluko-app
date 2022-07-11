@@ -11,7 +11,7 @@ class UsersSelfiesRepository {
 
   UsersSelfiesRepository.test({this.firestoreInstance});
 
-  static Future<UsersSelfies> getUsersSelfies() async {
+  static Future<UsersSelfies> get() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -19,6 +19,22 @@ class UsersSelfiesRepository {
         .get();
     List<UsersSelfies> usersSelfies = mapQueryToUsersSelfies(querySnapshot);
     return usersSelfies != null ? usersSelfies[0] : null;
+  }
+
+  static void update(String selfie) async {
+    UsersSelfies usersSelfies = await get();
+    final DocumentReference docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('usersSelfies')
+        .doc(usersSelfies.id);
+    if (usersSelfies.selfies.length < 70) {
+      usersSelfies.selfies.add(selfie);
+    } else {
+      usersSelfies.selfies[usersSelfies.indexToReplace] = selfie;
+      usersSelfies.indexToReplace = usersSelfies.indexToReplace < 69 ? usersSelfies.indexToReplace + 1 : 0;
+    }
+    docRef.update({'selfies': usersSelfies.selfies, 'index_to_replace': usersSelfies.indexToReplace});
   }
 
   static List<UsersSelfies> mapQueryToUsersSelfies(QuerySnapshot qs) {

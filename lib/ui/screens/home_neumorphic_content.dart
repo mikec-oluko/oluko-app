@@ -444,7 +444,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Scaffold getNotEnrolledContent(bool showStories, BuildContext context) {
-    BlocProvider.of<UsersSelfiesBloc>(context).getUsersSelfies();
+    BlocProvider.of<UsersSelfiesBloc>(context).get();
     return Scaffold(
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       body: Column(
@@ -513,7 +513,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     width: ScreenUtils.width(context),
                     child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
                       if (state is UsersSelfiesSuccess) {
-                        return SelfiesGrid();
+                        return SelfiesGrid(images: state.usersSelfies.selfies);
                       } else {
                         return OlukoCircularProgressIndicator();
                       }

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/users_selfies.dart';
-import 'package:oluko_app/repositories/users_selfies.dart';
+import 'package:oluko_app/repositories/users_selfies_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class UsersSelfiesState {}
@@ -20,10 +20,10 @@ class Failure extends UsersSelfiesState {
 class UsersSelfiesBloc extends Cubit<UsersSelfiesState> {
   UsersSelfiesBloc() : super(Loading());
 
-  void getUsersSelfies() async {
+  void get() async {
     emit(Loading());
     try {
-      UsersSelfies usersSelfies = await UsersSelfiesRepository.getUsersSelfies();
+      UsersSelfies usersSelfies = await UsersSelfiesRepository.get();
       emit(UsersSelfiesSuccess(usersSelfies: usersSelfies));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
