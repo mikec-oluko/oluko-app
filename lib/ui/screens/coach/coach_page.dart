@@ -69,6 +69,7 @@ class CoachPage extends StatefulWidget {
   _CoachPageState createState() => _CoachPageState();
 }
 
+const String assessmentId = 'emnsmBgZ13UBRqTS26Qd';
 const String _defaultIdForAllContentTimeline = '0';
 const String _defaultIntroductionVideoId = 'introVideo';
 const bool hideAssessmentsTab = true;
@@ -209,7 +210,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void _requestCurrentUserData(BuildContext context) {
-    BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
+    BlocProvider.of<AssessmentBloc>(context).getById(assessmentId);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
     BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_currentAuthUser.id, coachAssignment.coachId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, coachAssignment.coachId);
