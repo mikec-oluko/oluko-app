@@ -958,11 +958,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void checkNewAlertToShow() {
-    int index = _isIndexInRange()
-        ? _alertIndex
-        : _isIndexEqualToLength()
-            ? _alertIndex - 1
-            : _alertIndex;
+    int index;
+
+    if (_isIndexInRange()) {
+      index = _alertIndex;
+    } else {
+      if (_isIndexEqualToLength()) {
+        index = _alertIndex - 1;
+      } else {
+        index = _alertIndex;
+      }
+    }
 
     if (_isIndexInRange(index)) {
       if (alertDuration.inSeconds == _currentRoundAlerts[index].time) {
@@ -977,13 +983,21 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void checkAlertReachedMaxDuration() {
-    int index = _isIndexInRange()
-        ? _alertIndex == 0
-            ? _alertIndex
-            : _alertIndex - 1
-        : _isIndexEqualToLength()
-            ? _alertIndex - 1
-            : _alertIndex;
+    int index;
+
+    if (_isIndexInRange()) {
+      if (_alertIndex == 0) {
+        index = _alertIndex;
+      } else {
+        index = _alertIndex - 1;
+      }
+    } else {
+      if (_isIndexEqualToLength()) {
+        index = _alertIndex - 1;
+      } else {
+        index = _alertIndex;
+      }
+    }
 
     if (_isIndexInRange(index)) {
       int momentAlertStarted = _currentRoundAlerts[index].time;
