@@ -6,6 +6,7 @@ class Assessment extends Base {
   Assessment(
       {this.name,
       this.video,
+      this.videoThumbnail,
       this.coverImage,
       this.thumbnailImage,
       this.description,
@@ -28,6 +29,7 @@ class Assessment extends Base {
 
   String name;
   String video;
+  String videoThumbnail;
   String coverImage;
   String thumbnailImage;
   String description;
@@ -37,6 +39,7 @@ class Assessment extends Base {
     Assessment assessment = Assessment(
       name: json['name']?.toString(),
       video: json['video']?.toString(),
+      videoThumbnail: json['video_thumbnail']?.toString(),
       coverImage: json['cover_image']?.toString(),
       thumbnailImage: json['thumbnail_image']?.toString(),
       description: json['description']?.toString(),
@@ -55,6 +58,7 @@ class Assessment extends Base {
     Map<String, dynamic> assessmentJson = {
       'name': name,
       'video': video,
+      'video_thumbnail': videoThumbnail,
       'cover_image': coverImage,
       'thumbnail_image': thumbnailImage,
       'description': description,
