@@ -83,7 +83,7 @@ class _UserListComponentState extends State<UserListComponent> {
             child: Text(
               OlukoLocalizations.get(context, 'noUsers'),
               textAlign: TextAlign.start,
-              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
             ))
       ]),
     );

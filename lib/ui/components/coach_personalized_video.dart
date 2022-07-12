@@ -65,7 +65,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
             if (OlukoNeumorphism.isNeumorphismDesign)
               Text(
                 DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
               )
             else
               Column(
@@ -73,14 +73,14 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                 children: [
                   Text(
                     OlukoLocalizations.get(context, 'date'),
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   Text(
                     DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                   )
                 ],
               ),

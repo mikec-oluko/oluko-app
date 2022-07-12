@@ -1,20 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_notification_panel_content_card.dart';
+import 'package:oluko_app/ui/components/coach_notification_video_card.dart';
 import 'package:oluko_app/ui/components/coach_personalized_video.dart';
+import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'coach_recommendation_default.dart';
 
@@ -229,5 +234,110 @@ class CoachHelperFunctions {
         }
       });
     }
+  }
+
+  static List<Widget> notificationPanel(
+      {@required BuildContext context,
+      @required CoachAssignment coachAssignment,
+      @required Assessment assessment,
+      @required List<CoachRecommendationDefault> coachRecommendations,
+      @required List<Annotation> annotationVideos,
+      @required List<CoachMediaMessage> coachVideoMessages,
+      @required Function() onOpenCard,
+      @required Function() onCloseCard}) {
+    List<Widget> carouselContent = [];
+    List<CoachNotificationContent> contentForNotificationPanel = [];
+
+    if (!coachAssignment.welcomeVideoSeen) {
+      carouselContent.add(CoachNotificationVideoCard(
+          cardImage: assessment.thumbnailImage,
+          fileType: CoachFileTypeEnum.welcomeVideo,
+          onCloseCard: () => onCloseCard,
+          onOpenCard: () => onOpenCard));
+    }
+
+    if (coachRecommendations.isNotEmpty) {
+      contentForNotificationPanel =
+          CoachTimelineFunctions.coachRecommendationsForInteraction(coachRecommendations: coachRecommendations, context: context);
+      carouselContent = CoachHelperFunctions.notificationsWidget(
+          contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
+    }
+
+    if (annotationVideos.isNotEmpty) {
+      contentForNotificationPanel =
+          CoachTimelineFunctions.mentoredVideoForInteraction(annotationContent: annotationVideos, context: context);
+      carouselContent = CoachHelperFunctions.notificationsWidget(
+          contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
+    }
+
+    if (coachVideoMessages.isNotEmpty) {
+      contentForNotificationPanel =
+          CoachTimelineFunctions.messageVideoForInteraction(messageVideoContent: coachVideoMessages, context: context);
+      carouselContent = CoachHelperFunctions.notificationsWidget(
+          contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
+    }
+    return carouselContent;
+  }
+
+  static List<Annotation> addIntroVideoOnAnnotations(List<Annotation> annotationVideosContent, Annotation introductionVideo) {
+    const String _defaultIntroductionVideoId = 'introVideo';
+    if (annotationVideosContent != null && introductionVideo != null) {
+      if (annotationVideosContent.where((annotation) => annotation.id == _defaultIntroductionVideoId).toList().isEmpty) {
+        annotationVideosContent.insert(0, introductionVideo);
+      }
+    }
+    return annotationVideosContent;
+  }
+
+  static List<RecommendationMedia> getRecommendedVideosContent(List<CoachRecommendationDefault> coachRecommendations) {
+    List<RecommendationMedia> recommendationVideos = [];
+    for (CoachRecommendationDefault recommendation in coachRecommendations) {
+      if (recommendation.contentType == TimelineInteractionType.recommendedVideo) {
+        RecommendationMedia _mediaUpdatedDateOfCreation = recommendation.recommendationMedia;
+        _mediaUpdatedDateOfCreation.createdAt = recommendation.createdAt;
+        recommendationVideos.add(_mediaUpdatedDateOfCreation);
+      }
+    }
+    return recommendationVideos;
+  }
+
+  static Widget recommendedContentImageStack(
+      {BuildContext context,
+      List<CoachRecommendationDefault> coachRecommendations,
+      Function(List<CoachRecommendationDefault> recommendationList) onTap,
+      TimelineInteractionType contentType,
+      bool isForCarousel}) {
+    Widget widgetToReturn = const SizedBox.shrink();
+    List<CoachRecommendationDefault> movementsRecommended = [];
+    List<CoachRecommendationDefault> coursesRecommended = [];
+    if (coachRecommendations != null && coachRecommendations.isNotEmpty) {
+      if (contentType == TimelineInteractionType.movement) {
+        widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedMovements'));
+        movementsRecommended =
+            CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
+        if (movementsRecommended.isNotEmpty) {
+          widgetToReturn = GestureDetector(
+              onTap: () => onTap(movementsRecommended),
+              child: CoachRecommendedContentPreviewStack(
+                recommendationsList: movementsRecommended,
+                titleForSection: OlukoLocalizations.of(context).find('recommendedMovements'),
+              ));
+        }
+      }
+      if (contentType == TimelineInteractionType.course) {
+        widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedCourses'));
+        coursesRecommended =
+            CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.course, coursesRecommended);
+        if (coursesRecommended.isNotEmpty) {
+          widgetToReturn = GestureDetector(
+              onTap: () => onTap(coursesRecommended),
+              child: CoachRecommendedContentPreviewStack(
+                recommendationsList: coursesRecommended,
+                titleForSection: OlukoLocalizations.of(context).find('recommendedCourses'),
+              ));
+        }
+      }
+    }
+    return widgetToReturn;
   }
 }

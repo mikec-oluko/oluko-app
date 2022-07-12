@@ -39,7 +39,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
       children: [
         Text(
           OlukoLocalizations.get(context, 'activityStats'),
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
         ),
         AnimatedContainer(
           decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
@@ -107,7 +107,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
               ? SizedBox.shrink()
               : Text(
                   OlukoLocalizations.get(context, 'activityStats'),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                 ),
           AnimatedContainer(
               onEnd: () {
@@ -171,7 +171,8 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                       height: _isUserStatisticExpanded ? MediaQuery.of(context).size.height / 12 : 0,
                       duration: const Duration(milliseconds: 200),
                       child: CoachUserProgressComponent(
-                        progressValue: 0,
+                        progressValue:
+                            widget.userStats != null && widget.userStats.appCompleted != null ? widget.userStats.appCompleted : 0,
                         nameOfField: OlukoLocalizations.get(context, 'appCompleted'),
                         needPercentage: true,
                       ),

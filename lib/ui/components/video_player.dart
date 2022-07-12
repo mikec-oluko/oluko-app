@@ -7,6 +7,8 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
+import '../../helpers/video_player_helper.dart';
+
 class OlukoVideoPlayer extends StatefulWidget {
   final String videoUrl;
   final double aspectRatio;
@@ -51,10 +53,10 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
     super.initState();
 
     if (widget.filePath != null) {
-      _controller = VideoPlayerController.file(File(widget.filePath));
+      _controller = VideoPlayerHelper.VideoPlayerControllerFromFile(File(widget.filePath));
     } else {
       if (widget.videoUrl != null) {
-        _controller = VideoPlayerController.network(widget.videoUrl);
+        _controller = VideoPlayerHelper.VideoPlayerControllerFromNetwork(widget.videoUrl);
       } else {
         _controller = null;
       }
@@ -93,6 +95,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
           customControls: controls,
           videoPlayerController: _controller,
           autoPlay: widget.autoPlay,
+          autoInitialize: true,
           showControls: widget.showControls,
           placeholder: Center(child: CircularProgressIndicator()),
           deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],

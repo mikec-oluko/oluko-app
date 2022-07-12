@@ -103,7 +103,7 @@ class CourseUtils {
         padding: EdgeInsets.only(left: 30, top: 20),
         child: Text(
           OlukoLocalizations.get(context, 'noCourseFound'),
-          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
         ));
   }
 
@@ -124,5 +124,9 @@ class CourseUtils {
 
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
     return "$weeks ${OlukoLocalizations.get(context, 'weeks')}, $classes ${OlukoLocalizations.get(context, 'classes')}";
+  }
+
+  static Course getCourseById(String courseId, List<Course> courses) {
+    return courses.where((course) => course.id == courseId).first;
   }
 }

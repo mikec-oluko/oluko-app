@@ -114,12 +114,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
           BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
-          BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         }
+        BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
 
         return form();
       } else {
-        return SizedBox();
+        return const SizedBox.shrink();
       }
     });
   }
@@ -136,7 +136,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   body: OlukoNeumorphism.isNeumorphismDesign
                       ? customScrollView(enrollmentState)
                       : Container(
-                          color:OlukoColors.black,
+                          color: OlukoColors.black,
                           child: Stack(
                             children: [
                               ListView(children: [
@@ -153,13 +153,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                 showEnrollButton(
                                     enrollmentState is GetEnrollmentSuccess ? enrollmentState.courseEnrollment : null, context),
                                 Padding(
-                                    padding: EdgeInsets.only(right: 15, left: 15, top: 0),
+                                    padding: const EdgeInsets.only(right: 15, left: 15, top: 0),
                                     child: Container(
                                         width: MediaQuery.of(context).size.width,
                                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                           Text(
                                             widget.course.name,
-                                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
@@ -168,7 +168,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                               CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                                                   widget.course.classes != null ? widget.course.classes.length : 0, context),
                                               style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           buildStatistics(),
@@ -177,7 +177,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             child: Text(
                                               widget.course.description ?? '',
                                               style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           if (!OlukoNeumorphism.isNeumorphismDesign)
@@ -185,7 +185,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                               padding: const EdgeInsets.only(top: 25.0),
                                               child: Text(
                                                 OlukoLocalizations.get(context, 'classes'),
-                                                style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                                style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
                                               ),
                                             ),
                                           buildClassExpansionPanels()
@@ -237,7 +237,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: Text(
                           widget.course.name,
-                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                          style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -246,7 +246,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       child: Text(
                         CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                             widget.course.classes != null ? widget.course.classes.length : 0, context),
-                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                       ),
                     ),
                   ],
@@ -294,7 +294,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                           padding: const EdgeInsets.only(top: 10.0, right: 10),
                           child: Text(
                             widget.course.description ?? '',
-                            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                           ),
                         ),
                         Padding(

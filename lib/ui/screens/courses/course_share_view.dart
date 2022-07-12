@@ -13,7 +13,6 @@ import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
-import 'package:oluko_app/ui/components/users_list_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -32,11 +31,11 @@ class _CourseShareViewState extends State<CourseShareView> {
   List<UserResponse> userSelectedList = [];
   Map<String, UserProgress> _usersProgress = {};
   List<FriendModel> _friends = [];
-  Widget usersWidget = SizedBox.shrink();
+  Widget usersWidget = const SizedBox.shrink();
   bool isSelected = true;
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     super.initState();
   }
@@ -87,7 +86,8 @@ class _CourseShareViewState extends State<CourseShareView> {
                                     Text(
                                       OlukoLocalizations.get(context, 'sendFriendRecommendation'),
                                       textAlign: TextAlign.start,
-                                      style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                                      style:
+                                          OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                                     ),
                                     IgnorePointer(
                                       ignoring: userSelectedList.isEmpty,
@@ -95,9 +95,9 @@ class _CourseShareViewState extends State<CourseShareView> {
                                           width: 50,
                                           height: 50,
                                           child: IconButton(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 if (userSelectedList.isNotEmpty) {
-                                                  BlocProvider.of<CourseUserIteractionBloc>(context).recommendCourseToFriends(
+                                                  await BlocProvider.of<CourseUserIteractionBloc>(context).recommendCourseToFriends(
                                                     originUserId: widget.currentUser.id,
                                                     courseRecommendedId: widget.courseToShare.id,
                                                     usersRecommended: userSelectedList,
@@ -139,12 +139,12 @@ class _CourseShareViewState extends State<CourseShareView> {
           child: Text(
             favorite ? OlukoLocalizations.get(context, 'favorites') : OlukoLocalizations.get(context, 'friends'),
             textAlign: TextAlign.start,
-            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500),
           ),
         ),
         GridView.count(
             padding: const EdgeInsets.only(top: 10),
-            childAspectRatio: 0.7,
+            childAspectRatio: 0.6,
             crossAxisCount: 4,
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
@@ -230,19 +230,16 @@ class _CourseShareViewState extends State<CourseShareView> {
     return Container(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context) / 7,
-      // color: Colors.red,
       child: Column(
         children: [
-          Expanded(child: SizedBox()),
+          const Expanded(child: SizedBox()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Expanded(child: SizedBox()),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    // color: Colors.blue,
                     width: 60,
                     height: 60,
                     child: Neumorphic(
@@ -262,11 +259,12 @@ class _CourseShareViewState extends State<CourseShareView> {
                     ),
                   ),
                 ),
+                const Expanded(child: SizedBox()),
               ],
             ),
           ),
-          Expanded(child: SizedBox()),
-          OlukoNeumorphicDivider()
+          const Expanded(child: SizedBox()),
+          const OlukoNeumorphicDivider()
         ],
       ),
     );

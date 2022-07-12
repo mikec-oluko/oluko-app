@@ -8,6 +8,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/classes_menu.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/unenroll_menu.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCard extends StatefulWidget {
@@ -18,6 +19,7 @@ class CourseCard extends StatefulWidget {
   final List<String> userRecommendationsAvatarUrls;
   final CourseEnrollment actualCourse;
   final bool canUnenrollCourse;
+  final bool friendRecommended;
   final Function() unrolledFunction;
   final List<ChallengeNavigation> challengeNavigations;
   final Function() closePanelFunction;
@@ -34,7 +36,8 @@ class CourseCard extends StatefulWidget {
       this.userRecommendationsAvatarUrls,
       this.actualCourse,
       this.unrolledFunction,
-      this.canUnenrollCourse = false});
+      this.canUnenrollCourse = false,
+      this.friendRecommended = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -42,6 +45,7 @@ class CourseCard extends StatefulWidget {
 
 class _State extends State<CourseCard> {
   double userRadius = 15.0;
+  final int _imageStackMaxLength = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +103,10 @@ class _State extends State<CourseCard> {
     return Container(
       width: widget.width,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        if (widget.userRecommendationsAvatarUrls != null)
+        if (widget.userRecommendationsAvatarUrls != null && !widget.friendRecommended)
           Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
         else
-          SizedBox(),
+          const SizedBox.shrink(),
         Neumorphic(
           style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
           child: Stack(
@@ -123,7 +127,11 @@ class _State extends State<CourseCard> {
             ),
           )
         else
-          SizedBox()
+          const SizedBox.shrink(),
+        if (widget.userRecommendationsAvatarUrls != null && widget.friendRecommended)
+          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls, friendRecommended: widget.friendRecommended))
+        else
+          const SizedBox.shrink(),
       ]),
     );
   }
@@ -150,15 +158,23 @@ class _State extends State<CourseCard> {
       right: -15,
       child: Visibility(
         visible: widget.challengeNavigations != null && widget.challengeNavigations.length > 1,
-        child: Align(alignment: Alignment.topRight, child: ClassesMenu(challengeNavigations: widget.challengeNavigations, closePanelFunction: widget.closePanelFunction, audioNavigation: widget.audioNavigation)),
+        child: Align(
+            alignment: Alignment.topRight,
+            child: ClassesMenu(
+                challengeNavigations: widget.challengeNavigations,
+                closePanelFunction: widget.closePanelFunction,
+                audioNavigation: widget.audioNavigation)),
       ),
     );
   }
 
-  Widget _userRecommendations(List<String> userRecommendationImageUrls) {
-    List<String> userImageList =
-        userRecommendationImageUrls.length < 3 ? userRecommendationImageUrls : userRecommendationImageUrls.sublist(0, 3);
-
+  Widget _userRecommendations(List<String> userRecommendationImageUrls, {bool friendRecommended = false}) {
+    List<String> userImageList = [];
+    userImageList = userRecommendationImageUrls.length < _imageStackMaxLength
+        ? userRecommendationImageUrls
+        : userRecommendationImageUrls.sublist(0, _imageStackMaxLength);
+    String _friendsText =
+        userRecommendationImageUrls.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
     return Padding(
       padding: const EdgeInsets.only(bottom: 1.0),
       child: Stack(
@@ -166,25 +182,37 @@ class _State extends State<CourseCard> {
           children: userImageList
               .asMap()
               .map((index, userUrl) => MapEntry(
-                  Positioned(
-                    //Expression to overlap user avatars to a max of 3 items.
-                    right: (index + (userRecommendationImageUrls.length <= 3 ? 0 : 1)) * (userRadius / 1.5),
-                    child: CircleAvatar(
-                      minRadius: userRadius,
-                      backgroundImage: CachedNetworkImageProvider(userUrl),
-                    ),
-                  ),
+                  friendRecommended
+                      ? Positioned(
+                          left: (index * (userRadius / 1.5)),
+                          child: _userAvatar(userUrl),
+                        )
+                      : Positioned(
+                          right: (index + (userRecommendationImageUrls.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
+                          child: _userAvatar(userUrl)),
                   index))
               .keys
               .toList()
             ..add(Positioned(
               right: 0,
-              child: Text(
-                //Show ellipsis if there are more than 3 user avatars
-                userRecommendationImageUrls.length > 3 ? '...' : '',
-                style: TextStyle(color: Colors.white),
-              ),
+              bottom: userRadius * 0.5,
+              child: friendRecommended
+                  ? Text(
+                      '${userRecommendationImageUrls.length} $_friendsText',
+                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                    )
+                  : Text(
+                      userRecommendationImageUrls.length > _imageStackMaxLength ? '...' : '',
+                      style: TextStyle(color: Colors.white),
+                    ),
             ))),
+    );
+  }
+
+  CircleAvatar _userAvatar(String userUrl) {
+    return CircleAvatar(
+      minRadius: userRadius,
+      backgroundImage: CachedNetworkImageProvider(userUrl),
     );
   }
 }

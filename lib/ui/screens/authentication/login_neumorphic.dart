@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         height: ScreenUtils.height(context) * 0.07,
       ),
       TextFormField(
-        style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.white),
+        style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           focusedBorder: OutlineInputBorder(
@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             borderRadius: BorderRadius.circular(40),
           ),
           filled: true,
-          hintStyle: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: Colors.white),
+          hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w500, customColor: Colors.white),
           hintText: OlukoLocalizations.get(context, 'emailOrUsername').toLowerCase(),
           fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         ),
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         height: 10,
       ),
       TextFormField(
-        style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.white),
+        style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           suffixIcon: PeekPassword(
@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           ),
           filled: true,
           errorStyle: const TextStyle(height: 0.5),
-          hintStyle: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: Colors.white),
+          hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w500, customColor: Colors.white),
           hintText: OlukoLocalizations.get(context, 'password').toLowerCase(),
           fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         ),

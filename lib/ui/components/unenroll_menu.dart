@@ -23,15 +23,15 @@ class _UnenrollCourseState extends State<UnenrollCourse> {
         return <PopupMenuEntry<Unenroll>>[
           PopupMenuItem(
             onTap: () {
-              BlocProvider.of<CourseEnrollmentListBloc>(context).unenrollCourseForUser(widget.actualCourse, true);
+              BlocProvider.of<CourseEnrollmentListBloc>(context).unenrollCourseForUser(widget.actualCourse, isUnenrolledValue: true);
               if (widget.unrolledFunction != null) {
                 widget.unrolledFunction();
               }
             },
             value: Unenroll.unenroll,
-            child: Center(child: Text('Unenroll', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white))),
             padding: EdgeInsets.zero,
-          ),
+            child: Center(child: Text('Unenroll', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white))),
+          )
         ];
       },
       color: OlukoColors.black,

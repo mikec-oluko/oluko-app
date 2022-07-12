@@ -58,7 +58,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
+    BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     super.initState();
   }
@@ -236,7 +236,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           children: [
             Text(
               achievementValue,
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -250,7 +250,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               width: _textContainerWidth,
               child: Text(
                 achievementTitle,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
               ),
             ),
           ],

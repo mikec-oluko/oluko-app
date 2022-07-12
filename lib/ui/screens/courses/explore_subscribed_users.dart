@@ -41,7 +41,6 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
 
   @override
   void initState() {
-    BlocProvider.of<UserProgressListBloc>(context).get();
     super.initState();
   }
 
@@ -50,10 +49,11 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess && loggedUser == null && allEnrolledUsers == null) {
         loggedUser = authState;
+        BlocProvider.of<UserProgressListBloc>(context).get(authState.user.id);
         BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseId, loggedUser.user.id);
       }
       return Scaffold(
-        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark :OlukoColors.black,
+        backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
         appBar: OlukoAppBar(),
         body: SizedBox(
           height: ScreenUtils.height(context),

@@ -68,7 +68,7 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
         //Text Fields
         Align(
           alignment: Alignment.topLeft,
-          child: Text(OlukoLocalizations.get(context, 'password'), style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400)),
+          child: Text(OlukoLocalizations.get(context, 'password'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400)),
         ),
         const SizedBox(
           height: 12,
@@ -78,7 +78,7 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
           height: 45,
         ),
         TextFormField(
-          style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.white),
+          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
           decoration: InputDecoration(
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -91,7 +91,7 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
             ),
             filled: false,
             errorStyle: const TextStyle(height: 0.5),
-            hintStyle: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
+            hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.grey[800]),
             hintText: OlukoLocalizations.get(context, 'password').toLowerCase(),
             fillColor: Colors.white70,
           ),

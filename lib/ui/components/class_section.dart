@@ -72,13 +72,13 @@ class _State extends State<ClassSection> {
                               child: Text(
                                 "${OlukoLocalizations.get(context, 'class')} ${widget.index + 1}",
                                 style: OlukoFonts.olukoSmallFont(
-                                    custoFontWeight: FontWeight.bold, customColor: isStarted ? OlukoColors.yellow : OlukoColors.black),
+                                    customFontWeight: FontWeight.bold, customColor: isStarted ? OlukoColors.yellow : OlukoColors.black),
                               )),
                           Padding(
                             padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10, right: 10),
                             child: Text(
                               widget.classObj.name,
-                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                             ),
                           ),
                           widget.classProgress == 1
@@ -97,14 +97,14 @@ class _State extends State<ClassSection> {
                             padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10),
                             child: Text(
                               widget.classObj.name,
-                              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                             ),
                           ),
                           Padding(
                               padding: const EdgeInsets.only(left: 15.0),
                               child: Text(
                                 "${OlukoLocalizations.get(context, 'class').toUpperCase()} ${widget.index + 1}/${widget.total}",
-                                style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+                                style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
                               )),
                         ],
                       ),
@@ -156,14 +156,14 @@ class _State extends State<ClassSection> {
                     padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10),
                     child: Text(
                       widget.classObj.name,
-                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                     ),
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text(
                         "${OlukoLocalizations.get(context, 'class').toUpperCase()} ${widget.index + 1}/${widget.total}",
-                        style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+                        style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
                       )),
                 ],
               ),
@@ -180,7 +180,7 @@ class _State extends State<ClassSection> {
                   child: () {
                     if (widget.classObj.description != null) {
                       return Text(widget.classObj.description,
-                          style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor));
+                          style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor));
                     } else {
                       return const SizedBox();
                     }

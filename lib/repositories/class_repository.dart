@@ -13,37 +13,35 @@ class ClassRepository {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  ClassRepository.test({FirebaseFirestore firestoreInstance}) {
-    this.firestoreInstance = firestoreInstance;
-  }
+  ClassRepository.test({this.firestoreInstance});
 
   static Future<List<Class>> getAll(Course course) async {
-    List<Class> classes = [];
+    final List<Class> classes = [];
     if (course.classes == null) {
       return classes;
     }
-    for (ObjectSubmodel classObj in course.classes) {
-      DocumentSnapshot ds = await classObj.reference.get();
-      Class retrievedClass = Class.fromJson(ds.data() as Map<String, dynamic>);
+    for (final ObjectSubmodel classObj in course.classes) {
+      final DocumentSnapshot ds = await classObj.reference.get();
+      final Class retrievedClass = Class.fromJson(ds.data() as Map<String, dynamic>);
       classes.add(retrievedClass);
     }
     return classes;
   }
 
   static Future<Class> create(Class newClass, DocumentReference courseReference) async {
-    CollectionReference reference =
+    final CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('classes');
     final DocumentReference docRef = reference.doc();
     newClass.id = docRef.id;
     docRef.set(newClass.toJson());
-    ObjectSubmodel classObj = ObjectSubmodel(id: newClass.id, reference: reference.doc(newClass.id), name: newClass.name);
+    final ObjectSubmodel classObj = ObjectSubmodel(id: newClass.id, reference: reference.doc(newClass.id), name: newClass.name);
     await CourseRepository.updateClasses(classObj, courseReference);
     return newClass;
   }
 
   static Future<void> updateSegments(SegmentSubmodel segment, DocumentReference reference) async {
-    DocumentSnapshot ds = await reference.get();
-    Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
+    final DocumentSnapshot ds = await reference.get();
+    final Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
     List<SegmentSubmodel> segments;
     if (classObj.segments == null) {
       segments = [];
@@ -55,27 +53,27 @@ class ClassRepository {
   }
 
   static Future<Class> get(String id) async {
-    DocumentReference reference =
+    final DocumentReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('classes').doc(id);
-    DocumentSnapshot ds = await reference.get();
+    final DocumentSnapshot ds = await reference.get();
     return Class.fromJson(ds.data() as Map<String, dynamic>);
   }
 
   static Future<void> addSelfie(String classId, String image) async {
-    DocumentReference reference = FirebaseFirestore.instance
+    final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('classes')
         .doc(classId);
-    DocumentSnapshot ds = await reference.get();
-    Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
-    List<String> images = classObj.userSelfies ?? [];
+    final DocumentSnapshot ds = await reference.get();
+    final Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
+    final List<String> images = classObj.userSelfies ?? [];
     images.add(image);
     await reference.update({'user_selfies': images});
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getClassesSubscription() {
-    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
+    final Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('classes')

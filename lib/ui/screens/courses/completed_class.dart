@@ -332,13 +332,13 @@ class _CompletedClassState extends State<CompletedClass> {
                         children: [
                           Text(
                             widget.courseEnrollment.classes[widget.classIndex].name,
-                            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
+                            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold),
                             textAlign: TextAlign.start,
                           ),
                           SizedBox(height: 11),
                           Text(
                             ClassUtils.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-                            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
+                            style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.white),
                           ),
                           Image.asset(
                             'assets/courses/completed_logo.png',
@@ -375,14 +375,14 @@ class _CompletedClassState extends State<CompletedClass> {
             width: ScreenUtils.width(context) * 0.75,
             child: Text(
               segment.name,
-              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.grayColor),
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.grayColor),
               textAlign: TextAlign.start,
             ),
           )
         else
           Text(
             segment.name,
-            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold),
             textAlign: TextAlign.start,
           ),
       ]));

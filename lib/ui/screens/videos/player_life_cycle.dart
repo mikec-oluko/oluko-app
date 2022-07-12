@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import '../../../helpers/video_player_helper.dart';
 
-typedef Widget VideoWidgetBuilder(
-    BuildContext context, VideoPlayerController controller);
+typedef Widget VideoWidgetBuilder(BuildContext context, VideoPlayerController controller);
 
 abstract class PlayerLifeCycle extends StatefulWidget {
   PlayerLifeCycle(this.dataSource, this.childBuilder);
@@ -14,8 +14,7 @@ abstract class PlayerLifeCycle extends StatefulWidget {
 /// A widget connecting its life cycle to a [VideoPlayerController] using
 /// a data source from the network.
 class NetworkPlayerLifeCycle extends PlayerLifeCycle {
-  NetworkPlayerLifeCycle(String dataSource, VideoWidgetBuilder childBuilder)
-      : super(dataSource, childBuilder);
+  NetworkPlayerLifeCycle(String dataSource, VideoWidgetBuilder childBuilder) : super(dataSource, childBuilder);
 
   @override
   _NetworkPlayerLifeCycleState createState() => _NetworkPlayerLifeCycleState();
@@ -63,6 +62,6 @@ abstract class _PlayerLifeCycleState extends State<PlayerLifeCycle> {
 class _NetworkPlayerLifeCycleState extends _PlayerLifeCycleState {
   @override
   VideoPlayerController createVideoPlayerController() {
-    return VideoPlayerController.network(widget.dataSource);
+    return VideoPlayerHelper.VideoPlayerControllerFromNetwork(widget.dataSource);
   }
 }

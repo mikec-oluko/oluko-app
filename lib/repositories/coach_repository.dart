@@ -9,6 +9,7 @@ import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/recommendation.dart';
+import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -263,6 +264,10 @@ class CoachRepository {
               movementForItem.images.length >= 2 ? movementForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
           break;
         case TimelineInteractionType.mentoredVideo:
+          Annotation uploadedAnnotation = Annotation.fromJson(ds.data() as Map<String, dynamic>);
+          final DocumentSnapshot segmentSubmitted = await uploadedAnnotation.segmentSubmissionReference.get();
+          TaskSubmission taskSubmittedData = TaskSubmission.fromJson(segmentSubmitted.data() as Map<String, dynamic>);
+          timelineItem.contentName = taskSubmittedData.video.name;
           break;
         case TimelineInteractionType.sentVideo:
           break;

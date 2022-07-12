@@ -40,14 +40,14 @@ class _CoachRequestContentState extends State<CoachRequestContent> {
             ]),
             const SizedBox(height: 15),
             Text(OlukoLocalizations.get(context, 'coach') + " " + widget.name,
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
             const SizedBox(height: 15),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(
                     OlukoLocalizations.get(context, 'coach') + " " + widget.name + " " + OlukoLocalizations.get(context, 'coachRequest'),
                     textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400))),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400))),
             const SizedBox(height: 35),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

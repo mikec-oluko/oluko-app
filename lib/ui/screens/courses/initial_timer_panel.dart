@@ -51,7 +51,7 @@ class _State extends State<InitialTimerPanel> {
                   Text(
                     OlukoLocalizations.get(context, 'dontShowAgain'),
                     textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.primary),
+                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.primary),
                   ),
                 ],
               ),

@@ -268,7 +268,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           children: [
             Text(
               OlukoLocalizations.get(context, 'makeThisPublic'),
-              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
             ),
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicSwitch(
@@ -589,7 +589,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                               _controller.pause();
                             }
                             Navigator.pop(context);
-                            //Navigator.pop(context);
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                               'taskId': _task.id,
                               'taskIndex': widget.taskIndex,

@@ -25,7 +25,7 @@ class _TimelineListContentState extends State<TimelineListContent> {
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(widget.newDate ?? OlukoLocalizations.get(context, 'todayCapitalMessage'),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
           ),
           Column(children: widget.content)
         ]),

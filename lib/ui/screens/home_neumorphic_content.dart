@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -21,6 +22,7 @@ import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
+import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
@@ -248,7 +250,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           onLongPress: () => Navigator.pushNamed(
             context,
             routeLabels[RouteEnum.homeLongPress],
-            arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index},
+            arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index, 'currentUser': widget.authState.user},
           ),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
@@ -278,7 +280,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
                       widget.courses[index].name,
-                      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w600),
+                      style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
@@ -291,7 +293,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           child: Text(
             widget.courses[index].description ?? '',
             style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.normal,
+              customFontWeight: FontWeight.normal,
               customColor: OlukoColors.grayColor,
             ),
           ),
@@ -404,7 +406,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                                 child: Text(
                                   course.course.name,
                                   style: OlukoFonts.olukoBigFont(
-                                    custoFontWeight: FontWeight.normal,
+                                    customFontWeight: FontWeight.normal,
                                     customColor: i == index ? OlukoColors.white : OlukoColors.grayColor,
                                   ),
                                 ),
@@ -442,6 +444,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Scaffold getNotEnrolledContent(bool showStories, BuildContext context) {
+    BlocProvider.of<UsersSelfiesBloc>(context).get();
     return Scaffold(
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       body: Column(
@@ -458,7 +461,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Image.asset(
-                         OlukoNeumorphism.mvtLogo,
+                          OlukoNeumorphism.mvtLogo,
                           scale: 4,
                         ),
                       ),
@@ -500,14 +503,21 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
                   },
                   child: Container(
-                    decoration: const BoxDecoration(
+                    /*decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/courses/profile_photos.png'),
                         fit: BoxFit.cover,
                       ),
-                    ),
+                    ),*/
                     height: ScreenUtils.height(context) - (showStories ? 240 : 181),
                     width: ScreenUtils.width(context),
+                    child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
+                      if (state is UsersSelfiesSuccess) {
+                        return SelfiesGrid(images: state.usersSelfies.selfies);
+                      } else {
+                        return OlukoCircularProgressIndicator();
+                      }
+                    }),
                   ),
                 ),
                 Center(child: notErolledContent(showStories))
@@ -609,7 +619,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         ),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
-          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
+          style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.white),
         ),
         const SizedBox(height: 15),
         Image.asset(

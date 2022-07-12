@@ -59,19 +59,18 @@ class _State extends State<AudioDialogContent> {
                 child: Column(children: [
               SizedBox(height: 45),
               Stack(alignment: Alignment.bottomCenter, children: [
-                StoriesItem(
-                    maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar),
+                StoriesItem(maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar),
                 Image.asset('assets/courses/photo_ellipse.png', scale: 4)
               ]),
               SizedBox(height: 15),
               Text(coach == null ? widget.audio.userName : coach.firstName + ' ' + coach.lastName,
-                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
                   child: Text(OlukoLocalizations.get(context, 'sentMessage'),
                       textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))),
               SizedBox(height: 35),
               audioSlider(),
               SizedBox(height: 30),

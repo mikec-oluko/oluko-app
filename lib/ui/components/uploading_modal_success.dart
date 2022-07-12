@@ -55,7 +55,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                   padding: const EdgeInsets.all(20.0),
                   child: Text(
                     _successText,
-                    style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w400),
+                    style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w400),
                   ),
                 ),
                 Padding(
@@ -73,7 +73,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                     BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
                                     BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
                                     Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                                        arguments: {'profileInfo': widget.userRequested,'viewAllPage':false});
+                                        arguments: {'profileInfo': widget.userRequested, 'viewAllPage': false});
                                   } else {
                                     BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
                                     BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
@@ -95,7 +95,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                       BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
                                       BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
                                       Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                                          arguments: {'profileInfo': widget.userRequested,'viewAllPage':false});
+                                          arguments: {'profileInfo': widget.userRequested, 'viewAllPage': false});
                                     } else {
                                       BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
                                       BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
