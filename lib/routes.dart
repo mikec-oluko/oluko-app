@@ -435,8 +435,8 @@ class Routes {
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
   final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
-  final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
+  final MyAccountBloc _myAccountBloc = MyAccountBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
