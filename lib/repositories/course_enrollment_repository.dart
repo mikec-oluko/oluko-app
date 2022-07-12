@@ -133,7 +133,7 @@ class CourseEnrollmentRepository {
       EnrollmentClass enrollmentClass =
           EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
 
-      enrollmentClass = await setEnrollmentSegments(enrollmentClass);
+      //enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
     }
     return courseEnrollment;
