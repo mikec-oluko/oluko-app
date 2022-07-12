@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
+import 'package:oluko_app/models/submodels/rounds_alerts.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 
 class Segment extends Base {
@@ -13,7 +16,7 @@ class Segment extends Base {
   int initialTimer;
   SegmentTypeEnum type;
   int rounds;
-  List<Alert> alerts;
+  List<RoundsAlerts> roundsAlerts;
   int totalTime;
   bool isPublished;
   List<SectionSubmodel> sections;
@@ -36,7 +39,7 @@ class Segment extends Base {
       this.challengeVideo,
       this.challengeImage,
       this.type,
-      this.alerts,
+      this.roundsAlerts,
       this.likes,
       this.dislikes,
       String id,
@@ -78,10 +81,10 @@ class Segment extends Base {
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
         type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
-        alerts: json['alerts'] == null
+        roundsAlerts: json['rounds_alerts'] == null
             ? null
-            : List<Alert>.from(
-                (json['alerts'] as Iterable).map((alert) => alert == null ? null : Alert.fromJson(alert as Map<String, dynamic>))),
+            : List<RoundsAlerts>.from(
+                (json['rounds_alerts'] as Iterable).map((roundAlerts) => roundAlerts == null ? null : RoundsAlerts.fromJson(roundAlerts as Map<String, dynamic>))),
         sections: json['sections'] == null
             ? null
             : List<SectionSubmodel>.from(
@@ -104,7 +107,7 @@ class Segment extends Base {
       'is_published': isPublished,
       'is_challenge': isChallenge,
       'challenge_image': challengeImage,
-      'alerts': alerts == null ? null : List<dynamic>.from(alerts.map((alert) => alert.toJson())),
+      'rounds_alerts': roundsAlerts == null ? null : List<dynamic>.from(roundsAlerts.map((roundAlerts) => roundAlerts.toJson())),
       'type': type == null ? null : type.index,
       'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
       'likes':likes ?? 0,

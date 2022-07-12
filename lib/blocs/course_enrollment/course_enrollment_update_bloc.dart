@@ -9,6 +9,7 @@ import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/repositories/story_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 import 'package:oluko_app/repositories/class_repository.dart';
+import 'package:oluko_app/repositories/users_selfies_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,6 +76,7 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
       final miniThumbnailUrl = await _uploadFile(miniThumbnail, 'classes/' + courseEnrollment.classes[classIndex].id + '/mini');
       final CourseEnrollment courseUpdated =
           await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl, miniThumbnailUrl);
+          UsersSelfiesRepository.update(thumbnailUrl);
       saveSelfieInClass(courseEnrollment, classIndex);
       TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, file, courseEnrollment.userId, null);
       emit(SaveSelfieSuccess(courseEnrollment: courseUpdated));
