@@ -96,8 +96,10 @@ class CourseEnrollmentRepository {
         courseEnrollment.completion = 1;
         courseEnrollment.isUnenrolled = true;
       } else {
-        final double courseProgress = 1 / courseEnrollment.classes.length;
-        courseEnrollment.completion += courseProgress;
+        if (courseEnrollment.classes[classIndex].completedAt == null) {
+          final double courseProgress = 1 / courseEnrollment.classes.length;
+          courseEnrollment.completion += courseProgress;
+        }
       }
       classes[classIndex].completedAt = Timestamp.now();
     }
