@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
@@ -77,7 +79,22 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                                   children: _friendUsersList
                                       .map(
                                         (friend) => GestureDetector(
-                                          onTap: () {},
+                                          onTap: () async {
+                                            List<CoachTimelineGroup> _timelinePanelContent = [];
+                                            List<CoachTimelineItem> _allContent = [];
+                                            List<CoachTimelineItem> items =
+                                                await BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(friend.id);
+                                            _timelinePanelContent = CoachTimelineFunctions.getTimelineContentForPanel(
+                                              context,
+                                              timelineContentTabs: _timelinePanelContent,
+                                              timelineItemsFromState: items,
+                                              allContent: _allContent,
+                                              listOfCoursesId: items.map((e) => e.course != null ? e.course.id : '0').toList(),
+                                              isForFriend: true
+                                            );
+                                            BlocProvider.of<CoachTimelineBloc>(context)
+                                                .emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
+                                          },
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -201,7 +218,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 CoachTimelineCardContent(
                   cardImage: content.contentThumbnail,
                   cardTitle: content.contentName,
-                  cardSubTitle: content.courseForNavigation?.duration,
+                  cardSubTitle: content.courseForNavigation != null ? content.courseForNavigation.duration : '',
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.recommendedCourse,
                 ),

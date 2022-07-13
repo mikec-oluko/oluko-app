@@ -270,7 +270,8 @@ class CoachTimelineFunctions {
   }
 
   static List<CoachTimelineGroup> timelinePanelUpdateTabsAndContent(
-      CoachTimelineGroup allTabContent, List<CoachTimelineGroup> timelinePanelContent) {
+      CoachTimelineGroup allTabContent, List<CoachTimelineGroup> timelinePanelContent,
+      {bool isForFriend = false}) {
     if (timelinePanelContent != null && timelinePanelContent.isNotEmpty) {
       final indexForAllTab = timelinePanelContent.indexWhere((panelItem) => panelItem.courseId == allTabContent.courseId);
       if (indexForAllTab != -1) {
@@ -293,7 +294,7 @@ class CoachTimelineFunctions {
       allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
       timelinePanelContent.insert(0, allTabContent);
     }
-    return timelinePanelContent;
+    return isForFriend && timelinePanelContent.length > 1 ? [timelinePanelContent[0]] : timelinePanelContent;
   }
 
   static void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {
@@ -313,5 +314,32 @@ class CoachTimelineFunctions {
       });
       timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
     }
+  }
+
+  static List<CoachTimelineGroup> getTimelineContentForPanel(BuildContext context,
+      {@required List<CoachTimelineGroup> timelineContentTabs,
+      @required List<CoachTimelineItem> timelineItemsFromState,
+      @required List<CoachTimelineItem> allContent,
+      @required List<String> listOfCoursesId,
+      bool isForFriend = false}) {
+    List<CoachTimelineGroup> _updatedContent = [];
+    const String _defaultIdForAllContentTimeline = '0';
+
+    _updatedContent = timelineContentTabs;
+    _updatedContent = buildContentForTimelinePanel(timelineItemsContent: timelineItemsFromState, enrolledCourseIdList: listOfCoursesId);
+
+    _updatedContent.forEach((timelinePanelElement) {
+      timelinePanelElement.timelineElements.forEach((timelineContentItem) {
+        if (allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
+          allContent.add(timelineContentItem);
+        } else {
+          print(timelineContentItem);
+        }
+      });
+    });
+    CoachTimelineGroup allTabContent = CoachTimelineGroup(
+        courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: allContent);
+
+    return timelinePanelUpdateTabsAndContent(allTabContent, _updatedContent, isForFriend: isForFriend);
   }
 }

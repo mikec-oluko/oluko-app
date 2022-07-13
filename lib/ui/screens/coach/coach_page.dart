@@ -414,21 +414,13 @@ class _CoachPageState extends State<CoachPage> {
       _annotationVideosContent = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosContent, _introductionVideo);
 
   void _timelineContentBuilding(BuildContext context) {
-    _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(
-        timelineItemsContent: _timelineItemsContent,
-        enrolledCourseIdList: _courseEnrollmentList.map((enrolledCourse) => enrolledCourse.course.id).toList());
-
-    _timelinePanelContent.forEach((timelinePanelElement) {
-      timelinePanelElement.timelineElements.forEach((timelineContentItem) {
-        if (_allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
-          _allContent.add(timelineContentItem);
-        }
-      });
-    });
-    CoachTimelineGroup allTabContent = CoachTimelineGroup(
-        courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: _allContent);
-
-    _timelinePanelContent = CoachTimelineFunctions.timelinePanelUpdateTabsAndContent(allTabContent, _timelinePanelContent);
+    _timelinePanelContent = CoachTimelineFunctions.getTimelineContentForPanel(
+      context,
+      timelineContentTabs: _timelinePanelContent,
+      timelineItemsFromState: _timelineItemsContent,
+      allContent: _allContent,
+      listOfCoursesId: _courseEnrollmentList.map((enrolledCourse) => enrolledCourse.course.id).toList(),
+    );
   }
 
   void _coachRecommendationsTimelineItems() {
