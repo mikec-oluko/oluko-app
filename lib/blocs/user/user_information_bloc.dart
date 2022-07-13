@@ -30,7 +30,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
   UserInformationBloc() : super(Loading());
   final _userRepository = UserRepository();
 
-  Future<bool> updateUserInformation(ChangeUserInformation userInformation, String userId, BuildContext context) async {
+  Future<bool> updateUserInformation(UserInformation userInformation, String userId, BuildContext context) async {
     if (_checkAllNullsAndEmptys(userInformation)) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'allFieldsRequired');
       return false;
@@ -82,7 +82,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
     }
   }
 
-  bool _checkAllNullsAndEmptys(ChangeUserInformation userInformation) {
+  bool _checkAllNullsAndEmptys(UserInformation userInformation) {
     return userInformation.username.isEmpty &&
         userInformation.firstName.isEmpty &&
         userInformation.lastName.isEmpty &&
