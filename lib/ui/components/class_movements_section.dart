@@ -32,28 +32,24 @@ class _State extends State<ClassMovementSection> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (OlukoNeumorphism.isNeumorphismDesign)
-        const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: OlukoNeumorphicDivider(
-            isFadeOut: true,
-          ),
-        )
-      else
+       if (!OlukoNeumorphism.isNeumorphismDesign)
         const Divider(
           color: OlukoColors.grayColor,
           height: 50,
         ),
-      Row(children: [
-        Text(
-          OlukoLocalizations.get(context, 'movesInThisClass'),
-          style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)
-              : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
-        ),
-        Expanded(child: SizedBox()),
-        getViewDetails()
-      ]),
+      Padding(
+        padding: const EdgeInsets.only(top:15.0),
+        child: Row(children: [
+          Text(
+            OlukoLocalizations.get(context, 'movesInThisClass'),
+            style: OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)
+                : OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+          ),
+          Expanded(child: SizedBox()),
+          getViewDetails()
+        ]),
+      ),
       buildMovementBubbles(),
     ]);
   }

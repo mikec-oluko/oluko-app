@@ -1,6 +1,8 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
@@ -64,6 +66,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        BlocProvider.of<FAQBloc>(context).get();
                         Navigator.pushNamed(context, routeLabels[RouteEnum.profileHelpAndSupport]);
                         _controller.pause();
                       },

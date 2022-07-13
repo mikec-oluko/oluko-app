@@ -428,6 +428,7 @@ class _CoachProfileState extends State<CoachProfile> {
     return Container(
         width: ScreenUtils.width(context) - 40,
         child: OlukoNeumorphicPrimaryButton(
+            thinPadding: true,
             isExpanded: false,
             title: OlukoLocalizations.get(context, 'saveAudioCoach'),
             onPressed: () {

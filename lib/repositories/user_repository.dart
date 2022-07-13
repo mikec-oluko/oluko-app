@@ -244,7 +244,7 @@ class UserRepository {
         .set({'user_token': token}, SetOptions(merge: true));
   }
 
-  Future<Response> updateUserInformation(ChangeUserInformation user, String userId) async {
+  Future<Response> updateUserInformation(UserInformation user, String userId) async {
     final apiToken = await AuthRepository().getApiToken();
     if (apiToken != null) {
       Client http = Client();

@@ -1,5 +1,7 @@
-class ChangeUserInformation {
-  ChangeUserInformation({
+import 'package:equatable/equatable.dart';
+
+class UserInformation  extends Equatable{
+  UserInformation({
     this.firstName,
     this.lastName,
     this.email,
@@ -23,4 +25,7 @@ class ChangeUserInformation {
     };
     return changeUserInformationJson;
   }
+
+  @override
+  List<Object> get props => [firstName,lastName,email,username,city,state,country];
 }

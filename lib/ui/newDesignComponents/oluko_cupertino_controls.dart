@@ -8,13 +8,15 @@ import 'package:chewie/src/helpers/utils.dart';
 import 'package:chewie/src/material/widgets/options_dialog.dart';
 import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_center_play_button.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/src/models/subtitle_model.dart';
 
 class OlukoCupertinoControls extends StatefulWidget {
-  const OlukoCupertinoControls({Key key}) : super(key: key);
+  bool showOptions;
+  OlukoCupertinoControls({Key key,this.showOptions=false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -73,7 +75,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
           absorbing: notifier.hideStuff,
           child: Stack(
             children: [
-              if (_latestValue.isBuffering)
+              if (_latestValue.isBuffering && (_latestValue.buffered[0].end.inSeconds<10 || _latestValue.buffered[0].end>=_latestValue.position))
                 const Center(
                   child: CircularProgressIndicator(),
                 )
@@ -88,7 +90,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
                       offset: Offset(0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
                       child: _buildSubtitles(context, chewieController.subtitle),
                     ),
-                  // _buildBottomBar(context),
+                  widget.showOptions? _buildBottomBar(context):SizedBox(),
                 ],
               ),
             ],
@@ -136,7 +138,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
           child: Row(
             children: [
               _buildSubtitleToggle(),
-              //if (chewieController.showOptions) _buildOptionsButton(),
+              if (chewieController.showOptions) _buildOptionsButton(),
             ],
           ),
         ),
@@ -175,6 +177,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
             await chewieController.optionsBuilder(context, options);
           } else {
             await showModalBottomSheet<OptionItem>(
+              backgroundColor:  OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
               context: context,
               isScrollControlled: true,
               useRootNavigator: true,
