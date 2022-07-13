@@ -48,7 +48,6 @@ void dispose() {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
-        //BlocProvider.of<PlanBloc>(context).getPlans();
         this._profileInfo = state.user;
         _defaultUser = UserInformation(
           username: _profileInfo.username,
@@ -302,7 +301,6 @@ void dispose() {
             title:
                 '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'save'))} ${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'changes'))}',
             onPressed: () async {
-              //formKey.currentState.save();
               FocusScope.of(context).unfocus();
               if (emailHasChanged || usernameHasChanged) {
                 if (await logOutConfirmationPopUp(context)) {
