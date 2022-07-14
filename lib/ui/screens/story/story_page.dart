@@ -34,7 +34,8 @@ class StoryPage extends StatefulWidget {
   _StoryPageState createState() => _StoryPageState();
 }
 
-class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMixin {
+class _StoryPageState extends State<StoryPage>
+    with SingleTickerProviderStateMixin {
   PageController _pageController;
   AnimationController _animController;
   VideoPlayerController _videoController;
@@ -69,7 +70,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   void findFirstStory() {
-    final firstStoryIndex = widget.stories.indexWhere((element) => !element.seen);
+    final firstStoryIndex =
+        widget.stories.indexWhere((element) => !element.seen);
     if (firstStoryIndex != -1) {
       _currentIndex = firstStoryIndex;
     } else {
@@ -90,9 +92,13 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     var loading = false;
     final Story story = widget.stories[_currentIndex];
     return Scaffold(
-      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign
+          ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
+          : OlukoColors.black,
       body: GestureDetector(
-        onTapDown: (details) => _onTapDown(details, story),
+        onTapUp: (details) => _onTapDown(details, story),
+        onLongPress: () => {_animController.stop()},
+        onLongPressUp: () => {_animController.forward()},
         child: Stack(
           children: <Widget>[
             PageView.builder(
@@ -106,12 +112,14 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                     final img = Image(
                       image: CachedNetworkImageProvider(story.url),
                       fit: BoxFit.cover,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent loadingProgress) {
                         if (loadingProgress == null) {
                           if (loading) {
                             _animController.stop();
                             _animController.reset();
-                            _animController.duration = Duration(seconds: story.duration);
+                            _animController.duration =
+                                Duration(seconds: story.duration);
                             _animController.forward();
                             loading = false;
                           }
@@ -124,7 +132,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         return Center(
                           child: CircularProgressIndicator(
                             value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes
                                 : null,
                           ),
                         );
@@ -136,13 +145,16 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: SizedBox(height: ScreenUtils.height(context) * 0.45, child: img),
+                            child: SizedBox(
+                                height: ScreenUtils.height(context) * 0.45,
+                                child: img),
                           ),
                         ],
                       ),
                     );
                   case 'video':
-                    if (_videoController != null && _videoController.value.isInitialized) {
+                    if (_videoController != null &&
+                        _videoController.value.isInitialized) {
                       return FutureBuilder(
                         future: _initializeVideoPlayerFuture,
                         builder: (context, snapshot) {
@@ -195,7 +207,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       name: widget.name,
                       lastname: widget.lastname,
                       userId: widget.userId,
-                      timeFromCreation: widget.stories[_currentIndex].timeFromCreation,
+                      timeFromCreation:
+                          widget.stories[_currentIndex].timeFromCreation,
                     ),
                   ),
                 ],
@@ -205,7 +218,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               bottom: ScreenUtils.height(context) * 0.02,
               right: 0,
               left: 0,
-              child: SizedBox(height: ScreenUtils.height(context) * 0.25, child: getBottomWidgets(story.contentType)),
+              child: SizedBox(
+                  height: ScreenUtils.height(context) * 0.25,
+                  child: getBottomWidgets(story.contentType)),
             )
           ],
         ),
@@ -213,7 +228,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     );
   }
 
-  void _onTapDown(TapDownDetails details, Story story) {
+  void _onTapDown(TapUpDetails details, Story story) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double dx = details.globalPosition.dx;
     if (dx < screenWidth / 3) {
@@ -250,7 +265,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   void setStoryAsSeen() {
     if (!widget.stories[_currentIndex].seen) {
       widget.stories[_currentIndex].seen = true;
-      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStoriesId, widget.stories[_currentIndex].id);
+      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId,
+          widget.userStoriesId, widget.stories[_currentIndex].id);
       BlocProvider.of<StoryListBloc>(context).get(widget.userId);
     }
   }
@@ -266,7 +282,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         break;
       case 'video':
         _videoController = null;
-        _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(story.url);
+        _videoController =
+            VideoPlayerHelper.VideoPlayerControllerFromNetwork(story.url);
         _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
           setState(() {});
           if (_videoController.value.isInitialized) {
@@ -337,17 +354,22 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     return Center(
       child: GestureDetector(
         onTap: () {
-          BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
+          BlocProvider.of<HiFiveSendBloc>(context)
+              .set(context, widget.userId, widget.userStoriesId);
           AppMessages().showHiFiveSentDialog(context);
         },
         child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
           bloc: BlocProvider.of(context),
           listener: (hiFiveSendContext, hiFiveSendState) {
             if (hiFiveSendState is HiFiveSendSuccess) {
-              AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+              AppMessages.clearAndShowSnackbar(
+                  context, OlukoLocalizations.get(context, 'hiFiveSent'));
             }
           },
-          child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+          child: SizedBox(
+              width: 80,
+              height: 80,
+              child: Image.asset('assets/profile/hiFive.png')),
         ),
       ),
     );
@@ -425,7 +447,9 @@ class AnimatedBar extends StatelessWidget {
     return [
       _buildContainer(
         double.infinity,
-        position < currentIndex ? OlukoColors.primary : Colors.white.withOpacity(0.5),
+        position < currentIndex
+            ? OlukoColors.primary
+            : Colors.white.withOpacity(0.5),
       ),
       if (position == currentIndex)
         AnimatedBuilder(
@@ -513,7 +537,8 @@ class UserInfo extends StatelessWidget {
         ).image,
       );
     } else {
-      return UserUtils.avatarImageDefault(maxRadius: 22, name: name, lastname: lastname);
+      return UserUtils.avatarImageDefault(
+          maxRadius: 22, name: name, lastname: lastname);
     }
   }
 }
