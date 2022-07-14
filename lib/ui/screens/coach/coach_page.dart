@@ -203,9 +203,13 @@ class _CoachPageState extends State<CoachPage> {
     } else {
       BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
       return CoachSlidingUpPanel(
-          content: _coachViewPageContent(context),
-          timelineItemsContent: _timelinePanelContent,
-          isIntroductionVideoComplete: coachAssignment.introductionCompleted);
+        content: _coachViewPageContent(context),
+        timelineItemsContent: _timelinePanelContent,
+        isIntroductionVideoComplete: coachAssignment.introductionCompleted,
+        currentUser: _currentAuthUser,
+        onCurrentUserSelected: () =>
+            BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent),
+      );
     }
   }
 

@@ -100,7 +100,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
           Padding(
             padding: const EdgeInsets.all(5),
             child:
-                Text(DateFormat.jm().format(widget.date).toString(), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                Text(DateFormat.jm().format(widget.date).toString(), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor)),
           ),
         ],
       ),

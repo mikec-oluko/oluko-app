@@ -294,7 +294,7 @@ class CoachTimelineFunctions {
       allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
       timelinePanelContent.insert(0, allTabContent);
     }
-    return isForFriend && timelinePanelContent.length > 1 ? [timelinePanelContent[0]] : timelinePanelContent;
+    return timelinePanelContent;
   }
 
   static void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {
@@ -332,14 +332,11 @@ class CoachTimelineFunctions {
       timelinePanelElement.timelineElements.forEach((timelineContentItem) {
         if (allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
           allContent.add(timelineContentItem);
-        } else {
-          print(timelineContentItem);
         }
       });
     });
     CoachTimelineGroup allTabContent = CoachTimelineGroup(
         courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: allContent);
-
-    return timelinePanelUpdateTabsAndContent(allTabContent, _updatedContent, isForFriend: isForFriend);
+    return isForFriend ? [allTabContent] : timelinePanelUpdateTabsAndContent(allTabContent, _updatedContent, isForFriend: isForFriend);
   }
 }

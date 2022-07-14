@@ -25,7 +25,9 @@ import "package:collection/collection.dart";
 
 class CoachTimelinePanel extends StatefulWidget {
   final bool isIntroductionVideoComplete;
-  const CoachTimelinePanel({this.isIntroductionVideoComplete});
+  final UserResponse currentUser;
+  final Function onCurrentUserSelected;
+  const CoachTimelinePanel({this.isIntroductionVideoComplete, this.currentUser, this.onCurrentUserSelected});
   @override
   _CoachTimelinePanelConteState createState() => _CoachTimelinePanelConteState();
 }
@@ -37,6 +39,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   List<CoachTimelineGroup> _timelineContentItems;
   List<CoachTimelineItem> timelineItems = [];
   List<UserResponse> _friendUsersList = [];
+  int _actualTabIndex = 0;
 
   @override
   void initState() {
@@ -61,6 +64,9 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           builder: (context, friendState) {
             if (friendState is GetFriendsSuccess) {
               _friendUsersList = friendState.friendUsers;
+              if (_friendUsersList.where((user) => user.id == widget.currentUser.id).toList().isEmpty) {
+                _friendUsersList.insert(0, widget.currentUser);
+              }
             }
             return Column(
               children: [
@@ -78,56 +84,48 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                                   padding: EdgeInsets.zero,
                                   children: _friendUsersList
                                       .map(
-                                        (friend) => GestureDetector(
-                                          onTap: () async {
-                                            List<CoachTimelineGroup> _timelinePanelContent = [];
-                                            List<CoachTimelineItem> _allContent = [];
-                                            List<CoachTimelineItem> items =
-                                                await BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(friend.id);
-                                            _timelinePanelContent = CoachTimelineFunctions.getTimelineContentForPanel(
-                                              context,
-                                              timelineContentTabs: _timelinePanelContent,
-                                              timelineItemsFromState: items,
-                                              allContent: _allContent,
-                                              listOfCoursesId: items.map((e) => e.course != null ? e.course.id : '0').toList(),
-                                              isForFriend: true
-                                            );
-                                            BlocProvider.of<CoachTimelineBloc>(context)
-                                                .emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
-                                          },
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 5),
-                                                child: Container(
-                                                  width: 60,
-                                                  height: 60,
-                                                  child: Neumorphic(
-                                                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                                                    child: CircleAvatar(
-                                                      // backgroundColor: OlukoColors.primary,
-                                                      backgroundImage: CachedNetworkImageProvider(friend.avatar),
-                                                      radius: 40.0,
-                                                      child: SizedBox.shrink(),
+                                        (friend) => Padding(
+                                          padding: const EdgeInsets.only(top: 8),
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              if (friend.id == widget.currentUser.id) {
+                                                widget.onCurrentUserSelected();
+                                              } else {
+                                                await _getTimelineActivityForFriend(context, friend);
+                                              }
+                                            },
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                                                  child: Container(
+                                                    width: 60,
+                                                    height: 55,
+                                                    child: Neumorphic(
+                                                      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                                                      child: CircleAvatar(
+                                                        backgroundImage: CachedNetworkImageProvider(friend.avatar),
+                                                        radius: 40.0,
+                                                        child: const SizedBox.shrink(),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(2.0),
-                                                child: Container(
-                                                  height: 10,
-                                                  child: Text(
-                                                    // ${friend.lastName}
-                                                    '${friend.username} ',
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-                                                    textAlign: TextAlign.center,
+                                                Padding(
+                                                  padding: const EdgeInsets.all(2.0),
+                                                  child: Container(
+                                                    height: 10,
+                                                    child: Text(
+                                                      friend.id == widget.currentUser.id ? 'Me' : friend.username,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                                                      textAlign: TextAlign.center,
+                                                    ),
                                                   ),
-                                                ),
-                                              )
-                                            ],
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       )
@@ -145,13 +143,20 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                       indicatorWeight: 4,
                       isScrollable: true,
                       controller: _tabController,
+                      onTap: (index) {
+                        _actualTabIndex = index;
+                      },
                       tabs: _timelineContentItems
                           .map((content) => Tab(
                                 child: Container(
                                   width: MediaQuery.of(context).size.width / _timelineContentItems.length,
-                                  child: Text(content.courseName.toUpperCase(),
+                                  child: Text(content.courseName,
+                                      // content.courseName.toUpperCase(),
                                       textAlign: TextAlign.center,
-                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.white,
+                                          // getColor(_actualTabIndex, _timelineContentItems.indexOf(content)),
+                                          customFontWeight: FontWeight.w700)),
                                 ),
                               ))
                           .toList()),
@@ -178,6 +183,19 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       },
     );
+  }
+
+  Future<void> _getTimelineActivityForFriend(BuildContext context, UserResponse friend) async {
+    List<CoachTimelineGroup> _timelinePanelContent = [];
+    List<CoachTimelineItem> _allContent = [];
+    List<CoachTimelineItem> items = await BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(friend.id);
+    _timelinePanelContent = CoachTimelineFunctions.getTimelineContentForPanel(context,
+        timelineContentTabs: _timelinePanelContent,
+        timelineItemsFromState: items,
+        allContent: _allContent,
+        listOfCoursesId: items.map((e) => e.course != null ? e.course.id : '0').toList(),
+        isForFriend: true);
+    BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
   }
 
   List<List<Widget>> passContentToWidgets() {
@@ -369,10 +387,12 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         Padding(
           padding: const EdgeInsets.only(left: 5),
           child: Text(date == DateFormat.yMMMd().format(DateTime.now()) ? OlukoLocalizations.get(context, 'today') : date,
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
         ),
         Column(children: contentList.map((content) => switchTypeWidget(content)).toList()),
       ],
     );
   }
+
+  Color getColor(int tabIndex, int elementIndex) => tabIndex == elementIndex ? OlukoColors.white : OlukoColors.grayColor;
 }
