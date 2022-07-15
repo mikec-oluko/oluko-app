@@ -875,7 +875,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
   }
 
-  void _finishWorkout() {
+  Future<void> _finishWorkout() async {
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
       BlocProvider.of<UserProgressBloc>(context).update(_user.uid, 1, _friends);
     }
@@ -890,7 +890,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
 
     if (widget.segments[widget.segmentIndex].isChallenge) {
-      StoryUtils.createNewPRChallengeStory(context, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+      await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);
       BlocProvider.of<PersonalRecordBloc>(context).create(
           widget.segments[widget.segmentIndex],
           widget.courseEnrollment,

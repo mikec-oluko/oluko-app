@@ -5,6 +5,8 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/personal_record.dart';
+import 'package:oluko_app/repositories/personal_record_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -12,8 +14,12 @@ class StoryUtils {
 
   static Future<void> createNewPRChallengeStory(BuildContext context, int totalScore, String userId, Segment segment) async {
       final int result = totalScore ?? 0;
-      final bool isNewPersonalRecord =
-          await BlocProvider.of<ChallengeSegmentBloc>(context).isNewPersonalRecord(segment.id, userId, result);
+      final List<PersonalRecord> pRList=await PersonalRecordRepository.getByUserAndChallengeId(userId,segment.id);
+      bool isNewPersonalRecord=true;
+      if(pRList!=null){
+        isNewPersonalRecord=pRList[0].value<result;
+      }  
+      // await BlocProvider.of<ChallengeSegmentBloc>(context).isNewPersonalRecord(segment.id, userId, result);
       if (isNewPersonalRecord) {
         final String segmentTitle = '${segment.name} ${OlukoLocalizations.get(context, 'challenge')}';
         BlocProvider.of<storyBloc.StoryBloc>(context).createChallengeStory(
