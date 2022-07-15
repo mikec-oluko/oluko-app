@@ -274,7 +274,7 @@ class _StoryPageState extends State<StoryPage>
   void _loadStory({Story story, bool animateToPage = true}) {
     _animController.stop();
     _animController.reset();
-    _videoController?.dispose();
+    //_videoController?.dispose();
     switch (story.contentType) {
       case 'image':
         _animController.duration = Duration(seconds: story.duration);
