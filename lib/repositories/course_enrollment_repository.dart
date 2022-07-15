@@ -107,7 +107,7 @@ class CourseEnrollmentRepository {
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
       'completion': courseEnrollment.completion,
       'completed_at': FieldValue.serverTimestamp(),
-      'is_unenrolled': courseEnrollment.isUnenrolled,
+      'is_unenrolled': courseEnrollment.isUnenrolled is bool ? courseEnrollment.isUnenrolled : false,
       'updated_at': FieldValue.serverTimestamp()
     });
   }
@@ -343,6 +343,7 @@ class CourseEnrollmentRepository {
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .where('created_by', isEqualTo: userId)
+        .where('is_unenrolled', isEqualTo: false)
         .orderBy('created_at', descending: true)
         .snapshots();
     return courseEnrollmentsStream;
