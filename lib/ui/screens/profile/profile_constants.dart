@@ -21,7 +21,7 @@ class ProfileViewConstants {
   static const profileSubscriptionMessage = "Recommended Upgrade";
   static const profileUpgradeText = "Upgrade";
   static const profileHelpAndSupportSubTitle = "Need more help?";
-  static const profileHelpAndSupportButtonText = "Contact us";
+  static const profileHelpAndSupportButtonText = "Contact Us";
   static const profileUpcomingChallengesTitle = "Upcoming Challenges";
   static const profileOwnProfileActiveCourses = 'Active Courses';
   static const profileChallengesPageTitle = "Challenges";

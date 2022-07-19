@@ -75,23 +75,29 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           _authState = authState;
           BlocProvider.of<HiFiveReceivedBloc>(context).get(context, authState.user.id, widget.userToDisplayInformation.id);
         }
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
-          //TODO: Check if need neumorphic outside
-          child: Container(
-            decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
-            width: MediaQuery.of(context).size.width,
-            height: OlukoNeumorphism.isNeumorphismDesign
-                ? MediaQuery.of(context).size.height < 700
-                    ? MediaQuery.of(context).size.height / 2.7
-                    : MediaQuery.of(context).size.height / 3.1
-                : null,
-            child: Padding(
-                padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 10 : 10),
-                child: OlukoNeumorphism.isNeumorphismDesign
-                    ? _profileUserNeumorphicInformation(_userLocation, _valuesDemo)
-                    : _profileUserInformation(_userLocation, _valuesDemo)),
+        return WillPopScope(
+          onWillPop:()async{
+            BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+            return true;
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
+            //TODO: Check if need neumorphic outside
+            child: Container(
+              decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
+              width: MediaQuery.of(context).size.width,
+              height: OlukoNeumorphism.isNeumorphismDesign
+                  ? MediaQuery.of(context).size.height < 700
+                      ? MediaQuery.of(context).size.height / 2.7
+                      : MediaQuery.of(context).size.height / 3.1
+                  : null,
+              child: Padding(
+                  padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 10 : 10),
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? _profileUserNeumorphicInformation(_userLocation, _valuesDemo)
+                      : _profileUserInformation(_userLocation, _valuesDemo)),
+            ),
           ),
         );
       }),
