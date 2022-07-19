@@ -236,7 +236,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             ),
           ),
           Text(
-            OlukoLocalizations.get(context, 'or').toUpperCase(),
+            OlukoLocalizations.get(context, 'orContinueWith'),
             style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
           ),
           Expanded(
@@ -333,7 +333,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       icon: Align(
         child: Image.asset(
           'assets/login/google-logo.png',
-          width: 25,
+          width: 18,
           color: Colors.white,
         ),
       ),
