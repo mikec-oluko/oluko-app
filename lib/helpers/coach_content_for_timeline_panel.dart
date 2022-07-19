@@ -77,7 +77,9 @@ class CoachTimelineFunctions {
         contentType:
             welcomeVideo.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
         mentoredVideosForNavigation: [welcomeVideo],
-        course: CourseTimelineSubmodel(),
+        course: CourseTimelineSubmodel(
+          name: OlukoLocalizations.get(context, 'all'),
+        ),
         id: defaultIdForAllContentTimeline,
         createdAt: welcomeVideo.createdAt);
   }
@@ -101,7 +103,9 @@ class CoachTimelineFunctions {
             contentType:
                 element.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
             mentoredVideosForNavigation: annotationContent,
-            course: CourseTimelineSubmodel(),
+            course: CourseTimelineSubmodel(
+              name: OlukoLocalizations.get(context, 'all'),
+            ),
             id: defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
         if (mentoredVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
@@ -122,7 +126,7 @@ class CoachTimelineFunctions {
             sentVideosForNavigation: segmentSubmittedContent,
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
-                : CourseTimelineSubmodel(),
+                : CourseTimelineSubmodel(name: OlukoLocalizations.get(context, 'all')),
             id: courseEnrollmentList.contains(element.courseEnrollmentId)
                 ? getCourseId(courseEnrollmentList, element)
                 : defaultIdForAllContentTimeline,
@@ -150,6 +154,8 @@ class CoachTimelineFunctions {
         course: CourseTimelineSubmodel(),
         courseForNavigation: recommendationItem.courseContent ?? recommendationItem.courseContent,
         movementForNavigation: recommendationItem.movementContent ?? recommendationItem.movementContent,
+        coachMediaMessage: recommendationItem.coachMediaMessage ?? recommendationItem.coachMediaMessage,
+        recommendationMedia: recommendationItem.recommendationMedia ?? recommendationItem.recommendationMedia,
         id: '0',
         createdAt: recommendationItem.createdAt);
     return newItem;

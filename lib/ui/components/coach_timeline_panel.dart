@@ -296,82 +296,130 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           ),
         );
       case TimelineInteractionType.mentoredVideo:
-        return Container(
-          color: OlukoNeumorphismColors.appBackgroundColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CoachTimelineVideoContent(
-                  videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'personalizedVideo'),
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.mentoredVideo),
-            ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.mentoredVideosForNavigation,
+              'titleForContent': OlukoLocalizations.of(context).find('personalizedVideo')
+            });
+          },
+          child: Container(
+            color: OlukoNeumorphismColors.appBackgroundColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CoachTimelineVideoContent(
+                    videoThumbnail: content.contentThumbnail,
+                    videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'personalizedVideo'),
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.mentoredVideo),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.sentVideo:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CoachTimelineVideoContent(
-                  videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'sentVideo'),
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.sentVideo),
-            ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.sentVideosForNavigation,
+              'titleForContent': OlukoLocalizations.of(context).find('sentVideo')
+            });
+          },
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CoachTimelineVideoContent(
+                    videoThumbnail: content.contentThumbnail,
+                    videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'sentVideo'),
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.sentVideo),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.recommendedVideo:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CoachTimelineVideoContent(
-                  videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recommendedVideos'),
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.recommendedVideo),
-            ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.recommendationMedia.video.url,
+              'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
+            });
+          },
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CoachTimelineVideoContent(
+                    videoThumbnail: content.contentThumbnail,
+                    videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recommendedVideos'),
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.recommendedVideo),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.messageVideo:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CoachTimelineVideoContent(
-                  videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'coachMessageVideo'),
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.messageVideo),
-            ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.coachMediaMessage,
+              'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
+            });
+          },
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CoachTimelineVideoContent(
+                    videoThumbnail: content.contentThumbnail,
+                    videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'coachMessageVideo'),
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.messageVideo),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.introductionVideo:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CoachTimelineVideoContent(
-                  videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'introductionVideo'),
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.introductionVideo),
-            ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.mentoredVideosForNavigation,
+              'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
+            });
+          },
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CoachTimelineVideoContent(
+                    videoThumbnail: content.contentThumbnail,
+                    videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'introductionVideo'),
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.introductionVideo),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.welcomeVideo:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CoachTimelineVideoContent(
-                  videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'welcomeVideo'),
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.welcomeVideo),
-            ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+              'videoUrl': content.mentoredVideosForNavigation,
+              'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
+            });
+          },
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CoachTimelineVideoContent(
+                    videoThumbnail: content.contentThumbnail,
+                    videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'welcomeVideo'),
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.welcomeVideo),
+              ],
+            ),
           ),
         );
       //   break;
@@ -387,7 +435,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         Padding(
           padding: const EdgeInsets.only(left: 5),
           child: Text(date == DateFormat.yMMMd().format(DateTime.now()) ? OlukoLocalizations.get(context, 'today') : date,
-              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
         ),
         Column(children: contentList.map((content) => switchTypeWidget(content)).toList()),
       ],

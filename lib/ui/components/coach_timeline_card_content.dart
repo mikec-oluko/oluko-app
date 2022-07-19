@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
@@ -38,20 +39,23 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 100,
-                          height: 140,
-                          decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(5)),
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(widget.cardImage),
-                                fit: BoxFit.cover,
-                              )),
+                        Neumorphic(
+                          style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
+                          child: Container(
+                            width: 100,
+                            height: 140,
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(widget.cardImage),
+                                  fit: BoxFit.cover,
+                                )),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(DateFormat.jm().format(widget.date).toString(),
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor)),
                         ),
                       ],
                     )

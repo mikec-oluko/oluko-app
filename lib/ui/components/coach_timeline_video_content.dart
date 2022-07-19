@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
@@ -37,13 +38,16 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                 child: Stack(
                   children: [
                     Align(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                image: DecorationImage(
-                                  image: widget.videoThumbnail != null ? CachedNetworkImageProvider(widget.videoThumbnail) : defaultImage,
-                                  fit: BoxFit.cover,
-                                )))),
+                        child: Neumorphic(
+                      style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(5)),
+                              image: DecorationImage(
+                                image: widget.videoThumbnail != null ? CachedNetworkImageProvider(widget.videoThumbnail) : defaultImage,
+                                fit: BoxFit.cover,
+                              ))),
+                    )),
                     Align(
                       child: SizedBox(
                         child: OlukoNeumorphism.isNeumorphismDesign

@@ -6,7 +6,7 @@ class CourseTimelineSubmodel extends Equatable {
   String id;
   String name;
 
-  CourseTimelineSubmodel({this.id = '0', this.name = 'all', this.reference});
+  CourseTimelineSubmodel({this.id = '0', this.name = 'All', this.reference});
 
   factory CourseTimelineSubmodel.fromJson(Map<String, dynamic> json) {
     return CourseTimelineSubmodel(
