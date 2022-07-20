@@ -209,6 +209,7 @@
     "forNextRound": "para la siguente ronda",
     "activityStats": "Estadísticas de actividad",
     "recommendedVideos": "Videos Recomendados",
+    "timelineRecommendedVideos": "Videos Recomendados:",
     "voiceMessages": "Mensajes de voz",
     "addYourSelfie": "Agrega Tu Selfie...",
     "timelinePersonalizedVideo": "Video Personalizado: ",
@@ -301,6 +302,7 @@
     "reDoCourseTitle": "¿Estás seguro de que quieres volver a hacer esta clase?",
     "reDoCourseBody": "Su progreso anterior será eliminado.",
     "welcomeVideo": "Video de bienvenida",
+    "timelineWelcomeVideo": "Video de bienvenida:",
     "movements": "Movimientos",
     "askYourCoach": "Pregunta al entrenador",
     "aboutCoach": "Sobre tu entrenador",
@@ -346,6 +348,7 @@
     "noInternetConnectionBodyText": "Asegúrate de que el wifi o los datos móviles estén activados y vuelve a intentarlo.",
     "retry": "Reintentar",
     "coachMessageVideo": "Video Mensaje",
+    "timelineCoachMessageVideo": "Video Mensaje:",
     "exitOnButtonBack": "Pulsa el botón atrás para Salir",
     "noRequests": "No hay solicitudes",
     "saveChanges": "Guardar cambios.",
@@ -361,6 +364,8 @@
     "about": "Acerca de",
     "memberships": "Membresías",
     "introductionVideo": "Video de introducción",
+    "timelineIntroductionVideo": "Video de introducción:",
     "sendFriendRecommendation": "Enviar recomendación",
-    "cousesPanelText": "Encontrarás este desafío en los siguientes cursos"
+    "cousesPanelText": "Encontrarás este desafío en los siguientes cursos",
+    "me": "Yo"
 }

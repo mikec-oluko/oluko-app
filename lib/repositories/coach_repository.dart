@@ -253,8 +253,9 @@ class CoachRepository {
         case TimelineInteractionType.classes:
           break;
         case TimelineInteractionType.segment:
-          TaskSubmission taskSubmitted = TaskSubmission.fromJson(ds.data() as Map<String, dynamic>);
+          SegmentSubmission taskSubmitted = SegmentSubmission.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.contentThumbnail = taskSubmitted.video?.thumbUrl;
+          timelineItem.sentVideosForNavigation = [taskSubmitted];
           break;
         case TimelineInteractionType.movement:
           Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);
@@ -268,8 +269,11 @@ class CoachRepository {
           final DocumentSnapshot segmentSubmitted = await uploadedAnnotation.segmentSubmissionReference.get();
           TaskSubmission taskSubmittedData = TaskSubmission.fromJson(segmentSubmitted.data() as Map<String, dynamic>);
           timelineItem.contentName = taskSubmittedData.video.name;
+          timelineItem.mentoredVideosForNavigation = [uploadedAnnotation];
           break;
         case TimelineInteractionType.sentVideo:
+          SegmentSubmission uploadedSegment = SegmentSubmission.fromJson(ds.data() as Map<String, dynamic>);
+          timelineItem.sentVideosForNavigation = [uploadedSegment];
           break;
         case TimelineInteractionType.recommendedVideo:
           break;
