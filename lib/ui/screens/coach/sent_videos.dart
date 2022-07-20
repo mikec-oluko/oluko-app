@@ -99,16 +99,20 @@ class _SentVideosPageState extends State<SentVideosPage> {
             leading: OlukoNeumorphism.isNeumorphismDesign
                 ? Neumorphic(
                     style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  )
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                              width: 40,
+                              height: 40,
+                              child: Image.asset(
+                                'assets/courses/left_back_arrow.png',
+                                scale: 3.5,
+                              )),
+                        )))
                 : IconButton(
                     icon: const Icon(
                       Icons.arrow_back_ios,
