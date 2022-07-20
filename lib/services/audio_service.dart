@@ -22,4 +22,15 @@ class AudioService {
     }
     return null;
   }
+static int getUnseenAudios(List<Audio> audios)  { 
+      int unseenAudios = 0;
+      if (audios != null) {
+        audios.forEach((audio) {
+          if (!audio.seen) {
+            unseenAudios++;
+          }
+        });
+      }
+      return unseenAudios;
+  }
 }

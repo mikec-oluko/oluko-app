@@ -19,7 +19,6 @@ class StoryUtils {
       if(pRList!=null){
         isNewPersonalRecord=pRList[0].value<result;
       }  
-      // await BlocProvider.of<ChallengeSegmentBloc>(context).isNewPersonalRecord(segment.id, userId, result);
       if (isNewPersonalRecord) {
         final String segmentTitle = '${segment.name} ${OlukoLocalizations.get(context, 'challenge')}';
         BlocProvider.of<storyBloc.StoryBloc>(context).createChallengeStory(

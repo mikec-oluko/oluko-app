@@ -108,7 +108,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     }
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     if(widget.challenge!=null){
-      BlocProvider.of<ChallengeAudioBloc>(context).getUnseenAudios(widget.challenge.audios);
+      _audioQty =AudioService.getUnseenAudios(widget.challenge.audios);
     }
     super.initState();
   }
@@ -634,10 +634,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget getAudioButton() {
     return BlocBuilder<ChallengeAudioBloc, ChallengeAudioState>(
       builder: (context, state) {
-        if(state is ChallengeAudioSuccess){
-          _audioQty=state.unseenAudios;
-        }
-        else if(state is MarkAsSeenChallengeAudioSuccess){
+        if(state is MarkAsSeenChallengeAudioSuccess){
           _audioQty=0;
         }
         return GestureDetector(

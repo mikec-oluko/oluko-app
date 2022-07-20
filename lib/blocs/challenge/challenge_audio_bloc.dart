@@ -57,24 +57,4 @@ class ChallengeAudioBloc extends Cubit<ChallengeAudioState> {
       rethrow;
     }
   }
-  void getUnseenAudios(List<Audio> audios) async {
-    try {
-      int unseenAudios = 0;
-      if (audios != null) {
-        audios.forEach((audio) {
-          if (!audio.seen) {
-            unseenAudios++;
-          }
-        });
-      }
-      emit(ChallengeAudioSuccess(unseenAudios: unseenAudios));
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: e.toString()));
-      rethrow;
-    }
-  }
 }
