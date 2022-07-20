@@ -535,17 +535,17 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         Rect.fromLTRB(0, 0, rect.width, rect.height));
                   },
                   child: Container(
-                    /*decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/courses/profile_photos.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),*/
+                    // decoration: const BoxDecoration(
+                    //   image: DecorationImage(
+                    //     image: AssetImage('assets/courses/profile_photos.png'),
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // ),
                     height: ScreenUtils.height(context) - (showStories
                             ? ScreenUtils.smallScreen(context)
-                                ? ScreenUtils.height(context) * 0.43
+                                ? ScreenUtils.height(context) * 0.38
                                 : ScreenUtils.height(context) * 0.35
-                            : ScreenUtils.height(context) * 0.24),
+                            : ScreenUtils.height(context) * 0.26),
                     width: ScreenUtils.width(context),
                     child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
                       if (state is UsersSelfiesSuccess) {

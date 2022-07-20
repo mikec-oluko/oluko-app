@@ -90,6 +90,14 @@ class ChallengeRepository {
         .doc(challenge.id);
     await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
   }
+  static Future<void> markAudiosAsSeen(String challengeId, List<Audio> audios) async {
+    final DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('challenges')
+        .doc(challengeId);
+    await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
+  }
 
   static Future<List<Challenge>> getChallengesForUserRequested(
     String userRequestedId,

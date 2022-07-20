@@ -85,6 +85,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
     setSegments();
     super.initState();
   }
+  @override
+  void dispose() {
+ 
+    
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -297,8 +303,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getSegmentImageSection(int i) {
-    return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
-      return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
+    return BlocBuilder<CoachUserBloc, CoachUserState>(
+      buildWhen: (CoachUserState previous, CoachUserState current) => previous is CoachUserLoading,
+      builder: (context, coachUserState) {
+      return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
+        builder: (context, coachRequestStreamState) {
         if (coachUserState is CoachUserSuccess &&
             (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
           coachLogic(coachUserState, coachRequestStreamState);
