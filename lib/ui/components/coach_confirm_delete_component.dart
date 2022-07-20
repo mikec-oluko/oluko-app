@@ -46,6 +46,7 @@ class _CoachConfirmDeleteComponentState extends State<CoachConfirmDeleteComponen
                   width: 80,
                   height: 50,
                   child: OlukoNeumorphicPrimaryButton(
+                    thinPadding: true,
                       isExpanded: false, title: OlukoLocalizations.get(context, 'allow'), onPressed: () => widget.allowAction()))
             ],
           ),

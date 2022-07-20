@@ -56,6 +56,7 @@ class _CoachRequestContentState extends State<CoachRequestContent> {
                   children: [
                     OlukoNeumorphism.isNeumorphismDesign
                         ? OlukoNeumorphicSecondaryButton(
+                          lighterButton: true,
                             title: OlukoLocalizations.get(context, 'ignore'),
                             onPressed: () {
                               widget.onNotRecordingAction();

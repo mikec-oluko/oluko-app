@@ -15,6 +15,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
   final bool isPrimary;
   final bool useBorder;
   final bool isExpanded;
+  final bool lighterButton;
   final double customHeight;
   const OlukoNeumorphicSecondaryButton(
       {@required this.title,
@@ -30,23 +31,27 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
       this.isExpanded = true,
       this.customHeight = 50,
       this.useBorder = false,
-      this.isPrimary = true})
+      this.isPrimary = true, 
+      this.lighterButton=false})
       : super();
 
   @override
   _OlukoNeumorphicButtonState createState() => _OlukoNeumorphicButtonState();
 }
 
-class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> {
+class _OlukoNeumorphicButtonState
+    extends State<OlukoNeumorphicSecondaryButton> {
   Color buttonColor = OlukoColors.primary;
 
   @override
   Widget build(BuildContext context) {
     return widget.isExpanded
         ? Expanded(
-            child: secondaryButton(),
+            child: widget.lighterButton? lighterSecondaryButton():secondaryButton(),
           )
-        : Center(child: Container(height: widget.customHeight, child: secondaryButton()));
+        : Center(
+            child: Container(
+                height: widget.customHeight, child:widget.lighterButton? lighterSecondaryButton():secondaryButton()));
   }
 
   NeumorphicButton secondaryButton() {
@@ -70,13 +75,44 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       ),
     );
   }
+  NeumorphicButton lighterSecondaryButton() {
+    return NeumorphicButton(
+      onPressed: () {
+        widget.onPressed != null ? widget.onPressed() : () {};
+      },
+      padding: EdgeInsets.all(2),
+      style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
+          .copyWith(
+              lightSource: LightSource.bottom,
+              intensity: 1,
+              boxShape: NeumorphicBoxShape.stadium(),
+              border: NeumorphicBorder(
+                  width: 3,
+                  color:
+                      OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)),
+      child: Neumorphic(
+        style: OlukoNeumorphism.secondaryButtonStyle(
+          buttonShape: widget.buttonShape,
+          boxShape: NeumorphicBoxShape.stadium(),
+          ligthShadow: true,
+          darkShadow: true,
+        ).copyWith(
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+        child: Center(
+          child: widget.onlyIcon ? widget.icon : _textLabel(),
+        ),
+      ),
+    );
+  }
 
   Widget _textLabel() {
     if (widget.thinPadding) {
       return Text(
         widget.title,
         textAlign: widget.textAlign,
-        style: OlukoFonts.olukoBigFont(customColor: widget.textColor,),
+        style: OlukoFonts.olukoBigFont(
+          customColor: widget.textColor,
+        ),
       );
     } else {
       return Padding(

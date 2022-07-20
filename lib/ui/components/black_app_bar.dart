@@ -278,7 +278,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           height: 55,
           width: 55,
           child: GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: () =>widget.title == OlukoLocalizations.get(context, 'filters')?filterBackButtonAction(): Navigator.pop(context),
             child: OlukoBlurredButton(
               childContent: Image.asset(
                 'assets/courses/left_back_arrow.png',
@@ -372,6 +372,12 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
         ],
       ),
     );
+  }
+  void filterBackButtonAction() {
+    FocusScope.of(context).unfocus();
+    widget.actionButton();
+    widget.showBottomTab();
+    
   }
 
   OlukoNeumorphicDivider neumorphicDivider(BuildContext context) {
