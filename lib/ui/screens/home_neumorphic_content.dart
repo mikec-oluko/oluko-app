@@ -545,7 +545,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                             ? ScreenUtils.smallScreen(context)
                                 ? ScreenUtils.height(context) * 0.38
                                 : ScreenUtils.height(context) * 0.35
-                            : ScreenUtils.height(context) * 0.24),
+                            : ScreenUtils.height(context) * 0.26),
                     width: ScreenUtils.width(context),
                     child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
                       if (state is UsersSelfiesSuccess) {

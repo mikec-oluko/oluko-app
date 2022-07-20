@@ -460,7 +460,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                             if (workState != WorkState.paused) {
                               changeSegmentState();
                             }
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
                           }),
                       body: _body(keyboardVisibilty),
                     )

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
@@ -106,7 +107,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(segmentId: widget.segment.id, userId: widget.userId);
     }
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
-    _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;
+    if(widget.challenge!=null){
+      BlocProvider.of<ChallengeAudioBloc>(context).getUnseenAudios(widget.challenge.audios);
+    }
     super.initState();
   }
 
@@ -631,11 +634,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget getAudioButton() {
     return BlocBuilder<ChallengeAudioBloc, ChallengeAudioState>(
       builder: (context, state) {
-        if (state is DeleteChallengeAudioSuccess) {
-          _audioQty = state.audios.length;
+        if(state is ChallengeAudioSuccess){
+          _audioQty=state.unseenAudios;
+        }
+        else if(state is MarkAsSeenChallengeAudioSuccess){
+          _audioQty=0;
         }
         return GestureDetector(
-          onTap: () => widget.audioAction(_challengeAudios, widget.challenge),
+          onTap: () { 
+            widget.audioAction(_challengeAudios, widget.challenge);
+           BlocProvider.of<ChallengeAudioBloc>(context).markAsSeen(_challengeAudios,widget.challenge.id);
+          },
           child: AudioSection(audioMessageQty: _audioQty),
         );
       },
