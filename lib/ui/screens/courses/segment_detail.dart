@@ -86,13 +86,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     super.initState();
   }
   @override
-  void dispose() {
- 
-    
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
