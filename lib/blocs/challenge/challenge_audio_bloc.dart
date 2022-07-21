@@ -17,6 +17,13 @@ class DeleteChallengeAudioSuccess extends ChallengeAudioState {
   final List<Audio> audios;
   DeleteChallengeAudioSuccess({this.audios});
 }
+class ChallengeAudioSuccess extends ChallengeAudioState {
+  final int unseenAudios;
+  ChallengeAudioSuccess({this.unseenAudios});
+}
+class MarkAsSeenChallengeAudioSuccess extends ChallengeAudioState {
+  MarkAsSeenChallengeAudioSuccess();
+}
 
 class ChallengeAudioBloc extends Cubit<ChallengeAudioState> {
   ChallengeAudioBloc() : super(Loading());
@@ -31,6 +38,22 @@ class ChallengeAudioBloc extends Cubit<ChallengeAudioState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+    void markAsSeen(List<Audio> audios,String challengeId) async {
+    try {
+      if(audios!=null){
+      audios.forEach((audio) {audio.seen=true;});
+      await ChallengeRepository.markAudiosAsSeen(challengeId, audios);
+      }
+    emit(MarkAsSeenChallengeAudioSuccess());
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: e.toString()));
       rethrow;
     }
   }

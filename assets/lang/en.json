@@ -377,5 +377,7 @@
     "errorMessage": "Your information wasn’t updated. Please try again.",
     "cousesPanelText": "You will encounter this challenge in the following Courses",
     "messageRequired": "Message required",
-    "me": "Me"
+    "me": "Me",
+    "continueWithApple": "Continue with Apple ",
+    "continueWithGoogle": "Continue with Google"
 }
