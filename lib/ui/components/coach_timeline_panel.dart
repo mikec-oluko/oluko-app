@@ -364,11 +364,11 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.recommendedVideo:
         return GestureDetector(
-          onTap: !_isForFriend
+          onTap: _isForFriend
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.recommendationMedia.video.url,
+                    'videoUrl': content.recommendationMedia.videoHls ?? content.recommendationMedia.video.url,
                     'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
                   });
                 },
