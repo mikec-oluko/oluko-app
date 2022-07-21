@@ -227,7 +227,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                       child: GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                        'videoUrl': videoRecommended.video.url,
+                        'videoUrl': videoRecommended.videoHls ?? videoRecommended.video.url,
                         'aspectRatio': videoRecommended.video.aspectRatio,
                         'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
                       });
