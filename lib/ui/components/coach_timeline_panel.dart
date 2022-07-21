@@ -41,6 +41,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   List<UserResponse> _friendUsersList = [];
   int _actualTabIndex = 0;
   bool _isForFriend = false;
+  bool _showTimelineFriends = true;
 
   @override
   void initState() {
@@ -75,7 +76,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 Container(
                   height: 50,
                 ),
-                if (_friendUsersList.isNotEmpty)
+                if (_friendUsersList.isNotEmpty && _showTimelineFriends)
                   Padding(
                       padding: const EdgeInsets.fromLTRB(2, 5, 2, 5),
                       child: Container(
