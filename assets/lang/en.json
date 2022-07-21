@@ -371,5 +371,7 @@
     "tokenExpired": "Token has expired, please logout to get a new one.",
     "errorMessage": "Your information wasn’t updated. Please try again.",
     "cousesPanelText": "You will encounter this challenge in the following Courses",
-    "messageRequired": "Message required"
+    "messageRequired": "Message required",
+    "continueWithApple": "Continue with Apple ",
+    "continueWithGoogle": "Continue with Google"
 }
