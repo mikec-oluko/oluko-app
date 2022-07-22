@@ -11,6 +11,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -19,6 +20,7 @@ import 'package:oluko_app/ui/components/coach_timeline_video_content.dart';
 import 'package:oluko_app/ui/components/tab_content_list.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'coach_timeline_card_content.dart';
 import 'oluko_circular_progress_indicator.dart';
 import "package:collection/collection.dart";
@@ -66,7 +68,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         return BlocBuilder<FriendBloc, FriendState>(
           builder: (context, friendState) {
             if (friendState is GetFriendsSuccess) {
-              _friendUsersList = friendState.friendUsers;
+              _friendUsersList = friendState.friendUsers
+                  .where((user) => user.currentPlan >= 1 && PrivacyOptions.getPrivacyValue(user.privacy) == SettingsPrivacyOptions.public)
+                  .toList();
+              ;
               if (_friendUsersList.where((user) => user.id == widget.currentUser.id).toList().isEmpty) {
                 _friendUsersList.insert(0, widget.currentUser);
               }
@@ -106,13 +111,16 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                                                     width: 60,
                                                     height: 55,
                                                     child: Neumorphic(
-                                                      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                                                      child: CircleAvatar(
-                                                        backgroundImage: CachedNetworkImageProvider(friend.avatar),
-                                                        radius: 40.0,
-                                                        child: const SizedBox.shrink(),
-                                                      ),
-                                                    ),
+                                                        style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                                                        child: friend.avatar != null || friend.avatarThumbnail != null
+                                                            ? CircleAvatar(
+                                                                backgroundImage:
+                                                                    CachedNetworkImageProvider(friend.avatar ?? friend.avatarThumbnail),
+                                                                radius: 40.0,
+                                                                child: const SizedBox.shrink(),
+                                                              )
+                                                            : UserUtils.avatarImageDefault(
+                                                                maxRadius: 40, name: friend.firstName, lastname: friend.lastName)),
                                                   ),
                                                 ),
                                                 Padding(
