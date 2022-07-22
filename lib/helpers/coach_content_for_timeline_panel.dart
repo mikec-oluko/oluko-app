@@ -162,7 +162,7 @@ class CoachTimelineFunctions {
   }
 
   static List<CoachNotificationContent> mentoredVideoForInteraction({List<Annotation> annotationContent, BuildContext context}) {
-    String _defaultIntroductionVideoId = 'introVideo';
+    const String _defaultIntroductionVideoId = 'introVideo';
     List<CoachNotificationContent> mentoredVideosAsNotification = [];
     if (annotationContent != null) {
       annotationContent.forEach((annotation) {

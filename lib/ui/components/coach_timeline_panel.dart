@@ -43,7 +43,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
   List<UserResponse> _friendUsersList = [];
   int _actualTabIndex = 0;
   bool _isForFriend = false;
-  bool _showTimelineFriends = true;
+  final bool _showTimelineFriends = false;
 
   @override
   void initState() {
@@ -68,9 +68,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         return BlocBuilder<FriendBloc, FriendState>(
           builder: (context, friendState) {
             if (friendState is GetFriendsSuccess) {
-              _friendUsersList = friendState.friendUsers
-                  .where((user) => user.currentPlan >= 1 && PrivacyOptions.getPrivacyValue(user.privacy) == SettingsPrivacyOptions.public)
-                  .toList();
+              _friendUsersList = friendState.friendUsers.where((friendUser) => _canShowFriendContent(friendUser)).toList();
               ;
               if (_friendUsersList.where((user) => user.id == widget.currentUser.id).toList().isEmpty) {
                 _friendUsersList.insert(0, widget.currentUser);
@@ -102,41 +100,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                                                 await _getTimelineActivityForFriend(context, friend);
                                               }
                                             },
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                                                  child: Container(
-                                                    width: 60,
-                                                    height: 55,
-                                                    child: Neumorphic(
-                                                        style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                                                        child: friend.avatar != null || friend.avatarThumbnail != null
-                                                            ? CircleAvatar(
-                                                                backgroundImage:
-                                                                    CachedNetworkImageProvider(friend.avatar ?? friend.avatarThumbnail),
-                                                                radius: 40.0,
-                                                                child: const SizedBox.shrink(),
-                                                              )
-                                                            : UserUtils.avatarImageDefault(
-                                                                maxRadius: 40, name: friend.firstName, lastname: friend.lastName)),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(2.0),
-                                                  child: Container(
-                                                    height: 10,
-                                                    child: Text(
-                                                      isCurrentUser(friend) ? OlukoLocalizations.of(context).find('me') : friend.username,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                            child: _createFriendTimelineProfileElement(friend, context),
                                           ),
                                         ),
                                       )
@@ -162,12 +126,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                                 child: Container(
                                   width: MediaQuery.of(context).size.width / _timelineContentItems.length,
                                   child: Text(content.courseName,
-                                      // content.courseName.toUpperCase(),
                                       textAlign: TextAlign.center,
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.white,
-                                          // getColor(_actualTabIndex, _timelineContentItems.indexOf(content)),
-                                          customFontWeight: FontWeight.w700)),
+                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)),
                                 ),
                               ))
                           .toList()),
@@ -196,7 +156,46 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
     );
   }
 
-  bool isCurrentUser(UserResponse friend) => friend.id == widget.currentUser.id;
+  Column _createFriendTimelineProfileElement(UserResponse friend, BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Container(
+            width: 60,
+            height: 55,
+            child: Neumorphic(
+                style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                child: friend.avatar != null || friend.avatarThumbnail != null
+                    ? CircleAvatar(
+                        backgroundImage: CachedNetworkImageProvider(friend.avatar ?? friend.avatarThumbnail),
+                        radius: 40.0,
+                        child: const SizedBox.shrink(),
+                      )
+                    : UserUtils.avatarImageDefault(maxRadius: 40, name: friend.firstName, lastname: friend.lastName)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Container(
+            height: 10,
+            child: Text(
+              _isCurrentUser(friend) ? OlukoLocalizations.of(context).find('me') : friend.username,
+              overflow: TextOverflow.ellipsis,
+              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  bool _canShowFriendContent(UserResponse friendUser) =>
+      friendUser.currentPlan >= 1 && PrivacyOptions.getPrivacyValue(friendUser.privacy) == SettingsPrivacyOptions.public;
+
+  bool _isCurrentUser(UserResponse friend) => friend.id == widget.currentUser.id;
 
   Future<void> _getTimelineActivityForFriend(BuildContext context, UserResponse friend) async {
     List<CoachTimelineGroup> _timelinePanelContent = [];
@@ -221,7 +220,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
       List<MapEntry<String, List<CoachTimelineItem>>> entries = tabDateAndContentList.entries.toList();
       entries.forEach((entry) {
         String date = entry.key;
-        List<CoachTimelineItem> items = entry.value;
+        final List<CoachTimelineItem> items = entry.value;
 
         listOfWidgets.add(widgetToUse(date, items));
       });
@@ -481,6 +480,4 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
       ],
     );
   }
-
-  Color getColor(int tabIndex, int elementIndex) => tabIndex == elementIndex ? OlukoColors.white : OlukoColors.grayColor;
 }

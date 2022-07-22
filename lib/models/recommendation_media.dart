@@ -33,7 +33,7 @@ class RecommendationMedia extends Base {
       title: json['title'].toString(),
       description: json['description'].toString(),
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
-      videoHls: json['video_hls'].toString(),
+      videoHls: json['video_hls']?.toString(),
     );
 
     recommendationVideo.setBase(json);

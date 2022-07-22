@@ -13,6 +13,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_personalized_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -144,20 +145,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               leading: OlukoNeumorphism.isNeumorphismDesign
                   ? Neumorphic(
                       style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                                width: 40,
-                                height: 40,
-                                child: Image.asset(
-                                  'assets/courses/left_back_arrow.png',
-                                  scale: 3.5,
-                                )),
-                          )),
+                      child: OlukoNeumorphicCircleButton(
+                        defaultAspect: true,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     )
                   : IconButton(
                       icon: const Icon(
