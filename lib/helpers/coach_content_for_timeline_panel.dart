@@ -343,6 +343,7 @@ class CoachTimelineFunctions {
     });
     CoachTimelineGroup allTabContent = CoachTimelineGroup(
         courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: allContent);
+    allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
     return isForFriend ? [allTabContent] : timelinePanelUpdateTabsAndContent(allTabContent, _updatedContent, isForFriend: isForFriend);
   }
 }
