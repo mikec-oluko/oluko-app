@@ -9,6 +9,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -46,11 +47,8 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
           leading: OlukoNeumorphism.isNeumorphismDesign
               ? Neumorphic(
                   style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
+                  child: OlukoNeumorphicCircleButton(
+                    defaultAspect: true,
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -222,7 +220,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                       child: GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                        'videoUrl': videoRecommended.video.url,
+                        'videoUrl': videoRecommended.videoHls ?? videoRecommended.video.url,
                         'aspectRatio': videoRecommended.video.aspectRatio,
                         'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
                       });

@@ -92,10 +92,10 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
     });
   }
 
-  void getTimelineItemsForUser(String userId) async {
+  Future<List<CoachTimelineItem>> getTimelineItemsForUser(String userId) async {
     try {
       final List<CoachTimelineItem> timelineContent = await CoachRepository().getTimelineContent(userId);
-      emit(CoachTimelineItemsSuccess(timelineItems: timelineContent));
+      return timelineContent;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

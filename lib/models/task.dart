@@ -4,6 +4,7 @@ import 'base.dart';
 class Task extends Base {
   String name;
   String video;
+  String videoHls;
   String stepsDescription;
   String stepsTitle;
   String description;
@@ -13,6 +14,7 @@ class Task extends Base {
   Task(
       {this.name,
       this.video,
+      this.videoHls,
       this.stepsDescription,
       this.stepsTitle,
       this.description,
@@ -38,6 +40,7 @@ class Task extends Base {
     Task task = Task(
       name: json['name']?.toString(),
       video: json['video']?.toString(),
+      videoHls: json['video_hls']?.toString(),
       stepsDescription: json['steps_description']?.toString(),
       stepsTitle: json['steps_title']?.toString(),
       description: json['description']?.toString(),
@@ -52,6 +55,7 @@ class Task extends Base {
     Map<String, dynamic> taskJson = {
       'name': name,
       'video': video,
+      'video_hls': videoHls,
       'steps_description': stepsDescription,
       'steps_title': stepsTitle,
       'description': description,

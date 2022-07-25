@@ -40,6 +40,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
       this.mentoredVideosForNavigation,
       this.sentVideosForNavigation,
       this.coachMediaMessage,
+      this.recommendationMedia,
       String id,
       Timestamp createdAt,
       String createdBy,
