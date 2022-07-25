@@ -205,7 +205,7 @@ class _State extends State<Courses> {
       }),
       onSearchResults: (SearchResults results) => this.setState(() {
         showSearchSuggestions = true;
-        searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
+        searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.searchResults));
       }),
       suggestionMethod: CourseUtils.suggestionMethod,
       searchMethod: CourseUtils.searchMethod,
