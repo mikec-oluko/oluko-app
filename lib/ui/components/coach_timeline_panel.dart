@@ -56,6 +56,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
     super.dispose();
   }
 
+  final _timelineHeaderSafeSpace = Container(
+    height: 50,
+  );
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CoachTimelineBloc, CoachTimelineState>(
@@ -69,90 +73,91 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           builder: (context, friendState) {
             if (friendState is GetFriendsSuccess) {
               _friendUsersList = friendState.friendUsers.where((friendUser) => _canShowFriendContent(friendUser)).toList();
-              ;
               if (_friendUsersList.where((user) => user.id == widget.currentUser.id).toList().isEmpty) {
                 _friendUsersList.insert(0, widget.currentUser);
               }
             }
             return Column(
               children: [
-                Container(
-                  height: 50,
-                ),
-                if (_friendUsersList.isNotEmpty && _showTimelineFriends)
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(2, 5, 2, 5),
-                      child: Container(
-                          height: 80,
-                          child: _friendUsersList.isNotEmpty
-                              ? ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: EdgeInsets.zero,
-                                  children: _friendUsersList
-                                      .map(
-                                        (friend) => Padding(
-                                          padding: const EdgeInsets.only(top: 8),
-                                          child: GestureDetector(
-                                            onTap: () async {
-                                              if (friend.id == widget.currentUser.id) {
-                                                widget.onCurrentUserSelected();
-                                              } else {
-                                                await _getTimelineActivityForFriend(context, friend);
-                                              }
-                                            },
-                                            child: _createFriendTimelineProfileElement(friend, context),
-                                          ),
-                                        ),
-                                      )
-                                      .toList())
-                              : const SizedBox.shrink()
-                          //   },
-                          // ),
-                          ))
-                else
-                  const SizedBox.shrink(),
-                Container(
-                  child: TabBar(
-                      labelColor: OlukoColors.black,
-                      indicatorColor: OlukoColors.primary,
-                      indicatorWeight: 4,
-                      isScrollable: true,
-                      controller: _tabController,
-                      onTap: (index) {
-                        _actualTabIndex = index;
-                      },
-                      tabs: _timelineContentItems
-                          .map((content) => Tab(
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width / _timelineContentItems.length,
-                                  child: Text(content.courseName,
-                                      textAlign: TextAlign.center,
-                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)),
-                                ),
-                              ))
-                          .toList()),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: passContentToWidgets()
-                        .map((widgetCollection) => Container(
-                              color: OlukoNeumorphism.isNeumorphismDesign
-                                  ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                                  : OlukoColors.black,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TabContentList(contentToDisplay: widgetCollection),
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                )
+                _timelineHeaderSafeSpace,
+                if (_friendUsersList.isNotEmpty && _showTimelineFriends) _timelineFriendsListSection(context) else const SizedBox.shrink(),
+                _timelineTabsSection(context),
+                _timelineListContentSection()
               ],
             );
           },
         );
       },
+    );
+  }
+
+  Padding _timelineFriendsListSection(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(2, 5, 2, 5),
+        child: Container(
+            height: 80,
+            child: _friendUsersList.isNotEmpty
+                ? ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.zero,
+                    children: _friendUsersList
+                        .map(
+                          (friend) => Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: GestureDetector(
+                              onTap: () async {
+                                if (friend.id == widget.currentUser.id) {
+                                  widget.onCurrentUserSelected();
+                                } else {
+                                  _getTimelineActivityForFriend(context, friend);
+                                }
+                              },
+                              child: _createFriendTimelineProfileElement(friend, context),
+                            ),
+                          ),
+                        )
+                        .toList())
+                : const SizedBox.shrink()));
+  }
+
+  Container _timelineTabsSection(BuildContext context) {
+    return Container(
+      child: TabBar(
+          labelColor: OlukoColors.black,
+          indicatorColor: OlukoColors.primary,
+          indicatorWeight: 4,
+          isScrollable: true,
+          controller: _tabController,
+          onTap: (index) {
+            _actualTabIndex = index;
+          },
+          tabs: _timelineContentItems
+              .map((content) => Tab(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / _timelineContentItems.length,
+                      child: Text(content.courseName,
+                          textAlign: TextAlign.center,
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)),
+                    ),
+                  ))
+              .toList()),
+    );
+  }
+
+  Expanded _timelineListContentSection() {
+    return Expanded(
+      child: TabBarView(
+        controller: _tabController,
+        children: passContentToWidgets()
+            .map((widgetCollection) => Container(
+                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TabContentList(contentToDisplay: widgetCollection),
+                  ),
+                ))
+            .toList(),
+      ),
     );
   }
 
@@ -461,7 +466,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             ),
           ),
         );
-      //   break;
       default:
         return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
     }
