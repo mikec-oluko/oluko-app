@@ -155,34 +155,31 @@ class _State extends State<Courses> {
 
   Widget _courseWidget(BuildContext context, TagState tagState) {
     if (tagState is TagSuccess) {
-      return WillPopScope(
-        onWillPop: () => AppNavigator.onWillPop(context),
-        child: OrientationBuilder(builder: (context, orientation) {
-          return Container(
-            color: OlukoNeumorphismColors.appBackgroundColor,
-            height: ScreenUtils.height(context),
-            width: ScreenUtils.width(context),
-            child: showFilterSelector
-                ? CourseUtils.filterSelector(tagState,
-                    onSubmit: (List<Base> selectedItems) => setState(() {
-                          selectedTags = selectedItems as List<Tag>;
-                          showFilterSelector = false;
-                          BlocProvider.of<RemainSelectedTagsBloc>(context).set(selectedTags);
-                          searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
-                        }),
-                    onClosed: () => this.setState(() {
-                          showFilterSelector = false;
-                        }),
-                    showBottomTab: widget.showBottomTab)
-                : searchResults.query.isEmpty && selectedTags.isEmpty
-                    ? _mainPage(context)
-                    : showSearchSuggestions
-                        ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
-                        : CourseUtils.searchResults(
-                            context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
-          );
-        }),
-      );
+      return OrientationBuilder(builder: (context, orientation) {
+        return Container(
+          color: OlukoNeumorphismColors.appBackgroundColor,
+          height: ScreenUtils.height(context),
+          width: ScreenUtils.width(context),
+          child: showFilterSelector
+              ? CourseUtils.filterSelector(tagState,
+                  onSubmit: (List<Base> selectedItems) => setState(() {
+                        selectedTags = selectedItems as List<Tag>;
+                        showFilterSelector = false;
+                        BlocProvider.of<RemainSelectedTagsBloc>(context).set(selectedTags);
+                        searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
+                      }),
+                  onClosed: () => this.setState(() {
+                        showFilterSelector = false;
+                      }),
+                  showBottomTab: widget.showBottomTab)
+              : searchResults.query.isEmpty && selectedTags.isEmpty
+                  ? _mainPage(context)
+                  : showSearchSuggestions
+                      ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
+                      : CourseUtils.searchResults(
+                          context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+        );
+      });
     }
 
     // this return will handle this states: TagLoading TagFailure CourseLoading CourseFailure
