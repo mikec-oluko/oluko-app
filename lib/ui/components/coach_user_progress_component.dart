@@ -59,11 +59,15 @@ class _CoachUserProgressComponentState extends State<CoachUserProgressComponent>
             child: Center(
                 child: Text(
               widget.needPercentage ? widget.progressValue.toString() + "%" : widget.progressValue.toString(),
+              maxLines: 1,
               style: ScreenUtils.smallScreen(context)
                   ? ScreenUtils.modifiedFont(context)
                       ? OlukoFonts.olukoMediumFont(customColor: Colors.orange[400], customFontWeight: FontWeight.w800)
                       : OlukoFonts.olukoBigFont(customColor: Colors.orange[400], customFontWeight: FontWeight.w800)
-                  : OlukoFonts.olukoSubtitleFont(customColor: Colors.orange[400], customFontWeight: FontWeight.w800),
+                  : widget.progressValue.toString().length >= 2
+                      ? OlukoFonts.olukoSubtitleFont(customColor: Colors.orange[400], customFontWeight: FontWeight.w800)
+                          .copyWith(fontSize: 18)
+                      : OlukoFonts.olukoSubtitleFont(customColor: Colors.orange[400], customFontWeight: FontWeight.w800),
             ))),
         Padding(
           padding: const EdgeInsets.only(left: 10),
