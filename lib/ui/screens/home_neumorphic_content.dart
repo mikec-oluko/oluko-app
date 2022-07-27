@@ -638,7 +638,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             onPressed: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courses],
                   arguments: {
-                    'homeEnrollTocourse': 'true',
+                    'backButtonWithFilters': true,
                     'showBottomTab': () => setState(() {
                           _isBottomTabActive = !_isBottomTabActive;
                         })

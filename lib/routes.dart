@@ -1120,7 +1120,7 @@ class Routes {
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
-        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true',showBottomTab: args['showBottomTab'] as Function(),);
+        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] as bool,showBottomTab: args['showBottomTab'] as Function(),backButtonWithFilters:args['backButtonWithFilters'] as bool);
         break;
 
       case RouteEnum.viewAll:

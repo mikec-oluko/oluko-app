@@ -42,8 +42,9 @@ import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   bool homeEnrollTocourse;
+  bool backButtonWithFilters;
   Function showBottomTab;
-  Courses({this.homeEnrollTocourse=false, this.showBottomTab, Key key}) : super(key: key);
+  Courses({this.homeEnrollTocourse=false, this.showBottomTab,this.backButtonWithFilters=false, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -192,6 +193,7 @@ class _State extends State<Courses> {
       showTitle: true,
       searchKey: searchKey,
       showBackButton: goBack,
+      backButtonWithFilters: widget.backButtonWithFilters,
       showActions: widget.homeEnrollTocourse,
       title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
       actions: [_filterWidget()],
