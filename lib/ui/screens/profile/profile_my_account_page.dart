@@ -38,12 +38,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   bool formHasChanged = false;
   final formKey = GlobalKey<FormState>();
 
-@override
-void dispose() {
-  BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
-  super.dispose();
-}
-
+  @override
+  void dispose() {
+    BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -117,32 +116,37 @@ void dispose() {
       key: formKey,
       child: Column(
         children: [
-          userInformationFields(OlukoLocalizations.get(context, 'username'),
-              UserHelper.printUsername(_profileInfo.username, _profileInfo.id)),
-          userInformationFields(OlukoLocalizations.get(context, 'firstName'),
-              _profileInfo.firstName),
-          userInformationFields(OlukoLocalizations.get(context, 'lastName'),
-              _profileInfo.lastName),
           userInformationFields(
-              OlukoLocalizations.get(context, 'email'), _profileInfo.email),
+            OlukoLocalizations.get(context, 'username'),
+            UserHelper.printUsername(_profileInfo.username, _profileInfo.id),
+            'username',
+          ),
+          userInformationFields(OlukoLocalizations.get(context, 'firstName'),
+              _profileInfo.firstName, 'firstName'),
+          userInformationFields(OlukoLocalizations.get(context, 'lastName'),
+              _profileInfo.lastName, 'lastName'),
+          userInformationFields(OlukoLocalizations.get(context, 'email'),
+              _profileInfo.email, 'email'),
           userInformationFields(OlukoLocalizations.get(context, 'city'),
-              _profileInfo.city != null ? _profileInfo.city : ""),
+              _profileInfo.city != null ? _profileInfo.city : "", 'city'),
           userInformationFields(OlukoLocalizations.get(context, 'state'),
-              _profileInfo.state != null ? _profileInfo.state : ""),
-          userInformationFields(OlukoLocalizations.get(context, 'country'),
-              _profileInfo.country != null ? _profileInfo.country : ""),
+              _profileInfo.state != null ? _profileInfo.state : "", 'state'),
+          userInformationFields(
+              OlukoLocalizations.get(context, 'country'),
+              _profileInfo.country != null ? _profileInfo.country : "",
+              'country'),
         ],
       ),
     );
   }
 
-  Widget userInformationFields(String title, String value) {
+  Widget userInformationFields(String title, String value, String key) {
     String oldEmail;
     String oldUserName;
-    if (title == 'Email') {
+    if (key == 'email') {
       oldEmail = value;
     }
-    if (title == 'Username') {
+    if (key == 'username') {
       oldUserName = value;
     }
     TextEditingController controller = TextEditingController();
@@ -193,32 +197,32 @@ void dispose() {
                         if (value != null || value.isNotEmpty) {
                           value = value.trim();
                         }
-                        switch (title) {
-                          case 'Username':
+                        switch (key) {
+                          case 'username':
                             if (value != oldUserName) {
                               usernameHasChanged = true;
                             }
                             newFields.username = value;
                             break;
-                          case 'First Name':
+                          case 'firstName':
                             newFields.firstName = value;
                             break;
-                          case 'Last Name':
+                          case 'lastName':
                             newFields.lastName = value;
                             break;
-                          case 'Email':
+                          case 'email':
                             if (value != oldEmail) {
                               emailHasChanged = true;
                             }
                             newFields.email = value;
                             break;
-                          case 'City':
+                          case 'city':
                             newFields.city = value;
                             break;
-                          case 'State':
+                          case 'state':
                             newFields.state = value;
                             break;
-                          case 'Country':
+                          case 'country':
                             newFields.country = value;
                             break;
                         }
@@ -273,13 +277,11 @@ void dispose() {
   Widget getSaveButton() {
     return BlocBuilder<MyAccountBloc, MyAccountState>(
       builder: (context, state) {
-        if(state is MyAccountSuccess){
+        if (state is MyAccountSuccess) {
           return saveChangesButton(state.formHasChanged);
-        }
-        else{
+        } else {
           return saveChangesButton(false);
         }
-        
       },
     );
   }
