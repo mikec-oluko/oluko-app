@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -236,7 +237,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             ),
           ),
           Text(
-            OlukoLocalizations.get(context, 'orContinueWith'),
+            OlukoLocalizations.get(context, 'or').toUpperCase(),
             style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
           ),
           Expanded(
@@ -252,7 +253,6 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       //getExternalLoginButtonsWithFacebook(),
       SizedBox(
         width: ScreenUtils.width(context),
-        height: 50,
         child: getExternalLoginButtons(),
       ),
     ];
@@ -322,46 +322,80 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   }
 
   Widget getExternalLoginButtons() {
-    final Widget googleButton = OlukoNeumorphicSecondaryButton(
-      title: '',
-      useBorder: true,
-      thinPadding: true,
-      onlyIcon: true,
-      onPressed: () {
-        BlocProvider.of<AuthBloc>(context).loginWithGoogle(context);
-      },
-      icon: Align(
-        child: Image.asset(
-          'assets/login/google-logo.png',
-          width: 18,
-          color: Colors.white,
+    final Widget googleButton = SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.white),
+        ),
+        onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithGoogle(context),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/login/google-logo.png',
+              width: 20,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              OlukoLocalizations.get(context, 'continueWithGoogle'),
+              style: const TextStyle(color: OlukoColors.grayColor),
+            )
+          ],
         ),
       ),
     );
 
     if (Platform.isIOS) {
-      return Row(
+      return Column(
         children: [
           googleButton,
-          const SizedBox(width: 10),
-          OlukoNeumorphicSecondaryButton(
-            title: '',
-            useBorder: true,
-            thinPadding: true,
-            onlyIcon: true,
-            onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithApple(context),
-            icon: Align(
-              child: Image.asset(
-                'assets/login/apple-logo.png',
-                width: 43,
-                color: Colors.white,
+          const SizedBox(
+            height: 5,
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
+              ),
+              onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithApple(context),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/login/apple-logo.png',
+                    width: 18,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    OlukoLocalizations.get(context, 'continueWithApple'),
+                    style: const TextStyle(color: OlukoColors.white),
+                  )
+                ],
               ),
             ),
           )
         ],
       );
     } else {
-      return Row(
+      return Column(
         children: [
           googleButton,
         ],

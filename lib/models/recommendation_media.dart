@@ -6,10 +6,12 @@ class RecommendationMedia extends Base {
   String title;
   String description;
   Video video;
+  String videoHls;
   RecommendationMedia(
       {this.title,
       this.description,
       this.video,
+      this.videoHls,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -31,6 +33,7 @@ class RecommendationMedia extends Base {
       title: json['title'].toString(),
       description: json['description'].toString(),
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+      videoHls: json['video_hls']?.toString(),
     );
 
     recommendationVideo.setBase(json);
@@ -42,6 +45,7 @@ class RecommendationMedia extends Base {
       'title': title,
       'description': description,
       'video': video == null ? null : video.toJson(),
+      'video_hls': videoHls,
     };
     recommendationVideo.addEntries(super.toJson().entries);
     return recommendationVideo;

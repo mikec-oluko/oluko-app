@@ -23,7 +23,7 @@ class _SelfiesGridState extends State<SelfiesGrid> {
     return GridView.count(
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 1,
-      crossAxisCount: 7,
+      crossAxisCount: 6,
       children: CollageUtils.getCollageWidgets(widget.images, 70), //70 items
     );
   }
