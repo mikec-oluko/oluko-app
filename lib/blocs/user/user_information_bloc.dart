@@ -30,28 +30,28 @@ class UserInformationBloc extends Cubit<UserInformationState> {
   UserInformationBloc() : super(Loading());
   final _userRepository = UserRepository();
 
-  Future<bool> updateUserInformation(UserInformation userInformation, String userId, BuildContext context) async {
+  Future<bool> updateUserInformation(UserInformation userInformation, String userId, BuildContext context,{bool isLoggedOut=false}) async {
     if (_checkAllNullsAndEmptys(userInformation)) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'allFieldsRequired');
       return false;
     }
-    if (userInformation.username.isEmpty || userInformation.username == null) {
+    if (userInformation.username == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'usernameRequired');
       return false;
     }
-    if (userInformation.state.isEmpty || userInformation.state == null) {
+    if (userInformation.state == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'stateRequired');
       return false;
     }
-    if (userInformation.lastName.isEmpty || userInformation.lastName == null) {
+    if (userInformation.lastName == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'lastnameRequired');
       return false;
     }
-    if (userInformation.firstName.isEmpty || userInformation.firstName == null) {
+    if (userInformation.firstName == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'firstnameRequired');
       return false;
     }
-    if (userInformation.email.isEmpty || userInformation.email == null) {
+    if (userInformation.email == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'emailRequired');
       return false;
     } else if (!FormHelper.isEmail(userInformation.email)) {
@@ -59,11 +59,11 @@ class UserInformationBloc extends Cubit<UserInformationState> {
       return false;
     }
 
-    if (userInformation.country.isEmpty || userInformation.country == null) {
+    if (userInformation.country == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'countryRequired');
       return false;
     }
-    if (userInformation.city.isEmpty || userInformation.city == null) {
+    if ( userInformation.city == null) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'cityRequired');
       return false;
     }
@@ -74,7 +74,8 @@ class UserInformationBloc extends Cubit<UserInformationState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'tokenExpired');
       return false;
     } else if (response.statusCode == 200) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');
+      if(!isLoggedOut){AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');}
+
       return true;
     } else {
       AppMessages.clearAndShowSnackbarTranslated(context, 'errorMessage');

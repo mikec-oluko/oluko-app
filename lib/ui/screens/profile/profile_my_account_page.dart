@@ -40,7 +40,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   @override
   void dispose() {
-    BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
+    //BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
     super.dispose();
   }
 
@@ -310,7 +310,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                       context, 'uploadingWithDots');
                   if (await BlocProvider.of<UserInformationBloc>(context)
                       .updateUserInformation(
-                          newFields, _profileInfo.id, context)) {
+                          newFields, _profileInfo.id, context,isLoggedOut: true)) {
                     logOut();
                   }
                 }
