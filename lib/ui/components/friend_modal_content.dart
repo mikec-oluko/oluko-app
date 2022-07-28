@@ -95,7 +95,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                     itemUserId: widget.user.id,
                     userProgress: widget.usersProgess != null ? widget.usersProgess[widget.user.id] : null,
                     maxRadius: 40,
-                    imageUrl: widget.user.avatar,
+                    imageUrl: widget.user.getAvatarThumbnail(),
                     name: widget.user.firstName,
                     lastname: widget.user.lastName,
                     userProgressStreamBloc: widget.userProgressStreamBloc,
@@ -108,7 +108,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '${widget.user.firstName} ${widget.user.lastName}',
+                          widget.user.getFullName(),
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w700),

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "214950619734",
+    "firebase_url": "https://oluko-qa-default-rtdb.firebaseio.com",
     "project_id": "oluko-qa",
     "storage_bucket": "oluko-qa.appspot.com"
   },
@@ -13,6 +14,54 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "214950619734-28jm3dloiqpj7l9b9jqa5efpmp5olhdj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko.qa",
+            "certificate_hash": "d0b025df9a5abe992d938810a1e9c8d0125c6616"
+          }
+        },
+        {
+          "client_id": "214950619734-730a1udt4b3fs6qsrp6r4diogvlf764l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko.qa",
+            "certificate_hash": "cd054e30bf8e78752d102a5b755d13632583152c"
+          }
+        },
+        {
+          "client_id": "214950619734-iq9e19b68vktmjj9l64skdvii4pap0ea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko.qa",
+            "certificate_hash": "7945f77aaf8f4d5f28794c4651ec2a7a91ba1b8e"
+          }
+        },
+        {
+          "client_id": "214950619734-j66anq2bvinaqh3p8eh2vp8o00m7co3s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko.qa",
+            "certificate_hash": "c66a1af5c994c2f69f22d7eb0856361f417f3794"
+          }
+        },
+        {
+          "client_id": "214950619734-jm9i76u84hv7h129br17nproo57n22df.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko.qa",
+            "certificate_hash": "7f5b31a66b3c3585b885704cfb4afb20f2cbb207"
+          }
+        },
+        {
+          "client_id": "214950619734-qp8ngq58l9s422ioumrbl0dc7v0g1s4s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko.qa",
+            "certificate_hash": "f8fa34d7d05e3a0eca8bf4c7142e09e88ac582d1"
+          }
+        },
         {
           "client_id": "214950619734-b3a8abqf8a9j9l9171396qt4rlght5g6.apps.googleusercontent.com",
           "client_type": 3

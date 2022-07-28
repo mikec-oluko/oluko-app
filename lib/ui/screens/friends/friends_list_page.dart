@@ -299,7 +299,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         if (!userIsFriend)
                           StoriesItem(
                             maxRadius: 40,
-                            imageUrl: user.avatar,
+                            imageUrl: user.getAvatarThumbnail(),
                             name: user.firstName,
                             lastname: user.lastName,
                           )
@@ -308,7 +308,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             from: StoriesItemFrom.friendsModal,
                             bloc: BlocProvider.of<StoryListBloc>(context),
                             maxRadius: 40,
-                            imageUrl: user.avatar,
+                            imageUrl: user.getAvatarThumbnail(),
                             name: user.firstName,
                             lastname: user.lastName,
                             getStories: true,
@@ -322,7 +322,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${user.firstName} ${user.lastName}',
+                                  user.getFullName(),
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
