@@ -58,14 +58,21 @@ class _State<T extends Base> extends State<FilterSelector> {
         fit: StackFit.expand,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.14 : 20),
+            padding: EdgeInsets.only(
+                bottom: OlukoNeumorphism.isNeumorphismDesign
+                    ? ScreenUtils.bigScreen(context)||ScreenUtils.mediumScreen(context)
+                        ? 190
+                        : 120
+                    : 20),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: _getFilterSelectorContent(),
             ),
           ),
           if (OlukoNeumorphism.isNeumorphismDesign)
-            Align(alignment: Alignment.bottomCenter, child: SizedBox(height: 100, child: filterNeumorphicButtons(context)))
+            Positioned(
+                bottom: ScreenUtils.bigScreen(context) || ScreenUtils.mediumScreen(context) ? 80 : 15,
+                child: SizedBox(height: 100, child: filterNeumorphicButtons(context)))
           else
             filterButtons(context),
         ],
@@ -123,9 +130,6 @@ class _State<T extends Base> extends State<FilterSelector> {
                       title: 'Close',
                       onPressed: () => {widget.onClosed(), widget.showBottonTab()}),
                 ),
-                // SizedBox(
-                //   width: 15,
-                // ),
                 SizedBox(
                   width: 150,
                   height: 60,
@@ -144,15 +148,13 @@ class _State<T extends Base> extends State<FilterSelector> {
   }
 
   Widget _getFilterSelectorContent() {
-    return Container(
-      child: ListView(
-        children: widget.itemList.entries
-            .map((entry) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _getFilterCategory(entry),
-                ))
-            .toList(),
-      ),
+    return ListView(
+      children: widget.itemList.entries
+          .map((entry) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _getFilterCategory(entry),
+              ))
+          .toList(),
     );
   }
 

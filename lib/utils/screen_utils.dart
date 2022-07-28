@@ -8,5 +8,6 @@ class ScreenUtils {
   static double width(BuildContext context) => MediaQuery.of(context).size.width;
   static bool smallScreen(BuildContext context) => MediaQuery.of(context).size.height < 700;
   static bool mediumScreen(BuildContext context) => MediaQuery.of(context).size.height >= 700 && MediaQuery.of(context).size.height < 850;
+  static bool bigScreen(BuildContext context) => MediaQuery.of(context).size.height >= 850;
   static bool modifiedFont(BuildContext context) => MediaQuery.of(context).textScaleFactor > 1;
 }
