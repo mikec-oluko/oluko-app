@@ -314,37 +314,34 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
             isDisabled: !isEnabled,
             title:
                 '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'save'))} ${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'changes'))}',
-            onPressed: !isEnabled
-                ? () {}
-                : () async {
-                    FocusScope.of(context).unfocus();
-                    if (emailHasChanged || usernameHasChanged) {
-                      if (await logOutConfirmationPopUp(context)) {
-                        AppMessages.clearAndShowSnackbarTranslated(
-                            context, 'uploadingWithDots');
-                        if (await BlocProvider.of<UserInformationBloc>(context)
-                            .updateUserInformation(
-                                newFields, _profileInfo.id, context,
-                                isLoggedOut: true)) {
-                          logOut();
-                        }
-                      }
-                    } else {
-                      AppMessages.clearAndShowSnackbarTranslated(
-                          context, 'uploadingWithDots');
-                      BlocProvider.of<UserInformationBloc>(context)
-                          .updateUserInformation(
-                              newFields, _profileInfo.id, context);
-                    }
-                    usernameHasChanged = false;
-                    emailHasChanged = false;
-                  },
+            onPressed: !isEnabled ? () {} : saveChangesAction,
             isExpanded: false,
             customHeight: 60,
           ),
         ),
       ),
     );
+  }
+
+  Future<void> saveChangesAction() async {
+    FocusScope.of(context).unfocus();
+    if (emailHasChanged || usernameHasChanged) {
+      if (await logOutConfirmationPopUp(context)) {
+        AppMessages.clearAndShowSnackbarTranslated(
+            context, 'uploadingWithDots');
+        if (await BlocProvider.of<UserInformationBloc>(context)
+            .updateUserInformation(newFields, _profileInfo.id, context,
+                isLoggedOut: true)) {
+          logOut();
+        }
+      }
+    } else {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
+      BlocProvider.of<UserInformationBloc>(context)
+          .updateUserInformation(newFields, _profileInfo.id, context);
+    }
+    usernameHasChanged = false;
+    emailHasChanged = false;
   }
 
   Future<void> logOut() async {
@@ -521,17 +518,16 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       );
     }
     return Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
-              child: Text(
-                '-',
-                style: OlukoFonts.olukoBigFont(
-                    customFontWeight: FontWeight.w500,
-                    customColor: !isGoogleAuth
-                        ? OlukoColors.white
-                        : OlukoColors.grayColor),
-              ),
-            );
+      padding: const EdgeInsets.symmetric(
+          horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
+      child: Text(
+        '-',
+        style: OlukoFonts.olukoBigFont(
+            customFontWeight: FontWeight.w500,
+            customColor:
+                !isGoogleAuth ? OlukoColors.white : OlukoColors.grayColor),
+      ),
+    );
   }
 
   List<DropdownMenuItem<String>> getItemsForStatesDropdown() {
