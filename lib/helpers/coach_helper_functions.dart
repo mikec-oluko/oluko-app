@@ -250,10 +250,10 @@ class CoachHelperFunctions {
 
     if (!coachAssignment.welcomeVideoSeen) {
       carouselContent.add(CoachNotificationVideoCard(
-          cardImage: assessment.thumbnailImage,
+          cardImage: assessment.videoThumbnail,
           fileType: CoachFileTypeEnum.welcomeVideo,
-          onCloseCard: () => onCloseCard,
-          onOpenCard: () => onOpenCard));
+          onCloseCard: onCloseCard,
+          onOpenCard: onOpenCard));
     }
 
     if (coachRecommendations.isNotEmpty) {

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
@@ -36,18 +37,24 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                             width: 70,
                             height: 70,
                             child: widget.circleImage != null
-                                ? CircleAvatar(
-                                    backgroundImage: CachedNetworkImageProvider(widget.circleImage),
-                                    backgroundColor: OlukoColors.randomColor(),
-                                    radius: 30,
+                                ? Neumorphic(
+                                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                                    child: CircleAvatar(
+                                      backgroundImage: CachedNetworkImageProvider(widget.circleImage),
+                                      backgroundColor: OlukoColors.randomColor(),
+                                      radius: 30,
+                                    ),
                                   )
-                                : CircleAvatar(
-                                    backgroundColor: OlukoColors.randomColor(),
-                                    radius: 30,
-                                    child: Text(titleForCircle(widget.fileType),
-                                        textAlign: TextAlign.center,
-                                        style:
-                                            OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
+                                : Neumorphic(
+                                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                                    child: CircleAvatar(
+                                      backgroundColor: OlukoColors.randomColor(),
+                                      radius: 30,
+                                      child: Text(titleForCircle(widget.fileType),
+                                          textAlign: TextAlign.center,
+                                          style:
+                                              OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
+                                    ),
                                   )),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -69,7 +76,7 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                     Padding(
                       padding: const EdgeInsets.all(5),
                       child: Text(DateFormat.jm().format(widget.date).toString(),
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                          style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor)),
                     ),
                   ],
                 ),

@@ -1193,6 +1193,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1220,6 +1221,7 @@ class Routes {
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
         ];
         newRouteView = CoachPage();
         break;
