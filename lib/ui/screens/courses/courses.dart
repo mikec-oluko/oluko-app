@@ -42,8 +42,9 @@ import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   bool homeEnrollTocourse;
+  bool backButtonWithFilters;
   Function showBottomTab;
-  Courses({this.homeEnrollTocourse=false, this.showBottomTab, Key key}) : super(key: key);
+  Courses({this.homeEnrollTocourse=false, this.showBottomTab,this.backButtonWithFilters=false, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -155,34 +156,31 @@ class _State extends State<Courses> {
 
   Widget _courseWidget(BuildContext context, TagState tagState) {
     if (tagState is TagSuccess) {
-      return WillPopScope(
-        onWillPop: () => AppNavigator.onWillPop(context),
-        child: OrientationBuilder(builder: (context, orientation) {
-          return Container(
-            color: OlukoNeumorphismColors.appBackgroundColor,
-            height: ScreenUtils.height(context),
-            width: ScreenUtils.width(context),
-            child: showFilterSelector
-                ? CourseUtils.filterSelector(tagState,
-                    onSubmit: (List<Base> selectedItems) => setState(() {
-                          selectedTags = selectedItems as List<Tag>;
-                          showFilterSelector = false;
-                          BlocProvider.of<RemainSelectedTagsBloc>(context).set(selectedTags);
-                          searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
-                        }),
-                    onClosed: () => this.setState(() {
-                          showFilterSelector = false;
-                        }),
-                    showBottomTab: widget.showBottomTab)
-                : searchResults.query.isEmpty && selectedTags.isEmpty
-                    ? _mainPage(context)
-                    : showSearchSuggestions
-                        ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
-                        : CourseUtils.searchResults(
-                            context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
-          );
-        }),
-      );
+      return OrientationBuilder(builder: (context, orientation) {
+        return Container(
+          color: OlukoNeumorphismColors.appBackgroundColor,
+          height: ScreenUtils.height(context),
+          width: ScreenUtils.width(context),
+          child: showFilterSelector
+              ? CourseUtils.filterSelector(tagState,
+                  onSubmit: (List<Base> selectedItems) => setState(() {
+                        selectedTags = selectedItems as List<Tag>;
+                        showFilterSelector = false;
+                        BlocProvider.of<RemainSelectedTagsBloc>(context).set(selectedTags);
+                        searchKey.currentState.updateSearchResults('', selectedTags: selectedTags);
+                      }),
+                  onClosed: () => this.setState(() {
+                        showFilterSelector = false;
+                      }),
+                  showBottomTab: widget.showBottomTab)
+              : searchResults.query.isEmpty && selectedTags.isEmpty
+                  ? _mainPage(context)
+                  : showSearchSuggestions
+                      ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
+                      : CourseUtils.searchResults(
+                          context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+        );
+      });
     }
 
     // this return will handle this states: TagLoading TagFailure CourseLoading CourseFailure
@@ -195,6 +193,7 @@ class _State extends State<Courses> {
       showTitle: true,
       searchKey: searchKey,
       showBackButton: goBack,
+      backButtonWithFilters: widget.backButtonWithFilters,
       showActions: widget.homeEnrollTocourse,
       title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
       actions: [_filterWidget()],
@@ -205,7 +204,7 @@ class _State extends State<Courses> {
       }),
       onSearchResults: (SearchResults results) => this.setState(() {
         showSearchSuggestions = true;
-        searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
+        searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.searchResults));
       }),
       suggestionMethod: CourseUtils.suggestionMethod,
       searchMethod: CourseUtils.searchMethod,
