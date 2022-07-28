@@ -302,7 +302,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
             isDisabled: !isEnabled,
             title:
                 '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'save'))} ${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'changes'))}',
-            onPressed: () async {
+            onPressed:!isEnabled?(){}: () async {
               FocusScope.of(context).unfocus();
               if (emailHasChanged || usernameHasChanged) {
                 if (await logOutConfirmationPopUp(context)) {
