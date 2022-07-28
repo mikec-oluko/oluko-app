@@ -166,7 +166,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                           userProgress: _usersProgress[friendUserElement.id],
                           progressValue: 0.5,
                           maxRadius: 30,
-                          imageUrl: friendUserElement.avatar,
+                          imageUrl: friendUserElement.getAvatarThumbnail(),
                           name: friendUserElement.firstName,
                           lastname: friendUserElement.lastName,
                           currentUserId: widget.currentUser.id,
@@ -178,7 +178,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
                           child: Text(
-                            '${friendUserElement.firstName} ${friendUserElement.lastName}',
+                            friendUserElement.getFullName(),
                             overflow: TextOverflow.ellipsis,
                             style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
                             textAlign: TextAlign.center,

@@ -66,4 +66,12 @@ class UserStories extends Base {
     storyJson.addEntries(super.toJson().entries);
     return storyJson;
   }
+
+  String getAvatarThumbnail() {
+    return avatar_thumbnail ?? avatar ?? '';
+  }
+
+  String getFullName() {
+    return name ?? '';
+  }
 }

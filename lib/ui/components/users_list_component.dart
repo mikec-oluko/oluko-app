@@ -109,7 +109,7 @@ class _UserListComponentState extends State<UserListComponent> {
                     userProgress: widget.usersProgess[friendElement.id],
                     progressValue: 0.5,
                     maxRadius: 30,
-                    imageUrl: friendElement.avatar,
+                    imageUrl: friendElement.getAvatarThumbnail(),
                     name: friendElement.firstName,
                     lastname: friendElement.lastName,
                     currentUserId: widget.authUser.id,
@@ -144,7 +144,7 @@ class _UserListComponentState extends State<UserListComponent> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
       child: Text(
-        '${user.firstName} ${user.lastName}',
+        user.getFullName(),
         overflow: TextOverflow.ellipsis,
         style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
         textAlign: TextAlign.center,
