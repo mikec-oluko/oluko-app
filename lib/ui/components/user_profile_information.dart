@@ -141,7 +141,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   userProgress: _usersProgress[widget.userToDisplayInformation.id],
                   itemUserId: widget.userToDisplayInformation.id,
                   maxRadius: 40,
-                  imageUrl: widget.userToDisplayInformation.avatar,
+                  imageUrl: widget.userToDisplayInformation.getAvatarThumbnail(),
                   name: widget.userToDisplayInformation.firstName,
                   lastname: widget.userToDisplayInformation.lastName,
                   userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
@@ -381,7 +381,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+                widget.userToDisplayInformation.getFullName(),
                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
               ),

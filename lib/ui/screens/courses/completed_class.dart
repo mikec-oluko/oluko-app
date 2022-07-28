@@ -122,7 +122,8 @@ class _CompletedClassState extends State<CompletedClass> {
                                     .saveSelfie(widget.courseEnrollment, widget.classIndex, widget.selfie);
                               }
                               if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
-                                Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                                Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root])); 
+                                Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root], arguments: {
                                   'index': widget.courseIndex,
                                   'classIndex': widget.classIndex + 1,
                                 });
