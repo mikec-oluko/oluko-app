@@ -10,6 +10,7 @@ import 'package:oluko_app/ui/components/search_filters.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'oluko_outlined_button.dart';
 import 'oluko_primary_button.dart';
@@ -82,12 +83,12 @@ class _State<T extends Base> extends State<FilterSelector> {
               children: [
                 OlukoPrimaryButton(
                   onPressed: submit,
-                  title: 'Apply',
+                  title: OlukoLocalizations.get(context, 'apply'),
                 ),
                 SizedBox(
                   width: 15,
                 ),
-                OlukoOutlinedButton(title: 'Close', onPressed: () => {widget.onClosed()})
+                OlukoOutlinedButton(title: OlukoLocalizations.get(context, 'close'), onPressed: () => {widget.onClosed()})
               ],
             )));
   }
@@ -119,7 +120,7 @@ class _State<T extends Base> extends State<FilterSelector> {
                         isExpanded: false,
                         textColor: OlukoColors.grayColor,
                         thinPadding: true,
-                        title: 'Close',
+                        title: OlukoLocalizations.get(context, 'close'),
                         onPressed: () => {widget.onClosed(), widget.showBottonTab()}),
                   ),
                   SizedBox(
@@ -130,7 +131,7 @@ class _State<T extends Base> extends State<FilterSelector> {
                       isExpanded: false,
                       thinPadding: true,
                       onPressed: submit,
-                      title: 'Apply',
+                      title: OlukoLocalizations.get(context, 'apply'),
                     ),
                   ),
                 ],
