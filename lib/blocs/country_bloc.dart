@@ -32,7 +32,7 @@ class CountryBloc extends Cubit<CountryState> {
           }
         }
       } else {
-        countries = await CountryRepository.getCountries();
+        countries = await CountryRepository.getCountries(country);
       }
       emit(CountrySuccess(countries: countries));
     } catch (e, stackTrace) {

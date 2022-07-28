@@ -48,7 +48,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
-        this._profileInfo = state.user;
+        _profileInfo = state.user;
         _defaultUser = UserInformation(
           username: _profileInfo.username,
           firstName: _profileInfo.firstName,
@@ -67,6 +67,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           country: _profileInfo.country,
           city: _profileInfo.city,
         );
+        BlocProvider.of<CountryBloc>(context).getCountriesWithStates(newFields != null && newFields.country != null ? newFields.country : _profileInfo.country);
         isGoogleAuth = state.firebaseUser.providerData[0].providerId == 'google.com';
         return buildScaffoldPage(context);
       } else {
@@ -117,9 +118,9 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           userInformationFields(OlukoLocalizations.get(context, 'firstName'), _profileInfo.firstName),
           userInformationFields(OlukoLocalizations.get(context, 'lastName'), _profileInfo.lastName),
           userInformationFields(OlukoLocalizations.get(context, 'email'), _profileInfo.email),
-          userInformationFields(OlukoLocalizations.get(context, 'city'), _profileInfo.city != null ? _profileInfo.city : ""),
-          userInformationFields(OlukoLocalizations.get(context, 'state'), _profileInfo.state != null ? _profileInfo.state : ""),
           userInformationFields(OlukoLocalizations.get(context, 'country'), _profileInfo.country != null ? _profileInfo.country : ""),
+          userInformationFields(OlukoLocalizations.get(context, 'state'), _profileInfo.state != null ? _profileInfo.state : ""),
+          userInformationFields(OlukoLocalizations.get(context, 'city'), _profileInfo.city != null ? _profileInfo.city : ""),
         ],
       ),
     );
@@ -144,9 +145,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
               OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20, vertical: 10) : const EdgeInsets.all(10.0),
           child: Container(
             decoration: BoxDecoration(
-                borderRadius:
-                    OlukoNeumorphism.isNeumorphismDesign ? const BorderRadius.all(const Radius.circular(15.0)) : const BorderRadius.all(Radius.circular(5.0)),
-                border: OlukoNeumorphism.isNeumorphismDesign ? const Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.grayColor),
+                borderRadius: OlukoNeumorphism.isNeumorphismDesign
+                    ? const BorderRadius.all(const Radius.circular(15.0))
+                    : const BorderRadius.all(Radius.circular(5.0)),
+                border:
+                    OlukoNeumorphism.isNeumorphismDesign ? const Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.grayColor),
                 color:
                     OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent),
             child: Container(
@@ -365,7 +368,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   Widget countriesDropdown() {
     return BlocListener<CountryBloc, CountryState>(
-      bloc: BlocProvider.of<CountryBloc>(context)..getCountriesWithStates(newFields.country ?? _profileInfo.country),
       listener: (context, state) {
         if (state is CountrySuccess) {
           setState(() {
@@ -415,23 +417,25 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   Widget statesDropdown() {
-    return countries != null && countries.isNotEmpty
-        ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
-            child: DropdownButton(
-              dropdownColor:
-                  OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
-              isExpanded: true,
-              value: newFields.state ?? _profileInfo.state,
-              items: getItemsForStatesDropdown(),
-              onChanged: (String item) {
-                setState(() {
-                  newFields.state = item;
-                });
-              },
-            ),
-          )
-        : const SizedBox();
+    if (countries != null && countries.isNotEmpty) {
+      final items = getItemsForStatesDropdown();
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
+        child: DropdownButton(
+          dropdownColor:
+              OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
+          isExpanded: true,
+          value: newFields.state ?? _profileInfo.state,
+          items: items,
+          onChanged: (String item) {
+            setState(() {
+              newFields.state = item;
+            });
+          },
+        ),
+      );
+    }
+    return const SizedBox();
   }
 
   List<DropdownMenuItem<String>> getItemsForStatesDropdown() {

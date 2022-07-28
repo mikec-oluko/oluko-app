@@ -28,14 +28,14 @@ class CountryRepository {
     return response;
   }
 
-  static Future<List<Country>> getCountries({String countryName}) async {
+  static Future<List<Country>> getCountries(String countryName) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance.collection('countries').orderBy('name').get();
     final List<Country> countries = [];
     for (final doc in docRef.docs) {
       final Map<String, dynamic> countryMap = doc.data() as Map<String, dynamic>;
       final country = Country.fromJson(countryMap);
       if (countryName != null && countryName == country.name) {
-        await getCountryStates(country.id);
+       country.states = await getCountryStates(country.id);
       }
       countries.add(country);
     }
