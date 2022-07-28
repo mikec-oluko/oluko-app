@@ -652,6 +652,10 @@ class Routes {
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<MyAccountBloc>.value(value: _myAccountBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
+          BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
@@ -1120,7 +1124,10 @@ class Routes {
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
-        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] as bool,showBottomTab: args['showBottomTab'] as Function(),backButtonWithFilters:args['backButtonWithFilters'] as bool);
+        newRouteView = Courses(
+            homeEnrollTocourse: args['homeEnrollTocourse'] as bool,
+            showBottomTab: args['showBottomTab'] as Function(),
+            backButtonWithFilters: args['backButtonWithFilters'] as bool);
         break;
 
       case RouteEnum.viewAll:
