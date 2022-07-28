@@ -145,7 +145,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                             showUserProgress: true,
                             userProgress: _usersProgress[user.id],
                             maxRadius: 30,
-                            imageUrl: user.avatar,
+                            imageUrl: user.getAvatarThumbnail(),
                             bloc: BlocProvider.of<StoryListBloc>(context),
                             getStories: true,
                             itemUserId: user.id,
@@ -161,14 +161,14 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                             itemUserId: user.id,
                             userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                             maxRadius: 30,
-                            imageUrl: user.avatar,
+                            imageUrl: user.getAvatarThumbnail(),
                             name: user.firstName,
                           ),
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0, bottom: 0.0),
                           child: Text(
                             user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
-                                ? '${user.firstName} ${user.lastName}'
+                                ? user.getFullName()
                                 : '',
                             style: OlukoFonts.olukoMediumFont(),
                             textAlign: TextAlign.center,
