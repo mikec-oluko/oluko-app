@@ -305,8 +305,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Future<void> logOut() async {
     await BlocProvider.of<AuthBloc>(context).logout(context);
     AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
-    Navigator.popUntil(context, ModalRoute.withName('/'));
-    // setState(() {});
   }
 
   Future<bool> logOutConfirmationPopUp(BuildContext context) async {
