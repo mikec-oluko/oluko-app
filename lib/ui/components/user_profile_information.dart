@@ -141,7 +141,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   userProgress: _usersProgress[widget.userToDisplayInformation.id],
                   itemUserId: widget.userToDisplayInformation.id,
                   maxRadius: 40,
-                  imageUrl: widget.userToDisplayInformation.avatarThumbnail ?? widget.userToDisplayInformation.avatar,
+                  imageUrl: widget.userToDisplayInformation.getAvatarThumbnail(),
                   name: widget.userToDisplayInformation.firstName,
                   lastname: widget.userToDisplayInformation.lastName,
                   userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
