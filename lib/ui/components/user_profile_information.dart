@@ -381,7 +381,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+                widget.userToDisplayInformation.getFullName(),
                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
               ),

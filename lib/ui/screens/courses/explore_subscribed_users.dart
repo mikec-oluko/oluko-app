@@ -168,7 +168,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                           padding: const EdgeInsets.only(top: 5.0, bottom: 0.0),
                           child: Text(
                             user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
-                                ? '${user.firstName} ${user.lastName}'
+                                ? user.getFullName()
                                 : '',
                             style: OlukoFonts.olukoMediumFont(),
                             textAlign: TextAlign.center,

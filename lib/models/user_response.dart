@@ -111,4 +111,8 @@ class UserResponse extends Base {
   String getAvatarThumbnail() {
     return avatarThumbnail ?? avatar ?? '';
   }
+
+  String getFullName() {
+    return '${firstName ?? ''} ${lastName ?? ''}';
+  }
 }

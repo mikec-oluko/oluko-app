@@ -144,7 +144,7 @@ class _UserListComponentState extends State<UserListComponent> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
       child: Text(
-        '${user.firstName} ${user.lastName}',
+        user.getFullName(),
         overflow: TextOverflow.ellipsis,
         style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
         textAlign: TextAlign.center,

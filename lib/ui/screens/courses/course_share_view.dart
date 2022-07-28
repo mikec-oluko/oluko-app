@@ -178,7 +178,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
                           child: Text(
-                            '${friendUserElement.firstName} ${friendUserElement.lastName}',
+                            friendUserElement.getFullName(),
                             overflow: TextOverflow.ellipsis,
                             style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
                             textAlign: TextAlign.center,

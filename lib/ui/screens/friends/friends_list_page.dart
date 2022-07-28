@@ -322,7 +322,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${user.firstName} ${user.lastName}',
+                                  user.getFullName(),
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
