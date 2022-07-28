@@ -40,7 +40,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   @override
   void dispose() {
-    BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
     super.dispose();
   }
 
@@ -58,16 +57,17 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           country: _profileInfo.country,
           city: _profileInfo.city,
         );
+        BlocProvider.of<CountryBloc>(context)
+            .getCountriesWithStates(newFields != null && newFields.country != null ? newFields.country : _profileInfo.country);
         newFields = UserInformation(
-          username: _profileInfo.username,
-          firstName: _profileInfo.firstName,
-          lastName: _profileInfo.lastName,
-          state: _profileInfo.state,
-          email: _profileInfo.email,
-          country: _profileInfo.country,
-          city: _profileInfo.city,
+          username: newFields.username ?? _profileInfo.username,
+          firstName: newFields.username ?? _profileInfo.firstName,
+          lastName: newFields.lastName ?? _profileInfo.lastName,
+          state: newFields.state ?? _profileInfo.state,
+          email: newFields.email ?? _profileInfo.email,
+          country: newFields.country ?? _profileInfo.country,
+          city: newFields.city ?? _profileInfo.city,
         );
-        BlocProvider.of<CountryBloc>(context).getCountriesWithStates(newFields != null && newFields.country != null ? newFields.country : _profileInfo.country);
         isGoogleAuth = state.firebaseUser.providerData[0].providerId == 'google.com';
         return buildScaffoldPage(context);
       } else {
@@ -84,7 +84,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: OlukoAppBar(
-          title: ProfileViewConstants.profileMyAccountTitle, showSearchBar: false, showTitle: OlukoNeumorphism.isNeumorphismDesign),
+        title: ProfileViewConstants.profileMyAccountTitle,
+        showSearchBar: false,
+        showTitle: OlukoNeumorphism.isNeumorphismDesign,
+        onPressed: () {
+          BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
+          BlocProvider.of<CountryBloc>(context).clear();
+        },
+      ),
       body: Stack(children: [
         SingleChildScrollView(
           child: Container(
@@ -370,9 +377,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     return BlocListener<CountryBloc, CountryState>(
       listener: (context, state) {
         if (state is CountrySuccess) {
-          setState(() {
-            countries = state.countries;
-          });
+          if (countries == null || countries.isEmpty || _profileInfo.country != newFields.country) {
+            setState(() {
+              countries = state.countries;
+            });
+          }
         }
       },
       child: countries != null && countries.isNotEmpty
@@ -403,6 +412,9 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                     newFieldsState = statesOfSelectedCountry[0];
                   } else {
                     newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(selectedCountry.id);
+                    final Country newCountryWithStates = newCountries.firstWhere((element) => element.id == selectedCountry.id);
+                    newFieldsState =
+                        newCountryWithStates != null && newCountryWithStates.states != null ? newCountryWithStates.states[0] : '';
                   }
                   setState(() {
                     newFields.country = item;
@@ -412,7 +424,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                 },
               ),
             )
-          : const SizedBox(),
+          : const Text('-'),
     );
   }
 
@@ -435,7 +447,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         ),
       );
     }
-    return const SizedBox();
+    return const Text('-');
   }
 
   List<DropdownMenuItem<String>> getItemsForStatesDropdown() {

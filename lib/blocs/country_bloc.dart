@@ -29,12 +29,13 @@ class CountryBloc extends Cubit<CountryState> {
           if (countryToUpdateIndex != -1 &&
               (countries[countryToUpdateIndex].states == null && countries[countryToUpdateIndex].states.isEmpty)) {
             countries[countryToUpdateIndex].states = await CountryRepository.getCountryStates(countries[countryToUpdateIndex].id);
+            emit(CountrySuccess(countries: countries));
           }
         }
       } else {
         countries = await CountryRepository.getCountries(country);
+        emit(CountrySuccess(countries: countries));
       }
-      emit(CountrySuccess(countries: countries));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
