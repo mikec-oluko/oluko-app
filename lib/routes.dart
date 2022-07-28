@@ -196,6 +196,7 @@ import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
 import 'models/dto/story_dto.dart';
 import 'models/transformation_journey_uploads.dart';
+import 'package:oluko_app/blocs/country_bloc.dart';
 
 enum RouteEnum {
   root,
@@ -437,6 +438,7 @@ class Routes {
   final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
   final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
+  final CountryBloc _countryBloc = CountryBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -652,6 +654,7 @@ class Routes {
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<MyAccountBloc>.value(value: _myAccountBloc),
+          BlocProvider<CountryBloc>.value(value: _countryBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
