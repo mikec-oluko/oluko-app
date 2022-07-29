@@ -63,7 +63,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                 : _profileInfo.country);
         newFields = UserInformation(
           username: newFields.username ?? _profileInfo.username,
-          firstName: newFields.username ?? _profileInfo.firstName,
+          firstName: newFields.firstName ?? _profileInfo.firstName,
           lastName: newFields.lastName ?? _profileInfo.lastName,
           state: newFields.state ?? _profileInfo.state,
           email: newFields.email ?? _profileInfo.email,
