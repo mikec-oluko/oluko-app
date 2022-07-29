@@ -109,7 +109,7 @@ class UserResponse extends Base {
   }
 
   String getAvatarThumbnail() {
-    return avatarThumbnail ?? avatar ?? '';
+    return avatarThumbnail ?? avatar;
   }
 
   String getFullName() {
