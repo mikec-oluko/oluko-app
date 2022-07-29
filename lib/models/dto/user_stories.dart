@@ -68,10 +68,10 @@ class UserStories extends Base {
   }
 
   String getAvatarThumbnail() {
-    return avatar_thumbnail ?? avatar ?? '';
+    return avatar_thumbnail ?? avatar;
   }
 
   String getFullName() {
-    return name ?? '';
+    return name;
   }
 }
