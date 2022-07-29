@@ -322,7 +322,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             current.taskSubmission != null &&
             current.taskSubmission.id == previous?.taskSubmission?.id &&
             current.taskSubmission.video != null &&
-            current.taskSubmission.video.url == previous?.taskSubmission?.video?.url) {
+            current.taskSubmission.video.url == previous?.taskSubmission?.video?.url&&_taskSubmission.video!=null) {
           return false;
         }
         if (previous is! GetSuccess &&
@@ -340,7 +340,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             ListView(
               children: [
                 const SizedBox(height: 20),
-                showVideoPlayer(_task.video),
+                showVideoPlayer(_task.videoHls ?? _task.video),
                 formSection(),
               ],
             ),
@@ -356,7 +356,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         return ListView(
           children: [
             const SizedBox(height: 20),
-            showVideoPlayer(_task.video),
+            showVideoPlayer(_task.videoHls ?? _task.video),
             formSection(state.taskSubmission),
             if (OlukoNeumorphism.isNeumorphismDesign)
               SizedBox(height: ScreenUtils.height(context) * 0.4)
@@ -371,7 +371,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             ListView(
               children: [
                 const SizedBox(height: 20),
-                showVideoPlayer(_task.video),
+                showVideoPlayer(_task.videoHls ?? _task.video),
                 formSection(),
               ],
             ),
@@ -458,6 +458,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           children: [
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicSecondaryButton(
+                    lighterButton: true,
                     buttonShape: NeumorphicShape.flat,
                     useBorder: true,
                     thinPadding: true,
@@ -732,7 +733,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   left: 10,
                   child: Container(
                     decoration: BoxDecoration(
-                      color:OlukoColors.black.withAlpha(150),
+                      color: OlukoColors.black.withAlpha(150),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Padding(
@@ -781,7 +782,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   left: 10,
                   child: Container(
                     decoration: BoxDecoration(
-                      color:OlukoColors.black.withAlpha(150),
+                      color: OlukoColors.black.withAlpha(150),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Padding(

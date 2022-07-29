@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -8,10 +9,13 @@ import 'coach_timeline_panel.dart';
 import 'dart:math' as math;
 
 class CoachSlidingUpPanel extends StatefulWidget {
-  const CoachSlidingUpPanel({this.content, this.timelineItemsContent, this.isIntroductionVideoComplete});
+  const CoachSlidingUpPanel(
+      {this.content, this.timelineItemsContent, this.isIntroductionVideoComplete, this.currentUser, this.onCurrentUserSelected});
   final bool isIntroductionVideoComplete;
   final Widget content;
   final List<CoachTimelineGroup> timelineItemsContent;
+  final UserResponse currentUser;
+  final Function() onCurrentUserSelected;
 
   @override
   _CoachSlidingUpPanelState createState() => _CoachSlidingUpPanelState();
@@ -48,6 +52,8 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         height: 300,
         child: CoachTimelinePanel(
           isIntroductionVideoComplete: widget.isIntroductionVideoComplete,
+          currentUser: widget.currentUser,
+          onCurrentUserSelected: widget.onCurrentUserSelected,
         ),
       ),
       controller: _panelController,

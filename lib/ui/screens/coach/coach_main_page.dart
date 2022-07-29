@@ -58,7 +58,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   }
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
-                    if (_coachAssignment != null) {
+                    if (_coachAssignment != null && (_coachAssignment.coachId != null && _coachAssignment.coachReference != null)) {
                       if (_coachAssignment.userId == _currentUser.id) {
                         if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
                             CoachAssignmentStatusEnum.approved) {

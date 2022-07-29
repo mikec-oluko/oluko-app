@@ -96,8 +96,10 @@ class CourseEnrollmentRepository {
         courseEnrollment.completion = 1;
         courseEnrollment.isUnenrolled = true;
       } else {
-        final double courseProgress = 1 / courseEnrollment.classes.length;
-        courseEnrollment.completion += courseProgress;
+        if (courseEnrollment.classes[classIndex].completedAt == null) {
+          final double courseProgress = 1 / courseEnrollment.classes.length;
+          courseEnrollment.completion += courseProgress;
+        }
       }
       classes[classIndex].completedAt = Timestamp.now();
     }
@@ -105,7 +107,7 @@ class CourseEnrollmentRepository {
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
       'completion': courseEnrollment.completion,
       'completed_at': FieldValue.serverTimestamp(),
-      'is_unenrolled': courseEnrollment.isUnenrolled,
+      'is_unenrolled': courseEnrollment.isUnenrolled is bool ? courseEnrollment.isUnenrolled : false,
       'updated_at': FieldValue.serverTimestamp()
     });
   }
@@ -127,7 +129,7 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
-    for (final ObjectSubmodel classObj in course.classes) {
+    for (final ObjectSubmodel classObj in course.classes) { 
       EnrollmentClass enrollmentClass =
           EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
 
@@ -341,6 +343,7 @@ class CourseEnrollmentRepository {
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .where('created_by', isEqualTo: userId)
+        .where('is_unenrolled', isEqualTo: false)
         .orderBy('created_at', descending: true)
         .snapshots();
     return courseEnrollmentsStream;

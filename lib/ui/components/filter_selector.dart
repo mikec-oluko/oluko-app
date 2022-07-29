@@ -10,6 +10,7 @@ import 'package:oluko_app/ui/components/search_filters.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'oluko_outlined_button.dart';
 import 'oluko_primary_button.dart';
@@ -54,22 +55,19 @@ class _State<T extends Base> extends State<FilterSelector> {
           }
         }
       }
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.14 : 20),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: _getFilterSelectorContent(),
-            ),
-          ),
-          if (OlukoNeumorphism.isNeumorphismDesign)
-            Align(alignment: Alignment.bottomCenter, child: SizedBox(height: 100, child: filterNeumorphicButtons(context)))
-          else
-            filterButtons(context),
-        ],
-      );
+      return Scaffold(
+          bottomSheet: SizedBox(height: ScreenUtils.height(context) / 5.6, child: filterNeumorphicButtons(context)),
+          body: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 5.6 + 10 : 20),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: _getFilterSelectorContent(),
+                ),
+              ),
+            ],
+          ));
     });
   }
 
@@ -85,12 +83,12 @@ class _State<T extends Base> extends State<FilterSelector> {
               children: [
                 OlukoPrimaryButton(
                   onPressed: submit,
-                  title: 'Apply',
+                  title: OlukoLocalizations.get(context, 'apply'),
                 ),
                 SizedBox(
                   width: 15,
                 ),
-                OlukoOutlinedButton(title: 'Close', onPressed: () => {widget.onClosed()})
+                OlukoOutlinedButton(title: OlukoLocalizations.get(context, 'close'), onPressed: () => {widget.onClosed()})
               ],
             )));
   }
@@ -108,51 +106,50 @@ class _State<T extends Base> extends State<FilterSelector> {
           width: ScreenUtils.width(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: 150,
-                  height: 60,
-                  child: OlukoNeumorphicSecondaryButton(
-                      useBorder: true,
-                      buttonShape: NeumorphicShape.flat,
-                      isExpanded: false,
-                      textColor: OlukoColors.grayColor,
-                      thinPadding: true,
-                      title: 'Close',
-                      onPressed: () => {widget.onClosed(), widget.showBottonTab()}),
-                ),
-                // SizedBox(
-                //   width: 15,
-                // ),
-                SizedBox(
-                  width: 150,
-                  height: 60,
-                  child: OlukoNeumorphicPrimaryButton(
-                    useBorder: true,
-                    isExpanded: false,
-                    thinPadding: true,
-                    onPressed: submit,
-                    title: 'Apply',
+            child: Column(children: [
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    height: 60,
+                    child: OlukoNeumorphicSecondaryButton(
+                        useBorder: true,
+                        buttonShape: NeumorphicShape.flat,
+                        isExpanded: false,
+                        textColor: OlukoColors.grayColor,
+                        thinPadding: true,
+                        title: OlukoLocalizations.get(context, 'close'),
+                        onPressed: () => {widget.onClosed(), widget.showBottonTab()}),
                   ),
-                ),
-              ],
-            ),
+                  SizedBox(
+                    width: 150,
+                    height: 60,
+                    child: OlukoNeumorphicPrimaryButton(
+                      useBorder: true,
+                      isExpanded: false,
+                      thinPadding: true,
+                      onPressed: submit,
+                      title: OlukoLocalizations.get(context, 'apply'),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10)
+            ]),
           )),
     );
   }
 
   Widget _getFilterSelectorContent() {
-    return Container(
-      child: ListView(
-        children: widget.itemList.entries
-            .map((entry) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _getFilterCategory(entry),
-                ))
-            .toList(),
-      ),
+    return ListView(
+      children: widget.itemList.entries
+          .map((entry) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _getFilterCategory(entry),
+              ))
+          .toList(),
     );
   }
 

@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -21,6 +22,7 @@ import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
+import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
@@ -34,7 +36,10 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeNeumorphicContent extends StatefulWidget {
-  HomeNeumorphicContent(this.courseEnrollments, this.authState, this.courses, this.user, {Key key, this.index = 0}) : super(key: key);
+  HomeNeumorphicContent(
+      this.courseEnrollments, this.authState, this.courses, this.user,
+      {Key key, this.index = 0})
+      : super(key: key);
 
   int index;
   final User user;
@@ -57,25 +62,31 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool showLogo = true;
   int courseIndex = 0;
   bool _isVideoPlaying = false;
+  bool _isBottomTabActive = true;
 
   @override
   Widget build(BuildContext context) {
-    widget.scrollController =
-        ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
+    widget.scrollController = ScrollController(
+        initialScrollOffset: widget.index != null
+            ? widget.index * ScreenUtils.width(context) * 0.42
+            : 0);
     BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
     return homeContainer();
   }
 
   Widget homeContainer() {
     if (mounted) {
-      BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: courseIndex);
+      BlocProvider.of<CarouselBloc>(context)
+          .widgetIsHiden(false, widgetIndex: courseIndex);
     }
     if (widget.courseEnrollments.isNotEmpty) {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(
         builder: (context, courseState) {
           if (courseState is GetByCourseEnrollmentsSuccess) {
             widget.courses = courseState.courses;
-            if (widget.courses != null && widget.courses.isNotEmpty && widget.courses.any((element) => element != null)) {
+            if (widget.courses != null &&
+                widget.courses.isNotEmpty &&
+                widget.courses.any((element) => element != null)) {
               return enrolled();
             } else {
               return notEnrolled();
@@ -99,7 +110,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               showLogo ? getLogo() : SliverToBoxAdapter(),
-              if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+              if (GlobalConfiguration().getValue('showStories') == 'true')
+                getStoriesBar(context),
             ];
           },
           body: CarouselSlider.builder(
@@ -127,7 +139,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     alignment: Alignment.topCenter,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.15),
+                        padding: EdgeInsets.only(
+                            top: ScreenUtils.height(context) * 0.15),
                         child: Image.asset(
                           OlukoNeumorphism.mvtLogo,
                           scale: 2,
@@ -137,10 +150,18 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         bottom: ScreenUtils.height(context) * 0.1,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                            Navigator.pushNamed(
+                                context, routeLabels[RouteEnum.courses],
+                                arguments: {
+                    'homeEnrollTocourse': 'true',
+                    'showBottomTab': () => setState(() {
+                          _isBottomTabActive = !_isBottomTabActive;
+                        })
+                  });
                           },
                           child: Neumorphic(
-                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                            style: OlukoNeumorphism
+                                .getNeumorphicStyleForCircleElement(),
                             child: Padding(
                               padding: const EdgeInsets.all(25.0),
                               child: Image.asset(
@@ -166,7 +187,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 if (index <= widget.courses.length - 1) {
                   courseIndex = index;
                   if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                    BlocProvider.of<CarouselBloc>(context)
+                        .widgetIsHiden(false, widgetIndex: index);
                   }
                   if (!showLogo) {
                     setState(() {
@@ -219,7 +241,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget getStoriesBar(BuildContext context) {
     return BlocBuilder<StoryBloc, StoryState>(
       builder: (context, hasStories) {
-        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories && showLogo;
+        showStories = hasStories is HasStoriesSuccess &&
+            hasStories.hasStories &&
+            showLogo;
         return enrolledContent(showStories);
       },
     );
@@ -234,14 +258,16 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           ? StoriesHeader(
               widget.user.uid,
               maxRadius: 30,
-              color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
+              color: OlukoColors.userColor(widget.authState.user.firstName,
+                  widget.authState.user.lastName),
             )
           : const SizedBox(),
     ));
   }
 
   SliverList getClassView(int index, BuildContext context) {
-    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.courses[index].video);
+    BlocProvider.of<VideoBloc>(context)
+        .getAspectRatio(widget.courses[index].video);
     return SliverList(
       delegate: SliverChildListDelegate([
         GestureDetector(
@@ -260,10 +286,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                     courseIndex == index &&
                     !_isVideoPlaying &&
                     courseIndex <= widget.courses.length) {
-                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+                  BlocProvider.of<CarouselBloc>(context)
+                      .widgetIsHiden(true, widgetIndex: index);
                 } else {
                   if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                    BlocProvider.of<CarouselBloc>(context)
+                        .widgetIsHiden(false, widgetIndex: index);
                   }
                 }
               },
@@ -375,7 +403,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         },
         child: Padding(
           padding: EdgeInsets.only(
-              top: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.08 : ScreenUtils.height(context) * 0.06),
+              top: ScreenUtils.smallScreen(context)
+                  ? ScreenUtils.height(context) * 0.08
+                  : ScreenUtils.height(context) * 0.06),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
@@ -387,7 +417,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   _keys.add(GlobalKey(debugLabel: i.toString()));
                   return Padding(
                     key: _keys[i],
-                    padding: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 15),
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 15, bottom: 15),
                     child: GestureDetector(
                       onTap: () {
                         widget.carouselController.jumpToPage(i);
@@ -432,7 +463,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     if (GlobalConfiguration().getValue('showStories') == 'true') {
       return BlocBuilder<StoryBloc, StoryState>(
         builder: (context, hasStories) {
-          final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
+          final bool showStories =
+              hasStories is HasStoriesSuccess && hasStories.hasStories;
           return getNotEnrolledContent(showStories, context);
         },
       );
@@ -442,6 +474,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Scaffold getNotEnrolledContent(bool showStories, BuildContext context) {
+    BlocProvider.of<UsersSelfiesBloc>(context).get();
     return Scaffold(
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       body: Column(
@@ -454,12 +487,13 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 20, top: 20, bottom: showStories ? 0 : 20),
+                      padding: EdgeInsets.only(
+                          left: 20, top: 20, bottom: showStories ? 0 : 20),
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Image.asset(
-                         OlukoNeumorphism.mvtLogo,
-                          scale: 4,
+                          OlukoNeumorphism.mvtLogo,
+                          scale: 4.5,
                         ),
                       ),
                     ),
@@ -497,17 +531,23 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: OlukoNeumorphismColors.homeGradientColorList,
-                    ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                    ).createShader(
+                        Rect.fromLTRB(0, 0, rect.width, rect.height));
                   },
                   child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/courses/profile_photos.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    height: ScreenUtils.height(context) - (showStories ? 240 : 181),
+                    height: ScreenUtils.height(context) - (showStories
+                            ? ScreenUtils.smallScreen(context)
+                                ? ScreenUtils.height(context) * 0.38
+                                : ScreenUtils.height(context) * 0.35
+                            : ScreenUtils.height(context) * 0.26),
                     width: ScreenUtils.width(context),
+                    child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
+                      if (state is UsersSelfiesSuccess) {
+                        return SelfiesGrid(images: state.usersSelfies.selfies);
+                      } else {
+                        return OlukoCircularProgressIndicator();
+                      }
+                    }),
                   ),
                 ),
                 Center(child: notErolledContent(showStories))
@@ -538,7 +578,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     );
     return SizedBox(
       width: ScreenUtils.width(context),
-      height: showStories ? ScreenUtils.height(context) * 0.72 : ScreenUtils.height(context) * 0.77,
+      height: showStories
+          ? ScreenUtils.height(context) * 0.72
+          : ScreenUtils.height(context) * 0.77,
       child: Stack(
         children: widgets +
             [
@@ -576,7 +618,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         child: StoriesHeader(
           widget.user.uid,
           maxRadius: 30,
-          color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
+          color: OlukoColors.userColor(
+              widget.authState.user.firstName, widget.authState.user.lastName),
         ),
       );
     } else {
@@ -593,7 +636,13 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             useBorder: true,
             title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+              Navigator.pushNamed(context, routeLabels[RouteEnum.courses],
+                  arguments: {
+                    'backButtonWithFilters': true,
+                    'showBottomTab': () => setState(() {
+                          _isBottomTabActive = !_isBottomTabActive;
+                        })
+                  });
             },
           )
         ],
@@ -605,7 +654,11 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return Column(
       children: [
         SizedBox(
-          height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.05,
+          height: showStories
+              ? ScreenUtils.smallScreen(context)
+                  ? 0
+                  : ScreenUtils.height(context) * 0.1
+              : ScreenUtils.height(context) * 0.05,
         ),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
@@ -614,12 +667,17 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         const SizedBox(height: 15),
         Image.asset(
           OlukoNeumorphism.mvtLogo,
-          scale: 2,
+          scale: 2.5,
         ),
-        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),
+        SizedBox(
+            height: showStories
+                ? ScreenUtils.height(context) * 0.1
+                : ScreenUtils.height(context) * 0.15),
         GestureDetector(
           onTap: () async {
-            final videoUrl = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.homeVideo);
+            final videoUrl =
+                await BlocProvider.of<IntroductionMediaBloc>(context)
+                    .getVideo(IntroductionMediaTypeEnum.homeVideo);
             if (videoUrl != null) {
               setState(() {
                 mediaURL = videoUrl;
@@ -631,11 +689,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             width: 65,
             height: 65,
             child: OlukoBlurredButton(
-              childContent: Image.asset('assets/courses/play_arrow.png', scale: 3.5, color: OlukoColors.white),
+              childContent: Image.asset('assets/courses/play_arrow.png',
+                  scale: 3.5, color: OlukoColors.white),
             ),
           ),
         ),
-        SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),
+        SizedBox(
+            height: showStories
+                ? ScreenUtils.height(context) * 0.1
+                : ScreenUtils.height(context) * 0.15),
         enrollButton()
       ],
     );
@@ -655,5 +717,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return const SizedBox();
   }
 
-  bool isSelected(int selected, int index) => (index != null && selected == index) || (index == null && selected == 0);
+  bool isSelected(int selected, int index) =>
+      (index != null && selected == index) || (index == null && selected == 0);
 }

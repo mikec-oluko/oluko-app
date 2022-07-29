@@ -50,6 +50,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/profile/mail_bloc.dart';
+import 'package:oluko_app/blocs/profile/my_account_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
@@ -89,6 +90,7 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
+import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -194,6 +196,7 @@ import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
 import 'models/dto/story_dto.dart';
 import 'models/transformation_journey_uploads.dart';
+import 'package:oluko_app/blocs/country_bloc.dart';
 
 enum RouteEnum {
   root,
@@ -433,6 +436,9 @@ class Routes {
   final CoursePanelBloc _coursePanelBloc = CoursePanelBloc();
   final UpcomingChallengesBloc _upcomingChallengesBloc = UpcomingChallengesBloc();
   final CoachVideoMessageBloc _coachVideoMessageBloc = CoachVideoMessageBloc();
+  final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
+  final MyAccountBloc _myAccountBloc = MyAccountBloc();
+  final CountryBloc _countryBloc = CountryBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -449,6 +455,7 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<RemainSelectedTagsBloc>.value(value: _remainSelectedTagsBloc),
@@ -646,6 +653,12 @@ class Routes {
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
+          BlocProvider<MyAccountBloc>.value(value: _myAccountBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
+          BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
+          BlocProvider<CountryBloc>.value(value: _countryBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
@@ -1114,7 +1127,10 @@ class Routes {
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
-        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
+        newRouteView = Courses(
+            homeEnrollTocourse: args['homeEnrollTocourse'] as bool,
+            showBottomTab: args['showBottomTab'] as Function(),
+            backButtonWithFilters: args['backButtonWithFilters'] as bool);
         break;
 
       case RouteEnum.viewAll:
@@ -1180,6 +1196,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1207,6 +1224,7 @@ class Routes {
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
         ];
         newRouteView = CoachPage();
         break;

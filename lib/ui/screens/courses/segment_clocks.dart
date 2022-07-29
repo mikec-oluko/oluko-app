@@ -16,7 +16,6 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
-import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -29,15 +28,14 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
-import 'package:oluko_app/models/enums/personal_record_param.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
-import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/submodels/rounds_alerts.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -57,14 +55,11 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
-import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 //import 'package:native_device_orientation/native_device_orientation.dart';
-
-import '../../../services/video_service.dart';
 
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
@@ -110,13 +105,13 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   int realTaskIndex = 0;
 
   //Alert timer
-  Duration alertTimeLeft;
+  Duration alertDuration = Duration.zero;
   Timer alertTimer;
   bool alertTimerPlaying = false;
 
-  //Alert timer
-  Duration alertDurationTimeLeft;
-  Timer alertDurationTimer;
+  List<Alert> _currentRoundAlerts = [];
+  int _alertIndex = 0;
+  int _alertTotalDuration = 5;
 
   //Stopwatch
   Duration stopwatchDuration = Duration();
@@ -150,7 +145,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool _wantsToCreateStory = false;
   bool _isVideoUploaded = false;
   bool waitingForSegSubCreation = false;
-  String _roundAlert = null;
   CoachRequest _coachRequest;
   XFile videoRecorded;
   bool _isFromChallenge = false;
@@ -173,7 +167,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
       scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
-
     setState(() {
       _isFromChallenge = widget.fromChallenge ?? false;
     });
@@ -233,7 +226,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                               File(_segmentSubmission.videoState.stateInfo),
                               3.0 / 4.0,
                               _segmentSubmission.id,
-                             segmentSubmission: _segmentSubmission,
+                              segmentSubmission: _segmentSubmission,
                             );
 
                             _globalService.videoProcessing = true;
@@ -453,7 +446,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             builder: (context, state) {
               keyboardVisibilty = state.setVisible;
               textController = state.textEditingController;
-              return !keyboardVisibilty && isSegmentWithoutRecording()
+              return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
                   ? SlidingUpPanel(
                       controller: panelController,
                       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -467,7 +460,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                             if (workState != WorkState.paused) {
                               changeSegmentState();
                             }
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
                           }),
                       body: _body(keyboardVisibilty),
                     )
@@ -526,7 +519,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
         } else {
           if (alertTimerPlaying) {
-            _playAlertTimer();
+            _playAlert(); //TODO: CHECK THIS
           }
         }
         _startStopwatch();
@@ -591,16 +584,22 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           )
         else
           const SizedBox(),
-        if (_roundAlert != null)
-          Positioned(
-            top: isSegmentWithoutRecording() ? ScreenUtils.height(context) * 0.59 : ScreenUtils.height(context) * 0.55,
-            left: ScreenUtils.width(context) / 3.8,
-            child: OlukoRoundAlert(text: _roundAlert),
-          )
-        else
-          const SizedBox.shrink(),
+        alertWidget()
       ]),
     );
+  }
+
+  Widget alertWidget() {
+    if (alertTimerPlaying) {
+      String alertText = _currentRoundAlerts[_alertIndex - 1].text;
+      return Positioned(
+        top: isSegmentWithoutRecording() ? ScreenUtils.height(context) * 0.59 : ScreenUtils.height(context) * 0.55,
+        left: ScreenUtils.width(context) / 3.8,
+        child: OlukoRoundAlert(text: alertText),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   void shareDoneAction() {
@@ -613,6 +612,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   void nextSegmentAction() {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     if (widget.segmentIndex < widget.segments.length - 1) {
+      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.segmentDetail],
@@ -741,6 +741,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (alertTimer != null) {
       alertTimer.cancel();
     }
+    alertTimerPlaying = false;
 
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
       if ((isLastOne() || nextIsFirstRound()) ||
@@ -754,9 +755,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     _saveStopwatch();
 
     if (timerTaskIndex == timerEntries.length - 1 && realTaskIndex <= timerEntries.length - 1) {
-      setState(() {
-        _roundAlert = null;
-      });
       _finishWorkout();
       realTaskIndex++;
       return;
@@ -770,7 +768,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       setAlert();
       if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
         BlocProvider.of<UserProgressBloc>(context)
-            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds,_friends);
+            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
       }
     }
     _playTask();
@@ -878,7 +876,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
   }
 
-  void _finishWorkout() {
+  Future<void> _finishWorkout() async {
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
       BlocProvider.of<UserProgressBloc>(context).update(_user.uid, 1, _friends);
     }
@@ -893,7 +891,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
 
     if (widget.segments[widget.segmentIndex].isChallenge) {
-      StoryUtils.createNewPRChallengeStory(context, totalScore, _user.uid, widget.segments[widget.segmentIndex]);
+      await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);
       BlocProvider.of<PersonalRecordBloc>(context).create(
           widget.segments[widget.segmentIndex],
           widget.courseEnrollment,
@@ -934,66 +932,113 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return value;
   }
 
-  setAlert() {
-    _roundAlert = null;
-    final List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
-    if (alerts != null && !alerts.isEmpty) {
-      Alert alert;
+  //Called each time round change
+  void setAlert() {
+    alertDuration = Duration.zero;
+    _alertIndex = 0;
+    List<RoundsAlerts> roundsAlerts = widget.segments[widget.segmentIndex].roundsAlerts;
+    if (roundsAlerts != null && roundsAlerts.isNotEmpty) {
       if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-        alert = alerts[0];
+        _currentRoundAlerts = roundsAlerts[0].alerts;
       } else {
-        alert = alerts[timerEntries[timerTaskIndex].round];
+        _currentRoundAlerts = roundsAlerts[timerEntries[timerTaskIndex].round].alerts;
       }
-      playAlert(alert);
+      if (_currentRoundAlerts != null && _currentRoundAlerts.isNotEmpty) {
+        _playAlert();
+      }
     }
   }
 
-  playAlert(Alert alert) {
-    if (alert != null) {
-      if (alert.time > 0) {
-        alertTimerPlaying = true;
-        alertTimeLeft = Duration(seconds: alert.time);
-        _playAlertTimer();
+  void _playAlert() {
+    alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      checkNewAlertToShow();
+      checkAlertReachedMaxDuration();
+      checkNextAlertStartingBeforeCurrentOneFinished();
+      alertDuration = Duration(seconds: alertDuration.inSeconds + 1);
+    });
+  }
+
+  void checkNewAlertToShow() {
+    int index;
+
+    if (_isIndexInRange()) {
+      index = _alertIndex;
+    } else {
+      if (_isIndexEqualToLength()) {
+        index = _alertIndex - 1;
       } else {
-        _roundAlert = alert.text;
-        setAlertDuration(5);
+        index = _alertIndex;
+      }
+    }
+
+    if (_isIndexInRange(index)) {
+      if (alertDuration.inSeconds == _currentRoundAlerts[index].time) {
+        setState(() {
+          alertTimerPlaying = true;
+        });
+        if (_canIncrementAlert()) {
+          _alertIndex++;
+        }
+      }
+    }
+  }
+
+  void checkAlertReachedMaxDuration() {
+    int index;
+
+    if (_isIndexInRange()) {
+      if (_alertIndex == 0) {
+        index = _alertIndex;
+      } else {
+        index = _alertIndex - 1;
       }
     } else {
-      _roundAlert = null;
+      if (_isIndexEqualToLength()) {
+        index = _alertIndex - 1;
+      } else {
+        index = _alertIndex;
+      }
+    }
+
+    if (_isIndexInRange(index)) {
+      int momentAlertStarted = _currentRoundAlerts[index].time;
+      int currentAlertDuration = alertDuration.inSeconds - momentAlertStarted;
+      if (currentAlertDuration == _alertTotalDuration) {
+        setState(() {
+          alertTimerPlaying = false;
+        });
+        if (_canIncrementAlert()) {
+          _alertIndex++;
+        }
+      }
     }
   }
 
-  void _playAlertTimer() {
-    alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      if (alertTimeLeft.inSeconds == 0) {
-        alertTimerPlaying = false;
-        alertTimer.cancel();
-        if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-          _roundAlert = widget.segments[widget.segmentIndex].alerts[0].text;
-        } else {
-          _roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round].text;
-        }
-        setAlertDuration(5);
+  void checkNextAlertStartingBeforeCurrentOneFinished() {
+    if (_existsNextAlert()) {
+      int nextAlertTime = _currentRoundAlerts[_alertIndex + 1].time;
+      if (alertDuration.inSeconds == nextAlertTime) {
+        _alertIndex++;
         return;
       }
-      alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
-    });
+    }
   }
 
-  setAlertDuration(int seconds) {
-    alertDurationTimeLeft = Duration(seconds: seconds);
-    _playAlertDurationTimer();
+  bool _canIncrementAlert() {
+    return (_alertIndex + 1) <= _currentRoundAlerts.length;
   }
 
-  void _playAlertDurationTimer() {
-    alertDurationTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      if (alertDurationTimeLeft.inSeconds == 0) {
-        alertDurationTimer.cancel();
-        _roundAlert = null;
-        return;
-      }
-      alertDurationTimeLeft = Duration(seconds: alertDurationTimeLeft.inSeconds - 1);
-    });
+  bool _existsNextAlert() {
+    return (_alertIndex + 1) < _currentRoundAlerts.length;
+  }
+
+  bool _isIndexInRange([int index]) {
+    int i = index == null ? _alertIndex : index;
+    return i < _currentRoundAlerts.length;
+  }
+
+  bool _isIndexEqualToLength() {
+    return _alertIndex == _currentRoundAlerts.length;
   }
 
   _startMovement() {
@@ -1028,9 +1073,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     WidgetsBinding.instance.removeObserver(this);
     if (stopwatchTimer != null && stopwatchTimer.isActive) {
       stopwatchTimer.cancel();
-    }
-    if (alertDurationTimer != null && alertDurationTimer.isActive) {
-      alertDurationTimer.cancel();
     }
     if (alertTimer != null && alertTimer.isActive) {
       alertTimer.cancel();

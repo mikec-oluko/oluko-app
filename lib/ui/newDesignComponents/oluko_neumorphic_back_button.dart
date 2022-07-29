@@ -3,11 +3,11 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 
 class OlukoNeumorphicCircleButton extends StatefulWidget {
-  const OlukoNeumorphicCircleButton({@required this.onPressed, this.customIcon});
+  const OlukoNeumorphicCircleButton({@required this.onPressed, this.customIcon, this.defaultAspect = false});
 
   final Function() onPressed;
   final Icon customIcon;
-
+  final bool defaultAspect;
   @override
   State<OlukoNeumorphicCircleButton> createState() => _OlukoNeumorphicCircleButtonState();
 }
@@ -16,7 +16,7 @@ class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButto
   @override
   Widget build(BuildContext context) {
     return Neumorphic(
-      style: NeumorphicStyle(
+      style: const NeumorphicStyle(
           depth: 5,
           intensity: 0.6,
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -27,13 +27,32 @@ class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButto
           shadowLightColorEmboss: OlukoColors.black,
           surfaceIntensity: 1,
           shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-          shadowDarkColor:OlukoColors.black),
-      child: IconButton(
-          padding: widget.customIcon != null ? EdgeInsets.zero : const EdgeInsets.only(left: 10),
-          icon: widget.customIcon != null ? widget.customIcon : Icon(Icons.arrow_back_ios, size: 24, color: OlukoColors.grayColor),
-          onPressed: () => {
-                if (this.widget.onPressed == null) {Navigator.pop(context)} else {this.widget.onPressed()}
-              }),
+          shadowDarkColor: OlukoColors.black),
+      child: widget.defaultAspect
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: GestureDetector(
+                onTap: () {
+                  if (widget.onPressed == null) {
+                    Navigator.pop(context);
+                  } else {
+                    widget.onPressed();
+                  }
+                },
+                child: Container(
+                    width: 40,
+                    height: 40,
+                    child: Image.asset(
+                      'assets/courses/left_back_arrow.png',
+                      scale: 3.5,
+                    )),
+              ))
+          : IconButton(
+              padding: widget.customIcon != null ? EdgeInsets.zero : const EdgeInsets.only(left: 10),
+              icon: widget.customIcon ?? const Icon(Icons.arrow_back_ios, size: 24, color: OlukoColors.grayColor),
+              onPressed: () => {
+                    if (widget.onPressed == null) {Navigator.pop(context)} else {widget.onPressed()}
+                  }),
     );
   }
 }

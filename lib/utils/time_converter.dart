@@ -99,7 +99,13 @@ class TimeConverter {
     final dateSplitted = ymdLocalized.split(' ');
     dateSplitted[0] = '${dateSplitted[0]},';
     List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    String ret = dateSplitted[1] + " " + dateSplitted[2];
+    String ret;
+    if(dateSplitted.length>2){
+      ret = dateSplitted[1] + " " + dateSplitted[2];
+    }
+    else{
+      ret = dateSplitted[1];
+    }
     String day = dateToFormat.toDate().day.toString();
     String year = dateToFormat.toDate().year.toString();
     String month = months[dateToFormat.toDate().month - 1];

@@ -30,7 +30,13 @@ class UserResponse extends Base {
       bool isHidden,
       bool isDeleted})
       : super(
-            id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
+            id: id,
+            createdBy: createdBy,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            updatedBy: updatedBy,
+            isDeleted: isDeleted,
+            isHidden: isHidden);
 
   String firstName, lastName, email, username, firebaseId, avatar, avatarThumbnail, coverImage, city, state, country;
   double currentPlan;
@@ -100,5 +106,13 @@ class UserResponse extends Base {
     };
     userReponseJson.addEntries(super.toJson().entries);
     return userReponseJson;
+  }
+
+  String getAvatarThumbnail() {
+    return avatarThumbnail ?? avatar;
+  }
+
+  String getFullName() {
+    return '${firstName ?? ''} ${lastName ?? ''}';
   }
 }

@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -68,6 +69,7 @@ class CoachPage extends StatefulWidget {
   _CoachPageState createState() => _CoachPageState();
 }
 
+const String assessmentId = 'emnsmBgZ13UBRqTS26Qd';
 const String _defaultIdForAllContentTimeline = '0';
 const String _defaultIntroductionVideoId = 'introVideo';
 const bool hideAssessmentsTab = true;
@@ -201,14 +203,18 @@ class _CoachPageState extends State<CoachPage> {
     } else {
       BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
       return CoachSlidingUpPanel(
-          content: _coachViewPageContent(context),
-          timelineItemsContent: _timelinePanelContent,
-          isIntroductionVideoComplete: coachAssignment.introductionCompleted);
+        content: _coachViewPageContent(context),
+        timelineItemsContent: _timelinePanelContent,
+        isIntroductionVideoComplete: coachAssignment.introductionCompleted,
+        currentUser: _currentAuthUser,
+        onCurrentUserSelected: () =>
+            BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent),
+      );
     }
   }
 
   void _requestCurrentUserData(BuildContext context) {
-    BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
+    BlocProvider.of<AssessmentBloc>(context).getById(assessmentId);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
     BlocProvider.of<CoachRequestStreamBloc>(context).getStream(_currentAuthUser.id, coachAssignment.coachId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, coachAssignment.coachId);
@@ -218,6 +224,7 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
     BlocProvider.of<ChallengeStreamBloc>(context).getStream(_currentAuthUser.id);
     BlocProvider.of<CoachVideoMessageBloc>(context).getStream(userId: _currentAuthUser.id, coachId: coachAssignment.coachId);
+    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
   }
 
   Widget _coachViewPageContent(BuildContext context) {
@@ -411,21 +418,13 @@ class _CoachPageState extends State<CoachPage> {
       _annotationVideosContent = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosContent, _introductionVideo);
 
   void _timelineContentBuilding(BuildContext context) {
-    _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(
-        timelineItemsContent: _timelineItemsContent,
-        enrolledCourseIdList: _courseEnrollmentList.map((enrolledCourse) => enrolledCourse.course.id).toList());
-
-    _timelinePanelContent.forEach((timelinePanelElement) {
-      timelinePanelElement.timelineElements.forEach((timelineContentItem) {
-        if (_allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
-          _allContent.add(timelineContentItem);
-        }
-      });
-    });
-    CoachTimelineGroup allTabContent = CoachTimelineGroup(
-        courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: _allContent);
-
-    _timelinePanelContent = CoachTimelineFunctions.timelinePanelUpdateTabsAndContent(allTabContent, _timelinePanelContent);
+    _timelinePanelContent = CoachTimelineFunctions.getTimelineContentForPanel(
+      context,
+      timelineContentTabs: _timelinePanelContent,
+      timelineItemsFromState: _timelineItemsContent,
+      allContent: _allContent,
+      listOfCoursesId: _courseEnrollmentList.map((enrolledCourse) => enrolledCourse.course.id).toList(),
+    );
   }
 
   void _coachRecommendationsTimelineItems() {

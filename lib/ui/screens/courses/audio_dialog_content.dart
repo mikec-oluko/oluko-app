@@ -63,7 +63,7 @@ class _State extends State<AudioDialogContent> {
                 Image.asset('assets/courses/photo_ellipse.png', scale: 4)
               ]),
               SizedBox(height: 15),
-              Text(coach == null ? widget.audio.userName : coach.firstName + ' ' + coach.lastName,
+              Text(coach == null ? widget.audio.userName : coach.getFullName(),
                   textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Padding(

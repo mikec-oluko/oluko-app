@@ -24,7 +24,7 @@ class CourseEnrollment extends Base {
       this.finishedAt,
       this.classes,
       this.userId,
-      this.isUnenrolled,
+      this.isUnenrolled = false,
       String id,
       Timestamp createdAt,
       String createdBy,

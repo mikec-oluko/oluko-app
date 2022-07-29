@@ -46,7 +46,7 @@ class CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamSta
         });
         emit(CourseEnrollmentsByUserStreamSuccess(
             courseEnrollments:
-                courseEnrollments.where((element) => element.completion < 1).where((element) => element.isUnenrolled != true).toList()));
+                courseEnrollments.where((element) => element.completion < 1).toList()));
       } catch (exception, stackTrace) {
         await Sentry.captureException(
           exception,
