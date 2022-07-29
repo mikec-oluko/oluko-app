@@ -6,7 +6,9 @@ import 'package:http/http.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/assessment_repository.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -16,8 +18,8 @@ abstract class UserInformationState {}
 class Loading extends UserInformationState {}
 
 class Success extends UserInformationState {
-  final List<Assessment> assessments;
-  Success({this.assessments});
+  UserResponse userResponse;
+  Success(this.userResponse);
 }
 
 class Failure extends UserInformationState {
@@ -81,7 +83,9 @@ class UserInformationBloc extends Cubit<UserInformationState> {
         AppMessages.clearAndShowSnackbarTranslated(
             context, 'infoUpdateSuccess');
       }
-
+      final UserResponse user = await UserRepository().getById(userId);
+      AuthRepository().storeLoginData(user);
+      emit(Success(user));
       return true;
     } else {
       AppMessages.clearAndShowSnackbarTranslated(context, 'errorMessage');

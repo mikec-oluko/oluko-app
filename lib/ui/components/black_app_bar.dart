@@ -311,9 +311,17 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           height: 55,
           width: 55,
           child: GestureDetector(
-            onTap: () => widget.title == OlukoLocalizations.get(context, 'filters')
-                ? filterBackButtonAction()
-                : widget.onPressed() ?? Navigator.pop(context),
+            onTap: () => {
+              if (widget.title == OlukoLocalizations.get(context, 'filters'))
+                {filterBackButtonAction()}
+              else
+                {
+                  if (widget.onPressed != null)
+                    {widget.onPressed()}
+                  else
+                    {Navigator.pop(context)}
+                }
+            },
             child: OlukoBlurredButton(
               childContent: Image.asset(
                 'assets/courses/left_back_arrow.png',
