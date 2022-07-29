@@ -93,6 +93,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         onPressed: () {
           BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
           BlocProvider.of<CountryBloc>(context).clear();
+          Navigator.pop(context);
         },
       ),
       body: Stack(children: [
