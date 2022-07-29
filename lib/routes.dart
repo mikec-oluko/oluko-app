@@ -449,6 +449,7 @@ class Routes {
     final List<BlocProvider> commonProviders = [
       BlocProvider<AuthBloc>.value(value: _authBloc),
       BlocProvider<FAQBloc>.value(value: _fAQBloc),
+      BlocProvider<UserInformationBloc>.value(value: _userInformationBloc),
     ];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
