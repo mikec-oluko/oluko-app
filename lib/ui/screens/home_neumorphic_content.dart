@@ -535,12 +535,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         Rect.fromLTRB(0, 0, rect.width, rect.height));
                   },
                   child: Container(
-                    // decoration: const BoxDecoration(
-                    //   image: DecorationImage(
-                    //     image: AssetImage('assets/courses/profile_photos.png'),
-                    //     fit: BoxFit.cover,
-                    //   ),
-                    // ),
                     height: ScreenUtils.height(context) - (showStories
                             ? ScreenUtils.smallScreen(context)
                                 ? ScreenUtils.height(context) * 0.38
@@ -644,7 +638,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             onPressed: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courses],
                   arguments: {
-                    'homeEnrollTocourse': 'true',
+                    'backButtonWithFilters': true,
                     'showBottomTab': () => setState(() {
                           _isBottomTabActive = !_isBottomTabActive;
                         })
