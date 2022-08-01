@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
+import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
@@ -17,15 +18,16 @@ abstract class UserInformationState {}
 
 class Loading extends UserInformationState {}
 
-class Success extends UserInformationState {
+class UserInformationSuccess extends UserInformationState {
   UserResponse userResponse;
-  Success(this.userResponse);
+  UserInformationSuccess(this.userResponse);
 }
 
-class Failure extends UserInformationState {
-  final dynamic exception;
+class UserInformationFailure extends UserInformationState {
+  final bool tokenExpired;
 
-  Failure({this.exception});
+
+  UserInformationFailure({this.tokenExpired=false});
 }
 
 class UserInformationBloc extends Cubit<UserInformationState> {
@@ -76,19 +78,15 @@ class UserInformationBloc extends Cubit<UserInformationState> {
         await _userRepository.updateUserInformation(userInformation, userId);
     List<String> messageList;
     if (response == null) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'tokenExpired');
+      emit(UserInformationFailure(tokenExpired: true));
       return false;
     } else if (response.statusCode == 200) {
-      if (!isLoggedOut) {
-        AppMessages.clearAndShowSnackbarTranslated(
-            context, 'infoUpdateSuccess');
-      }
       final UserResponse user = await UserRepository().getById(userId);
       AuthRepository().storeLoginData(user);
-      emit(Success(user));
+      emit(UserInformationSuccess(user));
       return true;
     } else {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'errorMessage');
+      emit(UserInformationFailure());
       return false;
     }
   }
