@@ -1,12 +1,5 @@
 enum PasswordStrength { weak, medium, strong }
-enum ValidatorNames {
-  containsUppercase,
-  containsLowercase,
-  containsDigit,
-  containsSpecialChar,
-  containsRecommendedChars,
-  containsMinChars
-}
+enum ValidatorNames { containsUppercase, containsLowercase, containsDigit, containsSpecialChar, containsRecommendedChars, containsMinChars }
 
 class AppValidators {
   PasswordStrength validatePassword(String value) {
@@ -48,5 +41,17 @@ class AppValidators {
       else
         return true;
     }
+  }
+
+  static bool isNeitherNullNorEmpty(dynamic list) {
+    if (list == null) {
+      return false;
+    }
+    try {
+      if (list.isNotEmpty as bool) {
+        return true;
+      }
+    } catch (e) {}
+    return false;
   }
 }

@@ -20,6 +20,7 @@ import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileMyAccountPage extends StatefulWidget {
@@ -27,10 +28,10 @@ class ProfileMyAccountPage extends StatefulWidget {
   ProfileMyAccountPage();
   @override
   _ProfileMyAccountPageState createState() => _ProfileMyAccountPageState();
+
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
-  User _firebaseUser;
   UserResponse _profileInfo;
   UserInformation newFields = UserInformation();
   UserInformation _defaultUser;
@@ -41,57 +42,54 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   final formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    BlocProvider.of<CountryBloc>(context).clear();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
 
   List<Country> countries = [];
   Widget build(BuildContext context) {
-    return BlocListener<UserInformationBloc, UserInformationState>(
-      listener: (context, state) {
-        if (state is Success) {
-          BlocProvider.of<AuthBloc>(context)
-              .updateAuthSuccess(state.userResponse, _firebaseUser);
-        }
-      },
-      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-        if (state is AuthSuccess) {
-          _firebaseUser = state.firebaseUser;
-          _profileInfo = state.user;
-          _defaultUser = UserInformation(
-            username: _profileInfo.username,
-            firstName: _profileInfo.firstName,
-            lastName: _profileInfo.lastName,
-            state: _profileInfo.state,
-            email: _profileInfo.email,
-            country: _profileInfo.country,
-            city: _profileInfo.city,
-          );
-          BlocProvider.of<CountryBloc>(context).getCountriesWithStates(
-              newFields != null && newFields.country != null
-                  ? newFields.country
-                  : _profileInfo.country);
-          newFields = UserInformation(
-            username: newFields.username ?? _profileInfo.username,
-            firstName: newFields.firstName ?? _profileInfo.firstName,
-            lastName: newFields.lastName ?? _profileInfo.lastName,
-            state: newFields.state ?? _profileInfo.state,
-            email: newFields.email ?? _profileInfo.email,
-            country: newFields.country ?? _profileInfo.country,
-            city: newFields.city ?? _profileInfo.city,
-          );
-          isGoogleAuth =
-              state.firebaseUser.providerData[0].providerId == 'google.com';
-          return buildScaffoldPage(context);
-        } else {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: OlukoCircularProgressIndicator(),
-          );
-        }
-      }),
-    );
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        _profileInfo = state.user;
+        _defaultUser = UserInformation(
+          username: _profileInfo.username,
+          firstName: _profileInfo.firstName,
+          lastName: _profileInfo.lastName,
+          state: _profileInfo.state,
+          email: _profileInfo.email,
+          country: _profileInfo.country,
+          city: _profileInfo.city,
+        );
+        BlocProvider.of<CountryBloc>(context).getCountriesWithStates(
+            newFields != null && newFields.country != null
+                ? newFields.country
+                : _profileInfo.country);
+        newFields = UserInformation(
+          username: newFields.username ?? _profileInfo.username,
+          firstName: newFields.firstName ?? _profileInfo.firstName,
+          lastName: newFields.lastName ?? _profileInfo.lastName,
+          state: newFields.state ?? _profileInfo.state,
+          email: newFields.email ?? _profileInfo.email,
+          country: newFields.country ?? _profileInfo.country,
+          city: newFields.city ?? _profileInfo.city,
+        );
+        isGoogleAuth =
+            state.firebaseUser.providerData[0].providerId == 'google.com';
+        return buildScaffoldPage(context);
+      } else {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: OlukoCircularProgressIndicator(),
+        );
+      }
+    });
   }
 
   Scaffold buildScaffoldPage(BuildContext context) {
@@ -103,7 +101,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         showTitle: OlukoNeumorphism.isNeumorphismDesign,
         onPressed: () {
           BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
-          BlocProvider.of<CountryBloc>(context).clear();
           Navigator.pop(context);
         },
       ),
@@ -312,29 +309,34 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
             isDisabled: !isEnabled,
             title:
                 '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'save'))} ${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'changes'))}',
-            onPressed: !isEnabled
-                ? () {}
-                : () async {
-                    FocusScope.of(context).unfocus();
-                    if (emailHasChanged || usernameHasChanged) {
-                      if (await logOutConfirmationPopUp(context)) {
-                        AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
-                        if (await BlocProvider.of<UserInformationBloc>(context)
-                            .updateUserInformation(newFields, _profileInfo.id, context, isLoggedOut: true)) {
-                          logOut();
-                        }
-                      }
-                    } else {
-                      AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
-                      BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context);
-                    }
-                  },
+            onPressed: !isEnabled ? () {} : saveChangesAction,
             isExpanded: false,
             customHeight: 60,
           ),
         ),
       ),
     );
+  }
+
+  Future<void> saveChangesAction() async {
+    FocusScope.of(context).unfocus();
+    if (emailHasChanged || usernameHasChanged) {
+      if (await logOutConfirmationPopUp(context)) {
+        AppMessages.clearAndShowSnackbarTranslated(
+            context, 'uploadingWithDots');
+        if (await BlocProvider.of<UserInformationBloc>(context)
+            .updateUserInformation(newFields, _profileInfo.id, context,
+                isLoggedOut: true)) {
+          logOut();
+        }
+      }
+    } else {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
+      BlocProvider.of<UserInformationBloc>(context)
+          .updateUserInformation(newFields, _profileInfo.id, context);
+    }
+    usernameHasChanged = false;
+    emailHasChanged = false;
   }
 
   Future<void> logOut() async {
@@ -434,7 +436,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                     newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(selectedCountry.id);
                     final Country newCountryWithStates = newCountries.firstWhere((element) => element.id == selectedCountry.id);
                     newFieldsState =
-                        newCountryWithStates != null && newCountryWithStates.states != null ? newCountryWithStates.states[0] : '';
+                        newCountryWithStates != null && AppValidators.isNeitherNullNorEmpty(newCountryWithStates.states) ? newCountryWithStates.states[0] : '-';
                   }
                   setState(() {
                     newFields.country = item;
