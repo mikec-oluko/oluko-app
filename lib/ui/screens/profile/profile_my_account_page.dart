@@ -30,7 +30,6 @@ class ProfileMyAccountPage extends StatefulWidget {
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
-  User _firebaseUser;
   UserResponse _profileInfo;
   UserInformation newFields = UserInformation();
   UserInformation _defaultUser;
@@ -47,51 +46,42 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   List<Country> countries = [];
   Widget build(BuildContext context) {
-    return BlocListener<UserInformationBloc, UserInformationState>(
-      listener: (context, state) {
-        if (state is Success) {
-          BlocProvider.of<AuthBloc>(context)
-              .updateAuthSuccess(state.userResponse, _firebaseUser);
-        }
-      },
-      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-        if (state is AuthSuccess) {
-          _firebaseUser = state.firebaseUser;
-          _profileInfo = state.user;
-          _defaultUser = UserInformation(
-            username: _profileInfo.username,
-            firstName: _profileInfo.firstName,
-            lastName: _profileInfo.lastName,
-            state: _profileInfo.state,
-            email: _profileInfo.email,
-            country: _profileInfo.country,
-            city: _profileInfo.city,
-          );
-          BlocProvider.of<CountryBloc>(context).getCountriesWithStates(
-              newFields != null && newFields.country != null
-                  ? newFields.country
-                  : _profileInfo.country);
-          newFields = UserInformation(
-            username: newFields.username ?? _profileInfo.username,
-            firstName: newFields.firstName ?? _profileInfo.firstName,
-            lastName: newFields.lastName ?? _profileInfo.lastName,
-            state: newFields.state ?? _profileInfo.state,
-            email: newFields.email ?? _profileInfo.email,
-            country: newFields.country ?? _profileInfo.country,
-            city: newFields.city ?? _profileInfo.city,
-          );
-          isGoogleAuth =
-              state.firebaseUser.providerData[0].providerId == 'google.com';
-          return buildScaffoldPage(context);
-        } else {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: OlukoCircularProgressIndicator(),
-          );
-        }
-      }),
-    );
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        _profileInfo = state.user;
+        _defaultUser = UserInformation(
+          username: _profileInfo.username,
+          firstName: _profileInfo.firstName,
+          lastName: _profileInfo.lastName,
+          state: _profileInfo.state,
+          email: _profileInfo.email,
+          country: _profileInfo.country,
+          city: _profileInfo.city,
+        );
+        BlocProvider.of<CountryBloc>(context).getCountriesWithStates(
+            newFields != null && newFields.country != null
+                ? newFields.country
+                : _profileInfo.country);
+        newFields = UserInformation(
+          username: newFields.username ?? _profileInfo.username,
+          firstName: newFields.firstName ?? _profileInfo.firstName,
+          lastName: newFields.lastName ?? _profileInfo.lastName,
+          state: newFields.state ?? _profileInfo.state,
+          email: newFields.email ?? _profileInfo.email,
+          country: newFields.country ?? _profileInfo.country,
+          city: newFields.city ?? _profileInfo.city,
+        );
+        isGoogleAuth =
+            state.firebaseUser.providerData[0].providerId == 'google.com';
+        return buildScaffoldPage(context);
+      } else {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: OlukoCircularProgressIndicator(),
+        );
+      }
+    });
   }
 
   Scaffold buildScaffoldPage(BuildContext context) {
