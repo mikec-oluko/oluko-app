@@ -328,8 +328,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       BlocProvider.of<UserInformationBloc>(context)
           .updateUserInformation(newFields, _profileInfo.id, context);
     }
-    usernameHasChanged = false;
-    emailHasChanged = false;
   }
 
   Future<void> logOut() async {
