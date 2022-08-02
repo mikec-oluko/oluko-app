@@ -20,6 +20,7 @@ import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileMyAccountPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class ProfileMyAccountPage extends StatefulWidget {
   ProfileMyAccountPage();
   @override
   _ProfileMyAccountPageState createState() => _ProfileMyAccountPageState();
+
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
@@ -38,6 +40,12 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   bool isGoogleAuth = false;
   bool formHasChanged = false;
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    BlocProvider.of<CountryBloc>(context).clear();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -93,7 +101,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         showTitle: OlukoNeumorphism.isNeumorphismDesign,
         onPressed: () {
           BlocProvider.of<MyAccountBloc>(context).emitMyAccountDispose();
-          BlocProvider.of<CountryBloc>(context).clear();
           Navigator.pop(context);
         },
       ),
@@ -427,7 +434,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                     newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(selectedCountry.id);
                     final Country newCountryWithStates = newCountries.firstWhere((element) => element.id == selectedCountry.id);
                     newFieldsState =
-                        newCountryWithStates != null && newCountryWithStates.states != null ? newCountryWithStates.states[0] : '';
+                        newCountryWithStates != null && AppValidators.isNeitherNullNorEmpty(newCountryWithStates.states) ? newCountryWithStates.states[0] : '-';
                   }
                   setState(() {
                     newFields.country = item;
