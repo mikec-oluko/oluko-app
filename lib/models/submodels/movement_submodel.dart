@@ -21,7 +21,7 @@ class MovementSubmodel {
       reference: json['reference'] as DocumentReference,
       id: json['id']?.toString(),
       name: json['name']?.toString(),
-      value: json['value'] as int,
+      value: json['value'] is double ? (json['value'] as double).floor() : json['value'] as int,
       image: json['image'] == null ? null : json['image']?.toString(),
       isRestTime: json['is_rest_time'] == null ? false : json['is_rest_time'] as bool,
       isBothSide: json['is_both_side'] == null ? false : json['is_both_side'] as bool,
