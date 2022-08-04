@@ -10,7 +10,6 @@ class SubscriptionCard extends StatefulWidget {
   Function(bool) onPressed;
   Function() onHintPressed;
   String title;
-  List<String> subtitles;
   String priceLabel;
   String priceSubtitle;
   bool selected;
@@ -19,7 +18,6 @@ class SubscriptionCard extends StatefulWidget {
 
   SubscriptionCard(
       {this.title,
-      this.subtitles,
       this.priceLabel,
       this.priceSubtitle,
       this.onPressed,
@@ -110,7 +108,7 @@ class _State extends State<SubscriptionCard> {
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                             child: Container(
-                              height: 30.0 + (widget.subtitles.length * 15).toDouble(),
+                              height: 30.0,
                             ),
                           ),
                         ),
@@ -131,7 +129,7 @@ class _State extends State<SubscriptionCard> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                           child: Container(
-                            height: 41.0 + (widget.subtitles.length * 15).toDouble(),
+                            height: 41.0,
                             child: Column(children: [
                               Row(
                                 children: [
@@ -139,11 +137,6 @@ class _State extends State<SubscriptionCard> {
                                   widget.showHint ? getWaitList() : SizedBox()
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: displayFeatures(widget.subtitles)),
-                                ],
-                              )
                             ]),
                           ),
                         ),

@@ -21,11 +21,13 @@ class Plan extends Base {
       {this.duration,
       this.features,
       this.infoDialog,
-      this.price,
       this.recurrent,
-      this.title,
+      this.name,
+      this.amount,
+      this.amountDecimal,
       this.backgroundImage,
       this.metadata,
+      this.description,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -42,31 +44,33 @@ class Plan extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
+  bool active;
+  num amountDecimal;
+  num amount;
   PlanDuration duration;
   List<PlanFeature> features;
   InfoDialog infoDialog;
-  num price;
-  double amountDecimal;
   bool recurrent;
-  String title;
-  bool active;
+  String name;
   String currency;
   String description;
   String backgroundImage;
-  Map<String, String> metadata;
+  Map<String, dynamic> metadata;
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
         duration: EnumHelper.enumFromString<PlanDuration>(PlanDuration.values, json['duration']?.toString()),
-        features: List.from(json['features'] as Iterable)
+        /*features: List.from(json['features'] as Iterable)
             .map((e) => EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e?.toString()))
-            .toList(),
+            .toList(),*/
         infoDialog: json['info_dialog'] != null ? InfoDialog.fromJson(json['info_dialog'] as Map<String, dynamic>) : null,
-        price: json['price'] as num,
-        recurrent: json['recurrent'] as bool,
-        title: json['title']?.toString(),
+        amount: json['amount'] as num,
+        amountDecimal: json['amountDecimal'] as num,
+        recurrent: json['recurrent'] is bool ? json['recurrent'] as bool : false,
+        name: json['name']?.toString(),
         backgroundImage: json['background_image']?.toString(),
-        metadata: json['metadata'] as Map<String, String>);
+        description: json['description']?.toString(),
+        metadata: json['metadata'] as Map<String, dynamic>);
     plan.setBase(json);
     return plan;
   }
@@ -76,9 +80,11 @@ class Plan extends Base {
       'duration': EnumHelper.enumToString(duration),
       'features': features.map((feature) => EnumHelper.enumToString(feature)).toList(),
       'info_dialog': infoDialog.toJson(),
-      'price': price,
+      'amountDecimal': amountDecimal,
+      'amount': amount,
+      'description': description,
       'recurrent': recurrent,
-      'title': title,
+      'name': name,
       'background_image': backgroundImage,
       'metadata': metadata
     };
@@ -88,7 +94,7 @@ class Plan extends Base {
 
   bool isCurrentLevel(double currentPlan) {
     if (metadata != null) {
-      return (double.parse(metadata['level']) == currentPlan);
+      return double.parse(metadata['level'].toString()) == currentPlan;
     } else {
       return false;
     }

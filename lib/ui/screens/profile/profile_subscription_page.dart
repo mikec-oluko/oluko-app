@@ -103,10 +103,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   SubscriptionCard _showSubscriptionCard(Plan plan) {
     SubscriptionCard subscriptionCard = SubscriptionCard();
 
-    subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
-    subscriptionCard.title = plan.title;
-    subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
+    subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.duration]}';
+    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration]}' : '';
+    subscriptionCard.title = plan.name;
     subscriptionCard.selected = false;
     subscriptionCard.showHint = false;
     subscriptionCard.backgroundImage = plan.backgroundImage;
