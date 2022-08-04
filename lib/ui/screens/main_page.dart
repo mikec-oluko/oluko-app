@@ -24,6 +24,7 @@ import 'package:oluko_app/ui/screens/home.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'coach/coach_main_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -143,7 +144,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
                 body: Padding(
                   padding: _isBottomTabActive && this.tabController.index != 3
-                      ? const EdgeInsets.only(bottom: 70)
+                      ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
                       : const EdgeInsets.only(bottom: 0),
                   child: TabBarView(
                     //physics this is setup to stop swiping from tab to tab
@@ -168,8 +169,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   taskSubmissionActions(VideoSuccess state) {
-    BlocProvider.of<TaskSubmissionListBloc>(context)
-        .updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
+    BlocProvider.of<TaskSubmissionListBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
     BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
     BlocProvider.of<TaskCardBloc>(context).taskFinished(state.taskSubmission.task.id);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(state.assessmentAssignment, state.taskSubmission.task.id);
