@@ -140,7 +140,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         child: GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
-                              'homeEnrollTocourse': 'true',
+                              'homeEnrollTocourse': true,
                               'showBottomTab': () => setState(() {
                                     _isBottomTabActive = !_isBottomTabActive;
                                   })
