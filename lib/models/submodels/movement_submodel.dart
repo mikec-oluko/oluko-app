@@ -24,7 +24,9 @@ class MovementSubmodel {
       value: json['value'] != null
           ? json['value'] is double
               ? (json['value'] as double).floor()
-              : json['value'] as int
+              : json['value'] is int
+                  ? json['value'] as int
+                  : 0
           : 0,
       image: json['image'] == null ? null : json['image']?.toString(),
       isRestTime: json['is_rest_time'] == null ? false : json['is_rest_time'] as bool,
