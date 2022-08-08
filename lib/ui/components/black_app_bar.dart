@@ -379,7 +379,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                 child: Visibility(
                   visible: !isSearchVisible,
                   child: GestureDetector(
-                    // onTap: ,
                     child: OlukoNeumorphicCircleButton(
                         onPressed: () {
                           if (widget.title ==

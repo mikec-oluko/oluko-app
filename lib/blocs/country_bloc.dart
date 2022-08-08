@@ -27,7 +27,7 @@ class CountryBloc extends Cubit<CountryState> {
         if (country != null && country != '') {
           final countryToUpdateIndex = countries.indexWhere((element) => element.name == country);
           if (countryToUpdateIndex != -1 &&
-              (countries[countryToUpdateIndex].states == null && countries[countryToUpdateIndex].states.isEmpty)) {
+              (countries[countryToUpdateIndex].states == null || countries[countryToUpdateIndex].states.isEmpty)) {
             countries[countryToUpdateIndex].states = await CountryRepository.getCountryStates(countries[countryToUpdateIndex].id);
             emit(CountrySuccess(countries: countries));
           }

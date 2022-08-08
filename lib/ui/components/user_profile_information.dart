@@ -49,7 +49,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   @override
   void initState() {
     BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
-    _userLocation = getUserLocation(widget.userToDisplayInformation);
     _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
     super.initState();
   }
@@ -60,6 +59,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   @override
   Widget build(BuildContext context) {
+    _userLocation = getUserLocation(widget.userToDisplayInformation);
     final List<String> _valuesDemo = ['07', '10', '50'];
 
     return BlocListener<HiFiveReceivedBloc, HiFiveReceivedState>(
