@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/search_filters.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -161,13 +162,14 @@ class _State<T extends Base> extends State<FilterSelector> {
       ),
       SearchFilters<T>(
           itemList: Map<T, String>.fromIterable(filterEntry.value.keys, key: (item) => item as T, value: (item) => item.name as String),
+          updateSelection: _updateTagsSelected,
           selectedTags: _getSelectedItemList(),
           onPressed: _loadTagsFromSearchFilter)
     ];
   }
 
   void _loadTagsFromSearchFilter(Map<String, bool> selectedItems) {
-    this.setState(() {
+    setState(() {
       selectedItems.entries.forEach((MapEntry<String, bool> entry) => _selected[entry.key] = entry.value);
       if (widget.onPressed != null) {
         widget.onPressed(_getSelectedItemList());
@@ -175,13 +177,22 @@ class _State<T extends Base> extends State<FilterSelector> {
     });
   }
 
-  List<Base> _getSelectedItemList() {
-    List<MapEntry<String, bool>> selectedEntries = _selected.entries.where((element) => element.value == true).toList();
+  void _updateTagsSelected(Map<String, bool> selectedItems) {
+    setState(() {
+      selectedItems.entries.forEach((MapEntry<String, bool> entry) => _selected[entry.key] = entry.value);
+      BlocProvider.of<RemainSelectedTagsBloc>(context).set(_getSelectedItemList(selectedItemsUpdated: selectedItems) as List<Tag>);
+    });
+  }
+
+  List<Base> _getSelectedItemList({Map<String, bool> selectedItemsUpdated}) {
+    Map<String, bool> _updatedTagSelected = {};
+    _updatedTagSelected = selectedItemsUpdated ?? _selected;
+    final List<MapEntry<String, bool>> selectedEntries = _updatedTagSelected.entries.where((element) => element.value == true).toList();
 
     List<T> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>)
         .map((item) => item.key)
         .toList();
-    List<Base> selectedItems = selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
+    final List<Base> selectedItems = selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
     BlocProvider.of<SelectedTagsBloc>(context).updateSelectedTags(selectedItems.length);
     return selectedItems;
   }

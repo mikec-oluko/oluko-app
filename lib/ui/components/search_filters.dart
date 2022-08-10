@@ -7,8 +7,9 @@ class SearchFilters<T extends Base> extends StatefulWidget {
   final Map<T, String> itemList;
   final Function(Map<String, bool>) onPressed;
   final List<Base> selectedTags;
+  final Function(Map<String, bool>) updateSelection;
 
-  SearchFilters({this.textInput, this.itemList, this.onPressed, this.selectedTags});
+  SearchFilters({this.textInput, this.itemList, this.onPressed, this.selectedTags, this.updateSelection});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -32,8 +33,9 @@ class _State<T extends Base> extends State<SearchFilters> {
         children: widget.itemList.entries
             .map(
               (MapEntry<Base, String> courseName) => GestureDetector(
-                onTap: () => this.setState(() {
+                onTap: () => setState(() {
                   selected[courseName.key.id] = !selected[courseName.key.id];
+                  widget.updateSelection(selected);
                   widget.onPressed(selected);
                 }),
                 child: OlukoNeumorphism.isNeumorphismDesign
@@ -52,7 +54,7 @@ class _State<T extends Base> extends State<SearchFilters> {
       side: BorderSide(color: OlukoColors.primary),
       label: Text(
         courseName.value,
-        style: TextStyle(color: selected[courseName.key.id] ?OlukoColors.black : OlukoColors.primary, fontSize: 15),
+        style: TextStyle(color: selected[courseName.key.id] ? OlukoColors.black : OlukoColors.primary, fontSize: 15),
       ),
       backgroundColor: selected[courseName.key.id] ? OlukoColors.primary : OlukoColors.black,
     );
