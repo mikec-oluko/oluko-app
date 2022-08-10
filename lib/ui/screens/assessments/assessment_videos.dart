@@ -28,6 +28,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
   const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, this.assessmentsDone = false, Key key}) : super(key: key);
@@ -309,7 +310,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
-                isOlukoControls: true,
+                isOlukoControls: !UserUtils.userDeviceIsIOS(),
                 videoUrl: videoUrl,
                 autoPlay: false,
                 whenInitialized: (ChewieController chewieController) => setState(() {
@@ -317,7 +318,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                     })),
           )
         : OlukoVideoPlayer(
-            isOlukoControls: true,
+            isOlukoControls: !UserUtils.userDeviceIsIOS(),
             videoUrl: videoUrl,
             autoPlay: false,
             whenInitialized: (ChewieController chewieController) => setState(() {
@@ -494,7 +495,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor:OlukoColors.black,
+        backgroundColor: OlukoColors.black,
         content: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(

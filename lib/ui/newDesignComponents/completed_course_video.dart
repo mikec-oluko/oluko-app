@@ -44,18 +44,22 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
           _videoPlayerController.value != null &&
           _videoPlayerController.value.position == _videoPlayerController.value.duration) {
         await _videoPlayerController.dispose();
-        Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
+        if (Navigator.canPop(context)) {
+          Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
+        }
       }
     });
 
     return chewieController;
   }
-
+                                                               
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _videoPlayerController.pause();
+        if (_videoPlayerController != null) {
+          _videoPlayerController.pause();
+        }
         return true;
       },
       child: FutureBuilder<ChewieController>(
@@ -74,8 +78,10 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
                 right: 10,
                 child: GestureDetector(
                   onTap: () async {
-                    await _videoPlayerController.dispose();
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                    if (_videoPlayerController != null && Navigator.canPop(context)) {
+                      await _videoPlayerController.dispose();
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                    }
                   },
                   child: SizedBox(
                     height: 46,

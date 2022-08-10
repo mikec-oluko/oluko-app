@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io' show Platform;
 
 class UserUtils {
   String defaultAvatarImageAsset = 'assets/utils/avatar.png';
   String defaultAvatarImageUrl =
       'https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/avatar.png?alt=media&token=c16925c3-e2be-47fb-9d15-8cd1469d9790';
 
-  static CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname,Color circleColor}) {
+  static CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname, Color circleColor}) {
     return CircleAvatar(
       maxRadius: maxRadius ?? 30,
-      backgroundColor: circleColor!=null?circleColor:name == null || lastname == null || name == 'null' || lastname == 'null'
-          ? OlukoColors.userColor(null, null)
-          : OlukoColors.userColor(name, lastname),
+      backgroundColor: circleColor != null
+          ? circleColor
+          : name == null || lastname == null || name == 'null' || lastname == 'null'
+              ? OlukoColors.userColor(null, null)
+              : OlukoColors.userColor(name, lastname),
       child: name != null && name.isNotEmpty
           ? Text(
               getAvatarText(name, lastname),
@@ -55,4 +58,7 @@ class UserUtils {
     sharedPref.setBool('first_time', false);
     return true;
   }
+
+  static bool userDeviceIsIOS() => Platform.isIOS;
+  static bool userDeviceIsAndrioid() => Platform.isAndroid;
 }
