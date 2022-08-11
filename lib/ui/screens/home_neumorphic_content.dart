@@ -32,6 +32,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -540,7 +541,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     }
     widgets.add(
       OlukoVideoPlayer(
-        isOlukoControls: true,
+        isOlukoControls: !UserUtils.userDeviceIsIOS(),
         videoUrl: videoUrl,
         onVideoFinished: () => setState(() {
           _controller = null;
