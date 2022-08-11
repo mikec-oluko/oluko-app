@@ -8,6 +8,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 import '../../../routes.dart';
 
@@ -101,7 +102,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: OlukoVideoPlayer(
-                isOlukoControls: true,
+                isOlukoControls: !UserUtils.userDeviceIsIOS(),
                 showOptions: true,
                 videoUrl: videoUrl,
                 autoPlay: false,

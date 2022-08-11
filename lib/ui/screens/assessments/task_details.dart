@@ -33,6 +33,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class TaskDetails extends StatefulWidget {
@@ -239,7 +240,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        isOlukoControls: true,
+        isOlukoControls: !UserUtils.userDeviceIsIOS(),
         showOptions: true,
         videoUrl: videoUrl,
         autoPlay: false,
@@ -462,7 +463,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                       } else {
                         DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
                       }
-                      //}
                     },
                     title: OlukoLocalizations.get(context, 'recordAgain'),
                   )
@@ -547,16 +547,17 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
   }
 
-  List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) {
-    //TODO: USE THE CONTENT
-    return [recordAgainDialogContent()];
-  }
+  List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) => [recordAgainDialogContent()];
 
   Padding recordAgainDialogContent() {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
           Padding(padding: const EdgeInsets.only(bottom: 15.0), child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
+          Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+          Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
           Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
           Padding(
               padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 80 : 25.0),
@@ -620,7 +621,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                               _controller.pause();
                             }
                             Navigator.pop(context);
-                            //Navigator.pop(context);
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                               'taskId': _task.id,
                               'taskIndex': widget.taskIndex,
