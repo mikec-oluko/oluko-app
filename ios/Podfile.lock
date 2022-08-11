@@ -612,7 +612,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.24)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.4.3):
+  - cloud_firestore (3.4.4):
     - Firebase/Firestore (= 9.3.0)
     - firebase_core
     - Flutter
@@ -648,10 +648,10 @@ PODS:
     - Firebase/Auth (= 9.3.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.20.0):
+  - firebase_core (1.20.1):
     - Firebase/CoreOnly (= 9.3.0)
     - Flutter
-  - firebase_database (9.1.0):
+  - firebase_database (9.1.1):
     - Firebase/Database (= 9.3.0)
     - firebase_core
     - Flutter
@@ -659,7 +659,7 @@ PODS:
     - Firebase/Messaging (= 9.3.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.3.4):
+  - firebase_storage (10.3.5):
     - Firebase/Storage (= 9.3.0)
     - firebase_core
     - Flutter
@@ -1034,7 +1034,7 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: 08093e207dfb2e6c82a6b272def699e022548786
+  cloud_firestore: 683679d43f60e55f9318a5cb03b13637e060a99c
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
@@ -1042,10 +1042,10 @@ SPEC CHECKSUMS:
   FBSDKLoginKit: e993f97c7cc794c5da4056d8aec3c3d66033a727
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
   firebase_auth: abe46b4b5465b491c48ea4c9d4c031c40f0fd4af
-  firebase_core: 96214f90497b808a2cf2a24517084c5f6de37b53
-  firebase_database: 7c4734c0eeecc1bf85c08ca7aff634ce847fb8d7
+  firebase_core: e66a443ec996cb5e364dc70b4cfc1809c32cbb2e
+  firebase_database: 8a1e2fd8d74a5bbdcbb7b563df3f175571bc968c
   firebase_messaging: 24112f219663060db68ef803f20166d374138b6e
-  firebase_storage: e95ec41580e311cb30b1ed7459b9e94fb4bbe672
+  firebase_storage: fcd8643b05fba82ce94633c828ebc9b945cb7c5b
   FirebaseAppCheckInterop: 63119cdfc94b16c3e9421513c17f597aee2ea225
   FirebaseAuth: 9ebc3577fe0acf9092df21ac314024b70aebf21e
   FirebaseAuthInterop: 826d3d772b554e3675ceaab8c665008277ca9d1c
