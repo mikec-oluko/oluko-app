@@ -98,7 +98,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       appBar: OlukoNeumorphism.isNeumorphismDesign
           ? null
           : OlukoImageBar(actions: [], movements: [_movementSubmodel], onPressedMovement: (context, movement) => {}),
-      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker :OlukoColors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
       body: Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
@@ -422,8 +422,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   height: 180,
                   child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      child: Stack(children: _videoPlayer(movement.video, tabController.index))))
-              : Container(height: 200, child: Stack(children: _videoPlayer(movement.video, tabController.index))),
+                      child: Stack(children: _videoPlayer(movement.videoHls ?? movement.video, tabController.index))))
+              : Container(height: 200, child: Stack(children: _videoPlayer(movement.videoHls ?? movement.video, tabController.index))),
         ),
         Padding(
           padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(15.0) : const EdgeInsets.all(8.0),
@@ -451,17 +451,15 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 child: Row(
                   children: [
                     MovementItemBubblesNeumorphic(
-                            referenceMovementsSection: true,
-                            onPressed: (context, movement) {
-                              if (_videoControllers[tabController.index] != null) {
-                                _videoControllers[tabController.index].pause();
-                              }
-                              Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro],
-                                  arguments: {'movement': movement});
-                            },
-                            content: _movementInfoSuccess.relatedMovements,
-                            width: ScreenUtils.width(context) / 1.2)
-                        ,
+                        referenceMovementsSection: true,
+                        onPressed: (context, movement) {
+                          if (_videoControllers[tabController.index] != null) {
+                            _videoControllers[tabController.index].pause();
+                          }
+                          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+                        },
+                        content: _movementInfoSuccess.relatedMovements,
+                        width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),

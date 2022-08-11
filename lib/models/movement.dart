@@ -6,6 +6,7 @@ class Movement extends Base {
   String name;
   String description;
   String video;
+  String videoHls;
   List<ObjectSubmodel> tags;
   int index;
   String image;
@@ -14,6 +15,7 @@ class Movement extends Base {
   Movement(
       {this.name,
       this.video,
+      this.videoHls,
       this.description,
       this.tags,
       this.index,
@@ -39,6 +41,7 @@ class Movement extends Base {
     Movement movement = Movement(
         name: json['name']?.toString(),
         video: json['video']?.toString(),
+        videoHls: json['video_hls']?.toString(),
         description: json['description']?.toString(),
         index: json['index'] as int,
         image: json['image'] == null ? null : json['image']?.toString(),
@@ -54,6 +57,7 @@ class Movement extends Base {
     Map<String, dynamic> movementJson = {
       'name': name,
       'video': video,
+      'video_hls': videoHls,
       'description': description,
       'index': index,
       'image': image,
