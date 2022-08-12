@@ -71,13 +71,12 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
         }
 
         if (_recommendationsUpdatedContent.isNotEmpty) {
-          if (_newNotificationIncoming(_recommendationsUpdatedContent)) {
-            if (await SoundUtils.canPlaySound()) SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          if (_newNotificationIncoming(_recommendationsUpdatedContent) && await SoundUtils.canPlaySound()) {
+            SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
           }
           emit(
             CoachRecommendationsUpdate(
-              coachRecommendationContent:
-                  await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
+              coachRecommendationContent: await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
             ),
           );
         } else {
@@ -103,7 +102,8 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     });
   }
 
-  bool _newNotificationIncoming(Set<Recommendation> _recommendationsUpdatedContent) => _recommendationsUpdatedContent.where((recommendation) => !recommendation.notificationViewed).toList().isNotEmpty;
+  bool _newNotificationIncoming(Set<Recommendation> _recommendationsUpdatedContent) =>
+      _recommendationsUpdatedContent.where((recommendation) => !recommendation.notificationViewed).toList().isNotEmpty;
 
   Future<void> getStreamFromUser(String userId) async {
     if (subscription == null) {
@@ -141,8 +141,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     try {
       emit(LoadingCoachRecommendations());
       final List<Recommendation> coachRecommendations = await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
-      final List<CoachRecommendationDefault> recommendationsFormatted =
-          await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
+      final List<CoachRecommendationDefault> recommendationsFormatted = await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
       emit(CoachRecommendationsSuccess(coachRecommendationList: recommendationsFormatted));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -157,8 +156,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   Future<List<CoachRecommendationDefault>> getCoachRecommendationsData({List<Recommendation> coachRecommendationContent}) async {
     try {
       emit(LoadingCoachRecommendations());
-      final List<CoachRecommendationDefault> coachRecommendations =
-          await _coachRepository.getRecommendationsInfo(coachRecommendationContent);
+      final List<CoachRecommendationDefault> coachRecommendations = await _coachRepository.getRecommendationsInfo(coachRecommendationContent);
       return coachRecommendations;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
