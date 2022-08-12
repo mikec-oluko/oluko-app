@@ -148,7 +148,6 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                         ))
                   else
                     const SizedBox(
-                      height: 0,
                     ),
                   if (_contentGallery.isNotEmpty)
                     Align(

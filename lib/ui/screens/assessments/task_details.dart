@@ -516,8 +516,6 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   void nextAssessmentButtonOnPress(BuildContext context) {
     if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
-      //TODO: Check plan enable skip
-      //AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
       goToAssessmentVideos();
     } else {
       if (_controller != null) {
