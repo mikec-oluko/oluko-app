@@ -30,6 +30,7 @@ class Plan extends Base {
       this.name,
       this.object,
       this.type,
+      this.appleId,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -58,6 +59,7 @@ class Plan extends Base {
   String name;
   String object;
   String type;
+  String appleId;
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
@@ -72,7 +74,8 @@ class Plan extends Base {
         metadata: json['metadata'] as Map<String, dynamic>,
         name: json['name']?.toString(),
         object: json['object']?.toString(),
-        type: json['type']?.toString());
+        type: json['type']?.toString(),
+        appleId: json['apple_id']?.toString());
 
     plan.setBase(json);
     return plan;

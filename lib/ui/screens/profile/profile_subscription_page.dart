@@ -35,8 +35,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 50),
-                    child: Column(
-                      children: [
+                    child: state.plans != null
+                        ? ListView(
+                            children: state.plans.map((plan) {
+                              return _showSubscriptionCard(plan);
+                            }).toList(),
+                            /*[
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: _showSubscriptionCard(state.plans[0]),
@@ -49,8 +53,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                           ),
                         ),
                         _subscriptionCardWithButton(state, context),
-                      ],
-                    ),
+                      ],*/
+                          )
+                        : const SizedBox(),
                   ),
                 );
               } else {
@@ -78,20 +83,21 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
           right: 0,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0))),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0)),
+                      ),
                       primary: OlukoColors.primary,
-                      side: BorderSide(color: OlukoColors.primary)),
+                      side: const BorderSide(color: OlukoColors.primary)),
                   onPressed: () => AppModal.dialogContent(context: context, content: [SubscriptionModalOption()], closeButton: true),
                   child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text(
                         OlukoLocalizations.get(context, 'upgrade'),
-                        style: TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: 18),
                       ))),
             ),
           ),
@@ -101,15 +107,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   }
 
   SubscriptionCard _showSubscriptionCard(Plan plan) {
-    SubscriptionCard subscriptionCard = SubscriptionCard();
-
-    subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.duration]}';
-    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration]}' : '';
+    final SubscriptionCard subscriptionCard = SubscriptionCard();
+    subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.intervalCount]}';
+    subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
     subscriptionCard.title = plan.name;
     subscriptionCard.selected = false;
-    subscriptionCard.showHint = false;
-    subscriptionCard.backgroundImage = plan.backgroundImage;
-    subscriptionCard.onHintPressed = plan.infoDialog != null ? () {} : null;
     return subscriptionCard;
   }
 }

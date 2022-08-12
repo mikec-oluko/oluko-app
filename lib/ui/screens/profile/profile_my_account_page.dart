@@ -28,7 +28,6 @@ class ProfileMyAccountPage extends StatefulWidget {
   ProfileMyAccountPage();
   @override
   _ProfileMyAccountPageState createState() => _ProfileMyAccountPageState();
-
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
@@ -66,10 +65,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           country: _profileInfo.country,
           city: _profileInfo.city,
         );
-        BlocProvider.of<CountryBloc>(context).getCountriesWithStates(
-            newFields != null && newFields.country != null
-                ? newFields.country
-                : _profileInfo.country);
+        BlocProvider.of<CountryBloc>(context)
+            .getCountriesWithStates(newFields != null && newFields.country != null ? newFields.country : _profileInfo.country);
         newFields = UserInformation(
           username: newFields.username ?? _profileInfo.username,
           firstName: newFields.firstName ?? _profileInfo.firstName,
@@ -79,8 +76,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           country: newFields.country ?? _profileInfo.country,
           city: newFields.city ?? _profileInfo.city,
         );
-        isGoogleAuth =
-            state.firebaseUser.providerData[0].providerId == 'google.com';
+        isGoogleAuth = state.firebaseUser.providerData[0].providerId == 'google.com';
         return buildScaffoldPage(context);
       } else {
         return Container(
@@ -322,18 +318,15 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     FocusScope.of(context).unfocus();
     if (emailHasChanged || usernameHasChanged) {
       if (await logOutConfirmationPopUp(context)) {
-        AppMessages.clearAndShowSnackbarTranslated(
-            context, 'uploadingWithDots');
+        AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
         if (await BlocProvider.of<UserInformationBloc>(context)
-            .updateUserInformation(newFields, _profileInfo.id, context,
-                isLoggedOut: true)) {
+            .updateUserInformation(newFields, _profileInfo.id, context, isLoggedOut: true)) {
           logOut();
         }
       }
     } else {
       AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
-      BlocProvider.of<UserInformationBloc>(context)
-          .updateUserInformation(newFields, _profileInfo.id, context);
+      BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context);
     }
   }
 
@@ -377,17 +370,21 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
     //TODO: Use plan from userData.
-    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan), orElse: () => null);
+    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan?.toInt() ?? 0), orElse: () => null);
 
     SubscriptionCard subscriptionCard = SubscriptionCard();
     subscriptionCard.selected = true;
     if (userPlan != null) {
-      subscriptionCard.priceLabel = '\$${userPlan.amount}/${durationLabel[userPlan.duration]}';
+      subscriptionCard.priceLabel = '\$${userPlan.amount}/${durationLabel[userPlan.intervalCount]}';
+      subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
+      subscriptionCard.title = userPlan.name;
+      subscriptionCard.selected = false;
+      /*subscriptionCard.priceLabel = '\$${userPlan.amount}/${durationLabel[userPlan.duration]}';
       subscriptionCard.priceSubtitle = userPlan.recurrent ? 'Renews every ${durationLabel[userPlan.duration]}' : '';
       subscriptionCard.title = userPlan.name;
       subscriptionCard.showHint = false;
       subscriptionCard.backgroundImage = userPlan.backgroundImage;
-      subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;
+      subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;*/
     }
     return [subscriptionCard];
   }
@@ -432,8 +429,9 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                   } else {
                     newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(selectedCountry.id);
                     final Country newCountryWithStates = newCountries.firstWhere((element) => element.id == selectedCountry.id);
-                    newFieldsState =
-                        newCountryWithStates != null && AppValidators.isNeitherNullNorEmpty(newCountryWithStates.states) ? newCountryWithStates.states[0] : '-';
+                    newFieldsState = newCountryWithStates != null && AppValidators.isNeitherNullNorEmpty(newCountryWithStates.states)
+                        ? newCountryWithStates.states[0]
+                        : '-';
                   }
                   setState(() {
                     newFields.country = item;
@@ -476,14 +474,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       );
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
+      padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
       child: Text(
         '-',
         style: OlukoFonts.olukoBigFont(
-            customFontWeight: FontWeight.w500,
-            customColor:
-                !isGoogleAuth ? OlukoColors.white : OlukoColors.grayColor),
+            customFontWeight: FontWeight.w500, customColor: !isGoogleAuth ? OlukoColors.white : OlukoColors.grayColor),
       ),
     );
   }
