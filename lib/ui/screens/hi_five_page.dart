@@ -77,7 +77,7 @@ class _HiFivePageState extends State<HiFivePage> {
             listener: (context, hiFiveState) {
               if (hiFiveState is HiFiveSuccess) {
                 if (hiFiveState.alertMessage != null) {
-                  AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
+                 AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
                 }
                 if (hiFiveState.users == null || hiFiveState.users.isEmpty) {
                   Navigator.pop(context);
