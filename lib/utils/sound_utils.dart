@@ -2,6 +2,8 @@ import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/models/sound.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:sound_mode/sound_mode.dart';
+import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 
 enum ClockStateEnum { work, rest, segmentStart }
 
@@ -54,5 +56,10 @@ class SoundUtils {
         return soundB;
       }
     });
+  }
+
+  static Future<bool> canPlaySound() async {
+    final RingerModeStatus _deviceSoundStatus = await SoundMode.ringerModeStatus;
+    return _deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown;
   }
 }

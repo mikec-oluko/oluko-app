@@ -55,6 +55,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -609,7 +610,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     BlocProvider.of<TimerTaskBloc>(context).setShareDone(shareDone);
   }
 
-  void nextSegmentAction() {
+  Future<void> nextSegmentAction() async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
@@ -625,7 +626,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         },
       );
     } else {
-      SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished);
+      if (await SoundUtils.canPlaySound()) SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished);
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.completedClass],

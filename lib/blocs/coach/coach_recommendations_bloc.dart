@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
@@ -7,6 +6,7 @@ import 'package:oluko_app/models/enums/coach_assignment_status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CoachRecommendationsState {}
@@ -71,7 +71,9 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
         }
 
         if (_recommendationsUpdatedContent.isNotEmpty) {
-          SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          if (_newNotificationIncoming(_recommendationsUpdatedContent)) {
+            if (await SoundUtils.canPlaySound()) SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          }
           emit(
             CoachRecommendationsUpdate(
               coachRecommendationContent:
@@ -100,6 +102,8 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       emit(CoachRecommendationsFailure(exception: error));
     });
   }
+
+  bool _newNotificationIncoming(Set<Recommendation> _recommendationsUpdatedContent) => _recommendationsUpdatedContent.where((recommendation) => !recommendation.notificationViewed).toList().isNotEmpty;
 
   Future<void> getStreamFromUser(String userId) async {
     if (subscription == null) {

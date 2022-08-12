@@ -45,6 +45,7 @@ import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -377,7 +378,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (!widget.isCoachRecommendation) {
         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
       }
-      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+      if (await SoundUtils.canPlaySound()) await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
     _disableAction = true;
   }
