@@ -69,7 +69,7 @@ class EnrolledCourse extends StatefulWidget {
     final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
     final int index = courseIndex ?? outsideCourseIndex;
 
-    final List<Class> _coursesClases = CourseService.getCourseClasses(course ?? outsideCourse, classes);
+    final List<Class> _coursesClases = CourseService.getCourseClasses(classes,courseEnrollment: outsideCourseEnrollment??courseEnrollment);
     final List<ClassItem> _classItems = [];
     for (final element in _coursesClases) {
       final ClassItem classItem = ClassItem(classObj: element, expanded: false);
@@ -497,7 +497,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
-      classes: CourseService.getCourseClasses(widget.course, _classes),
+      classes: CourseService.getCourseClasses(_classes,course:widget.course),
       onPressedMovement: (BuildContext context, MovementSubmodel movement) {
         widget.playPauseVideo();
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});

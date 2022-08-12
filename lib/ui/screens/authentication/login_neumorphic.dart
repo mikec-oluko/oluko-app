@@ -9,6 +9,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
@@ -174,31 +175,44 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           return null;
         },
       ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: InkWell(
-            child: Text(
-              OlukoLocalizations.get(context, 'forgotPassword'),
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            onTap: () {
-              _formKey.currentState.save();
-              BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
-                context,
-                ForgotPasswordDto(
-                  email: _requestData.email,
-                  projectId: GlobalConfiguration().getValue('projectId'),
+      BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthResetPassLoading) {
+            return Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 20, right: 20),
+                  child: Container(height: 15, width: 15, child: OlukoCircularProgressIndicator(personalized: true, width: 2))),
+            );
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  child: Text(
+                    OlukoLocalizations.get(context, 'forgotPassword'),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    _formKey.currentState.save();
+                    BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
+                      context,
+                      ForgotPasswordDto(
+                        email: _requestData.email,
+                        projectId: GlobalConfiguration().getValue('projectId'),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            );
+          }
+        },
       ),
       const SizedBox(
         height: 20,
