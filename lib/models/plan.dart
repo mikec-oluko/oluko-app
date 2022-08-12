@@ -18,16 +18,18 @@ Map<PlanDuration, String> durationLabel = {PlanDuration.YEARLY: 'Year', PlanDura
 
 class Plan extends Base {
   Plan(
-      {this.duration,
-      this.features,
-      this.infoDialog,
-      this.recurrent,
-      this.name,
+      {this.active,
       this.amount,
       this.amountDecimal,
-      this.backgroundImage,
-      this.metadata,
+      this.currency,
       this.description,
+      this.interval,
+      this.intervalCount,
+      this.livemode,
+      this.metadata,
+      this.name,
+      this.object,
+      this.type,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -45,54 +47,57 @@ class Plan extends Base {
             isHidden: isHidden);
 
   bool active;
-  num amountDecimal;
-  num amount;
-  PlanDuration duration;
-  List<PlanFeature> features;
-  InfoDialog infoDialog;
-  bool recurrent;
-  String name;
+  int amount;
+  String amountDecimal;
   String currency;
   String description;
-  String backgroundImage;
+  String interval;
+  int intervalCount;
+  bool livemode;
   Map<String, dynamic> metadata;
+  String name;
+  String object;
+  String type;
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
-        duration: EnumHelper.enumFromString<PlanDuration>(PlanDuration.values, json['duration']?.toString()),
-        /*features: List.from(json['features'] as Iterable)
-            .map((e) => EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e?.toString()))
-            .toList(),*/
-        infoDialog: json['info_dialog'] != null ? InfoDialog.fromJson(json['info_dialog'] as Map<String, dynamic>) : null,
-        amount: json['amount'] as num,
-        amountDecimal: json['amountDecimal'] as num,
-        recurrent: json['recurrent'] is bool ? json['recurrent'] as bool : false,
-        name: json['name']?.toString(),
-        backgroundImage: json['background_image']?.toString(),
+        active: json['active'] is bool ? json['active'] as bool : false,
+        amount: json['amount'] is int ? json['amount'] as int : null,
+        amountDecimal: json['amount_decimal']?.toString(),
+        currency: json['currency']?.toString(),
         description: json['description']?.toString(),
-        metadata: json['metadata'] as Map<String, dynamic>);
+        interval: json['interval']?.toString(),
+        intervalCount: json['interval_count'] is int ? json['interval_count'] as int : null,
+        livemode: json['livemode'] is bool ? json['livemode'] as bool : false,
+        metadata: json['metadata'] as Map<String, dynamic>,
+        name: json['name']?.toString(),
+        object: json['object']?.toString(),
+        type: json['type']?.toString());
+
     plan.setBase(json);
     return plan;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> planJson = {
-      'duration': EnumHelper.enumToString(duration),
-      'features': features.map((feature) => EnumHelper.enumToString(feature)).toList(),
-      'info_dialog': infoDialog.toJson(),
-      'amountDecimal': amountDecimal,
+      'active': active,
       'amount': amount,
+      'amount_decimal': amountDecimal,
+      'currency': currency,
       'description': description,
-      'recurrent': recurrent,
+      'interval': interval,
+      'interval_count': intervalCount,
+      'livemode': livemode,
+      'metadata': metadata,
       'name': name,
-      'background_image': backgroundImage,
-      'metadata': metadata
+      'object': object,
+      'type': type,
     };
     planJson.addEntries(super.toJson().entries);
     return planJson;
   }
 
-  bool isCurrentLevel(double currentPlan) {
+  bool isCurrentLevel(int currentPlan) {
     if (metadata != null) {
       return double.parse(metadata['level'].toString()) == currentPlan;
     } else {
