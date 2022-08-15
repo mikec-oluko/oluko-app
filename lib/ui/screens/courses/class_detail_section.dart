@@ -45,6 +45,7 @@ class _State extends State<ClassDetailSection> {
     List<Widget> getClassWidgets() {
       List<Widget> widgets = [];
       for (int i = 0; i < widget.classObj.segments.length; i++) {
+        if(widget.segments!=null && widget.segments.length>i){
         List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, _movements);
         /*for (int j = 0; j < widget.segments.length; j++) {
           if (widget.segments[j].id == widget.classObj.segments[i].id && widget.segments[j].isChallenge == true) {
@@ -71,6 +72,8 @@ class _State extends State<ClassDetailSection> {
             movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
             movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
             onPressedMovement: widget.onPressedMovement)); //TODO:check null value
+
+        }
       }
       return widgets;
     }

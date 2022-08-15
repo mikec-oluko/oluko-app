@@ -6,6 +6,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/repositories/story_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 import 'package:oluko_app/repositories/class_repository.dart';
@@ -37,8 +38,8 @@ class SaveSelfieSuccess extends CourseEnrollmentUpdateState {
 class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
   CourseEnrollmentUpdateBloc() : super(Loading());
 
-  void saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex, int sectionIndex, int classIndex, MovementSubmodel movement,
-      int totalRounds, int currentRound, int counter) async {
+  void saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex, int sectionIndex, int classIndex, MovementSubmodel movement, int totalRounds,
+      int currentRound, int counter) async {
     try {
       await CourseEnrollmentRepository.saveMovementCounter(
           courseEnrollment, segmentIndex, classIndex, sectionIndex, movement, totalRounds, currentRound, counter);
@@ -52,11 +53,10 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
     }
   }
 
-  void saveSectionStopwatch(CourseEnrollment courseEnrollment, int segmentIndex, int sectionIndex, int classIndex, int totalRounds,
-      int currentRound, int stopwatch) async {
+  void saveSectionStopwatch(
+      CourseEnrollment courseEnrollment, int segmentIndex, int sectionIndex, int classIndex, int totalRounds, int currentRound, int stopwatch) async {
     try {
-      await CourseEnrollmentRepository.saveSectionStopwatch(
-          courseEnrollment, segmentIndex, classIndex, sectionIndex, totalRounds, currentRound, stopwatch);
+      await CourseEnrollmentRepository.saveSectionStopwatch(courseEnrollment, segmentIndex, classIndex, sectionIndex, totalRounds, currentRound, stopwatch);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -74,11 +74,11 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
       final thumbnailUrl = await _uploadFile(thumbnail, 'classes/' + courseEnrollment.classes[classIndex].id);
       final miniThumbnail = await ImageUtils().getThumbnailForImage(file, 50);
       final miniThumbnailUrl = await _uploadFile(miniThumbnail, 'classes/' + courseEnrollment.classes[classIndex].id + '/mini');
-      final CourseEnrollment courseUpdated =
-          await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl, miniThumbnailUrl);
-          UsersSelfiesRepository.update(thumbnailUrl);
+      final CourseEnrollment courseUpdated = await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl, miniThumbnailUrl);
+      UsersSelfiesRepository.update(thumbnailUrl);
       saveSelfieInClass(courseEnrollment, classIndex);
-      TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, file, courseEnrollment.userId, null);
+      final List<TransformationJourneyUpload> uploadedContent = await TransformationJourneyRepository().getUploadedContentByUserId(courseEnrollment.userId);
+      TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, file, courseEnrollment.userId, uploadedContent.length);
       emit(SaveSelfieSuccess(courseEnrollment: courseUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

@@ -459,7 +459,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
-      classes: CourseService.getCourseClasses(widget.course, _classes),
+      classes: CourseService.getCourseClasses(_classes,course:widget.course),
       onPressedMovement: (BuildContext context, MovementSubmodel movement) {
         if (widget.closeVideo != null) {
           widget.closeVideo();

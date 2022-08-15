@@ -102,7 +102,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
       HiFiveSuccess(
         chat: _lastState.chat,
         users: _lastState.users,
-        alertMessage: '$hiFivesAmount Hi-Five${hiFivesAmount > 1 ? 's' : ''} sended',
+        alertMessage: '$hiFivesAmount ${OlukoLocalizations.get(context, 'hiFiveSent')}',
       ),
     );
   }

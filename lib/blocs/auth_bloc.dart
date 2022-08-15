@@ -10,7 +10,6 @@ import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
-import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
@@ -58,6 +57,10 @@ class AuthFailure extends AuthState {
 }
 
 class AuthLoading extends AuthState {}
+
+class AuthResetPassSent extends AuthState {}
+
+class AuthResetPassLoading extends AuthState {}
 
 class AuthGuest extends AuthState {}
 
@@ -394,18 +397,20 @@ class AuthBloc extends Cubit<AuthState> {
 
   Future<void> sendPasswordResetEmail(
       BuildContext context, ForgotPasswordDto forgotPasswordDto) async {
+
     if (forgotPasswordDto.email == null || forgotPasswordDto.email == '') {
       AppMessages.clearAndShowSnackbar(
           context, OlukoLocalizations.get(context, 'enterEmail'));
       return;
     }
-
+    emit(AuthResetPassLoading());
     try {
       await AuthRepository().sendPasswordResetEmail(forgotPasswordDto);
       AppMessages.clearAndShowSnackbar(
           context,
           OlukoLocalizations.get(
               context, 'pleaseCheckYourEmailForInstructions'));
+      emit(AuthResetPassSent());
     } catch (e) {
       AppMessages.clearAndShowSnackbar(
           context, OlukoLocalizations.get(context, 'wrongEmailFormat'));

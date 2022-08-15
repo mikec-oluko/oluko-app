@@ -44,7 +44,7 @@ class Courses extends StatefulWidget {
   bool homeEnrollTocourse;
   bool backButtonWithFilters;
   Function showBottomTab;
-  Courses({this.homeEnrollTocourse=false, this.showBottomTab,this.backButtonWithFilters=false, Key key}) : super(key: key);
+  Courses({this.homeEnrollTocourse = false, this.showBottomTab, this.backButtonWithFilters = false, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -177,8 +177,7 @@ class _State extends State<Courses> {
                   ? _mainPage(context)
                   : showSearchSuggestions
                       ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
-                      : CourseUtils.searchResults(
-                          context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+                      : CourseUtils.searchResults(context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
         );
       });
     }
@@ -432,14 +431,10 @@ class _State extends State<Courses> {
           final List<String> userRecommendationAvatars = courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 
           return Padding(
-            padding:
-                OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
+            padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
-                'course': course,
-                'fromCoach': false,
-                'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false
-              }),
+              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                  arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false}),
               child: _getCourseCard(_generateImageCourse(course.image),
                   width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendationsAvatarUrls: userRecommendationAvatars),
             ),
@@ -469,7 +464,9 @@ class _State extends State<Courses> {
         int courseIndex = courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
         if (activeCourseList.isNotEmpty) {
           course = activeCourseList[0];
-          enrolledCourses.add(course);
+          if (!enrolledCourses.contains(course)) {
+            enrolledCourses.add(course);
+          }
           return Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(right: 12, bottom: 8, top: 8) : const EdgeInsets.all(8.0),
             child: GestureDetector(

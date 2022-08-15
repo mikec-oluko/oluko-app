@@ -210,8 +210,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                   if (coachRequestStreamState is GetCoachRequestStreamUpdate) {
                     coachRequests = coachRequestStreamState.values;
                   }
-                  _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id,
-                      widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
+                  _coachRequest = SegmentUtils.getSegmentCoachRequest(coachRequests, widget.segments[widget.segmentIndex].id, widget.courseEnrollment.id,
+                      widget.courseEnrollment.classes[widget.classIndex].id);
                   return GestureDetector(
                     onTap: () {
                       FocusScope.of(context).unfocus();
@@ -235,8 +235,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           waitingForSegSubCreation = false;
                           BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid, RequestStatusEnum.resolved);
                           if (_wantsToCreateStory) {
-                            StoryUtils.callBlocToCreateStory(
-                                context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
+                            StoryUtils.callBlocToCreateStory(context, state.segmentSubmission, totalScore, widget.segments[widget.segmentIndex]);
                           } else {
                             _isVideoUploaded = true;
                             _segmentSubmission = state?.segmentSubmission;
@@ -250,8 +249,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                               if (!_progressCreated && _user != null) {
                                 BlocProvider.of<UserProgressBloc>(context).create(
                                     _user.uid,
-                                    SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) ||
-                                            SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])
+                                    SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) || SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])
                                         ? 1
                                         : 0,
                                     _friends);
@@ -393,8 +391,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return Scaffold(
         extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
         resizeToAvoidBottomInset: false,
-        appBar: SegmentClocksUtils.getAppBar(
-            context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
+        appBar: SegmentClocksUtils.getAppBar(context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: OlukoColors.black,
         body:
             //TODO: for screen rotation
@@ -471,9 +468,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget getPlayPauseAction() {
-    return Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: OlukoNeumorphism.isNeumorphismDesign ? neumorphicPlayPauseAction() : playPauseAction());
+    return Padding(padding: const EdgeInsets.only(right: 10), child: OlukoNeumorphism.isNeumorphismDesign ? neumorphicPlayPauseAction() : playPauseAction());
   }
 
   Widget neumorphicPlayPauseAction() {
@@ -579,8 +574,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             child: SizedBox(
                 height: ScreenUtils.height(context) * 0.14,
                 width: ScreenUtils.width(context),
-                child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context,
-                    shareDoneAction, goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex, deleteUserProgress)),
+                child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context, shareDoneAction,
+                    goToClassAction, nextSegmentAction, widget.segments, widget.segmentIndex, deleteUserProgress)),
           )
         else
           const SizedBox(),
@@ -678,18 +673,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             } else {
               setPaused();
             }
-          });
-          if (isSegmentWithRecording()) {
-            await cameraController.stopVideoRecording();
-            BottomDialogUtils.showBottomDialog(
-              context: context,
-              content: PauseDialogContent(resumeAction: _resume, restartAction: _goToSegmentDetail),
-            );
-            _recordingPaused = true;
-          }
-          setState(() {
-            workoutType = WorkoutType.segment;
-            isPlaying = false;
+            stopVideo();
           });
         },
         child: SegmentClocksUtils.pauseButton());
@@ -697,6 +681,19 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   _goToSegmentDetail() {
     Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+  }
+
+  Future<void> stopVideo() async {
+    if (isSegmentWithRecording()) {
+      await cameraController.stopVideoRecording();
+      BottomDialogUtils.showBottomDialog(
+        context: context,
+        content: PauseDialogContent(resumeAction: _resume, restartAction: _goToSegmentDetail),
+      );
+      _recordingPaused = true;
+      workoutType = WorkoutType.segment;
+      isPlaying = false;
+    }
   }
 
   //Timer Functions
@@ -807,8 +804,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       durationPR += currentDuration;
       totalScore += currentDuration;
       scoresInt[timerEntries[timerTaskIndex].round] += currentDuration;
-      scores[timerEntries[timerTaskIndex].round] =
-          TimeConverter.durationToString(Duration(seconds: scoresInt[timerEntries[timerTaskIndex].round]));
+      scores[timerEntries[timerTaskIndex].round] = TimeConverter.durationToString(Duration(seconds: scoresInt[timerEntries[timerTaskIndex].round]));
 
       _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
@@ -892,12 +888,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
     if (widget.segments[widget.segmentIndex].isChallenge) {
       await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);
-      BlocProvider.of<PersonalRecordBloc>(context).create(
-          widget.segments[widget.segmentIndex],
-          widget.courseEnrollment,
-          getPersonalRecordValue(),
-          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]),
-          widget.fromChallenge);
+      BlocProvider.of<PersonalRecordBloc>(context).create(widget.segments[widget.segmentIndex], widget.courseEnrollment, getPersonalRecordValue(),
+          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]), widget.fromChallenge);
     }
 
     Wakelock.disable();
@@ -1147,14 +1139,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   createSegmentSubmission() {
     waitingForSegSubCreation = true;
-    BlocProvider.of<SegmentSubmissionBloc>(context).create(
-        _user,
-        widget.courseEnrollment,
-        widget.segments[widget.segmentIndex],
-        videoRecorded.path,
-        widget.coach != null ? widget.coach.id : null,
-        widget.courseEnrollment.classes[widget.classIndex].id,
-        _coachRequest);
+    BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path,
+        widget.coach != null ? widget.coach.id : null, widget.courseEnrollment.classes[widget.classIndex].id, _coachRequest);
   }
 
 //STOPWATCH FUNCTIONS
