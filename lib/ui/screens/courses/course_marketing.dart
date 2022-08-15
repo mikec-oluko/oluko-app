@@ -60,13 +60,7 @@ class CourseMarketing extends StatefulWidget {
   Function closeVideo;
 
   CourseMarketing(
-      {Key key,
-      this.course,
-      this.fromCoach = false,
-      this.isCoachRecommendation = false,
-      this.courseEnrollment,
-      this.courseIndex,
-      this.fromHome = false})
+      {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex, this.fromHome = false})
       : super(key: key);
 
   get progress => null;
@@ -128,8 +122,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   Widget form() {
     return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
       return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
-        if ((enrollmentState is GetEnrollmentSuccess || enrollmentState is CourseEnrollmentBlocLoading.Loading) &&
-            classState is ClassSubscriptionSuccess) {
+        if ((enrollmentState is GetEnrollmentSuccess || enrollmentState is CourseEnrollmentBlocLoading.Loading) && classState is ClassSubscriptionSuccess) {
           _classes = classState.classes;
           return Form(
               key: _formKey,
@@ -151,8 +144,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                       showShareButton: true,
                                       onBackPressed: () => Navigator.pop(context)),
                                 ),
-                                showEnrollButton(
-                                    enrollmentState is GetEnrollmentSuccess ? enrollmentState.courseEnrollment : null, context),
+                                showEnrollButton(enrollmentState is GetEnrollmentSuccess ? enrollmentState.courseEnrollment : null, context),
                                 Padding(
                                     padding: const EdgeInsets.only(right: 15, left: 15, top: 0),
                                     child: Container(
@@ -168,8 +160,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                               //TODO: change weeks number
                                               CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
                                                   widget.course.classes != null ? widget.course.classes.length : 0, context),
-                                              style: OlukoFonts.olukoBigFont(
-                                                  customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           buildStatistics(),
@@ -177,8 +168,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
                                             child: Text(
                                               widget.course.description ?? '',
-                                              style: OlukoFonts.olukoBigFont(
-                                                  customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           if (!OlukoNeumorphism.isNeumorphismDesign)
@@ -245,8 +235,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Text(
-                        CourseUtils.toCourseDuration(int.tryParse(widget.course.duration) ?? 0,
-                            widget.course.classes != null ? widget.course.classes.length : 0, context),
+                        CourseUtils.toCourseDuration(
+                            int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
                         style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                       ),
                     ),
@@ -271,8 +261,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       ScreenUtils.height(context) * 0.12,
                       ScreenUtils.height(context) * 0.12,
                       child: Container(
-                          color: OlukoNeumorphismColors.finalGradientColorDark,
-                          child: showEnrollButton(courseEnrollmentState.courseEnrollment, context)),
+                          color: OlukoNeumorphismColors.finalGradientColorDark, child: showEnrollButton(courseEnrollmentState.courseEnrollment, context)),
                     )),
               )
             else
@@ -319,8 +308,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    bool showEnorollButton = (courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
-        (courseEnrollment == null || courseEnrollment.completion >= 1);
+    bool showEnorollButton =
+        (courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1);
     if (showEnorollButton) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
         listener: (context, courseEnrollmentState) {
@@ -378,7 +367,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (!widget.isCoachRecommendation) {
         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
       }
-      if (await SoundUtils.canPlaySound()) await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
     _disableAction = true;
   }
@@ -424,8 +413,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   Widget buildStatistics() {
     return BlocBuilder<StatisticsSubscriptionBloc, StatisticsSubscriptionState>(builder: (context, statisticsState) {
       if (statisticsState is StatisticsSubscriptionSuccess) {
-        List<CourseStatistics> courseStatistics =
-            statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList();
+        List<CourseStatistics> courseStatistics = statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList();
 
         final CourseStatistics courseStatistic = courseStatistics.isNotEmpty ? courseStatistics[0] : null;
         return Padding(
@@ -460,7 +448,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
-      classes: CourseService.getCourseClasses(_classes,course:widget.course),
+      classes: CourseService.getCourseClasses(_classes, course: widget.course),
       onPressedMovement: (BuildContext context, MovementSubmodel movement) {
         if (widget.closeVideo != null) {
           widget.closeVideo();
@@ -510,11 +498,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   }
                   return GestureDetector(
                     onTap: () {
-                      BlocProvider.of<CourseUserIteractionBloc>(context)
-                          .updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+                      BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
                     },
-                    child: topButtonsBackground(
-                        Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
+                    child: topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
                   );
                 },
               ),

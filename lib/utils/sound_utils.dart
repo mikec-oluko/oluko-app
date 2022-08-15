@@ -12,8 +12,8 @@ enum SoundTypeEnum { fixed, calculated }
 const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
-  static void playSound(int timeLeft, int totalTime, int workState) {
-    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled()) {
+  static Future<void> playSound(int timeLeft, int totalTime, int workState) async {
+    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled() && await SoundUtils.canPlaySound()) {
       final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
       if (segmentClockSounds.isNotEmpty) {
         final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
@@ -34,17 +34,19 @@ class SoundUtils {
           if (posibleSounds.length > 1) {
             final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
             if (existSoundAsset(soundToPlay)) {
-              playAsset(soundToPlay);
+              await playAsset(soundToPlay);
             }
           } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
-            playAsset(posibleSounds[0]);
+            await playAsset(posibleSounds[0]);
           }
         }
       }
     }
   }
 
-  static Future<dynamic> playAsset(Sound soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
+  static Future<dynamic> playAsset(Sound soundToPlay) async {
+    if (await SoundUtils.canPlaySound()) SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
+  }
 
   static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 

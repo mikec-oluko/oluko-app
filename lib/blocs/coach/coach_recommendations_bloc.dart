@@ -71,8 +71,8 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
         }
 
         if (_recommendationsUpdatedContent.isNotEmpty) {
-          if (_newNotificationIncoming(_recommendationsUpdatedContent) && await SoundUtils.canPlaySound()) {
-            SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          if (_newNotificationIncoming(_recommendationsUpdatedContent)) {
+            await SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
           }
           emit(
             CoachRecommendationsUpdate(
