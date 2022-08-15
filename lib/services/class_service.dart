@@ -34,7 +34,7 @@ class ClassService {
     }
     for (SectionSubmodel section in sections) {
       for (MovementSubmodel movement in section.movements) {
-        if (!movement.isRestTime) {
+        if (!movement.isRestTime && movements.where((savedMomvents) => savedMomvents.id == movement.id).toList().isEmpty) {
           movements.add(movement);
         }
       }
