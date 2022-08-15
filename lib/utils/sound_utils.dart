@@ -34,19 +34,17 @@ class SoundUtils {
           if (posibleSounds.length > 1) {
             final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
             if (existSoundAsset(soundToPlay)) {
-              await playAsset(soundToPlay);
+              _playAsset(soundToPlay);
             }
           } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
-            await playAsset(posibleSounds[0]);
+            _playAsset(posibleSounds[0]);
           }
         }
       }
     }
   }
 
-  static Future<dynamic> playAsset(Sound soundToPlay) async {
-    if (await SoundUtils.canPlaySound()) SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
-  }
+  static dynamic _playAsset(Sound soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
 
   static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 
