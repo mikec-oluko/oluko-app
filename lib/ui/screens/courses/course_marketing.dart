@@ -78,15 +78,32 @@ class _CourseMarketingState extends State<CourseMarketing> {
   final _formKey = GlobalKey<FormState>();
   User _user;
   AuthSuccess _userState;
+  List<Class>_growingClassList=[];
+  List<Class>_allCourseClasses=[];
+  final int _batchClassMaxRange = 8;
   List<Class> _classes;
   bool _disableAction = false;
   bool _isVideoPlaying = false;
   bool _courseLiked = false;
+  final ScrollController _scrollController = ScrollController();
+  double _pixelsToReload;
 
   @override
   void initState() {
-    super.initState();
-
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels>_pixelsToReload*0.75) {
+        if (_scrollController.position.pixels > 0) {
+          if (_growingClassList.length != _allCourseClasses.length) {
+            _getMoreClasses();
+            _pixelsToReload+=_scrollController.position.extentInside;
+            setState(() {});
+          }
+        }
+      }
+    });
+    _scrollController.addListener(() {
+      
+    });
     widget.isVideoPlaying = () => setState(() {
           _isVideoPlaying = !_isVideoPlaying;
         });
@@ -96,10 +113,21 @@ class _CourseMarketingState extends State<CourseMarketing> {
           }
         });
     _courseLiked = false;
+    super.initState();
   }
+    void _getMoreClasses() => _growingClassList = _allCourseClasses.isNotEmpty
+      ? [
+          ..._allCourseClasses.getRange(
+              0,
+              _allCourseClasses.length > _growingClassList.length + _batchClassMaxRange
+                  ? _growingClassList.length + _batchClassMaxRange
+                  : _allCourseClasses.length)
+        ]
+      : [];
 
   @override
   Widget build(BuildContext context) {
+    _pixelsToReload=ScreenUtils.height(context)*0.60;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -130,6 +158,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         if ((enrollmentState is GetEnrollmentSuccess || enrollmentState is CourseEnrollmentBlocLoading.Loading) &&
             classState is ClassSubscriptionSuccess) {
           _classes = classState.classes;
+          _allCourseClasses=CourseService.getCourseClasses(_classes,course:widget.course);
+          _getMoreClasses();
           return Form(
               key: _formKey,
               child: Scaffold(
@@ -208,6 +238,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       child: Container(
         color: OlukoNeumorphismColors.finalGradientColorDark,
         child: CustomScrollView(
+          controller: _scrollController,
           slivers: [
             SliverStack(positionedAlignment: Alignment.bottomRight, children: [
               SliverPersistentHeader(
@@ -459,7 +490,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
-      classes: CourseService.getCourseClasses(_classes,course:widget.course),
+      totalClasses: _allCourseClasses.length,
+      classes: _growingClassList,
       onPressedMovement: (BuildContext context, MovementSubmodel movement) {
         if (widget.closeVideo != null) {
           widget.closeVideo();
