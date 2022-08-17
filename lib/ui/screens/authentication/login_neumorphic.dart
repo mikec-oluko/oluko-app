@@ -18,6 +18,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
+import '../../../routes.dart';
+
 class LoginNeumorphicPage extends StatefulWidget {
   LoginNeumorphicPage({this.dontShowWelcomeTest, Key key}) : super(key: key);
   bool dontShowWelcomeTest;
@@ -237,6 +239,33 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             );
           },
           title: OlukoLocalizations.get(context, 'login'),
+        ),
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      SizedBox(
+        height: 50,
+        child: OlukoNeumorphicPrimaryButton(
+          useBorder: true,
+          isExpanded: false,
+          thinPadding: true,
+          onPressed: () {
+            // Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+            Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
+            // _formKey.currentState.save();
+            // FocusScope.of(context).unfocus();
+            // BlocProvider.of<AuthBloc>(context).login(
+            //   context,
+            //   LoginRequest(
+            //     email: _requestData.email,
+            //     password: _requestData.password,
+            //     userName: _requestData.userName,
+            //     projectId: GlobalConfiguration().getValue('projectId'),
+            //   ),
+            // );
+          },
+          title: OlukoLocalizations.get(context, 'register'),
         ),
       ),
       const SizedBox(
