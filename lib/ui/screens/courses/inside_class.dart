@@ -258,26 +258,33 @@ class _InsideClassesState extends State<InsideClass> {
     List<ChallengeNavigation> challengesForNavigation = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
-        int segmentPos = _class.segments.indexOf(segment);
-        SegmentSubmodel previousSegment = segmentPos > 0 ? _class.segments.elementAt(segmentPos - 1) : null;
-        EnrollmentClass classWithSegment =
-            widget.courseEnrollment.classes.where((actualClass) => actualClass.id == _class.id).toList().first;
-        EnrollmentSegment segmentFromClass =
-            classWithSegment.segments.where((segmentElement) => segmentElement.id == segment.id).toList().first;
-        setChallengeImageIfNotFound(segmentFromClass, segment);
+       int segmentPos = _class.segments.indexOf(segment);
+       
+          SegmentSubmodel previousSegment = segmentPos > 0 ? _class.segments.elementAt(segmentPos - 1) : null;
+          
+          EnrollmentClass classWithSegments =
+              widget.courseEnrollment.classes.where((actualClass) => actualClass.id == _class.id).toList().first;
+          List<EnrollmentSegment> segmentFromClass =
+              classWithSegments.segments.where((segmentElement) => segmentElement.id == segment.id).toList();
+          if(segmentFromClass.isNotEmpty){
 
-        EnrollmentSegment lastSegment = previousSegment != null
-            ? classWithSegment.segments.where((segmentElement) => segmentElement.id == previousSegment.id).toList().first
-            : null;
+          setChallengeImageIfNotFound(segmentFromClass.first, segment);
+          
+          EnrollmentSegment lastSegment = previousSegment != null
+              ? classWithSegments.segments.where((segmentElement) => segmentElement.id == previousSegment.id).toList().first
+              : null;
+          
+          challengesForNavigation.add(createChallengeForNavigation(
+            segmentFromCourseEnrollment: segmentFromClass.first,
+            classFromCourseEnrollment: classWithSegments,
+            previousSegmentFinished: previousSegment != null ? lastSegment.completedAt != null : true,
+            segmentIndex: classWithSegments.segments.indexOf(segmentFromClass.first),
+            segmentId: segmentFromClass.first.id,
+            classId: classWithSegments.id,
+          ));
 
-        challengesForNavigation.add(createChallengeForNavigation(
-          segmentFromCourseEnrollment: segmentFromClass,
-          classFromCourseEnrollment: classWithSegment,
-          previousSegmentFinished: previousSegment != null ? lastSegment.completedAt != null : true,
-          segmentIndex: classWithSegment.segments.indexOf(segmentFromClass),
-          segmentId: segmentFromClass.id,
-          classId: classWithSegment.id,
-        ));
+          }
+
       }
     });
     return challengesForNavigation;
