@@ -210,9 +210,10 @@ class _State extends State<Courses> {
       searchResultItems: _courses,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
-      actionButton: () => this.setState(() {
+      actionButton: () {
         showFilterSelector = false;
-      }),
+        cancelAction();
+      },
     );
   }
 
@@ -325,6 +326,7 @@ class _State extends State<Courses> {
   void cancelAction() {
     setState(() {
       selectedTags.clear();
+      BlocProvider.of<RemainSelectedTagsBloc>(context).set([]);
     });
     panelController.close();
   }
