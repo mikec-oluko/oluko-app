@@ -7,6 +7,7 @@ import 'package:oluko_app/models/enums/register_fields_enum.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_register_textfield.dart';
+import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../../utils/screen_utils.dart';
 
@@ -20,6 +21,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterState extends State<RegisterPage> {
   final bool _tempCheck = true;
   final formKey = GlobalKey<FormState>();
+  Map<ValidatorNames, bool> _passwordValidationState;
 
   @override
   void initState() {
@@ -154,10 +156,14 @@ class _RegisterState extends State<RegisterPage> {
                     height: 15,
                     child: Stack(alignment: Alignment.center, children: [
                       Image.asset(
-                        _tempCheck ? 'assets/assessment/neumorphic_green_circle.png' : 'assets/assessment/neumorphic_green_outlined.png',
+                        _passwordValidationState == null
+                            ? 'assets/assessment/green_ellipse.png'
+                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsMinChars] == false
+                                ? 'assets/assessment/neumorphic_green_outlined.png'
+                                : 'assets/assessment/neumorphic_green_circle.png',
                         scale: 4,
                       ),
-                      if (_tempCheck)
+                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsMinChars] == true)
                         Image.asset(
                           'assets/assessment/neumorphic_check.png',
                           scale: 4,
@@ -182,10 +188,14 @@ class _RegisterState extends State<RegisterPage> {
                     height: 15,
                     child: Stack(alignment: Alignment.center, children: [
                       Image.asset(
-                        _tempCheck ? 'assets/assessment/neumorphic_green_circle.png' : 'assets/assessment/neumorphic_green_outlined.png',
+                        _passwordValidationState == null
+                            ? 'assets/assessment/green_ellipse.png'
+                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsUppercase] == false
+                                ? 'assets/assessment/neumorphic_green_outlined.png'
+                                : 'assets/assessment/neumorphic_green_circle.png',
                         scale: 4,
                       ),
-                      if (_tempCheck)
+                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsUppercase] == true)
                         Image.asset(
                           'assets/assessment/neumorphic_check.png',
                           scale: 4,
@@ -216,10 +226,14 @@ class _RegisterState extends State<RegisterPage> {
                     height: 15,
                     child: Stack(alignment: Alignment.center, children: [
                       Image.asset(
-                        _tempCheck ? 'assets/assessment/neumorphic_green_circle.png' : 'assets/assessment/neumorphic_green_outlined.png',
+                        _passwordValidationState == null
+                            ? 'assets/assessment/green_ellipse.png'
+                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsDigit] == false
+                                ? 'assets/assessment/neumorphic_green_outlined.png'
+                                : 'assets/assessment/neumorphic_green_circle.png',
                         scale: 4,
                       ),
-                      if (_tempCheck)
+                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsDigit] == true)
                         Image.asset(
                           'assets/assessment/neumorphic_check.png',
                           scale: 4,
@@ -244,10 +258,14 @@ class _RegisterState extends State<RegisterPage> {
                     height: 15,
                     child: Stack(alignment: Alignment.center, children: [
                       Image.asset(
-                        _tempCheck ? 'assets/assessment/neumorphic_green_circle.png' : 'assets/assessment/neumorphic_green_outlined.png',
+                        _passwordValidationState == null
+                            ? 'assets/assessment/green_ellipse.png'
+                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsLowercase] == false
+                                ? 'assets/assessment/neumorphic_green_outlined.png'
+                                : 'assets/assessment/neumorphic_green_circle.png',
                         scale: 4,
                       ),
-                      if (!_tempCheck)
+                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsLowercase] == true)
                         Image.asset(
                           'assets/assessment/neumorphic_check.png',
                           scale: 4,
@@ -316,10 +334,21 @@ class _RegisterState extends State<RegisterPage> {
           OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'state'), fieldType: RegisterFieldEnum.STATE),
           OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'city'), fieldType: RegisterFieldEnum.CITY),
           OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'email'), fieldType: RegisterFieldEnum.EMAIL),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'password'), fieldType: RegisterFieldEnum.PASSWORD),
+          OlukoRegisterTextfield(
+            key: formKey,
+            title: OlukoLocalizations.get(context, 'password'),
+            fieldType: RegisterFieldEnum.PASSWORD,
+            onPasswordValidate: (passwordValidateState) => _passwordValidationStatus(passwordValidateState),
+          ),
         ],
       ),
     );
+  }
+
+  void _passwordValidationStatus(Map<ValidatorNames, bool> passwordValidationState) {
+    setState(() {
+      _passwordValidationState = passwordValidationState;
+    });
   }
 
   void validateAndSave() {

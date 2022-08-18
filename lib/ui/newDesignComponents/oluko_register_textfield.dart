@@ -4,13 +4,15 @@ import 'package:oluko_app/blocs/country_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/country.dart';
 import 'package:oluko_app/models/enums/register_fields_enum.dart';
+import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
 import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class OlukoRegisterTextfield extends StatefulWidget {
   final String title;
   final RegisterFieldEnum fieldType;
-  const OlukoRegisterTextfield({Key key, this.title, this.fieldType}) : super();
+  final Function(Map<ValidatorNames, bool> passwordValidationState) onPasswordValidate;
+  const OlukoRegisterTextfield({Key key, this.title, this.fieldType, this.onPasswordValidate}) : super();
 
   @override
   State<OlukoRegisterTextfield> createState() => _OlukoRegisterTextfieldState();
@@ -26,6 +28,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   Country _countryWithStates;
   List<String> defaultStates = ['-'];
   String _selectedState;
+  bool _peekPassword = false;
 
   @override
   void dispose() {
@@ -91,28 +94,57 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary),
         hintText: widget.title,
         fillColor: OlukoColors.white,
-        suffixIcon: controller.text.isNotEmpty
-            ? IconButton(
-                onPressed: () {
-                  controller.clear();
-                  setState(() {});
+        suffixIcon: !_isPasswordField(widget.fieldType)
+            ? controller.text.isNotEmpty
+                ? IconButton(
+                    onPressed: () {
+                      controller.clear();
+                      setState(() {});
+                    },
+                    icon: Icon(
+                      Icons.clear,
+                      color: OlukoColors.black,
+                    ),
+                  )
+                : null
+            : PeekPassword(
+                onPressed: (bool peekPassword) => {
+                  setState(() {
+                    this._peekPassword = peekPassword;
+                  })
                 },
-                icon: Icon(
-                  Icons.clear,
-                  color: OlukoColors.black,
-                ),
-              )
-            : null,
+              ),
       ),
+      obscureText: _isPasswordField(widget.fieldType) && !_peekPassword,
       cursorColor: OlukoColors.primary,
       cursorWidth: 1.5,
       onChanged: (value) {
         if (value == null || value.isEmpty) {
+          if (_isPasswordField(widget.fieldType)) widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
           setState(() {
             existError = true;
             errorMessage = 'cant be null';
           });
         } else {
+          switch (widget.fieldType) {
+            case RegisterFieldEnum.USERNAME:
+              print(value);
+              break;
+            case RegisterFieldEnum.FIRSTNAME:
+              print(value);
+              break;
+            case RegisterFieldEnum.LASTNAME:
+              print(value);
+              break;
+            case RegisterFieldEnum.EMAIL:
+              print(value);
+              break;
+            case RegisterFieldEnum.PASSWORD:
+              widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
+              break;
+            default:
+          }
+
           if (value.length <= 3) {
             setState(() {
               existError = true;
@@ -135,6 +167,8 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       },
     );
   }
+
+  bool _isPasswordField(RegisterFieldEnum textfieldType) => textfieldType == RegisterFieldEnum.PASSWORD;
 
   Widget countriesDropdown() {
     return BlocListener<CountryBloc, CountryState>(

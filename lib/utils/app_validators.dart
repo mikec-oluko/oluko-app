@@ -30,6 +30,24 @@ class AppValidators {
     }
   }
 
+  Map<ValidatorNames, bool> getPasswordValidationState(String value) {
+    Map<ValidatorNames, bool> validators = {};
+
+    validators[ValidatorNames.containsUppercase] = validatePattern(value, r'[A-Z]');
+    validators[ValidatorNames.containsLowercase] = validatePattern(value, r'[a-z]');
+    validators[ValidatorNames.containsDigit] = validatePattern(value, r'[0-9]');
+    validators[ValidatorNames.containsMinChars] = validatePattern(value, r'^.{8,}');
+
+    List<ValidatorNames> validatorsWithError = [];
+    validators.forEach((key, value) {
+      if (value == false) {
+        validatorsWithError.add(key);
+      }
+    });
+
+    return validators;
+  }
+
   bool validatePattern(String value, Pattern pattern) {
     RegExp regex = new RegExp(pattern.toString());
     print(value);
