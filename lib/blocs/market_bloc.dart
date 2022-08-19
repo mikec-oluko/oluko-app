@@ -1,61 +1,61 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DemoPage extends StatefulWidget {
-  @override
-  _DemoPageState createState() => _DemoPageState();
+abstract class MarketState {}
+
+class LoadingState extends MarketState {}
+
+class MarketSuccess extends MarketState {
+  MarketSuccess();
 }
 
-class _DemoPageState extends State<DemoPage> {
-  final InAppPurchase _inAppPurchase = InAppPurchase.instance;
-  final String _productID = 'PREMIUM_PLAN';
+class Failure extends MarketState {
+  final dynamic exception;
+  Failure({this.exception});
+}
 
-  bool _available = true;
-  List<ProductDetails> _products = [];
-  List<PurchaseDetails> _purchases = [];
-  StreamSubscription<List<PurchaseDetails>> _subscription;
+class MarketBloc extends Cubit<MarketState> {
+  MarketBloc() : super(LoadingState());
+  final InAppPurchase inAppPurchase = InAppPurchase.instance;
+  final String coreID = 'oluko_1999_1m';
+  final String coachID = 'oluko_9999_1m';
+  final String coachPlusID = 'oluko_19999_1m';
+  final String subscID = 'subscriptions (dev)';
 
-  @override
+  bool available = true;
+  List<ProductDetails> products = [];
+  List<PurchaseDetails> purchases = [];
+  StreamSubscription<List<PurchaseDetails>> subscription;
+
   void initState() {
-    final Stream<List<PurchaseDetails>> purchaseUpdated =
-        _inAppPurchase.purchaseStream;
-
-    _subscription = purchaseUpdated.listen((purchaseDetailsList) {
-      setState(() {
-        _purchases.addAll(purchaseDetailsList);
-        _listenToPurchaseUpdated(purchaseDetailsList);
-      });
+    final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
+    subscription = purchaseUpdated.listen((purchaseDetailsList) {
+      purchases.addAll(purchaseDetailsList);
+      listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
-      _subscription.cancel();
+      subscription.cancel();
     }, onError: (error) {
-      _subscription.cancel();
+      subscription.cancel();
     });
 
-    _initialize();
-
-    super.initState();
+    initialize();
   }
 
-  @override
   void dispose() {
-    _subscription.cancel();
-    super.dispose();
+    subscription.cancel();
   }
 
-  void _initialize() async {
-    _available = await _inAppPurchase.isAvailable();
-
-    final List<ProductDetails> products = await _getProducts(<String>{_productID},
+  void initialize() async {
+    List<ProductDetails> products = await getProducts(
+      <String>{coreID, coachID, coachPlusID, subscID},
     );
-
-    setState(() {
-      _products = products;
-    });
+    products = products;
   }
 
-  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+  void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
@@ -77,26 +77,25 @@ class _DemoPageState extends State<DemoPage> {
       }
 
       if (purchaseDetails.pendingCompletePurchase) {
-        await _inAppPurchase.completePurchase(purchaseDetails);
+        await inAppPurchase.completePurchase(purchaseDetails);
       }
     });
   }
 
-  Future<List<ProductDetails>> _getProducts(Set<String> productIds) async {
-    ProductDetailsResponse response =
-        await _inAppPurchase.queryProductDetails(productIds);
+  Future<List<ProductDetails>> getProducts(Set<String> productIds) async {
+    final ProductDetailsResponse response = await inAppPurchase.queryProductDetails(productIds);
 
     return response.productDetails;
   }
 
-  ListTile _buildProduct(ProductDetails product) {
+  ListTile buildProduct(ProductDetails product) {
     return ListTile(
       leading: const Icon(Icons.attach_money),
       title: Text('${product.title} - ${product.price}'),
       subtitle: Text(product.description),
       trailing: ElevatedButton(
         onPressed: () {
-          _subscribe(product);
+          subscribe(product.id);
         },
         child: const Text(
           'Subscribe',
@@ -105,7 +104,7 @@ class _DemoPageState extends State<DemoPage> {
     );
   }
 
-  ListTile _buildPurchase(PurchaseDetails purchase) {
+  ListTile buildPurchase(PurchaseDetails purchase) {
     if (purchase.error != null) {
       return ListTile(
         title: Text('${purchase.error}'),
@@ -127,160 +126,15 @@ class _DemoPageState extends State<DemoPage> {
     );
   }
 
-  void _subscribe(ProductDetails product) {
-    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
-    _inAppPurchase.buyNonConsumable(
-      purchaseParam: purchaseParam,
+  Future<void> subscribe(String productId) async {
+    final List<ProductDetails> products = await getProducts(
+      <String>{productId},
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('In App Purchase 1.0.8'),
-      ),
-      body: _available
-          ? Column(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Current Products ${_products.length}'),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _products.length,
-                        itemBuilder: (context, index) {
-                          return _buildProduct(_products[index],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Past Purchases: ${_purchases.length}'),
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _purchases.length,
-                          itemBuilder: (context, index) {
-                            return _buildPurchase(_purchases[index],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
-          : const Center(
-              child: Text('The Store Is Not Available'),
-            ),
-    );
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/enrollment_audio.dart';
-import 'dart:async';
-import 'package:in_app_purchase/in_app_purchase.dart';
-
-abstract class MarketState {}
-
-class Loading extends MarketState {}
-
-class GetEnrollmentAudioSuccess extends MarketState {
-  EnrollmentAudio enrollmentAudio;
-  GetEnrollmentAudioSuccess({this.enrollmentAudio});
-}
-
-class Failure extends MarketState {
-  final dynamic exception;
-  Failure({this.exception});
-}
-
-class MarketBloc extends Cubit<MarketState> {
-  MarketBloc() : super(Loading());
-
-  InAppPurchase iap = InAppPurchase.instance;
-  bool available = true;
-  List<ProductDetails> products = [];
-  List<PurchaseDetails> purchases = [];
-  StreamSubscription subscription;
-
-  void initialize() async {
-    available = await iap.isAvailable();
-    if (available) {
-      await getProducts();
-
-      verifyPurchase();
-      subscription = iap.purchaseStream.listen((data) {
-        purchases.addAll(data);
-        verifyPurchase();
-      });
+    if (products != null && products.isNotEmpty) {
+      final PurchaseParam purchaseParam = PurchaseParam(productDetails: products.first);
+      inAppPurchase.buyNonConsumable(
+        purchaseParam: purchaseParam,
+      );
     }
   }
-
-  @override
-  void dispose() {
-    if (subscription != null) {
-      subscription.cancel();
-      subscription = null;
-    }
-  }
-
-  Future<void> getProducts() async {
-    final Set<String> ids = Set.from([testId]);
-    ProductDetailsResponse response = await iap.queryProductDetails(ids);
-    products = response.productDetails;
-  }
-
-  PurchaseDetails hasPurchased(String productId) {
-    return purchases.firstWhere((purchase) => purchase.productID == productId, orElse: () => null);
-  }
-
-  void verifyPurchase() {
-    PurchaseDetails purchase = hasPurchased(testId);
-    if (purchase != null && purchase.status == PurchaseStatus.purchased) {}
-  }
-
-  void buyProduct(ProductDetails prod) {
-    final PurchaseParam purchaseParam = PurchaseParam(productDetails: prod);
-    iap.
-  }
-}*/
+}

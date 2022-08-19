@@ -46,6 +46,7 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
+import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
@@ -439,6 +440,7 @@ class Routes {
   final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
+  final MarketBloc _marketBloc = MarketBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -664,6 +666,9 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
+      providers = [
+          BlocProvider<MarketBloc>.value(value: _marketBloc),
+        ];
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:

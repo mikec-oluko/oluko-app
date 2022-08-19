@@ -15,6 +15,8 @@ Map<PlanFeature, String> featureLabel = {
 };
 
 Map<PlanDuration, String> durationLabel = {PlanDuration.YEARLY: 'Year', PlanDuration.MONTHLY: 'Month', PlanDuration.DAILY: 'Day'};
+Map<PlanDuration, String> shortDurationLabel = {PlanDuration.YEARLY: 'yr', PlanDuration.MONTHLY: 'yr', PlanDuration.DAILY: 'dy'};
+
 
 class Plan extends Base {
   Plan(
