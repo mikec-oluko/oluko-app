@@ -209,7 +209,7 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
             await showModalBottomSheet<OptionItem>(
               barrierColor: Colors.transparent,
               context: context,
-              backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              backgroundColor: OlukoColors.white,
               isScrollControlled: true,
               useRootNavigator: chewieController.useRootNavigator,
               builder: (context) => OptionsDialog(
