@@ -1,5 +1,16 @@
 enum PasswordStrength { weak, medium, strong }
 enum ValidatorNames { containsUppercase, containsLowercase, containsDigit, containsSpecialChar, containsRecommendedChars, containsMinChars }
+enum StringValidation {
+  isValidUserName,
+  isValidFirstAndLastName,
+  containsBlankSpaces,
+  startorEndWithBlankSpace,
+  containsMinChars,
+  containsSpecialChars,
+  isAlphabetic,
+  isAlphanumeric,
+  isValidEmail
+}
 
 class AppValidators {
   PasswordStrength validatePassword(String value) {
@@ -46,6 +57,30 @@ class AppValidators {
     });
 
     return validators;
+  }
+
+  Map<StringValidation, bool> getStringValidationState(String value) {
+    Map<StringValidation, bool> stringValidator = {};
+
+    stringValidator[StringValidation.containsBlankSpaces] = validatePattern(value, r'\s+');
+    stringValidator[StringValidation.startorEndWithBlankSpace] = validatePattern(value, r'^\s[a-z]+$') || validatePattern(value, r'^[a-z]+\s+$');
+    stringValidator[StringValidation.containsMinChars] = validatePattern(value, r'^.{8,}');
+    stringValidator[StringValidation.containsSpecialChars] = validatePattern(value, r'^[a-zA-Z0-9]+$');
+    stringValidator[StringValidation.isValidEmail] = validatePattern(value,
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+    stringValidator[StringValidation.isAlphabetic] = validatePattern(value, r'^[a-zA-Z]+$');
+    stringValidator[StringValidation.isAlphanumeric] = validatePattern(value, r'^[a-zA-Z0-9]+$');
+    stringValidator[StringValidation.isValidUserName] = validatePattern(value, r'^\S[a-zA-Z0-9_.-]{3,}$');
+    stringValidator[StringValidation.isValidFirstAndLastName] = validatePattern(value, r'^[^0-9 ]+([a-zA-Z]+\s?)+[a-zA-Z]+$');
+
+    List<StringValidation> validatorsWithError = [];
+    stringValidator.forEach((key, value) {
+      if (value == false) {
+        validatorsWithError.add(key);
+      }
+    });
+
+    return stringValidator;
   }
 
   bool validatePattern(String value, Pattern pattern) {

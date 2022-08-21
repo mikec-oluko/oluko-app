@@ -12,7 +12,8 @@ class OlukoRegisterTextfield extends StatefulWidget {
   final String title;
   final RegisterFieldEnum fieldType;
   final Function(Map<ValidatorNames, bool> passwordValidationState) onPasswordValidate;
-  const OlukoRegisterTextfield({Key key, this.title, this.fieldType, this.onPasswordValidate}) : super();
+  final Function(String value) onInputUpdated;
+  const OlukoRegisterTextfield({Key key, this.title, this.fieldType, this.onPasswordValidate, this.onInputUpdated}) : super();
 
   @override
   State<OlukoRegisterTextfield> createState() => _OlukoRegisterTextfieldState();
@@ -29,6 +30,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   List<String> defaultStates = ['-'];
   String _selectedState;
   bool _peekPassword = false;
+  Map<StringValidation, bool> stringValidator = {};
 
   @override
   void dispose() {
@@ -69,25 +71,25 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       decoration: InputDecoration(
         errorText: existError ? errorMessage : '',
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(width: 1, color: OlukoColors.error),
+          borderSide: BorderSide(color: OlukoColors.grayColor),
         ),
         errorBorder: existError
             ? const OutlineInputBorder(
-                borderSide: BorderSide(width: 1, color: OlukoColors.error),
+                borderSide: BorderSide(color: OlukoColors.error),
               )
             : OutlineInputBorder(
-                borderSide: const BorderSide(width: 1, color: OlukoColors.grayColor),
+                borderSide: const BorderSide(color: OlukoColors.grayColor),
                 borderRadius: BorderRadius.circular(5),
               ),
         labelText: widget.title,
-        labelStyle: TextStyle(height: 1, color: OlukoColors.primary),
+        labelStyle: const TextStyle(height: 1, color: OlukoColors.primary),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(width: 2, color: OlukoColors.grayColor),
           borderRadius: BorderRadius.circular(5),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(width: 1, color: OlukoColors.grayColor),
+          borderSide: const BorderSide(color: OlukoColors.grayColor),
           borderRadius: BorderRadius.circular(5),
         ),
         filled: true,
@@ -101,7 +103,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                       controller.clear();
                       setState(() {});
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.clear,
                       color: OlukoColors.black,
                     ),
@@ -110,7 +112,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
             : PeekPassword(
                 onPressed: (bool peekPassword) => {
                   setState(() {
-                    this._peekPassword = peekPassword;
+                    _peekPassword = peekPassword;
                   })
                 },
               ),
@@ -122,50 +124,132 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         if (value == null || value.isEmpty) {
           if (_isPasswordField(widget.fieldType)) widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
           setState(() {
-            existError = true;
-            errorMessage = 'cant be null';
+            // existError = true;
+            // errorMessage = 'cant be null';
           });
         } else {
+          stringValidator = AppValidators().getStringValidationState(value);
           switch (widget.fieldType) {
             case RegisterFieldEnum.USERNAME:
-              print(value);
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
+                } else if (!stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
+                } else if (stringValidator[StringValidation.containsSpecialChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                } else if (!stringValidator[StringValidation.isAlphanumeric]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(alphaNumericError: true));
+                } else {
+                  _clearFieldErrors();
+                }
+              }
               break;
             case RegisterFieldEnum.FIRSTNAME:
-              print(value);
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
+                } else if (!stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
+                } else if (stringValidator[StringValidation.containsSpecialChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
+                } else {
+                  _clearFieldErrors();
+                }
+              }
               break;
             case RegisterFieldEnum.LASTNAME:
-              print(value);
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
+                } else if (!stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
+                } else if (stringValidator[StringValidation.containsSpecialChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
+                } else {
+                  _clearFieldErrors();
+                }
+              }
               break;
             case RegisterFieldEnum.EMAIL:
-              print(value);
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.isValidEmail]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(emailError: true));
+                } else {
+                  _clearFieldErrors();
+                }
+              }
               break;
             case RegisterFieldEnum.PASSWORD:
               widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
               break;
             default:
           }
-
-          if (value.length <= 3) {
-            setState(() {
-              existError = true;
-              errorMessage = 'too short';
-            });
-          } else {
-            setState(() {
-              existError = false;
-              // errorMessage = 'too short';
-            });
-          }
+          widget.onInputUpdated(value);
         }
       },
       onSaved: (value) {},
       validator: (value) {
         if (value == null || value.isEmpty) {
+          if (widget.fieldType == RegisterFieldEnum.PASSWORD) {}
           return OlukoLocalizations.get(context, 'required');
         }
         return null;
       },
     );
+  }
+
+  void _clearFieldErrors() {
+    setState(() {
+      existError = false;
+      errorMessage = '';
+    });
+  }
+
+  String _getErrorMessage(
+      {bool specialCharsError = false,
+      bool startOrEndBlankError = false,
+      bool blankSpacesError = false,
+      bool alphaNumericError = false,
+      bool alphabeticError = false,
+      bool emailError = false,
+      bool minCharsError = false}) {
+    final String _specialChar = OlukoLocalizations.get(context, 'errorMessageSpecialCharacters');
+    final String _onlyAlphabetic = OlukoLocalizations.get(context, 'errorMessageOnlyAlphabetic');
+    final String _onlyAlphaNumeric = OlukoLocalizations.get(context, 'errorMessageOnlyAlphanumeric');
+    final String _hasBlankSpaces = OlukoLocalizations.get(context, 'errorMessageContainBlankSpace');
+    final String _startOrEndWithBlankSpace = OlukoLocalizations.get(context, 'errorMessageBlankSpace');
+    final String _invalidLength = OlukoLocalizations.get(context, 'errorMessageMustContainAtLeast');
+    final String _isNotEmail = OlukoLocalizations.get(context, 'errorMessageInvalidEmail');
+    final String _errorMessageBase = '${OlukoLocalizations.get(context, 'errorMessageTheField')} ${widget.title}';
+    String _endMessage = 'Is invalid';
+
+    if (specialCharsError) _endMessage = _specialChar;
+    if (startOrEndBlankError) _endMessage = _startOrEndWithBlankSpace;
+    if (blankSpacesError) _endMessage = _hasBlankSpaces;
+    if (alphaNumericError) _endMessage = _onlyAlphaNumeric;
+    if (alphabeticError) _endMessage = _onlyAlphabetic;
+    if (emailError) _endMessage = _isNotEmail;
+    if (minCharsError) _endMessage = _invalidLength;
+
+    return _errorMessageBase + _endMessage;
+  }
+
+  void setErrorMessage({@required String errorMessageToShow}) {
+    setState(() {
+      existError = true;
+      errorMessage = errorMessageToShow;
+    });
   }
 
   bool _isPasswordField(RegisterFieldEnum textfieldType) => textfieldType == RegisterFieldEnum.PASSWORD;
@@ -259,7 +343,54 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
                   isExpanded: true,
                   value: _selectedState ?? _countryWithStates.states[0],
-                  items: _countryWithStates.states.map<DropdownMenuItem<String>>((String countryState) {
+                  items: _countryWithStates.states.isNotEmpty
+                      ? _countryWithStates.states.map<DropdownMenuItem<String>>((String countryState) {
+                          return DropdownMenuItem<String>(
+                            value: countryState,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Text(
+                                countryState,
+                                overflow: TextOverflow.ellipsis,
+                                style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                              ),
+                            ),
+                          );
+                        }).toList()
+                      : defaultStates.map<DropdownMenuItem<String>>((String countryState) {
+                          return DropdownMenuItem<String>(
+                            value: countryState,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Text(
+                                countryState,
+                                overflow: TextOverflow.ellipsis,
+                                style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                  onChanged: (String item) async {
+                    setState(() {
+                      _selectedState = item;
+                    });
+                  },
+                ),
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: OlukoColors.grayColor, width: 1),
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                  borderRadius: BorderRadius.circular(5),
+                  dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
+                  isExpanded: true,
+                  value: '-',
+                  items: defaultStates.map<DropdownMenuItem<String>>((String countryState) {
                     return DropdownMenuItem<String>(
                       value: countryState,
                       child: Padding(
@@ -279,27 +410,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   },
                 ),
               ),
-            )
-          : DropdownButton(
-              borderRadius: BorderRadius.circular(5),
-              dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
-              isExpanded: true,
-              value: '-',
-              items: defaultStates.map<DropdownMenuItem<String>>((String countryState) {
-                return DropdownMenuItem<String>(
-                  value: countryState,
-                  child: Text(
-                    countryState,
-                    overflow: TextOverflow.ellipsis,
-                    style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.black),
-                  ),
-                );
-              }).toList(),
-              onChanged: (String item) async {
-                setState(() {
-                  _selectedState = item;
-                });
-              },
             ),
     );
   }

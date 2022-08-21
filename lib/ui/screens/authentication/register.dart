@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/country_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/register_fields_enum.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_register_textfield.dart';
@@ -13,7 +14,6 @@ import '../../../utils/screen_utils.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage() : super();
-
   @override
   State<RegisterPage> createState() => _RegisterState();
 }
@@ -22,6 +22,7 @@ class _RegisterState extends State<RegisterPage> {
   final bool _tempCheck = true;
   final formKey = GlobalKey<FormState>();
   Map<ValidatorNames, bool> _passwordValidationState;
+  SignUpRequest _newUserFromRegister = SignUpRequest();
 
   @override
   void initState() {
@@ -46,25 +47,24 @@ class _RegisterState extends State<RegisterPage> {
           actions: [],
         ),
         body: Container(
+          alignment: Alignment.center,
           color: OlukoColors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                _defaultWidgetSpacer(context),
-                _getSignUpText(context),
-                _defaultWidgetSpacer(context),
-                _textfieldsSection(),
-                _defaultWidgetSpacer(context, customHeight: ScreenUtils.height(context) * 0.02),
-                _passwordRequirementsSection(context),
-                _defaultWidgetSpacer(context),
-                _userCheckConditionsAndPolicySection(context),
-                _defaultWidgetSpacer(context),
-                _registerConfirmButton(context),
-                _defaultWidgetSpacer(context),
-              ],
-            ),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              _defaultWidgetSpacer(context),
+              _getSignUpText(context),
+              _defaultWidgetSpacer(context),
+              _textfieldsSection(),
+              _passwordRequirementsSection(context),
+              _defaultWidgetSpacer(context),
+              _userCheckConditionsAndPolicySection(context),
+              _defaultWidgetSpacer(context),
+              _termsAndConditionsPrivacyPolicy(context),
+              _defaultWidgetSpacer(context),
+              _registerConfirmButton(context),
+              _defaultWidgetSpacer(context),
+            ],
           ),
         ),
       ),
@@ -83,31 +83,44 @@ class _RegisterState extends State<RegisterPage> {
           onPressed: () {
             validateAndSave();
           },
-          title: 'Lets Go',
+          title: OlukoLocalizations.get(context, 'letsGo'),
         ),
       ),
     );
   }
 
-  Padding _userCheckConditionsAndPolicySection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 5),
-                child: Container(width: 15, height: 15, child: checkBox()),
-              ),
-              Text(
-                'I agree to Terms And Conditions and Privacy Policy',
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
-              ),
-            ],
-          ),
-          _defaultWidgetSpacer(context, customHeight: ScreenUtils.height(context) * 0.02),
-          Row(
+  Widget _termsAndConditionsPrivacyPolicy(BuildContext context) {
+    return Column(
+      children: [
+        Text(OlukoLocalizations.get(context, 'registerByContinuing'),
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+        Row(
+          children: [
+            Text(OlukoLocalizations.get(context, 'mvtFitness'),
+                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+            Text(OlukoLocalizations.get(context, 'termsAndConditions'),
+                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+          ],
+        ),
+        Row(
+          children: [
+            Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+            Text(OlukoLocalizations.get(context, 'privacyPolicy'),
+                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _userCheckConditionsAndPolicySection(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _widgetSpacer(),
+        Container(
+          width: ScreenUtils.width(context) * 0.45,
+          child: Row(
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 5),
@@ -117,16 +130,22 @@ class _RegisterState extends State<RegisterPage> {
                   child: Container(width: 15, height: 15, child: checkBox()),
                 ),
               ),
-              Text(
-                'Sign up for MVT Fitness news, info and offers.',
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
+              Flexible(
+                child: Text(
+                  OlukoLocalizations.get(context, 'newsInfoAndOffers'),
+                  // maxLines: 2,
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
+                ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        _widgetSpacer(),
+      ],
     );
   }
+
+  Expanded _widgetSpacer() => const Expanded(child: SizedBox());
 
   Padding _passwordRequirementsSection(BuildContext context) {
     return Padding(
@@ -134,164 +153,100 @@ class _RegisterState extends State<RegisterPage> {
       child: Column(
         children: [
           _passwordRequirementsTitle(),
-          _defaultWidgetSpacer(context, customHeight: ScreenUtils.height(context) * 0.02),
+          _defaultWidgetSpacer(context, customHeight: ScreenUtils.height(context) * 0.01),
           _passwordRequirementsChecksList(context)
         ],
       ),
     );
   }
 
-  Column _passwordRequirementsChecksList(BuildContext context) {
-    return Column(
+  Widget _passwordRequirementsChecksList(BuildContext context) {
+    return Row(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        _widgetSpacer(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Stack(alignment: Alignment.center, children: [
-                      Image.asset(
-                        _passwordValidationState == null
-                            ? 'assets/assessment/green_ellipse.png'
-                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsMinChars] == false
-                                ? 'assets/assessment/neumorphic_green_outlined.png'
-                                : 'assets/assessment/neumorphic_green_circle.png',
-                        scale: 4,
-                      ),
-                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsMinChars] == true)
-                        Image.asset(
-                          'assets/assessment/neumorphic_check.png',
-                          scale: 4,
-                        )
-                      else
-                        const SizedBox.shrink()
-                    ]),
-                  ),
-                ),
-                Text(
-                  '8 or more characters',
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
-                ),
-              ],
+            _passwordRequirementsTile(
+              evaluate: () => _containsMinChars(),
+              errorText: OlukoLocalizations.get(context, 'passwordMinLength'),
+            ), // 'At least one number'
+            _passwordRequirementsTile(
+              evaluate: () => _containsUppercase(),
+              errorText: OlukoLocalizations.get(context, 'passwordUppercase'),
             ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Stack(alignment: Alignment.center, children: [
-                      Image.asset(
-                        _passwordValidationState == null
-                            ? 'assets/assessment/green_ellipse.png'
-                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsUppercase] == false
-                                ? 'assets/assessment/neumorphic_green_outlined.png'
-                                : 'assets/assessment/neumorphic_green_circle.png',
-                        scale: 4,
-                      ),
-                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsUppercase] == true)
-                        Image.asset(
-                          'assets/assessment/neumorphic_check.png',
-                          scale: 4,
-                        )
-                      else
-                        const SizedBox.shrink()
-                    ]),
-                  ),
-                ),
-                Text(
-                  'At least 1 uppercase letter',
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
-                ),
-              ],
+            _passwordRequirementsTile(
+              evaluate: () => _containsDigit(),
+              errorText: OlukoLocalizations.get(context, 'passwordNumberRequired'),
+            ),
+            _passwordRequirementsTile(
+              evaluate: () => _containsLowercase(),
+              errorText: OlukoLocalizations.get(context, 'passwordLowercase'),
             ),
           ],
         ),
-        _defaultWidgetSpacer(context, customHeight: ScreenUtils.height(context) * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Stack(alignment: Alignment.center, children: [
-                      Image.asset(
-                        _passwordValidationState == null
-                            ? 'assets/assessment/green_ellipse.png'
-                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsDigit] == false
-                                ? 'assets/assessment/neumorphic_green_outlined.png'
-                                : 'assets/assessment/neumorphic_green_circle.png',
-                        scale: 4,
-                      ),
-                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsDigit] == true)
-                        Image.asset(
-                          'assets/assessment/neumorphic_check.png',
-                          scale: 4,
-                        )
-                      else
-                        const SizedBox.shrink()
-                    ]),
-                  ),
-                ),
-                Text(
-                  'At least one number',
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Stack(alignment: Alignment.center, children: [
-                      Image.asset(
-                        _passwordValidationState == null
-                            ? 'assets/assessment/green_ellipse.png'
-                            : _passwordValidationState != null && _passwordValidationState[ValidatorNames.containsLowercase] == false
-                                ? 'assets/assessment/neumorphic_green_outlined.png'
-                                : 'assets/assessment/neumorphic_green_circle.png',
-                        scale: 4,
-                      ),
-                      if (_passwordValidationState != null && _passwordValidationState[ValidatorNames.containsLowercase] == true)
-                        Image.asset(
-                          'assets/assessment/neumorphic_check.png',
-                          scale: 4,
-                        )
-                      else
-                        const SizedBox.shrink()
-                    ]),
-                  ),
-                ),
-                Text(
-                  'At least 1 lowercase letter',
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
-                ),
-              ],
-            )
-          ],
-        ),
+        _widgetSpacer(),
       ],
     );
   }
 
+  bool _containsMinChars() => _passwordValidationState[ValidatorNames.containsMinChars];
+
+  bool _containsUppercase() => _passwordValidationState[ValidatorNames.containsUppercase];
+
+  bool _containsDigit() => _passwordValidationState[ValidatorNames.containsDigit];
+
+  Widget _passwordRequirementsTile({@required bool Function() evaluate, @required String errorText}) {
+    return Container(
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: Container(
+              width: 15,
+              height: 15,
+              child: Stack(alignment: Alignment.center, children: [
+                if (_passwordValidationState == null)
+                  Container(
+                      decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: OlukoColors.primary, width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(50.0)),
+                  )),
+                if (_passwordValidationState != null)
+                  Container(
+                      decoration: BoxDecoration(
+                    color: evaluate() ? OlukoColors.primary : Colors.transparent,
+                    border: Border.all(color: evaluate() ? OlukoColors.primary : OlukoColors.error, width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(50.0)),
+                  )),
+                if (_passwordValidationState != null && evaluate())
+                  Image.asset(
+                    'assets/assessment/neumorphic_check.png',
+                    scale: 4,
+                  )
+                else
+                  const SizedBox.shrink()
+              ]),
+            ),
+          ),
+          Text(
+            errorText,
+            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase] == true;
+
   Row _passwordRequirementsTitle() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Password Requirements',
+          OlukoLocalizations.get(context, 'passworRequirements'),
           style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary),
         )
       ],
@@ -312,10 +267,9 @@ class _RegisterState extends State<RegisterPage> {
     return Container(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context) * 0.08,
-      // color: OlukoColors.coral,
       child: Center(
         child: Text(
-          'Sign up',
+          OlukoLocalizations.get(context, 'signUp'),
           style: OlukoFonts.olukoBiggestFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
         ),
       ),
@@ -327,17 +281,54 @@ class _RegisterState extends State<RegisterPage> {
       key: formKey,
       child: Column(
         children: [
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'username'), fieldType: RegisterFieldEnum.USERNAME),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'firstName'), fieldType: RegisterFieldEnum.FIRSTNAME),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'lastName'), fieldType: RegisterFieldEnum.LASTNAME),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'country'), fieldType: RegisterFieldEnum.COUNTRY),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'state'), fieldType: RegisterFieldEnum.STATE),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'city'), fieldType: RegisterFieldEnum.CITY),
-          OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'email'), fieldType: RegisterFieldEnum.EMAIL),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'username'),
+              fieldType: RegisterFieldEnum.USERNAME,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.username = value;
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'firstName'),
+              fieldType: RegisterFieldEnum.FIRSTNAME,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.firstName = value;
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'lastName'),
+              fieldType: RegisterFieldEnum.LASTNAME,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.lastName = value;
+                });
+              }),
+          // OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'country'), fieldType: RegisterFieldEnum.COUNTRY),
+          // OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'state'), fieldType: RegisterFieldEnum.STATE),
+          // OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'city'), fieldType: RegisterFieldEnum.CITY),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'email'),
+              fieldType: RegisterFieldEnum.EMAIL,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.email = value;
+                });
+              }),
           OlukoRegisterTextfield(
             key: formKey,
             title: OlukoLocalizations.get(context, 'password'),
             fieldType: RegisterFieldEnum.PASSWORD,
+            onInputUpdated: (value) {
+              setState(() {
+                _newUserFromRegister.password = value;
+              });
+            },
             onPasswordValidate: (passwordValidateState) => _passwordValidationStatus(passwordValidateState),
           ),
         ],
@@ -353,6 +344,7 @@ class _RegisterState extends State<RegisterPage> {
 
   void validateAndSave() {
     final FormState form = formKey.currentState;
+    print(_newUserFromRegister);
     if (form.validate()) {
       print('Form is valid');
     } else {
