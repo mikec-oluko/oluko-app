@@ -450,7 +450,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
       _buttonTextContent = OlukoLocalizations.of(context).find('remove');
       return SizedBox(
         child: OlukoNeumorphicSecondaryButton(
-          thinPadding: true,
+         // thinPadding: true,
           isExpanded: false,
           textColor: Colors.grey,
           title: _buttonTextContent,
