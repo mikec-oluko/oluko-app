@@ -10,6 +10,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/newDesignComponents/oluko_register_textfield.dart';
 import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/screen_utils.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -19,10 +20,12 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterState extends State<RegisterPage> {
-  final bool _tempCheck = true;
+  bool newsletter = false;
   final formKey = GlobalKey<FormState>();
   Map<ValidatorNames, bool> _passwordValidationState;
   SignUpRequest _newUserFromRegister = SignUpRequest();
+  final Uri _mvtTermsAndConditionsUrl = Uri.parse('https://www.mvtfitnessapp.com/terms');
+  final Uri _mvtPrivacyPolicyUrl = Uri.parse('https://www.mvtfitnessapp.com/privacy-policy');
 
   @override
   void initState() {
@@ -95,22 +98,38 @@ class _RegisterState extends State<RegisterPage> {
         Text(OlukoLocalizations.get(context, 'registerByContinuing'),
             style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
         Row(
+          //  crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+
           children: [
             Text(OlukoLocalizations.get(context, 'mvtFitness'),
                 style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
-            Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+            InkWell(
+              onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
+              child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
+            ),
           ],
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
-            Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
+            InkWell(
+              onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
+              child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
+            ),
           ],
         ),
       ],
     );
+  }
+
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
   }
 
   Widget _userCheckConditionsAndPolicySection(BuildContext context) {
@@ -196,6 +215,8 @@ class _RegisterState extends State<RegisterPage> {
 
   bool _containsDigit() => _passwordValidationState[ValidatorNames.containsDigit];
 
+  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase] == true;
+
   Widget _passwordRequirementsTile({@required bool Function() evaluate, @required String errorText}) {
     return Container(
       child: Row(
@@ -238,8 +259,6 @@ class _RegisterState extends State<RegisterPage> {
       ),
     );
   }
-
-  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase] == true;
 
   Row _passwordRequirementsTitle() {
     return Row(
@@ -345,25 +364,26 @@ class _RegisterState extends State<RegisterPage> {
   void validateAndSave() {
     final FormState form = formKey.currentState;
     print(_newUserFromRegister);
-    if (form.validate()) {
+    if (form.validate() && isPasswordValid()) {
       print('Form is valid');
     } else {
       print('Form is invalid');
     }
   }
 
+  bool isPasswordValid() => (_containsMinChars() && _containsUppercase()) && (_containsDigit() && _containsLowercase());
+
   Widget checkBox() {
     return Theme(
       data: ThemeData(unselectedWidgetColor: OlukoColors.primary),
       child: Checkbox(
-        checkColor: OlukoColors.primary,
-        activeColor: Colors.transparent,
-        value: !_tempCheck,
+        checkColor: OlukoColors.black,
+        activeColor: Colors.white,
+        value: newsletter,
         onChanged: (bool value) {
           setState(() {
-            // _tempCheck = value;
+            newsletter = value;
           });
-          // widget.onShowAgainPressed();
         },
       ),
     );

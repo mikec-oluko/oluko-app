@@ -136,9 +136,9 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
                 } else if (stringValidator[StringValidation.containsBlankSpaces]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
-                } else if (!stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
-                } else if (stringValidator[StringValidation.containsSpecialChars]) {
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
                 } else if (!stringValidator[StringValidation.isAlphanumeric]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(alphaNumericError: true));
@@ -153,9 +153,9 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
                 } else if (stringValidator[StringValidation.containsBlankSpaces]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
-                } else if (!stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
-                } else if (stringValidator[StringValidation.containsSpecialChars]) {
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
                 } else if (!stringValidator[StringValidation.isAlphabetic]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
@@ -170,9 +170,9 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
                 } else if (stringValidator[StringValidation.containsBlankSpaces]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
-                } else if (!stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
-                } else if (stringValidator[StringValidation.containsSpecialChars]) {
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
                 } else if (!stringValidator[StringValidation.isAlphabetic]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
@@ -201,8 +201,77 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       onSaved: (value) {},
       validator: (value) {
         if (value == null || value.isEmpty) {
-          if (widget.fieldType == RegisterFieldEnum.PASSWORD) {}
+          // if (widget.fieldType == RegisterFieldEnum.PASSWORD) {}
           return OlukoLocalizations.get(context, 'required');
+        } else {
+          stringValidator = AppValidators().getStringValidationState(value);
+          switch (widget.fieldType) {
+            case RegisterFieldEnum.USERNAME:
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  return _getErrorMessage(minCharsError: true);
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  return _getErrorMessage(blankSpacesError: true);
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  return _getErrorMessage(startOrEndBlankError: true);
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
+                  return _getErrorMessage(specialCharsError: true);
+                } else if (!stringValidator[StringValidation.isAlphanumeric]) {
+                  return _getErrorMessage(alphaNumericError: true);
+                } else {
+                  return null;
+                }
+              }
+              break;
+            case RegisterFieldEnum.FIRSTNAME:
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  return _getErrorMessage(minCharsError: true);
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  return _getErrorMessage(blankSpacesError: true);
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  return _getErrorMessage(startOrEndBlankError: true);
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
+                  return _getErrorMessage(specialCharsError: true);
+                } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                  return _getErrorMessage(alphabeticError: true);
+                } else {
+                  return null;
+                }
+              }
+              break;
+            case RegisterFieldEnum.LASTNAME:
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  return _getErrorMessage(minCharsError: true);
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  return _getErrorMessage(blankSpacesError: true);
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  return _getErrorMessage(startOrEndBlankError: true);
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
+                  return _getErrorMessage(specialCharsError: true);
+                } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                  return _getErrorMessage(alphabeticError: true);
+                } else {
+                  return null;
+                }
+              }
+              break;
+            case RegisterFieldEnum.EMAIL:
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.isValidEmail]) {
+                  return _getErrorMessage(emailError: true);
+                } else {
+                  return null;
+                }
+              }
+              break;
+            case RegisterFieldEnum.PASSWORD:
+              widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
+              return null;
+              break;
+            default:
+          }
         }
         return null;
       },
