@@ -92,7 +92,8 @@ class _State extends State<ChallengesCard> {
         if (needAudioComponent)
           Padding(
             padding: const EdgeInsets.only(left: 5.0),
-            child: SizedBox(            
+            child: SizedBox(       
+              width:  ScreenUtils.width(context)*0.17 ,     
                 child: Text(
                   '${OlukoLocalizations.get(context, 'saveFor')}${widget.userRequested.firstName}',
                   style: OlukoFonts.olukoSmallFont(),
