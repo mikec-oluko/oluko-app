@@ -109,8 +109,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
 
   SubscriptionCard _showSubscriptionCard(Plan plan, double currentPlan) {
     final SubscriptionCard subscriptionCard = SubscriptionCard();
-    final priceFormated = NumberFormat('###.##').format(plan.amount);
-    subscriptionCard.price = '\$$priceFormated ';
+    subscriptionCard.price = '\$${plan.applePrice} ';
     subscriptionCard.priceLabel = shortDurationLabel[PlanDuration.values[plan.intervalCount]];
     subscriptionCard.description = plan.description;
     subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}';

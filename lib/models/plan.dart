@@ -17,7 +17,6 @@ Map<PlanFeature, String> featureLabel = {
 Map<PlanDuration, String> durationLabel = {PlanDuration.YEARLY: 'Year', PlanDuration.MONTHLY: 'Month', PlanDuration.DAILY: 'Day'};
 Map<PlanDuration, String> shortDurationLabel = {PlanDuration.YEARLY: 'yr', PlanDuration.MONTHLY: 'yr', PlanDuration.DAILY: 'dy'};
 
-
 class Plan extends Base {
   Plan(
       {this.active,
@@ -33,6 +32,7 @@ class Plan extends Base {
       this.object,
       this.type,
       this.appleId,
+      this.applePrice,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,14 +40,7 @@ class Plan extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   bool active;
   int amount;
@@ -62,6 +55,7 @@ class Plan extends Base {
   String object;
   String type;
   String appleId;
+  int applePrice;
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
@@ -77,7 +71,9 @@ class Plan extends Base {
         name: json['name']?.toString(),
         object: json['object']?.toString(),
         type: json['type']?.toString(),
-        appleId: json['apple_id']?.toString());
+        appleId: json['apple_id']?.toString(),
+        applePrice: json['apple_price'] is int ? json['apple_price'] as int : null,
+        );
 
     plan.setBase(json);
     return plan;
@@ -97,6 +93,8 @@ class Plan extends Base {
       'name': name,
       'object': object,
       'type': type,
+      'apple_id': appleId,
+      'apple_price': applePrice
     };
     planJson.addEntries(super.toJson().entries);
     return planJson;

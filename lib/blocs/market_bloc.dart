@@ -23,7 +23,6 @@ class MarketBloc extends Cubit<MarketState> {
   final String coreID = 'oluko_1999_1m';
   final String coachID = 'oluko_9999_1m';
   final String coachPlusID = 'oluko_19999_1m';
-  final String subscID = 'subscriptions (dev)';
 
   bool available = true;
   List<ProductDetails> products = [];
@@ -32,27 +31,33 @@ class MarketBloc extends Cubit<MarketState> {
 
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
-    subscription = purchaseUpdated.listen((purchaseDetailsList) {
-      purchases.addAll(purchaseDetailsList);
-      listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      subscription.cancel();
-    }, onError: (error) {
-      subscription.cancel();
-    });
+    subscription = purchaseUpdated.listen(
+      (purchaseDetailsList) {
+        purchases.addAll(purchaseDetailsList);
+        listenToPurchaseUpdated(purchaseDetailsList);
+      },
+      onDone: () {
+        subscription.cancel();
+      },
+      onError: (error) {
+        subscription.cancel();
+      },
+    );
 
     initialize();
   }
 
   void dispose() {
-    subscription.cancel();
+    if (subscription != null) {
+      subscription.cancel();
+    }
   }
 
   void initialize() async {
-    List<ProductDetails> products = await getProducts(
-      <String>{coreID, coachID, coachPlusID, subscID},
+    final List<ProductDetails> appleProducts = await getProducts(
+      <String>{coreID, coachID, coachPlusID},
     );
-    products = products;
+    products = appleProducts;
   }
 
   void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -84,8 +89,23 @@ class MarketBloc extends Cubit<MarketState> {
 
   Future<List<ProductDetails>> getProducts(Set<String> productIds) async {
     final ProductDetailsResponse response = await inAppPurchase.queryProductDetails(productIds);
-
     return response.productDetails;
+  }
+
+  Future<void> subscribe(String productId) async {
+    ProductDetails product = products?.firstWhere((product) => product.id == productId);
+    if (product == null) {
+      products = await getProducts(
+        <String>{productId},
+      );
+      if (products != null && products.isNotEmpty) {
+        product = products.first;
+      }
+    }
+    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
+    inAppPurchase.buyNonConsumable(
+      purchaseParam: purchaseParam,
+    );
   }
 
   ListTile buildProduct(ProductDetails product) {
@@ -124,17 +144,5 @@ class MarketBloc extends Cubit<MarketState> {
       title: Text('${purchase.productID} ${transactionDate ?? ''}'),
       subtitle: Text(purchase.status.toString()),
     );
-  }
-
-  Future<void> subscribe(String productId) async {
-    final List<ProductDetails> products = await getProducts(
-      <String>{productId},
-    );
-    if (products != null && products.isNotEmpty) {
-      final PurchaseParam purchaseParam = PurchaseParam(productDetails: products.first);
-      inAppPurchase.buyNonConsumable(
-        purchaseParam: purchaseParam,
-      );
-    }
   }
 }
