@@ -59,12 +59,12 @@ class AppValidators {
     return validators;
   }
 
-  Map<StringValidation, bool> getStringValidationState(String value) {
+  Map<StringValidation, bool> getStringValidationState(String value, {int minStringLength}) {
     Map<StringValidation, bool> stringValidator = {};
 
     stringValidator[StringValidation.containsBlankSpaces] = validatePattern(value, r'\s+');
     stringValidator[StringValidation.startorEndWithBlankSpace] = validatePattern(value, r'^\s[a-z]+$') || validatePattern(value, r'^[a-z]+\s+$');
-    stringValidator[StringValidation.containsMinChars] = validatePattern(value, r'^.{8,}');
+    stringValidator[StringValidation.containsMinChars] = validatePattern(value, r'^.{3,}');
     stringValidator[StringValidation.containsSpecialChars] = validatePattern(value, r'^[a-zA-Z0-9]+$');
     stringValidator[StringValidation.isValidEmail] = validatePattern(value,
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');

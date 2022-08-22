@@ -83,6 +83,7 @@ class _RegisterState extends State<RegisterPage> {
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
           thinPadding: true,
+          flatStyle: true,
           onPressed: () {
             validateAndSave();
           },
@@ -140,9 +141,10 @@ class _RegisterState extends State<RegisterPage> {
         Container(
           width: ScreenUtils.width(context) * 0.45,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 5),
+                padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
                 child: Container(
                   width: 15,
                   height: 15,
@@ -189,7 +191,7 @@ class _RegisterState extends State<RegisterPage> {
             _passwordRequirementsTile(
               evaluate: () => _containsMinChars(),
               errorText: OlukoLocalizations.get(context, 'passwordMinLength'),
-            ), // 'At least one number'
+            ),
             _passwordRequirementsTile(
               evaluate: () => _containsUppercase(),
               errorText: OlukoLocalizations.get(context, 'passwordUppercase'),

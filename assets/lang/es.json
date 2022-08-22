@@ -382,7 +382,7 @@
     "apply": "Aplicar",
     "register": "Registrarse",
     "characters": "caracteres",
-    "errorMessageTheField": "El campo: ",
+    "errorMessageTheField": "El campo:",
     "errorMessageOnlyAlphabetic": ", debe tener solo caracteres alfabéticos.",
     "errorMessageOnlyAlphanumeric": ", debe tener solo caracteres alfanuméricos.",
     "errorMessageInvalidEmail": ", debe ser un correo electrónico válido.",

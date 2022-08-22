@@ -70,8 +70,8 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.black),
       decoration: InputDecoration(
         errorText: existError ? errorMessage : '',
-        focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: OlukoColors.grayColor),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
         ),
         errorBorder: existError
             ? const OutlineInputBorder(
@@ -82,7 +82,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                 borderRadius: BorderRadius.circular(5),
               ),
         labelText: widget.title,
-        labelStyle: const TextStyle(height: 1, color: OlukoColors.primary),
+        labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(width: 2, color: OlukoColors.grayColor),
@@ -201,7 +201,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       onSaved: (value) {},
       validator: (value) {
         if (value == null || value.isEmpty) {
-          // if (widget.fieldType == RegisterFieldEnum.PASSWORD) {}
           return OlukoLocalizations.get(context, 'required');
         } else {
           stringValidator = AppValidators().getStringValidationState(value);
@@ -298,7 +297,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
     final String _onlyAlphaNumeric = OlukoLocalizations.get(context, 'errorMessageOnlyAlphanumeric');
     final String _hasBlankSpaces = OlukoLocalizations.get(context, 'errorMessageContainBlankSpace');
     final String _startOrEndWithBlankSpace = OlukoLocalizations.get(context, 'errorMessageBlankSpace');
-    final String _invalidLength = OlukoLocalizations.get(context, 'errorMessageMustContainAtLeast');
+    final String _invalidLength = OlukoLocalizations.get(context, 'errorMessageMustContainAtLeast') + OlukoLocalizations.get(context, 'characters');
     final String _isNotEmail = OlukoLocalizations.get(context, 'errorMessageInvalidEmail');
     final String _errorMessageBase = '${OlukoLocalizations.get(context, 'errorMessageTheField')} ${widget.title}';
     String _endMessage = 'Is invalid';
