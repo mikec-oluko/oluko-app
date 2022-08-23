@@ -104,7 +104,8 @@ class EnrolledCourse extends StatefulWidget {
     final classIndex = _classItemsToUse.indexOf(item);
     return enrollment.classes[classIndex] != null && enrollment.classes[classIndex].completedAt != null
         ? GestureDetector(
-            onTap: () {Navigator.pushNamed(
+            onTap: () {
+              Navigator.pushNamed(
               context,
               routeLabels[RouteEnum.insideClass],
               arguments: {
@@ -129,7 +130,7 @@ class EnrolledCourse extends StatefulWidget {
 }
 
 Widget getIncompletedClasses(List<ClassItem> _classItemsToUse, CourseEnrollment enrollment, Function outSideCloseVideo, Function closeVideo,
-    BuildContext context, int index, ClassItem item,{Function onPressed}) {
+    BuildContext context, int index, ClassItem item, { Function onPressed, }) {
   final classIndex = _classItemsToUse.indexOf(item);
   final classProgress = CourseEnrollmentService.getClassProgress(enrollment, classIndex);
   return enrollment.classes[classIndex].completedAt == null

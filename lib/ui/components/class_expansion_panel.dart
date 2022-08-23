@@ -97,12 +97,7 @@ class _State extends State<ClassExpansionPanels> {
       return CustomExpansionPanelList.radio(
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
-            // _classItems[index].expanded = isExpanded; //TODO: new
-            _classItems[index].expanded = !_classItems[index].expanded;
-            // if (_classItems[index].expanded) {
-            //   _scrollToSelectedContent(expansionTileKey: _classItems[index].globalKey);
-            //   //_scrollToSelectedContent(expansionTileKey: index);
-            // }
+            _classItems[index].expanded = !_classItems[index].expanded;         
           });
         },
         children: _classItems.map<ExpansionPanelRadio>((ClassItem item) {
@@ -123,9 +118,6 @@ class _State extends State<ClassExpansionPanels> {
               );
             },
             body: _subClassItems[_classItems.indexOf(item)],
-            // isExpanded: item.expanded,
-
-            // value: _classItems[_classItems.indexOf(item)].globalKey = GlobalKey(),
             value: _classItems.indexOf(item),
           );
         }).toList(),
@@ -140,14 +132,6 @@ class _State extends State<ClassExpansionPanels> {
     }
   }
 
-  // void _scrollToSelectedContent({GlobalKey expansionTileKey}) {
-  //   final keyContext = expansionTileKey.currentContext;
-  //   if (keyContext != null) {
-  //     Future.delayed(Duration(milliseconds: SCROLL_DELAY_DURATION)).then((value) {
-  //       Scrollable.ensureVisible(keyContext, duration: Duration(milliseconds: SCROLL_DURATION), alignment: 0);
-  //     });
-  //   }
-  // }
 
   List<Widget> generateSubClassItems() {
     List<Widget> subClassItems = [];
