@@ -82,9 +82,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
           }
       }
     });
-    _scrollController.addListener(() {
-      
-    });
     widget.isVideoPlaying = () => setState(() {
           _isVideoPlaying = !_isVideoPlaying;
         });
