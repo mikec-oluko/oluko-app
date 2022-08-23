@@ -368,7 +368,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     if (userPlan != null) {
       subscriptionCard.priceLabel = '\$${userPlan.amount}/${durationLabel[userPlan.intervalCount]}';
       subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-      subscriptionCard.title = userPlan.name;
       subscriptionCard.selected = false;
     }
     return [subscriptionCard];

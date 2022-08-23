@@ -164,7 +164,6 @@ class _AppPlansState extends State<AppPlans> {
       SubscriptionCard subscriptionCard = SubscriptionCard();
       subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.intervalCount]}';
       subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-      subscriptionCard.title = plan.name;
       subscriptionCard.selected = false;
       return subscriptionCard;
     }).toList();

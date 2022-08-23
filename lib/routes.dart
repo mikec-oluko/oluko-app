@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -440,7 +441,6 @@ class Routes {
   final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
-  final MarketBloc _marketBloc = MarketBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -524,7 +524,6 @@ class Routes {
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
-          BlocProvider<MarketBloc>.value(value: _marketBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
@@ -535,6 +534,11 @@ class Routes {
             BlocProvider<StoryBloc>.value(value: _storyBloc)
           ]);
         }
+        if (Platform.isIOS || Platform.isMacOS) {
+          final MarketBloc _marketBloc = MarketBloc();
+          providers.add(BlocProvider<MarketBloc>.value(value: _marketBloc));
+        }
+
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MainPage(
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
@@ -551,10 +555,7 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.loginNeumorphic:
-        providers = [
-          BlocProvider<UserBloc>.value(value: _userBloc),
-          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
-        ];
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc), BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)];
         final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
         newRouteView = LoginNeumorphicPage(dontShowWelcomeTest: argumentsToAdd != null ? argumentsToAdd['dontShowWelcomeTest'] : null);
         break;
@@ -667,7 +668,9 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
+      final MarketBloc _marketBloc = MarketBloc();
       providers = [
+          BlocProvider<PlanBloc>.value(value: _planBloc),
           BlocProvider<MarketBloc>.value(value: _marketBloc),
         ];
         newRouteView = ProfileSubscriptionPage();
@@ -722,8 +725,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView =
-            UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
+        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
         providers = [
@@ -735,8 +737,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
           challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
-          isCurrentUser:
-              argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
+          isCurrentUser: argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,
         );
         break;
@@ -834,10 +835,7 @@ class Routes {
             fromChallenge: argumentsToAdd['fromChallenge'] as bool);
         break;
       case RouteEnum.movementIntro:
-        providers = [
-          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
-        ];
+        providers = [BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MovementIntro(
           movement: argumentsToAdd['movement'] as Movement,
@@ -1017,8 +1015,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = UserChallengeDetail(
-            challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
+        newRouteView = UserChallengeDetail(challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -1034,8 +1031,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
           isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? true : argumentsToAdd['isFirstTime'] as bool,
-          assessmentsDone:
-              argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
+          assessmentsDone: argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
         );
         break;
       case RouteEnum.taskDetails:
@@ -1269,8 +1265,7 @@ class Routes {
           BlocProvider<VideoBloc>.value(value: _videoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView =
-            CoachProfile(coachUser: argumentsToAdd['coachUser'] as CoachUser, currentUser: argumentsToAdd['currentUser'] as UserResponse);
+        newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser'] as CoachUser, currentUser: argumentsToAdd['currentUser'] as UserResponse);
         break;
       case RouteEnum.hiFivePage:
         providers = [

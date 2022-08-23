@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/components/subscription_modal_options.dart';
@@ -21,7 +22,6 @@ class ProfileSubscriptionPage extends StatefulWidget {
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   @override
   void initState() {
-    BlocProvider.of<MarketBloc>(context).initState();
     super.initState();
   }
 
@@ -45,11 +45,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   child: BlocBuilder<PlanBloc, PlanState>(
                     builder: (context, state) {
                       if (state is PlansSuccess) {
+                        BlocProvider.of<MarketBloc>(context).initState(state.plans);
                         return state.plans != null
                             ? ListView(
                                 shrinkWrap: true,
                                 children: state.plans.map((plan) {
-                                  return _showSubscriptionCard(plan, authState.user.currentPlan);
+                                  return _showSubscriptionCard(plan, authState.user);
                                 }).toList(),
                               )
                             : const SizedBox();
@@ -76,7 +77,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: _showSubscriptionCard(state.plans[2], 0),
+          child: _showSubscriptionCard(state.plans[2], null),
         ),
         Positioned(
           bottom: -30,
@@ -107,15 +108,13 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
     );
   }
 
-  SubscriptionCard _showSubscriptionCard(Plan plan, double currentPlan) {
+  SubscriptionCard _showSubscriptionCard(Plan plan, UserResponse user) {
     final SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.price = '\$${plan.applePrice} ';
+    subscriptionCard.plan = plan;
     subscriptionCard.priceLabel = shortDurationLabel[PlanDuration.values[plan.intervalCount]];
-    subscriptionCard.description = plan.description;
     subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}';
-    subscriptionCard.title = plan.name;
-    subscriptionCard.selected = plan.metadata['level'] == currentPlan;
-    subscriptionCard.appleId = plan.appleId;
+    subscriptionCard.selected = plan.metadata['level'] == user.currentPlan;
+    subscriptionCard.userId = user.id;
     return subscriptionCard;
   }
 }

@@ -3,6 +3,9 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/models/purchase.dart';
+import 'package:oluko_app/repositories/purchase_repository.dart';
 
 abstract class MarketState {}
 
@@ -20,16 +23,13 @@ class Failure extends MarketState {
 class MarketBloc extends Cubit<MarketState> {
   MarketBloc() : super(LoadingState());
   final InAppPurchase inAppPurchase = InAppPurchase.instance;
-  final String coreID = 'oluko_1999_1m';
-  final String coachID = 'oluko_9999_1m';
-  final String coachPlusID = 'oluko_19999_1m';
 
   bool available = true;
   List<ProductDetails> products = [];
   List<PurchaseDetails> purchases = [];
   StreamSubscription<List<PurchaseDetails>> subscription;
 
-  void initState() {
+  void initState(List<Plan> plans) {
     final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
     subscription = purchaseUpdated.listen(
       (purchaseDetailsList) {
@@ -44,7 +44,7 @@ class MarketBloc extends Cubit<MarketState> {
       },
     );
 
-    initialize();
+    initialize(plans);
   }
 
   void dispose() {
@@ -53,11 +53,11 @@ class MarketBloc extends Cubit<MarketState> {
     }
   }
 
-  void initialize() async {
-    final List<ProductDetails> appleProducts = await getProducts(
-      <String>{coreID, coachID, coachPlusID},
-    );
-    products = appleProducts;
+  void initialize(List<Plan> plans) async {
+    if (plans != null && plans.isNotEmpty) {
+      final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.id).toSet());
+      products = appleProducts;
+    }
   }
 
   void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -67,6 +67,8 @@ class MarketBloc extends Cubit<MarketState> {
           //  _showPendingUI();
           break;
         case PurchaseStatus.purchased:
+          PurchaseRepository.create(purchaseDetails);
+          break;
         case PurchaseStatus.restored:
           // bool valid = await _verifyPurchase(purchaseDetails);
           // if (!valid) {
@@ -92,35 +94,19 @@ class MarketBloc extends Cubit<MarketState> {
     return response.productDetails;
   }
 
-  Future<void> subscribe(String productId) async {
-    ProductDetails product = products?.firstWhere((product) => product.id == productId);
+  Future<void> subscribe(Plan plan, String userId) async {
+    ProductDetails product = products?.firstWhere((product) => product.id == plan.appleId, orElse: () => null,);
     if (product == null) {
       products = await getProducts(
-        <String>{productId},
+        <String>{plan.appleId},
       );
       if (products != null && products.isNotEmpty) {
         product = products.first;
       }
     }
-    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
+    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product, applicationUserName: userId);
     inAppPurchase.buyNonConsumable(
       purchaseParam: purchaseParam,
-    );
-  }
-
-  ListTile buildProduct(ProductDetails product) {
-    return ListTile(
-      leading: const Icon(Icons.attach_money),
-      title: Text('${product.title} - ${product.price}'),
-      subtitle: Text(product.description),
-      trailing: ElevatedButton(
-        onPressed: () {
-          subscribe(product.id);
-        },
-        child: const Text(
-          'Subscribe',
-        ),
-      ),
     );
   }
 

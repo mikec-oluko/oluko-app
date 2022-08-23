@@ -9,16 +9,14 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class SubscriptionCard extends StatefulWidget {
   Function(bool) onPressed;
-  String title;
-  String description;
-  String price;
+  Plan plan;
   String priceLabel;
   String priceSubtitle;
   bool selected;
   String backgroundImage;
-  String appleId;
+  String userId;
 
-  SubscriptionCard({this.title, this.price, this.priceLabel, this.priceSubtitle, this.onPressed, this.selected, this.backgroundImage, this.appleId});
+  SubscriptionCard({this.plan, this.priceLabel, this.priceSubtitle, this.onPressed, this.selected, this.backgroundImage, this.userId});
 
   @override
   _State createState() => _State();
@@ -34,7 +32,7 @@ class _State extends State<SubscriptionCard> {
         width: ScreenUtils.width(context) - 50,
         child: Container(
           decoration: BoxDecoration(border: Border.all(color: cardColor, width: 2), borderRadius: const BorderRadius.all(Radius.circular(10))),
-          child: widget.title == null
+          child: widget.plan.name == null
               ? Text(
                   OlukoLocalizations.get(context, 'errorGettingCurrentPlan'),
                   style: const TextStyle(
@@ -58,10 +56,10 @@ class _State extends State<SubscriptionCard> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(
-                                    child: Text(widget.title, style: TextStyle(color: cardColor, fontSize: 20, fontWeight: FontWeight.normal)),
+                                    child: Text(widget.plan.name, style: TextStyle(color: cardColor, fontSize: 20, fontWeight: FontWeight.normal)),
                                   ),
                                   GestureDetector(
-                                    onTap: () => BlocProvider.of<MarketBloc>(context).subscribe(widget.appleId),
+                                    onTap: () => BlocProvider.of<MarketBloc>(context).subscribe(widget.plan, widget.userId),
                                     child: Text(
                                       OlukoLocalizations.get(context, 'purchase'),
                                       style: const TextStyle(color: OlukoColors.primary, fontSize: 15, fontWeight: FontWeight.normal),
@@ -74,7 +72,7 @@ class _State extends State<SubscriptionCard> {
                               ),
                               SizedBox(
                                 child: Text(
-                                  widget.description,
+                                  widget.plan.description,
                                   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
                                 ),
                               ),
@@ -88,7 +86,8 @@ class _State extends State<SubscriptionCard> {
                           children: [
                             Row(
                               children: [
-                                Text(widget.price, style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                                Text('\$${widget.plan.applePrice} ',
+                                    style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.bold)),
                                 Text(widget.priceLabel, style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.normal)),
                               ],
                             ),

@@ -191,15 +191,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
     SubscriptionCard subscriptionCard = SubscriptionCard();
     subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.intervalCount]}';
     subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-    subscriptionCard.title = plan.name;
     subscriptionCard.selected = false;
-    /*subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.duration]}';
-    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration]}' : '';
-    subscriptionCard.title = plan.name;
-    subscriptionCard.selected = false;
-    subscriptionCard.showHint = plan.infoDialog != null;
-    subscriptionCard.backgroundImage = plan.backgroundImage;
-    subscriptionCard.onHintPressed = plan.infoDialog != null ? () => showWaitlist(context, plan.infoDialog) : null;*/
     return subscriptionCard;
   }
 }

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/models/purchase.dart';
 import 'package:oluko_app/utils/info_dialog.dart';
 
 import 'base.dart';
@@ -59,21 +61,21 @@ class Plan extends Base {
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
-        active: json['active'] is bool ? json['active'] as bool : false,
-        amount: json['amount'] is int ? json['amount'] as int : null,
-        amountDecimal: json['amount_decimal']?.toString(),
-        currency: json['currency']?.toString(),
-        description: json['description']?.toString(),
-        interval: json['interval']?.toString(),
-        intervalCount: json['interval_count'] is int ? json['interval_count'] as int : null,
-        livemode: json['livemode'] is bool ? json['livemode'] as bool : false,
-        metadata: json['metadata'] as Map<String, dynamic>,
-        name: json['name']?.toString(),
-        object: json['object']?.toString(),
-        type: json['type']?.toString(),
-        appleId: json['apple_id']?.toString(),
-        applePrice: json['apple_price'] is int ? json['apple_price'] as int : null,
-        );
+      active: json['active'] is bool ? json['active'] as bool : false,
+      amount: json['amount'] is int ? json['amount'] as int : null,
+      amountDecimal: json['amount_decimal']?.toString(),
+      currency: json['currency']?.toString(),
+      description: json['description']?.toString(),
+      interval: json['interval']?.toString(),
+      intervalCount: json['interval_count'] is int ? json['interval_count'] as int : null,
+      livemode: json['livemode'] is bool ? json['livemode'] as bool : false,
+      metadata: json['metadata'] as Map<String, dynamic>,
+      name: json['name']?.toString(),
+      object: json['object']?.toString(),
+      type: json['type']?.toString(),
+      appleId: json['apple_id']?.toString(),
+      applePrice: json['apple_price'] is int ? json['apple_price'] as int : null,
+    );
 
     plan.setBase(json);
     return plan;
@@ -106,5 +108,31 @@ class Plan extends Base {
     } else {
       return false;
     }
+  }
+
+  Purchase mapToPurchase(PurchaseDetails purchaseDetails, Plan plan, String userId) {
+    return Purchase(
+        id: purchaseDetails.purchaseID,
+        appPlanId: purchaseDetails.productID,
+        customerId: userId,
+        paymentType: 'applePay',
+        poNumber: /*purchaseDetails.purchaseID*/ null,
+        createdAt:
+            int.tryParse(purchaseDetails.transactionDate) is int ? Timestamp.fromMicrosecondsSinceEpoch(int.tryParse(purchaseDetails.transactionDate)) : null,
+        createdBy: userId,
+        cancelAtPeriodEnd: null,
+        currentPeriodEnd: null,
+        currentPeriodEndString: null,
+        finalAmount: plan.applePrice,
+        price: plan.applePrice,
+        priceId: null,
+        planId: plan.id,
+        productDescription: plan.description,
+        productId: purchaseDetails.productID,
+        platform: Platform.APP,
+        productName: plan.name,
+        subscriptionId: purchaseDetails.purchaseID, //???
+        recurringInterval: null,
+        status: purchaseDetails.status == PurchaseStatus.purchased ? 'active' : 'inactive');
   }
 }
