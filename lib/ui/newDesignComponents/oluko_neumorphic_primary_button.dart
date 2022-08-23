@@ -53,19 +53,27 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
       onPressed: () => widget.onPressed != null ? widget.onPressed() : () {},
       padding: EdgeInsets.all(2),
       style: !widget.isDisabled
-          ? !widget.flatStyle
-              ? OlukoNeumorphism.primaryButtonStyle(
-                  useBorder: widget.useBorder, buttonShape: NeumorphicShape.convex, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
-              : OlukoNeumorphism.primaryButtonStyle(
-                  useBorder: widget.useBorder, buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
+          ? OlukoNeumorphism.primaryButtonStyle(
+              useBorder: widget.useBorder,
+              buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
+              boxShape: NeumorphicBoxShape.stadium(),
+              ligthShadow: true,
+              darkShadow: true)
           : OlukoNeumorphism.primaryButtonStyleDisable(
-              useBorder: widget.useBorder, buttonShape: NeumorphicShape.convex, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+              useBorder: widget.useBorder,
+              buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
+              boxShape: NeumorphicBoxShape.stadium(),
+              ligthShadow: true,
+              darkShadow: true),
       child: Neumorphic(
         style: !widget.isDisabled
             ? OlukoNeumorphism.primaryButtonStyle(
                 buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
             : OlukoNeumorphism.primaryButtonStyleDisable(
-                buttonShape: NeumorphicShape.convex, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+                buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
+                boxShape: NeumorphicBoxShape.stadium(),
+                ligthShadow: true,
+                darkShadow: true),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),

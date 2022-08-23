@@ -57,7 +57,7 @@ class SignupBloc extends Cubit<UserState> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(apiResponse.message[0]),
       ));
-      emit(SignupFailure(exception: Exception(apiResponse.message[0])));
+      emit(SignupFailure(exception: Exception(apiResponse.message)));
     }
   }
 }

@@ -58,6 +58,7 @@ import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
+import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -442,6 +443,7 @@ class Routes {
   final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
+  final SignupBloc _signUpBloc = SignupBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -1331,20 +1333,8 @@ class Routes {
       case RouteEnum.registerUser:
         providers = [
           BlocProvider<CountryBloc>.value(value: _countryBloc),
-          // BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
-          // BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
-          // BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
-          // BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          // BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
-          // BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
-          // BlocProvider<TaskBloc>.value(value: _taskBloc),
-          // BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
+          BlocProvider<SignupBloc>.value(value: _signUpBloc),
         ];
-        // final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        // newRouteView = AssessmentVideos(
-        //   isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? true : argumentsToAdd['isFirstTime'] as bool,
-        //   assessmentsDone: argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
-        // );
         newRouteView = const RegisterPage();
         break;
       default:

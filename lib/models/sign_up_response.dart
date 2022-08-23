@@ -24,8 +24,8 @@ class SignUpResponse {
       lastName: json['last_name']?.toString(),
       email: json['email']?.toString(),
       firebaseId: json['firebase_id']?.toString(),
-      hubspotCompanyId: num.tryParse(json['hubspot_company_id']?.toString()),
-      hubspotContactId: num.tryParse(json['hubspot_contact_id']?.toString()),
+      hubspotCompanyId: json['hubspot_company_id'] == null || json['hubspot_company_id'] is! num ? 0 : num.tryParse(json['hubspot_company_id']?.toString()),
+      hubspotContactId: json['hubspot_contact_id'] == null || json['hubspot_contact_id'] is! num ? 0 : num.tryParse(json['hubspot_contact_id']?.toString()),
     );
   }
 

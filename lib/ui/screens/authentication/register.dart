@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/country_bloc.dart';
+import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/register_fields_enum.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
@@ -12,6 +13,7 @@ import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/screen_utils.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage() : super();
@@ -20,7 +22,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterState extends State<RegisterPage> {
-  bool newsletter = false;
+  bool _newsletterSettings = false;
+  bool _agreeWithRequirements = false;
   final formKey = GlobalKey<FormState>();
   Map<ValidatorNames, bool> _passwordValidationState;
   SignUpRequest _newUserFromRegister = SignUpRequest();
@@ -30,6 +33,12 @@ class _RegisterState extends State<RegisterPage> {
   @override
   void initState() {
     BlocProvider.of<CountryBloc>(context).getAllCountries();
+    _newUserFromRegister.projectId = GlobalConfiguration().getValue('projectId');
+    _newUserFromRegister.country = '';
+    _newUserFromRegister.state = '';
+    _newUserFromRegister.city = '';
+    _newUserFromRegister.newsletter = _newsletterSettings;
+
     super.initState();
   }
 
@@ -81,6 +90,7 @@ class _RegisterState extends State<RegisterPage> {
         width: 150,
         height: 60,
         child: OlukoNeumorphicPrimaryButton(
+          isDisabled: !_agreeWithRequirements,
           isExpanded: false,
           thinPadding: true,
           flatStyle: true,
@@ -94,36 +104,33 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   Widget _termsAndConditionsPrivacyPolicy(BuildContext context) {
-    return Column(
-      children: [
-        Text(OlukoLocalizations.get(context, 'registerByContinuing'),
-            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
-        Row(
-          //  crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-
-          children: [
-            Text(OlukoLocalizations.get(context, 'mvtFitness'),
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
-            InkWell(
-              onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
-              child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
+                  child: Container(
+                    width: 15,
+                    height: 15,
+                    child: Container(width: 15, height: 15, child: checkBox()),
+                  ),
+                ),
+                Text(
+                  OlukoLocalizations.get(context, 'newsInfoAndOffers'),
+                  // maxLines: 2,
+                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
+                ),
+              ],
             ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black)),
-            InkWell(
-              onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
-              child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -134,35 +141,43 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   Widget _userCheckConditionsAndPolicySection(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _widgetSpacer(),
-        Container(
-          width: ScreenUtils.width(context) * 0.45,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
-                child: Container(
-                  width: 15,
-                  height: 15,
-                  child: Container(width: 15, height: 15, child: checkBox()),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
+                  child: Container(
+                    width: 15,
+                    height: 15,
+                    child: Container(width: 15, height: 15, child: checkBox(isAgree: true)),
+                  ),
                 ),
-              ),
-              Flexible(
-                child: Text(
-                  OlukoLocalizations.get(context, 'newsInfoAndOffers'),
-                  // maxLines: 2,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
+                Text(OlukoLocalizations.get(context, 'registerByContinuing'),
+                    style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                InkWell(
+                  onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
+                  child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                          .copyWith(decoration: TextDecoration.underline)),
                 ),
-              ),
-            ],
+                Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                InkWell(
+                  onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
+                  child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                          .copyWith(decoration: TextDecoration.underline)),
+                ),
+              ],
+            ),
           ),
-        ),
-        _widgetSpacer(),
-      ],
+        ],
+      ),
     );
   }
 
@@ -255,7 +270,8 @@ class _RegisterState extends State<RegisterPage> {
           ),
           Text(
             errorText,
-            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.black),
+            style: OlukoFonts.olukoBigFont(
+                customFontWeight: FontWeight.w600, customColor: _passwordValidationState == null || evaluate() ? OlukoColors.black : OlukoColors.error),
           ),
         ],
       ),
@@ -267,7 +283,7 @@ class _RegisterState extends State<RegisterPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          OlukoLocalizations.get(context, 'passworRequirements'),
+          OlukoLocalizations.get(context, 'passwordRequirements'),
           style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary),
         )
       ],
@@ -304,15 +320,6 @@ class _RegisterState extends State<RegisterPage> {
         children: [
           OlukoRegisterTextfield(
               key: formKey,
-              title: OlukoLocalizations.get(context, 'username'),
-              fieldType: RegisterFieldEnum.USERNAME,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.username = value;
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
               title: OlukoLocalizations.get(context, 'firstName'),
               fieldType: RegisterFieldEnum.FIRSTNAME,
               onInputUpdated: (value) {
@@ -342,6 +349,15 @@ class _RegisterState extends State<RegisterPage> {
                 });
               }),
           OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'username'),
+              fieldType: RegisterFieldEnum.USERNAME,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.username = value;
+                });
+              }),
+          OlukoRegisterTextfield(
             key: formKey,
             title: OlukoLocalizations.get(context, 'password'),
             fieldType: RegisterFieldEnum.PASSWORD,
@@ -363,10 +379,11 @@ class _RegisterState extends State<RegisterPage> {
     });
   }
 
-  void validateAndSave() {
+  Future<void> validateAndSave() async {
     final FormState form = formKey.currentState;
     print(_newUserFromRegister);
     if (form.validate() && isPasswordValid()) {
+      await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
       print('Form is valid');
     } else {
       print('Form is invalid');
@@ -375,16 +392,20 @@ class _RegisterState extends State<RegisterPage> {
 
   bool isPasswordValid() => (_containsMinChars() && _containsUppercase()) && (_containsDigit() && _containsLowercase());
 
-  Widget checkBox() {
+  Widget checkBox({bool isAgree = false}) {
     return Theme(
       data: ThemeData(unselectedWidgetColor: OlukoColors.primary),
       child: Checkbox(
         checkColor: OlukoColors.black,
         activeColor: Colors.white,
-        value: newsletter,
+        value: isAgree ? _agreeWithRequirements : _newsletterSettings,
         onChanged: (bool value) {
           setState(() {
-            newsletter = value;
+            if (isAgree) {
+              _agreeWithRequirements = value;
+            } else {
+              _newsletterSettings = value;
+            }
           });
         },
       ),
