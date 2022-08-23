@@ -88,6 +88,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                     Container(
                       width: 80,
                       child: OlukoNeumorphicPrimaryButton(
+                        thinPadding: true,
                         isExpanded: false,
                         title: OlukoLocalizations.get(context, 'ok'),
                         onPressed: () {

@@ -40,6 +40,15 @@ class CoachRepository {
     final coachAssignmentResponse = CoachAssignment.fromJson(response);
     return coachAssignmentResponse;
   }
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getCoachAssignmentByUserIdStream(String userId)  {
+    Stream<QuerySnapshot<Map<String, dynamic>>> coachAssignemntStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachAssignments')
+        .where('id', isEqualTo: userId).
+        snapshots();
+    return coachAssignemntStream;
+  }
 
   Future<CoachAssignment> welcomeVideoMarkAsSeen(CoachAssignment coachAssignment) async {
     try {

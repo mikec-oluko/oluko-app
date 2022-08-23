@@ -194,7 +194,7 @@ class _State extends State<Courses> {
       showBackButton: goBack,
       backButtonWithFilters: widget.backButtonWithFilters,
       showActions: widget.homeEnrollTocourse,
-      title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
+      title: OlukoLocalizations.get(context, searchResults.query.isNotEmpty || selectedTags.isNotEmpty?'filtersResult':showFilterSelector ? 'filters' : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
       onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
@@ -210,9 +210,10 @@ class _State extends State<Courses> {
       searchResultItems: _courses,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
-      actionButton: () => this.setState(() {
+      actionButton: () {
         showFilterSelector = false;
-      }),
+        cancelAction();
+      },
     );
   }
 
@@ -325,6 +326,7 @@ class _State extends State<Courses> {
   void cancelAction() {
     setState(() {
       selectedTags.clear();
+      BlocProvider.of<RemainSelectedTagsBloc>(context).set([]);
     });
     panelController.close();
   }

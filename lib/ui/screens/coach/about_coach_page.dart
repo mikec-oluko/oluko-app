@@ -33,6 +33,7 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
           if (_controller != null) {
             _controller.pause();
           }
+          Navigator.pop(context);
         },
       ),
       body: coachMediaGalleryComponent(),

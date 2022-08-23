@@ -752,13 +752,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
         title: OlukoLocalizations.get(context, 'upcomingChallenges'),
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),
         onOptionTap: () {
-          Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
+          if(_challengesCardsState!=null){
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
             'isCurrentUser': _isCurrentUser,
             'userRequested': _userProfileToDisplay,
             'challengesCardsState': _challengesCardsState
           });
+          }
         },
-        children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
+        children: challengeList.isNotEmpty? challengeList : [SizedBox.shrink()]);
   }
 
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
