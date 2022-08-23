@@ -98,6 +98,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                     child: OlukoNeumorphism.isNeumorphismDesign
                         ? OlukoNeumorphicPrimaryButton(
                             isExpanded: false,
+                            thinPadding: true,
                             title: OlukoLocalizations.get(context, 'submit'),
                             onPressed: () {
                               BlocProvider.of<MailBloc>(context)

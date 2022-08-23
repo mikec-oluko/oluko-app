@@ -83,7 +83,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height / 3,
+                              height: MediaQuery.of(context).size.height / 3.8,
                               child: ListView(
                                 padding: const EdgeInsets.all(0),
                                 scrollDirection: Axis.horizontal,

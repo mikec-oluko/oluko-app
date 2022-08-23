@@ -47,7 +47,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentUser = state.user;
-          BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_currentUser.id);
+          BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatusStream(_currentUser.id);
           BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.coachTabCorePlan);
         }
         return _currentUser.currentPlan >= 1
