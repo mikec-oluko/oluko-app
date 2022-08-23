@@ -47,6 +47,7 @@ class CoachMediaRepository {
         .collection('users')
         .doc(coachId)
         .collection('myMedia')
+        .where('is_deleted',isNotEqualTo: true)
         .snapshots();
     return coachMediaStream;
   }

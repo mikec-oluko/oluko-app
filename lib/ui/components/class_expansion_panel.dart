@@ -22,10 +22,11 @@ const SCROLL_DURATION = 600;
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
   final Function(BuildContext, MovementSubmodel) onPressedMovement;
-
+  final int totalClasses;
   const ClassExpansionPanels({
     this.classes,
-    this.onPressedMovement,
+    this.onPressedMovement, 
+    this.totalClasses,
   });
 
   @override
@@ -39,12 +40,13 @@ class _State extends State<ClassExpansionPanels> {
   @override
   void initState() {
     super.initState();
-    _classItems = generateClassItems(); //TODO: this is receiving old classes from another course
-    _subClassItems = generateSubClassItems();
+
   }
 
   @override
   Widget build(BuildContext context) {
+    _classItems = generateClassItems();
+    _subClassItems = generateSubClassItems();
     if (OlukoNeumorphism.isNeumorphismDesign) {
       return expansionPanelNeumorphic();
     } else {
@@ -53,6 +55,7 @@ class _State extends State<ClassExpansionPanels> {
   }
 
   Widget expansionPanel() {
+    
     return _classItems.isNotEmpty
         ? ExpansionPanelList(
             expansionCallback: (int index, bool isExpanded) {
@@ -70,7 +73,7 @@ class _State extends State<ClassExpansionPanels> {
                     contentPadding: const EdgeInsets.all(0),
                     title: ClassSection(
                       index: _classItems.indexOf(item),
-                      total: _classItems.length,
+                      total: widget.totalClasses,
                       classObj: item.classObj,
                       onPressed: () {},
                     ),
@@ -94,12 +97,7 @@ class _State extends State<ClassExpansionPanels> {
       return CustomExpansionPanelList.radio(
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
-            // _classItems[index].expanded = isExpanded; //TODO: new
-            _classItems[index].expanded = !_classItems[index].expanded;
-            if (_classItems[index].expanded) {
-              _scrollToSelectedContent(expansionTileKey: _classItems[index].globalKey);
-              //_scrollToSelectedContent(expansionTileKey: index);
-            }
+            _classItems[index].expanded = !_classItems[index].expanded;         
           });
         },
         children: _classItems.map<ExpansionPanelRadio>((ClassItem item) {
@@ -113,16 +111,13 @@ class _State extends State<ClassExpansionPanels> {
                 padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(left: 15.0) : const EdgeInsets.only(),
                 child: ClassSectionExpansionPanel(
                   index: _classItems.indexOf(item),
-                  total: _classItems.length,
+                  total: widget.totalClasses,
                   classObj: item.classObj,
                   onPressed: () {},
                 ),
               );
             },
             body: _subClassItems[_classItems.indexOf(item)],
-            // isExpanded: item.expanded,
-
-            // value: _classItems[_classItems.indexOf(item)].globalKey = GlobalKey(),
             value: _classItems.indexOf(item),
           );
         }).toList(),
@@ -137,14 +132,6 @@ class _State extends State<ClassExpansionPanels> {
     }
   }
 
-  void _scrollToSelectedContent({GlobalKey expansionTileKey}) {
-    final keyContext = expansionTileKey.currentContext;
-    if (keyContext != null) {
-      Future.delayed(Duration(milliseconds: SCROLL_DELAY_DURATION)).then((value) {
-        Scrollable.ensureVisible(keyContext, duration: Duration(milliseconds: SCROLL_DURATION), alignment: 0);
-      });
-    }
-  }
 
   List<Widget> generateSubClassItems() {
     List<Widget> subClassItems = [];
@@ -157,7 +144,7 @@ class _State extends State<ClassExpansionPanels> {
   List<ClassItem> generateClassItems() {
     List<ClassItem> classItems = [];
     widget.classes.forEach((element) {
-      ClassItem classItem = ClassItem(classObj: element, expanded: false, globalKey: GlobalKey());
+      ClassItem classItem = ClassItem(classObj: element, expanded: false);
       classItems.add(classItem);
     });
     return classItems;

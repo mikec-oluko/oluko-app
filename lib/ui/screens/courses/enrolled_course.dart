@@ -65,6 +65,7 @@ class EnrolledCourse extends StatefulWidget {
     Course outsideCourse,
     CourseEnrollment outsideCourseEnrollment,
     int outsideCourseIndex,
+    Function onPressed,
   }) {
     final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
     final int index = courseIndex ?? outsideCourseIndex;
@@ -89,21 +90,22 @@ class EnrolledCourse extends StatefulWidget {
       shrinkWrap: true,
       children: [
         ..._classItemsToUse.map(
-          (item) => getIncompletedClasses(_classItemsToUse, enrollment, outSideCloseVideo, closeVideo, context, index, item),
+          (item) => getIncompletedClasses(_classItemsToUse, enrollment, outSideCloseVideo, closeVideo, context, index, item,onPressed: onPressed),
         ),
         ..._classItemsToUse.map(
-          (item) => getCompletedClasses(enrollment, _classItemsToUse, item, context, index),
+          (item) => getCompletedClasses(enrollment, _classItemsToUse, item, context, index, onPressed:onPressed),
         )
       ],
     );
   }
 
   Widget getCompletedClasses(
-      CourseEnrollment enrollment, List<ClassItem> _classItemsToUse, ClassItem item, BuildContext context, int index) {
+      CourseEnrollment enrollment, List<ClassItem> _classItemsToUse, ClassItem item, BuildContext context, int index,{Function onPressed,}) {
     final classIndex = _classItemsToUse.indexOf(item);
     return enrollment.classes[classIndex] != null && enrollment.classes[classIndex].completedAt != null
         ? GestureDetector(
-            onTap: () => Navigator.pushNamed(
+            onTap: () {
+              Navigator.pushNamed(
               context,
               routeLabels[RouteEnum.insideClass],
               arguments: {
@@ -111,7 +113,7 @@ class EnrolledCourse extends StatefulWidget {
                 'classIndex': classIndex,
                 'courseIndex': index,
               },
-            ),
+            );onPressed!=null?onPressed():null;},
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: ClassSection(
@@ -128,7 +130,7 @@ class EnrolledCourse extends StatefulWidget {
 }
 
 Widget getIncompletedClasses(List<ClassItem> _classItemsToUse, CourseEnrollment enrollment, Function outSideCloseVideo, Function closeVideo,
-    BuildContext context, int index, ClassItem item) {
+    BuildContext context, int index, ClassItem item, { Function onPressed, }) {
   final classIndex = _classItemsToUse.indexOf(item);
   final classProgress = CourseEnrollmentService.getClassProgress(enrollment, classIndex);
   return enrollment.classes[classIndex].completedAt == null
@@ -140,6 +142,7 @@ Widget getIncompletedClasses(List<ClassItem> _classItemsToUse, CourseEnrollment 
               ),
               child: GestureDetector(
                 onTap: () {
+                  onPressed!=null?onPressed():null;
                   if (closeVideo != null) {
                     closeVideo();
                   } else {

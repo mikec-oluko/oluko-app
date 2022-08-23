@@ -116,11 +116,11 @@ class _OlukoNeumorphicButtonState
       );
     } else {
       return Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: Text(
             widget.title,
             textAlign: widget.textAlign,
-            style: TextStyle(fontSize: 18, color: widget.textColor),
+            style: OlukoFonts.olukoBigFont(customColor:  widget.textColor),
           ));
     }
   }

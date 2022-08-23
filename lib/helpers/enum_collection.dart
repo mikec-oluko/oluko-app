@@ -87,8 +87,8 @@ enum FAQCategoriesEnum { myAccount, memberships, about }
 
 Map<FAQCategoriesEnum, String> fAQCategories = {
   FAQCategoriesEnum.myAccount: 'myAccount',
-  FAQCategoriesEnum.memberships: 'about',
-  FAQCategoriesEnum.about: 'memberships',
+  FAQCategoriesEnum.memberships: 'memberships',
+  FAQCategoriesEnum.about: 'about',
 };
 
 enum EntityTypeEnum { course, classes, segment, movement, mentoredVideo, sentVideo }

@@ -312,6 +312,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   outsideCourseEnrollment: widget.courseEnrollments[index],
                   outsideCourseIndex: index,
                   outSideCloseVideo: closeVideo,
+                  onPressed: () => Future.delayed(Duration(milliseconds: 500),(){
+                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+                  })
                 ),
               );
             } else {

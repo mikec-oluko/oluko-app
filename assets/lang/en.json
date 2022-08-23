@@ -380,5 +380,7 @@
     "me": "Me",
     "continueWithApple": "Continue with Apple ",
     "continueWithGoogle": "Continue with Google",
-    "apply": "Apply"
+    "apply": "Apply",
+    "filtersResult": "Filters result",
+    "result": "Result"
 }

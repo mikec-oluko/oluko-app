@@ -85,7 +85,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
       );
     } else {
       return Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: Text(
             widget.title,
             textAlign: widget.textAlign,
