@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +46,6 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
-import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
@@ -188,7 +186,7 @@ import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
-import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
+import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
@@ -539,11 +537,6 @@ class Routes {
             BlocProvider<StoryBloc>.value(value: _storyBloc)
           ]);
         }
-        if (Platform.isIOS || Platform.isMacOS) {
-          final MarketBloc _marketBloc = MarketBloc();
-          providers.add(BlocProvider<MarketBloc>.value(value: _marketBloc));
-        }
-
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MainPage(
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
@@ -673,11 +666,6 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-      final MarketBloc _marketBloc = MarketBloc();
-      providers = [
-          BlocProvider<PlanBloc>.value(value: _planBloc),
-          BlocProvider<MarketBloc>.value(value: _marketBloc),
-        ];
         newRouteView = ProfileSubscriptionPage();
         break;
       case RouteEnum.profileHelpAndSupport:

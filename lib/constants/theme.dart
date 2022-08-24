@@ -289,10 +289,6 @@ class OlukoColors {
 
   static const Color orange = Color.fromRGBO(251, 147, 133, 1);
 
-  static const Color subscription = Color.fromRGBO(33, 150, 243, 1);
-
-  static const Color selectedSubscription = Color.fromRGBO(236, 116, 81, 1);
-
   static const Color yellow = Color.fromRGBO(254, 192, 0, 1);
 
   static const Color challengeLockedFilterColor = Color.fromRGBO(218, 5, 5, 0.2);
