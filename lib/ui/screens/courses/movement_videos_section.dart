@@ -50,8 +50,7 @@ class _State extends State<MovementVideosSection> {
           Row(children: [
             Padding(
               padding: EdgeInsets.only(left: 20),
-              child: Text(OlukoLocalizations.get(context, 'movementVideos'),
-                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
+              child: Text(OlukoLocalizations.get(context, 'movementVideos'), style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
             ),
             SizedBox(width: 10),
             Image.asset(
@@ -65,8 +64,7 @@ class _State extends State<MovementVideosSection> {
           Container(
               child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: MovementItemBubbles(
-                      onPressed: widget.onPressedMovement, movements: segmentMovements, width: ScreenUtils.width(context) / 1))),
+                  child: MovementItemBubbles(onPressed: widget.onPressedMovement, movements: segmentMovements, width: ScreenUtils.width(context) / 1))),
           OlukoNeumorphism.isNeumorphismDesign
               ? SizedBox.shrink()
               : Image.asset(
@@ -90,7 +88,7 @@ class _State extends State<MovementVideosSection> {
     List<MovementSubmodel> movementSubmodels = [];
     widget.segment.sections.forEach((section) {
       section.movements.forEach((MovementSubmodel movement) {
-        if (!movement.isRestTime) {
+        if (!movement.isRestTime && movementSubmodels.where((savedMovement) => savedMovement.id == movement.id).toList().isEmpty) {
           movementSubmodels.add(movement);
         }
       });

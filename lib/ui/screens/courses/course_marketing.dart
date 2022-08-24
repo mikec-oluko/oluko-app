@@ -35,6 +35,8 @@ import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class CourseMarketing extends StatefulWidget {
@@ -61,8 +63,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
   final _formKey = GlobalKey<FormState>();
   User _user;
   AuthSuccess _userState;
-  List<Class>_growingClassList=[];
-  List<Class>_allCourseClasses=[];
+  List<Class> _growingClassList = [];
+  List<Class> _allCourseClasses = [];
   final int _batchClassMaxRange = 8;
   List<Class> _classes;
   bool _disableAction = false;
@@ -74,12 +76,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
   @override
   void initState() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels>_pixelsToReload*0.85) {
-          if (_growingClassList.length != _allCourseClasses.length) {
-            _getMoreClasses();
-            _pixelsToReload+=_scrollController.position.extentInside;
-            setState(() {});
-          }
+      if (_scrollController.position.pixels > _pixelsToReload * 0.85) {
+        if (_growingClassList.length != _allCourseClasses.length) {
+          _getMoreClasses();
+          _pixelsToReload += _scrollController.position.extentInside;
+          setState(() {});
+        }
       }
     });
     widget.isVideoPlaying = () => setState(() {
@@ -93,7 +95,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
     _courseLiked = false;
     super.initState();
   }
-    void _getMoreClasses() => _growingClassList = _allCourseClasses.isNotEmpty
+
+  void _getMoreClasses() => _growingClassList = _allCourseClasses.isNotEmpty
       ? [
           ..._allCourseClasses.getRange(
               0,
@@ -105,7 +108,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   @override
   Widget build(BuildContext context) {
-    _pixelsToReload=ScreenUtils.height(context)*0.60;
+    _pixelsToReload = ScreenUtils.height(context) * 0.60;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -135,7 +138,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
         if ((enrollmentState is GetEnrollmentSuccess || enrollmentState is CourseEnrollmentBlocLoading.Loading) && classState is ClassSubscriptionSuccess) {
           _classes = classState.classes;
-          _allCourseClasses=CourseService.getCourseClasses(_classes,course:widget.course);
+          _allCourseClasses = CourseService.getCourseClasses(_classes, course: widget.course);
           _getMoreClasses();
           return Form(
               key: _formKey,
@@ -322,7 +325,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    bool showEnorollButton =(courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1);
+    bool showEnorollButton =
+        (courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1);
     if (showEnorollButton) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
         listener: (context, courseEnrollmentState) {

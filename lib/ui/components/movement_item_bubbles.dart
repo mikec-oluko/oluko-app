@@ -18,8 +18,8 @@ class MovementItemBubbles extends StatefulWidget {
 
 class _MovementItemBubblesState extends State<MovementItemBubbles> {
   //TODO: change this
-  String image =
-      'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1';
+  String image = 'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1';
+  final int _minMovementsQty = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +31,21 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   }
 
   Widget scrollableBubbles() {
-    return ShaderMask(
-      shaderCallback: (rect) {
-        return const LinearGradient(
-          begin: Alignment.center,
-          colors: [Colors.black, Colors.transparent],
-        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-      },
-      blendMode: BlendMode.dstIn,
-      child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: buildBubbles()),
-    );
+    return widget.movements.length > _minMovementsQty
+        ? ShaderMask(
+            shaderCallback: (rect) {
+              return const LinearGradient(
+                begin: Alignment.center,
+                colors: [Colors.black, Colors.transparent],
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+            },
+            blendMode: BlendMode.dstIn,
+            child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: buildBubbles()),
+          )
+        : SingleChildScrollView(
+            physics: widget.movements.length <= _minMovementsQty ? const NeverScrollableScrollPhysics() : const ScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: buildBubbles());
   }
 
   List<Widget> buildMovementItems() {
