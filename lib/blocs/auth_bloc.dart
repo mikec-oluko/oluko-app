@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -355,8 +356,10 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
       BlocProvider.of<LikedCoursesBloc>(context).dispose();
       BlocProvider.of<CoachAssignmentBloc>(context).dispose();
-      // BlocProvider.of<MarketBloc>(context).dispose();
-      BlocProvider.of<SubscriptionContentBloc>(context).dispose();
+
+      if(Platform.isIOS || Platform.isMacOS) {
+        BlocProvider.of<SubscriptionContentBloc>(context).dispose();
+      }
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});
