@@ -94,9 +94,11 @@ class _RegisterState extends State<RegisterPage> {
           isExpanded: false,
           thinPadding: true,
           flatStyle: true,
-          onPressed: () {
-            validateAndSave();
-          },
+          onPressed: !_agreeWithRequirements
+              ? () {}
+              : () {
+                  validateAndSave();
+                },
           title: OlukoLocalizations.get(context, 'letsGo'),
         ),
       ),

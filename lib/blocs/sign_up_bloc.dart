@@ -5,6 +5,7 @@ import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -47,7 +48,8 @@ class SignupBloc extends Cubit<UserState> {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
-      AppNavigator().returnToHome(context);
+      // AppNavigator().returnToHome(context);
+      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(OlukoLocalizations.get(context, 'checkYourEmail')),
