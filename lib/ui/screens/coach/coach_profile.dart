@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
@@ -54,6 +55,7 @@ class _CoachProfileState extends State<CoachProfile> {
   Widget _audioRecordedElement;
   Widget _panelNewContent;
   Widget _audioMessageSection;
+  bool _isAudioPlaying = false;
   CoachUser _coachUser;
 
   @override
@@ -563,11 +565,23 @@ class _CoachProfileState extends State<CoachProfile> {
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
+      onAudioPlaying: (bool playing) => _onPlayAudio(playing),
+      onStartPlaying: () => _canStartPlaying(),
       durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
       onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );
   }
+
+  void _onPlayAudio(bool isPlaying) {
+    if (isPlaying != null) {
+      setState(() {
+        _isAudioPlaying = isPlaying;
+      });
+    }
+  }
+
+  bool _canStartPlaying() => _isAudioPlaying;
 
   Positioned uploadCoverButton(BuildContext context) {
     return Positioned(

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
@@ -7,6 +6,7 @@ import 'package:oluko_app/models/enums/coach_assignment_status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
 import 'package:oluko_app/utils/sound_player.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CoachRecommendationsState {}
@@ -71,11 +71,12 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
         }
 
         if (_recommendationsUpdatedContent.isNotEmpty) {
-          SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          if (_newNotificationIncoming(_recommendationsUpdatedContent)) {
+            await SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          }
           emit(
             CoachRecommendationsUpdate(
-              coachRecommendationContent:
-                  await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
+              coachRecommendationContent: await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent.toList()),
             ),
           );
         } else {
@@ -100,6 +101,9 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       emit(CoachRecommendationsFailure(exception: error));
     });
   }
+
+  bool _newNotificationIncoming(Set<Recommendation> _recommendationsUpdatedContent) =>
+      _recommendationsUpdatedContent.where((recommendation) => !recommendation.notificationViewed).toList().isNotEmpty;
 
   Future<void> getStreamFromUser(String userId) async {
     if (subscription == null) {
@@ -137,8 +141,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     try {
       emit(LoadingCoachRecommendations());
       final List<Recommendation> coachRecommendations = await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
-      final List<CoachRecommendationDefault> recommendationsFormatted =
-          await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
+      final List<CoachRecommendationDefault> recommendationsFormatted = await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
       emit(CoachRecommendationsSuccess(coachRecommendationList: recommendationsFormatted));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -153,8 +156,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   Future<List<CoachRecommendationDefault>> getCoachRecommendationsData({List<Recommendation> coachRecommendationContent}) async {
     try {
       emit(LoadingCoachRecommendations());
-      final List<CoachRecommendationDefault> coachRecommendations =
-          await _coachRepository.getRecommendationsInfo(coachRecommendationContent);
+      final List<CoachRecommendationDefault> coachRecommendations = await _coachRepository.getRecommendationsInfo(coachRecommendationContent);
       return coachRecommendations;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
