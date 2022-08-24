@@ -1347,6 +1347,7 @@ class Routes {
         providers = [
           BlocProvider<CountryBloc>.value(value: _countryBloc),
           BlocProvider<SignupBloc>.value(value: _signUpBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const RegisterPage();
         break;
