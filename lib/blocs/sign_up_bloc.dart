@@ -55,9 +55,11 @@ class SignupBloc extends Cubit<UserState> {
     } else {
       AppLoader.stopLoading();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(apiResponse.message[0]),
+        content: Text(apiResponse.message.replaceAll(_removeSpecialChars(), '')),
       ));
-      emit(SignupFailure(exception: Exception(apiResponse.message)));
+      emit(SignupFailure(exception: Exception(apiResponse.message.replaceAll(_removeSpecialChars(), ''))));
     }
   }
+
+  RegExp _removeSpecialChars() => RegExp('[^A-Za-z0-9 ]');
 }

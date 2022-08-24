@@ -430,7 +430,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           });
         }
       },
-      child: _countryWithStates != null
+      child: _countryWithStates != null && _countryWithStates.states.isNotEmpty
           ? Container(
               decoration: BoxDecoration(
                 border: Border.all(color: OlukoColors.grayColor, width: 1),
