@@ -1,32 +1,22 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class SubscriptionCard extends StatefulWidget {
   Function(bool) onPressed;
-  Function() onHintPressed;
-  String title;
-  List<String> subtitles;
+  Plan plan;
   String priceLabel;
   String priceSubtitle;
   bool selected;
-  bool showHint;
   String backgroundImage;
+  String userId;
 
-  SubscriptionCard(
-      {this.title,
-      this.subtitles,
-      this.priceLabel,
-      this.priceSubtitle,
-      this.onPressed,
-      this.showHint,
-      this.onHintPressed,
-      this.selected,
-      this.backgroundImage});
+  SubscriptionCard({this.plan, this.priceLabel, this.priceSubtitle, this.onPressed, this.selected, this.backgroundImage, this.userId});
 
   @override
   _State createState() => _State();
@@ -35,173 +25,123 @@ class SubscriptionCard extends StatefulWidget {
 class _State extends State<SubscriptionCard> {
   @override
   Widget build(BuildContext context) {
-    Color cardColor = widget.selected ? OlukoColors.secondary : OlukoColors.primary;
-    if (widget.title == null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+    final Color cardColor = widget.selected ? OlukoColors.selectedSubscription : OlukoColors.subscription;
+    return Padding(
+      padding: const EdgeInsets.only(top: 30),
+      child: SizedBox(
+        width: ScreenUtils.width(context) - 50,
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: cardColor, width: 2), borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: Column(
-            children: [
-              Column(
-                children: [
-                  Stack(children: [
-                    Opacity(
-                      opacity: 0.3,
-                      child: Container(
-                        decoration: BoxDecoration(color:OlukoColors.black, borderRadius: BorderRadius.all(Radius.circular(9))),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                          child: Container(
-                            height: 30.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                        child: Container(
-                          child: Column(children: [
-                            Row(
-                              children: [
-                                Text(OlukoLocalizations.get(context, 'errorGettingCurrentPlan'),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                    )),
-                              ],
-                            ),
-                          ]),
-                        ),
-                      ),
-                    ),
-                  ]),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return GestureDetector(
-        onTap: () => this.setState(() {
-          widget.selected = !widget.selected;
-        }),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Container(
-            decoration: BoxDecoration(border: Border.all(color: cardColor, width: 2), borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Column(
-              children: [
-                Column(
-                  children: [
-                    Stack(children: [
-                      Opacity(
-                        opacity: 0.3,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: OlukoColors.black,
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.centerRight,
-                                  image: CachedNetworkImageProvider(widget.backgroundImage)),
-                              borderRadius: BorderRadius.all(Radius.circular(9))),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                            child: Container(
-                              height: 30.0 + (widget.subtitles.length * 15).toDouble(),
-                            ),
-                          ),
-                        ),
-                      ),
+          decoration: BoxDecoration(border: Border.all(color: cardColor, width: 2), borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: widget.plan.name == null
+              ? Text(
+                  OlukoLocalizations.get(context, 'errorGettingCurrentPlan'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {},
+                  child: Column(
+                    children: [
                       Container(
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              stops: [0.15, 1],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                cardColor,
-                                Colors.transparent,
-                              ],
-                            ),
-                            color: cardColor,
-                            borderRadius: BorderRadius.all(Radius.circular(3))),
+                        width: double.infinity,
+                        decoration: const BoxDecoration(color: OlukoColors.black, borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                          child: Container(
-                            height: 41.0 + (widget.subtitles.length * 15).toDouble(),
-                            child: Column(children: [
+                          padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
-                                  widget.showHint ? getWaitList() : SizedBox()
+                                  SizedBox(
+                                    child: Text(widget.plan.name, style: TextStyle(color: cardColor, fontSize: 20, fontWeight: FontWeight.normal)),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => BlocProvider.of<MarketBloc>(context).subscribe(widget.plan, widget.userId),
+                                    child: Text(
+                                      OlukoLocalizations.get(context, 'purchase'),
+                                      style: const TextStyle(color: OlukoColors.primary, fontSize: 15, fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: displayFeatures(widget.subtitles)),
-                                ],
-                              )
-                            ]),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              SizedBox(
+                                child: Text(
+                                  widget.plan.description,
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ]),
-                    Container(
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                          child: Column(children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                        child: Column(
+                          children: [
                             Row(
                               children: [
-                                Text(widget.priceLabel, style: TextStyle(color: cardColor, fontSize: 30, fontWeight: FontWeight.bold)),
+                                Text('\$${widget.plan.applePrice} ',
+                                    style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                                Text(widget.priceLabel, style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.normal)),
                               ],
                             ),
                             Row(
                               children: [
-                                Text(widget.priceSubtitle,
-                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w300)),
+                                Text(
+                                  widget.priceSubtitle,
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
+                                ),
                               ],
                             )
-                          ])),
-                    ),
-                  ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   List<Widget> displayFeatures(List<String> items) {
     return items
-        .map((item) => Text(featureLabel[EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, item)],
-            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w300)))
+        .map(
+          (item) => Text(
+            featureLabel[EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, item)],
+            style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w300),
+          ),
+        )
         .toList();
   }
 
   Widget getWaitList() {
     return Expanded(
-        child: InkWell(
-      onTap: () => widget.onHintPressed(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(
-            'Waitlist',
-            style: TextStyle(color: OlukoColors.secondary),
-          ),
-          Padding(
+      child: InkWell(
+        onTap: () {} /*widget.onHintPressed()*/,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const [
+            Text(
+              'Waitlist',
+              style: TextStyle(color: OlukoColors.secondary),
+            ),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 5),
               child: Icon(
                 Icons.help,
                 color: OlukoColors.secondary,
-              ))
-        ],
+              ),
+            )
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

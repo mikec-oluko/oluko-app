@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/models/purchase.dart';
 import 'package:oluko_app/utils/info_dialog.dart';
 
 import 'base.dart';
@@ -15,17 +17,24 @@ Map<PlanFeature, String> featureLabel = {
 };
 
 Map<PlanDuration, String> durationLabel = {PlanDuration.YEARLY: 'Year', PlanDuration.MONTHLY: 'Month', PlanDuration.DAILY: 'Day'};
+Map<PlanDuration, String> shortDurationLabel = {PlanDuration.YEARLY: 'yr', PlanDuration.MONTHLY: 'yr', PlanDuration.DAILY: 'dy'};
 
 class Plan extends Base {
   Plan(
-      {this.duration,
-      this.features,
-      this.infoDialog,
-      this.price,
-      this.recurrent,
-      this.title,
-      this.backgroundImage,
+      {this.active,
+      this.amount,
+      this.amountDecimal,
+      this.currency,
+      this.description,
+      this.interval,
+      this.intervalCount,
+      this.livemode,
       this.metadata,
+      this.name,
+      this.object,
+      this.type,
+      this.appleId,
+      this.applePrice,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -33,64 +42,97 @@ class Plan extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
-  PlanDuration duration;
-  List<PlanFeature> features;
-  InfoDialog infoDialog;
-  num price;
-  double amountDecimal;
-  bool recurrent;
-  String title;
   bool active;
+  int amount;
+  String amountDecimal;
   String currency;
   String description;
-  String backgroundImage;
-  Map<String, String> metadata;
+  String interval;
+  int intervalCount;
+  bool livemode;
+  Map<String, dynamic> metadata;
+  String name;
+  String object;
+  String type;
+  String appleId;
+  int applePrice;
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
-        duration: EnumHelper.enumFromString<PlanDuration>(PlanDuration.values, json['duration']?.toString()),
-        features: List.from(json['features'] as Iterable)
-            .map((e) => EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e?.toString()))
-            .toList(),
-        infoDialog: json['info_dialog'] != null ? InfoDialog.fromJson(json['info_dialog'] as Map<String, dynamic>) : null,
-        price: json['price'] as num,
-        recurrent: json['recurrent'] as bool,
-        title: json['title']?.toString(),
-        backgroundImage: json['background_image']?.toString(),
-        metadata: json['metadata'] as Map<String, String>);
+      active: json['active'] is bool ? json['active'] as bool : false,
+      amount: json['amount'] is int ? json['amount'] as int : null,
+      amountDecimal: json['amount_decimal']?.toString(),
+      currency: json['currency']?.toString(),
+      description: json['description']?.toString(),
+      interval: json['interval']?.toString(),
+      intervalCount: json['interval_count'] is int ? json['interval_count'] as int : null,
+      livemode: json['livemode'] is bool ? json['livemode'] as bool : false,
+      metadata: json['metadata'] as Map<String, dynamic>,
+      name: json['name']?.toString(),
+      object: json['object']?.toString(),
+      type: json['type']?.toString(),
+      appleId: json['apple_id']?.toString(),
+      applePrice: json['apple_price'] is int ? json['apple_price'] as int : null,
+    );
+
     plan.setBase(json);
     return plan;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> planJson = {
-      'duration': EnumHelper.enumToString(duration),
-      'features': features.map((feature) => EnumHelper.enumToString(feature)).toList(),
-      'info_dialog': infoDialog.toJson(),
-      'price': price,
-      'recurrent': recurrent,
-      'title': title,
-      'background_image': backgroundImage,
-      'metadata': metadata
+      'active': active,
+      'amount': amount,
+      'amount_decimal': amountDecimal,
+      'currency': currency,
+      'description': description,
+      'interval': interval,
+      'interval_count': intervalCount,
+      'livemode': livemode,
+      'metadata': metadata,
+      'name': name,
+      'object': object,
+      'type': type,
+      'apple_id': appleId,
+      'apple_price': applePrice
     };
     planJson.addEntries(super.toJson().entries);
     return planJson;
   }
 
-  bool isCurrentLevel(double currentPlan) {
+  bool isCurrentLevel(int currentPlan) {
     if (metadata != null) {
-      return (double.parse(metadata['level']) == currentPlan);
+      return double.parse(metadata['level'].toString()) == currentPlan;
     } else {
       return false;
     }
+  }
+
+  Purchase mapToPurchase(PurchaseDetails purchaseDetails, Plan plan, String userId) {
+    return Purchase(
+        id: purchaseDetails.purchaseID,
+        appPlanId: purchaseDetails.productID,
+        customerId: userId,
+        paymentType: 'applePay',
+        poNumber: /*purchaseDetails.purchaseID*/ null,
+        createdAt:
+            int.tryParse(purchaseDetails.transactionDate) is int ? Timestamp.fromMicrosecondsSinceEpoch(int.tryParse(purchaseDetails.transactionDate)) : null,
+        createdBy: userId,
+        cancelAtPeriodEnd: null,
+        currentPeriodEnd: null,
+        currentPeriodEndString: null,
+        finalAmount: plan.applePrice,
+        price: plan.applePrice,
+        priceId: null,
+        planId: plan.id,
+        productDescription: plan.description,
+        productId: purchaseDetails.productID,
+        platform: Platform.APP,
+        productName: plan.name,
+        subscriptionId: purchaseDetails.purchaseID, //???
+        recurringInterval: null,
+        status: purchaseDetails.status == PurchaseStatus.purchased ? 'active' : 'inactive');
   }
 }
