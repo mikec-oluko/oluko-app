@@ -5,13 +5,17 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
+  final bool fromRegister;
+  const ProfileSubscriptionPage({this.fromRegister});
   @override
   _ProfileSubscriptionPageState createState() => _ProfileSubscriptionPageState();
 }
@@ -25,56 +29,32 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SubscriptionContentBloc, SubscriptionContentState>(
-      bloc: BlocProvider.of<SubscriptionContentBloc>(context)..initialize(),
+      bloc: BlocProvider.of<SubscriptionContentBloc>(context)..initialize(widget.fromRegister),
       listenWhen: (context, subscriptionContentState) {
-        return subscriptionContentState is GoToHomeState || subscriptionContentState is GoBackState;
+        return subscriptionContentState is PurchaseSuccess || subscriptionContentState is FailureState;
       },
       listener: (context, subscriptionContentState) {
-        if (subscriptionContentState is GoToHomeState) {
-          Navigator.popUntil(context, ModalRoute.withName('/'));
-          AppNavigator().goToAssessmentVideosViaMain(context);
-        } else if (subscriptionContentState is GoBackState) {
+        if (subscriptionContentState is PurchaseSuccess) {
+          if (widget.fromRegister) {
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+            AppNavigator().goToAssessmentVideosViaMain(context);
+          } else {
+            Navigator.of(context).pop();
+          }
+        } else if (subscriptionContentState is FailureState) {
           Navigator.of(context).pop();
+          AppMessages.clearAndShowSnackbarTranslated(context, 'manageSubscriptionFromWeb');
         }
       },
       builder: (context, subscriptionContentState) {
-        if (subscriptionContentState is SubscriptionContentLoading) {
-          return const CircularProgressIndicator();
-        } else if (subscriptionContentState is SubscriptionContentInitialized) {
-          return Scaffold(
-            backgroundColor: OlukoColors.black,
-            appBar: OlukoAppBar(
-              title: ProfileViewConstants.profileOptionsSubscription,
-              showSearchBar: false,
-            ),
-            body: Container(
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: subscriptionContentState.plans != null
-                    ? ListView(
-                        shrinkWrap: true,
-                        children: subscriptionContentState.plans.map((plan) {
-                          return _showSubscriptionCard(plan, subscriptionContentState.user);
-                        }).toList(),
-                      )
-                    : const SizedBox(),
-              ),
-            ),
-          );
-        } else {
-          return SizedBox(
-            width: ScreenUtils.width(context),
-            height: ScreenUtils.height(context),
-            child: Center(
-              child: Text(
-                OlukoLocalizations.get(context, 'somethingWentWrong'),
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
-              ),
-            ),
-          );
-        }
+        return Scaffold(
+          backgroundColor: OlukoColors.black,
+          appBar: OlukoAppBar(
+            title: ProfileViewConstants.profileOptionsSubscription,
+            showSearchBar: false,
+          ),
+          body: getBody(subscriptionContentState),
+        );
       },
     );
   }
@@ -93,5 +73,38 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
 
   void _emitLoading() {
     BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
+  }
+
+  Widget getBody(SubscriptionContentState state) {
+    if (state is SubscriptionContentLoading) {
+      return OlukoCircularProgressIndicator();
+    } else if (state is SubscriptionContentInitialized) {
+      return Container(
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: state.plans != null
+              ? ListView(
+                  shrinkWrap: true,
+                  children: state.plans.map((plan) {
+                    return _showSubscriptionCard(plan, state.user);
+                  }).toList(),
+                )
+              : const SizedBox(),
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: ScreenUtils.width(context),
+        height: ScreenUtils.height(context),
+        child: Center(
+          child: Text(
+            OlukoLocalizations.get(context, 'somethingWentWrong'),
+            textAlign: TextAlign.center,
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
+          ),
+        ),
+      );
+    }
   }
 }

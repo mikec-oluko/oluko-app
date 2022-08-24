@@ -5,6 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/models/purchase.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/plan_repository.dart';
@@ -16,10 +17,6 @@ abstract class SubscriptionContentState {}
 
 class LoadingState extends SubscriptionContentState {}
 
-class GoToHomeState extends SubscriptionContentState {}
-
-class GoBackState extends SubscriptionContentState {}
-
 class PurchasePending extends SubscriptionContentState {
   PurchasePending();
 }
@@ -28,11 +25,9 @@ class PurchaseSuccess extends SubscriptionContentState {}
 
 class PurchaseRestored extends SubscriptionContentState {}
 
-class PurchaseFailed extends SubscriptionContentState {}
-
-class Failure extends SubscriptionContentState {
+class FailureState extends SubscriptionContentState {
   final dynamic exception;
-  Failure({this.exception});
+  FailureState({this.exception});
 }
 
 class SubscriptionContentLoading extends SubscriptionContentState {}
@@ -58,7 +53,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   List<PurchaseDetails> purchases = [];
   StreamSubscription<List<PurchaseDetails>> subscription;
 
-  void initState() {
+  void initState(bool fromRegister) {
     final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
     subscription = purchaseUpdated.listen(
       (purchaseDetailsList) {
@@ -72,7 +67,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         subscription.cancel();
       },
     );
-    initialize();
+    initialize(fromRegister);
   }
 
   void dispose() {
@@ -81,16 +76,19 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     }
   }
 
-  void initialize() async {
+  void initialize(bool fromRegister) async {
     try {
-      final List<Plan> plans = await PlanRepository.getAll();
-      final UserResponse user = await UserRepository().getById(AuthRepository.getLoggedUser().uid);
-      if (plans != null && plans.isNotEmpty) {
-        final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.id).toSet());
-        products = appleProducts;
+      final String userId = AuthRepository.getLoggedUser().uid;
+      if (fromRegister) {
+        await initAndEmit(userId);
+      } else {
+        final Purchase lastPurchase = await PurchaseRepository.getLastPurchase(userId);
+        if (lastPurchase.platform != null && lastPurchase.platform == Platform.APP) {
+          await initAndEmit(userId);
+        } else {
+          emit(FailureState());
+        }
       }
-
-      emit(SubscriptionContentInitialized(plans: plans, user: user));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -101,6 +99,16 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     }
   }
 
+  Future<void> initAndEmit(String userId) async {
+    final List<Plan> plans = await PlanRepository.getAll();
+    final UserResponse user = await UserRepository().getById(userId);
+    if (plans != null && plans.isNotEmpty) {
+      final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.id).toSet());
+      products = appleProducts;
+    }
+    emit(SubscriptionContentInitialized(plans: plans, user: user));
+  }
+
   void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       switch (purchaseDetails.status) {
@@ -108,14 +116,18 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
           emit(PurchasePending());
           break;
         case PurchaseStatus.purchased:
+          ProductDetails productDetails = products?.firstWhere(
+            (product) => product.id == purchaseDetails.productID,
+            orElse: () => null,
+          );
+          await PurchaseRepository.create(purchaseDetails, productDetails);
           emit(PurchaseSuccess());
-          await PurchaseRepository.create(purchaseDetails);
           break;
         case PurchaseStatus.restored:
           emit(PurchaseRestored());
           break;
         case PurchaseStatus.error:
-          emit(PurchaseFailed());
+          emit(FailureState());
           break;
         default:
           break;
@@ -133,7 +145,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   }
 
   Future<void> subscribe(Plan plan, String userId) async {
-    emit(LoadingState());
+    emit(SubscriptionContentLoading());
     ProductDetails product = products?.firstWhere(
       (product) => product.id == plan.appleId,
       orElse: () => null,

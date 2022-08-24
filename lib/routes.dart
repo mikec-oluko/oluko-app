@@ -673,11 +673,13 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-      final SubscriptionContentBloc _marketBloc = SubscriptionContentBloc();
-      providers = [
-          BlocProvider<SubscriptionContentBloc>.value(value: _marketBloc),
+        final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        providers = [
+          BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
         ];
-        newRouteView = ProfileSubscriptionPage();
+        newRouteView = ProfileSubscriptionPage(
+            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);
         break;
       case RouteEnum.profileHelpAndSupport:
         providers = [

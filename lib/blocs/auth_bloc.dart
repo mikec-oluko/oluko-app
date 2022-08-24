@@ -122,12 +122,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
 
     final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (user.currentPlan == -100) {
-      FirebaseAuth.instance.signOut();
-      AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
-      emit(AuthGuest());
-      return;
-    } else if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
+    if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
       //TODO: trigger to send another email
       await firebaseUser?.updateEmail(user.email);
       firebaseUser?.sendEmailVerification();
@@ -135,11 +130,18 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
-      AuthRepository().storeLoginData(user);
-      if (firebaseUser != null) {
-        AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
-        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
-        navigateToNextScreen(context, firebaseUser.uid);
+      if (user.currentPlan == -100 || user.currentPlan == 0.0) {
+        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+        AppNavigator().goToSubscriptionsViaMain(context);
+        emit(AuthGuest());
+        return;
+      } else {
+        AuthRepository().storeLoginData(user);
+        if (firebaseUser != null) {
+          AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
+          emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+          navigateToNextScreen(context, firebaseUser.uid);
+        }
       }
     }
   }
@@ -357,7 +359,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<LikedCoursesBloc>(context).dispose();
       BlocProvider.of<CoachAssignmentBloc>(context).dispose();
 
-      if(Platform.isIOS || Platform.isMacOS) {
+      if (Platform.isIOS || Platform.isMacOS) {
         BlocProvider.of<SubscriptionContentBloc>(context).dispose();
       }
 
