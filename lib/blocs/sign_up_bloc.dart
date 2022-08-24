@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
@@ -50,6 +51,7 @@ class SignupBloc extends Cubit<UserState> {
       UserResponse _userCreated = await UserRepository().get(response.email);
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
+      BlocProvider.of<AuthBloc>(context).updateAuthSuccess(_userCreated, null);
       Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
