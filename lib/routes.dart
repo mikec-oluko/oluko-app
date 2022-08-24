@@ -47,7 +47,6 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
-import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
@@ -63,6 +62,7 @@ import 'package:oluko_app/blocs/selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -535,8 +535,8 @@ class Routes {
           ]);
         }
         if (Platform.isIOS || Platform.isMacOS) {
-          final MarketBloc _marketBloc = MarketBloc();
-          providers.add(BlocProvider<MarketBloc>.value(value: _marketBloc));
+          final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
+          providers.add(BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc));
         }
 
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
@@ -668,10 +668,9 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-      final MarketBloc _marketBloc = MarketBloc();
+      final SubscriptionContentBloc _marketBloc = SubscriptionContentBloc();
       providers = [
-          BlocProvider<PlanBloc>.value(value: _planBloc),
-          BlocProvider<MarketBloc>.value(value: _marketBloc),
+          BlocProvider<SubscriptionContentBloc>.value(value: _marketBloc),
         ];
         newRouteView = ProfileSubscriptionPage();
         break;

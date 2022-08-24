@@ -38,7 +38,7 @@ class Purchase extends Base {
   String customerId;
   String paymentType;
   String planId;
-  int poNumber;
+  String poNumber;
   int finalAmount;
   int price;
   String recurringInterval;
@@ -62,7 +62,7 @@ class Purchase extends Base {
       customerId: json['customer_id']?.toString(),
       paymentType: json['payment_type']?.toString(),
       planId: json['plan_id']?.toString(),
-      poNumber: json['poNumber'] is int ? json['poNumber'] as int : null,
+      poNumber: json['poNumber']?.toString(),
       finalAmount: json['final_amount'] is int ? json['final_amount'] as int : null,
       price: json['price'] is int ? json['price'] as int : null,
       recurringInterval: json['recurring_interval']?.toString(),
