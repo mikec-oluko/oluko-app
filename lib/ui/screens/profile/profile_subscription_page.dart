@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/market_bloc.dart';
-import 'package:oluko_app/blocs/plan_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:oluko_app/ui/components/subscription_modal_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
   @override
@@ -27,84 +24,58 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        return BlocProvider(
-          create: (context) => PlanBloc()..getPlans(),
-          child: SafeArea(
-            child: Scaffold(
-              backgroundColor: OlukoColors.black,
-              appBar: OlukoAppBar(
-                title: ProfileViewConstants.profileOptionsSubscription,
-                showSearchBar: false,
-              ),
-              body: Container(
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: BlocBuilder<PlanBloc, PlanState>(
-                    builder: (context, state) {
-                      if (state is PlansSuccess) {
-                        BlocProvider.of<MarketBloc>(context).initState(state.plans);
-                        return state.plans != null
-                            ? ListView(
-                                shrinkWrap: true,
-                                children: state.plans.map((plan) {
-                                  return _showSubscriptionCard(plan, authState.user);
-                                }).toList(),
-                              )
-                            : const SizedBox();
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                ),
+    return BlocConsumer<SubscriptionContentBloc, SubscriptionContentState>(
+      bloc: BlocProvider.of<SubscriptionContentBloc>(context)..initialize(),
+      listenWhen: (context, subscriptionContentState) {
+        return subscriptionContentState is GoToHomeState || subscriptionContentState is GoBackState;
+      },
+      listener: (context, subscriptionContentState) {
+        if (subscriptionContentState is GoToHomeState) {
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+          AppNavigator().goToAssessmentVideosViaMain(context);
+        } else if (subscriptionContentState is GoBackState) {
+          Navigator.of(context).pop();
+        }
+      },
+      builder: (context, subscriptionContentState) {
+        if (subscriptionContentState is SubscriptionContentLoading) {
+          return const CircularProgressIndicator();
+        } else if (subscriptionContentState is SubscriptionContentInitialized) {
+          return Scaffold(
+            backgroundColor: OlukoColors.black,
+            appBar: OlukoAppBar(
+              title: ProfileViewConstants.profileOptionsSubscription,
+              showSearchBar: false,
+            ),
+            body: Container(
+              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: subscriptionContentState.plans != null
+                    ? ListView(
+                        shrinkWrap: true,
+                        children: subscriptionContentState.plans.map((plan) {
+                          return _showSubscriptionCard(plan, subscriptionContentState.user);
+                        }).toList(),
+                      )
+                    : const SizedBox(),
               ),
             ),
-          ),
-        );
-      } else {
-        return const SizedBox();
-      }
-    });
-  }
-
-  Stack _subscriptionCardWithButton(PlansSuccess state, BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.bottomCenter,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: _showSubscriptionCard(state.plans[2], null),
-        ),
-        Positioned(
-          bottom: -30,
-          left: 0,
-          right: 0,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0)),
-                      ),
-                      primary: OlukoColors.primary,
-                      side: const BorderSide(color: OlukoColors.primary)),
-                  onPressed: () => AppModal.dialogContent(context: context, content: [SubscriptionModalOption()], closeButton: true),
-                  child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text(
-                        OlukoLocalizations.get(context, 'upgrade'),
-                        style: const TextStyle(fontSize: 18),
-                      ))),
+          );
+        } else {
+          return SizedBox(
+            width: ScreenUtils.width(context),
+            height: ScreenUtils.height(context),
+            child: Center(
+              child: Text(
+                OlukoLocalizations.get(context, 'somethingWentWrong'),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
+              ),
             ),
-          ),
-        )
-      ],
+          );
+        }
+      },
     );
   }
 
@@ -115,6 +86,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
     subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}';
     subscriptionCard.selected = plan.metadata['level'] == user.currentPlan;
     subscriptionCard.userId = user.id;
+    subscriptionCard.loadingAction = _emitLoading;
+    subscriptionCard.subscribeAction = () => BlocProvider.of<SubscriptionContentBloc>(context).subscribe(plan, user.id);
     return subscriptionCard;
+  }
+
+  void _emitLoading() {
+    BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
   }
 }

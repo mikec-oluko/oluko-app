@@ -53,6 +53,7 @@
     "assessments": "Assessments",
     "plans": "Plans",
     "alreadySubscribedUser": "Already a subscribed user?",
+    "somethingWentWrong": "Something went wrong",
     "emailExample": "example@yourcompany.com",
     "email": "Email",
     "required": "Required field",

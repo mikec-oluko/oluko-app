@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -15,8 +14,10 @@ class SubscriptionCard extends StatefulWidget {
   bool selected;
   String backgroundImage;
   String userId;
+  Function() loadingAction;
+  Function() subscribeAction;
 
-  SubscriptionCard({this.plan, this.priceLabel, this.priceSubtitle, this.onPressed, this.selected, this.backgroundImage, this.userId});
+  SubscriptionCard({this.plan, this.priceLabel, this.priceSubtitle, this.onPressed, this.selected, this.backgroundImage, this.userId, this.loadingAction});
 
   @override
   _State createState() => _State();
@@ -59,7 +60,10 @@ class _State extends State<SubscriptionCard> {
                                     child: Text(widget.plan.name, style: TextStyle(color: cardColor, fontSize: 20, fontWeight: FontWeight.normal)),
                                   ),
                                   GestureDetector(
-                                    onTap: () => BlocProvider.of<MarketBloc>(context).subscribe(widget.plan, widget.userId),
+                                    onTap: () {
+                                      widget.loadingAction();
+                                      widget.subscribeAction();
+                                    },
                                     child: Text(
                                       OlukoLocalizations.get(context, 'purchase'),
                                       style: const TextStyle(color: OlukoColors.primary, fontSize: 15, fontWeight: FontWeight.normal),

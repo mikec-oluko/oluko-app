@@ -1,27 +1,56 @@
 import 'dart:async';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/plan.dart';
-import 'package:oluko_app/models/purchase.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/plan_repository.dart';
 import 'package:oluko_app/repositories/purchase_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-abstract class MarketState {}
+abstract class SubscriptionContentState {}
 
-class LoadingState extends MarketState {}
+class LoadingState extends SubscriptionContentState {}
 
-class MarketSuccess extends MarketState {
-  MarketSuccess();
+class GoToHomeState extends SubscriptionContentState {}
+
+class GoBackState extends SubscriptionContentState {}
+
+class PurchasePending extends SubscriptionContentState {
+  PurchasePending();
 }
 
-class Failure extends MarketState {
+class PurchaseSuccess extends SubscriptionContentState {}
+
+class PurchaseRestored extends SubscriptionContentState {}
+
+class PurchaseFailed extends SubscriptionContentState {}
+
+class Failure extends SubscriptionContentState {
   final dynamic exception;
   Failure({this.exception});
 }
 
-class MarketBloc extends Cubit<MarketState> {
-  MarketBloc() : super(LoadingState());
+class SubscriptionContentLoading extends SubscriptionContentState {}
+
+class SubscriptionContentInitialized extends SubscriptionContentState {
+  List<Plan> plans;
+  UserResponse user;
+  SubscriptionContentInitialized({this.plans, this.user});
+}
+
+class SubscriptionContentFailed extends SubscriptionContentState {
+  final dynamic exception;
+  SubscriptionContentFailed({this.exception});
+}
+
+class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
+  SubscriptionContentBloc() : super(SubscriptionContentLoading());
+
   final InAppPurchase inAppPurchase = InAppPurchase.instance;
 
   bool available = true;
@@ -29,7 +58,7 @@ class MarketBloc extends Cubit<MarketState> {
   List<PurchaseDetails> purchases = [];
   StreamSubscription<List<PurchaseDetails>> subscription;
 
-  void initState(List<Plan> plans) {
+  void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
     subscription = purchaseUpdated.listen(
       (purchaseDetailsList) {
@@ -43,8 +72,7 @@ class MarketBloc extends Cubit<MarketState> {
         subscription.cancel();
       },
     );
-
-    initialize(plans);
+    initialize();
   }
 
   void dispose() {
@@ -53,10 +81,23 @@ class MarketBloc extends Cubit<MarketState> {
     }
   }
 
-  void initialize(List<Plan> plans) async {
-    if (plans != null && plans.isNotEmpty) {
-      final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.id).toSet());
-      products = appleProducts;
+  void initialize() async {
+    try {
+      final List<Plan> plans = await PlanRepository.getAll();
+      final UserResponse user = await UserRepository().getById(AuthRepository.getLoggedUser().uid);
+      if (plans != null && plans.isNotEmpty) {
+        final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.id).toSet());
+        products = appleProducts;
+      }
+
+      emit(SubscriptionContentInitialized(plans: plans, user: user));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(SubscriptionContentFailed(exception: exception));
+      rethrow;
     }
   }
 
@@ -64,20 +105,17 @@ class MarketBloc extends Cubit<MarketState> {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
-          //  _showPendingUI();
+          emit(PurchasePending());
           break;
         case PurchaseStatus.purchased:
-          PurchaseRepository.create(purchaseDetails);
+          emit(PurchaseSuccess());
+          await PurchaseRepository.create(purchaseDetails);
           break;
         case PurchaseStatus.restored:
-          // bool valid = await _verifyPurchase(purchaseDetails);
-          // if (!valid) {
-          //   _handleInvalidPurchase(purchaseDetails);
-          // }
+          emit(PurchaseRestored());
           break;
         case PurchaseStatus.error:
-          print(purchaseDetails.error);
-          // _handleError(purchaseDetails.error!);
+          emit(PurchaseFailed());
           break;
         default:
           break;
@@ -95,7 +133,11 @@ class MarketBloc extends Cubit<MarketState> {
   }
 
   Future<void> subscribe(Plan plan, String userId) async {
-    ProductDetails product = products?.firstWhere((product) => product.id == plan.appleId, orElse: () => null,);
+    emit(LoadingState());
+    ProductDetails product = products?.firstWhere(
+      (product) => product.id == plan.appleId,
+      orElse: () => null,
+    );
     if (product == null) {
       products = await getProducts(
         <String>{plan.appleId},
@@ -130,5 +172,9 @@ class MarketBloc extends Cubit<MarketState> {
       title: Text('${purchase.productID} ${transactionDate ?? ''}'),
       subtitle: Text(purchase.status.toString()),
     );
+  }
+
+  void emitSubscriptionContentLoading() {
+    emit(SubscriptionContentLoading());
   }
 }

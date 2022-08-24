@@ -12,10 +12,10 @@ import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
-import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
@@ -355,7 +355,8 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
       BlocProvider.of<LikedCoursesBloc>(context).dispose();
       BlocProvider.of<CoachAssignmentBloc>(context).dispose();
-      BlocProvider.of<MarketBloc>(context).dispose();
+      // BlocProvider.of<MarketBloc>(context).dispose();
+      BlocProvider.of<SubscriptionContentBloc>(context).dispose();
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});
