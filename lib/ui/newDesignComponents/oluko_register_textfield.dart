@@ -123,10 +123,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       onChanged: (value) {
         if (value == null || value.isEmpty) {
           if (_isPasswordField(widget.fieldType)) widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
-          setState(() {
-            // existError = true;
-            // errorMessage = 'cant be null';
-          });
         } else {
           stringValidator = AppValidators().getStringValidationState(value);
           switch (widget.fieldType) {
@@ -148,6 +144,23 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
               }
               break;
             case RegisterFieldEnum.FIRSTNAME:
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
+                } else {
+                  _clearFieldErrors();
+                }
+              }
+              break;
+            case RegisterFieldEnum.CITY:
               if (stringValidator != null) {
                 if (!stringValidator[StringValidation.containsMinChars]) {
                   setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
@@ -236,6 +249,23 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   return _getErrorMessage(alphabeticError: true);
                 } else {
                   return null;
+                }
+              }
+              break;
+            case RegisterFieldEnum.CITY:
+              if (stringValidator != null) {
+                if (!stringValidator[StringValidation.containsMinChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
+                } else if (stringValidator[StringValidation.containsBlankSpaces]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
+                } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
+                } else if (!stringValidator[StringValidation.containsSpecialChars]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                  setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
+                } else {
+                  _clearFieldErrors();
                 }
               }
               break;
@@ -376,6 +406,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     setState(() {
                       countries = newCountries;
                     });
+                    widget.onInputUpdated(item);
                   },
                 ),
               ),
@@ -442,6 +473,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     setState(() {
                       _selectedState = item;
                     });
+                    widget.onInputUpdated(item);
                   },
                 ),
               ),

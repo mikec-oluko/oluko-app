@@ -336,9 +336,33 @@ class _RegisterState extends State<RegisterPage> {
                   _newUserFromRegister.lastName = value;
                 });
               }),
-          // OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'country'), fieldType: RegisterFieldEnum.COUNTRY),
-          // OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'state'), fieldType: RegisterFieldEnum.STATE),
-          // OlukoRegisterTextfield(key: formKey, title: OlukoLocalizations.get(context, 'city'), fieldType: RegisterFieldEnum.CITY),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'country'),
+              fieldType: RegisterFieldEnum.COUNTRY,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.country = value;
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'state'),
+              fieldType: RegisterFieldEnum.STATE,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.state = value;
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'city'),
+              fieldType: RegisterFieldEnum.CITY,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.city = value;
+                });
+              }),
           OlukoRegisterTextfield(
               key: formKey,
               title: OlukoLocalizations.get(context, 'email'),
@@ -381,7 +405,7 @@ class _RegisterState extends State<RegisterPage> {
 
   Future<void> validateAndSave() async {
     final FormState form = formKey.currentState;
-    print(_newUserFromRegister);
+    // print(_newUserFromRegister);
     if (form.validate() && isPasswordValid()) {
       await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
       print('Form is valid');

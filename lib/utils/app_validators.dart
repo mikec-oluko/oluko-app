@@ -85,7 +85,7 @@ class AppValidators {
 
   bool validatePattern(String value, Pattern pattern) {
     RegExp regex = new RegExp(pattern.toString());
-    print(value);
+    // print(value);
     if (value.isEmpty) {
       return false;
     } else {
