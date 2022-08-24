@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 
 abstract class UserState {}
 
@@ -46,9 +47,9 @@ class SignupBloc extends Cubit<UserState> {
     ApiResponse apiResponse = await _repository.signUp(request);
     if (apiResponse.statusCode == 200) {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
+      UserResponse _userCreated = await UserRepository().get(response.email);
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
-      // AppNavigator().returnToHome(context);
       Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
