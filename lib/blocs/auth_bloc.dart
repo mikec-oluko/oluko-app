@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,10 +13,10 @@ import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
-import 'package:oluko_app/blocs/market_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
@@ -121,12 +122,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
 
     final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (user.currentPlan == -100) {
-      FirebaseAuth.instance.signOut();
-      AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
-      emit(AuthGuest());
-      return;
-    } else if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
+    if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
       //TODO: trigger to send another email
       await firebaseUser?.updateEmail(user.email);
       firebaseUser?.sendEmailVerification();
@@ -134,11 +130,18 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
-      AuthRepository().storeLoginData(user);
-      if (firebaseUser != null) {
-        AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
-        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
-        navigateToNextScreen(context, firebaseUser.uid);
+      if (user.currentPlan == -100 || user.currentPlan == 0.0) {
+        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+        AppNavigator().goToSubscriptionsViaMain(context);
+        emit(AuthGuest());
+        return;
+      } else {
+        AuthRepository().storeLoginData(user);
+        if (firebaseUser != null) {
+          AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
+          emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+          navigateToNextScreen(context, firebaseUser.uid);
+        }
       }
     }
   }
@@ -355,7 +358,10 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
       BlocProvider.of<LikedCoursesBloc>(context).dispose();
       BlocProvider.of<CoachAssignmentBloc>(context).dispose();
-      BlocProvider.of<MarketBloc>(context).dispose();
+
+      if (Platform.isIOS || Platform.isMacOS) {
+        BlocProvider.of<SubscriptionContentBloc>(context).dispose();
+      }
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});

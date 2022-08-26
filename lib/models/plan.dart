@@ -112,15 +112,14 @@ class Plan extends Base {
 
   Purchase mapToPurchase(PurchaseDetails purchaseDetails, Plan plan, String userId) {
     return Purchase(
-        id: purchaseDetails.purchaseID,
         appPlanId: purchaseDetails.productID,
         customerId: userId,
         paymentType: 'applePay',
-        poNumber: /*purchaseDetails.purchaseID*/ null,
+        poNumber: purchaseDetails.purchaseID,
         createdAt:
             int.tryParse(purchaseDetails.transactionDate) is int ? Timestamp.fromMicrosecondsSinceEpoch(int.tryParse(purchaseDetails.transactionDate)) : null,
         createdBy: userId,
-        cancelAtPeriodEnd: null,
+        cancelAtPeriodEnd: false,
         currentPeriodEnd: null,
         currentPeriodEndString: null,
         finalAmount: plan.applePrice,
@@ -128,11 +127,11 @@ class Plan extends Base {
         priceId: null,
         planId: plan.id,
         productDescription: plan.description,
-        productId: purchaseDetails.productID,
+        productId: plan.id,
         platform: Platform.APP,
         productName: plan.name,
         subscriptionId: purchaseDetails.purchaseID, //???
-        recurringInterval: null,
+        recurringInterval: plan.interval,
         status: purchaseDetails.status == PurchaseStatus.purchased ? 'active' : 'inactive');
   }
 }

@@ -31,7 +31,8 @@ class SignupBloc extends Cubit<UserState> {
   final _repository = AuthRepository();
 
   Future<void> signUp(BuildContext context, SignUpRequest request) async {
-    if (request.password.contains(request.username)) {
+      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
+    /*if (request.password.contains(request.username)) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
       emit(SignupFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'))));
       return;
@@ -48,8 +49,6 @@ class SignupBloc extends Cubit<UserState> {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
-      // AppNavigator().returnToHome(context);
-      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(OlukoLocalizations.get(context, 'checkYourEmail')),
@@ -60,7 +59,7 @@ class SignupBloc extends Cubit<UserState> {
         content: Text(apiResponse.message.replaceAll(_removeSpecialChars(), '')),
       ));
       emit(SignupFailure(exception: Exception(apiResponse.message.replaceAll(_removeSpecialChars(), ''))));
-    }
+    }*/
   }
 
   RegExp _removeSpecialChars() => RegExp('[^A-Za-z0-9 ]');
