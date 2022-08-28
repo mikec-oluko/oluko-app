@@ -311,6 +311,8 @@ class OlukoColors {
 
   static const Color statisticsChartColor = Color.fromRGBO(254, 159, 31, 1);
 
+  static const Color subscriptionTabsColor = Color.fromRGBO(228, 229, 230, 1);
+
   static Color randomColor() {
     var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
     final _random = new Random();

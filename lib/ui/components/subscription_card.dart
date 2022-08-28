@@ -5,6 +5,7 @@ import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:html/parser.dart';
 
 class SubscriptionCard extends StatefulWidget {
   Function(bool) onPressed;
@@ -27,6 +28,39 @@ class _State extends State<SubscriptionCard> {
   @override
   Widget build(BuildContext context) {
     final Color cardColor = widget.selected ? OlukoColors.selectedSubscription : OlukoColors.subscription;
+    return Container(
+        decoration: BoxDecoration(
+            border: Border.all(
+              width: 2,
+              color: OlukoColors.primary,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: OlukoColors.primary),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: OlukoColors.subscriptionTabsColor,
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _parseHtmlString(widget.plan.description)
+                      .map((element) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                            child: Text('- ${element}', style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                          ))
+                      .toList())
+
+              //  Text(
+              //   _parseHtmlString(widget.plan.description),
+              // )),
+              ),
+        ));
+    // oldSubscriptionCard(context, cardColor);
+  }
+
+  Padding oldSubscriptionCard(BuildContext context, Color cardColor) {
     return Padding(
       padding: const EdgeInsets.only(top: 30),
       child: SizedBox(
@@ -74,12 +108,12 @@ class _State extends State<SubscriptionCard> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              SizedBox(
-                                child: Text(
-                                  widget.plan.description,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
-                                ),
-                              ),
+                              // SizedBox(
+                              //   child: Text(
+                              //     _parseHtmlString(widget.plan.description),
+                              //     style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -91,8 +125,8 @@ class _State extends State<SubscriptionCard> {
                             Row(
                               children: [
                                 Text('\$${widget.plan.applePrice} ',
-                                    style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.bold)),
-                                Text(widget.priceLabel, style: const TextStyle(color: OlukoColors.white, fontSize: 30, fontWeight: FontWeight.normal)),
+                                    style: const TextStyle(color: OlukoColors.coral, fontSize: 30, fontWeight: FontWeight.bold)),
+                                Text(widget.priceLabel, style: const TextStyle(color: OlukoColors.coral, fontSize: 30, fontWeight: FontWeight.normal)),
                               ],
                             ),
                             Row(
@@ -112,6 +146,11 @@ class _State extends State<SubscriptionCard> {
         ),
       ),
     );
+  }
+
+  List<String> _parseHtmlString(String htmlString) {
+    var rows = parse(htmlString).getElementsByTagName("ul")[0].getElementsByTagName("li");
+    return rows.map((element) => element.text).toList();
   }
 
   List<Widget> displayFeatures(List<String> items) {

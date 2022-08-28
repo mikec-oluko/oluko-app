@@ -673,9 +673,10 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-      final SubscriptionContentBloc _marketBloc = SubscriptionContentBloc();
-      providers = [
-          BlocProvider<SubscriptionContentBloc>.value(value: _marketBloc),
+        // final SubscriptionContentBloc _marketBloc = SubscriptionContentBloc();
+        providers = [
+          // BlocProvider<SubscriptionContentBloc>.value(value: _marketBloc),
+          BlocProvider<PlanBloc>.value(value: _planBloc),
         ];
         newRouteView = ProfileSubscriptionPage();
         break;
