@@ -677,6 +677,8 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         providers = [
           BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
+          // final SubscriptionContentBloc _marketBloc = SubscriptionContentBloc();
+          BlocProvider<PlanBloc>.value(value: _planBloc),
         ];
         newRouteView = ProfileSubscriptionPage(
             fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);
@@ -1349,6 +1351,7 @@ class Routes {
         providers = [
           BlocProvider<CountryBloc>.value(value: _countryBloc),
           BlocProvider<SignupBloc>.value(value: _signUpBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const RegisterPage();
         break;
