@@ -69,8 +69,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       },
       builder: (context, subscriptionContentState) {
         return Scaffold(
-          backgroundColor: OlukoColors.black,
+          backgroundColor: OlukoColors.white,
           appBar: OlukoAppBar(
+            showTitle: false,
+            showLogo: true,
+            reduceHeight: true,
+            showBackButton: false,
             title: ProfileViewConstants.profileOptionsSubscription,
             showSearchBar: false,
           ),
@@ -80,7 +84,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Align _selectPlanButton(PlansSuccess state) {
+  Align _selectPlanButton(SubscriptionContentInitialized state) {
     return Align(
       child: Container(
         width: ScreenUtils.width(context) / 2,
@@ -99,7 +103,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Padding _subscriptionBodyContent(BuildContext context, PlansSuccess state, AuthSuccess authState) {
+  Padding _subscriptionBodyContent(BuildContext context, SubscriptionContentInitialized state, UserResponse user) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
       child: Container(
@@ -107,7 +111,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         child: Stack(
           alignment: AlignmentDirectional.topCenter,
           children: [
-            Center(child: _subscriptionContent(context, state, authState)),
+            Center(child: _subscriptionContent(context, state, user)),
             Positioned(left: 0, right: 0, top: -(ScreenUtils.height(context) * 0.395), child: _plansTabs(state, context)),
           ],
         ),
@@ -145,7 +149,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Container _subscriptionContent(BuildContext context, PlansSuccess state, AuthSuccess authState) {
+  Container _subscriptionContent(BuildContext context, SubscriptionContentInitialized state, UserResponse user) {
     return Container(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context) / 5,
@@ -157,12 +161,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                   priceLabel: shortDurationLabel[PlanDuration.values[plan.intervalCount]],
                   priceSubtitle: 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}',
                   selected: true,
-                  userId: authState.user.id))
+                  userId: user.id))
               .toList()),
     );
   }
 
-  Container _plansTabs(PlansSuccess state, BuildContext context) {
+  Container _plansTabs(SubscriptionContentInitialized state, BuildContext context) {
     return Container(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context),
@@ -187,7 +191,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Stack _tabWithSelectedIcon(BuildContext context, PlansSuccess state, Plan tabContent) {
+  Stack _tabWithSelectedIcon(BuildContext context, SubscriptionContentInitialized state, Plan tabContent) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: AlignmentDirectional.topCenter,
@@ -201,7 +205,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Container _tabMainContainer(PlansSuccess state, Plan tabContent, BuildContext context) {
+  Container _tabMainContainer(SubscriptionContentInitialized state, Plan tabContent, BuildContext context) {
     return Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
@@ -213,7 +217,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         ));
   }
 
-  Widget _tabBorderEffect(BuildContext context, Plan tabContent, PlansSuccess state) {
+  Widget _tabBorderEffect(BuildContext context, Plan tabContent, SubscriptionContentInitialized state) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
       child: Container(
@@ -226,7 +230,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  bool _isCurrentTabIndex(PlansSuccess state, Plan tabContent) => _currentIndex == state.plans.indexOf(tabContent);
+  bool _isCurrentTabIndex(SubscriptionContentInitialized state, Plan tabContent) => _currentIndex == state.plans.indexOf(tabContent);
 
   Container _tabContent(BuildContext context, Plan tabContent) {
     return Container(
@@ -261,6 +265,17 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     });
   }
 
+  Align _cancelPlanButton() {
+    return Align(
+      child: Container(
+        width: ScreenUtils.width(context) / 2,
+        height: 60,
+        child:
+            OlukoNeumorphicWhiteButton(isExpanded: false, useBorder: true, flatStyle: true, onPressed: () {}, title: OlukoLocalizations.get(context, 'cancel')),
+      ),
+    );
+  }
+
   Widget getBody(SubscriptionContentState state) {
     if (state is SubscriptionContentLoading) {
       return OlukoCircularProgressIndicator();
@@ -268,15 +283,25 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       return Container(
         color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: state.plans != null
-              ? ListView(shrinkWrap: true, children: []
-                  //  state.plans.map((plan) {
-                  //   return _showSubscriptionCard(plan, state.user);
-                  // }).toList(),
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: state.plans != null
+                ? ListView(
+                    shrinkWrap: true,
+                    children: [
+                      _subscriptionTitleSection(context),
+                      _subscriptionBodyContent(context, state, state.user),
+                      _selectPlanButton(state),
+                      _cancelPlanButton()
+                    ],
                   )
-              : const SizedBox(),
-        ),
+                : const SizedBox()
+            // ? ListView(shrinkWrap: true, children: []
+            //     //  state.plans.map((plan) {
+            //     //   return _showSubscriptionCard(plan, state.user);
+            //     // }).toList(),
+            //     )
+            // : const SizedBox(),
+            ),
       );
     } else {
       return SizedBox(
