@@ -173,7 +173,6 @@ class TransformListOfItemsToWidget {
     String classImage;
     int classIndex;
     int courseIndex;
-
     for (final courseEnrollment in courseEnrollments) {
       for (final classToCheck in courseEnrollment.classes) {
         className = classToCheck.name;
@@ -207,12 +206,12 @@ class TransformListOfItemsToWidget {
           segmentReference: challenge.segmentReference,
           isChallenge: true,
           indexClass: challenge.indexClass,
-          indexCourse: challenge.indexSegment);
+          indexSegment: challenge.indexSegment);
       for (final segment in segments) {
         for (final actualSegment in segment.enrollmentSegments) {
-          if (challenge.segmentId == actualSegment.id) {
+          if (challenge.segmentId == actualSegment.id && challenge.courseEnrollmentId==segment.courseEnrollment.id) {
             coachSegmentContent.segmentName = actualSegment.name;
-            coachSegmentContent.indexSegment = segment.enrollmentSegments.indexOf(actualSegment);
+            coachSegmentContent.indexCourse=segment.courseIndex;
             coachSegmentContent.courseEnrollment = segment.courseEnrollment;
           }
         }
