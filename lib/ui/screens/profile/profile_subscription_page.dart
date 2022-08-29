@@ -123,9 +123,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   Padding _subscriptionBodyContent(BuildContext context, PlansSuccess state, AuthSuccess authState) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
       child: Container(
-        height: ScreenUtils.height(context) / 2.5,
+        height: ScreenUtils.height(context) / 2,
         child: Stack(
           alignment: AlignmentDirectional.topCenter,
           children: [
@@ -141,11 +141,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Row(
       children: [
         SizedBox(
-          width: ScreenUtils.width(context) / 5,
+          width: ScreenUtils.width(context) / 7,
         ),
         _manageMembershipText(),
         SizedBox(
-          width: ScreenUtils.width(context) / 5,
+          width: ScreenUtils.width(context) / 7,
         ),
       ],
     );
