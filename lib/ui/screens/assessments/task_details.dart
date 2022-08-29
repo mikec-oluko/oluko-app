@@ -554,10 +554,6 @@ class _TaskDetailsState extends State<TaskDetails> {
           Padding(padding: const EdgeInsets.only(bottom: 15.0), child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
           Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
           Padding(
-              padding: const EdgeInsets.only(bottom: 15.0),
-              child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
-          Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-          Padding(
               padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 80 : 25.0),
               child: Row(
                 mainAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? MainAxisAlignment.end : MainAxisAlignment.center,
@@ -601,6 +597,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                           width: 80,
                           height: 50,
                           child: OlukoNeumorphicPrimaryButton(
+                            thinPadding: true,
                             isExpanded: false,
                             title: OlukoLocalizations.get(context, 'no'),
                             onPressed: () {

@@ -131,7 +131,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   Widget usersGrid(List<UserResponse> users, bool areFriends) {
     if (users.isNotEmpty) {
       return GridView.count(
-          childAspectRatio: 0.7,
+          childAspectRatio: 0.6,
           crossAxisCount: 4,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,

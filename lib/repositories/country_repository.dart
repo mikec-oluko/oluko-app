@@ -15,11 +15,8 @@ class CountryRepository {
   }
 
   Future<List<Assessment>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('assessments')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('assessments').get();
     List<Assessment> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
@@ -35,7 +32,7 @@ class CountryRepository {
       final Map<String, dynamic> countryMap = doc.data() as Map<String, dynamic>;
       final country = Country.fromJson(countryMap);
       if (countryName != null && countryName == country.name) {
-       country.states = await getCountryStates(country.id);
+        country.states = await getCountryStates(country.id);
       }
       countries.add(country);
     }
@@ -53,5 +50,27 @@ class CountryRepository {
       return states.map((state) => state.toString()).toList();
     }
     return [];
+  }
+
+  static Future<List<Country>> getAllCountries() async {
+    final List<Country> _allCountries = [];
+    final QuerySnapshot docRef = await FirebaseFirestore.instance.collection('countries').orderBy('name').get();
+    if (docRef.docs.isNotEmpty) {
+      docRef.docs.forEach((countryDoc) {
+        final Map<String, dynamic> countryMap = countryDoc.data() as Map<String, dynamic>;
+        final country = Country.fromJson(countryMap);
+
+        if (_allCountries.isNotEmpty) {
+          if (_allCountries.where((savedCountry) => savedCountry.id == country.id).toList().isEmpty) {
+            _allCountries.add(country);
+          }
+        } else {
+          _allCountries.add(country);
+        }
+      });
+      return _allCountries;
+    } else {
+      return [];
+    }
   }
 }

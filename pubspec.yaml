@@ -40,7 +40,7 @@ dependencies:
   flutter_dotenv: ^3.1.0
   transparent_image: ^2.0.0
   video_player: ^2.2.5
-  firebase_storage: ^10.2.7 
+  firebase_storage: ^10.2.7
   # flutter_ffmpeg: ^0.4.0
   filesize: ^2.0.1
   path_provider: ^2.0.9
@@ -95,6 +95,8 @@ dependencies:
   native_device_orientation: ^1.1.2
   the_apple_sign_in: ^1.1.1
   jwt_decoder: ^2.0.1
+  url_launcher: ^6.1.5
+  sound_mode: ^2.0.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.0"

@@ -175,8 +175,8 @@ class AuthRepository {
   }
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
-    var body2 = signUpRequest.toDTOJson();
-    Response response = await http.post(Uri.parse("$url/signup"), body: body2);
+    Map<String, dynamic> signUpBody = signUpRequest.toDTOJson();
+    Response response = await http.post(Uri.parse("$url/signup"), body: jsonEncode(signUpBody), headers: {'content-type': 'application/json'});
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] != null && signUpResponseBody['message'] is String) {
       signUpResponseBody['message'] = [signUpResponseBody['message']];
@@ -210,8 +210,7 @@ class AuthRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final Future<bool> removedLoginData = prefs.remove('login-data');
     final Future<bool> removedApiToken = prefs.remove('apiToken');
-    final Future<bool> removeFutures =
-        Future.wait([removedLoginData, removedApiToken]).then((results) => !results.any((element) => element == false));
+    final Future<bool> removeFutures = Future.wait([removedLoginData, removedApiToken]).then((results) => !results.any((element) => element == false));
     FirebaseAuth.instance.signOut();
     print('Removed login info.');
     return removeFutures;

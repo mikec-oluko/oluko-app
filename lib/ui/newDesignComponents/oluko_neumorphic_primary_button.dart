@@ -14,11 +14,12 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final bool isPrimary;
   final bool useBorder;
   final bool isExpanded;
+  final bool flatStyle;
   final double customHeight;
   const OlukoNeumorphicPrimaryButton(
       {@required this.title,
       @required this.onPressed,
-      this.textColor =OlukoColors.black,
+      this.textColor = OlukoColors.black,
       this.textAlign = TextAlign.center,
       this.icon,
       this.thinPadding = false,
@@ -27,6 +28,7 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
       this.customHeight = 50,
       this.isDisabled = false,
       this.useBorder = false,
+      this.flatStyle = false,
       this.isPrimary = true})
       : super();
 
@@ -53,13 +55,13 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
       style: !widget.isDisabled
           ? OlukoNeumorphism.primaryButtonStyle(
               useBorder: widget.useBorder,
-              buttonShape: NeumorphicShape.convex,
+              buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
               boxShape: NeumorphicBoxShape.stadium(),
               ligthShadow: true,
               darkShadow: true)
           : OlukoNeumorphism.primaryButtonStyleDisable(
               useBorder: widget.useBorder,
-              buttonShape: NeumorphicShape.convex,
+              buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
               boxShape: NeumorphicBoxShape.stadium(),
               ligthShadow: true,
               darkShadow: true),
@@ -68,7 +70,10 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
             ? OlukoNeumorphism.primaryButtonStyle(
                 buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
             : OlukoNeumorphism.primaryButtonStyleDisable(
-                buttonShape: NeumorphicShape.convex, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+                buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
+                boxShape: NeumorphicBoxShape.stadium(),
+                ligthShadow: true,
+                darkShadow: true),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),
@@ -85,7 +90,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
       );
     } else {
       return Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: Text(
             widget.title,
             textAlign: widget.textAlign,
