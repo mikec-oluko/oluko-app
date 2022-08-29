@@ -43,48 +43,48 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        BlocProvider.of<PlanBloc>(context).getPlans();
-        //  BlocProvider(
-        //   create: (context) => PlanBloc()..getPlans(),
-        //   child:
-        return SafeArea(
-            child: Scaffold(
-                backgroundColor: OlukoColors.white,
-                appBar: OlukoAppBar(
-                  showTitle: false,
-                  showLogo: true,
-                  reduceHeight: true,
-                  showBackButton: false,
-                  title: ProfileViewConstants.profileOptionsSubscription,
-                  showSearchBar: false,
-                ),
-                body: Container(
-                  width: ScreenUtils.width(context),
-                  height: ScreenUtils.height(context),
-                  color: OlukoColors.white,
-                  child: BlocBuilder<PlanBloc, PlanState>(
-                    builder: (context, state) {
-                      if (state is PlansSuccess) {
-                        // BlocProvider.of<MarketBloc>(context).initState(state.plans);
-                        return state.plans != null
-                            ? ListView(
-                                shrinkWrap: true,
-                                children: [
-                                  _subscriptionTitleSection(context),
-                                  _subscriptionBodyContent(context, state, authState),
-                                  _selectPlanButton(state),
-                                  _cancelPlanButton()
-                                ],
-                              )
-                            : const SizedBox();
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                ))
-            // ),
-            );
+        // BlocProvider.of<PlanBloc>(context).getPlans();
+        return BlocProvider(
+          create: (context) => PlanBloc()..getPlans(),
+          child:
+              // return
+              SafeArea(
+                  child: Scaffold(
+                      backgroundColor: OlukoColors.white,
+                      appBar: OlukoAppBar(
+                        showTitle: false,
+                        showLogo: true,
+                        reduceHeight: true,
+                        showBackButton: false,
+                        title: ProfileViewConstants.profileOptionsSubscription,
+                        showSearchBar: false,
+                      ),
+                      body: Container(
+                        width: ScreenUtils.width(context),
+                        height: ScreenUtils.height(context),
+                        color: OlukoColors.white,
+                        child: BlocBuilder<PlanBloc, PlanState>(
+                          builder: (context, state) {
+                            if (state is PlansSuccess) {
+                              // BlocProvider.of<MarketBloc>(context).initState(state.plans);
+                              return state.plans != null
+                                  ? ListView(
+                                      shrinkWrap: true,
+                                      children: [
+                                        _subscriptionTitleSection(context),
+                                        _subscriptionBodyContent(context, state, authState),
+                                        _selectPlanButton(state),
+                                        _cancelPlanButton()
+                                      ],
+                                    )
+                                  : const SizedBox();
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ))),
+        );
       } else {
         return const SizedBox();
       }
