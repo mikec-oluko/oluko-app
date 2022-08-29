@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,7 @@ import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -186,7 +188,7 @@ import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
-import 'ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
@@ -537,6 +539,11 @@ class Routes {
             BlocProvider<StoryBloc>.value(value: _storyBloc)
           ]);
         }
+        if (Platform.isIOS || Platform.isMacOS) {
+          final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
+          providers.add(BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc));
+        }
+
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MainPage(
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
@@ -666,7 +673,13 @@ class Routes {
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-        newRouteView = ProfileSubscriptionPage();
+        final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        providers = [
+          BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
+        ];
+        newRouteView = ProfileSubscriptionPage(
+            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);
         break;
       case RouteEnum.profileHelpAndSupport:
         providers = [

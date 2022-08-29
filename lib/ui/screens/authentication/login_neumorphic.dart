@@ -241,33 +241,34 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           title: OlukoLocalizations.get(context, 'login'),
         ),
       ),
-      const SizedBox(
-        height: 20,
-      ),
-      SizedBox(
-        height: 50,
-        child: OlukoNeumorphicPrimaryButton(
-          useBorder: true,
-          isExpanded: false,
-          thinPadding: true,
-          onPressed: () {
-            // Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
-            // _formKey.currentState.save();
-            // FocusScope.of(context).unfocus();
-            // BlocProvider.of<AuthBloc>(context).login(
-            //   context,
-            //   LoginRequest(
-            //     email: _requestData.email,
-            //     password: _requestData.password,
-            //     userName: _requestData.userName,
-            //     projectId: GlobalConfiguration().getValue('projectId'),
-            //   ),
-            // );
-          },
-          title: OlukoLocalizations.get(context, 'register'),
+      if (Platform.isIOS || Platform.isMacOS)
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: SizedBox(
+            height: 50,
+            child: OlukoNeumorphicPrimaryButton(
+              useBorder: true,
+              isExpanded: false,
+              thinPadding: true,
+              onPressed: () {
+                // Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
+                // _formKey.currentState.save();
+                // FocusScope.of(context).unfocus();
+                // BlocProvider.of<AuthBloc>(context).login(
+                //   context,
+                //   LoginRequest(
+                //     email: _requestData.email,
+                //     password: _requestData.password,
+                //     userName: _requestData.userName,
+                //     projectId: GlobalConfiguration().getValue('projectId'),
+                //   ),
+                // );
+              },
+              title: OlukoLocalizations.get(context, 'register'),
+            ),
+          ),
         ),
-      ),
       const SizedBox(
         height: 15,
       ),
@@ -397,7 +398,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       ),
     );
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       return Column(
         children: [
           googleButton,

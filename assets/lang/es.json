@@ -53,6 +53,7 @@
     "assessments": "Evaluaciones",
     "plans": "Planes",
     "alreadySubscribedUser": "Ya eres usuario registrado?",
+    "somethingWentWrong": "Algo salio mal",
     "emailExample": "ejemplo@yourcompany.com",
     "email": "Email",
     "required": "Campo requerido",
@@ -401,5 +402,9 @@
     "passwordUppercase": "Al menos 1 letra mayúscula",
     "passwordNumberRequired": "al menos un numero",
     "passwordLowercase": "Al menos 1 minúscula",
-    "letsGo": "Vamos"
+    "letsGo": "Vamos",
+    "filtersResult": "Filtrar resultados",
+    "result": "Resultados",
+    "manageSubscriptionFromWeb": "Solo puedes modificar la suscripción desde la web",
+    "selectASubscription": "Seleccione una suscripción"
 }
