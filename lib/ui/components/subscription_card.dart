@@ -27,14 +27,17 @@ class SubscriptionCard extends StatefulWidget {
 class _State extends State<SubscriptionCard> {
   @override
   Widget build(BuildContext context) {
-    final Color cardColor = widget.selected ? OlukoColors.selectedSubscription : OlukoColors.subscription;
+    return _subscriptionCardForPlan();
+  }
+
+  Container _subscriptionCardForPlan() {
     return Container(
         decoration: BoxDecoration(
             border: Border.all(
               width: 2,
               color: OlukoColors.primary,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: OlukoColors.primary),
         child: Padding(
           padding: const EdgeInsets.all(2.0),
@@ -43,21 +46,19 @@ class _State extends State<SubscriptionCard> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: OlukoColors.subscriptionTabsColor,
               ),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                   children: _parseHtmlString(widget.plan.description)
                       .map((element) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                            child: Text('- ${element}', style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                            padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
+                            child: Row(
+                              children: [
+                                Text('- ', style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                                Text(element, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                              ],
+                            ),
                           ))
-                      .toList())
-
-              //  Text(
-              //   _parseHtmlString(widget.plan.description),
-              // )),
-              ),
+                      .toList())),
         ));
-    // oldSubscriptionCard(context, cardColor);
   }
 
   Padding oldSubscriptionCard(BuildContext context, Color cardColor) {
@@ -149,7 +150,7 @@ class _State extends State<SubscriptionCard> {
   }
 
   List<String> _parseHtmlString(String htmlString) {
-    var rows = parse(htmlString).getElementsByTagName("ul")[0].getElementsByTagName("li");
+    var rows = parse(htmlString).getElementsByTagName('ul')[0].getElementsByTagName('li');
     return rows.map((element) => element.text).toList();
   }
 

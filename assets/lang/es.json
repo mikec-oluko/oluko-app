@@ -403,5 +403,6 @@
     "passwordUppercase": "Al menos 1 letra mayúscula",
     "passwordNumberRequired": "al menos un numero",
     "passwordLowercase": "Al menos 1 minúscula",
-    "letsGo": "Vamos"
+    "letsGo": "Vamos",
+    "selectPlan": "Seleccionar plan"
 }

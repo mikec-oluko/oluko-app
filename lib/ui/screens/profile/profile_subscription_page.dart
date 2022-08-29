@@ -11,6 +11,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/components/subscription_modal_options.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -25,11 +26,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   final bool useNew = true;
   TabController _controller;
   int _currentIndex = 0;
+  final int _planQty = 3;
 
   @override
   void initState() {
     super.initState();
-    _controller = TabController(vsync: this, length: 3);
+    _controller = TabController(vsync: this, animationDuration: Duration.zero, length: _planQty);
     _controller.addListener(_handleTabSelection);
   }
 
@@ -46,44 +48,42 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         // BlocProvider.of<PlanBloc>(context).getPlans();
         return BlocProvider(
           create: (context) => PlanBloc()..getPlans(),
-          child:
-              // return
-              SafeArea(
-                  child: Scaffold(
-                      backgroundColor: OlukoColors.white,
-                      appBar: OlukoAppBar(
-                        showTitle: false,
-                        showLogo: true,
-                        reduceHeight: true,
-                        showBackButton: false,
-                        title: ProfileViewConstants.profileOptionsSubscription,
-                        showSearchBar: false,
-                      ),
-                      body: Container(
-                        width: ScreenUtils.width(context),
-                        height: ScreenUtils.height(context),
-                        color: OlukoColors.white,
-                        child: BlocBuilder<PlanBloc, PlanState>(
-                          builder: (context, state) {
-                            if (state is PlansSuccess) {
-                              // BlocProvider.of<MarketBloc>(context).initState(state.plans);
-                              return state.plans != null
-                                  ? ListView(
-                                      shrinkWrap: true,
-                                      children: [
-                                        _subscriptionTitleSection(context),
-                                        _subscriptionBodyContent(context, state, authState),
-                                        _selectPlanButton(state),
-                                        _cancelPlanButton()
-                                      ],
-                                    )
-                                  : const SizedBox();
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      ))),
+          child: SafeArea(
+              child: Scaffold(
+                  backgroundColor: OlukoColors.white,
+                  appBar: OlukoAppBar(
+                    showTitle: false,
+                    showLogo: true,
+                    reduceHeight: true,
+                    showBackButton: false,
+                    title: ProfileViewConstants.profileOptionsSubscription,
+                    showSearchBar: false,
+                  ),
+                  body: Container(
+                    width: ScreenUtils.width(context),
+                    height: ScreenUtils.height(context),
+                    color: OlukoColors.white,
+                    child: BlocBuilder<PlanBloc, PlanState>(
+                      builder: (context, state) {
+                        if (state is PlansSuccess) {
+                          // BlocProvider.of<MarketBloc>(context).initState(state.plans);
+                          return state.plans != null
+                              ? ListView(
+                                  shrinkWrap: true,
+                                  children: [
+                                    _subscriptionTitleSection(context),
+                                    _subscriptionBodyContent(context, state, authState),
+                                    _selectPlanButton(state),
+                                    _cancelPlanButton()
+                                  ],
+                                )
+                              : const SizedBox();
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                  ))),
         );
       } else {
         return const SizedBox();
@@ -94,11 +94,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   Align _cancelPlanButton() {
     return Align(
       child: Container(
-        width: 150,
+        width: ScreenUtils.width(context) / 2,
         height: 60,
-        child: OlukoNeumorphicPrimaryButton(isDisabled: false, isExpanded: false, thinPadding: false, flatStyle: true, onPressed: () {}, title: 'Cancel'
-            // OlukoLocalizations.get(context, 'letsGo'),
-            ),
+        child:
+            OlukoNeumorphicWhiteButton(isExpanded: false, useBorder: true, flatStyle: true, onPressed: () {}, title: OlukoLocalizations.get(context, 'cancel')),
       ),
     );
   }
@@ -106,28 +105,27 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   Align _selectPlanButton(PlansSuccess state) {
     return Align(
       child: Container(
-        width: 150,
+        width: ScreenUtils.width(context) / 2,
         height: 60,
         child: OlukoNeumorphicPrimaryButton(
-            isDisabled: false,
-            isExpanded: false,
-            thinPadding: false,
-            flatStyle: true,
-            onPressed: () {
-              print(state.plans[_currentIndex].name);
-            },
-            title: 'Select Plan'
-            // OlukoLocalizations.get(context, 'letsGo'),
-            ),
+          isDisabled: false,
+          isExpanded: false,
+          thinPadding: false,
+          flatStyle: true,
+          onPressed: () {
+            print(state.plans[_currentIndex].name);
+          },
+          title: OlukoLocalizations.get(context, 'selectPlan'),
+        ),
       ),
     );
   }
 
   Padding _subscriptionBodyContent(BuildContext context, PlansSuccess state, AuthSuccess authState) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.only(top: 20),
       child: Container(
-        height: ScreenUtils.height(context) / 2,
+        height: ScreenUtils.height(context) / 2.5,
         child: Stack(
           alignment: AlignmentDirectional.topCenter,
           children: [
@@ -143,11 +141,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Row(
       children: [
         SizedBox(
-          width: ScreenUtils.width(context) / 4,
+          width: ScreenUtils.width(context) / 5,
         ),
         _manageMembershipText(),
         SizedBox(
-          width: ScreenUtils.width(context) / 4,
+          width: ScreenUtils.width(context) / 5,
         ),
       ],
     );
@@ -159,7 +157,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       height: 25,
       decoration: BoxDecoration(
         color: OlukoColors.primary,
-        border: Border.all(color: OlukoColors.primary, width: 1),
+        border: Border.all(color: OlukoColors.primary),
         borderRadius: const BorderRadius.all(Radius.circular(50.0)),
       ),
       child: Image.asset(
@@ -199,6 +197,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         labelColor: Colors.black,
         unselectedLabelColor: Colors.black,
         indicatorWeight: 0.001,
+        padding: EdgeInsets.zero,
+        indicatorPadding: EdgeInsets.zero,
+        labelPadding: const EdgeInsets.symmetric(horizontal: 8),
         tabs: state.plans
             .map(
               (tabContent) => _tabWithSelectedIcon(context, state, tabContent),
@@ -217,7 +218,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           height: ScreenUtils.height(context) / 10,
           child: _tabMainContainer(state, tabContent, context),
         ),
-        Visibility(visible: _currentIndex == state.plans.indexOf(tabContent), child: Positioned(top: -10, child: _checkCircle())),
+        Visibility(visible: _isCurrentTabIndex(state, tabContent), child: Positioned(top: -10, child: _checkCircle())),
       ],
     );
   }
@@ -226,10 +227,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-          color: _currentIndex == state.plans.indexOf(tabContent) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor,
+          color: _isCurrentTabIndex(state, tabContent) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor,
         ),
         child: Padding(
-          padding: !(_currentIndex == state.plans.indexOf(tabContent)) ? EdgeInsets.zero : const EdgeInsets.fromLTRB(4, 4, 4, 0),
+          padding: !_isCurrentTabIndex(state, tabContent) ? EdgeInsets.zero : const EdgeInsets.fromLTRB(4, 4, 4, 0),
           child: _tabBorderEffect(context, tabContent, state),
         ));
   }
@@ -239,14 +240,15 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
       child: Container(
         decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(
-                    color: !(_currentIndex == state.plans.indexOf(tabContent)) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor, width: 4.0)),
+            border:
+                Border(bottom: BorderSide(color: !_isCurrentTabIndex(state, tabContent) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor, width: 4.0)),
             color: OlukoColors.subscriptionTabsColor),
         child: _tabContent(context, tabContent),
       ),
     );
   }
+
+  bool _isCurrentTabIndex(PlansSuccess state, Plan tabContent) => _currentIndex == state.plans.indexOf(tabContent);
 
   Container _tabContent(BuildContext context, Plan tabContent) {
     return Container(
