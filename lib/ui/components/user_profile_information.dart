@@ -357,8 +357,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           height: 40,
           child: TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.profileSubscription]);
-                // BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
+                BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
               },
               child: Image.asset('assets/profile/upload_icon.png')),
         ),
