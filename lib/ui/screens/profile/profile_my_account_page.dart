@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -306,10 +305,34 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     );
   }
 
+  Padding deleteMyAccountButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Container(
+        child: OlukoNeumorphicPrimaryButton(
+          customColor: Colors.red,
+          title: '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'deleteUser'))} ',
+          onPressed: () => deleteUserAction(),
+          isExpanded: false,
+          customHeight: 60,
+        ),
+      ),
+    );
+  }
+
+  Future<void> deleteUserAction() async {
+    if (await logOutConfirmationPopUp(context, 'deleteUserConfirmation')) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWhithDots');
+      if (await BlocProvider.of<UserInformationBloc>(context).sendDeleteConfirmation(_profileInfo.id)) {
+        logOut();
+      }
+    }
+  }
+
   Future<void> saveChangesAction() async {
     FocusScope.of(context).unfocus();
     if (emailHasChanged || usernameHasChanged) {
-      if (await logOutConfirmationPopUp(context)) {
+      if (await logOutConfirmationPopUp(context, 'updateEmailUserNameMsg')) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
         if (await BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context, isLoggedOut: true)) {
           logOut();
@@ -326,14 +349,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
   }
 
-  Future<bool> logOutConfirmationPopUp(BuildContext context) async {
+  Future<bool> logOutConfirmationPopUp(BuildContext context, String textKey) async {
     bool result = false;
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: OlukoColors.black,
         content: Text(
-          OlukoLocalizations.get(context, 'updateEmailUserNameMsg'),
+          OlukoLocalizations.get(context, textKey),
           style: OlukoFonts.olukoBigFont(),
         ),
         actions: <Widget>[
