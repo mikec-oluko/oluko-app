@@ -395,6 +395,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     var newCountries = countries;
                     if (statesOfSelectedCountry != null && statesOfSelectedCountry.isNotEmpty) {
                       newFieldsState = statesOfSelectedCountry[0];
+                      BlocProvider.of<CountryBloc>(context).emitSelectedCountryState(_selectedCountry);
                     } else {
                       newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(_selectedCountry.id);
                       newCountryWithStates = newCountries.firstWhere((element) => element.id == _selectedCountry.id);
