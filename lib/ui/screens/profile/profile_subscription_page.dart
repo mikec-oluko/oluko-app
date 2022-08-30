@@ -123,11 +123,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Row(
       children: [
         SizedBox(
-          width: ScreenUtils.width(context) / 7.2,
+          width: ScreenUtils.width(context) / 15,
         ),
         _manageMembershipText(),
         SizedBox(
-          width: ScreenUtils.width(context) / 7.2,
+          width: ScreenUtils.width(context) / 15,
         ),
       ],
     );

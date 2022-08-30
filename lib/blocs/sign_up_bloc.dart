@@ -34,7 +34,7 @@ class SignupBloc extends Cubit<UserState> {
 
   Future<void> signUp(BuildContext context, SignUpRequest request) async {
     Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
-    /*if (request.password.contains(request.username)) {
+    if (request.password.contains(request.username)) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
       emit(SignupFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'))));
       return;
@@ -64,7 +64,7 @@ class SignupBloc extends Cubit<UserState> {
         content: Text(apiResponse.message.replaceAll(_removeSpecialChars(), '')),
       ));
       emit(SignupFailure(exception: Exception(apiResponse.message.replaceAll(_removeSpecialChars(), ''))));
-    }*/
+    }
   }
 
   RegExp _removeSpecialChars() => RegExp('[^A-Za-z0-9 ]');
