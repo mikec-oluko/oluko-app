@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-// import 'package:oluko_app/blocs/market_bloc.dart';
-import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -11,13 +7,11 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:oluko_app/ui/components/subscription_modal_options.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
-import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -153,17 +147,20 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Container(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context) / 5,
-      child: TabBarView(
-          controller: _controller,
-          children: state.plans
-              .map((plan) => SubscriptionCard(
-                  plan: state.plans.elementAt(_currentIndex),
-                  priceLabel: shortDurationLabel[PlanDuration.values[plan.intervalCount]],
-                  priceSubtitle: 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}',
-                  selected: true,
-                  userId: user.id))
-              .toList()),
+      child: TabBarView(controller: _controller, children: state.plans.map((plan) => _showSubscriptionCard(plan, user)).toList()),
     );
+  }
+
+  SubscriptionCard _showSubscriptionCard(Plan plan, UserResponse user) {
+    final SubscriptionCard subscriptionCard = SubscriptionCard();
+    subscriptionCard.plan = plan;
+    subscriptionCard.priceLabel = shortDurationLabel[PlanDuration.values[plan.intervalCount]];
+    subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}';
+    subscriptionCard.selected = plan.metadata['level'] == user.currentPlan;
+    subscriptionCard.userId = user.id;
+    subscriptionCard.loadingAction = _emitLoading;
+    subscriptionCard.subscribeAction = () => BlocProvider.of<SubscriptionContentBloc>(context).subscribe(plan, user.id);
+    return subscriptionCard;
   }
 
   Container _plansTabs(SubscriptionContentInitialized state, BuildContext context) {
@@ -251,7 +248,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       child: Padding(
         padding: const EdgeInsets.only(top: 30),
         child: Container(
-          child: Text('Manage Membership', textAlign: TextAlign.center, style: OlukoFonts.olukoBiggestFont(customColor: Colors.black)),
+          child: Text(OlukoLocalizations.get(context, 'manageMembership'),
+              textAlign: TextAlign.center, style: OlukoFonts.olukoBiggestFont(customColor: Colors.black)),
         ),
       ),
     );
@@ -294,14 +292,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                       _cancelPlanButton()
                     ],
                   )
-                : const SizedBox()
-            // ? ListView(shrinkWrap: true, children: []
-            //     //  state.plans.map((plan) {
-            //     //   return _showSubscriptionCard(plan, state.user);
-            //     // }).toList(),
-            //     )
-            // : const SizedBox(),
-            ),
+                : const SizedBox()),
       );
     } else {
       return SizedBox(
@@ -316,5 +307,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         ),
       );
     }
+  }
+
+  void _emitLoading() {
+    BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
   }
 }

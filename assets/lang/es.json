@@ -407,5 +407,6 @@
     "result": "Resultados",
     "manageSubscriptionFromWeb": "Solo puedes modificar la suscripción desde la web",
     "selectASubscription": "Seleccione una suscripción",
-    "selectPlan": "Seleccionar plan"
+    "selectPlan": "Seleccionar plan",
+    "manageMembership": "Administrar membresía"
 }

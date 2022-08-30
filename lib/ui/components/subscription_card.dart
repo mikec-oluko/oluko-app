@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -104,12 +103,6 @@ class _State extends State<SubscriptionCard> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              // SizedBox(
-                              //   child: Text(
-                              //     _parseHtmlString(widget.plan.description),
-                              //     style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),
-                              //   ),
-                              // ),
                             ],
                           ),
                         ),
