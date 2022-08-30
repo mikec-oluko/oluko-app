@@ -100,4 +100,22 @@ class UserInformationBloc extends Cubit<UserInformationState> {
         userInformation.city.isEmpty &&
         userInformation.state.isEmpty;
   }
+  Future<bool> sendDeleteConfirmation(String userId) async {
+    try {
+      final Response response = await UserRepository().sendDeleteConfirmation(userId);
+      if (response != null) {
+        emit(UserInformationSuccess());
+        return true;
+      } else {
+        emit(UserInformationFailure(tokenExpired: true));
+        return false;
+      }
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
 }
