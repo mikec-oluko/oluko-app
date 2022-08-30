@@ -23,16 +23,13 @@ class ProfileSubscriptionPage extends StatefulWidget {
 }
 
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with TickerProviderStateMixin {
-  final bool useNew = true;
   TabController _controller;
   int _currentIndex = 0;
-  final int _planQty = 3;
 
   @override
   void initState() {
     super.initState();
-    _controller = TabController(vsync: this, animationDuration: Duration.zero, length: _planQty);
-    _controller.addListener(_handleTabSelection);
+    BlocProvider.of<SubscriptionContentBloc>(context).initialize(widget.fromRegister);
   }
 
   @override
@@ -44,12 +41,27 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SubscriptionContentBloc, SubscriptionContentState>(
-      bloc: BlocProvider.of<SubscriptionContentBloc>(context)..initialize(widget.fromRegister),
       listenWhen: (context, subscriptionContentState) {
-        return subscriptionContentState is PurchaseSuccess || subscriptionContentState is FailureState;
+        return subscriptionContentState is PurchaseSuccess ||
+            subscriptionContentState is FailureState ||
+            subscriptionContentState is SubscriptionContentInitialized;
       },
       listener: (context, subscriptionContentState) {
-        if (subscriptionContentState is PurchaseSuccess) {
+        if (subscriptionContentState is SubscriptionContentInitialized) {
+          int index = 0;
+          TabController controller;
+          if (subscriptionContentState.user != null && subscriptionContentState.user.currentPlan != null) {
+            index = subscriptionContentState.user.currentPlan.toInt();
+          }
+          if (subscriptionContentState.plans != null && subscriptionContentState.plans.isNotEmpty) {
+            controller = TabController(vsync: this, animationDuration: Duration.zero, length: subscriptionContentState.plans.length);
+          } else {
+            controller = TabController(vsync: this, animationDuration: Duration.zero, length: 3);
+          }
+          controller.addListener(_handleTabSelection);
+          _currentIndex = index;
+          _controller = controller;
+        } else if (subscriptionContentState is PurchaseSuccess) {
           if (widget.fromRegister) {
             Navigator.popUntil(context, ModalRoute.withName('/'));
             AppNavigator().goToAssessmentVideosViaMain(context);
@@ -80,16 +92,15 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   Align _selectPlanButton(SubscriptionContentInitialized state) {
     return Align(
-      child: Container(
+      child: SizedBox(
         width: ScreenUtils.width(context) / 2,
         height: 60,
         child: OlukoNeumorphicPrimaryButton(
-          isDisabled: false,
           isExpanded: false,
-          thinPadding: false,
           flatStyle: true,
           onPressed: () {
-            print(state.plans[_currentIndex].name);
+            BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
+            BlocProvider.of<SubscriptionContentBloc>(context).subscribe(state.plans[_currentIndex], state.user.id);
           },
           title: OlukoLocalizations.get(context, 'selectPlan'),
         ),
@@ -100,7 +111,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   Padding _subscriptionBodyContent(BuildContext context, SubscriptionContentInitialized state, UserResponse user) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-      child: Container(
+      child: SizedBox(
         height: ScreenUtils.height(context) / 2,
         child: Stack(
           alignment: AlignmentDirectional.topCenter,
@@ -143,8 +154,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Container _subscriptionContent(BuildContext context, SubscriptionContentInitialized state, UserResponse user) {
-    return Container(
+  SizedBox _subscriptionContent(BuildContext context, SubscriptionContentInitialized state, UserResponse user) {
+    return SizedBox(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context) / 5,
       child: TabBarView(controller: _controller, children: state.plans.map((plan) => _showSubscriptionCard(plan, user)).toList()),
@@ -152,19 +163,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   }
 
   SubscriptionCard _showSubscriptionCard(Plan plan, UserResponse user) {
-    final SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.plan = plan;
-    subscriptionCard.priceLabel = shortDurationLabel[PlanDuration.values[plan.intervalCount]];
-    subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.values[plan.intervalCount]]?.toLowerCase()}';
-    subscriptionCard.selected = plan.metadata['level'] == user.currentPlan;
-    subscriptionCard.userId = user.id;
-    subscriptionCard.loadingAction = _emitLoading;
-    subscriptionCard.subscribeAction = () => BlocProvider.of<SubscriptionContentBloc>(context).subscribe(plan, user.id);
+    final SubscriptionCard subscriptionCard = SubscriptionCard(plan);
     return subscriptionCard;
   }
 
-  Container _plansTabs(SubscriptionContentInitialized state, BuildContext context) {
-    return Container(
+  SizedBox _plansTabs(SubscriptionContentInitialized state, BuildContext context) {
+    return SizedBox(
       width: ScreenUtils.width(context),
       height: ScreenUtils.height(context),
       child: TabBar(
@@ -177,7 +181,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         unselectedLabelColor: Colors.black,
         indicatorWeight: 0.001,
         padding: EdgeInsets.zero,
-        indicatorPadding: EdgeInsets.zero,
         labelPadding: const EdgeInsets.symmetric(horizontal: 8),
         tabs: state.plans
             .map(
@@ -265,11 +268,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   Align _cancelPlanButton() {
     return Align(
-      child: Container(
+      child: SizedBox(
         width: ScreenUtils.width(context) / 2,
         height: 60,
-        child:
-            OlukoNeumorphicWhiteButton(isExpanded: false, useBorder: true, flatStyle: true, onPressed: () {}, title: OlukoLocalizations.get(context, 'cancel')),
+        child: OlukoNeumorphicWhiteButton(
+            isExpanded: false, useBorder: true, flatStyle: true, onPressed: () => Navigator.pop(context), title: OlukoLocalizations.get(context, 'cancel')),
       ),
     );
   }
@@ -289,7 +292,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                       _subscriptionTitleSection(context),
                       _subscriptionBodyContent(context, state, state.user),
                       _selectPlanButton(state),
-                      _cancelPlanButton()
+                      if (widget.fromRegister) _cancelPlanButton()
                     ],
                   )
                 : const SizedBox()),

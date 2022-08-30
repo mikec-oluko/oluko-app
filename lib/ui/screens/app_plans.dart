@@ -161,15 +161,7 @@ class _AppPlansState extends State<AppPlans> {
 
   List<SubscriptionCard> showSubscriptionCards(List<Plan> plans) {
     return plans.map((Plan plan) {
-      SubscriptionCard subscriptionCard = SubscriptionCard();
-      // subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-      // subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
-      // subscriptionCard.title = plan.title;
-      // subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
-      // subscriptionCard.selected = false;
-      // subscriptionCard.showHint = plan.infoDialog != null;
-      // subscriptionCard.backgroundImage = plan.backgroundImage;
-      // subscriptionCard.onHintPressed = plan.infoDialog != null ? () => showWaitlist(context, plan.infoDialog) : null;
+      SubscriptionCard subscriptionCard = SubscriptionCard(plan);
       return subscriptionCard;
     }).toList();
   }

@@ -360,20 +360,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
-    //TODO: Use plan from userData.
     final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan as int), orElse: () => null);
-
-    SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.selected = true;
-    if (userPlan != null) {
-      // subscriptionCard.priceLabel = '\$${userPlan.price}/${durationLabel[userPlan.duration].toLowerCase()}';
-      // subscriptionCard.priceSubtitle = userPlan.recurrent ? 'Renews every ${durationLabel[userPlan.duration].toLowerCase()}' : '';
-      // subscriptionCard.title = userPlan.title;
-      // subscriptionCard.subtitles = userPlan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
-      // subscriptionCard.showHint = false;
-      // subscriptionCard.backgroundImage = userPlan.backgroundImage;
-      // subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;
-    }
+    SubscriptionCard subscriptionCard = SubscriptionCard(userPlan);
     return [subscriptionCard];
   }
 

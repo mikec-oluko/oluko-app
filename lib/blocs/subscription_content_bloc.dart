@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -83,7 +82,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         await initAndEmit(userId);
       } else {
         final Purchase lastPurchase = await PurchaseRepository.getLastPurchase(userId);
-        if (lastPurchase.platform != null && lastPurchase.platform == Platform.APP) {
+        if (lastPurchase == null || lastPurchase.platform != null && lastPurchase.platform == Platform.APP) {
           await initAndEmit(userId);
         } else {
           emit(FailureState());

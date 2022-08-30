@@ -23,10 +23,15 @@ class PurchaseRepository {
         .orderBy('created_at', descending: true)
         .limit(1)
         .get();
-    final Map<String, dynamic> purchaseJson = purchaseDoc?.docs?.first?.data();
-    if (purchaseJson != null) {
-      return Purchase.fromJson(purchaseJson);
+    try {
+      final Map<String, dynamic> purchaseJson = purchaseDoc?.docs?.first?.data();
+      if (purchaseJson != null) {
+        return Purchase.fromJson(purchaseJson);
+      }
+    } catch (e) {
+      return null;
     }
+
     return null;
   }
 
