@@ -29,7 +29,9 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
       this.customHeight = 50,
       this.isDisabled = false,
       this.useBorder = false,
-      this.isPrimary = true, this.customColor, this.flatStyle,})
+      this.isPrimary = true, 
+      this.customColor, 
+      this.flatStyle=false,})
       : super();
 
   @override
