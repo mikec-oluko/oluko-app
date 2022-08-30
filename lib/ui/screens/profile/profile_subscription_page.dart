@@ -123,11 +123,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Row(
       children: [
         SizedBox(
-          width: ScreenUtils.width(context) / 7,
+          width: ScreenUtils.width(context) / 7.2,
         ),
         _manageMembershipText(),
         SizedBox(
-          width: ScreenUtils.width(context) / 7,
+          width: ScreenUtils.width(context) / 7.2,
         ),
       ],
     );
@@ -281,7 +281,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       return OlukoCircularProgressIndicator();
     } else if (state is SubscriptionContentInitialized) {
       return Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+        color: OlukoColors.white,
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: state.plans != null
