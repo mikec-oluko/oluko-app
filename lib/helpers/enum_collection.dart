@@ -7,9 +7,10 @@ Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.restricted: 'restrictedSubtitle',
   SettingsPrivacyOptions.anonymous: 'anonymousSubtitle',
 };
-enum EmailTemplateEnum { contactUs }
+enum EmailTemplateEnum { contactUs,deleteUserAccount }
 Map<EmailTemplateEnum, String> emailTemplates = {
   EmailTemplateEnum.contactUs: 'ContactUs',
+  EmailTemplateEnum.deleteUserAccount: 'DeleteUserAccount',
 };
 enum MailEnum { support }
 Map<MailEnum, String> mailsEnum = {

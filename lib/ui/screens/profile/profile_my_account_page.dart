@@ -113,9 +113,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
               child: Column(
                 children: [
                   buildUserInformationFields(),
+                  deleteMyAccountButton(),
                   const SizedBox(
-                    height: 100,
-                  )
+                    height: 120,
+                  ),
                 ],
               ),
             ),
@@ -332,9 +333,12 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Future<void> saveChangesAction() async {
     FocusScope.of(context).unfocus();
     if (emailHasChanged || usernameHasChanged) {
-      if (await logOutConfirmationPopUp(context, 'updateEmailUserNameMsg')) {
-        AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
-        if (await BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context, isLoggedOut: true)) {
+      if (await logOutConfirmationPopUp(context,'updateEmailUserNameMsg')) {
+        AppMessages.clearAndShowSnackbarTranslated(
+            context, 'uploadingWithDots');
+        if (await BlocProvider.of<UserInformationBloc>(context)
+            .updateUserInformation(newFields, _profileInfo.id, context,
+                isLoggedOut: true)) {
           logOut();
         }
       }
@@ -349,14 +353,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
   }
 
-  Future<bool> logOutConfirmationPopUp(BuildContext context, String textKey) async {
+  Future<bool> logOutConfirmationPopUp(BuildContext context,String textKey) async {
     bool result = false;
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: OlukoColors.black,
         content: Text(
-          OlukoLocalizations.get(context, textKey),
+          OlukoLocalizations.get(context,textKey),
           style: OlukoFonts.olukoBigFont(),
         ),
         actions: <Widget>[

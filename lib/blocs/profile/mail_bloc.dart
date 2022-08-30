@@ -20,14 +20,27 @@ class MailFailure extends OlukoException with MailState {
 class MailBloc extends Cubit<MailState> {
   MailBloc() : super(MailLoading());
 
-  Future<void> sendEmail(String username, String email, String message, String phone) async {
+  Future<void> sendContactUsMail(String username, String email, String message, String phone) async {
     try {
       if (message != '') {
-        MailService.send(username, email, message, phone);
+        MailService.sendContactUsMail(username, email, message, phone);
         emit(MailSuccess());
       } else {
         emit(MailFailure());
       }
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(MailFailure(exception: exception));
+      rethrow;
+    }
+  }
+  Future<void> sendDeleteUserConfirmationMail(String username, String email) async {
+    try {
+        MailService.sendDeleteUserConfirmationMail(username, email);
+        emit(MailSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

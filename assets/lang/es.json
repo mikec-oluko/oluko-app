@@ -407,5 +407,7 @@
     "filtersResult": "Filtrar resultados",
     "result": "Resultados",
     "manageSubscriptionFromWeb": "Solo puedes modificar la suscripción desde la web",
-    "selectASubscription": "Seleccione una suscripción"
+    "selectASubscription": "Seleccione una suscripción",
+    "deleteUser": "Borrar usuario",
+    "deleteUserConfirmation":"¿Está seguro? Su perfil y la información de la cuenta relacionada se eliminarán de la aplicación"
 }
