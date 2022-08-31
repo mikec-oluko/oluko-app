@@ -596,18 +596,22 @@ class _State extends State<Clock> {
           widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight));
 
   void _playCountdown(Function() goToNextStep, Function() setPaused) {
-    countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-      await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index));
-      if (widget.timeLeft.inSeconds == 0) {
-        _pauseCountdown(setPaused);
-        goToNextStep();
-        return;
-      }
-      setState(() {
-        widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds - 1);
-        BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeValue(Duration(milliseconds: widget.timeLeft.inMilliseconds));
+    if (countdownTimer == null || !countdownTimer.isActive) {
+      countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
+        await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index));
+        if (widget.timeLeft.inSeconds == 0) {
+          _pauseCountdown(setPaused);
+          goToNextStep();
+          return;
+        }
+        if (mounted) {
+          setState(() {
+            widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds - 1);
+            BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeValue(Duration(milliseconds: widget.timeLeft.inMilliseconds));
+          });
+        }
       });
-    });
+    }
   }
 
   void _pauseCountdown(Function() setPaused) {

@@ -784,6 +784,12 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (recordingPanelController.isAttached && timerTaskIndex == 1) {
       recordingPanelController.close();
     }
+
+    if (timerEntries[timerTaskIndex].round > 0) {
+      Future.delayed(const Duration(milliseconds: 2000), () {
+       cameraController?.dispose();
+      });
+    }
   }
 
   bool currentRoundDifferentToNextRound() {
@@ -1109,6 +1115,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       cameras = await availableCameras();
       cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
+      await cameraController.prepareForVideoRecording();
       await cameraController.startVideoRecording();
     } on CameraException catch (_) {}
     if (!mounted) return;
