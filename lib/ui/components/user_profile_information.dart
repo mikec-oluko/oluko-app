@@ -105,10 +105,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   }
 
   String getUserLocation(UserResponse user) {
-    if (user.city == null || user.state == null || user.country == null) {
-      return null;
-    }
-    return " ${user.city[0].toUpperCase() ?? ''}${user.city.substring(1).toLowerCase() ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
+    return " ${user.city.isEmpty?'':user.city[0].toUpperCase() }${user.city.isEmpty?'':user.city.substring(1).toLowerCase()}, ${user.state ?? ''} ${user.country ?? ''}";
   }
 
   Widget _profileUserNeumorphicInformation(String location, List<String> valuesForArchivements) {
