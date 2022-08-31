@@ -311,7 +311,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
         child: OlukoNeumorphicPrimaryButton(
-          customColor: Colors.red,
+          customColor: OlukoColors.error,
           title: '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'deleteUser'))} ',
           onPressed: () => deleteUserAction(),
           isExpanded: false,

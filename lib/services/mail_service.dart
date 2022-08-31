@@ -24,25 +24,4 @@ class MailService {
     };
     reference.add(mail);
   }
-  static void sendDeleteUserConfirmationMail(
-      String username, String email) {
-    CollectionReference reference =
-        FirebaseFirestore.instance.collection('emails');
-    Map<String, dynamic> mail = {
-      'projectId': GlobalConfiguration().getValue('projectId'),
-      'template': {
-        'data': {
-          'userName': username,
-          'email': email,
-          'message': '',
-          'from': email
-        },
-        'name':
-            '${GlobalConfiguration().getValue('projectId')}-${emailTemplates[EmailTemplateEnum.contactUs]}',
-      },
-      'to': mailsEnum[MailEnum.support],
-      'replyTo': email,
-    };
-    reference.add(mail);
-  }
 }

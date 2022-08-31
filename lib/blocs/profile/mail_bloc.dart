@@ -37,17 +37,5 @@ class MailBloc extends Cubit<MailState> {
       rethrow;
     }
   }
-  Future<void> sendDeleteUserConfirmationMail(String username, String email) async {
-    try {
-        MailService.sendDeleteUserConfirmationMail(username, email);
-        emit(MailSuccess());
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(MailFailure(exception: exception));
-      rethrow;
-    }
-  }
+
 }
