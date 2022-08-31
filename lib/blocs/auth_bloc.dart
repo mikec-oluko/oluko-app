@@ -130,7 +130,7 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
-      if (user.currentPlan == -100 || user.currentPlan == null) {
+      if (user.currentPlan == -100) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsViaMain(context);
         emit(AuthGuest());

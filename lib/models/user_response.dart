@@ -113,7 +113,10 @@ class UserResponse extends Base {
   }
 
   String getFullName() {
-    return '${getSingleName() ?? ''} ${lastName ?? ''}';
+    if(firstName!=null&&lastName!=null){
+      return '${getSingleName() ?? ''} ${lastName ?? ''}';
+      }
+    return username;
   }
   String getSingleName() {
     String singleName='';
@@ -121,5 +124,5 @@ class UserResponse extends Base {
       singleName = firstName.split(' ')[0];
     }
     return singleName;
-  }
+    }
 }
