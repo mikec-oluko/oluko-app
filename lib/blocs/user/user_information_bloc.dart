@@ -97,7 +97,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
   Future<bool> sendDeleteConfirmation(String userId) async {
     try {
       final Response response = await UserRepository().sendDeleteConfirmation(userId);
-      if (response == null) {
+      if (response != null) {
         emit(UserInformationSuccess());
         return true;
       } else {
