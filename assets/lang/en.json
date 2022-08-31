@@ -409,5 +409,6 @@
     "manageSubscriptionFromWeb": "You can only modify the subscription from the web",
     "selectASubscription": "Select a subscription",
     "selectPlan": "Select plan",
-    "manageMembership": "Manage Membership"
+    "manageMembership": "Manage Membership",
+    "successfullySubscribed": "Successfully subscribed"
 }

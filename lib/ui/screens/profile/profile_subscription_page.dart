@@ -29,7 +29,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SubscriptionContentBloc>(context).initialize(widget.fromRegister);
+    BlocProvider.of<SubscriptionContentBloc>(context).initState(widget.fromRegister);
   }
 
   @override
@@ -43,7 +43,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return BlocConsumer<SubscriptionContentBloc, SubscriptionContentState>(
       listenWhen: (context, subscriptionContentState) {
         return subscriptionContentState is PurchaseSuccess ||
-            subscriptionContentState is FailureState ||
+            subscriptionContentState is ManageFromWebState ||
             subscriptionContentState is SubscriptionContentInitialized;
       },
       listener: (context, subscriptionContentState) {
@@ -58,20 +58,26 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           } else {
             controller = TabController(vsync: this, animationDuration: Duration.zero, length: 3);
           }
-          controller.addListener(_handleTabSelection);
           _currentIndex = index;
           _controller = controller;
+          _controller.addListener(_handleTabSelection);
         } else if (subscriptionContentState is PurchaseSuccess) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'successfullySubscribed');
           if (widget.fromRegister) {
             Navigator.popUntil(context, ModalRoute.withName('/'));
             AppNavigator().goToAssessmentVideosViaMain(context);
           } else {
             Navigator.of(context).pop();
           }
-        } else if (subscriptionContentState is FailureState) {
+        } else if (subscriptionContentState is ManageFromWebState) {
           Navigator.of(context).pop();
           AppMessages.clearAndShowSnackbarTranslated(context, 'manageSubscriptionFromWeb');
         }
+      },
+      buildWhen: (context, subscriptionContentState) {
+        return subscriptionContentState is SubscriptionContentLoading ||
+            subscriptionContentState is SubscriptionContentInitialized ||
+            subscriptionContentState is FailureState;
       },
       builder: (context, subscriptionContentState) {
         return Scaffold(
@@ -80,7 +86,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
             showTitle: false,
             showLogo: true,
             reduceHeight: true,
-            showBackButton: false,
+            showBackButton: !widget.fromRegister,
             title: ProfileViewConstants.profileOptionsSubscription,
             showSearchBar: false,
           ),
@@ -241,7 +247,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(tabContent.name, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
-            Text('${_getCurrency(tabContent)} ${tabContent.applePrice.toString()}'),
+            Text('${_getCurrency(tabContent)} ${_getPrice(tabContent.applePrice.toString())}'),
           ],
         )));
   }
@@ -259,6 +265,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   }
 
   String _getCurrency(Plan tabContent) => tabContent.currency == 'usd' ? '\$' : tabContent.currency;
+
+  String _getPrice(String price) => price.length > 2 ? '${price.substring(0, price.length - 2)}.${price.substring(price.length - 2, price.length)}' : price;
 
   void _handleTabSelection() {
     setState(() {
