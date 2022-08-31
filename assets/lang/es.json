@@ -409,5 +409,8 @@
     "selectASubscription": "Seleccione una suscripción",
     "selectPlan": "Seleccionar plan",
     "manageMembership": "Administrar membresía",
-    "successfullySubscribed": "Suscrito con éxito"
+    "successfullySubscribed": "Suscrito con éxito",
+    "cancelSubscription": "Cancelar suscripción",
+    "askCancelSubscription": "Estas seguro de que deseas cancelar tu suscripción? esta accion no se puede deshacer.",
+    "subCancelledSuccessfully": "Subscripción cancelada con éxito"
 }

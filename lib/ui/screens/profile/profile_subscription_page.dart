@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -7,11 +8,14 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -24,7 +28,8 @@ class ProfileSubscriptionPage extends StatefulWidget {
 
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with TickerProviderStateMixin {
   TabController _controller;
-  int _currentIndex = 0;
+  int _selectedIndex = 0;
+  int _currentPlan = 0;
 
   @override
   void initState() {
@@ -44,9 +49,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       listenWhen: (context, subscriptionContentState) {
         return subscriptionContentState is PurchaseSuccess ||
             subscriptionContentState is ManageFromWebState ||
-            subscriptionContentState is SubscriptionContentInitialized;
+            subscriptionContentState is SubscriptionContentInitialized ||
+            subscriptionContentState is PurchaseRestored;
       },
-      listener: (context, subscriptionContentState) {
+      listener: (context, subscriptionContentState) async {
         if (subscriptionContentState is SubscriptionContentInitialized) {
           int index = 0;
           TabController controller;
@@ -58,20 +64,29 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           } else {
             controller = TabController(vsync: this, animationDuration: Duration.zero, length: 3);
           }
-          _currentIndex = index;
+          _selectedIndex = index;
+          _currentPlan = index;
+          if (index < 0) {
+            _selectedIndex = 0;
+          }
           _controller = controller;
           _controller.addListener(_handleTabSelection);
         } else if (subscriptionContentState is PurchaseSuccess) {
+          removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'successfullySubscribed');
           if (widget.fromRegister) {
-            Navigator.popUntil(context, ModalRoute.withName('/'));
-            AppNavigator().goToAssessmentVideosViaMain(context);
+            BlocProvider.of<AuthBloc>(context).navigateToNextScreen(context, subscriptionContentState.userId);
           } else {
             Navigator.of(context).pop();
           }
         } else if (subscriptionContentState is ManageFromWebState) {
-          Navigator.of(context).pop();
+          removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'manageSubscriptionFromWeb');
+          Navigator.of(context).pop();
+        } else if (subscriptionContentState is PurchaseRestored) {
+          removeSubscriptionStream();
+          AppMessages.clearAndShowSnackbarTranslated(context, 'subCancelledSuccessfully');
+          await BlocProvider.of<AuthBloc>(context).logout(context);
         }
       },
       buildWhen: (context, subscriptionContentState) {
@@ -99,14 +114,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   Align _selectPlanButton(SubscriptionContentInitialized state) {
     return Align(
       child: SizedBox(
-        width: ScreenUtils.width(context) / 2,
+        width: ScreenUtils.width(context) / 1.8,
         height: 60,
         child: OlukoNeumorphicPrimaryButton(
           isExpanded: false,
           flatStyle: true,
           onPressed: () {
             BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
-            BlocProvider.of<SubscriptionContentBloc>(context).subscribe(state.plans[_currentIndex], state.user.id);
+            BlocProvider.of<SubscriptionContentBloc>(context).subscribe(state.plans[_selectedIndex], state.user.id);
           },
           title: OlukoLocalizations.get(context, 'selectPlan'),
         ),
@@ -213,14 +228,15 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   Container _tabMainContainer(SubscriptionContentInitialized state, Plan tabContent, BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-          color: _isCurrentTabIndex(state, tabContent) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor,
-        ),
-        child: Padding(
-          padding: !_isCurrentTabIndex(state, tabContent) ? EdgeInsets.zero : const EdgeInsets.fromLTRB(4, 4, 4, 0),
-          child: _tabBorderEffect(context, tabContent, state),
-        ));
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        color: _isCurrentTabIndex(state, tabContent) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor,
+      ),
+      child: Padding(
+        padding: !_isCurrentTabIndex(state, tabContent) ? EdgeInsets.zero : const EdgeInsets.fromLTRB(4, 4, 4, 0),
+        child: _tabBorderEffect(context, tabContent, state),
+      ),
+    );
   }
 
   Widget _tabBorderEffect(BuildContext context, Plan tabContent, SubscriptionContentInitialized state) {
@@ -228,28 +244,50 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
       child: Container(
         decoration: BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: !_isCurrentTabIndex(state, tabContent) ? OlukoColors.primary : OlukoColors.subscriptionTabsColor, width: 4.0)),
-            color: OlukoColors.subscriptionTabsColor),
-        child: _tabContent(context, tabContent),
+          border: Border(
+            bottom: BorderSide(
+              color: !_isCurrentTabIndex(state, tabContent)
+                  ? OlukoColors.primary
+                  : _isCurrentPlan(state, tabContent)
+                      ? OlukoColors.listGrayColor
+                      : OlukoColors.subscriptionTabsColor,
+              width: 4.0,
+            ),
+          ),
+          color: _isCurrentPlan(state, tabContent) ? OlukoColors.listGrayColor : OlukoColors.subscriptionTabsColor,
+        ),
+        child: _tabContent(context, tabContent, state),
       ),
     );
   }
 
-  bool _isCurrentTabIndex(SubscriptionContentInitialized state, Plan tabContent) => _currentIndex == state.plans.indexOf(tabContent);
+  bool _isCurrentTabIndex(SubscriptionContentInitialized state, Plan tabContent) => _selectedIndex == state.plans.indexOf(tabContent);
 
-  Container _tabContent(BuildContext context, Plan tabContent) {
+  bool _isCurrentPlan(SubscriptionContentInitialized state, Plan tabContent) => _currentPlan == state.plans.indexOf(tabContent);
+
+  Container _tabContent(BuildContext context, Plan tabContent, SubscriptionContentInitialized state) {
     return Container(
-        padding: EdgeInsets.zero,
-        width: MediaQuery.of(context).size.width,
-        child: Align(
-            child: Column(
+      padding: EdgeInsets.zero,
+      width: MediaQuery.of(context).size.width,
+      child: Align(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(tabContent.name, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
-            Text('${_getCurrency(tabContent)} ${_getPrice(tabContent.applePrice.toString())}'),
+            Text(
+              tabContent.name,
+              style: OlukoFonts.olukoBigFont(
+                customFontWeight: FontWeight.w600,
+                customColor: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black,
+              ),
+            ),
+            Text(
+              '${_getCurrency(tabContent)} ${_getPrice(tabContent.applePrice.toString())}',
+              style: TextStyle(color: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black),
+            ),
           ],
-        )));
+        ),
+      ),
+    );
   }
 
   Widget _manageMembershipText() {
@@ -257,8 +295,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       child: Padding(
         padding: const EdgeInsets.only(top: 30),
         child: Container(
-          child: Text(OlukoLocalizations.get(context, 'manageMembership'),
-              textAlign: TextAlign.center, style: OlukoFonts.olukoBiggestFont(customColor: Colors.black)),
+          child: Text(
+            OlukoLocalizations.get(context, 'manageMembership'),
+            textAlign: TextAlign.center,
+            style: OlukoFonts.olukoBiggestFont(customColor: Colors.black),
+          ),
         ),
       ),
     );
@@ -270,17 +311,22 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   void _handleTabSelection() {
     setState(() {
-      _currentIndex = _controller.index;
+      _selectedIndex = _controller.index;
     });
   }
 
-  Align _cancelPlanButton() {
+  Align _cancelPlanButton(SubscriptionContentInitialized state) {
     return Align(
       child: SizedBox(
-        width: ScreenUtils.width(context) / 2,
+        width: ScreenUtils.width(context) / 1.8,
         height: 60,
         child: OlukoNeumorphicWhiteButton(
-            isExpanded: false, useBorder: true, flatStyle: true, onPressed: () => Navigator.pop(context), title: OlukoLocalizations.get(context, 'cancel')),
+          isExpanded: false,
+          useBorder: true,
+          flatStyle: true,
+          onPressed: () => BottomDialogUtils.showBottomDialog(content: cancelSubscriptionConfirmation(state), context: context),
+          title: OlukoLocalizations.get(context, 'cancelSubscription'),
+        ),
       ),
     );
   }
@@ -292,18 +338,19 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       return Container(
         color: OlukoColors.white,
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: state.plans != null
-                ? ListView(
-                    shrinkWrap: true,
-                    children: [
-                      _subscriptionTitleSection(context),
-                      _subscriptionBodyContent(context, state, state.user),
-                      _selectPlanButton(state),
-                      if (widget.fromRegister) _cancelPlanButton()
-                    ],
-                  )
-                : const SizedBox()),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: state.plans != null
+              ? ListView(
+                  shrinkWrap: true,
+                  children: [
+                    _subscriptionTitleSection(context),
+                    _subscriptionBodyContent(context, state, state.user),
+                    _selectPlanButton(state),
+                    if (!widget.fromRegister && state.user.currentPlan >= 0) _cancelPlanButton(state)
+                  ],
+                )
+              : const SizedBox(),
+        ),
       );
     } else {
       return SizedBox(
@@ -320,7 +367,63 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     }
   }
 
-  void _emitLoading() {
-    BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
+  removeSubscriptionStream() {
+    BlocProvider.of<SubscriptionContentBloc>(context).dispose();
+  }
+
+  Widget cancelSubscriptionConfirmation(SubscriptionContentInitialized state) {
+    return Container(
+      height: ScreenUtils.height(context) / 2.5,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
+        image: DecorationImage(
+          image: AssetImage('assets/courses/dialog_background.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Padding(padding: const EdgeInsets.only(bottom: 15, top: 30), child: TitleBody(OlukoLocalizations.get(context, 'cancelSubscription'), bold: true)),
+            Text(OlukoLocalizations.get(context, 'askCancelSubscription'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: Row(
+                mainAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? MainAxisAlignment.end : MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        OlukoLocalizations.get(context, 'yes'),
+                        style: OlukoFonts.olukoBigFont(),
+                      ),
+                    ),
+                    onPressed: () {
+                      BlocProvider.of<SubscriptionContentBloc>(context).cancelSubscription(state.user.id, state.plans[_currentPlan].appleId);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const SizedBox(width: 20),
+                  SizedBox(
+                    width: 80,
+                    height: 50,
+                    child: OlukoNeumorphicPrimaryButton(
+                      thinPadding: true,
+                      isExpanded: false,
+                      title: OlukoLocalizations.get(context, 'no'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

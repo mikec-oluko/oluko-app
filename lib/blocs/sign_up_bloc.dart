@@ -33,7 +33,7 @@ class SignupBloc extends Cubit<UserState> {
   final _repository = AuthRepository();
 
   Future<void> signUp(BuildContext context, SignUpRequest request) async {
-    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
+    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
     if (request.password.contains(request.username)) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
       emit(SignupFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'))));
@@ -53,7 +53,7 @@ class SignupBloc extends Cubit<UserState> {
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
       BlocProvider.of<AuthBloc>(context).updateAuthSuccess(_userCreated, null);
-      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription]);
+      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(OlukoLocalizations.get(context, 'checkYourEmail')),

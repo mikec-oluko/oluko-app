@@ -410,5 +410,8 @@
     "selectASubscription": "Select a subscription",
     "selectPlan": "Select plan",
     "manageMembership": "Manage Membership",
-    "successfullySubscribed": "Successfully subscribed"
+    "successfullySubscribed": "Successfully subscribed",
+    "cancelSubscription": "Cancel subscription",
+    "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
+    "subCancelledSuccessfully": "Subscription canceled successfully"
 }

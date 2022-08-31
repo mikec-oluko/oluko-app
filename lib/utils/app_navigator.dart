@@ -16,7 +16,7 @@ class AppNavigator {
     Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': true});
   }
 
-  Future<void> goToSubscriptionsViaMain(BuildContext context) async {
+  Future<void> goToSubscriptionsFromRegister(BuildContext context) async {
     Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
     Navigator.pushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
   }

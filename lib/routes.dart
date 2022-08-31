@@ -530,6 +530,7 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<UserBloc>.value(value: _userBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -677,6 +678,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         providers = [
           BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
+          BlocProvider<PlanBloc>.value(value: _planBloc),
         ];
         newRouteView = ProfileSubscriptionPage(
             fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);

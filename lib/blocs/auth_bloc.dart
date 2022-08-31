@@ -132,7 +132,7 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       if (user.currentPlan == -100) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-        AppNavigator().goToSubscriptionsViaMain(context);
+        AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthGuest());
         return;
       } else {
@@ -338,26 +338,28 @@ class AuthBloc extends Cubit<AuthState> {
 
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
-      BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
-      BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
-      BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
-      BlocProvider.of<StoryListBloc>(context).dispose();
-      BlocProvider.of<UserProgressStreamBloc>(context).dispose();
-      BlocProvider.of<CoachSentVideosBloc>(context).dispose();
-      BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
-      BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
-      BlocProvider.of<ChallengeStreamBloc>(context).dispose();
-      BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
-      BlocProvider.of<CourseCategoryBloc>(context).dispose();
-      BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
-      BlocProvider.of<NotificationBloc>(context).dispose();
-      BlocProvider.of<CoachMediaBloc>(context).dispose();
-      BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
-      BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
-      BlocProvider.of<CoachVideoMessageBloc>(context).dispose();
-      BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
-      BlocProvider.of<LikedCoursesBloc>(context).dispose();
-      BlocProvider.of<CoachAssignmentBloc>(context).dispose();
+      try {
+        BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
+        BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
+        BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
+        BlocProvider.of<StoryListBloc>(context).dispose();
+        BlocProvider.of<UserProgressStreamBloc>(context).dispose();
+        BlocProvider.of<CoachSentVideosBloc>(context).dispose();
+        BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
+        BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
+        BlocProvider.of<ChallengeStreamBloc>(context).dispose();
+        BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
+        BlocProvider.of<CourseCategoryBloc>(context).dispose();
+        BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
+        BlocProvider.of<NotificationBloc>(context).dispose();
+        BlocProvider.of<CoachMediaBloc>(context).dispose();
+        BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
+        BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
+        BlocProvider.of<CoachVideoMessageBloc>(context).dispose();
+        BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
+        BlocProvider.of<LikedCoursesBloc>(context).dispose();
+        BlocProvider.of<CoachAssignmentBloc>(context).dispose();
+      } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {
         BlocProvider.of<SubscriptionContentBloc>(context).dispose();

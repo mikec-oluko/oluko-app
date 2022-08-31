@@ -35,9 +35,8 @@ class PurchaseRepository {
     return null;
   }
 
-  static create(PurchaseDetails purchaseDetails, ProductDetails productDetails) async {
+  static create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
     final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
-    final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
     final DocumentReference userReference = proyectReference.collection('users').doc(userId);
     final QuerySnapshot<Map<String, dynamic>> planDocRef =
         await proyectReference.collection('plans').where('apple_id', isEqualTo: purchaseDetails.productID).get();
@@ -51,5 +50,19 @@ class PurchaseRepository {
     await proyectReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.update({'current_plan': plan.metadata['level']});
+  }
+
+  static restore(String userId, String productId) async {
+    final DocumentReference userReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
+    QuerySnapshot<Map<String, dynamic>> purchasesSnapshot =
+        await userReference.collection('purchases').where('appPlanId', isEqualTo: productId).get();
+    purchasesSnapshot.docs.forEach((purchase) {
+      purchase.reference.update({
+                'status': 'inactive',
+                'is_deleted': true
+              });
+    });
+    await userReference.update({'current_plan': -100});
   }
 }

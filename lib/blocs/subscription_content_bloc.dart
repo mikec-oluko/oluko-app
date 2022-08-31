@@ -18,7 +18,10 @@ class PurchasePending extends SubscriptionContentState {
   PurchasePending();
 }
 
-class PurchaseSuccess extends SubscriptionContentState {}
+class PurchaseSuccess extends SubscriptionContentState {
+  final String userId;
+  PurchaseSuccess({this.userId});
+}
 
 class PurchaseRestored extends SubscriptionContentState {}
 
@@ -105,20 +108,22 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
 
   void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+      final ProductDetails productDetails = products?.firstWhere(
+        (product) => product.id == purchaseDetails.productID,
+        orElse: () => null,
+      );
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
           emit(PurchasePending());
           break;
         case PurchaseStatus.purchased:
-          final ProductDetails productDetails = products?.firstWhere(
-            (product) => product.id == purchaseDetails.productID,
-            orElse: () => null,
-          );
-          await PurchaseRepository.create(purchaseDetails, productDetails);
-          emit(PurchaseSuccess());
+          try {
+            final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
+            await PurchaseRepository.create(purchaseDetails, productDetails, userId);
+            emit(PurchaseSuccess(userId: userId));
+          } catch (e) {}
           break;
         case PurchaseStatus.restored:
-          emit(PurchaseRestored());
           break;
         case PurchaseStatus.error:
           emit(FailureState());
@@ -127,7 +132,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
           break;
       }
 
-      if (purchaseDetails.pendingCompletePurchase) {
+      if (purchaseDetails.pendingCompletePurchase && purchaseDetails.status != PurchaseStatus.restored) {
         await inAppPurchase.completePurchase(purchaseDetails);
       }
     });
@@ -153,9 +158,29 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
       }
     }
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product, applicationUserName: userId);
-    inAppPurchase.buyNonConsumable(
-      purchaseParam: purchaseParam,
-    );
+    try {
+      inAppPurchase.buyNonConsumable(
+        purchaseParam: purchaseParam,
+      ).catchError((exception) => emit(FailureState(exception: exception) ));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FailureState(exception: exception));
+      rethrow;
+    }
+  }
+
+  Future<void> cancelSubscription(String userId, String productId) async {
+    emit(SubscriptionContentLoading());
+    try {
+      await inAppPurchase.restorePurchases(
+        applicationUserName: userId,
+      );
+      await PurchaseRepository.restore(userId, productId);
+    } catch (e) {}
+    emit(PurchaseRestored());
   }
 
   ListTile buildPurchase(PurchaseDetails purchase) {
