@@ -164,7 +164,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         purchaseParam: purchaseParam,
       )
           .catchError((exception) {
-        final PurchaseDetails purchaseDetails = PurchaseDetails(productID: product.id, purchaseID: 'sdf', status: PurchaseStatus.canceled, transactionDate: null, verificationData: null);
+        final PurchaseDetails purchaseDetails = PurchaseDetails(productID: product.id, status: PurchaseStatus.canceled, transactionDate: null, verificationData: null);
         inAppPurchase.completePurchase(purchaseDetails);
         emit(FailureState(exception: exception));
       });

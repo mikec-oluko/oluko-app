@@ -63,6 +63,6 @@ class PurchaseRepository {
                 'is_deleted': true
               });
     });
-    await userReference.update({'current_plan': -100});
+    await userReference.update({'current_plan': -1});
   }
 }
