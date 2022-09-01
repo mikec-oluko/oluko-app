@@ -612,8 +612,8 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.24)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.4.3):
-    - Firebase/Firestore (= 9.3.0)
+  - cloud_firestore (3.4.6):
+    - Firebase/Firestore (= 9.4.0)
     - firebase_core
     - Flutter
   - connectivity_plus (0.0.1):
@@ -648,19 +648,19 @@ PODS:
     - Firebase/Auth (= 9.4.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.20.0):
-    - Firebase/CoreOnly (= 9.3.0)
+  - firebase_core (1.21.1):
+    - Firebase/CoreOnly (= 9.4.0)
     - Flutter
-  - firebase_database (9.1.0):
-    - Firebase/Database (= 9.3.0)
+  - firebase_database (9.1.3):
+    - Firebase/Database (= 9.4.0)
     - firebase_core
     - Flutter
   - firebase_messaging (11.4.4):
     - Firebase/Messaging (= 9.4.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.3.4):
-    - Firebase/Storage (= 9.3.0)
+  - firebase_storage (10.3.7):
+    - Firebase/Storage (= 9.4.0)
     - firebase_core
     - Flutter
   - FirebaseAppCheckInterop (9.5.0)
@@ -1047,31 +1047,31 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: 08093e207dfb2e6c82a6b272def699e022548786
+  cloud_firestore: 6448075c9bac372319e7f025fdfa6f1d382644d7
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
   FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
   FBSDKLoginKit: e993f97c7cc794c5da4056d8aec3c3d66033a727
-  Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
-  firebase_auth: abe46b4b5465b491c48ea4c9d4c031c40f0fd4af
-  firebase_core: 96214f90497b808a2cf2a24517084c5f6de37b53
-  firebase_database: 7c4734c0eeecc1bf85c08ca7aff634ce847fb8d7
-  firebase_messaging: 24112f219663060db68ef803f20166d374138b6e
-  firebase_storage: e95ec41580e311cb30b1ed7459b9e94fb4bbe672
-  FirebaseAppCheckInterop: 63119cdfc94b16c3e9421513c17f597aee2ea225
-  FirebaseAuth: 9ebc3577fe0acf9092df21ac314024b70aebf21e
-  FirebaseAuthInterop: 826d3d772b554e3675ceaab8c665008277ca9d1c
-  FirebaseCore: c088995ece701a021a48a1348ea0174877de2a6a
-  FirebaseCoreDiagnostics: aaa87098082c4d4bdd1a9557b1186d18ca85ce8c
-  FirebaseCoreExtension: 2cf8c542b54ad3c2d4b746c22e8828b670dcd9b0
-  FirebaseCoreInternal: a13302b0088fbf5f38b79b6ece49c2af7d3e05d6
-  FirebaseDatabase: 92350185966ddd283842aa9ca07e188691f3b8ad
-  FirebaseFirestore: 5a72aa925528f67469b16a54a6cfc369467197e4
-  FirebaseInstallations: 61db1054e688d2bdc4e2b3f744c1b086e913b742
-  FirebaseMessaging: 2f6e38b6133059eb796ec224104f09379298a8c3
-  FirebaseStorage: 1414d27e15fa04f6350ef6602accef0e951c8bca
-  FirebaseStorageInternal: 425c7dc7de44d9b7e07a9f8d6515bab0f1266b87
+  Firebase: 7703fc4022824b6d6db1bf7bea58d13b8e17ec46
+  firebase_auth: 7a3383756f4621fd2e5808fdf7ff8fda8a04396e
+  firebase_core: 8e500850dd138c269d197c8dfca3ae886fa3b6f2
+  firebase_database: 31aebb8797cd59eb881375aa0debe33eba5a1c2a
+  firebase_messaging: c7f8a34e148cdcbbcbf01b3644204db33a91c587
+  firebase_storage: 846832b7f2d22238678dc9abc513f2151f102462
+  FirebaseAppCheckInterop: 8e95b4329809e3c06fb425acb3839dcadfe23673
+  FirebaseAuth: ae5d4402e1516497357d909162b091b3ca2a2e9c
+  FirebaseAuthInterop: c5aa97b55a87785e22c60c73996c1ad32e5f7ac9
+  FirebaseCore: 9a2b10270a854731c4d4d8a97d0aa8380ec3458d
+  FirebaseCoreDiagnostics: 17cbf4e72b1dbd64bfdc33d4b1f07bce4f16f1d8
+  FirebaseCoreExtension: 2904492b693a6871ddbd1088c9d1fe6e54384050
+  FirebaseCoreInternal: 50a8e39cae8abf72d5145d07ea34c3244f70862b
+  FirebaseDatabase: e93f5441b549ea4492a8d8a0c7d612ac46c1b12a
+  FirebaseFirestore: 945196dd78f4e92de6fc47b38569a1e7088af81f
+  FirebaseInstallations: 41f811b530c41dd90973d0174381cdb3fcb5e839
+  FirebaseMessaging: 4e220eddd356181469ba2ec5f7d5fafbc2312841
+  FirebaseStorage: 160ba975dd3452d9c59a3bf5ea9bf70ff96bd3c2
+  FirebaseStorageInternal: 4f8a9e27391a99ac0692adbbd072fe0e5c4125fe
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_facebook_auth: dfd6b2563406c538098e2127512d385c9ffd70ad
   flutter_image_compress: 5a5e9aee05b6553048b8df1c3bc456d0afaac433
