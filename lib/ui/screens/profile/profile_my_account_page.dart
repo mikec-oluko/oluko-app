@@ -387,16 +387,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
-    //TODO: Use plan from userData.
-    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan?.toInt() ?? 0), orElse: () => null);
-
-    SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.selected = true;
-    if (userPlan != null) {
-      subscriptionCard.priceLabel = '\$${userPlan.amount}/${durationLabel[userPlan.intervalCount]}';
-      subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-      subscriptionCard.selected = false;
-    }
+    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan as int), orElse: () => null);
+    SubscriptionCard subscriptionCard = SubscriptionCard(userPlan);
     return [subscriptionCard];
   }
 

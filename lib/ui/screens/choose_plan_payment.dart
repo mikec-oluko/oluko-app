@@ -188,10 +188,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
   }
 
   SubscriptionCard showSubscriptionCard(Plan plan) {
-    SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.intervalCount]}';
-    subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-    subscriptionCard.selected = false;
+    SubscriptionCard subscriptionCard = SubscriptionCard(plan);
     return subscriptionCard;
   }
 }

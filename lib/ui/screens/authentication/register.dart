@@ -407,12 +407,8 @@ class _RegisterState extends State<RegisterPage> {
 
   Future<void> validateAndSave() async {
     final FormState form = formKey.currentState;
-      await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
-    // print(_newUserFromRegister);
     if (form.validate() && isPasswordValid()) {
-      print('Form is valid');
-    } else {
-      print('Form is invalid');
+      await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
     }
   }
 

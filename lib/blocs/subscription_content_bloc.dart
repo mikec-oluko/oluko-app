@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -15,15 +14,18 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class SubscriptionContentState {}
 
-class LoadingState extends SubscriptionContentState {}
-
 class PurchasePending extends SubscriptionContentState {
   PurchasePending();
 }
 
-class PurchaseSuccess extends SubscriptionContentState {}
+class PurchaseSuccess extends SubscriptionContentState {
+  final String userId;
+  PurchaseSuccess({this.userId});
+}
 
 class PurchaseRestored extends SubscriptionContentState {}
+
+class ManageFromWebState extends SubscriptionContentState {}
 
 class FailureState extends SubscriptionContentState {
   final dynamic exception;
@@ -36,11 +38,6 @@ class SubscriptionContentInitialized extends SubscriptionContentState {
   List<Plan> plans;
   UserResponse user;
   SubscriptionContentInitialized({this.plans, this.user});
-}
-
-class SubscriptionContentFailed extends SubscriptionContentState {
-  final dynamic exception;
-  SubscriptionContentFailed({this.exception});
 }
 
 class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
@@ -67,7 +64,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         subscription.cancel();
       },
     );
-    initialize(fromRegister);
+    getProductsForUser(fromRegister);
   }
 
   void dispose() {
@@ -76,17 +73,17 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     }
   }
 
-  void initialize(bool fromRegister) async {
+  void getProductsForUser(bool fromRegister) async {
     try {
       final String userId = AuthRepository.getLoggedUser().uid;
       if (fromRegister) {
         await initAndEmit(userId);
       } else {
         final Purchase lastPurchase = await PurchaseRepository.getLastPurchase(userId);
-        if (lastPurchase.platform != null && lastPurchase.platform == Platform.APP) {
+        if (lastPurchase == null || lastPurchase.platform != null && lastPurchase.platform == Platform.APP) {
           await initAndEmit(userId);
         } else {
-          emit(FailureState());
+          emit(ManageFromWebState());
         }
       }
     } catch (exception, stackTrace) {
@@ -94,7 +91,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(SubscriptionContentFailed(exception: exception));
+      emit(FailureState(exception: exception));
       rethrow;
     }
   }
@@ -111,20 +108,22 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
 
   void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+      final ProductDetails productDetails = products?.firstWhere(
+        (product) => product.id == purchaseDetails.productID,
+        orElse: () => null,
+      );
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
           emit(PurchasePending());
           break;
         case PurchaseStatus.purchased:
-          ProductDetails productDetails = products?.firstWhere(
-            (product) => product.id == purchaseDetails.productID,
-            orElse: () => null,
-          );
-          await PurchaseRepository.create(purchaseDetails, productDetails);
-          emit(PurchaseSuccess());
+          try {
+            final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
+            await PurchaseRepository.create(purchaseDetails, productDetails, userId);
+            emit(PurchaseSuccess(userId: userId));
+          } catch (e) {}
           break;
         case PurchaseStatus.restored:
-          emit(PurchaseRestored());
           break;
         case PurchaseStatus.error:
           emit(FailureState());
@@ -133,7 +132,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
           break;
       }
 
-      if (purchaseDetails.pendingCompletePurchase) {
+      if (purchaseDetails.pendingCompletePurchase && purchaseDetails.status != PurchaseStatus.restored) {
         await inAppPurchase.completePurchase(purchaseDetails);
       }
     });
@@ -159,9 +158,35 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
       }
     }
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product, applicationUserName: userId);
-    inAppPurchase.buyNonConsumable(
-      purchaseParam: purchaseParam,
-    );
+    try {
+      inAppPurchase
+          .buyNonConsumable(
+        purchaseParam: purchaseParam,
+      )
+          .catchError((exception) {
+        final PurchaseDetails purchaseDetails = PurchaseDetails(productID: product.id, status: PurchaseStatus.canceled, transactionDate: null, verificationData: null);
+        inAppPurchase.completePurchase(purchaseDetails);
+        emit(FailureState(exception: exception));
+      });
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FailureState(exception: exception));
+      rethrow;
+    }
+  }
+
+  Future<void> cancelSubscription(String userId, String productId) async {
+    emit(SubscriptionContentLoading());
+    try {
+      await inAppPurchase.restorePurchases(
+        applicationUserName: userId,
+      );
+      await PurchaseRepository.restore(userId, productId);
+    } catch (e) {}
+    emit(PurchaseRestored());
   }
 
   ListTile buildPurchase(PurchaseDetails purchase) {
@@ -174,7 +199,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
 
     String transactionDate;
     if (purchase.status == PurchaseStatus.purchased) {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      final DateTime date = DateTime.fromMillisecondsSinceEpoch(
         int.parse(purchase.transactionDate),
       );
       transactionDate = ' @ ${DateFormat('yyyy-MM-dd HH:mm:ss').format(date)}';
