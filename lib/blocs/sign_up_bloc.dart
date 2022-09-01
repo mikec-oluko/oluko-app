@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
+import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
-import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -33,7 +34,6 @@ class SignupBloc extends Cubit<UserState> {
   final _repository = AuthRepository();
 
   Future<void> signUp(BuildContext context, SignUpRequest request) async {
-    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
     if (request.password.contains(request.username)) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
       emit(SignupFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'))));
@@ -52,8 +52,8 @@ class SignupBloc extends Cubit<UserState> {
       UserResponse _userCreated = await UserRepository().get(response.email);
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
-      BlocProvider.of<AuthBloc>(context).updateAuthSuccess(_userCreated, null);
-      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
+      BlocProvider.of<AuthBloc>(context).login(context,
+          LoginRequest(email: request.email, password: request.password, userName: request.username, projectId: GlobalConfiguration().getValue('projectId')));
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(OlukoLocalizations.get(context, 'checkYourEmail')),

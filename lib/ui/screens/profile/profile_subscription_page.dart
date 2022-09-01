@@ -13,9 +13,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -98,12 +96,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         return Scaffold(
           backgroundColor: OlukoColors.white,
           appBar: OlukoAppBar(
-            showTitle: false,
-            showLogo: true,
-            reduceHeight: true,
-            showBackButton: !widget.fromRegister,
-            title: ProfileViewConstants.profileOptionsSubscription,
-            showSearchBar: false,
+              showTitle: !widget.fromRegister,
+              showBackButton: !widget.fromRegister,
+              reduceHeight: true,
+              title: ProfileViewConstants.profileOptionsSubscription,
+              showLogo: widget.fromRegister,
           ),
           body: getBody(subscriptionContentState),
         );
@@ -120,7 +117,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           isExpanded: false,
           flatStyle: true,
           onPressed: () {
-            BlocProvider.of<SubscriptionContentBloc>(context).emitSubscriptionContentLoading();
             BlocProvider.of<SubscriptionContentBloc>(context).subscribe(state.plans[_selectedIndex], state.user.id);
           },
           title: OlukoLocalizations.get(context, 'selectPlan'),
@@ -331,6 +327,24 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
+  Align _cancelButton() {
+    return Align(
+      child: SizedBox(
+        width: ScreenUtils.width(context) / 1.8,
+        height: 60,
+        child: OlukoNeumorphicWhiteButton(
+          isExpanded: false,
+          useBorder: true,
+          flatStyle: true,
+          onPressed: () async {
+            await BlocProvider.of<AuthBloc>(context).logout(context);
+          } ,
+          title: OlukoLocalizations.get(context, 'cancel'),
+        ),
+      ),
+    );
+  }
+
   Widget getBody(SubscriptionContentState state) {
     if (state is SubscriptionContentLoading) {
       return OlukoCircularProgressIndicator();
@@ -346,6 +360,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                     _subscriptionTitleSection(context),
                     _subscriptionBodyContent(context, state, state.user),
                     _selectPlanButton(state),
+                    if (widget.fromRegister) _cancelButton(),
                     if (!widget.fromRegister && state.user.currentPlan >= 0) _cancelPlanButton(state)
                   ],
                 )

@@ -130,13 +130,13 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
-      if (user.currentPlan == -100) {
+      AuthRepository().storeLoginData(user);
+      if (user.currentPlan == -100 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
-        emit(AuthGuest());
+        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         return;
       } else {
-        AuthRepository().storeLoginData(user);
         if (firebaseUser != null) {
           AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -200,6 +200,13 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(userResponse);
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        if (userResponse.currentPlan == -100 || userResponse.currentPlan == null) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+          AppNavigator().goToSubscriptionsFromRegister(context);
+          emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+          return;
+        }
+        emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
         AppMessages.clearAndShowSnackbar(
           context,
           '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}',
@@ -248,8 +255,14 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-
       AuthRepository().storeLoginData(user);
+      if (user.currentPlan == -100 || user.currentPlan == null) {
+        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+        AppNavigator().goToSubscriptionsFromRegister(context);
+        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        return;
+      }
+
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
       navigateToNextScreen(context, firebaseUser.uid);
     }
@@ -289,6 +302,13 @@ class AuthBloc extends Cubit<AuthState> {
       }
 
       AuthRepository().storeLoginData(userResponse);
+
+      if (userResponse.currentPlan == -100 || userResponse.currentPlan == null) {
+        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+        AppNavigator().goToSubscriptionsFromRegister(context);
+        emit(AuthSuccess(user: userResponse, firebaseUser: result));
+        return;
+      }
       if (result != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
         AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
