@@ -98,10 +98,11 @@ class AuthRepository {
       );
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('apiToken', googleAuth?.accessToken);
+      await prefs.setString('apiToken', googleAuth?.idToken);
 
       // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      final response = await FirebaseAuth.instance.signInWithCredential(credential);
+      return response;
     } catch (e) {
       print(e.toString());
       return null;

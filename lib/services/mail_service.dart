@@ -3,7 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 
 class MailService {
-  static void send(
+  static void sendContactUsMail(
       String username, String email, String message, String phone) {
     CollectionReference reference =
         FirebaseFirestore.instance.collection('emails');
