@@ -446,6 +446,8 @@ class Routes {
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
+  final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
+
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -540,7 +542,6 @@ class Routes {
           ]);
         }
         if (Platform.isIOS || Platform.isMacOS) {
-          final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
           providers.add(BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc));
         }
 
@@ -669,11 +670,12 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CountryBloc>.value(value: _countryBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
         ];
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-        final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         providers = [
           BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
