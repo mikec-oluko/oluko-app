@@ -131,7 +131,7 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
-      if (user.currentPlan == -100 || user.currentPlan == null) {
+      if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -200,7 +200,7 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(userResponse);
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-        if (userResponse.currentPlan == -100 || userResponse.currentPlan == null) {
+        if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
           AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
           AppNavigator().goToSubscriptionsFromRegister(context);
           emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
@@ -256,7 +256,7 @@ class AuthBloc extends Cubit<AuthState> {
         return;
       }
       AuthRepository().storeLoginData(user);
-      if (user.currentPlan == -100 || user.currentPlan == null) {
+      if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -303,7 +303,7 @@ class AuthBloc extends Cubit<AuthState> {
 
       AuthRepository().storeLoginData(userResponse);
 
-      if (userResponse.currentPlan == -100 || userResponse.currentPlan == null) {
+      if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
