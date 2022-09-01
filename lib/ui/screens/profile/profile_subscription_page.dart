@@ -37,7 +37,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   @override
   void dispose() {
-    _controller.dispose();
+    if(_controller != null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
