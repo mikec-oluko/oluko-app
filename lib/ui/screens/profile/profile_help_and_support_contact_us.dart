@@ -102,14 +102,14 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                             title: OlukoLocalizations.get(context, 'submit'),
                             onPressed: () {
                               BlocProvider.of<MailBloc>(context)
-                                  .sendEmail(profileInfo.username, profileInfo.email, messageController.text, phoneController.text);
+                                  .sendContactUsMail(profileInfo.username, profileInfo.email, messageController.text, phoneController.text);
                             },
                           )
                         : OlukoPrimaryButton(
                             title: OlukoLocalizations.get(context, 'submit'),
                             onPressed: () {
                               BlocProvider.of<MailBloc>(context)
-                                  .sendEmail(profileInfo.username, profileInfo.email, messageController.text, phoneController.text);
+                                  .sendContactUsMail(profileInfo.username, profileInfo.email, messageController.text, phoneController.text);
                             },
                           ),
                   ),

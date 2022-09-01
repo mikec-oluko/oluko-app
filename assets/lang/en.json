@@ -408,5 +408,7 @@
     "filtersResult": "Filters result",
     "result": "Result",
     "manageSubscriptionFromWeb": "You can only modify the subscription from the web",
-    "selectASubscription": "Select a subscription"
+    "selectASubscription": "Select a subscription",
+    "deleteUser": "delete user",
+    "deleteUserConfirmation":"Are you sure? Your profile and related account information will be deleted from the app"
 }

@@ -37,14 +37,15 @@ class OlukoNeumorphism {
       bool darkShadow = true,
       num depth = 3,
       NeumorphicShape buttonShape,
-      NeumorphicBoxShape boxShape}) {
+      NeumorphicBoxShape boxShape,
+      Color customColor}) {
     return NeumorphicStyle(
         border: useBorder
             ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
             : const NeumorphicBorder.none(),
         depth: 5,
         intensity: 0.5,
-        color: OlukoNeumorphismColors.initialGradientColorPrimary,
+        color:customColor?? OlukoNeumorphismColors.initialGradientColorPrimary,
         shape: buttonShape,
         lightSource: LightSource.top,
         boxShape: boxShape,
