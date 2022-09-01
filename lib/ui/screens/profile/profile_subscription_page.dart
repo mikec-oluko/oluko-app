@@ -37,7 +37,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   @override
   void dispose() {
-    if(_controller != null) {
+    if (_controller != null) {
       _controller.dispose();
     }
     super.dispose();
@@ -95,16 +95,19 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
             subscriptionContentState is FailureState;
       },
       builder: (context, subscriptionContentState) {
-        return Scaffold(
-          backgroundColor: OlukoColors.white,
-          appBar: OlukoAppBar(
+        return WillPopScope(
+          onWillPop: () async => _onWillPop(subscriptionContentState),
+          child: Scaffold(
+            backgroundColor: OlukoColors.white,
+            appBar: OlukoAppBar(
               showTitle: !widget.fromRegister,
               showBackButton: !widget.fromRegister,
               reduceHeight: true,
               title: ProfileViewConstants.profileOptionsSubscription,
               showLogo: widget.fromRegister,
+            ),
+            body: getBody(subscriptionContentState),
           ),
-          body: getBody(subscriptionContentState),
         );
       },
     );
@@ -340,7 +343,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           flatStyle: true,
           onPressed: () async {
             await BlocProvider.of<AuthBloc>(context).logout(context);
-          } ,
+          },
           title: OlukoLocalizations.get(context, 'cancel'),
         ),
       ),
@@ -442,5 +445,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         ),
       ),
     );
+  }
+
+  bool _onWillPop(SubscriptionContentState subscriptionContentState) {
+    if (subscriptionContentState is SubscriptionContentInitialized) {
+      return subscriptionContentState.user.currentPlan >= 0;
+    }
+    return false;
   }
 }
