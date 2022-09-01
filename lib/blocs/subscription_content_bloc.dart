@@ -159,9 +159,15 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     }
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product, applicationUserName: userId);
     try {
-      inAppPurchase.buyNonConsumable(
+      inAppPurchase
+          .buyNonConsumable(
         purchaseParam: purchaseParam,
-      ).catchError((exception) => emit(FailureState(exception: exception) ));
+      )
+          .catchError((exception) {
+        final PurchaseDetails purchaseDetails = PurchaseDetails(productID: product.id, purchaseID: 'sdf', status: PurchaseStatus.canceled, transactionDate: null, verificationData: null);
+        inAppPurchase.completePurchase(purchaseDetails);
+        emit(FailureState(exception: exception));
+      });
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
