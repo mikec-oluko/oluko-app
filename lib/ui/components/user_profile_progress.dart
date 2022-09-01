@@ -36,9 +36,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   profileNeumorphicAccomplishments(
-                      achievementTitleKey: ['challenges', 'completed'],
-                      achievementValue: widget.challengesCompleted,
-                      color: OlukoColors.white),
+                      achievementTitleKey: ['challenges', 'completed'], achievementValue: widget.challengesCompleted, color: OlukoColors.white),
                   profileNeumorphicAccomplishments(
                       achievementTitleKey: ['classes', 'completed'], achievementValue: widget.classesCompleted, color: OlukoColors.white),
                 ],
@@ -71,16 +69,13 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              profileAccomplishments(
-                  achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.primary),
+              profileAccomplishments(achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.primary),
               profileVerticalDivider(),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-              profileAccomplishments(
-                  achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.primary),
+              profileAccomplishments(achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.primary),
               profileVerticalDivider(),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-              profileAccomplishments(
-                  achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
+              profileAccomplishments(achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
             ],
           ),
         )

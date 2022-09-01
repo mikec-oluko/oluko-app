@@ -8,6 +8,7 @@ import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
@@ -30,40 +31,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.titleForAppBar,
-            style: OlukoNeumorphism.isNeumorphismDesign
-                ? ScreenUtils.smallScreen(context)
-                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
-                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
-                : ScreenUtils.smallScreen(context)
-                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400)
-                    : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400),
-          ),
-          actions: [],
-          elevation: 0.0,
-          backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-          leading: OlukoNeumorphism.isNeumorphismDesign
-              ? Neumorphic(
-                  style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                  child: OlukoNeumorphicCircleButton(
-                    defaultAspect: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                )
-              : IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-        ),
+        appBar: OlukoAppBar(title: widget.titleForAppBar, showTitle: true, showBackButton: true),
         body: Container(
           width: ScreenUtils.width(context),
           height: ScreenUtils.height(context),
@@ -123,8 +91,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                 arguments: {'course': contentRecommended.courseContent, 'fromCoach': true, 'isCoachRecommendation': false});
           }
           if (recommendationType == TimelineInteractionType.movement) {
-            return Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
-                arguments: {'movement': contentRecommended.movementContent});
+            return Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': contentRecommended.movementContent});
           }
         },
         child: Container(
@@ -149,9 +116,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                             decoration: BoxDecoration(
                                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                                 image: DecorationImage(
-                                  image: contentRecommended.contentImage != null
-                                      ? CachedNetworkImageProvider(contentRecommended.contentImage)
-                                      : defaultImage,
+                                  image: contentRecommended.contentImage != null ? CachedNetworkImageProvider(contentRecommended.contentImage) : defaultImage,
                                   fit: BoxFit.cover,
                                 )),
                           ),
@@ -170,8 +135,8 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: recommendationType == TimelineInteractionType.movement
                                   ? informationForMovement(contentRecommended.contentTitle)
-                                  : informationForCourse(contentRecommended.contentTitle,
-                                      contentRecommended.courseContent?.classes?.length.toString(), contentRecommended.contentDescription),
+                                  : informationForCourse(contentRecommended.contentTitle, contentRecommended.courseContent?.classes?.length.toString(),
+                                      contentRecommended.contentDescription),
                             ),
                           ),
                         )
@@ -209,8 +174,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 image: DecorationImage(
-                  image:
-                      videoRecommended.video.thumbUrl != null ? CachedNetworkImageProvider(videoRecommended.video.thumbUrl) : defaultImage,
+                  image: videoRecommended.video.thumbUrl != null ? CachedNetworkImageProvider(videoRecommended.video.thumbUrl) : defaultImage,
                   fit: BoxFit.cover,
                 )),
             child: Stack(
@@ -230,8 +194,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                             width: 50,
                             height: 50,
                             child: OlukoBlurredButton(
-                                childContent:
-                                    Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
+                                childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
                           )
                         : Image.asset(
                             'assets/self_recording/play_button.png',

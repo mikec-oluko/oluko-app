@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 
@@ -22,7 +23,7 @@ class _CoachRecommendedContentPreviewStackState extends State<CoachRecommendedCo
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 5),
+          padding: const EdgeInsets.fromLTRB(5, 0, 0, 2),
           child: Text(
             widget.titleForSection,
             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
@@ -49,9 +50,7 @@ class _CoachRecommendedContentPreviewStackState extends State<CoachRecommendedCo
           Visibility(
               visible: recommendationImages != null && recommendationImages.length > 1,
               child: secondElementPreview(recommendationImages.length > 1 ? recommendationImages[1] : recommendationImages[0])),
-          Visibility(
-              visible: recommendationImages != null && recommendationImages.isNotEmpty,
-              child: firstElementPreview(recommendationImages[0])),
+          Visibility(visible: recommendationImages != null && recommendationImages.isNotEmpty, child: firstElementPreview(recommendationImages[0])),
         ],
       ),
     );
@@ -67,12 +66,15 @@ class _CoachRecommendedContentPreviewStackState extends State<CoachRecommendedCo
 
   Positioned thirdElementPreview(String imageUrl) {
     return Positioned(
-      top: 20,
+      top: 15,
       child: Center(
-        child: Container(
-          decoration: videoCardDecoration(image: imageUrl),
-          width: _maxWidth - 20,
-          height: _maxHeight,
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+          child: Container(
+            decoration: videoCardDecoration(image: imageUrl),
+            width: _maxWidth - 15,
+            height: _maxHeight,
+          ),
         ),
       ),
     );
@@ -80,12 +82,15 @@ class _CoachRecommendedContentPreviewStackState extends State<CoachRecommendedCo
 
   Positioned secondElementPreview(String imageUrl) {
     return Positioned(
-      top: 10,
+      top: 7.5,
       child: Center(
-        child: Container(
-          decoration: videoCardDecoration(image: imageUrl),
-          width: _maxWidth - 10,
-          height: _maxHeight,
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+          child: Container(
+            decoration: videoCardDecoration(image: imageUrl),
+            width: _maxWidth - 7.5,
+            height: _maxHeight,
+          ),
         ),
       ),
     );
@@ -95,10 +100,13 @@ class _CoachRecommendedContentPreviewStackState extends State<CoachRecommendedCo
     return Positioned(
       top: 0,
       child: Center(
-        child: Container(
-          decoration: videoCardDecoration(image: imageUrl),
-          width: _maxWidth,
-          height: _maxHeight,
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+          child: Container(
+            decoration: videoCardDecoration(image: imageUrl),
+            width: _maxWidth,
+            height: _maxHeight,
+          ),
         ),
       ),
     );

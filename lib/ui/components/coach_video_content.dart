@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 
@@ -36,9 +37,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
           Visibility(
               visible: widget.videoThumbnail != null && widget.videoThumbnail.length > 1,
               child: secondElementPreview(widget.videoThumbnail.length > 1 ? widget.videoThumbnail[1] : widget.videoThumbnail[0])),
-          Visibility(
-              visible: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty,
-              child: firstElementPreview(widget.videoThumbnail[0])),
+          Visibility(visible: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty, child: firstElementPreview(widget.videoThumbnail[0])),
         ],
       ),
     );
@@ -54,12 +53,15 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
 
   Positioned thirdElementPreview(String imageUrl) {
     return Positioned(
-      top: 20,
+      top: 15,
       child: Center(
-        child: Container(
-          decoration: videoCardDecoration(image: imageUrl),
-          width: _maxWidth - 20,
-          height: _maxHeight,
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+          child: Container(
+            decoration: videoCardDecoration(image: imageUrl),
+            width: _maxWidth - 15,
+            height: _maxHeight,
+          ),
         ),
       ),
     );
@@ -67,12 +69,15 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
 
   Positioned secondElementPreview(String imageUrl) {
     return Positioned(
-      top: 10,
+      top: 7.5,
       child: Center(
-        child: Container(
-          decoration: videoCardDecoration(image: imageUrl),
-          width: _maxWidth - 10,
-          height: _maxHeight,
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+          child: Container(
+            decoration: videoCardDecoration(image: imageUrl),
+            width: _maxWidth - 7.5,
+            height: _maxHeight,
+          ),
         ),
       ),
     );
@@ -82,11 +87,14 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
     return Positioned(
       top: 0,
       child: Center(
-        child: Container(
-          decoration: videoCardDecoration(image: imageUrl),
-          width: _maxWidth,
-          height: _maxHeight,
-          child: Center(child: playIconButton()),
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+          child: Container(
+            decoration: videoCardDecoration(image: imageUrl),
+            width: _maxWidth,
+            height: _maxHeight,
+            child: Center(child: playIconButton()),
+          ),
         ),
       ),
     );
@@ -104,8 +112,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
       width: 45,
       height: 45,
       child: OlukoNeumorphism.isNeumorphismDesign
-          ? OlukoBlurredButton(
-              childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white))
+          ? OlukoBlurredButton(childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white))
           : SizedBox(
               child: Image.asset(
               'assets/self_recording/play_button.png',

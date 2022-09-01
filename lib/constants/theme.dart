@@ -8,16 +8,9 @@ class OlukoNeumorphism {
   static const String mvtLogo = 'assets/home/mvt.png';
 
   static NeumorphicStyle primaryButtonStyleDisable(
-      {bool useBorder = false,
-      bool ligthShadow = true,
-      bool darkShadow = true,
-      num depth = 3,
-      NeumorphicShape buttonShape,
-      NeumorphicBoxShape boxShape}) {
+      {bool useBorder = false, bool ligthShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {
     return NeumorphicStyle(
-        border: useBorder
-            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
-            : const NeumorphicBorder.none(),
+        border: useBorder ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark) : const NeumorphicBorder.none(),
         depth: 5,
         intensity: 0.5,
         color: OlukoNeumorphismColors.initialGradientColorPrimary.withOpacity(0.25),
@@ -32,16 +25,9 @@ class OlukoNeumorphism {
   }
 
   static NeumorphicStyle primaryButtonStyle(
-      {bool useBorder = false,
-      bool ligthShadow = true,
-      bool darkShadow = true,
-      num depth = 3,
-      NeumorphicShape buttonShape,
-      NeumorphicBoxShape boxShape}) {
+      {bool useBorder = false, bool ligthShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {
     return NeumorphicStyle(
-        border: useBorder
-            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
-            : const NeumorphicBorder.none(),
+        border: useBorder ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark) : const NeumorphicBorder.none(),
         depth: 5,
         intensity: 0.5,
         color: OlukoNeumorphismColors.initialGradientColorPrimary,
@@ -56,16 +42,9 @@ class OlukoNeumorphism {
   }
 
   static NeumorphicStyle secondaryButtonStyle(
-      {bool useBorder = false,
-      bool ligthShadow = true,
-      bool darkShadow = true,
-      num depth = 3,
-      NeumorphicShape buttonShape,
-      NeumorphicBoxShape boxShape}) {
+      {bool useBorder = false, bool ligthShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {
     return NeumorphicStyle(
-        border: useBorder
-            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
-            : const NeumorphicBorder.none(),
+        border: useBorder ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark) : const NeumorphicBorder.none(),
         depth: 5,
         intensity: 0.5,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -160,10 +139,25 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForStackCardElement() {
+    return NeumorphicStyle(
+        border: NeumorphicBorder.none(),
+        depth: 6,
+        intensity: 0.8,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(5))),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.finalGradientColorDark,
+        shadowDarkColor: Colors.black);
+  }
+
   static NeumorphicStyle getNeumorphicStyleForCardClasses(bool isStarted) {
     return NeumorphicStyle(
-        border:
-            isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        border: isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
         depth: 0,
         intensity: 0.8,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -218,8 +212,7 @@ class OlukoNeumorphismColors {
   static const Color olukoNeumorphicBlueBackgroundColor = Color(0XFF1976D2);
   static const List<Color> homeGradientColorList = [Color(0xFF3e3737), Color(0xFFbfbaba), Color(0xFF3e3737)];
   static const Color olukoNeumorphicGreenWatchColor = Color.fromRGBO(51, 188, 132, 1);
-  static const Color appBackgroundColor =
-      OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black;
+  static const Color appBackgroundColor = OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black;
 }
 
 class OlukoColors {
