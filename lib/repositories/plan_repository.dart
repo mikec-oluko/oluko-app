@@ -14,9 +14,9 @@ class PlanRepository {
   }
 
   static Future<List<Plan>> getAll() async {
-    DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
-    QuerySnapshot docRef = await projectReference.collection('plans').get();
-    List<Plan> response = mapQueryToPlan(docRef);
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final QuerySnapshot docRef = await projectReference.collection('plans').where('active', isNotEqualTo: false).get();
+    final List<Plan> response = mapQueryToPlan(docRef);
     return response;
   }
 

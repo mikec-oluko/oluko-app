@@ -57,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .getUserStatistics(profileInfo.id);
         return BlocListener<UserInformationBloc, UserInformationState>(
           listener: (context, userInformationState) {
-            if (userInformationState is UserInformationSuccess) {
+            if (userInformationState is UserInformationSuccess && userInformationState.userResponse!=null) {
               BlocProvider.of<AuthBloc>(context).updateAuthSuccess(
                 userInformationState.userResponse,
                 authState.firebaseUser,

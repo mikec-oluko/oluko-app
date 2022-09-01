@@ -33,14 +33,13 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
         key: _formKey,
         child: Scaffold(
             body: Container(
-                color:OlukoColors.black,
+                color: OlukoColors.black,
                 child: ListView(children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(
-                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 20), formSection()])))
+                          child: Column(children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 20), formSection()])))
                 ]))));
   }
 
@@ -77,8 +76,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
           children: [
             showSubscriptionCard(state.plans[1]),
             Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: OlukoColors.primary, width: 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: BoxDecoration(border: Border.all(color: OlukoColors.primary, width: 1), borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextFormField(
@@ -174,8 +172,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                       child: Align(
                         alignment: Alignment.topRight,
                         child: Container(
-                          decoration:
-                              BoxDecoration(boxShadow: [BoxShadow(blurRadius: 5)], borderRadius: BorderRadius.all(Radius.circular(15))),
+                          decoration: BoxDecoration(boxShadow: [BoxShadow(blurRadius: 5)], borderRadius: BorderRadius.all(Radius.circular(15))),
                           child: CircleAvatar(
                             radius: 14.0,
                             backgroundColor: Colors.white,
@@ -191,15 +188,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
   }
 
   SubscriptionCard showSubscriptionCard(Plan plan) {
-    SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
-    subscriptionCard.title = plan.title;
-    subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
-    subscriptionCard.selected = false;
-    subscriptionCard.showHint = plan.infoDialog != null;
-    subscriptionCard.backgroundImage = plan.backgroundImage;
-    subscriptionCard.onHintPressed = plan.infoDialog != null ? () => showWaitlist(context, plan.infoDialog) : null;
+    SubscriptionCard subscriptionCard = SubscriptionCard(plan);
     return subscriptionCard;
   }
 }

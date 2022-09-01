@@ -60,13 +60,13 @@ class CourseUtils {
         return true;
       }
       //Check if this course match with the current tag filters.
-      bool tagMatch = true;
+      bool tagMatch = false;
       selectedTagIds.forEach((tagId) {
-        if (!courseTagIds.contains(tagId)) {
-          tagMatch = false;
+        if (courseTagIds.contains(tagId)&&!tagMatch) {
+          tagMatch = true;
         }
-      });
 
+      });
       return tagMatch;
     }).toList();
     return filteredResults;
@@ -90,17 +90,27 @@ class CourseUtils {
       int searchResultsToShowLandscape) {
     return search.searchResults.isEmpty
         ? noCourseText(context)
-        : SearchResultsGrid<Course>(
-            childAspectRatio: cardsAspectRatio,
-            crossAxisCount:
-                MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
-            textInput: search.query,
-            itemList: search.searchResults);
+        : Column(crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 10,top: 25,bottom: 15),
+              child: Text(
+                      '${OlukoLocalizations.get(context, 'result')} ${search.searchResults.length} ${OlukoLocalizations.get(context, 'courses').toLowerCase()}',
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),),
+            ),
+            SearchResultsGrid<Course>(
+                childAspectRatio: cardsAspectRatio,
+                crossAxisCount:
+                    MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
+                textInput: search.query,
+                itemList: search.searchResults),
+          ],
+        );
   }
 
   static Widget noCourseText(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(left: 30, top: 20),
+        padding: const EdgeInsets.only(left: 30, top: 20),
         child: Text(
           OlukoLocalizations.get(context, 'noCourseFound'),
           style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
@@ -110,7 +120,7 @@ class CourseUtils {
   static Widget filterSelector(TagSuccess state,
       {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const [], Function showBottomTab}) {
     return Padding(
-        padding: EdgeInsets.only(top: 15.0, left: 0, right: 0),
+        padding: const EdgeInsets.only(top: 15.0, left: 0, right: 0),
         child: FilterSelector<Tag>(
           itemList: Map.fromIterable(state.tagsByCategories.entries,
               key: (entry) => entry.key.name.toString(),

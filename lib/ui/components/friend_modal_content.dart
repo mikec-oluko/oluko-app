@@ -430,7 +430,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
 
   Widget _getButtons(bool connectionRequested, FriendState friendState, bool userIsFriend) {
     if (connectionRequested) {
-      _buttonTextContent = OlukoLocalizations.of(context).find('cancel');
+      _buttonTextContent = OlukoLocalizations.of(context).find('connectionRequestCancelled');
       return Container(
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
@@ -450,7 +450,6 @@ class _FriendModalContentState extends State<FriendModalContent> {
       _buttonTextContent = OlukoLocalizations.of(context).find('remove');
       return SizedBox(
         child: OlukoNeumorphicSecondaryButton(
-          thinPadding: true,
           isExpanded: false,
           textColor: Colors.grey,
           title: _buttonTextContent,
@@ -478,7 +477,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
             if (friendState is GetFriendsSuccess) {
               widget.friendRequestBloc.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
               setState(() {
-                _buttonTextContent = OlukoLocalizations.of(context).find('cancel');
+                _buttonTextContent = OlukoLocalizations.of(context).find('connectionRequestCancelled');
               });
             }
           },

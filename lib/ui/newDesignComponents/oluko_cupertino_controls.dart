@@ -7,6 +7,7 @@ import 'package:chewie/src/material/material_progress_bar.dart';
 import 'package:chewie/src/helpers/utils.dart';
 import 'package:chewie/src/material/widgets/options_dialog.dart';
 import 'package:chewie/src/notifiers/index.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_center_play_button.dart';
@@ -16,7 +17,7 @@ import 'package:chewie/src/models/subtitle_model.dart';
 
 class OlukoCupertinoControls extends StatefulWidget {
   bool showOptions;
-  OlukoCupertinoControls({Key key,this.showOptions=false}) : super(key: key);
+  OlukoCupertinoControls({Key key, this.showOptions = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -75,7 +76,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
           absorbing: notifier.hideStuff,
           child: Stack(
             children: [
-              if (_latestValue.isBuffering && (_latestValue.buffered[0].end.inSeconds<10 || _latestValue.buffered[0].end>=_latestValue.position))
+              if (_latestValue.isBuffering && (_latestValue.buffered[0].end.inSeconds < 10 || _latestValue.buffered[0].end >= _latestValue.position))
                 const Center(
                   child: CircularProgressIndicator(),
                 )
@@ -90,7 +91,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
                       offset: Offset(0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
                       child: _buildSubtitles(context, chewieController.subtitle),
                     ),
-                  widget.showOptions? _buildBottomBar(context):SizedBox(),
+                  widget.showOptions ? _buildBottomBar(context) : SizedBox(),
                 ],
               ),
             ],
@@ -146,8 +147,38 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
     );
   }
 
+  Future<void> _onSpeedButtonTap() async {
+    _hideTimer?.cancel();
+
+    final chosenSpeed = await showCupertinoModalPopup<double>(
+      context: context,
+      semanticsDismissible: true,
+      useRootNavigator: chewieController.useRootNavigator,
+      builder: (context) => _PlaybackSpeedDialog(
+        speeds: chewieController.playbackSpeeds,
+        selected: _latestValue.playbackSpeed,
+      ),
+    );
+
+    if (chosenSpeed != null) {
+      controller.setPlaybackSpeed(chosenSpeed);
+    }
+
+    if (_latestValue.isPlaying) {
+      _startHideTimer();
+    }
+  }
+
   Widget _buildOptionsButton() {
-    final options = <OptionItem>[];
+    final options = <OptionItem>[
+      OptionItem(
+        onTap: () {
+         _onSpeedButtonTap();
+        },
+        iconData: Icons.speed,
+        title: chewieController.optionsTranslation?.playbackSpeedButtonText ?? 'Playback speed',
+      ),
+    ];
 
     if (chewieController.subtitle != null && chewieController.subtitle.isNotEmpty) {
       options.add(
@@ -177,7 +208,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
             await chewieController.optionsBuilder(context, options);
           } else {
             await showModalBottomSheet<OptionItem>(
-              backgroundColor:  OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
               context: context,
               isScrollControlled: true,
               useRootNavigator: true,
@@ -502,6 +533,43 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
               backgroundColor: Theme.of(context).disabledColor.withOpacity(.5),
             ),
       ),
+    );
+  }
+}
+
+class _PlaybackSpeedDialog extends StatelessWidget {
+  const _PlaybackSpeedDialog({
+    Key key,
+    List<double> speeds,
+    double selected,
+  })  : _speeds = speeds,
+        _selected = selected,
+        super(key: key);
+
+  final List<double> _speeds;
+  final double _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedColor = CupertinoTheme.of(context).primaryColor;
+
+    return CupertinoActionSheet(
+      actions: _speeds
+          .map(
+            (e) => CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.of(context).pop(e);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (e == _selected) Icon(Icons.check, size: 20.0, color: selectedColor),
+                  Text(e.toString()),
+                ],
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 }

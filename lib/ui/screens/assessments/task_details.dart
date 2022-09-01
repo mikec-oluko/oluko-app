@@ -37,8 +37,7 @@ import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false, this.taskCompleted = false})
-      : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false, this.taskCompleted = false}) : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
@@ -144,13 +143,14 @@ class _TaskDetailsState extends State<TaskDetails> {
               }
             }),
         body: BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+          buildWhen: (previous, current) => previous is! GetSuccess && current is GetSuccess,
           builder: (context, state) {
             if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission.task.id == _task.id) {
               isAssessmentDone = true;
               _makePublic = state.taskSubmission.isPublic;
               _panelContent = isAssessmentDone ? recordAgainButtons(_taskSubmission) : startRecordingButton();
             } else if (state is TaskSubmissionLoading) {
-              _panelContent = const SizedBox.shrink();
+              _panelContent = Center(child: OlukoCircularProgressIndicator());
             } else {
               _panelContent = startRecordingButton();
             }
@@ -177,9 +177,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                               padding: const EdgeInsets.symmetric(horizontal: 20),
                               child: isAssessmentDone || widget.taskCompleted
                                   ? recordAgainButtons(_taskSubmission)
-                                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                      Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: _panelContent)
-                                    ]),
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: _panelContent)]),
                             ),
                           ),
                     body: viewContent(),
@@ -250,12 +250,8 @@ class _TaskDetailsState extends State<TaskDetails> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
@@ -279,8 +275,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                         setState(() {
                           _makePublic = value;
                           //BlocProvider.of<TaskPrivacityBloc>(context).set(value);
-                          BlocProvider.of<TaskSubmissionBloc>(context)
-                              .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                          BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
                         });
                       } else {
                         AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
@@ -293,8 +288,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     onChanged: (bool value) => setState(() {
                       if (taskSubmission != null) {
                         _makePublic = value;
-                        BlocProvider.of<TaskSubmissionBloc>(context)
-                            .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                        BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
                       } else {
                         AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
                       }
@@ -327,10 +321,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             _taskSubmission.video != null) {
           return false;
         }
-        if (previous is! GetSuccess &&
-            _taskSubmission != null &&
-            current.taskSubmission != null &&
-            current.taskSubmission.id == _taskSubmission.id) {
+        if (previous is! GetSuccess && _taskSubmission != null && current.taskSubmission != null && current.taskSubmission.id == _taskSubmission.id) {
           return false;
         }
       }
@@ -360,10 +351,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             const SizedBox(height: 20),
             showVideoPlayer(_task.videoHls ?? _task.video),
             formSection(state.taskSubmission),
-            if (OlukoNeumorphism.isNeumorphismDesign)
-              SizedBox(height: ScreenUtils.height(context) * 0.4)
-            else
-              recordAgainButtons(state.taskSubmission)
+            if (OlukoNeumorphism.isNeumorphismDesign) SizedBox(height: ScreenUtils.height(context) * 0.4) else recordAgainButtons(state.taskSubmission)
           ],
         );
       } else {
@@ -528,7 +516,6 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   void nextAssessmentButtonOnPress(BuildContext context) {
     if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
-      //AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
       goToAssessmentVideos();
     } else {
       if (_controller != null) {
@@ -564,9 +551,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
-          Padding(
-              padding: const EdgeInsets.only(bottom: 15.0),
-              child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
+          Padding(padding: const EdgeInsets.only(bottom: 15.0), child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
           Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
           Padding(
               padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 80 : 25.0),
@@ -612,6 +597,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                           width: 80,
                           height: 50,
                           child: OlukoNeumorphicPrimaryButton(
+                            thinPadding: true,
                             isExpanded: false,
                             title: OlukoLocalizations.get(context, 'no'),
                             onPressed: () {
@@ -646,10 +632,7 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget recordedVideos(TaskSubmission taskSubmission) {
     return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
-      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex ||
-          isAssessmentDone ||
-          widget.taskCompleted ||
-          _isLoading) {
+      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex || isAssessmentDone || widget.taskCompleted || _isLoading) {
         return Column(children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -676,8 +659,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                       }
                     },
                     child: taskResponse(
-                        TimeConverter.durationToString(Duration(
-                            milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
+                        TimeConverter.durationToString(
+                            Duration(milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
                         taskSubmission?.video?.thumbUrl,
                         taskSubmission)),
               ]),
@@ -700,10 +683,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null)
-                const Image(image: AssetImage('assets/assessment/thumbnail.jpg'))
-              else
-                Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null) const Image(image: AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign
@@ -749,10 +729,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null)
-                const Image(image: AssetImage('assets/assessment/thumbnail.jpg'))
-              else
-                Image(image: CachedNetworkImageProvider(thumbnail)),
+              if (thumbnail == null) const Image(image: AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign

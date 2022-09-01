@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -58,9 +59,11 @@ import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/selected_tags_bloc.dart';
+import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -121,6 +124,7 @@ import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_password.dart';
 import 'package:oluko_app/ui/screens/authentication/loginWithSteps/login_username.dart';
 import 'package:oluko_app/ui/screens/authentication/login_neumorphic.dart';
+import 'package:oluko_app/ui/screens/authentication/register.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -184,7 +188,7 @@ import 'models/recommendation_media.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
-import 'ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
@@ -256,7 +260,8 @@ enum RouteEnum {
   coachRecommendedContentGallery,
   aboutCoach,
   noInternetConnection,
-  courseShareView
+  courseShareView,
+  registerUser
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -318,6 +323,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.aboutCoach: '/coach-about-coach-view',
   RouteEnum.noInternetConnection: '/no-internet-connection',
   RouteEnum.courseShareView: '/course-share-view',
+  RouteEnum.registerUser: '/register-user',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -439,6 +445,7 @@ class Routes {
   final UsersSelfiesBloc _usersSelfiesBloc = UsersSelfiesBloc();
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
+  final SignupBloc _signUpBloc = SignupBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -451,6 +458,10 @@ class Routes {
       BlocProvider<FAQBloc>.value(value: _fAQBloc),
       BlocProvider<UserInformationBloc>.value(value: _userInformationBloc),
     ];
+
+    if (Platform.isIOS || Platform.isMacOS) {
+      commonProviders.add(BlocProvider<SubscriptionContentBloc>.value(value: SubscriptionContentBloc()));
+    }
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
@@ -523,6 +534,7 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<UserBloc>.value(value: _userBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -532,6 +544,7 @@ class Routes {
             BlocProvider<StoryBloc>.value(value: _storyBloc)
           ]);
         }
+
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MainPage(
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
@@ -548,10 +561,7 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.loginNeumorphic:
-        providers = [
-          BlocProvider<UserBloc>.value(value: _userBloc),
-          BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)
-        ];
+        providers = [BlocProvider<UserBloc>.value(value: _userBloc), BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc)];
         final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
         newRouteView = LoginNeumorphicPage(dontShowWelcomeTest: argumentsToAdd != null ? argumentsToAdd['dontShowWelcomeTest'] : null);
         break;
@@ -660,11 +670,17 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CountryBloc>.value(value: _countryBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc)
         ];
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-        newRouteView = ProfileSubscriptionPage();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        providers = [
+          BlocProvider<PlanBloc>.value(value: _planBloc),
+        ];
+        newRouteView = ProfileSubscriptionPage(
+            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);
         break;
       case RouteEnum.profileHelpAndSupport:
         providers = [
@@ -716,8 +732,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView =
-            UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
+        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
         providers = [
@@ -729,8 +744,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileChallengesPage(
           challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
-          isCurrentUser:
-              argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
+          isCurrentUser: argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,
         );
         break;
@@ -828,10 +842,7 @@ class Routes {
             fromChallenge: argumentsToAdd['fromChallenge'] as bool);
         break;
       case RouteEnum.movementIntro:
-        providers = [
-          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
-        ];
+        providers = [BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MovementIntro(
           movement: argumentsToAdd['movement'] as Movement,
@@ -1011,8 +1022,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = UserChallengeDetail(
-            challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
+        newRouteView = UserChallengeDetail(challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -1028,8 +1038,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
           isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? true : argumentsToAdd['isFirstTime'] as bool,
-          assessmentsDone:
-              argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
+          assessmentsDone: argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
         );
         break;
       case RouteEnum.taskDetails:
@@ -1261,10 +1270,11 @@ class Routes {
           BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView =
-            CoachProfile(coachUser: argumentsToAdd['coachUser'] as CoachUser, currentUser: argumentsToAdd['currentUser'] as UserResponse);
+        newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser'] as CoachUser, currentUser: argumentsToAdd['currentUser'] as UserResponse);
         break;
       case RouteEnum.hiFivePage:
         providers = [
@@ -1335,6 +1345,14 @@ class Routes {
           currentUser: argumentsToAdd['currentUser'] as UserResponse,
           courseToShare: argumentsToAdd['courseToShare'] as Course,
         );
+        break;
+      case RouteEnum.registerUser:
+        providers = [
+          BlocProvider<CountryBloc>.value(value: _countryBloc),
+          BlocProvider<SignupBloc>.value(value: _signUpBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+        ];
+        newRouteView = const RegisterPage();
         break;
       default:
         newRouteView = MainPage();

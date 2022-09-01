@@ -64,8 +64,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   @override
   Widget build(BuildContext context) {
-    widget.scrollController =
-        ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
+    widget.scrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
     BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
     return homeContainer();
   }
@@ -264,11 +263,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             child: VisibilityDetector(
               key: Key('video${index}'),
               onVisibilityChanged: (VisibilityInfo info) {
-                if (info.visibleFraction < 0.1 &&
-                    mounted &&
-                    courseIndex == index &&
-                    !_isVideoPlaying &&
-                    courseIndex <= widget.courses.length) {
+                if (info.visibleFraction < 0.1 && mounted && courseIndex == index && !_isVideoPlaying && courseIndex <= widget.courses.length) {
                   BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
                 } else {
                   if (mounted) {
@@ -317,6 +312,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   outsideCourseEnrollment: widget.courseEnrollments[index],
                   outsideCourseIndex: index,
                   outSideCloseVideo: closeVideo,
+                  onPressed: () => Future.delayed(Duration(milliseconds: 500),(){
+                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+                  })
                 ),
               );
             } else {
@@ -383,8 +381,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           }
         },
         child: Padding(
-          padding: EdgeInsets.only(
-              top: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.08 : ScreenUtils.height(context) * 0.06),
+          padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.08 : ScreenUtils.height(context) * 0.06),
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
@@ -515,7 +512,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                             ? ScreenUtils.smallScreen(context)
                                 ? ScreenUtils.height(context) * 0.38
                                 : ScreenUtils.height(context) * 0.35
-                            : ScreenUtils.height(context) * 0.26),
+                            : ScreenUtils.height(context) * 0.255),
                     width: ScreenUtils.width(context),
                     child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
                       if (state is UsersSelfiesSuccess) {

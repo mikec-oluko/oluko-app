@@ -12,9 +12,18 @@ class CoachAudioSentComponent extends StatefulWidget {
   final Duration durationFromRecord;
   final bool isPreviewContent;
   final Function() onDelete;
+  final Function(bool isPlaying) onAudioPlaying;
+  final bool Function() onStartPlaying;
   final CoachAudioMessage audioMessageItem;
   const CoachAudioSentComponent(
-      {Key key, this.record, this.isPreviewContent = false, this.onDelete, this.audioMessageItem, this.durationFromRecord})
+      {Key key,
+      this.record,
+      this.isPreviewContent = false,
+      this.onDelete,
+      this.audioMessageItem,
+      this.durationFromRecord,
+      this.onAudioPlaying,
+      this.onStartPlaying})
       : super(key: key);
 
   @override
@@ -31,6 +40,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
 
   @override
   void dispose() {
+    audioPlayer.dispose();
     super.dispose();
   }
 
@@ -207,8 +217,8 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
   }
 
   Future<void> _onPlay({String filePath}) async {
-    if (!_isPlaying) {
-      if (playedOnce) {
+    if (!widget.onStartPlaying()) {
+      if (playedOnce && audioPlayer.state == PlayerState.PAUSED) {
         await audioPlayer.resume();
       } else {
         await audioPlayer.play(filePath, isLocal: true);
@@ -216,15 +226,16 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
           playedOnce = true;
         });
       }
-
       setState(() {
         _completedPercentage = 0.0;
         _isPlaying = true;
+        widget.onAudioPlaying(_isPlaying);
       });
 
       audioPlayer.onPlayerCompletion.listen((_) {
         setState(() {
           _isPlaying = false;
+          widget.onAudioPlaying(_isPlaying);
           _completedPercentage = 0.0;
           playedOnce = false;
         });
@@ -242,10 +253,13 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         });
       });
     } else {
-      await audioPlayer.pause();
-      setState(() {
-        _isPlaying = false;
-      });
+      if (audioPlayer.state == PlayerState.PLAYING) {
+        await audioPlayer.pause();
+        setState(() {
+          _isPlaying = false;
+          widget.onAudioPlaying(_isPlaying);
+        });
+      }
     }
   }
 }

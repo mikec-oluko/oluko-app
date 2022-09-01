@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
+import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/personal_record.dart';
@@ -16,8 +17,13 @@ class StoryUtils {
       final int result = totalScore ?? 0;
       final List<PersonalRecord> pRList=await PersonalRecordRepository.getByUserAndChallengeId(userId,segment.id);
       bool isNewPersonalRecord=true;
-      if(pRList!=null){
-        isNewPersonalRecord=pRList[0].value<result;
+      if(pRList.isNotEmpty){
+        if(segment.type==SegmentTypeEnum.Rounds){
+          isNewPersonalRecord=pRList[0].value<result;
+        }
+        else{
+          isNewPersonalRecord=pRList[0].value>result;
+        }
       }  
       if (isNewPersonalRecord) {
         final String segmentTitle = '${segment.name} ${OlukoLocalizations.get(context, 'challenge')}';

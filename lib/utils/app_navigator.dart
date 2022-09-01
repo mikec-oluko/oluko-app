@@ -16,6 +16,11 @@ class AppNavigator {
     Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': true});
   }
 
+  Future<void> goToSubscriptionsFromRegister(BuildContext context) async {
+    Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+    Navigator.pushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
+  }
+
   static Future<bool> onWillPop(BuildContext context) async {
     if (Platform.isAndroid) {
       SystemNavigator.pop();

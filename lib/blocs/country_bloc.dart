@@ -12,6 +12,11 @@ class CountrySuccess extends CountryState {
   CountrySuccess({this.countries});
 }
 
+class CountryWithStateSuccess extends CountryState {
+  Country country;
+  CountryWithStateSuccess({this.country});
+}
+
 class CountryFailure extends CountryState {
   final String exceptionMessage;
   CountryFailure({this.exceptionMessage});
@@ -26,8 +31,7 @@ class CountryBloc extends Cubit<CountryState> {
       if (countries != null && countries.isNotEmpty) {
         if (country != null && country != '') {
           final countryToUpdateIndex = countries.indexWhere((element) => element.name == country);
-          if (countryToUpdateIndex != -1 &&
-              (countries[countryToUpdateIndex].states == null || countries[countryToUpdateIndex].states.isEmpty)) {
+          if (countryToUpdateIndex != -1 && (countries[countryToUpdateIndex].states == null || countries[countryToUpdateIndex].states.isEmpty)) {
             countries[countryToUpdateIndex].states = await CountryRepository.getCountryStates(countries[countryToUpdateIndex].id);
             emit(CountrySuccess(countries: countries));
           }
@@ -65,5 +69,26 @@ class CountryBloc extends Cubit<CountryState> {
 
   void clear() {
     countries = [];
+  }
+
+  Future<void> getAllCountries() async {
+    try {
+      countries = await CountryRepository.getAllCountries();
+      if (countries.isNotEmpty) {
+        emit(CountrySuccess(countries: countries));
+      } else {
+        emit(CountryFailure());
+      }
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  void emitSelectedCountryState(Country selectedCountry) {
+    emit(CountryWithStateSuccess(country: selectedCountry));
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
@@ -24,8 +27,13 @@ class CoachAssignmentResponseDispose extends CoachAssignmentState {
 
 class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
   CoachAssignmentBloc() : super(Loading());
-
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+  @override
   void dispose() {
+    if (subscription != null) {
+      subscription.cancel();
+      subscription = null;
+    }    
     emitCoachAssignmentDispose();
   }
 
@@ -41,6 +49,16 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
       emit(CoachAssignmentFailure(exception: exception));
       rethrow;
     }
+  }
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getCoachAssignmentStatusStream(String userId)  {
+    CoachAssignment coachAssignmentResponse; 
+    return subscription ??= CoachRepository.getCoachAssignmentByUserIdStream(userId).listen((snapshot) async {
+      snapshot.docs.forEach((doc) {
+          final Map<String, dynamic> content = doc.data();
+          coachAssignmentResponse = CoachAssignment.fromJson(content);
+        });
+      emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentResponse));
+    });
   }
 
   void welcomeVideoAsSeen(CoachAssignment coachAssignment) async {

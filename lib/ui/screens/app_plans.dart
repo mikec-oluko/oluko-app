@@ -31,14 +31,13 @@ class _AppPlansState extends State<AppPlans> {
         key: _formKey,
         child: Scaffold(
             body: Container(
-                color:OlukoColors.black,
+                color: OlukoColors.black,
                 child: ListView(children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(
-                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
+                          child: Column(children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
                 ]))));
   }
 
@@ -145,8 +144,7 @@ class _AppPlansState extends State<AppPlans> {
                       child: Align(
                         alignment: Alignment.topRight,
                         child: Container(
-                          decoration:
-                              BoxDecoration(boxShadow: [BoxShadow(blurRadius: 5)], borderRadius: BorderRadius.all(Radius.circular(15))),
+                          decoration: BoxDecoration(boxShadow: [BoxShadow(blurRadius: 5)], borderRadius: BorderRadius.all(Radius.circular(15))),
                           child: CircleAvatar(
                             radius: 14.0,
                             backgroundColor: Colors.white,
@@ -163,15 +161,7 @@ class _AppPlansState extends State<AppPlans> {
 
   List<SubscriptionCard> showSubscriptionCards(List<Plan> plans) {
     return plans.map((Plan plan) {
-      SubscriptionCard subscriptionCard = SubscriptionCard();
-      subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-      subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
-      subscriptionCard.title = plan.title;
-      subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
-      subscriptionCard.selected = false;
-      subscriptionCard.showHint = plan.infoDialog != null;
-      subscriptionCard.backgroundImage = plan.backgroundImage;
-      subscriptionCard.onHintPressed = plan.infoDialog != null ? () => showWaitlist(context, plan.infoDialog) : null;
+      SubscriptionCard subscriptionCard = SubscriptionCard(plan);
       return subscriptionCard;
     }).toList();
   }

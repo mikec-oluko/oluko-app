@@ -9,6 +9,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
@@ -16,6 +17,8 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+
+import '../../../routes.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
   LoginNeumorphicPage({this.dontShowWelcomeTest, Key key}) : super(key: key);
@@ -174,31 +177,44 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           return null;
         },
       ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: InkWell(
-            child: Text(
-              OlukoLocalizations.get(context, 'forgotPassword'),
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            onTap: () {
-              _formKey.currentState.save();
-              BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
-                context,
-                ForgotPasswordDto(
-                  email: _requestData.email,
-                  projectId: GlobalConfiguration().getValue('projectId'),
+      BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthResetPassLoading) {
+            return Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 20, right: 20),
+                  child: Container(height: 15, width: 15, child: OlukoCircularProgressIndicator(personalized: true, width: 2))),
+            );
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  child: Text(
+                    OlukoLocalizations.get(context, 'forgotPassword'),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    _formKey.currentState.save();
+                    BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
+                      context,
+                      ForgotPasswordDto(
+                        email: _requestData.email,
+                        projectId: GlobalConfiguration().getValue('projectId'),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            );
+          }
+        },
       ),
       const SizedBox(
         height: 20,
@@ -225,6 +241,34 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           title: OlukoLocalizations.get(context, 'login'),
         ),
       ),
+      if (Platform.isIOS || Platform.isMacOS)
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: SizedBox(
+            height: 50,
+            child: OlukoNeumorphicPrimaryButton(
+              useBorder: true,
+              isExpanded: false,
+              thinPadding: true,
+              onPressed: () {
+                // Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
+                // _formKey.currentState.save();
+                // FocusScope.of(context).unfocus();
+                // BlocProvider.of<AuthBloc>(context).login(
+                //   context,
+                //   LoginRequest(
+                //     email: _requestData.email,
+                //     password: _requestData.password,
+                //     userName: _requestData.userName,
+                //     projectId: GlobalConfiguration().getValue('projectId'),
+                //   ),
+                // );
+              },
+              title: OlukoLocalizations.get(context, 'register'),
+            ),
+          ),
+        ),
       const SizedBox(
         height: 15,
       ),
@@ -354,7 +398,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       ),
     );
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       return Column(
         children: [
           googleButton,

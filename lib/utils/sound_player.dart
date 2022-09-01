@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_player.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
+import 'package:oluko_app/utils/sound_utils.dart';
 
 enum SoundsEnum { enroll, classFinished, newCoachRecomendation }
 
@@ -35,7 +36,7 @@ class SoundPlayer {
   }
 
   static Future playAsset({SoundsEnum soundEnum, String asset}) async {
-    if (globalNotificationsEnabled(soundEnum)) {
+    if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound()) {
       final AudioCache player = AudioCache(duckAudio: true);
       String assetToPlay = asset;
       if (soundEnum != null) {
