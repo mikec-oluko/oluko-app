@@ -10,17 +10,17 @@ import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/ui/newDesignComponents/animation.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/config/project_settings.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +28,9 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
+  final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
   final bool firstTime = await UserUtils.isFirstTime();
-  final String route = await getInitialRoute(alreadyLoggedUser, firstTime);
+  final String route = await getInitialRoute(alreadyLoggedUser, firstTime,alreadyLoggedUserResponse);
   final MyApp myApp = MyApp(
     initialRoute: route,
   );
@@ -47,7 +48,7 @@ Future<void> main() async {
   }
 }
 
-Future<String> getInitialRoute(User alreadyLoggedUser, bool isFirstTime) async {
+Future<String> getInitialRoute(User alreadyLoggedUser, bool isFirstTime, UserResponse alreadyLoggedUserResponse) async {
   if (alreadyLoggedUser == null) {
     if (isFirstTime != null && isFirstTime && OlukoNeumorphism.isNeumorphismDesign) {
       return routeLabels[RouteEnum.introVideo];
@@ -59,13 +60,15 @@ Future<String> getInitialRoute(User alreadyLoggedUser, bool isFirstTime) async {
       }
     }
   } else {
+    if (alreadyLoggedUserResponse.currentPlan < 0 || alreadyLoggedUserResponse.currentPlan == null) {
+      return routeLabels[RouteEnum.profileSubscription];
+    }
     AssessmentAssignment assesmentA = await AssessmentAssignmentRepository.getByUserId(alreadyLoggedUser.uid);
     if (assesmentA != null && (assesmentA.seenByUser == null || !assesmentA.seenByUser)) {
       return routeLabels[RouteEnum.assessmentVideos];
-    }else{
+    } else {
       return routeLabels[RouteEnum.root];
     }
-    
   }
 }
 
