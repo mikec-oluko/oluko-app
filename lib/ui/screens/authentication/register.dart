@@ -107,28 +107,23 @@ class _RegisterState extends State<RegisterPage> {
 
   Widget _termsAndConditionsPrivacyPolicy(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Container(width: 15, height: 15, child: checkBox()),
-                  ),
-                ),
-                Text(
-                  OlukoLocalizations.get(context, 'newsInfoAndOffers'),
-                  // maxLines: 2,
-                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
+            child: Container(
+              width: 15,
+              height: 15,
+              child: Container(width: 15, height: 15, child: checkBox()),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              OlukoLocalizations.get(context, 'newsInfoAndOffers'),
+              // maxLines: 2,
+              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
             ),
           ),
         ],
@@ -144,39 +139,40 @@ class _RegisterState extends State<RegisterPage> {
 
   Widget _userCheckConditionsAndPolicySection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Container(width: 15, height: 15, child: checkBox(isAgree: true)),
-                  ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
+                child: Container(
+                  width: 15,
+                  height: 15,
+                  child: Container(width: 15, height: 15, child: checkBox(isAgree: true)),
                 ),
-                Text(OlukoLocalizations.get(context, 'registerByContinuing'),
-                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
-                InkWell(
-                  onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
-                  child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
-                          .copyWith(decoration: TextDecoration.underline)),
-                ),
-                Text(OlukoLocalizations.get(context, 'and'),
-                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
-                InkWell(
-                  onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
-                  child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
-                          .copyWith(decoration: TextDecoration.underline)),
-                ),
-              ],
+              ),
+              Text(OlukoLocalizations.get(context, 'registerByContinuing'),
+                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+              InkWell(
+                onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
+                child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
+                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                        .copyWith(decoration: TextDecoration.underline)),
+              ),
+              Text(OlukoLocalizations.get(context, 'and'),
+                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: InkWell(
+              onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
+              child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
+                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                      .copyWith(decoration: TextDecoration.underline)),
             ),
           ),
         ],
