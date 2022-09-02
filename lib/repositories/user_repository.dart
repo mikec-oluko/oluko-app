@@ -1,20 +1,15 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
-import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/services/image_upload_service..dart';
 import 'package:oluko_app/utils/image_utils.dart';
-import 'package:path/path.dart' as p;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'auth_repository.dart';
@@ -109,8 +104,7 @@ class UserRepository {
     final CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
 
-    final UserResponse user =
-        UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
+    final UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
     user.id = docRef.id;
     user.username = docRef.id;
@@ -145,7 +139,7 @@ class UserRepository {
     final DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 500);
-    final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path,'avatar');
+    final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path, 'avatar');
     user.avatar = downloadUrl;
     try {
       //await userReference.update(user.toJson()); This will be done by the extesion
@@ -164,7 +158,7 @@ class UserRepository {
     final DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(coverImage, 1000);
-    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path,'cover_image');
+    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path, 'cover_image');
     user.coverImage = coverDownloadImage;
     try {
       //await userReference.update(user.toJson()); This will be done by the extesion
@@ -247,17 +241,31 @@ class UserRepository {
   Future<Response> updateUserInformation(UserInformation user, String userId) async {
     final apiToken = await AuthRepository().getApiToken();
     if (apiToken != null) {
-      Client http = Client();
-      final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/user';
-      var body = user.toJson();
+      final Client http = Client();
+      final String url = '${GlobalConfiguration().getValue('firebaseFunctions')}/user';
+      final body = user.toJson();
       final headers = {
         'Authorization': 'Bearer $apiToken',
       };
-      Response response = await http.put(Uri.parse('$url/${userId}'), headers: headers, body: body);
+      final Response response = await http.put(Uri.parse('$url/${userId}'), headers: headers, body: body);
       return response;
     } else {
       return null;
     }
+  }
 
+  Future<Response> sendDeleteConfirmation(String userId) async {
+    final apiToken = await AuthRepository().getApiToken();
+    if (apiToken != null) {
+      final Client http = Client();
+      final String url = '${GlobalConfiguration().getValue('firebaseFunctions')}/user';
+      final headers = {
+        'Authorization': 'Bearer $apiToken',
+      };
+      final Response response = await http.post(Uri.parse('$url/$userId/start-delete-process'), headers: headers);
+      return response;
+    } else {
+      return null;
+    }
   }
 }

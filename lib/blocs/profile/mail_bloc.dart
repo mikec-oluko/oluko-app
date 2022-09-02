@@ -20,10 +20,10 @@ class MailFailure extends OlukoException with MailState {
 class MailBloc extends Cubit<MailState> {
   MailBloc() : super(MailLoading());
 
-  Future<void> sendEmail(String username, String email, String message, String phone) async {
+  Future<void> sendContactUsMail(String username, String email, String message, String phone) async {
     try {
       if (message != '') {
-        MailService.send(username, email, message, phone);
+        MailService.sendContactUsMail(username, email, message, phone);
         emit(MailSuccess());
       } else {
         emit(MailFailure());
@@ -37,4 +37,5 @@ class MailBloc extends Cubit<MailState> {
       rethrow;
     }
   }
+
 }

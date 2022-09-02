@@ -234,7 +234,6 @@
     "exitConfirmationBody": "Do you want to exit?",
     "pleaseCheckYourEmail": "Please check your email for account confirmation.",
     "pleaseSubscribe": "Please subscribe",
-    "purchase": "Purchase",
     "welcome": "Welcome",
     "userForThisAccountNotFound": "User for this account not found",
     "pleaseCheckYourEmailForInstructions": "Please check your email for instruction.",
@@ -408,5 +407,13 @@
     "filtersResult": "Filters result",
     "result": "Result",
     "manageSubscriptionFromWeb": "You can only modify the subscription from the web",
-    "selectASubscription": "Select a subscription"
+    "selectASubscription": "Select a subscription",
+    "selectPlan": "Select plan",
+    "manageMembership": "Manage Membership",
+    "successfullySubscribed": "Successfully subscribed",
+    "cancelSubscription": "Cancel subscription",
+    "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
+    "subCancelledSuccessfully": "Subscription canceled successfully",
+    "deleteUser": "delete user",
+    "deleteUserConfirmation":"Are you sure? Your profile and related account information will be deleted from the app"
 }

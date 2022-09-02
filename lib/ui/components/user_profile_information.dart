@@ -15,6 +15,7 @@ import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
@@ -30,8 +31,7 @@ class UserProfileInformation extends StatefulWidget {
   final UserResponse currentUser;
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
-  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
-      : super();
+  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats}) : super();
 
   @override
   _UserProfileInformationState createState() => _UserProfileInformationState();
@@ -76,13 +76,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           BlocProvider.of<HiFiveReceivedBloc>(context).get(context, authState.user.id, widget.userToDisplayInformation.id);
         }
         return WillPopScope(
-          onWillPop:()async{
+          onWillPop: () async {
             BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
             return true;
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
+            padding:
+                const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
             //TODO: Check if need neumorphic outside
             child: Container(
               decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
@@ -110,10 +110,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget _profileUserNeumorphicInformation(String location, List<String> valuesForArchivements) {
     final bool canShowDetails = _privacyOptions.canShowDetails(
-        isOwner: _isOwner,
-        currentUser: widget.currentUser,
-        userRequested: widget.userToDisplayInformation,
-        connectStatus: widget.connectStatus);
+        isOwner: _isOwner, currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation, connectStatus: widget.connectStatus);
 
     final profileDefaultProfilePicContent =
         '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
@@ -226,10 +223,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
     final bool canShowDetails = _privacyOptions.canShowDetails(
-        isOwner: _isOwner,
-        currentUser: widget.currentUser,
-        userRequested: widget.userToDisplayInformation,
-        connectStatus: widget.connectStatus);
+        isOwner: _isOwner, currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation, connectStatus: widget.connectStatus);
 
     final profileDefaultProfilePicContent =
         '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
@@ -362,7 +356,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               onPressed: () {
                 BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
               },
-              child: Image.asset('assets/profile/upload_icon.png')),
+              child: Image.asset('assets/profile/uploadImage.png')),
         ),
       ),
     );
@@ -422,8 +416,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             child: Text(
               UserHelper.getFullName(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
               style: OlukoFonts.olukoBigFont(
-                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                  customFontWeight: FontWeight.w500),
+                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, customFontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
           ),

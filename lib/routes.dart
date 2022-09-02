@@ -459,6 +459,10 @@ class Routes {
       BlocProvider<UserInformationBloc>.value(value: _userInformationBloc),
     ];
 
+    if (Platform.isIOS || Platform.isMacOS) {
+      commonProviders.add(BlocProvider<SubscriptionContentBloc>.value(value: SubscriptionContentBloc()));
+    }
+
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
       case RouteEnum.root:
@@ -530,6 +534,7 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<UserBloc>.value(value: _userBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -538,10 +543,6 @@ class Routes {
             BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
             BlocProvider<StoryBloc>.value(value: _storyBloc)
           ]);
-        }
-        if (Platform.isIOS || Platform.isMacOS) {
-          final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
-          providers.add(BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc));
         }
 
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
@@ -669,17 +670,17 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CountryBloc>.value(value: _countryBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc)
         ];
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
-        final SubscriptionContentBloc _subscriptionContentBloc = SubscriptionContentBloc();
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         providers = [
-          BlocProvider<SubscriptionContentBloc>.value(value: _subscriptionContentBloc),
+          BlocProvider<PlanBloc>.value(value: _planBloc),
         ];
         newRouteView = ProfileSubscriptionPage(
-            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);
+            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? true : argumentsToAdd['fromRegister'] as bool);
         break;
       case RouteEnum.profileHelpAndSupport:
         providers = [
@@ -1349,6 +1350,7 @@ class Routes {
         providers = [
           BlocProvider<CountryBloc>.value(value: _countryBloc),
           BlocProvider<SignupBloc>.value(value: _signUpBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const RegisterPage();
         break;

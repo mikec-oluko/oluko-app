@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -114,9 +113,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
               child: Column(
                 children: [
                   buildUserInformationFields(),
+                  deleteMyAccountButton(),
                   const SizedBox(
-                    height: 100,
-                  )
+                    height: 120,
+                  ),
                 ],
               ),
             ),
@@ -306,12 +306,39 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     );
   }
 
+  Padding deleteMyAccountButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Container(
+        child: OlukoNeumorphicPrimaryButton(
+          customColor: OlukoColors.error,
+          title: '${TextHelper.capitalizeFirstCharacter(OlukoLocalizations.get(context, 'deleteUser'))} ',
+          onPressed: () => deleteUserAction(),
+          isExpanded: false,
+          customHeight: 60,
+        ),
+      ),
+    );
+  }
+
+  Future<void> deleteUserAction() async {
+    if (await logOutConfirmationPopUp(context, 'deleteUserConfirmation')) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWhithDots');
+      if (await BlocProvider.of<UserInformationBloc>(context).sendDeleteConfirmation(_profileInfo.id)) {
+        logOut();
+      }
+    }
+  }
+
   Future<void> saveChangesAction() async {
     FocusScope.of(context).unfocus();
     if (emailHasChanged || usernameHasChanged) {
-      if (await logOutConfirmationPopUp(context)) {
-        AppMessages.clearAndShowSnackbarTranslated(context, 'uploadingWithDots');
-        if (await BlocProvider.of<UserInformationBloc>(context).updateUserInformation(newFields, _profileInfo.id, context, isLoggedOut: true)) {
+      if (await logOutConfirmationPopUp(context,'updateEmailUserNameMsg')) {
+        AppMessages.clearAndShowSnackbarTranslated(
+            context, 'uploadingWithDots');
+        if (await BlocProvider.of<UserInformationBloc>(context)
+            .updateUserInformation(newFields, _profileInfo.id, context,
+                isLoggedOut: true)) {
           logOut();
         }
       }
@@ -326,14 +353,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
   }
 
-  Future<bool> logOutConfirmationPopUp(BuildContext context) async {
+  Future<bool> logOutConfirmationPopUp(BuildContext context,String textKey) async {
     bool result = false;
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: OlukoColors.black,
         content: Text(
-          OlukoLocalizations.get(context, 'updateEmailUserNameMsg'),
+          OlukoLocalizations.get(context,textKey),
           style: OlukoFonts.olukoBigFont(),
         ),
         actions: <Widget>[
@@ -360,16 +387,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
-    //TODO: Use plan from userData.
-    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan?.toInt() ?? 0), orElse: () => null);
-
-    SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.selected = true;
-    if (userPlan != null) {
-      subscriptionCard.priceLabel = '\$${userPlan.amount}/${durationLabel[userPlan.intervalCount]}';
-      subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-      subscriptionCard.selected = false;
-    }
+    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan as int), orElse: () => null);
+    SubscriptionCard subscriptionCard = SubscriptionCard(userPlan);
     return [subscriptionCard];
   }
 

@@ -161,10 +161,7 @@ class _AppPlansState extends State<AppPlans> {
 
   List<SubscriptionCard> showSubscriptionCards(List<Plan> plans) {
     return plans.map((Plan plan) {
-      SubscriptionCard subscriptionCard = SubscriptionCard();
-      subscriptionCard.priceLabel = '\$${plan.amount}/${durationLabel[plan.intervalCount]}';
-      subscriptionCard.priceSubtitle = 'Renews every ${durationLabel[PlanDuration.YEARLY.index]}';
-      subscriptionCard.selected = false;
+      SubscriptionCard subscriptionCard = SubscriptionCard(plan);
       return subscriptionCard;
     }).toList();
   }
