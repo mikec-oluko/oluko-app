@@ -214,7 +214,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       break;
                     default:
                       Navigator.pushNamed(context,
-                          ProfileRoutes.returnRouteName(option.option));
+                          ProfileRoutes.returnRouteName(option.option),arguments: {
+                            'fromRegister':false
+                          });
                   }
                 }
               : () {},
