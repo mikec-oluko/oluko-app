@@ -52,7 +52,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         return subscriptionContentState is PurchaseSuccess ||
             subscriptionContentState is ManageFromWebState ||
             subscriptionContentState is SubscriptionContentInitialized ||
-            subscriptionContentState is PurchaseRestored;
+            subscriptionContentState is PurchaseRestored ||
+            subscriptionContentState is FailureState;
       },
       listener: (context, subscriptionContentState) async {
         if (subscriptionContentState is SubscriptionContentInitialized) {
@@ -77,7 +78,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'successfullySubscribed');
           AuthRepository().storeLoginData(subscriptionContentState.user);
-          BlocProvider.of<AuthBloc>(context).updateAuthSuccess(subscriptionContentState.user,AuthRepository.getLoggedUser());
+          BlocProvider.of<AuthBloc>(context).updateAuthSuccess(subscriptionContentState.user, AuthRepository.getLoggedUser());
           if (widget.fromRegister) {
             BlocProvider.of<AuthBloc>(context).navigateToNextScreen(context, subscriptionContentState.user.id);
           } else {
@@ -91,12 +92,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'subCancelledSuccessfully');
           await BlocProvider.of<AuthBloc>(context).logout(context);
+        } else if (subscriptionContentState is FailureState) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'somethingWentWrong');
+          setState(() {});
+          BlocProvider.of<SubscriptionContentBloc>(context).initState(widget.fromRegister);
         }
       },
       buildWhen: (context, subscriptionContentState) {
-        return subscriptionContentState is SubscriptionContentLoading ||
-            subscriptionContentState is SubscriptionContentInitialized ||
-            subscriptionContentState is FailureState;
+        return subscriptionContentState is SubscriptionContentLoading || subscriptionContentState is SubscriptionContentInitialized;
       },
       builder: (context, subscriptionContentState) {
         return WillPopScope(
