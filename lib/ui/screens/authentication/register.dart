@@ -107,7 +107,7 @@ class _RegisterState extends State<RegisterPage> {
 
   Widget _termsAndConditionsPrivacyPolicy(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -126,7 +126,7 @@ class _RegisterState extends State<RegisterPage> {
                 Text(
                   OlukoLocalizations.get(context, 'newsInfoAndOffers'),
                   // maxLines: 2,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
+                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
                 ),
               ],
             ),
@@ -144,7 +144,7 @@ class _RegisterState extends State<RegisterPage> {
 
   Widget _userCheckConditionsAndPolicySection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -161,18 +161,19 @@ class _RegisterState extends State<RegisterPage> {
                   ),
                 ),
                 Text(OlukoLocalizations.get(context, 'registerByContinuing'),
-                    style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
                 InkWell(
                   onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
                   child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
                           .copyWith(decoration: TextDecoration.underline)),
                 ),
-                Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                Text(OlukoLocalizations.get(context, 'and'),
+                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
                 InkWell(
                   onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
                   child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
                           .copyWith(decoration: TextDecoration.underline)),
                 ),
               ],
