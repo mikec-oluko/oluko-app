@@ -680,7 +680,7 @@ class Routes {
           BlocProvider<PlanBloc>.value(value: _planBloc),
         ];
         newRouteView = ProfileSubscriptionPage(
-            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? false : argumentsToAdd['fromRegister'] as bool);
+            fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? true : argumentsToAdd['fromRegister'] as bool);
         break;
       case RouteEnum.profileHelpAndSupport:
         providers = [

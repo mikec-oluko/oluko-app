@@ -3,6 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/purchase.dart';
+import 'package:oluko_app/models/user_response.dart';
 
 class PurchaseRepository {
   FirebaseFirestore firestoreInstance;
@@ -35,7 +36,7 @@ class PurchaseRepository {
     return null;
   }
 
-  static create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
+  static Future<UserResponse> create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
     final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final DocumentReference userReference = proyectReference.collection('users').doc(userId);
     final QuerySnapshot<Map<String, dynamic>> planDocRef =
@@ -50,6 +51,9 @@ class PurchaseRepository {
     await proyectReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.update({'current_plan': plan.metadata['level']});
+    final userDoc=await userReference.get();
+    final userJson = userDoc.data() as  Map<String, dynamic>;
+    return UserResponse.fromJson(userJson);
   }
 
   static restore(String userId, String productId) async {

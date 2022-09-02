@@ -39,7 +39,7 @@ class _State extends State<SubscriptionCard> {
                   children: _parseHtmlString(widget.plan.description)
                       .map((element) => Padding(
                             padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
-                            child: Text('- $element', style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+                            child: Text('- $element', style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)),
                           ))
                       .toList())),
         ));
