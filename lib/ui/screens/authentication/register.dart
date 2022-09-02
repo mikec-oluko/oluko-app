@@ -72,7 +72,7 @@ class _RegisterState extends State<RegisterPage> {
               _defaultWidgetSpacer(context),
               _userCheckConditionsAndPolicySection(context),
               _defaultWidgetSpacer(context),
-              _termsAndConditionsPrivacyPolicy(context),
+              _mvtNewsInfoAndOffers(context),
               _defaultWidgetSpacer(context),
               _registerConfirmButton(context),
               _defaultWidgetSpacer(context),
@@ -105,30 +105,25 @@ class _RegisterState extends State<RegisterPage> {
     );
   }
 
-  Widget _termsAndConditionsPrivacyPolicy(BuildContext context) {
+  Widget _mvtNewsInfoAndOffers(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Container(width: 15, height: 15, child: checkBox()),
-                  ),
-                ),
-                Text(
-                  OlukoLocalizations.get(context, 'newsInfoAndOffers'),
-                  // maxLines: 2,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
+            child: Container(
+              width: 15,
+              height: 15,
+              child: Container(width: 15, height: 15, child: checkBox()),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              OlukoLocalizations.get(context, 'newsInfoAndOffers'),
+              // maxLines: 2,
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
             ),
           ),
         ],
@@ -145,38 +140,31 @@ class _RegisterState extends State<RegisterPage> {
   Widget _userCheckConditionsAndPolicySection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Wrap(
+        alignment: WrapAlignment.center,
         children: [
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    child: Container(width: 15, height: 15, child: checkBox(isAgree: true)),
-                  ),
-                ),
-                Text(OlukoLocalizations.get(context, 'registerByContinuing'),
-                    style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
-                InkWell(
-                  onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
-                  child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
-                          .copyWith(decoration: TextDecoration.underline)),
-                ),
-                Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
-                InkWell(
-                  onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
-                  child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
-                          .copyWith(decoration: TextDecoration.underline)),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 2.5, 5, 0),
+            child: Container(
+              width: 15,
+              height: 15,
+              child: Container(width: 15, height: 15, child: checkBox(isAgree: true)),
             ),
+          ),
+          Text(OlukoLocalizations.get(context, 'registerByContinuing'),
+              style: OlukoFonts.olukoBigFont( customColor: OlukoColors.black)),
+          InkWell(
+            onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
+            child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
+                style: OlukoFonts.olukoBigFont( customColor: OlukoColors.primary)
+                    .copyWith(decoration: TextDecoration.underline)),
+          ),
+          Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont( customColor: OlukoColors.black)),
+          InkWell(
+            onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
+            child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
+                style: OlukoFonts.olukoBigFont( customColor: OlukoColors.primary)
+                    .copyWith(decoration: TextDecoration.underline)),
           ),
         ],
       ),

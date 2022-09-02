@@ -251,19 +251,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
               isExpanded: false,
               thinPadding: true,
               onPressed: () {
-                // Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
                 Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
-                // _formKey.currentState.save();
-                // FocusScope.of(context).unfocus();
-                // BlocProvider.of<AuthBloc>(context).login(
-                //   context,
-                //   LoginRequest(
-                //     email: _requestData.email,
-                //     password: _requestData.password,
-                //     userName: _requestData.userName,
-                //     projectId: GlobalConfiguration().getValue('projectId'),
-                //   ),
-                // );
               },
               title: OlukoLocalizations.get(context, 'register'),
             ),
