@@ -152,18 +152,18 @@ class _RegisterState extends State<RegisterPage> {
             ),
           ),
           Text(OlukoLocalizations.get(context, 'registerByContinuing'),
-              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+              style: OlukoFonts.olukoBigFont( customColor: OlukoColors.black)),
           InkWell(
             onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
             child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                style: OlukoFonts.olukoBigFont( customColor: OlukoColors.primary)
                     .copyWith(decoration: TextDecoration.underline)),
           ),
-          Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black)),
+          Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont( customColor: OlukoColors.black)),
           InkWell(
             onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
             child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)
+                style: OlukoFonts.olukoBigFont( customColor: OlukoColors.primary)
                     .copyWith(decoration: TextDecoration.underline)),
           ),
         ],
