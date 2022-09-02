@@ -5,6 +5,8 @@ import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
@@ -74,8 +76,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         } else if (subscriptionContentState is PurchaseSuccess) {
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'successfullySubscribed');
+          AuthRepository().storeLoginData(subscriptionContentState.user);
+          BlocProvider.of<AuthBloc>(context).updateAuthSuccess(subscriptionContentState.user,AuthRepository.getLoggedUser());
           if (widget.fromRegister) {
-            BlocProvider.of<AuthBloc>(context).navigateToNextScreen(context, subscriptionContentState.userId);
+            BlocProvider.of<AuthBloc>(context).navigateToNextScreen(context, subscriptionContentState.user.id);
           } else {
             Navigator.of(context).pop();
           }
