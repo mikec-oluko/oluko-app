@@ -109,7 +109,7 @@ class _RegisterState extends State<RegisterPage> {
 
   Padding _registerCancelButton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) / 4),
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) / 4, vertical: 10),
       child: Center(
         child: GestureDetector(
           onTap: () => Navigator.pop(context),
