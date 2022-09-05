@@ -8,6 +8,7 @@ import 'package:oluko_app/models/enums/register_fields_enum.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_register_textfield.dart';
 import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -75,6 +76,7 @@ class _RegisterState extends State<RegisterPage> {
               _mvtNewsInfoAndOffers(context),
               _defaultWidgetSpacer(context),
               _registerConfirmButton(context),
+              _registerCancelButton(context),
               _defaultWidgetSpacer(context),
             ],
           ),
@@ -100,6 +102,21 @@ class _RegisterState extends State<RegisterPage> {
                   validateAndSave();
                 },
           title: OlukoLocalizations.get(context, 'letsGo'),
+        ),
+      ),
+    );
+  }
+
+  Padding _registerCancelButton(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) / 4, vertical: 10),
+      child: Center(
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Text(
+            OlukoLocalizations.get(context, 'cancel'),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary)
+          ),
         ),
       ),
     );
@@ -151,20 +168,17 @@ class _RegisterState extends State<RegisterPage> {
               child: Container(width: 15, height: 15, child: checkBox(isAgree: true)),
             ),
           ),
-          Text(OlukoLocalizations.get(context, 'registerByContinuing'),
-              style: OlukoFonts.olukoBigFont( customColor: OlukoColors.black)),
+          Text(OlukoLocalizations.get(context, 'registerByContinuing'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
           InkWell(
             onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
             child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                style: OlukoFonts.olukoBigFont( customColor: OlukoColors.primary)
-                    .copyWith(decoration: TextDecoration.underline)),
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(decoration: TextDecoration.underline)),
           ),
-          Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont( customColor: OlukoColors.black)),
+          Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
           InkWell(
             onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
             child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                style: OlukoFonts.olukoBigFont( customColor: OlukoColors.primary)
-                    .copyWith(decoration: TextDecoration.underline)),
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(decoration: TextDecoration.underline)),
           ),
         ],
       ),
