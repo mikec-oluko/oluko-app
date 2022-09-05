@@ -413,7 +413,6 @@
     "successfullySubscribed": "Successfully subscribed",
     "cancelSubscription": "Cancel subscription",
     "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
-    "subCancelledSuccessfully": "Subscription canceled successfully",
     "deleteUser": "delete user",
     "deleteUserConfirmation":"Are you sure? Your profile and related account information will be deleted from the app"
 }
