@@ -52,6 +52,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         return subscriptionContentState is PurchaseSuccess ||
             subscriptionContentState is ManageFromWebState ||
             subscriptionContentState is SubscriptionContentInitialized ||
+            subscriptionContentState is PurchaseRestored ||
             subscriptionContentState is FailureState;
       },
       listener: (context, subscriptionContentState) async {
@@ -87,6 +88,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'manageSubscriptionFromWeb');
           Navigator.of(context).pop();
+        } else if (subscriptionContentState is PurchaseRestored) {
+          removeSubscriptionStream();
+          AppMessages.clearAndShowSnackbarTranslated(context, 'subCancelledSuccessfully');
+          await BlocProvider.of<AuthBloc>(context).logout(context);
         } else if (subscriptionContentState is FailureState) {
           AppMessages.clearAndShowSnackbarTranslated(context, 'somethingWentWrong');
           setState(() {});
