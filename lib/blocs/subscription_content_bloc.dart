@@ -19,8 +19,8 @@ class PurchasePending extends SubscriptionContentState {
 }
 
 class PurchaseSuccess extends SubscriptionContentState {
-  final String userId;
-  PurchaseSuccess({this.userId});
+  final UserResponse user;
+  PurchaseSuccess({this.user});
 }
 
 class PurchaseRestored extends SubscriptionContentState {}
@@ -119,8 +119,8 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         case PurchaseStatus.purchased:
           try {
             final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
-            await PurchaseRepository.create(purchaseDetails, productDetails, userId);
-            emit(PurchaseSuccess(userId: userId));
+            final UserResponse user=await PurchaseRepository.create(purchaseDetails, productDetails, userId);
+            emit(PurchaseSuccess(user: user));
           } catch (e) {}
           break;
         case PurchaseStatus.restored:
