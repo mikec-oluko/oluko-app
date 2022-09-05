@@ -52,7 +52,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         return subscriptionContentState is PurchaseSuccess ||
             subscriptionContentState is ManageFromWebState ||
             subscriptionContentState is SubscriptionContentInitialized ||
-            subscriptionContentState is PurchaseRestored ||
             subscriptionContentState is FailureState;
       },
       listener: (context, subscriptionContentState) async {
@@ -88,10 +87,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'manageSubscriptionFromWeb');
           Navigator.of(context).pop();
-        } else if (subscriptionContentState is PurchaseRestored) {
-          removeSubscriptionStream();
-          AppMessages.clearAndShowSnackbarTranslated(context, 'subCancelledSuccessfully');
-          await BlocProvider.of<AuthBloc>(context).logout(context);
         } else if (subscriptionContentState is FailureState) {
           AppMessages.clearAndShowSnackbarTranslated(context, 'somethingWentWrong');
           setState(() {});
@@ -323,22 +318,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     });
   }
 
-  Align _cancelPlanButton(SubscriptionContentInitialized state) {
-    return Align(
-      child: SizedBox(
-        width: ScreenUtils.width(context) / 1.8,
-        height: 60,
-        child: OlukoNeumorphicWhiteButton(
-          isExpanded: false,
-          useBorder: true,
-          flatStyle: true,
-          onPressed: () => BottomDialogUtils.showBottomDialog(content: cancelSubscriptionConfirmation(state), context: context),
-          title: OlukoLocalizations.get(context, 'cancelSubscription'),
-        ),
-      ),
-    );
-  }
-
   Align _cancelButton() {
     return Align(
       child: SizedBox(
@@ -373,7 +352,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                     _subscriptionBodyContent(context, state, state.user),
                     _selectPlanButton(state),
                     if (widget.fromRegister) _cancelButton(),
-                    if (!widget.fromRegister && state.user.currentPlan >= 0) _cancelPlanButton(state)
                   ],
                 )
               : const SizedBox(),
@@ -396,62 +374,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   removeSubscriptionStream() {
     BlocProvider.of<SubscriptionContentBloc>(context).dispose();
-  }
-
-  Widget cancelSubscriptionConfirmation(SubscriptionContentInitialized state) {
-    return Container(
-      height: ScreenUtils.height(context) / 2.5,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
-        image: DecorationImage(
-          image: AssetImage('assets/courses/dialog_background.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Padding(padding: const EdgeInsets.only(bottom: 15, top: 30), child: TitleBody(OlukoLocalizations.get(context, 'cancelSubscription'), bold: true)),
-            Text(OlukoLocalizations.get(context, 'askCancelSubscription'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-            Padding(
-              padding: const EdgeInsets.only(top: 60),
-              child: Row(
-                mainAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? MainAxisAlignment.end : MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        OlukoLocalizations.get(context, 'yes'),
-                        style: OlukoFonts.olukoBigFont(),
-                      ),
-                    ),
-                    onPressed: () {
-                      BlocProvider.of<SubscriptionContentBloc>(context).cancelSubscription(state.user.id, state.plans[_currentPlan].appleId);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const SizedBox(width: 20),
-                  SizedBox(
-                    width: 80,
-                    height: 50,
-                    child: OlukoNeumorphicPrimaryButton(
-                      thinPadding: true,
-                      isExpanded: false,
-                      title: OlukoLocalizations.get(context, 'no'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   bool _onWillPop(SubscriptionContentState subscriptionContentState) {
