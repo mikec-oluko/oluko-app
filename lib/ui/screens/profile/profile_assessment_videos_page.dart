@@ -34,6 +34,9 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
           builder: (context, state) {
             if (state is GetUserTaskSubmissionSuccess) {
               _assessmentVideoContent = state.taskSubmissions;
+              if(_profileInfo.id!=widget.userRequested.id){
+                _assessmentVideoContent=_assessmentVideoContent.where((assessment) => assessment.isPublic).toList();
+              }
               _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
                   assessmentVideoData: _assessmentVideoContent,
                   requestedFromRoute: ActualProfileRoute.userAssessmentVideos,

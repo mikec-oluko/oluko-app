@@ -477,6 +477,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
         _assessmentVideosContent = state.taskSubmissions;
+        if(!_isCurrentUser){
+          _assessmentVideosContent=_assessmentVideosContent.where((assessment) => assessment.isPublic).toList();
+        }
       }
 
       return _assessmentVideosContent.isNotEmpty

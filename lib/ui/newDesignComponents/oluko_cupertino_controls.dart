@@ -139,7 +139,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
           child: Row(
             children: [
               _buildSubtitleToggle(),
-              if (chewieController.showOptions) _buildOptionsButton(),
+              if (widget.showOptions) _buildOptionsButton(),
             ],
           ),
         ),

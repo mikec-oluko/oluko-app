@@ -516,7 +516,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.9.0"
+    version: "9.9.1"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -1257,7 +1257,7 @@ packages:
       name: sliver_tools
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.7"
+    version: "0.2.8"
   sound_mode:
     dependency: "direct main"
     description:
@@ -1362,7 +1362,7 @@ packages:
       name: synchronized
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0+2"
+    version: "3.0.0+3"
   term_glyph:
     dependency: transitive
     description:

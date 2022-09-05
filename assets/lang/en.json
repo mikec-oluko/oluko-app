@@ -141,7 +141,7 @@
     "makeThisPublic": "Make this public",
     "retake": "Retake",
     "done!": "Done!",
-    "assessmentMessagePart1": "Thanks you for completing the assessments.",
+    "assessmentMessagePart1": "Thank you for completing the assessments.",
     "assessmentMessagePart2": "We'll review and assign you a coach shortly!",
     "goBack": "Go Back",
     "ok": "Ok",
@@ -413,7 +413,6 @@
     "successfullySubscribed": "Successfully subscribed",
     "cancelSubscription": "Cancel subscription",
     "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
-    "subCancelledSuccessfully": "Subscription canceled successfully",
     "deleteUser": "delete user",
     "deleteUserConfirmation":"Are you sure? Your profile and related account information will be deleted from the app"
 }

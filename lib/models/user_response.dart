@@ -119,10 +119,10 @@ class UserResponse extends Base {
     return username;
   }
   String getSingleName() {
-    if(firstName!=null){
-    final String singleName=firstName.split(' ')[0];
+    String singleName='';
+    if (firstName != null&&firstName.isNotEmpty) {
+      singleName = firstName.split(' ')[0];
+    }
     return singleName;
     }
-    return username;
-  }
 }
