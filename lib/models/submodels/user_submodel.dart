@@ -18,11 +18,27 @@ class UserSubmodel {
           firstName: json['first_name'].toString(),
           lastName: json['last_name'].toString(),
           username: json['username']?.toString(),
-          avatar: json['avatar'].toString(),
-          avatarThumbnail: json['avatar_thumbnail'].toString());
+          avatar: json['avatar']?.toString(),
+          avatarThumbnail: json['avatar_thumbnail']?.toString());
     }
     return null;
   }
+  String getAvatarThumbnail() {
+    return avatarThumbnail ?? avatar;
+  }
 
-  Map<String, dynamic> toJson() => {'id': id, 'first_name': firstName, 'last_name': lastName, 'username': username, 'avatar': avatar, 'avatar_thumbnail': avatarThumbnail};
+  String getFullName() {
+    return '${getSingleName() ?? ''} ${lastName ?? ''}';
+  }
+
+  String getSingleName() {
+    String singleName='';
+    if (firstName != null||firstName.isNotEmpty) {
+      singleName = firstName.split(' ')[0];
+    }
+    return singleName;
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'first_name': firstName, 'last_name': lastName, 'username': username, 'avatar': avatar, 'avatar_thumbnail': avatarThumbnail};
 }
