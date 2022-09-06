@@ -72,7 +72,7 @@ class _RegisterState extends State<RegisterPage> {
               _passwordRequirementsSection(context),
               _defaultWidgetSpacer(context),
               _userCheckConditionsAndPolicySection(context),
-              _defaultWidgetSpacer(context),
+              // _defaultWidgetSpacer(context),
               _mvtNewsInfoAndOffers(context),
               _defaultWidgetSpacer(context),
               _registerConfirmButton(context),
@@ -126,21 +126,28 @@ class _RegisterState extends State<RegisterPage> {
           data: ThemeData(
             unselectedWidgetColor: OlukoColors.primary,
           ),
-          child: CheckboxListTile(
-              value: _newsletterSettings,
-              checkColor: OlukoColors.black,
-              activeColor: Colors.white,
-              controlAffinity: ListTileControlAffinity.leading,
-              dense: true,
-              title: Text(
-                OlukoLocalizations.get(context, 'newsInfoAndOffers'),
-                style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _newsletterSettings = value;
-                });
-              }),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: CheckboxListTile(
+                value: _newsletterSettings,
+                contentPadding: EdgeInsets.zero,
+                checkColor: OlukoColors.black,
+                activeColor: Colors.white,
+                controlAffinity: ListTileControlAffinity.leading,
+                dense: true,
+                title: Transform.translate(
+                  offset: const Offset(-20, 0),
+                  child: Text(
+                    OlukoLocalizations.get(context, 'newsInfoAndOffers'),
+                    style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.black),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _newsletterSettings = value;
+                  });
+                }),
+          ),
         ));
   }
 
@@ -157,33 +164,42 @@ class _RegisterState extends State<RegisterPage> {
           data: ThemeData(
             unselectedWidgetColor: OlukoColors.primary,
           ),
-          child: CheckboxListTile(
-              checkColor: OlukoColors.black,
-              activeColor: Colors.white,
-              controlAffinity: ListTileControlAffinity.leading,
-              dense: true,
-              value: _agreeWithRequirements,
-              title: Wrap(
-                children: [
-                  Text(OlukoLocalizations.get(context, 'registerByContinuing'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
-                  InkWell(
-                    onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
-                    child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(decoration: TextDecoration.underline)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                checkColor: OlukoColors.black,
+                activeColor: Colors.white,
+                controlAffinity: ListTileControlAffinity.leading,
+                dense: true,
+                value: _agreeWithRequirements,
+                title: Transform.translate(
+                  offset: const Offset(-20, 0),
+                  child: Wrap(
+                    children: [
+                      Text(OlukoLocalizations.get(context, 'registerByContinuing'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
+                      InkWell(
+                        onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
+                        child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
+                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(decoration: TextDecoration.underline)),
+                      ),
+                      Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
+                      InkWell(
+                        onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
+                        child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
+                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(
+                              decoration: TextDecoration.underline,
+                            )),
+                      ),
+                    ],
                   ),
-                  Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
-                  InkWell(
-                    onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
-                    child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(decoration: TextDecoration.underline)),
-                  ),
-                ],
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _agreeWithRequirements = value;
-                });
-              }),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _agreeWithRequirements = value;
+                  });
+                }),
+          ),
         ));
   }
 
@@ -245,7 +261,7 @@ class _RegisterState extends State<RegisterPage> {
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.only(right: 5),
+            padding: const EdgeInsets.only(right: 10),
             child: Container(
               width: 15,
               height: 15,
