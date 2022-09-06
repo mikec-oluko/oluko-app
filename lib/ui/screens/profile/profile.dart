@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user/user_information_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -51,24 +52,21 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         profileInfo = authState.user;
-        BlocProvider.of<TransformationJourneyBloc>(context)
-            .getContentByUserId(profileInfo.id);
-        BlocProvider.of<UserStatisticsBloc>(context)
-            .getUserStatistics(profileInfo.id);
+        BlocProvider.of<SubscriptionContentBloc>(context).subscriptionPlatform(profileInfo.id);
+        BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(profileInfo.id);
+        BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
         return BlocListener<UserInformationBloc, UserInformationState>(
           listener: (context, userInformationState) {
-            if (userInformationState is UserInformationSuccess && userInformationState.userResponse!=null) {
+            if (userInformationState is UserInformationSuccess && userInformationState.userResponse != null) {
               BlocProvider.of<AuthBloc>(context).updateAuthSuccess(
                 userInformationState.userResponse,
                 authState.firebaseUser,
               );
               AppMessages.clearAndShowSnackbarTranslated(context, 'infoUpdateSuccess');
-            }
-            else if(userInformationState is UserInformationFailure){
-              if(userInformationState.tokenExpired){
+            } else if (userInformationState is UserInformationFailure) {
+              if (userInformationState.tokenExpired) {
                 AppMessages.clearAndShowSnackbarTranslated(context, 'tokenExpired');
-              }
-              else{
+              } else {
                 AppMessages.clearAndShowSnackbarTranslated(context, 'errorMessage');
               }
             }
@@ -100,9 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                color: OlukoNeumorphism.isNeumorphismDesign
-                    ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                    : OlukoColors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
@@ -117,9 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget userInformationSection() => Column(
         children: [
           GestureDetector(
-              onTap: () => Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.profileViewOwnProfile],
-                      arguments: {'userRequested': profileInfo})
+              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': profileInfo})
                   .then((value) => onGoBack()),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
                 builder: (context, state) {
@@ -143,12 +137,20 @@ class _ProfilePageState extends State<ProfilePage> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: ProfileOptions.profileOptions.length,
-        itemBuilder: (_, index) =>
-            _profileOptions(ProfileOptions.profileOptions[index]));
+        itemBuilder: (_, index) => _profileOptions(ProfileOptions.profileOptions[index]));
   }
 
   Widget _profileOptions(ProfileOptions option) {
-    return _currentOption(option);
+    return BlocBuilder<SubscriptionContentBloc, SubscriptionContentState>(
+      builder: (context, state) {
+        if (state is ManageFromWebState) {
+          if (option.option == ProfileOptionsTitle.subscription) {
+            return const SizedBox();
+          }
+        }
+        return _currentOption(option);
+      },
+    );
   }
 
   Widget _currentOption(ProfileOptions option) {
@@ -165,10 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ])
         : Container(
             width: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(
-                border: Border(
-                    bottom:
-                        BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+            decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
             child: buildOptionContent(option),
           );
   }
@@ -182,41 +181,24 @@ class _ProfilePageState extends State<ProfilePage> {
               ? () {
                   switch (option.option) {
                     case ProfileOptionsTitle.settings:
-                      Navigator.pushNamed(
-                              context, routeLabels[RouteEnum.profileSettings],
-                              arguments: {'profileInfo': profileInfo})
-                          .then((value) => onGoBack());
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileSettings], arguments: {'profileInfo': profileInfo}).then((value) => onGoBack());
                       break;
                     case ProfileOptionsTitle.transformationJourney:
-                      Navigator.pushNamed(context,
-                          routeLabels[RouteEnum.profileTransformationJourney],
-                          arguments: {
-                            'profileInfo': profileInfo,
-                            'viewAllPage': false
-                          });
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
+                          arguments: {'profileInfo': profileInfo, 'viewAllPage': false});
                       break;
                     case ProfileOptionsTitle.logout:
                       BlocProvider.of<AuthBloc>(context).logout(context);
-                      AppMessages.clearAndShowSnackbarTranslated(
-                          context, 'loggedOut');
+                      AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
                       Navigator.popUntil(context, ModalRoute.withName('/'));
                       setState(() {});
                       break;
                     case ProfileOptionsTitle.assessmentVideos:
-                      Navigator.pushNamed(
-                          context, routeLabels[RouteEnum.assessmentVideos],
-                          arguments: {
-                            'isFirstTime': false,
-                            'isFromProfile': true,
-                            'assessmentsDone':
-                                profileInfo.assessmentsCompletedAt != null
-                          });
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
+                          arguments: {'isFirstTime': false, 'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
                       break;
                     default:
-                      Navigator.pushNamed(context,
-                          ProfileRoutes.returnRouteName(option.option),arguments: {
-                            'fromRegister':false
-                          });
+                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option), arguments: {'fromRegister': false});
                   }
                 }
               : () {},
@@ -225,18 +207,10 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                    OlukoLocalizations.get(
-                        context, returnOptionString(option.option)),
-                    style: option.enable
-                        ? OlukoFonts.olukoMediumFont()
-                        : OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor)),
+                child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
+                    style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
               ),
-              IconButton(
-                  icon: Icon(Icons.arrow_forward_ios,
-                      color: OlukoColors.grayColor),
-                  onPressed: null)
+              IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
             ],
           ),
         ),
@@ -258,6 +232,5 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  String returnOptionString(ProfileOptionsTitle option) =>
-      option.toString().split('.')[1];
+  String returnOptionString(ProfileOptionsTitle option) => option.toString().split('.')[1];
 }
