@@ -83,7 +83,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height / 3.8,
+                              height: widget.isCurrentUser ? MediaQuery.of(context).size.height / 4 : MediaQuery.of(context).size.height / 3.8,
                               child: ListView(
                                 padding: const EdgeInsets.all(0),
                                 scrollDirection: Axis.horizontal,
@@ -116,8 +116,8 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                                     }
                                     return GridView.builder(
                                       padding: EdgeInsets.zero,
-                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3, childAspectRatio: widget.isCurrentUser ? 0.55 : 0.5),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: widget.isCurrentUser ? 0.58 : 0.5),
                                       itemCount: challengesCards.length,
                                       itemBuilder: (context, index) => challengesCards[index],
                                     );

@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 
-class OlukoNeumorphicPrimaryButton extends StatefulWidget {
+class OlukoNeumorphicWhiteButton extends StatefulWidget {
   final Function() onPressed;
   final String title;
   final Color textColor;
@@ -16,8 +15,7 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final bool isExpanded;
   final bool flatStyle;
   final double customHeight;
-  final Color customColor;
-  const OlukoNeumorphicPrimaryButton(
+  const OlukoNeumorphicWhiteButton(
       {@required this.title,
       @required this.onPressed,
       this.textColor = OlukoColors.black,
@@ -29,54 +27,53 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
       this.customHeight = 50,
       this.isDisabled = false,
       this.useBorder = false,
-      this.isPrimary = true, 
-      this.customColor, 
-      this.flatStyle=false,})
+      this.flatStyle = false,
+      this.isPrimary = true})
       : super();
 
   @override
-  _OlukoNeumorphicPrimaryButtonState createState() => _OlukoNeumorphicPrimaryButtonState();
+  _OlukoNeumorphicWhiteButtonState createState() => _OlukoNeumorphicWhiteButtonState();
 }
 
-class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryButton> {
+class _OlukoNeumorphicWhiteButtonState extends State<OlukoNeumorphicWhiteButton> {
   Color buttonColor = OlukoColors.primary;
 
   @override
   Widget build(BuildContext context) {
     return widget.isExpanded
         ? Expanded(
-            child: primaryButton(),
+            child: whiteButton(),
           )
-        : Center(child: Container(height: widget.customHeight, child: primaryButton()));
+        : Center(child: Container(height: widget.customHeight, child: whiteButton()));
   }
 
-  Widget primaryButton() {
+  Widget whiteButton() {
     return NeumorphicButton(
       onPressed: () => widget.onPressed != null ? widget.onPressed() : () {},
       padding: EdgeInsets.all(2),
       style: !widget.isDisabled
-          ? OlukoNeumorphism.primaryButtonStyle(
+          ? OlukoNeumorphism.whiteButtonStyle(
               useBorder: widget.useBorder,
               buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
-              boxShape: NeumorphicBoxShape.stadium(),
-              ligthShadow: false,
-              darkShadow: true,
-              customColor: widget.customColor)
-          : OlukoNeumorphism.primaryButtonStyleDisable(
-              useBorder: widget.useBorder,
-              buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
-              boxShape: NeumorphicBoxShape.stadium(),
+              boxShape: const NeumorphicBoxShape.stadium(),
               ligthShadow: true,
-              darkShadow: true),
+              darkShadow: true)
+          : OlukoNeumorphism.whiteButtonStyle(
+              useBorder: widget.useBorder,
+              buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
+              boxShape: const NeumorphicBoxShape.stadium(),
+              ligthShadow: true,
+              darkShadow: true,
+              isDisabled: widget.isDisabled),
       child: Neumorphic(
         style: !widget.isDisabled
-            ? OlukoNeumorphism.primaryButtonStyle(
-                buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: false, darkShadow: true,customColor: widget.customColor)
-            : OlukoNeumorphism.primaryButtonStyleDisable(
+            ? OlukoNeumorphism.whiteButtonStyle(buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
+            : OlukoNeumorphism.whiteButtonStyle(
                 buttonShape: !widget.flatStyle ? NeumorphicShape.convex : NeumorphicShape.flat,
-                boxShape: NeumorphicBoxShape.stadium(),
+                boxShape: const NeumorphicBoxShape.stadium(),
                 ligthShadow: true,
-                darkShadow: true),
+                darkShadow: true,
+                isDisabled: widget.isDisabled),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),
@@ -89,7 +86,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
       return Text(
         widget.title,
         textAlign: widget.textAlign,
-        style: OlukoFonts.olukoBigFont(),
+        style: OlukoFonts.olukoBigFont(customColor: widget.isDisabled ? OlukoColors.white : OlukoColors.primary),
       );
     } else {
       return Padding(
@@ -97,7 +94,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
           child: Text(
             widget.title,
             textAlign: widget.textAlign,
-            style: OlukoFonts.olukoBigFont(),
+            style: OlukoFonts.olukoBigFont(customColor: widget.isDisabled ? OlukoColors.white : OlukoColors.primary),
           ));
     }
   }

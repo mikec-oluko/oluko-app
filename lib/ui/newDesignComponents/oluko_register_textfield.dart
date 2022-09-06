@@ -395,6 +395,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     var newCountries = countries;
                     if (statesOfSelectedCountry != null && statesOfSelectedCountry.isNotEmpty) {
                       newFieldsState = statesOfSelectedCountry[0];
+                      BlocProvider.of<CountryBloc>(context).emitSelectedCountryState(_selectedCountry);
                     } else {
                       newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(_selectedCountry.id);
                       newCountryWithStates = newCountries.firstWhere((element) => element.id == _selectedCountry.id);
@@ -441,7 +442,9 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
                   isExpanded: true,
-                  value: _selectedState ?? _countryWithStates.states[0],
+                  value: _selectedState != null && (_countryWithStates.states.isNotEmpty && _countryWithStates.states.contains(_selectedState))
+                      ? _selectedState
+                      : _countryWithStates.states[0],
                   items: _countryWithStates.states.isNotEmpty
                       ? _countryWithStates.states.map<DropdownMenuItem<String>>((String countryState) {
                           return DropdownMenuItem<String>(

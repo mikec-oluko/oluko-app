@@ -3,12 +3,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
-import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/assessment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -20,23 +18,20 @@ class Loading extends UserInformationState {}
 
 class UserInformationSuccess extends UserInformationState {
   UserResponse userResponse;
-  UserInformationSuccess(this.userResponse);
+  UserInformationSuccess({this.userResponse});
 }
 
 class UserInformationFailure extends UserInformationState {
   final bool tokenExpired;
 
-
-  UserInformationFailure({this.tokenExpired=false});
+  UserInformationFailure({this.tokenExpired = false});
 }
 
 class UserInformationBloc extends Cubit<UserInformationState> {
   UserInformationBloc() : super(Loading());
   final _userRepository = UserRepository();
 
-  Future<bool> updateUserInformation(
-      UserInformation userInformation, String userId, BuildContext context,
-      {bool isLoggedOut = false}) async {
+  Future<bool> updateUserInformation(UserInformation userInformation, String userId, BuildContext context, {bool isLoggedOut = false}) async {
     if (_checkAllNullsAndEmptys(userInformation)) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'allFieldsRequired');
       return false;
@@ -53,8 +48,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'lastnameRequired');
       return false;
     }
-    if (userInformation.firstName == null ||
-        userInformation.firstName.isEmpty) {
+    if (userInformation.firstName == null || userInformation.firstName.isEmpty) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'firstnameRequired');
       return false;
     }
@@ -74,8 +68,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'cityRequired');
       return false;
     }
-    final Response response =
-        await _userRepository.updateUserInformation(userInformation, userId);
+    final Response response = await _userRepository.updateUserInformation(userInformation, userId);
     List<String> messageList;
     if (response == null) {
       emit(UserInformationFailure(tokenExpired: true));
@@ -83,7 +76,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
     } else if (response.statusCode == 200) {
       final UserResponse user = await UserRepository().getById(userId);
       AuthRepository().storeLoginData(user);
-      emit(UserInformationSuccess(user));
+      emit(UserInformationSuccess(userResponse: user));
       return true;
     } else {
       emit(UserInformationFailure());
@@ -99,5 +92,24 @@ class UserInformationBloc extends Cubit<UserInformationState> {
         userInformation.country.isEmpty &&
         userInformation.city.isEmpty &&
         userInformation.state.isEmpty;
+  }
+
+  Future<bool> sendDeleteConfirmation(String userId) async {
+    try {
+      final Response response = await UserRepository().sendDeleteConfirmation(userId);
+      if (response != null) {
+        emit(UserInformationSuccess());
+        return true;
+      } else {
+        emit(UserInformationFailure(tokenExpired: true));
+        return false;
+      }
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 }

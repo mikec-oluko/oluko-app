@@ -116,8 +116,6 @@ class Plan extends Base {
         customerId: userId,
         paymentType: 'applePay',
         poNumber: purchaseDetails.purchaseID,
-        createdAt:
-            int.tryParse(purchaseDetails.transactionDate) is int ? Timestamp.fromMicrosecondsSinceEpoch(int.tryParse(purchaseDetails.transactionDate)) : null,
         createdBy: userId,
         cancelAtPeriodEnd: false,
         currentPeriodEnd: null,

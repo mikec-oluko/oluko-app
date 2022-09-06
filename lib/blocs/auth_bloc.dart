@@ -130,13 +130,13 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
-      if (user.currentPlan == -100) {
+      AuthRepository().storeLoginData(user);
+      if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-        AppNavigator().goToSubscriptionsViaMain(context);
-        emit(AuthGuest());
+        AppNavigator().goToSubscriptionsFromRegister(context);
+        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         return;
       } else {
-        AuthRepository().storeLoginData(user);
         if (firebaseUser != null) {
           AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -200,6 +200,13 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(userResponse);
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+          AppNavigator().goToSubscriptionsFromRegister(context);
+          emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+          return;
+        }
+        emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
         AppMessages.clearAndShowSnackbar(
           context,
           '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}',
@@ -248,8 +255,14 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-
       AuthRepository().storeLoginData(user);
+      if (user.currentPlan < 0 || user.currentPlan == null) {
+        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+        AppNavigator().goToSubscriptionsFromRegister(context);
+        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        return;
+      }
+
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
       navigateToNextScreen(context, firebaseUser.uid);
     }
@@ -289,6 +302,13 @@ class AuthBloc extends Cubit<AuthState> {
       }
 
       AuthRepository().storeLoginData(userResponse);
+
+      if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
+        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+        AppNavigator().goToSubscriptionsFromRegister(context);
+        emit(AuthSuccess(user: userResponse, firebaseUser: result));
+        return;
+      }
       if (result != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
         AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
@@ -338,26 +358,28 @@ class AuthBloc extends Cubit<AuthState> {
 
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
-      BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
-      BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
-      BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
-      BlocProvider.of<StoryListBloc>(context).dispose();
-      BlocProvider.of<UserProgressStreamBloc>(context).dispose();
-      BlocProvider.of<CoachSentVideosBloc>(context).dispose();
-      BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
-      BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
-      BlocProvider.of<ChallengeStreamBloc>(context).dispose();
-      BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
-      BlocProvider.of<CourseCategoryBloc>(context).dispose();
-      BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
-      BlocProvider.of<NotificationBloc>(context).dispose();
-      BlocProvider.of<CoachMediaBloc>(context).dispose();
-      BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
-      BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
-      BlocProvider.of<CoachVideoMessageBloc>(context).dispose();
-      BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
-      BlocProvider.of<LikedCoursesBloc>(context).dispose();
-      BlocProvider.of<CoachAssignmentBloc>(context).dispose();
+      try {
+        BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
+        BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
+        BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
+        BlocProvider.of<StoryListBloc>(context).dispose();
+        BlocProvider.of<UserProgressStreamBloc>(context).dispose();
+        BlocProvider.of<CoachSentVideosBloc>(context).dispose();
+        BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
+        BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
+        BlocProvider.of<ChallengeStreamBloc>(context).dispose();
+        BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
+        BlocProvider.of<CourseCategoryBloc>(context).dispose();
+        BlocProvider.of<CoachRequestStreamBloc>(context).dispose();
+        BlocProvider.of<NotificationBloc>(context).dispose();
+        BlocProvider.of<CoachMediaBloc>(context).dispose();
+        BlocProvider.of<CoachAudioMessageBloc>(context).dispose();
+        BlocProvider.of<ProjectConfigurationBloc>(context).dispose();
+        BlocProvider.of<CoachVideoMessageBloc>(context).dispose();
+        BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
+        BlocProvider.of<LikedCoursesBloc>(context).dispose();
+        BlocProvider.of<CoachAssignmentBloc>(context).dispose();
+      } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {
         BlocProvider.of<SubscriptionContentBloc>(context).dispose();

@@ -3,6 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/purchase.dart';
+import 'package:oluko_app/models/user_response.dart';
 
 class PurchaseRepository {
   FirebaseFirestore firestoreInstance;
@@ -23,16 +24,20 @@ class PurchaseRepository {
         .orderBy('created_at', descending: true)
         .limit(1)
         .get();
-    final Map<String, dynamic> purchaseJson = purchaseDoc?.docs?.first?.data();
-    if (purchaseJson != null) {
-      return Purchase.fromJson(purchaseJson);
+    try {
+      final Map<String, dynamic> purchaseJson = purchaseDoc?.docs?.first?.data();
+      if (purchaseJson != null) {
+        return Purchase.fromJson(purchaseJson);
+      }
+    } catch (e) {
+      return null;
     }
+
     return null;
   }
 
-  static create(PurchaseDetails purchaseDetails, ProductDetails productDetails) async {
+  static Future<UserResponse> create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
     final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
-    final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
     final DocumentReference userReference = proyectReference.collection('users').doc(userId);
     final QuerySnapshot<Map<String, dynamic>> planDocRef =
         await proyectReference.collection('plans').where('apple_id', isEqualTo: purchaseDetails.productID).get();
@@ -46,5 +51,22 @@ class PurchaseRepository {
     await proyectReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.update({'current_plan': plan.metadata['level']});
+    final userDoc=await userReference.get();
+    final userJson = userDoc.data() as  Map<String, dynamic>;
+    return UserResponse.fromJson(userJson);
+  }
+
+  static restore(String userId, String productId) async {
+    final DocumentReference userReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
+    QuerySnapshot<Map<String, dynamic>> purchasesSnapshot =
+        await userReference.collection('purchases').where('appPlanId', isEqualTo: productId).get();
+    purchasesSnapshot.docs.forEach((purchase) {
+      purchase.reference.update({
+                'status': 'inactive',
+                'is_deleted': true
+              });
+    });
+    await userReference.update({'current_plan': -1});
   }
 }

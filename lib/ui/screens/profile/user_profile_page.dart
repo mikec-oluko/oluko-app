@@ -136,10 +136,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             panel: ChallengeCoursesPanelContent(panelController: _coursesPanelController),
             body: _buildUserProfileView(
-                profileViewContext: context,
-                authUser: _currentAuthUser,
-                userRequested: widget.userRequested,
-                isOwnProfile: _isCurrentUser));
+                profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser));
       } else {
         return Container(
           color: OlukoColors.black,
@@ -260,9 +257,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           maxHeight: _panelMaxHeight,
           collapsed: defaultWidgetNoContent,
           controller: _panelController,
-          borderRadius: OlukoNeumorphism.isNeumorphismDesign
-              ? const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
-              : BorderRadius.zero,
+          borderRadius:
+              OlukoNeumorphism.isNeumorphismDesign ? const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)) : BorderRadius.zero,
           panel: _isNewCoverImage ? profileCoverImageBuilder(profileViewContext) : profileAvatarBuilder(profileViewContext),
           body: buildProfileView(userRequested),
         ),
@@ -481,6 +477,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
         _assessmentVideosContent = state.taskSubmissions;
+        if(!_isCurrentUser){
+          _assessmentVideosContent=_assessmentVideosContent.where((assessment) => assessment.isPublic).toList();
+        }
       }
 
       return _assessmentVideosContent.isNotEmpty
@@ -488,9 +487,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
               routeForSection: RouteEnum.profileAssessmentVideos,
               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                  requestedUser: _userProfileToDisplay,
-                  assessmentVideoData: _assessmentVideosContent,
-                  requestedFromRoute: ActualProfileRoute.userProfile))
+                  requestedUser: _userProfileToDisplay, assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
           : defaultWidgetNoContent;
     });
   }
@@ -540,8 +537,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void checkUserConnectStatus(UserResponse userRequested) {
     switch (connectStatus) {
       case UserConnectStatus.connected:
-        BottomDialogUtils.removeConfirmationPopup(
-            _currentAuthUser.id, userRequested, friendData, context, BlocProvider.of<FriendBloc>(context));
+        BottomDialogUtils.removeConfirmationPopup(_currentAuthUser.id, userRequested, friendData, context, BlocProvider.of<FriendBloc>(context));
         break;
       case UserConnectStatus.notConnected:
         BlocProvider.of<FriendRequestBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
@@ -591,7 +587,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       right: 10,
       child: Visibility(
         visible: _isCurrentUser,
-        child: SizedBox(
+        child: Container(
           width: 40,
           height: 40,
           child: TextButton(
@@ -601,7 +597,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 });
                 BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
               },
-              child: Image.asset('assets/profile/upload_icon.png')),
+              child: Image.asset('assets/profile/uploadImage.png')),
         ),
       ),
     );
@@ -662,8 +658,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
-    if (PrivacyOptions().canShowDetails(
-        isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
+    if (PrivacyOptions()
+        .canShowDetails(isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
       _isCurrentUser
           ? BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(userRequested.id)
           : BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(userRequested.id);
@@ -703,10 +699,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
     if (listOfChallenges.isNotEmpty) {
       BlocProvider.of<UpcomingChallengesBloc>(context).getUniqueChallengeCards(
-          userId: _userProfileToDisplay.id,
-          listOfChallenges: listOfChallenges,
-          isCurrentUser: _isCurrentUser,
-          userRequested: _userProfileToDisplay);
+          userId: _userProfileToDisplay.id, listOfChallenges: listOfChallenges, isCurrentUser: _isCurrentUser, userRequested: _userProfileToDisplay);
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
@@ -752,15 +745,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         title: OlukoLocalizations.get(context, 'upcomingChallenges'),
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),
         onOptionTap: () {
-          if(_challengesCardsState!=null){
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
-            'isCurrentUser': _isCurrentUser,
-            'userRequested': _userProfileToDisplay,
-            'challengesCardsState': _challengesCardsState
-          });
+          if (_challengesCardsState != null) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
+                arguments: {'isCurrentUser': _isCurrentUser, 'userRequested': _userProfileToDisplay, 'challengesCardsState': _challengesCardsState});
           }
         },
-        children: challengeList.isNotEmpty? challengeList : [SizedBox.shrink()]);
+        children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
   }
 
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
@@ -830,10 +820,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   checkConnectionStatus(UserResponse userRequested, Friend friendData) {
     FriendModel userFriendModel;
-    final bool userRequestedIsFriend =
-        friendData?.friends?.isNotEmpty && friendData.friends.where((element) => element.id == userRequested.id).isNotEmpty;
-    final bool connectionRequested =
-        !userRequestedIsFriend && friendData.friendRequestSent.where((element) => element.id == userRequested.id).isNotEmpty;
+    final bool userRequestedIsFriend = friendData?.friends?.isNotEmpty && friendData.friends.where((element) => element.id == userRequested.id).isNotEmpty;
+    final bool connectionRequested = !userRequestedIsFriend && friendData.friendRequestSent.where((element) => element.id == userRequested.id).isNotEmpty;
     final bool connectionRequestReceived =
         !userRequestedIsFriend && friendData.friendRequestReceived.where((element) => element.id == userRequested.id).isNotEmpty;
 
