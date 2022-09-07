@@ -6,16 +6,13 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
-import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -302,12 +299,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     return Flexible(
       child: Padding(
         padding: const EdgeInsets.only(top: 30),
-        child: Container(
-          child: Text(
-            OlukoLocalizations.get(context, 'manageMembership'),
-            textAlign: TextAlign.center,
-            style: OlukoFonts.olukoBiggestFont(customColor: Colors.black),
-          ),
+        child: Text(
+          _currentPlan != null && _currentPlan >= 0 ? OlukoLocalizations.get(context, 'manageMembership') : OlukoLocalizations.get(context, 'paymentDetails'),
+          textAlign: TextAlign.center,
+          style: OlukoFonts.olukoBiggestFont(customColor: Colors.black),
         ),
       ),
     );

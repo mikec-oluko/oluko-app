@@ -410,6 +410,7 @@
     "selectASubscription": "Select a subscription",
     "selectPlan": "Select plan",
     "manageMembership": "Manage Membership",
+    "paymentDetails": "Payment Details",
     "successfullySubscribed": "Successfully subscribed",
     "cancelSubscription": "Cancel subscription",
     "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
