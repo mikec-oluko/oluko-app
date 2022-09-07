@@ -56,7 +56,9 @@ class SegmentBloc extends Cubit<SegmentState> {
           retSegments[index] = segments[i];
         }
       }
-      emit(GetSegmentsSuccess(segments: retSegments));
+      List<Segment> segmentWithOutNulls = List<Segment>.from(retSegments);
+      segmentWithOutNulls.removeWhere((segment) => segment == null);
+      emit(GetSegmentsSuccess(segments: segmentWithOutNulls));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
