@@ -191,8 +191,7 @@ class _CoachPageState extends State<CoachPage> {
   CoachAppBar _getCoachAppBar(BuildContext context) => CoachAppBar(
         coachUser: _coachUser,
         currentUser: _currentAuthUser,
-        onNavigation: () =>
-            !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
+        onNavigation: () => !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
       );
 
   Widget _panelAndViewCreation(BuildContext context) {
@@ -207,8 +206,7 @@ class _CoachPageState extends State<CoachPage> {
         timelineItemsContent: _timelinePanelContent,
         isIntroductionVideoComplete: coachAssignment.introductionCompleted,
         currentUser: _currentAuthUser,
-        onCurrentUserSelected: () =>
-            BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent),
+        onCurrentUserSelected: () => BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent),
       );
     }
   }
@@ -242,15 +240,18 @@ class _CoachPageState extends State<CoachPage> {
 
           return Container(
             color: OlukoNeumorphismColors.appBackgroundColor,
-            child: ListView(
-              children: [
-                _reviewsPendingSection(),
-                _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
-                _userStatisticsSection(carouselNotificationWidgetList),
-                _contentForUserSection(),
-                _challengesToDoSection(context),
-                _defaultBottomSafeSpace()
-              ],
+            child: Theme(
+              data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent)),
+              child: ListView(
+                children: [
+                  _reviewsPendingSection(),
+                  _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
+                  _userStatisticsSection(carouselNotificationWidgetList),
+                  _contentForUserSection(),
+                  _challengesToDoSection(context),
+                  _defaultBottomSafeSpace()
+                ],
+              ),
             ),
           );
         } else {
@@ -267,8 +268,7 @@ class _CoachPageState extends State<CoachPage> {
 
   void _getActiveChallenges() {
     _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-    _allSegmentsForUser =
-        TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses, _activeChallenges);
+    _allSegmentsForUser = TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses, _activeChallenges);
   }
 
   void _welcomeVideoProccess(CoachAssignmentResponse state) {
@@ -289,8 +289,7 @@ class _CoachPageState extends State<CoachPage> {
         )
       : null;
 
-  void _updateReviewPendingOnCoachAppBar(BuildContext context) =>
-      BlocProvider.of<CoachReviewPendingBloc>(context).updateReviewPendingMessage(
+  void _updateReviewPendingOnCoachAppBar(BuildContext context) => BlocProvider.of<CoachReviewPendingBloc>(context).updateReviewPendingMessage(
         _sentVideosContent != null && segmentsWithReview != null ? _sentVideosContent.length - segmentsWithReview.length : 0,
       );
 
@@ -331,22 +330,24 @@ class _CoachPageState extends State<CoachPage> {
         }
       },
       builder: (context, state) {
-        return Container(
-          width: ScreenUtils.width(context),
-          height: 50,
-          color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor.withOpacity(0.5), customFontWeight: FontWeight.w500),
+        return numberOfReviewPendingItems != 0
+            ? Container(
+                width: ScreenUtils.width(context),
+                height: 50,
+                color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor.withOpacity(0.5), customFontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
+              )
+            : const SizedBox.shrink();
       },
     );
   }
@@ -414,8 +415,7 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  void _addCoachAssignmentVideo() =>
-      _annotationVideosContent = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosContent, _introductionVideo);
+  void _addCoachAssignmentVideo() => _annotationVideosContent = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosContent, _introductionVideo);
 
   void _timelineContentBuilding(BuildContext context) {
     _timelinePanelContent = CoachTimelineFunctions.getTimelineContentForPanel(
@@ -451,16 +451,12 @@ class _CoachPageState extends State<CoachPage> {
 
   Widget _recommendedVideosSection({bool isForCarousel}) {
     return ((_coachRecommendations != null && _coachRecommendations.isNotEmpty) &&
-            _coachRecommendations
-                .where((coachRecommendation) => coachRecommendation.contentType == TimelineInteractionType.recommendedVideo)
-                .isNotEmpty)
+            _coachRecommendations.where((coachRecommendation) => coachRecommendation.contentType == TimelineInteractionType.recommendedVideo).isNotEmpty)
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.recomendedVideos,
             titleForSection: OlukoLocalizations.get(context, 'recommendedVideos'),
             recommendedVideoContent: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendations),
-            onNavigation: () => !coachAssignment.introductionCompleted
-                ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
-                : () {})
+            onNavigation: () => !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recommendedVideos'));
   }
 
@@ -470,10 +466,8 @@ class _CoachPageState extends State<CoachPage> {
         contentType: TimelineInteractionType.course,
         onTap: (courseRecommended) {
           BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
-            'recommendedContent': courseRecommended,
-            'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')
-          });
+          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+              arguments: {'recommendedContent': courseRecommended, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')});
         },
       );
 
@@ -483,10 +477,8 @@ class _CoachPageState extends State<CoachPage> {
         contentType: TimelineInteractionType.movement,
         onTap: (movementsRecommended) {
           BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery], arguments: {
-            'recommendedContent': movementsRecommended,
-            'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')
-          });
+          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+              arguments: {'recommendedContent': movementsRecommended, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')});
         },
       );
 
@@ -497,8 +489,7 @@ class _CoachPageState extends State<CoachPage> {
     _mentoredVideoTimelineContent.clear();
     _coachRecommendationTimelineContent.clear();
     _timelinePanelContent.clear();
-    _introductionVideo ??=
-        CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(coachAssignment: coachAssignment, userId: widget.userId);
+    _introductionVideo ??= CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(coachAssignment: coachAssignment, userId: widget.userId);
   }
 
   void _coachRecommendationsBuilderActions({@required CoachRecommendationsState state}) {

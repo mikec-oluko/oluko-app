@@ -57,7 +57,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 5),
+              padding: const EdgeInsets.fromLTRB(5, 0, 0, 2),
               child: Text(
                 widget.titleForSection,
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
@@ -94,7 +94,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 5),
+              padding: const EdgeInsets.fromLTRB(5, 0, 0, 2),
               child: Text(
                 widget.titleForSection,
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
@@ -113,8 +113,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
                   color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.coachAnnotationContent.isNotEmpty
                       ? CoachVideoContent(
-                          videoThumbnail:
-                              getThumbnails(annotations: widget.coachAnnotationContent, coachMediaMessages: widget.coachMediaMessages),
+                          videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent, coachMediaMessages: widget.coachMediaMessages),
                           isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
                 ),
@@ -134,7 +133,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 5),
+              padding: const EdgeInsets.fromLTRB(5, 0, 0, 2),
               child: Text(
                 widget.titleForSection,
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
@@ -152,8 +151,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
                   height: 120,
                   color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.recommendedVideoContent.isNotEmpty
-                      ? CoachVideoContent(
-                          videoThumbnail: getThumbnails(recommendedVideoContent: widget.recommendedVideoContent), isForGallery: false)
+                      ? CoachVideoContent(videoThumbnail: getThumbnails(recommendedVideoContent: widget.recommendedVideoContent), isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
                 ),
               ),
@@ -170,8 +168,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
         return Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos],
             arguments: {'coachAnnotation': widget.coachAnnotationContent, 'coachVideoMessages': widget.coachMediaMessages});
       case CoachContentSection.sentVideos:
-        return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
-            arguments: {'sentVideosContent': widget.segmentSubmissionContent});
+        return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos], arguments: {'sentVideosContent': widget.segmentSubmissionContent});
       case CoachContentSection.recomendedVideos:
         return Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
             arguments: {'recommendedVideoContent': widget.recommendedVideoContent, 'titleForAppBar': widget.titleForSection});
@@ -232,8 +229,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
     if (recommendedVideoContent != null && recommendedVideoContent.isNotEmpty) {
       List<RecommendationMedia> limitVideoRecommendation = [];
       recommendedVideoContent.length >= 3
-          ? limitVideoRecommendation =
-              recommendedVideoContent.getRange(recommendedVideoContent.length - 3, recommendedVideoContent.length).toList()
+          ? limitVideoRecommendation = recommendedVideoContent.getRange(recommendedVideoContent.length - 3, recommendedVideoContent.length).toList()
           : limitVideoRecommendation = recommendedVideoContent;
 
       limitVideoRecommendation.forEach((videoRecommended) {
