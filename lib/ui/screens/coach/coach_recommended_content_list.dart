@@ -31,7 +31,11 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: OlukoAppBar(title: widget.titleForAppBar, showTitle: true, showBackButton: true),
+        appBar: OlukoAppBar(
+          title: widget.titleForAppBar,
+          showTitle: true,
+          showBackButton: true,
+        ),
         body: Container(
           width: ScreenUtils.width(context),
           height: ScreenUtils.height(context),

@@ -96,6 +96,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
             appBar: OlukoAppBar(
               showTitle: true,
               showActions: true,
+              centerTitle: true,
               title: OlukoLocalizations.get(context, 'personalizedVideos'),
               actions: [
                 Row(
