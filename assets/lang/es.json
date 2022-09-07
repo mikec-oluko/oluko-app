@@ -411,6 +411,7 @@
     "deleteUserConfirmation":"¿Está seguro? Su perfil y la información de la cuenta relacionada se eliminarán de la aplicación",
     "selectPlan": "Seleccionar plan",
     "manageMembership": "Administrar membresía",
+    "paymentDetails": "Detalles de Pago",
     "successfullySubscribed": "Suscrito con éxito",
     "cancelSubscription": "Cancelar suscripción",
     "askCancelSubscription": "Estas seguro de que deseas cancelar tu suscripción? esta accion no se puede deshacer."
