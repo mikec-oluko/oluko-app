@@ -72,7 +72,6 @@ class _RegisterState extends State<RegisterPage> {
               _passwordRequirementsSection(context),
               _defaultWidgetSpacer(context),
               _userCheckConditionsAndPolicySection(context),
-              // _defaultWidgetSpacer(context),
               _mvtNewsInfoAndOffers(context),
               _defaultWidgetSpacer(context),
               _registerConfirmButton(context),
