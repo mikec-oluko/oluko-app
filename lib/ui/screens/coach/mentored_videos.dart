@@ -11,6 +11,7 @@ import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_personalized_video.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
@@ -39,8 +40,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   @override
   void initState() {
-    _personalizedVideosList = CoachHelperFunctions.createPersonalizedVideoFromContent(
-        mentoredVideos: widget.coachAnnotation, videoMessages: widget.coachVideoMessage);
+    _personalizedVideosList =
+        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation, videoMessages: widget.coachVideoMessage);
 
     setState(() {
       content.addAll(_personalizedVideosList);
@@ -64,8 +65,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         _updatedMessageVideos = state.coachVideoMessages;
         if (_personalizedVideosList.isNotEmpty) {
           _updatedMessageVideos.forEach((videoMessage) {
-            final _videoMatch = _personalizedVideosList.where(
-                (videoElement) => videoElement.videoMessageContent != null && videoElement.videoMessageContent.id == videoMessage.id);
+            final _videoMatch = _personalizedVideosList
+                .where((videoElement) => videoElement.videoMessageContent != null && videoElement.videoMessageContent.id == videoMessage.id);
             CoachPersonalizedVideo previousContent = _videoMatch.isNotEmpty ? _videoMatch.first : null;
             if (previousContent != null) {
               _personalizedVideosList[_personalizedVideosList.indexOf(previousContent)].videoMessageContent = videoMessage;
@@ -92,17 +93,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
           }
           filteredContent = contentSortedByDate();
           return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                OlukoLocalizations.get(context, 'personalizedVideos'),
-                style: OlukoNeumorphism.isNeumorphismDesign
-                    ? ScreenUtils.smallScreen(context)
-                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
-                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
-                    : ScreenUtils.smallScreen(context)
-                        ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400)
-                        : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w400),
-              ),
+            appBar: OlukoAppBar(
+              showTitle: true,
+              showActions: true,
+              centerTitle: true,
+              title: OlukoLocalizations.get(context, 'personalizedVideos'),
               actions: [
                 Row(
                   children: [
@@ -140,27 +135,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                   ],
                 )
               ],
-              elevation: 0.0,
-              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-              leading: OlukoNeumorphism.isNeumorphismDesign
-                  ? Neumorphic(
-                      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                      child: OlukoNeumorphicCircleButton(
-                        defaultAspect: true,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    )
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
             ),
             body: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {

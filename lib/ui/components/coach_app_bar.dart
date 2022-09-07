@@ -6,6 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -20,7 +21,7 @@ class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
   _CoachAppBarState createState() => _CoachAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight * 2);
 }
 
 class _CoachAppBarState extends State<CoachAppBar> {
@@ -32,8 +33,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
   void initState() {
     setState(() {
       if (widget.coachUser != null) {
-        defaultCoachPic =
-            '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
+        defaultCoachPic = '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
       }
     });
     super.initState();
@@ -74,29 +74,34 @@ class _CoachAppBarState extends State<CoachAppBar> {
             ),
           ),
         ),
-        actions: [
-          if (showCoachProfle)
-            Padding(
-              padding: const EdgeInsets.only(right: 5),
-              child: Row(
-                children: [
-                  goToCoachProfile(context),
-                  const SizedBox(width: 10),
-                  if (widget.coachUser != null && widget.coachUser.avatar != null)
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
-                        : coachAvatarImage()
-                  else
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
-                        : coachDefaultAvatar(),
-                ],
-              ),
-            )
-          else
-            const SizedBox.shrink(),
-        ],
-        elevation: 0.0,
+        flexibleSpace: showCoachProfle
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          goToCoachProfile(context),
+                          const SizedBox(width: 10),
+                          if (widget.coachUser != null && widget.coachUser.avatar != null)
+                            OlukoNeumorphism.isNeumorphismDesign
+                                ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())
+                                : coachAvatarImage()
+                          else
+                            OlukoNeumorphism.isNeumorphismDesign
+                                ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
+                                : coachDefaultAvatar(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
+        bottom: PreferredSize(preferredSize: const Size.fromHeight(kToolbarHeight), child: OlukoNeumorphicDivider()),
         backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
       ),
     );
@@ -140,8 +145,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
   Stack coachDefaultAvatar() {
     return Stack(children: [
       CircleAvatar(
-        backgroundColor:
-            widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
+        backgroundColor: widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
         radius: 24.0,
         child: Text(
             widget.coachUser != null
@@ -174,8 +178,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
     return GestureDetector(
       onTap: () {
         widget.onNavigation();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
-            arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
+        Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile], arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
       },
       child: Text(
         OlukoLocalizations.get(context, 'hiCoach'),

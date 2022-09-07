@@ -170,6 +170,22 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForStackCardElement() {
+    return NeumorphicStyle(
+        border: NeumorphicBorder.none(),
+        depth: 6,
+        intensity: 0.8,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(5))),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.finalGradientColorDark,
+        shadowDarkColor: Colors.black);
+  }
+
   static NeumorphicStyle getNeumorphicStyleForCardClasses(bool isStarted) {
     return NeumorphicStyle(
         border: isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),

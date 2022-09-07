@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class TitleHeader extends StatelessWidget {
   final String title;
@@ -19,7 +20,7 @@ class TitleHeader extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.start,
       style: reduceFontSize
-          ? MediaQuery.of(context).size.width < 400
+          ? ScreenUtils.smallScreen(context)
               ? OlukoFonts.olukoTitleFont(customFontWeight: fontWeight, customColor: fontColor)
               : OlukoFonts.olukoSuperBigFont(customFontWeight: fontWeight, customColor: fontColor)
           : OlukoFonts.olukoSuperBigFont(customFontWeight: fontWeight, customColor: fontColor),
