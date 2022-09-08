@@ -416,5 +416,5 @@
     "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
     "deleteUserConfirmation": "Are you sure? Your profile and related account information will be deleted from the app",
     "subCancelledSuccessfully": "Subscription canceled successfully",
-    "deleteMyAccount": "Delete My account"
+    "deleteMyAccount": "Delete My Account"
 }
