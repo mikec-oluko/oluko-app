@@ -21,8 +21,8 @@ class SegmentSubmissionRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<SegmentSubmission> create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId,
-      String classId, CoachRequest coachRequest) async {
+  static Future<SegmentSubmission> create(
+      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, String classId, CoachRequest coachRequest) async {
     DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
 
     DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
@@ -55,10 +55,6 @@ class SegmentSubmissionRepository {
         videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
 
     segmentSubmission.id = docRef.id;
-    await docRef.set(segmentSubmission.toJson());
-    if (coachRequest != null) {
-      await CoachRequestRepository().updateSegmentSubmission(user.uid, coachRequest, segmentSubmission.id, docRef);
-    }
     return segmentSubmission;
   }
 
@@ -74,6 +70,19 @@ class SegmentSubmissionRepository {
       'video_state.state_info': "",
       'video_state.state_extra_info': ""
     });
+  }
+
+  static Future<void> saveSegmentSubmissionWithVideo(SegmentSubmission segmentSubmission, CoachRequest coachRequest) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('segmentSubmissions')
+        .doc(segmentSubmission.id);
+    segmentSubmission.videoState.state = SubmissionStateEnum.uploaded;
+    if (coachRequest != null) {
+      await CoachRequestRepository().updateSegmentSubmission(segmentSubmission.userId, coachRequest, segmentSubmission.id, reference);
+    }
+    reference.set(segmentSubmission.toJson());
   }
 
   static Future<void> setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {

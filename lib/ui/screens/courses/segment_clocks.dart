@@ -223,12 +223,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           if (_segmentSubmission == null) {
                             _segmentSubmission = state.segmentSubmission;
                             BlocProvider.of<VideoBloc>(context).createVideo(
-                              context,
-                              File(_segmentSubmission.videoState.stateInfo),
-                              3.0 / 4.0,
-                              _segmentSubmission.id,
-                              segmentSubmission: _segmentSubmission,
-                            );
+                                context, File(_segmentSubmission.videoState.stateInfo), 3.0 / 4.0, _segmentSubmission.id,
+                                segmentSubmission: _segmentSubmission, coachRequest: _coachRequest);
 
                             _globalService.videoProcessing = true;
                           }
@@ -787,7 +783,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
     if (timerEntries[timerTaskIndex].round > 0) {
       Future.delayed(const Duration(milliseconds: 2000), () {
-       cameraController?.dispose();
+        cameraController?.dispose();
       });
     }
   }

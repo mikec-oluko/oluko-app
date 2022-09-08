@@ -169,7 +169,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   taskSubmissionActions(VideoSuccess state) {
-    BlocProvider.of<TaskSubmissionListBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
+    // BlocProvider.of<TaskSubmissionListBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
+    BlocProvider.of<TaskSubmissionListBloc>(context)
+        .saveTaskSubmissionWithVideo(state.assessmentAssignment, state.taskSubmission, state.video, state.isLastTask);
     BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
     BlocProvider.of<TaskCardBloc>(context).taskFinished(state.taskSubmission.task.id);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(state.assessmentAssignment, state.taskSubmission.task.id);
@@ -198,7 +200,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       _segmentSubmission = state.segmentSubmission;
       _segmentSubmission.video = state.video;
     });
-    BlocProvider.of<SegmentSubmissionBloc>(context).updateVideo(_segmentSubmission);
+    // BlocProvider.of<SegmentSubmissionBloc>(context).updateVideo(_segmentSubmission);
+    BlocProvider.of<SegmentSubmissionBloc>(context).saveSegmentSubmissionWithVideo(_segmentSubmission, state.coachRequest);
   }
 
   void saveErrorState(VideoFailure state) {
