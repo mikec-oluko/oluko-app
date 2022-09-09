@@ -76,16 +76,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   void getProductsForUser(bool fromRegister) async {
     try {
       final String userId = AuthRepository.getLoggedUser().uid;
-      if (fromRegister) {
-        await initAndEmit(userId);
-      } else {
-        final Purchase lastPurchase = await PurchaseRepository.getLastPurchase(userId);
-        if (lastPurchase == null || lastPurchase.platform != null && lastPurchase.platform == Platform.APP) {
-          await initAndEmit(userId);
-        } else {
-          emit(ManageFromWebState());
-        }
-      }
+      await initAndEmit(userId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -106,6 +97,15 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     emit(SubscriptionContentInitialized(plans: plans, user: user));
   }
 
+  Future<void> subscriptionPlatform(String userId) async {
+    final Purchase lastPurchase = await PurchaseRepository.getLastPurchase(userId);
+    if (lastPurchase != null) {
+      if (lastPurchase.platform != Platform.APP) {
+        emit(ManageFromWebState());
+      }
+    }
+  }
+
   void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       final ProductDetails productDetails = products?.firstWhere(
@@ -119,7 +119,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         case PurchaseStatus.purchased:
           try {
             final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
-            final UserResponse user=await PurchaseRepository.create(purchaseDetails, productDetails, userId);
+            final UserResponse user = await PurchaseRepository.create(purchaseDetails, productDetails, userId);
             emit(PurchaseSuccess(user: user));
           } catch (e) {}
           break;
@@ -164,7 +164,8 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         purchaseParam: purchaseParam,
       )
           .catchError((exception) {
-        final PurchaseDetails purchaseDetails = PurchaseDetails(productID: product.id, status: PurchaseStatus.canceled, transactionDate: null, verificationData: null);
+        final PurchaseDetails purchaseDetails =
+            PurchaseDetails(productID: product.id, status: PurchaseStatus.canceled, transactionDate: null, verificationData: null);
         inAppPurchase.completePurchase(purchaseDetails);
         emit(FailureState(exception: exception));
       });

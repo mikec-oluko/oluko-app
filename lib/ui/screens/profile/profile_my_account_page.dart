@@ -325,7 +325,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     if (await logOutConfirmationPopUp(context, 'deleteUserConfirmation')) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWhithDots');
       if (await BlocProvider.of<UserInformationBloc>(context).sendDeleteConfirmation(_profileInfo.id)) {
-        logOut();
+        logOut(userDeleted: true);
       }
     }
   }
@@ -345,9 +345,13 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     }
   }
 
-  Future<void> logOut() async {
+  Future<void> logOut({bool userDeleted = false}) async {
     await BlocProvider.of<AuthBloc>(context).logout(context);
-    AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
+    if (userDeleted) {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'deletionInstructions');
+    } else {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
+    }
   }
 
   Future<bool> logOutConfirmationPopUp(BuildContext context, String textKey) async {
