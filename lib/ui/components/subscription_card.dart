@@ -35,11 +35,14 @@ class _State extends State<SubscriptionCard> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: OlukoColors.subscriptionTabsColor,
               ),
-              child: ListView(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: _parseHtmlString(widget.plan.description)
-                      .map((element) => Padding(
-                            padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
-                            child: Text('- $element', style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)),
+                      .map((element) => Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
+                              child: Text('- $element', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
+                            ),
                           ))
                       .toList())),
         ));

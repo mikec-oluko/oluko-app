@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -48,13 +49,10 @@ class _SentVideosPageState extends State<SentVideosPage> {
           content = state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
         }
         return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              OlukoLocalizations.get(context, 'sentVideos'),
-              style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
-                  : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
-            ),
+          appBar: OlukoAppBar(
+            showTitle: true,
+            showActions: true,
+            title: OlukoLocalizations.get(context, 'sentVideos'),
             actions: [
               Row(
                 children: [
@@ -95,27 +93,6 @@ class _SentVideosPageState extends State<SentVideosPage> {
                 ],
               )
             ],
-            elevation: 0.0,
-            backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-            leading: OlukoNeumorphism.isNeumorphismDesign
-                ? Neumorphic(
-                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                    child: OlukoNeumorphicCircleButton(
-                      defaultAspect: true,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  )
-                : IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
           ),
           body: Container(
             width: MediaQuery.of(context).size.width,

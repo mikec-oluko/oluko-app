@@ -21,6 +21,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
         width: MediaQuery.of(context).size.width,
         height: 155,
         child: ListView(
+          physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           children: [
             Padding(

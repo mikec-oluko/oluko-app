@@ -41,8 +41,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   List<Movement> referenceMovements = [
     Movement(
         name: 'Airsquats',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1'),
+        image: 'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1'),
     Movement(
         name: 'Body Building',
         image:
@@ -258,8 +257,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                   }),
                                   controller: tabController,
                                   indicatorSize: TabBarIndicatorSize.label,
-                                  indicator: BoxDecoration(
-                                      border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
+                                  indicator: BoxDecoration(border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
                                   tabs: _getTabs(),
                                 ),
                               ),
@@ -333,9 +331,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       child: Row(
                         children: [
                           Icon(
-                            this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true
-                                ? Icons.bookmark
-                                : Icons.bookmark_border,
+                            this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true ? Icons.bookmark : Icons.bookmark_border,
                             size: 20,
                             color: Colors.white,
                           ),
@@ -360,8 +356,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Container(
-        decoration: BoxDecoration(
-            color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor, borderRadius: BorderRadius.all(Radius.circular(5))),
+        decoration: BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor, borderRadius: BorderRadius.all(Radius.circular(5))),
         height: 150,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -433,9 +428,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
                   movement.description,
-                  style: OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoFonts.olukoMediumFont(customColor: Colors.grey)
-                      : OlukoFonts.olukoMediumFont(),
+                  style: OlukoNeumorphism.isNeumorphismDesign ? OlukoFonts.olukoMediumFont(customColor: Colors.grey) : OlukoFonts.olukoMediumFont(),
                 ),
               ),
               Row(
@@ -463,35 +456,45 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TitleBody(
-                      OlukoLocalizations.get(context, 'referenceCourses'),
-                      bold: true,
+              if (_existRelatedCourses)
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TitleBody(
+                        OlukoLocalizations.get(context, 'referenceCourses'),
+                        bold: true,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                          children: _movementInfoSuccess.relatedCourses
-                              .map((Course course) => Padding(
-                                    padding: const EdgeInsets.only(right: 20.0),
-                                    child: course != null ? neumorphicCourseRow(course) : SizedBox(),
-                                  ))
-                              .toList()),
-                    )
-                  : Column(children: _movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
+                  ],
+                )
+              else
+                const SizedBox.shrink(),
+              if (OlukoNeumorphism.isNeumorphismDesign)
+                !_existRelatedCourses
+                    ? SizedBox.shrink()
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                            children: _movementInfoSuccess.relatedCourses
+                                .map((Course course) => Padding(
+                                      padding: const EdgeInsets.only(right: 20.0),
+                                      child: course != null ? neumorphicCourseRow(course) : SizedBox(),
+                                    ))
+                                .toList()),
+                      )
+              else
+                !_existRelatedCourses
+                    ? const SizedBox.shrink()
+                    : Column(children: _movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )
       ]),
     );
   }
+
+  bool get _existRelatedCourses => _movementInfoSuccess.relatedCourses.isNotEmpty;
 
   _secondTab() {
     return Container(

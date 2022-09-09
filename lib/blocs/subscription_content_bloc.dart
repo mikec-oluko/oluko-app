@@ -179,17 +179,6 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     }
   }
 
-  Future<void> cancelSubscription(String userId, String productId) async {
-    emit(SubscriptionContentLoading());
-    try {
-      await inAppPurchase.restorePurchases(
-        applicationUserName: userId,
-      );
-      await PurchaseRepository.restore(userId, productId);
-    } catch (e) {}
-    emit(PurchaseRestored());
-  }
-
   ListTile buildPurchase(PurchaseDetails purchase) {
     if (purchase.error != null) {
       return ListTile(
