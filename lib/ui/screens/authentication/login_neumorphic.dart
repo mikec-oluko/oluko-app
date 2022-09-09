@@ -21,8 +21,9 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import '../../../routes.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
-  LoginNeumorphicPage({this.dontShowWelcomeTest, Key key}) : super(key: key);
+  LoginNeumorphicPage({this.dontShowWelcomeTest, this.userDeleted = false, Key key}) : super(key: key);
   bool dontShowWelcomeTest;
+  bool userDeleted;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -38,6 +39,11 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   void initState() {
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
     super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (widget.userDeleted) {
+        deletionInstructionsPopUp(context);
+      }
+    });
   }
 
   @override
@@ -433,5 +439,27 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
         ],
       );
     }
+  }
+
+  Future<void> deletionInstructionsPopUp(BuildContext context) async {
+    bool result = true;
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: OlukoColors.black,
+        content: Text(
+          OlukoLocalizations.get(context, 'deletionInstructions'),
+          style: OlukoFonts.olukoBigFont(),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              OlukoLocalizations.get(context, 'ok'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
