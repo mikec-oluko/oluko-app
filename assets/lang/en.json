@@ -417,6 +417,6 @@
     "deleteUserConfirmation": "Are you sure? Your profile and related account information will be deleted from the app",
     "subCancelledSuccessfully": "Subscription canceled successfully",
     "deleteUser": "delete user",
-    "deletionInstructions": "Please check you email inbox to finish the delete process.",
+    "deletionInstructions": "Please check your email inbox to finish the delete process.",
     "deleteMyAccount": "Delete My Account"
 }
