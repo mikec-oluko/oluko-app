@@ -408,11 +408,12 @@
     "manageSubscriptionFromWeb": "Solo puedes modificar la suscripción desde la web",
     "selectASubscription": "Seleccione una suscripción",
     "deleteUser": "Borrar usuario",
-    "deleteUserConfirmation":"¿Está seguro? Su perfil y la información de la cuenta relacionada se eliminarán de la aplicación",
+    "deleteUserConfirmation": "¿Está seguro? Su perfil y la información de la cuenta relacionada se eliminarán de la aplicación",
     "selectPlan": "Seleccionar plan",
     "manageMembership": "Administrar membresía",
     "successfullySubscribed": "Suscrito con éxito",
     "cancelSubscription": "Cancelar suscripción",
     "askCancelSubscription": "Estas seguro de que deseas cancelar tu suscripción? esta accion no se puede deshacer.",
-    "subCancelledSuccessfully": "Subscripción cancelada con éxito"
+    "subCancelledSuccessfully": "Subscripción cancelada con éxito",
+    "deletionInstructions": "Por favor, revisa la bandeja de entrada de tu correo electrónico para finalizar el proceso de eliminación."
 }
