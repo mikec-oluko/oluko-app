@@ -310,24 +310,16 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           //TODO: light behind
           height: 55,
           width: 55,
-          child: GestureDetector(
-            onTap: () => {
+          child: OlukoNeumorphicCircleButton(
+            customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
+            onPressed: () => {
               if (widget.title == OlukoLocalizations.get(context, 'filters'))
                 {filterBackButtonAction()}
               else
                 {
-                  if (widget.onPressed != null)
-                    {widget.onPressed()}
-                  else
-                    {Navigator.pop(context)}
+                  if (widget.onPressed != null) {widget.onPressed()} else {Navigator.pop(context)}
                 }
             },
-            child: OlukoBlurredButton(
-              childContent: Image.asset(
-                'assets/courses/left_back_arrow.png',
-                scale: 3.5,
-              ),
-            ),
           ),
         ),
       ),
