@@ -41,7 +41,7 @@ class _State extends State<SubscriptionCard> {
                       .map((element) => Flexible(
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
-                              child: Flexible(child: Text('- $element', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black))),
+                              child: Text('- $element', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
                             ),
                           ))
                       .toList())),

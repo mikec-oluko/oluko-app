@@ -353,7 +353,7 @@ class AuthBloc extends Cubit<AuthState> {
     return loggedUser;
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> logout(BuildContext context, {bool userDeleted = false}) async {
     _globalService.videoProcessing = false;
 
     final success = await AuthRepository().removeLoginData();
@@ -386,7 +386,8 @@ class AuthBloc extends Cubit<AuthState> {
       }
 
       if (OlukoNeumorphism.isNeumorphismDesign) {
-        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false, arguments: {'dontShowWelcomeTest': true});
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.loginNeumorphic], (route) => false,
+            arguments: {'dontShowWelcomeTest': true, 'userDeleted': userDeleted});
       } else {
         Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       }

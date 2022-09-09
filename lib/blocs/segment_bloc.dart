@@ -50,7 +50,7 @@ class SegmentBloc extends Cubit<SegmentState> {
       List<Segment> segments = await SegmentRepository.getAll();
       final List segmentIds = classObj.segments.map((segment) => segment.id).toList();
       List<Segment> retSegments = List<Segment>.filled(segmentIds.length, null);
-      for (int i = 0; i < segments.length - 1; i++) {
+      for (int i = 0; i < segments.length; i++) {
         int index = segmentIds.indexOf(segments[i].id);
         if (index > -1) {
           retSegments[index] = segments[i];

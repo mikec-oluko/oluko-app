@@ -136,7 +136,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   Padding _subscriptionBodyContent(BuildContext context, SubscriptionContentInitialized state, UserResponse user) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SizedBox(
         height: ScreenUtils.height(context) / 2,
         child: Stack(
@@ -150,17 +150,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     );
   }
 
-  Row _subscriptionTitleSection(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: ScreenUtils.width(context) / 15,
-        ),
-        _manageMembershipText(),
-        SizedBox(
-          width: ScreenUtils.width(context) / 15,
-        ),
-      ],
+  Widget _subscriptionTitleSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30),
+      child: Text(
+        _currentPlan != null && _currentPlan >= 0 ? OlukoLocalizations.get(context, 'manageMembership') : OlukoLocalizations.get(context, 'paymentDetails'),
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: OlukoColors.black, fontSize: 36, fontWeight: FontWeight.w600),
+      ),
     );
   }
 
@@ -290,19 +287,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
               style: TextStyle(color: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _manageMembershipText() {
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 30),
-        child: Text(
-          _currentPlan != null && _currentPlan >= 0 ? OlukoLocalizations.get(context, 'manageMembership') : OlukoLocalizations.get(context, 'paymentDetails'),
-          textAlign: TextAlign.center,
-          style: OlukoFonts.olukoBiggestFont(customColor: Colors.black),
         ),
       ),
     );

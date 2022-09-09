@@ -20,8 +20,7 @@ class UserListComponent extends StatefulWidget {
   final Function() onTopScroll;
   final Map<String, UserProgress> usersProgess;
 
-  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgess, this.onTopScroll})
-      : super();
+  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgess, this.onTopScroll}) : super();
 
   @override
   State<UserListComponent> createState() => _UserListComponentState();
@@ -40,9 +39,8 @@ class _UserListComponentState extends State<UserListComponent> {
 
   @override
   void initState() {
-    _growingUserList = widget.users.isNotEmpty
-        ? [...widget.users.getRange(0, widget.users.length > _batchMaxRange ? _batchMaxRange : widget.users.length)]
-        : [];
+    _growingUserList =
+        widget.users.isNotEmpty ? [...widget.users.getRange(0, widget.users.length > _batchMaxRange ? _batchMaxRange : widget.users.length)] : [];
     _listController.addListener(() {
       if (_listController.position.atEdge) {
         if (_listController.position.pixels > 0) {
@@ -61,11 +59,8 @@ class _UserListComponentState extends State<UserListComponent> {
 
   void _getMoreUsers() => _growingUserList = widget.users.isNotEmpty
       ? [
-          ...widget.users.getRange(
-              0,
-              widget.users.length > _growingUserList.length + _batchMaxRange
-                  ? _growingUserList.length + _batchMaxRange
-                  : widget.users.length)
+          ...widget.users
+              .getRange(0, widget.users.length > _growingUserList.length + _batchMaxRange ? _growingUserList.length + _batchMaxRange : widget.users.length)
         ]
       : [];
 
@@ -78,13 +73,10 @@ class _UserListComponentState extends State<UserListComponent> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(
-            width: ScreenUtils.width(context) * 0.85,
-            child: Text(
-              OlukoLocalizations.get(context, 'noUsers'),
-              textAlign: TextAlign.start,
-              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
-            ))
+        Text(
+          OlukoLocalizations.get(context, 'noUsers'),
+          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
+        )
       ]),
     );
   }

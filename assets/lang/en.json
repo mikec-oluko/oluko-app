@@ -168,7 +168,7 @@
     "noContent": "No content to display",
     "remove": "Remove",
     "connect": "Connect",
-    "connectionRequestCancelled": "Cancel connection request",
+    "connectionRequestCancelled": "Cancel request",
     "profileUploadAborted": "Profile upload aborted",
     "cameraInfo": "Set your camera to your desired orientation and position",
     "cameraWarning": "Hitting this button will start the recording and the Segment",
@@ -416,5 +416,7 @@
     "askCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
     "deleteUserConfirmation": "Are you sure? Your profile and related account information will be deleted from the app",
     "subCancelledSuccessfully": "Subscription canceled successfully",
-    "deleteMyAccount": "Delete My account"
+    "deleteUser": "delete user",
+    "deletionInstructions": "Please check your email inbox to finish the delete process.",
+    "deleteMyAccount": "Delete My Account"
 }
