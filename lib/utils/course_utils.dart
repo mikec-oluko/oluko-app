@@ -62,10 +62,9 @@ class CourseUtils {
       //Check if this course match with the current tag filters.
       bool tagMatch = false;
       selectedTagIds.forEach((tagId) {
-        if (courseTagIds.contains(tagId)&&!tagMatch) {
+        if (courseTagIds.contains(tagId) && !tagMatch) {
           tagMatch = true;
         }
-
       });
       return tagMatch;
     }).toList();
@@ -86,26 +85,29 @@ class CourseUtils {
             keyNameList: search.suggestedItems.map((e) => e.name).toList());
   }
 
-  static Widget searchResults(BuildContext context, SearchResults<Course> search, double cardsAspectRatio, int searchResultsToShowPortrait,
-      int searchResultsToShowLandscape) {
+  static Widget searchResults(
+      BuildContext context, SearchResults<Course> search, double cardsAspectRatio, int searchResultsToShowPortrait, int searchResultsToShowLandscape) {
     return search.searchResults.isEmpty
         ? noCourseText(context)
-        : Column(crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10,top: 25,bottom: 15),
-              child: Text(
-                      '${OlukoLocalizations.get(context, 'result')} ${search.searchResults.length} ${OlukoLocalizations.get(context, 'courses').toLowerCase()}',
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),),
-            ),
-            SearchResultsGrid<Course>(
-                childAspectRatio: cardsAspectRatio,
-                crossAxisCount:
-                    MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
-                textInput: search.query,
-                itemList: search.searchResults),
-          ],
-        );
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 25, bottom: 15),
+                child: Text(
+                  '${OlukoLocalizations.get(context, 'result')} ${search.searchResults.length} ${OlukoLocalizations.get(context, 'courses').toLowerCase()}',
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                ),
+              ),
+              Expanded(
+                child: SearchResultsGrid<Course>(
+                    childAspectRatio: cardsAspectRatio,
+                    crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
+                    textInput: search.query,
+                    itemList: search.searchResults),
+              ),
+            ],
+          );
   }
 
   static Widget noCourseText(BuildContext context) {
