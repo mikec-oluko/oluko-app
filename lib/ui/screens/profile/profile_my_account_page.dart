@@ -346,12 +346,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   Future<void> logOut({bool userDeleted = false}) async {
-    await BlocProvider.of<AuthBloc>(context).logout(context);
-    if (userDeleted) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'deletionInstructions');
-    } else {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
-    }
+    await BlocProvider.of<AuthBloc>(context).logout(context, userDeleted: userDeleted);
+    AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
   }
 
   Future<bool> logOutConfirmationPopUp(BuildContext context, String textKey) async {

@@ -22,6 +22,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import '../../../constants/theme.dart';
 import '../../../routes.dart';
 
@@ -52,7 +53,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         profileInfo = authState.user;
-        BlocProvider.of<SubscriptionContentBloc>(context).subscriptionPlatform(profileInfo.id);
+        if (UserUtils.userDeviceIsIOS()) {
+          BlocProvider.of<SubscriptionContentBloc>(context).subscriptionPlatform(profileInfo.id);
+        }
         BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(profileInfo.id);
         BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
         return BlocListener<UserInformationBloc, UserInformationState>(
@@ -133,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildOptionsList() {
     return ListView.builder(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) / 20),
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: ProfileOptions.profileOptions.length,
@@ -141,16 +144,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _profileOptions(ProfileOptions option) {
-    return BlocBuilder<SubscriptionContentBloc, SubscriptionContentState>(
-      builder: (context, state) {
-        if (state is ManageFromWebState) {
-          if (option.option == ProfileOptionsTitle.subscription) {
-            return const SizedBox();
-          }
-        }
-        return _currentOption(option);
-      },
-    );
+    return UserUtils.userDeviceIsIOS()
+        ? BlocBuilder<SubscriptionContentBloc, SubscriptionContentState>(
+            builder: (context, state) {
+              if (state is ManageFromWebState) {
+                if (option.option == ProfileOptionsTitle.subscription) {
+                  return const SizedBox();
+                }
+              }
+              return _currentOption(option);
+            },
+          )
+        : _currentOption(option);
   }
 
   Widget _currentOption(ProfileOptions option) {
