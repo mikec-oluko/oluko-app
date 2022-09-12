@@ -10,6 +10,8 @@ abstract class AssessmentAssignmentState {}
 
 class AssessmentAssignmentLoading extends AssessmentAssignmentState {}
 
+class AssessmentAssignmentDispose extends AssessmentAssignmentState {}
+
 class AssessmentAssignmentSuccess extends AssessmentAssignmentState {
   final AssessmentAssignment assessmentAssignment;
   AssessmentAssignmentSuccess({this.assessmentAssignment});
@@ -54,4 +56,6 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
       rethrow;
     }
   }
+
+  void dispose() => emit(AssessmentAssignmentDispose());
 }

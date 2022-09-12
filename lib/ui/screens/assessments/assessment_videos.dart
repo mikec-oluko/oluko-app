@@ -58,6 +58,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   }
 
   @override
+  void dispose() {
+    _assessmentAssignment = null;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
@@ -259,8 +265,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             height: 50,
                           ),
                       ])),
-                  Visibility(
-                      visible: OlukoNeumorphism.isNeumorphismDesign ? _showDonePanel : false, child: assessmentDoneBottomPanel(context)),
+                  Visibility(visible: OlukoNeumorphism.isNeumorphismDesign ? _showDonePanel : false, child: assessmentDoneBottomPanel(context)),
                 ]))));
   }
 
@@ -327,12 +332,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
@@ -366,8 +367,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 padding: const EdgeInsets.all(50.0),
                 child: OlukoNeumorphism.isNeumorphismDesign
                     ? Container(
-                        color:
-                            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                         child: OlukoCircularProgressIndicator())
                     : OlukoCircularProgressIndicator());
           }
@@ -389,11 +389,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         });
       }
       BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
-      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-        'taskIndex': index,
-        'isLastTask': isLastTask,
-        'taskCompleted': taskSubmission != null && taskSubmission.video != null
-      }).then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
+      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+              arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null && taskSubmission.video != null})
+          .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
     }
     ;
   }
