@@ -73,16 +73,27 @@ class SegmentSubmissionRepository {
   }
 
   static Future<void> saveSegmentSubmissionWithVideo(SegmentSubmission segmentSubmission, CoachRequest coachRequest) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('segmentSubmissions')
-        .doc(segmentSubmission.id);
-    segmentSubmission.videoState.state = SubmissionStateEnum.uploaded;
-    if (coachRequest != null) {
-      await CoachRequestRepository().updateSegmentSubmission(segmentSubmission.userId, coachRequest, segmentSubmission.id, reference);
-    }
-    reference.set(segmentSubmission.toJson());
+    try {
+      DocumentReference reference = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('segmentSubmissions')
+          .doc(segmentSubmission.id);
+      segmentSubmission.videoState.state = SubmissionStateEnum.uploaded;
+      DocumentSnapshot<Object> segmentSubmmited = await reference.get();
+      if (segmentSubmmited.exists) {
+        Map<String, dynamic> data = segmentSubmmited.data() as Map<String, dynamic>;
+        SegmentSubmission existingSegmentSubmmited = SegmentSubmission.fromJson(data);
+        if (existingSegmentSubmmited.video != segmentSubmission.video) {
+          reference.update({'video': segmentSubmission.video.toJson()});
+        }
+      } else {
+        reference.set(segmentSubmission.toJson());
+      }
+      if (coachRequest != null) {
+        await CoachRequestRepository().updateSegmentSubmission(segmentSubmission.userId, coachRequest, segmentSubmission.id, reference);
+      }
+    } catch (e) {}
   }
 
   static Future<void> setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {

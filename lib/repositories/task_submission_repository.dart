@@ -58,7 +58,16 @@ class TaskSubmissionRepository {
     DocumentReference reference = projectReference.collection('assessmentAssignments').doc(assessmentA.id).collection('taskSubmissions').doc(taskSubmission.id);
     try {
       taskSubmission.video = video;
-      reference.set(taskSubmission.toJson());
+      DocumentSnapshot<Object> taskSubmitted = await reference.get();
+      if (taskSubmitted.exists) {
+        Map<String, dynamic> data = taskSubmitted.data() as Map<String, dynamic>;
+        TaskSubmission existingTask = TaskSubmission.fromJson(data);
+        if (existingTask.video != taskSubmission.video) {
+          reference.update({'video': taskSubmission.video.toJson()});
+        }
+      } else {
+        reference.set(taskSubmission.toJson());
+      }
       if (isLastTask != null && isLastTask) {
         UserResponse userToUpdate = await UserRepository().getById(taskSubmission.createdBy);
         await UserRepository().updateUserLastAssessmentUploaded(userToUpdate, Timestamp.now());
