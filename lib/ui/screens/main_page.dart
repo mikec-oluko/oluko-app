@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -8,21 +9,26 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
+import 'package:oluko_app/blocs/user/user_plan_subscription_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/services/push_notification_service.dart';
+import 'package:oluko_app/services/route_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/newDesignComponents/change_plan_popup_content.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'coach/coach_main_page.dart';
@@ -47,6 +53,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   Function showBottomTab;
   List<Widget> tabs = [];
   TabController tabController;
+  final AuthBloc _authBloc = AuthBloc();
 
   List<Widget> getTabs() {
     return [
@@ -131,13 +138,26 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 }
               }
             },
-          )
+          ),
+          BlocListener<UserPlanSubscriptionBloc, UserPlanSubscriptionState>(listener: (context, state) async {
+            if (state is UserChangedPlan) {
+              final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
+              final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
+              if (!_needLogoutAction(route)) {
+                _authBloc.storeUpdatedLoginData(state);
+              }
+              DialogUtils.getDialog(
+                  context, [ChangePlanPopUpContent(primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : _goToRoute(context, route))],
+                  showExitButton: false);
+            }
+          })
         ],
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
             if (authState is AuthSuccess) {
               BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
               BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
+              BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(loggedUser: authState.user);
             }
             return SafeArea(
               child: Scaffold(
@@ -167,6 +187,16 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           },
         ));
   }
+
+  void _goToRoute(BuildContext context, String route) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      route,
+      (route) => false,
+    );
+  }
+
+  bool _needLogoutAction(String route) => route == routeLabels[RouteEnum.loginNeumorphic] || route == routeLabels[RouteEnum.signUp];
 
   taskSubmissionActions(VideoSuccess state) {
     // BlocProvider.of<TaskSubmissionListBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);

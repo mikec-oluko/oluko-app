@@ -45,7 +45,7 @@ class CoachAssignment extends Base {
       introductionCompleted: json['introduction_completed'] == null ? false : json['introduction_completed'] as bool,
       isFavorite: json['is_favorite'] == null ? false : json['is_favorite'] as bool,
       welcomeVideoSeen: json['welcome_video_seen'] == null ? false : json['welcome_video_seen'] as bool,
-      welcomeVideoUploadedAt: json['welcome_video_uploaded_at'] as Timestamp,
+      welcomeVideoUploadedAt: json['welcome_video_uploaded_at'] != null ? json['welcome_video_uploaded_at'] as Timestamp : null,
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
       videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
       videoHLS: json['video_hls'] as String,

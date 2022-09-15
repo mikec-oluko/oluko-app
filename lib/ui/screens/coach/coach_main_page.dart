@@ -74,29 +74,34 @@ class _CoachMainPageState extends State<CoachMainPage> {
                       }
                     } else {
                       return _currentUser.assessmentsCompletedAt != null && _currentUser.assessmentsCompletedAt is Timestamp
-                          ? CoachAssignedCountDown(
-                              currentUser: _currentUser,
-                              coachAssignment: _coachAssignment,
-                            )
-                          : AssessmentVideos(
-                              isFirstTime: false, isForCoachPage: true, assessmentsDone: _currentUser.assessmentsCompletedAt != null);
+                          ? _coachAssignment == null
+                              ? CoachAssignedCountDown(
+                                  currentUser: _currentUser,
+                                  coachAssignment: _coachAssignment,
+                                )
+                              : _noCoachPage()
+                          : AssessmentVideos(isFirstTime: false, isForCoachPage: true, assessmentsDone: _currentUser.assessmentsCompletedAt != null);
                     }
                   } else {
                     return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
                   }
                 },
               )
-            : BlocBuilder<IntroductionMediaBloc, IntroductionMediaState>(
-                builder: (context, state) {
-                  if (state is Success && state.mediaURL != null) {
-                    return NoCoachPage(
-                      introductionVideo: state.mediaURL,
-                    );
-                  } else {
-                    return SizedBox();
-                  }
-                },
-              );
+            : _noCoachPage();
+      },
+    );
+  }
+
+  BlocBuilder<IntroductionMediaBloc, IntroductionMediaState> _noCoachPage() {
+    return BlocBuilder<IntroductionMediaBloc, IntroductionMediaState>(
+      builder: (context, state) {
+        if (state is Success && state.mediaURL != null) {
+          return NoCoachPage(
+            introductionVideo: state.mediaURL,
+          );
+        } else {
+          return SizedBox();
+        }
       },
     );
   }

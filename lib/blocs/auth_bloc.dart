@@ -19,6 +19,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscription_content_bloc.dart';
+import 'package:oluko_app/blocs/user/user_plan_subscription_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
@@ -135,7 +136,9 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-        AppNavigator().goToSubscriptionsFromRegister(context);
+        if (Platform.isIOS || Platform.isMacOS) {
+          AppNavigator().goToSubscriptionsFromRegister(context);
+        }
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         return;
       } else {
@@ -330,6 +333,14 @@ class AuthBloc extends Cubit<AuthState> {
     return AuthRepository().retrieveLoginData();
   }
 
+  Future<bool> storeUpdatedLoginData(UserChangedPlan userWithPlanChanged) async {
+    if (userWithPlanChanged.userDataUpdated != null && userWithPlanChanged.userDataUpdated is UserResponse) {
+      return AuthRepository().storeLoginData(userWithPlanChanged.userDataUpdated);
+    } else {
+      return false;
+    }
+  }
+
   void updateAuthSuccess(UserResponse userResponse, User firebaseUser) {
     emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
   }
@@ -383,6 +394,7 @@ class AuthBloc extends Cubit<AuthState> {
         BlocProvider.of<CoachAssignmentBloc>(context).dispose();
         BlocProvider.of<AssessmentAssignmentBloc>(context).dispose();
         BlocProvider.of<AssessmentBloc>(context).dispose();
+        BlocProvider.of<UserPlanSubscriptionBloc>(context).dispose();
       } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {

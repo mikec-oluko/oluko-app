@@ -416,5 +416,6 @@
     "cancelSubscription": "Cancelar suscripción",
     "askCancelSubscription": "Estas seguro de que deseas cancelar tu suscripción? esta accion no se puede deshacer.",
     "subCancelledSuccessfully": "Subscripción cancelada con éxito",
-    "deletionInstructions": "Por favor, revisa la bandeja de entrada de tu correo electrónico para finalizar el proceso de eliminación."
+    "deletionInstructions": "Por favor, revisa la bandeja de entrada de tu correo electrónico para finalizar el proceso de eliminación.",
+    "planChangedAlertMessage": "Hemos detectado cambios en tu cuenta, ajustaremos tu experiencia en la app"
 }

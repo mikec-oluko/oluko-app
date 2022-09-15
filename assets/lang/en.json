@@ -418,5 +418,6 @@
     "subCancelledSuccessfully": "Subscription canceled successfully",
     "deleteUser": "delete user",
     "deletionInstructions": "Please check your email inbox to finish the delete process.",
-    "deleteMyAccount": "Delete My Account"
+    "deleteMyAccount": "Delete My Account",
+    "planChangedAlertMessage": "We have detected changes in your account, we will adjust your experience in the app"
 }

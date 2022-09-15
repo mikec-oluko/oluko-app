@@ -1,5 +1,5 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -267,5 +267,9 @@ class UserRepository {
     } else {
       return null;
     }
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getUserPlanStream({@required String userId}) {
+    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).snapshots();
   }
 }
