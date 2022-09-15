@@ -225,7 +225,7 @@
     "timelineCourse": "Course: ",
     "timelineDuration": "Duration: ",
     "requiredPermitsTitle": "Required permits",
-    "requiredPermitsBody": "You need to enable app permissions",
+    "requiredPermitsBody": "You need to enable the following permissions:",
     "goToClass": "Go to Class",
     "nextSegment": "Next Segment",
     "errorLoadingImage": "Error loading image!",
@@ -418,5 +418,7 @@
     "subCancelledSuccessfully": "Subscription canceled successfully",
     "deleteUser": "delete user",
     "deletionInstructions": "Please check your email inbox to finish the delete process.",
-    "deleteMyAccount": "Delete My Account"
+    "deleteMyAccount": "Delete My Account",
+    "microphone": "Microphone",
+    "gallery": "Gallery"
 }

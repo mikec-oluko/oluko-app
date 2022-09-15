@@ -147,8 +147,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                           ),
                         ))
                   else
-                    const SizedBox(
-                    ),
+                    const SizedBox(),
                   if (_contentGallery.isNotEmpty)
                     Align(
                       alignment: Alignment.topLeft,
@@ -212,7 +211,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
               exceptionSource: state.exceptionSource);
         }
         if (state is TransformationJourneyRequirePermissions) {
-          _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
+          _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
         }
       },
       builder: (context, state) {

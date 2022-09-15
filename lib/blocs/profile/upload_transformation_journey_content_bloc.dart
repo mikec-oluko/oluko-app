@@ -26,7 +26,10 @@ class TransformationJourneyContentFailure extends OlukoException with Transforma
       : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
 }
 
-class TransformationJourneyRequirePermissions extends TransformationJourneyContentState {}
+class TransformationJourneyRequirePermissions extends TransformationJourneyContentState {
+  String permissionRequired;
+  TransformationJourneyRequirePermissions({this.permissionRequired});
+}
 
 class TransformationJourneyContentBloc extends Cubit<TransformationJourneyContentState> {
   TransformationJourneyContentBloc() : super(TransformationJourneyContentDefault());
@@ -35,7 +38,7 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
     XFile _image;
     try {
       if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
-        emit(TransformationJourneyRequirePermissions());
+        emit(TransformationJourneyRequirePermissions(permissionRequired: uploadedFrom.name));
         return;
       }
       final ImagePicker imagePicker = ImagePicker();
@@ -46,9 +49,7 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
       }
       if (_image == null && _image is! XFile) {
         emit(TransformationJourneyContentFailure(
-            exception: Exception(),
-            exceptionType: ExceptionTypeEnum.loadFileFailed,
-            exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
+            exception: Exception(), exceptionType: ExceptionTypeEnum.loadFileFailed, exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
         return;
       } else if (!(p.extension(_image.path) == ImageUtils.jpegFormat ||
           p.extension(_image.path) == ImageUtils.jpgFormat ||

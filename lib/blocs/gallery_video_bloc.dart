@@ -21,7 +21,10 @@ class Success extends GalleryVideoState {
   Success({this.pickedFile, this.firstVideo, this.firstImage});
 }
 
-class PermissionsRequired extends GalleryVideoState {}
+class PermissionsRequired extends GalleryVideoState {
+  String permissionRequired;
+  PermissionsRequired({this.permissionRequired});
+}
 
 class UploadFailure extends GalleryVideoState {
   final dynamic exception;
@@ -35,7 +38,7 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
   void getVideoFromGallery() async {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.gallery, checkMicrophone: false)) {
-        emit(PermissionsRequired());
+        emit(PermissionsRequired(permissionRequired: DeviceContentFrom.gallery.name));
         return;
       }
       final imagePicker = ImagePicker();
