@@ -168,7 +168,7 @@
     "noContent": "No content to display",
     "remove": "Remove",
     "connect": "Connect",
-    "connectionRequestCancelled": "Cancel connection request",
+    "connectionRequestCancelled": "Cancel request",
     "profileUploadAborted": "Profile upload aborted",
     "cameraInfo": "Set your camera to your desired orientation and position",
     "cameraWarning": "Hitting this button will start the recording and the Segment",
