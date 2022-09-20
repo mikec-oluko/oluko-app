@@ -10,6 +10,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_register_textfield.dart';
+import 'package:oluko_app/ui/newDesignComponents/terms_and_conditions_privacy_policy_component.dart';
 import 'package:oluko_app/utils/app_validators.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,7 +72,10 @@ class _RegisterState extends State<RegisterPage> {
               _textfieldsSection(),
               _passwordRequirementsSection(context),
               _defaultWidgetSpacer(context),
-              _userCheckConditionsAndPolicySection(context),
+              // _userCheckConditionsAndPolicySection(context),
+              TermsAndConditionsPrivacyPolicyComponent(
+                onPressed: (value) => agreeWithTermsAndConditions(value),
+              ),
               _mvtNewsInfoAndOffers(context),
               _defaultWidgetSpacer(context),
               _registerConfirmButton(context),
@@ -148,6 +152,12 @@ class _RegisterState extends State<RegisterPage> {
                 }),
           ),
         ));
+  }
+
+  agreeWithTermsAndConditions(bool value) {
+    setState(() {
+      _agreeWithRequirements = value;
+    });
   }
 
   Future<void> _launchUrl(Uri url) async {
