@@ -20,32 +20,32 @@ class _TermsAndConditionsPrivacyPolicyComponentState extends State<TermsAndCondi
   bool _agreeWithRequirements = false;
 
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Theme(
-          data: ThemeData(
-            unselectedWidgetColor: OlukoColors.primary,
-          ),
-          child: Padding(
+    return !widget.isReadOnly
+        ? Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: !widget.isReadOnly
-                ? CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    checkColor: OlukoColors.black,
-                    activeColor: Colors.white,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    dense: true,
-                    value: widget.currentValue,
-                    title: Transform.translate(
-                      offset: const Offset(-20, 0),
-                      child: _textContent(context, isReadOnly: widget.isReadOnly),
-                    ),
-                    onChanged: (value) {
-                      widget.onPressed(value);
-                    })
-                : _textContent(context),
-          ),
-        ));
+            child: Theme(
+              data: ThemeData(
+                unselectedWidgetColor: OlukoColors.primary,
+              ),
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      checkColor: OlukoColors.black,
+                      activeColor: Colors.white,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      dense: true,
+                      value: widget.currentValue,
+                      title: Transform.translate(
+                        offset: const Offset(-20, 0),
+                        child: _textContent(context, isReadOnly: widget.isReadOnly),
+                      ),
+                      onChanged: (value) {
+                        widget.onPressed(value);
+                      })),
+            ),
+          )
+        : _textContent(context);
   }
 
   Wrap _textContent(BuildContext context, {bool isReadOnly = false}) {
