@@ -45,11 +45,12 @@ class _TermsAndConditionsPrivacyPolicyComponentState extends State<TermsAndCondi
                       })),
             ),
           )
-        : _textContent(context);
+        : _textContent(context, isReadOnly: true);
   }
 
   Wrap _textContent(BuildContext context, {bool isReadOnly = false}) {
     return Wrap(
+      alignment: WrapAlignment.center,
       children: [
         Text(OlukoLocalizations.get(context, isReadOnly ? 'seeTextForTermsAndConditions' : 'registerByContinuing'),
             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
