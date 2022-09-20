@@ -29,8 +29,6 @@ class _RegisterState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   Map<ValidatorNames, bool> _passwordValidationState;
   SignUpRequest _newUserFromRegister = SignUpRequest();
-  final Uri _mvtTermsAndConditionsUrl = Uri.parse('https://www.mvtfitnessapp.com/terms');
-  final Uri _mvtPrivacyPolicyUrl = Uri.parse('https://www.mvtfitnessapp.com/privacy-policy');
 
   @override
   void initState() {
@@ -72,11 +70,7 @@ class _RegisterState extends State<RegisterPage> {
               _textfieldsSection(),
               _passwordRequirementsSection(context),
               _defaultWidgetSpacer(context),
-              // _userCheckConditionsAndPolicySection(context),
-              TermsAndConditionsPrivacyPolicyComponent(
-                currentValue: _agreeWithRequirements,
-                onPressed: (value) => agreeWithTermsAndConditions(value),
-              ),
+              _termsAndConditionsPrivacyPolicy(),
               _mvtNewsInfoAndOffers(context),
               _defaultWidgetSpacer(context),
               _registerConfirmButton(context),
@@ -86,6 +80,13 @@ class _RegisterState extends State<RegisterPage> {
           ),
         ),
       ),
+    );
+  }
+
+  TermsAndConditionsPrivacyPolicyComponent _termsAndConditionsPrivacyPolicy() {
+    return TermsAndConditionsPrivacyPolicyComponent(
+      currentValue: _agreeWithRequirements,
+      onPressed: (value) => agreeWithTermsAndConditions(value),
     );
   }
 
@@ -159,58 +160,6 @@ class _RegisterState extends State<RegisterPage> {
     setState(() {
       _agreeWithRequirements = value;
     });
-  }
-
-  Future<void> _launchUrl(Uri url) async {
-    if (!await launchUrl(url)) {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Widget _userCheckConditionsAndPolicySection(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Theme(
-          data: ThemeData(
-            unselectedWidgetColor: OlukoColors.primary,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                checkColor: OlukoColors.black,
-                activeColor: Colors.white,
-                controlAffinity: ListTileControlAffinity.leading,
-                dense: true,
-                value: _agreeWithRequirements,
-                title: Transform.translate(
-                  offset: const Offset(-20, 0),
-                  child: Wrap(
-                    children: [
-                      Text(OlukoLocalizations.get(context, 'registerByContinuing'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
-                      InkWell(
-                        onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
-                        child: Text(OlukoLocalizations.get(context, 'termsAndConditions'),
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(decoration: TextDecoration.underline)),
-                      ),
-                      Text(OlukoLocalizations.get(context, 'and'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.black)),
-                      InkWell(
-                        onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
-                        child: Text(OlukoLocalizations.get(context, 'privacyPolicy'),
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary).copyWith(
-                              decoration: TextDecoration.underline,
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _agreeWithRequirements = value;
-                  });
-                }),
-          ),
-        ));
   }
 
   Expanded _widgetSpacer() => const Expanded(child: SizedBox());

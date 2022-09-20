@@ -14,11 +14,10 @@ class TermsAndConditionsPrivacyPolicyComponent extends StatefulWidget {
 }
 
 class _TermsAndConditionsPrivacyPolicyComponentState extends State<TermsAndConditionsPrivacyPolicyComponent> {
-  @override
   final Uri _mvtTermsAndConditionsUrl = Uri.parse('https://www.mvtfitnessapp.com/terms');
   final Uri _mvtPrivacyPolicyUrl = Uri.parse('https://www.mvtfitnessapp.com/privacy-policy');
-  bool _agreeWithRequirements = false;
 
+  @override
   Widget build(BuildContext context) {
     return !widget.isReadOnly
         ? Padding(
