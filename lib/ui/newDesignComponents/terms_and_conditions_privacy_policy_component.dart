@@ -5,8 +5,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TermsAndConditionsPrivacyPolicyComponent extends StatefulWidget {
-  const TermsAndConditionsPrivacyPolicyComponent({@required this.onPressed}) : super();
+  const TermsAndConditionsPrivacyPolicyComponent({@required this.onPressed, @required this.currentValue}) : super();
   final Function(bool) onPressed;
+  final bool currentValue;
   @override
   State<TermsAndConditionsPrivacyPolicyComponent> createState() => _TermsAndConditionsPrivacyPolicyComponentState();
 }
@@ -32,7 +33,7 @@ class _TermsAndConditionsPrivacyPolicyComponentState extends State<TermsAndCondi
                 activeColor: Colors.white,
                 controlAffinity: ListTileControlAffinity.leading,
                 dense: true,
-                value: _agreeWithRequirements,
+                value: widget.currentValue,
                 title: Transform.translate(
                   offset: const Offset(-20, 0),
                   child: Wrap(

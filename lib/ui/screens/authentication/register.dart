@@ -74,6 +74,7 @@ class _RegisterState extends State<RegisterPage> {
               _defaultWidgetSpacer(context),
               // _userCheckConditionsAndPolicySection(context),
               TermsAndConditionsPrivacyPolicyComponent(
+                currentValue: _agreeWithRequirements,
                 onPressed: (value) => agreeWithTermsAndConditions(value),
               ),
               _mvtNewsInfoAndOffers(context),
