@@ -30,10 +30,12 @@ class _PlanDetailsTextComponentState extends State<PlanDetailsTextComponent> {
   }
 
   Widget _getCorePlanText({Plan plan}) => Wrap(
+    alignment: WrapAlignment.center,
         children: [_planDetailsTextWithCurrencyAndDate(plan), _planDetailsPromoAndManageText()],
       );
 
   Widget _getCoachPlansText({Plan plan}) => Wrap(
+    alignment: WrapAlignment.center,
         children: [_planDetailsTextWithCurrencyAndDate(plan), _planDetailsPromoAndManageText(), _contactUsFullContent()],
       );
 
