@@ -366,7 +366,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
 
   Padding _displayTermsAndConditionsPlusPrivacyPolicy() {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: TermsAndConditionsPrivacyPolicyComponent(isReadOnly: true),
     );
   }
