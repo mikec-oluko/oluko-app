@@ -12,6 +12,8 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/plan_details_text.dart';
+import 'package:oluko_app/ui/newDesignComponents/terms_and_conditions_privacy_policy_component.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -28,7 +30,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   TabController _controller;
   int _selectedIndex = 0;
   int _currentPlan = 0;
-  DateTime _today = DateTime.now();
 
   @override
   void initState() {
@@ -338,7 +339,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                     _subscriptionBodyContent(context, state, state.user),
                     _selectPlanButton(state),
                     if (widget.fromRegister) _cancelButton(),
-                    getTextDetailsForPlan(currentIndex: _selectedIndex, currentIndexPlan: state.plans.elementAt(_selectedIndex))
+                    _displayTermsAndConditionsPlusPrivacyPolicy(),
+                    _getCurrentPlanDetalsText(state)
                   ],
                 )
               : const SizedBox(),
@@ -359,6 +361,16 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
     }
   }
 
+  PlanDetailsTextComponent _getCurrentPlanDetalsText(SubscriptionContentInitialized state) =>
+      PlanDetailsTextComponent(currentIndex: _selectedIndex, plan: state.plans.elementAt(_selectedIndex));
+
+  Padding _displayTermsAndConditionsPlusPrivacyPolicy() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: TermsAndConditionsPrivacyPolicyComponent(isReadOnly: true),
+    );
+  }
+
   removeSubscriptionStream() {
     BlocProvider.of<SubscriptionContentBloc>(context).dispose();
   }
@@ -368,76 +380,5 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
       return subscriptionContentState.user.currentPlan >= 0;
     }
     return false;
-  }
-
-  Widget getTextDetailsForPlan({@required int currentIndex, @required Plan currentIndexPlan}) {
-    List<Widget> content = [
-      getCoreText(plan: currentIndexPlan),
-      getCoachText(plan: currentIndexPlan),
-      getCoachPlusText(plan: currentIndexPlan),
-    ];
-    return content.elementAt(currentIndex);
-  }
-
-  Widget getCoreText({Plan plan}) {
-    return Wrap(
-      children: [
-        Text(
-          'Your MVT Fitness free trial will automatically convert to a monthly Core membership once your trial period has ended.',
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black),
-        ),
-        Text(
-            'Your account will be charged ${_getCurrency(plan)} ${_getPrice(plan.applePrice.toString())} USD plus any tax on the ${_today.day} day of the month until you cancel or upgrade your membership. Promo code exceptions may apply. Manage your membership at any time from your account.',
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black))
-      ],
-    );
-  }
-
-  Widget getCoachText({Plan plan}) {
-    return Wrap(
-      children: [
-        Text(
-            'Your account will be charged  ${_getCurrency(plan)} ${_getPrice(plan.applePrice.toString())}  USD plus any tax on the ${_today.day} day of the month until you cancel or upgrade your membership.',
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
-        Text('Promo code exceptions may apply. Manage your membership at any time from your account.',
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
-        _contactUsFullContent()
-      ],
-    );
-  }
-
-  Row _contactUsFullContent() {
-    return Row(
-      children: [
-        Text(
-            'You will automatically enter a waitlist for 24 hours until your coach has been assigned. For any questions regarding your coaching subscription, please.',
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
-        _contactUsLink(),
-      ],
-    );
-  }
-
-  GestureDetector _contactUsLink() {
-    return GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            routeLabels[RouteEnum.profileContactUs],
-          );
-        },
-        child: Text('contact us', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500)));
-  }
-
-  Widget getCoachPlusText({Plan plan}) {
-    return Wrap(
-      children: [
-        Text(
-            'Your account will be charged ${_getCurrency(plan)} ${_getPrice(plan.applePrice.toString())} USD plus any tax on the ${_today.day} day of the month until you cancel or upgrade your membership.',
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
-        Text('Promo code exceptions may apply. Manage your membership at any time from your account.',
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
-        _contactUsFullContent()
-      ],
-    );
   }
 }
