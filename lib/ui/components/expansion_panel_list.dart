@@ -5,6 +5,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/faq_item.dart';
 import 'package:oluko_app/ui/components/parent_tile.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ExpansionPanelListWidget extends StatefulWidget {
   List<FAQItem> faqList;
@@ -14,6 +15,8 @@ class ExpansionPanelListWidget extends StatefulWidget {
 }
 
 class _ExpansionPanelListState extends State<ExpansionPanelListWidget> {
+  final Uri _mvtTermsAndConditionsUrl = Uri.parse('https://www.mvtfitnessapp.com/terms');
+  final Uri _mvtPrivacyPolicyUrl = Uri.parse('https://www.mvtfitnessapp.com/privacy-policy');
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,9 +29,34 @@ class _ExpansionPanelListState extends State<ExpansionPanelListWidget> {
                 for (FAQItem faq in widget.faqList)
                   if (faq.category == type) BasicTile(title: faq.question, tiles: [BasicTile(title: faq.answer)])
               ]),
-            )
+            ),
+          ParentTileWidget(
+              tile: BasicTile(
+                  title: OlukoLocalizations.get(context, 'termsAndConditions') +
+                      OlukoLocalizations.get(context, 'and') +
+                      OlukoLocalizations.get(context, 'privacyPolicy'),
+                  tiles: [
+                BasicTile(
+                  child: InkWell(
+                    onTap: () => _launchUrl(_mvtTermsAndConditionsUrl),
+                    child: Text(OlukoLocalizations.get(context, 'termsAndConditions'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
+                  ),
+                ),
+                BasicTile(
+                  child: InkWell(
+                    onTap: () => _launchUrl(_mvtPrivacyPolicyUrl),
+                    child: Text(OlukoLocalizations.get(context, 'privacyPolicy'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
+                  ),
+                )
+              ])),
         ],
       ),
     );
+  }
+}
+
+Future<void> _launchUrl(Uri url) async {
+  if (!await launchUrl(url)) {
+    throw 'Could not launch $url';
   }
 }
