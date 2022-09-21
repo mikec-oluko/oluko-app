@@ -6,11 +6,14 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_white_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/plan_details_text.dart';
+import 'package:oluko_app/ui/newDesignComponents/terms_and_conditions_privacy_policy_component.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -336,6 +339,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
                     _subscriptionBodyContent(context, state, state.user),
                     _selectPlanButton(state),
                     if (widget.fromRegister) _cancelButton(),
+                    _displayTermsAndConditionsPlusPrivacyPolicy(),
+                    _getCurrentPlanDetalsText(state)
                   ],
                 )
               : const SizedBox(),
@@ -354,6 +359,16 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         ),
       );
     }
+  }
+
+  PlanDetailsTextComponent _getCurrentPlanDetalsText(SubscriptionContentInitialized state) =>
+      PlanDetailsTextComponent(currentIndex: _selectedIndex, plan: state.plans.elementAt(_selectedIndex));
+
+  Padding _displayTermsAndConditionsPlusPrivacyPolicy() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: TermsAndConditionsPrivacyPolicyComponent(isReadOnly: true),
+    );
   }
 
   removeSubscriptionStream() {
