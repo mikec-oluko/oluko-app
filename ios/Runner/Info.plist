@@ -65,8 +65,6 @@
 	<string>To record user workouts</string>
 	<key>NSCameraUsageDescription</key>
 	<string>To upload training images so that the coach can validate the training.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>So that the user can share with his friends his progress in the app and invite them to it.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>So that a client can send audios to their coach asking for instructions.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

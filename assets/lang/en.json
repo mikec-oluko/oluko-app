@@ -418,5 +418,8 @@
     "subCancelledSuccessfully": "Subscription canceled successfully",
     "deleteUser": "delete user",
     "deletionInstructions": "Please check your email inbox to finish the delete process.",
-    "deleteMyAccount": "Delete My Account"
+    "deleteMyAccount": "Delete My Account",
+    "microphone": "Microphone",
+    "gallery": "Gallery",
+    "seeTextForTermsAndConditions": "See "
 }

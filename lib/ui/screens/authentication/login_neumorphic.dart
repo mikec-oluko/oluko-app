@@ -263,7 +263,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             ),
           ),
         ),
-      const SizedBox(
+      /*const SizedBox(
         height: 15,
       ),
       SizedBox(
@@ -292,7 +292,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       SizedBox(
         width: ScreenUtils.width(context),
         child: getExternalLoginButtons(),
-      ),
+      ),*/
     ];
   }
 
