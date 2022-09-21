@@ -565,7 +565,7 @@ class Routes {
         final Map<String, bool> argumentsToAdd = arguments as Map<String, bool>;
         newRouteView = LoginNeumorphicPage(
             dontShowWelcomeTest: argumentsToAdd != null ? argumentsToAdd['dontShowWelcomeTest'] : null,
-            userDeleted: argumentsToAdd != null ? argumentsToAdd['userDeleted'] : false);
+            userDeleted: argumentsToAdd['userDeleted'] != null ? argumentsToAdd['userDeleted'] : false);
         break;
       case RouteEnum.completedClass:
         providers = [
