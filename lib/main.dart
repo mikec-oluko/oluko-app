@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,7 @@ Future<void> main() async {
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
   final bool firstTime = await UserUtils.isFirstTime();
-  final String route = await getInitialRoute(alreadyLoggedUser, firstTime,alreadyLoggedUserResponse);
+  final String route = await getInitialRoute(alreadyLoggedUser, firstTime, alreadyLoggedUserResponse);
   final MyApp myApp = MyApp(
     initialRoute: route,
   );
@@ -61,7 +63,15 @@ Future<String> getInitialRoute(User alreadyLoggedUser, bool isFirstTime, UserRes
     }
   } else {
     if (alreadyLoggedUserResponse.currentPlan < 0 || alreadyLoggedUserResponse.currentPlan == null) {
-      return routeLabels[RouteEnum.profileSubscription];
+      if (Platform.isIOS || Platform.isMacOS) {
+        return routeLabels[RouteEnum.profileSubscription];
+      } else {
+        if (OlukoNeumorphism.isNeumorphismDesign) {
+          return routeLabels[RouteEnum.loginNeumorphic];
+        } else {
+          return routeLabels[RouteEnum.signUp];
+        }
+      }
     }
     AssessmentAssignment assesmentA = await AssessmentAssignmentRepository.getByUserId(alreadyLoggedUser.uid);
     if (assesmentA != null && (assesmentA.seenByUser == null || !assesmentA.seenByUser)) {
