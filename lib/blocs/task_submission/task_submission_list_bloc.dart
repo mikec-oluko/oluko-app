@@ -55,7 +55,7 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
     }
   }
 
-  void saveTaskSubmissionWithVideo(AssessmentAssignment assessmentA, TaskSubmission taskSubmission, Video video, bool isLastTask) async {
+  Future<void> saveTaskSubmissionWithVideo(AssessmentAssignment assessmentA, TaskSubmission taskSubmission, Video video, bool isLastTask) async {
     emit(Loading());
     try {
       await TaskSubmissionRepository.saveTaskSubmission(assessmentA, taskSubmission, video, isLastTask);

@@ -198,9 +198,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   bool _needLogoutAction(String route) => route == routeLabels[RouteEnum.loginNeumorphic] || route == routeLabels[RouteEnum.signUp];
 
-  taskSubmissionActions(VideoSuccess state) {
+  taskSubmissionActions(VideoSuccess state) async {
     // BlocProvider.of<TaskSubmissionListBloc>(context).updateTaskSubmissionVideo(state.assessmentAssignment, state.taskSubmission.id, state.video);
-    BlocProvider.of<TaskSubmissionListBloc>(context)
+    await BlocProvider.of<TaskSubmissionListBloc>(context)
         .saveTaskSubmissionWithVideo(state.assessmentAssignment, state.taskSubmission, state.video, state.isLastTask);
     BlocProvider.of<TaskSubmissionListBloc>(context).checkCompleted(state.assessmentAssignment, state.assessment);
     BlocProvider.of<TaskCardBloc>(context).taskFinished(state.taskSubmission.task.id);
