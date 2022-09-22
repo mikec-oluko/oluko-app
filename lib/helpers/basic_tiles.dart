@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class BasicTile {
   final String title;
   final List<BasicTile> tiles;
+  final Widget child;
   bool isExpanded;
 
-  BasicTile({@required this.title, this.tiles = const [], this.isExpanded = false});
+  BasicTile({this.title, this.tiles = const [], this.isExpanded = false, this.child});
 
   static final basicTiles = <BasicTile>[
     BasicTile(title: "Top Queries", tiles: [

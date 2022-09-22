@@ -135,11 +135,13 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       AuthRepository().storeLoginData(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
-        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         if (Platform.isIOS || Platform.isMacOS) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
           AppNavigator().goToSubscriptionsFromRegister(context);
+          emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        } else {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
         }
-        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         return;
       } else {
         if (firebaseUser != null) {
