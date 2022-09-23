@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -10,8 +11,9 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class ShareCard extends StatefulWidget {
   final Function() createStory;
   final Function(bool) whistleAction;
+  final String videoRecordedThumbnail;
 
-  ShareCard({this.createStory, this.whistleAction});
+  ShareCard({this.createStory, this.whistleAction, this.videoRecordedThumbnail});
 
   @override
   _State createState() => _State();
@@ -30,8 +32,7 @@ class _State extends State<ShareCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
+      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
       child: Padding(
         padding: const EdgeInsets.only(right: 15.0, left: 25.0, top: 12, bottom: 12.0),
         child: Column(
@@ -81,11 +82,16 @@ class _State extends State<ShareCard> {
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(5)),
       child: Container(
-        child: Image.asset(
-          'assets/assessment/task_response_thumbnail.png',
-          scale: 17,
-        ),
-      ),
+          width: 80,
+          height: 120,
+          child: widget.videoRecordedThumbnail != null
+              ? Image(
+                  image: CachedNetworkImageProvider(widget.videoRecordedThumbnail),
+                )
+              : Image.asset(
+                  'assets/assessment/task_response_thumbnail.png',
+                  scale: 17,
+                )),
     );
   }
 
@@ -121,8 +127,7 @@ class _State extends State<ShareCard> {
               Padding(
                 padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
                 child: Row(children: [
-                  Text('Coach',
-                      style: _whistleEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
+                  Text('Coach', style: _whistleEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
                   if (!_whistleEnabled) doubleCheck()
                 ]),
               )
@@ -250,10 +255,7 @@ class _State extends State<ShareCard> {
 
   Widget doubleCheck() {
     return Stack(
-      children: [
-        Image.asset('assets/assessment/check.png', scale: 5),
-        Positioned(left: 4, child: Image.asset('assets/assessment/check.png', scale: 5))
-      ],
+      children: [Image.asset('assets/assessment/check.png', scale: 5), Positioned(left: 4, child: Image.asset('assets/assessment/check.png', scale: 5))],
     );
   }
 }

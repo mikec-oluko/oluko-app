@@ -66,6 +66,7 @@ class ClocksLowerSection extends StatefulWidget {
 
 class _State extends State<ClocksLowerSection> {
   bool shareDone = false;
+  SegmentSubmission _updatedSegmentSubmission;
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +86,7 @@ class _State extends State<ClocksLowerSection> {
       return Container(
           color: OlukoColors.black,
           child: isSegmentWithRecording() && widget.timerTaskIndex > 0
-              ? SegmentClocksUtils.cameraSection(
-                  context, isWorkStateFinished(), widget.isCameraReady, widget.cameraController, widget.pauseButton)
+              ? SegmentClocksUtils.cameraSection(context, isWorkStateFinished(), widget.isCameraReady, widget.cameraController, widget.pauseButton)
               : const SizedBox());
     } else {
       return _segmentInfoSection();
@@ -103,8 +103,7 @@ class _State extends State<ClocksLowerSection> {
           children: [
             getTitle(),
             const SizedBox(height: 5),
-            if (widget.counter ||
-                (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds))
+            if (widget.counter || (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds))
               getScores()
             else
               getWorkouts(),
@@ -127,15 +126,12 @@ class _State extends State<ClocksLowerSection> {
                 width: ScreenUtils.width(context),
                 child: ListView(
                   padding: EdgeInsets.zero,
-                  children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
-                      .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
-                      ?.toList(),
+                  children:
+                      SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
                 )),
           )
         : Column(
-            children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex])
-                .map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))
-                ?.toList(),
+            children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
           );
   }
 
@@ -145,8 +141,8 @@ class _State extends State<ClocksLowerSection> {
         child: ListView(
             padding: EdgeInsets.zero,
             shrinkWrap: true,
-            children: SegmentClocksUtils.getScoresByRound(context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore,
-                widget.scores, widget.areDiferentMovsWithRepCouter)));
+            children: SegmentClocksUtils.getScoresByRound(
+                context, widget.timerEntries, widget.timerTaskIndex, widget.totalScore, widget.scores, widget.areDiferentMovsWithRepCouter)));
   }
 
   Widget getTitle() {
@@ -173,7 +169,18 @@ class _State extends State<ClocksLowerSection> {
   Widget getCard() {
     return widget.originalWorkoutType == WorkoutType.segment || shareDone
         ? FeedbackCard(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId)
-        : ShareCard(createStory: widget.createStory, whistleAction: _whistleAction);
+        : BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
+            builder: (context, state) {
+              if (state is UpdateSegmentSubmissionSuccess) {
+                _updatedSegmentSubmission = state.segmentSubmission;
+              }
+              return ShareCard(
+                createStory: widget.createStory,
+                whistleAction: _whistleAction,
+                videoRecordedThumbnail: _updatedSegmentSubmission.video.thumbUrl,
+              );
+            },
+          );
   }
 
   _whistleAction(bool delete) {
