@@ -171,7 +171,7 @@ class _State extends State<ClocksLowerSection> {
         ? FeedbackCard(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId)
         : BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
             builder: (context, state) {
-              if (state is UpdateSegmentSubmissionSuccess) {
+              if (state is SaveSegmentSubmissionSuccess) {
                 _updatedSegmentSubmission = state.segmentSubmission;
               }
               return ShareCard(

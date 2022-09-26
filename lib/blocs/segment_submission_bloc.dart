@@ -23,6 +23,11 @@ class UpdateSegmentSubmissionSuccess extends SegmentSubmissionState {
   UpdateSegmentSubmissionSuccess({this.segmentSubmission});
 }
 
+class SaveSegmentSubmissionSuccess extends SegmentSubmissionState {
+  SegmentSubmission segmentSubmission;
+  SaveSegmentSubmissionSuccess({this.segmentSubmission});
+}
+
 class EncodedSegmentSubmissionSuccess extends SegmentSubmissionState {}
 
 class ErrorSegmentSubmissionSuccess extends SegmentSubmissionState {}
@@ -88,7 +93,7 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   void saveSegmentSubmissionWithVideo(SegmentSubmission segmentSubmission, CoachRequest coachRequest) async {
     try {
       await SegmentSubmissionRepository.saveSegmentSubmissionWithVideo(segmentSubmission, coachRequest);
-      emit(UpdateSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
+      emit(SaveSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

@@ -228,7 +228,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
                             _globalService.videoProcessing = true;
                           }
-                        } else if (state is UpdateSegmentSubmissionSuccess) {
+                        } else if (state is SaveSegmentSubmissionSuccess) {
                           waitingForSegSubCreation = false;
                           BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, _user.uid, RequestStatusEnum.resolved);
                           if (_wantsToCreateStory) {
