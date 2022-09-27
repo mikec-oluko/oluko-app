@@ -150,7 +150,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   context,
                   [
                     ChangePlanPopUpContent(
-                      primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : _goToRoute(context, route),
+                      primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : goToRoute(context, route),
                       isPlanCanceled: state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null,
                     )
                   ],
@@ -194,13 +194,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         ));
   }
 
-  void _goToRoute(BuildContext context, String route) {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      route,
-      (route) => false,
-    );
-  }
+  void goToRoute(BuildContext context, String route) => Navigator.pushNamedAndRemoveUntil(
+        context,
+        route,
+        (route) => false,
+      );
 
   bool _needLogoutAction(String route) => route == routeLabels[RouteEnum.loginNeumorphic] || route == routeLabels[RouteEnum.signUp];
 
