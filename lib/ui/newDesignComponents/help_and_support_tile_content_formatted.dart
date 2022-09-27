@@ -58,8 +58,8 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
 
   TextSpan _createLinkText() {
     return TextSpan(
-      text: 'Contact',
-      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.coral),
+      text: 'contact',
+      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.skyblue, customFontWeight: FontWeight.bold).copyWith(decoration: TextDecoration.underline),
       recognizer: TapGestureRecognizer()
         ..onTap = () {
           Navigator.pushNamed(
