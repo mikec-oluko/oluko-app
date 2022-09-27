@@ -177,7 +177,7 @@ class _State extends State<ClocksLowerSection> {
               return ShareCard(
                 createStory: widget.createStory,
                 whistleAction: _whistleAction,
-                videoRecordedThumbnail: _updatedSegmentSubmission.video.thumbUrl,
+                videoRecordedThumbnail: _updatedSegmentSubmission?.video?.thumbUrl,
               );
             },
           );
