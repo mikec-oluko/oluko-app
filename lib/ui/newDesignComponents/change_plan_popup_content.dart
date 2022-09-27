@@ -7,8 +7,9 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChangePlanPopUpContent extends StatefulWidget {
-  const ChangePlanPopUpContent({Key key, this.primaryPress}) : super(key: key);
+  const ChangePlanPopUpContent({Key key, this.primaryPress, this.isPlanCanceled = false}) : super(key: key);
   final Function() primaryPress;
+  final bool isPlanCanceled;
 
   @override
   State<ChangePlanPopUpContent> createState() => _ChangePlanPopUpContentState();
@@ -24,13 +25,12 @@ class _ChangePlanPopUpContentState extends State<ChangePlanPopUpContent> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
-              child: TitleBody('Atention',
-                  // OlukoLocalizations.get(context, 'Atention'),
-                  bold: true),
+              child: TitleBody(OlukoLocalizations.get(context, 'attention'), bold: true),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: Text(OlukoLocalizations.get(context, 'planChangedAlertMessage'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+              child: Text(OlukoLocalizations.get(context, widget.isPlanCanceled ? 'planCanceledAlertMessage' : 'planChangedAlertMessage'),
+                  textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

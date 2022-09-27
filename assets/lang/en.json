@@ -419,8 +419,13 @@
     "deleteUser": "delete user",
     "deletionInstructions": "Please check your email inbox to finish the delete process.",
     "deleteMyAccount": "Delete My Account",
-    "planChangedAlertMessage": "We have detected changes in your account, we will adjust your experience in the app",
+    "planChangedAlertMessage": "Your membership is now updated!",
+    "planCanceledAlertMessage": "Your membership has been canceled. Please log into your account on the web to select a new membership and payment method.",
     "microphone": "Microphone",
     "gallery": "Gallery",
-    "seeTextForTermsAndConditions": "See "
+    "seeTextForTermsAndConditions": "See ",
+    "contact": "contact",
+    "prxPerformance": "PRx Performance",
+    "attention":"Attention!"
+    
 }

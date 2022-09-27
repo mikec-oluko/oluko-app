@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/url_launcher_service.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class HelpAndSupportTileContentFormatted extends StatefulWidget {
   const HelpAndSupportTileContentFormatted({this.rawTileStringContent}) : super();
@@ -14,7 +15,7 @@ class HelpAndSupportTileContentFormatted extends StatefulWidget {
 
 class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileContentFormatted> {
   final RegExp _matchContactWord = RegExp(r'\b(contact|Contact)\b');
-  final RegExp _matPxPerformanceWord = RegExp(r'\b(PRx Performance|prx performance)\b');
+  final RegExp _matchPxPerformanceWord = RegExp(r'\b(PRx Performance|prx performance)\b');
   final Uri _prxPerformanceUrl = Uri.parse('https://prxperformance.com/');
 
   @override
@@ -24,40 +25,40 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
 
   Widget getRichText(String inputText) {
     List<TextSpan> textElements = [];
-    List<TextSpan> tempTextElements = [];
+    List<TextSpan> _tempTextElements = [];
     List<String> _listOfParagraphs = formatText(inputText);
     _listOfParagraphs.forEach((pElement) {
       pElement = _removeBlankAddTextEnd(pElement);
 
       if (pElement.contains(_matchContactWord)) {
-        tempTextElements = pElement
+        _tempTextElements = pElement
             .split(_matchContactWord)
             .map((pElementWidget) => TextSpan(text: pElementWidget, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
             .toList();
-        tempTextElements.insert(
+        _tempTextElements.insert(
             1,
             _createLinkText(
-                textContent: 'contact',
+                textContent: OlukoLocalizations.get(context, 'contact'),
                 onTapFunction: () {
                   Navigator.pushNamed(
                     context,
                     routeLabels[RouteEnum.profileContactUs],
                   );
                 }));
-        textElements.addAll(tempTextElements);
-      } else if (pElement.contains(_matPxPerformanceWord)) {
-        tempTextElements = pElement
-            .split(_matPxPerformanceWord)
+        textElements.addAll(_tempTextElements);
+      } else if (pElement.contains(_matchPxPerformanceWord)) {
+        _tempTextElements = pElement
+            .split(_matchPxPerformanceWord)
             .map((pElementWidget) => TextSpan(text: pElementWidget, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
             .toList();
-        tempTextElements.insert(
+        _tempTextElements.insert(
             1,
             _createLinkText(
-                textContent: 'PRx Performance',
+                textContent: OlukoLocalizations.get(context, 'prxPerformance'),
                 onTapFunction: () {
                   UrlLauncherService.openNewUrl(_prxPerformanceUrl);
                 }));
-        textElements.addAll(tempTextElements);
+        textElements.addAll(_tempTextElements);
       } else {
         textElements.add(TextSpan(text: formatTextSpan(pElement), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)));
       }
@@ -83,10 +84,7 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
     return TextSpan(
       text: textContent,
       style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.skyblue, customFontWeight: FontWeight.bold).copyWith(decoration: TextDecoration.underline),
-      recognizer: TapGestureRecognizer()
-        ..onTap = () {
-          onTapFunction();
-        },
+      recognizer: TapGestureRecognizer()..onTap = () => onTapFunction(),
     );
   }
 

@@ -147,7 +147,13 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 _authBloc.storeUpdatedLoginData(state);
               }
               DialogUtils.getDialog(
-                  context, [ChangePlanPopUpContent(primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : _goToRoute(context, route))],
+                  context,
+                  [
+                    ChangePlanPopUpContent(
+                      primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : _goToRoute(context, route),
+                      isPlanCanceled: state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null,
+                    )
+                  ],
                   showExitButton: false);
             }
           })
