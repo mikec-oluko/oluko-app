@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/url_launcher_service.dart';
 
 class HelpAndSupportTileContentFormatted extends StatefulWidget {
   const HelpAndSupportTileContentFormatted({this.rawTileStringContent}) : super();
@@ -13,6 +14,8 @@ class HelpAndSupportTileContentFormatted extends StatefulWidget {
 
 class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileContentFormatted> {
   final RegExp _matchContactWord = RegExp(r'\b(contact|Contact)\b');
+  final RegExp _matPxPerformanceWord = RegExp(r'\b(PRx Performance|prx performance)\b');
+  final Uri _prxPerformanceUrl = Uri.parse('https://prxperformance.com/');
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +34,30 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
             .split(_matchContactWord)
             .map((pElementWidget) => TextSpan(text: pElementWidget, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
             .toList();
-        tempTextElements.insert(1, _createLinkText());
+        tempTextElements.insert(
+            1,
+            _createLinkText(
+                textContent: 'contact',
+                onTapFunction: () {
+                  Navigator.pushNamed(
+                    context,
+                    routeLabels[RouteEnum.profileContactUs],
+                  );
+                }));
         textElements.addAll(tempTextElements);
-      } else if (pElement.contains('performance')) {
-        textElements = [TextSpan(text: "PERFORMANCE: ${pElement}")];
+      } else if (pElement.contains(_matPxPerformanceWord)) {
+        tempTextElements = pElement
+            .split(_matPxPerformanceWord)
+            .map((pElementWidget) => TextSpan(text: pElementWidget, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
+            .toList();
+        tempTextElements.insert(
+            1,
+            _createLinkText(
+                textContent: 'PRx Performance',
+                onTapFunction: () {
+                  UrlLauncherService.openNewUrl(_prxPerformanceUrl);
+                }));
+        textElements.addAll(tempTextElements);
       } else {
         textElements.add(TextSpan(text: formatTextSpan(pElement), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)));
       }
@@ -56,16 +79,13 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
         .replaceAll("'", "");
   }
 
-  TextSpan _createLinkText() {
+  TextSpan _createLinkText({@required String textContent, @required Function() onTapFunction}) {
     return TextSpan(
-      text: 'contact',
+      text: textContent,
       style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.skyblue, customFontWeight: FontWeight.bold).copyWith(decoration: TextDecoration.underline),
       recognizer: TapGestureRecognizer()
         ..onTap = () {
-          Navigator.pushNamed(
-            context,
-            routeLabels[RouteEnum.profileContactUs],
-          );
+          onTapFunction();
         },
     );
   }
