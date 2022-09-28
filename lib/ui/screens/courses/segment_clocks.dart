@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:headset_connection_event/headset_event.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
@@ -94,6 +95,8 @@ class SegmentClocks extends StatefulWidget {
 
 class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserver {
   GlobalService _globalService = GlobalService();
+  final _headsetPlugin = HeadsetEvent();
+  HeadsetState _headsetState;
 
   final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
@@ -170,6 +173,12 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
     setState(() {
       _isFromChallenge = widget.fromChallenge ?? false;
+    });
+
+    _headsetPlugin.getCurrentState.then((_val) {
+      setState(() {
+        _headsetState = _val;
+      });
     });
     super.initState();
   }
@@ -617,7 +626,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         },
       );
     } else {
-      await SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished);
+      await SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished, headsetState: _headsetState);
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.completedClass],
