@@ -89,8 +89,8 @@ class _State extends State<ShareCard> {
                   image: CachedNetworkImageProvider(widget.videoRecordedThumbnail),
                 )
               : Image.asset(
-                  'assets/assessment/task_response_thumbnail.png',
-                  scale: 17,
+                  'assets/assessment/workout_finished.png',
+                  scale: 1,
                 )),
     );
   }
