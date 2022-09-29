@@ -41,6 +41,7 @@ class _ChangePlanPopUpContentState extends State<ChangePlanPopUpContent> {
                     height: 50,
                     child: OlukoNeumorphicPrimaryButton(
                       title: OlukoLocalizations.get(context, 'ok'),
+                      isExpanded: false,
                       onPressed: () {
                         widget.primaryPress();
                         Navigator.pop(context);
