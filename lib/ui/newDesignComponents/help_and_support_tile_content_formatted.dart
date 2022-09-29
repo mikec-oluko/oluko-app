@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/url_launcher_service.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:flutter/foundation.dart';
 
 class HelpAndSupportTileContentFormatted extends StatefulWidget {
   const HelpAndSupportTileContentFormatted({this.rawTileStringContent}) : super();
@@ -24,18 +25,15 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
   }
 
   Widget getRichText(String inputText) {
-    List<TextSpan> textElements = [];
-    List<TextSpan> _tempTextElements = [];
+    List<TextSpan> _textElementsToReturn = [];
+    List<TextSpan> _textElementsWithLinks = [];
     List<String> _listOfParagraphs = formatText(inputText);
     _listOfParagraphs.forEach((pElement) {
       pElement = _removeBlankAddTextEnd(pElement);
 
       if (pElement.contains(_matchContactWord)) {
-        _tempTextElements = pElement
-            .split(_matchContactWord)
-            .map((pElementWidget) => TextSpan(text: pElementWidget, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
-            .toList();
-        _tempTextElements.insert(
+        _textElementsWithLinks = newTextSpanElement(textToMatch: pElement, matchRegExp: _matchContactWord);
+        _textElementsWithLinks.insert(
             1,
             _createLinkText(
                 textContent: OlukoLocalizations.get(context, 'contact'),
@@ -45,25 +43,29 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
                     routeLabels[RouteEnum.profileContactUs],
                   );
                 }));
-        textElements.addAll(_tempTextElements);
+        _textElementsToReturn.addAll(_textElementsWithLinks);
       } else if (pElement.contains(_matchPxPerformanceWord)) {
-        _tempTextElements = pElement
-            .split(_matchPxPerformanceWord)
-            .map((pElementWidget) => TextSpan(text: pElementWidget, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
-            .toList();
-        _tempTextElements.insert(
+        _textElementsWithLinks = newTextSpanElement(textToMatch: pElement, matchRegExp: _matchPxPerformanceWord);
+        _textElementsWithLinks.insert(
             1,
             _createLinkText(
                 textContent: OlukoLocalizations.get(context, 'prxPerformance'),
                 onTapFunction: () {
                   UrlLauncherService.openNewUrl(_prxPerformanceUrl);
                 }));
-        textElements.addAll(_tempTextElements);
+        _textElementsToReturn.addAll(_textElementsWithLinks);
       } else {
-        textElements.add(TextSpan(text: formatTextSpan(pElement), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)));
+        _textElementsToReturn.add(TextSpan(text: formatTextSpan(pElement), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)));
       }
     });
-    return _createRichTextElement(textElements);
+    return _createRichTextElement(_textElementsToReturn);
+  }
+
+  List<TextSpan> newTextSpanElement({String textToMatch, RegExp matchRegExp}) {
+    return textToMatch
+        .split(matchRegExp)
+        .map((textContentForSpan) => TextSpan(text: textContentForSpan, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)))
+        .toList();
   }
 
   String formatTextSpan(String text) {
@@ -77,13 +79,14 @@ class _HelpAndSupportTileContentFormattedState extends State<HelpAndSupportTileC
         .toString()
         .replaceAll('[', '')
         .replaceAll(']', '')
-        .replaceAll("'", "");
+        .replaceAll("'", '');
   }
 
   TextSpan _createLinkText({@required String textContent, @required Function() onTapFunction}) {
     return TextSpan(
       text: textContent,
-      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.skyblue, customFontWeight: FontWeight.bold).copyWith(decoration: TextDecoration.underline),
+      style: OlukoFonts.olukoSmallFont(customColor: OlukoNeumorphismColors.olukoNeumorphicBlueBackgroundColor, customFontWeight: FontWeight.bold)
+          .copyWith(decoration: TextDecoration.underline),
       recognizer: TapGestureRecognizer()..onTap = () => onTapFunction(),
     );
   }

@@ -59,19 +59,16 @@ class Clock extends StatefulWidget {
 
 class _State extends State<Clock> {
   Timer countdownTimer;
-
   int AMRAPRound = 0;
-
   Duration stopwatch = Duration();
-
   final _headsetPlugin = HeadsetEvent();
   HeadsetState _headsetState;
 
   @override
   void initState() {
-    _headsetPlugin.getCurrentState.then((_val) {
+    _headsetPlugin.getCurrentState.then((headsetStatus) {
       setState(() {
-        _headsetState = _val;
+        _headsetState = headsetStatus;
       });
     });
 
@@ -609,7 +606,7 @@ class _State extends State<Clock> {
     if (countdownTimer == null || !countdownTimer.isActive) {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
-            headsetState: _headsetState);
+            headsetState: headsetState);
         if (widget.timeLeft.inSeconds == 0) {
           _pauseCountdown(setPaused);
           goToNextStep();

@@ -165,7 +165,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
                       if (state is ChallengeHistoricalResult) {
                         isFinishedBefore = state.wasCompletedBefore;
-                        _canStartSegment = isFinishedBefore == true ? isFinishedBefore : _canStartSegment;
+                        _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
                       }
                       return startWorkoutsButton(isFinishedBefore);
                     })))),
@@ -227,7 +227,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton(bool isFinihedBefore) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? ((widget.segment.isChallenge && _canStartSegment) || (widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge)
+        ? ((widget.segment.isChallenge && _canStartSegment) || ((widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge))
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: OlukoNeumorphicPrimaryButton(
