@@ -59,7 +59,6 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
     emit(Loading());
     try {
       await TaskSubmissionRepository.saveTaskSubmission(assessmentA, taskSubmission, video, isLastTask);
-      //emit(UpdateSuccess());
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
