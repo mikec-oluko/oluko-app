@@ -36,8 +36,8 @@ class SoundPlayer {
     }
   }
 
-  static Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState}) async {
-    if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState)) {
+  static Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState, bool isForWatch = false}) async {
+    if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
       final AudioCache player = AudioCache(duckAudio: true);
       String assetToPlay = asset;
       if (soundEnum != null) {

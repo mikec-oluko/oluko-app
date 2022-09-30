@@ -13,8 +13,8 @@ enum SoundTypeEnum { fixed, calculated }
 const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
-  static Future<void> playSound(int timeLeft, int totalTime, int workState, {HeadsetState headsetState}) async {
-    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled() && await SoundUtils.canPlaySound(headsetState: headsetState)) {
+  static Future<void> playSound(int timeLeft, int totalTime, int workState, {HeadsetState headsetState, bool isForWatch = false}) async {
+    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled() && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
       final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
       if (segmentClockSounds.isNotEmpty) {
         final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
@@ -45,8 +45,8 @@ class SoundUtils {
     }
   }
 
-  static dynamic _playAsset(Sound soundToPlay, {HeadsetState headsetState}) =>
-      SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState);
+  static dynamic _playAsset(Sound soundToPlay, {HeadsetState headsetState, bool isForWatch = false}) =>
+      SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState, isForWatch: isForWatch);
 
   static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 
@@ -60,9 +60,11 @@ class SoundUtils {
     });
   }
 
-  static Future<bool> canPlaySound({HeadsetState headsetState}) async {
+  static Future<bool> canPlaySound({HeadsetState headsetState, bool isForWatch = false}) async {
     final RingerModeStatus _deviceSoundStatus = await SoundMode.ringerModeStatus;
-    return (_deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown) ||
-        (headsetState != null && headsetState == HeadsetState.CONNECT);
+    return !isForWatch
+        ? (_deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown) ||
+            (headsetState != null && headsetState == HeadsetState.CONNECT)
+        : true;
   }
 }

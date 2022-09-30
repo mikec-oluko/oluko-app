@@ -626,7 +626,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         },
       );
     } else {
-      await SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished, headsetState: _headsetState);
+      await SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished, headsetState: _headsetState, isForWatch: true);
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.completedClass],
