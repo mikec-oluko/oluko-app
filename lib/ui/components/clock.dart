@@ -606,7 +606,7 @@ class _State extends State<Clock> {
     if (countdownTimer == null || !countdownTimer.isActive) {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
-            headsetState: headsetState);
+            headsetState: headsetState, isForWatch: true);
         if (widget.timeLeft.inSeconds == 0) {
           _pauseCountdown(setPaused);
           goToNextStep();

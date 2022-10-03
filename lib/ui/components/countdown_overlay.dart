@@ -31,7 +31,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
   _CountdownOverlayState(int seconds) {
     countdown = seconds;
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) async {
-      await SoundUtils.playSound(countdown - 1, widget.seconds, 2);
+      await SoundUtils.playSound(countdown - 1, widget.seconds, 2, isForWatch: true);
       setState(() {
         if (countdown > 1) {
           countdown--;
