@@ -14,7 +14,8 @@ class TaskSubmissionLoading extends TaskSubmissionState {}
 
 class CreateSuccess extends TaskSubmissionState {
   TaskSubmission taskSubmission;
-  CreateSuccess({this.taskSubmission});
+  bool isLastTask;
+  CreateSuccess({this.taskSubmission, this.isLastTask});
 }
 
 class GetSuccess extends TaskSubmissionState {
@@ -51,9 +52,25 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
     emit(TaskSubmissionLoading());
     try {
-      TaskSubmission newTaskSubmission =
-          await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic, isLastTask);
+      TaskSubmission newTaskSubmission = await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic, isLastTask);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: e));
+      rethrow;
+    }
+  }
+
+  Future<void> taskSubmissionCreationUpdated(AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
+    emit(TaskSubmissionLoading());
+    try {
+      TaskSubmission newTaskSubmission = await TaskSubmissionRepository.createTaskSubmissionUpdated(
+          assessmentAssignment: assessmentAssignment, task: task, isLastTask: isLastTask, isPublic: isPublic);
+
+      emit(CreateSuccess(taskSubmission: newTaskSubmission, isLastTask: isLastTask));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

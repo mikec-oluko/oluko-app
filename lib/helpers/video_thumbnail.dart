@@ -33,15 +33,11 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
   final Completer<ThumbnailResult> completer = Completer();
   String thumbnailPath;
   if (r.thumbnailPath != null) {
-    thumbnailPath = await VideoThumbnail.thumbnailFile(
-      video: r.video,
-      thumbnailPath: r.thumbnailPath,
-      imageFormat: ImageFormat.JPEG,
-      // maxHeight: r.maxHeight,
-      // maxWidth: r.maxWidth,
-      // timeMs: r.timeMs,
-      // quality: r.quality
-    );
+    thumbnailPath = await VideoThumbnail.thumbnailFile(video: r.video, thumbnailPath: r.thumbnailPath, imageFormat: ImageFormat.JPEG, quality: r.quality
+        // maxHeight: r.maxHeight,
+        // maxWidth: r.maxWidth,
+        // timeMs: r.timeMs,
+        );
 
     if (kDebugMode) {
       print('thumbnail file is located: $thumbnailPath');

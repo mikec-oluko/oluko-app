@@ -194,7 +194,13 @@ class _State extends State<Courses> {
       showBackButton: goBack,
       backButtonWithFilters: widget.backButtonWithFilters,
       showActions: widget.homeEnrollTocourse,
-      title: OlukoLocalizations.get(context, searchResults.query.isNotEmpty || selectedTags.isNotEmpty?'filtersResult':showFilterSelector ? 'filters' : 'courses'),
+      title: OlukoLocalizations.get(
+          context,
+          searchResults.query.isNotEmpty || selectedTags.isNotEmpty
+              ? 'filtersResult'
+              : showFilterSelector
+                  ? 'filters'
+                  : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
       onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
@@ -221,7 +227,7 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
-          padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.05),
+        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.05),
         children: [
           _activeCoursesSection(),
           _myListSection(),

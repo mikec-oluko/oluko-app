@@ -30,8 +30,7 @@ import 'package:oluko_app/utils/time_converter.dart';
 import '../../../services/video_service.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.taskId})
-      : super(key: key);
+  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.taskId}) : super(key: key);
   final String taskId;
   final String filePath;
   final int taskIndex;
@@ -84,7 +83,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     }
                     if (taskSubmissionState is CreateSuccess) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
-                      createVideo(_taskSubmission, _assessmentAssignment, _assessment);
+                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, widget.isLastTask);
                     }
                     return form();
                   } else {
@@ -101,12 +100,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     });
   }
 
-  createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment) async {
+  createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment, bool isLastTask) async {
     final int durationInMilliseconds = await VideoService.getVideoDuration(File(widget.filePath));
     BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmission.id,
         assessmentAssignment: assessmentAssignment,
         assessment: assessment,
         taskSubmission: taskSubmission,
+        isLastTask: isLastTask,
         durationInMilliseconds: durationInMilliseconds);
     _globalService.videoProcessing = true;
     BlocProvider.of<TaskCardBloc>(context).taskLoading(widget.taskIndex);
@@ -121,11 +121,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   }
 
   navigateToTaskDetails() {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-      'taskIndex': widget.taskIndex,
-      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-      'taskCompleted': true
-    });
+    Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+        arguments: {'taskIndex': widget.taskIndex, 'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask, 'taskCompleted': true});
   }
 
   Widget form() {
@@ -133,7 +130,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   }
 
   Widget contentScaffold() {
-    // TODO: UPDATED FOR NEUMORPHIC
     return Scaffold(
         appBar: OlukoAppBar(
           title: _task.name,
@@ -141,7 +137,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           showTitle: true,
         ),
         body: Container(
-          color:OlukoColors.black,
+          color: OlukoColors.black,
           child: ListView(
             children: [
               content(),
@@ -175,7 +171,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 100,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth :OlukoColors.black,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.black,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -183,8 +179,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                             ? Padding(
                                 padding: const EdgeInsets.only(left: 20),
                                 child: Text('${TimeConverter.durationToString(_controller.videoPlayerController.value.duration)} min',
-                                    style: OlukoFonts.olukoMediumFont(
-                                        customColor: OlukoColors.grayColor, customFontWeight: FontWeight.normal)),
+                                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.normal)),
                               )
                             : SizedBox.shrink(),
                         Padding(
@@ -200,9 +195,9 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                 if (!_globalService.videoProcessing) {
                                   if (_taskSubmission == null) {
                                     BlocProvider.of<TaskSubmissionBloc>(context)
-                                        .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+                                        .taskSubmissionCreationUpdated(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                                   } else {
-                                    createVideo(_taskSubmission, _assessmentAssignment, _assessment);
+                                    createVideo(_taskSubmission, _assessmentAssignment, _assessment, widget.isLastTask);
                                   }
                                 } else {
                                   showDialog();
@@ -240,7 +235,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     return Scaffold(
         appBar: OlukoAppBar(title: _task.name, showBackButton: false, actions: [SizedBox(width: 30)]),
         body: Container(
-          color:OlukoColors.black,
+          color: OlukoColors.black,
           child: Container(
             child: ProgressBar(processPhase: state.processPhase, progress: state.progress),
           ),
@@ -294,15 +289,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 padding: const EdgeInsets.only(left: 20, right: 8),
                 child: Text(
                   OlukoLocalizations.get(context, 'retake'),
-                  style:
-                      OlukoFonts.olukoBigFont(customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary),
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary),
                 ))));
   }
 
   Widget content() {
     return Column(children: [
-      ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: showVideoPlayer())),
+      ConstrainedBox(constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: showVideoPlayer())),
       Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(children: [
@@ -311,10 +304,9 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               onPressed: () async {
                 _controller.pause();
                 if (_taskSubmission == null) {
-                  BlocProvider.of<TaskSubmissionBloc>(context)
-                      .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+                  BlocProvider.of<TaskSubmissionBloc>(context).taskSubmissionCreationUpdated(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                 } else {
-                  createVideo(_taskSubmission, _assessmentAssignment, _assessment);
+                  createVideo(_taskSubmission, _assessmentAssignment, _assessment, widget.isLastTask);
                 }
               },
             )
@@ -324,8 +316,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   Widget neumorphicContent() {
     return Column(children: [
-      ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: showVideoPlayer())),
+      ConstrainedBox(constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: showVideoPlayer())),
     ]);
   }
 }

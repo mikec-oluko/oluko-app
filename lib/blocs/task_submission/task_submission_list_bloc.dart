@@ -39,7 +39,7 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
     }
   }
 
-    void updateTaskSubmissionVideo(AssessmentAssignment assessmentA, String taskSubmissionId, Video video) async {
+  void updateTaskSubmissionVideo(AssessmentAssignment assessmentA, String taskSubmissionId, Video video) async {
     emit(Loading());
     try {
       await TaskSubmissionRepository.updateTaskSubmissionVideo(assessmentA, taskSubmissionId, video);
@@ -55,7 +55,23 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
     }
   }
 
-    Future<bool> checkCompleted(AssessmentAssignment assessmentAssignment, Assessment assessment) async {
+  Future<void> saveTaskSubmissionWithVideo(AssessmentAssignment assessmentA, TaskSubmission taskSubmission, Video video, bool isLastTask) async {
+    emit(Loading());
+    try {
+      await TaskSubmissionRepository.saveTaskSubmission(assessmentA, taskSubmission, video, isLastTask);
+      //emit(UpdateSuccess());
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      print(e.toString());
+      emit(Failure(exception: e));
+      rethrow;
+    }
+  }
+
+  Future<bool> checkCompleted(AssessmentAssignment assessmentAssignment, Assessment assessment) async {
     try {
       List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissions(assessmentAssignment);
       if (taskSubmissions.length == assessment.tasks.length) {

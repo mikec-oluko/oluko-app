@@ -7,6 +7,8 @@ abstract class AssessmentState {}
 
 class AssessmentLoading extends AssessmentState {}
 
+class AssessmentDispose extends AssessmentState {}
+
 class AssessmentsSuccess extends AssessmentState {
   final List<Assessment> assessments;
   AssessmentsSuccess({this.assessments});
@@ -59,4 +61,6 @@ class AssessmentBloc extends Cubit<AssessmentState> {
       rethrow;
     }
   }
+
+  void dispose() => emit(AssessmentDispose());
 }

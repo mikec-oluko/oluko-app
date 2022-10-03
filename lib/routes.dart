@@ -87,6 +87,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user/user_information_bloc.dart';
+import 'package:oluko_app/blocs/user/user_plan_subscription_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
@@ -446,6 +447,7 @@ class Routes {
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
+  final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -534,6 +536,7 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<UserPlanSubscriptionBloc>.value(value: _userPlanSubscriptionBloc),
           BlocProvider<UserBloc>.value(value: _userBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {

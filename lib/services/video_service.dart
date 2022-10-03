@@ -18,8 +18,7 @@ import '../utils/time_converter.dart';
 import '../utils/video_process.dart';
 
 class VideoService {
-  static Future<Video> processVideoWithoutEncoding(
-      String videoFilePath, double aspectRatio, String id, String directory, int duration, String thumbnailPath,
+  static Future<Video> processVideoWithoutEncoding(String videoFilePath, double aspectRatio, String id, String directory, int duration, String thumbnailPath,
       [SendPort port]) async {
     try {
       String videoName = id;
@@ -79,16 +78,13 @@ class VideoService {
   }
 
   static Future<String> createVideoThumbnail(String videoPath) async {
+    const int _thumbnailQualityMinValue = 75;
     String thumbFilePath = null;
     try {
       final String outDirPath = path.dirname(videoPath);
 
-      ThumbnailResult thumbnail = await genThumbnail(ThumbnailRequest(
-        video: videoPath,
-        maxWidth: 100,
-        maxHeight: 150,
-        thumbnailPath: outDirPath,
-      ));
+      ThumbnailResult thumbnail =
+          await genThumbnail(ThumbnailRequest(video: videoPath, maxWidth: 100, maxHeight: 150, thumbnailPath: outDirPath, quality: _thumbnailQualityMinValue));
 
       thumbFilePath = thumbnail.path;
     } catch (e, stackTrace) {
