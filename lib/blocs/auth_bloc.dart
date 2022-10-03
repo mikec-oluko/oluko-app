@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
@@ -17,6 +19,7 @@ import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscription_content_bloc.dart';
+import 'package:oluko_app/blocs/user/user_plan_subscription_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/permissions.dart';
@@ -132,9 +135,13 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       AuthRepository().storeLoginData(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
-        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-        AppNavigator().goToSubscriptionsFromRegister(context);
-        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        if (Platform.isIOS || Platform.isMacOS) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+          AppNavigator().goToSubscriptionsFromRegister(context);
+          emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        } else {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
+        }
         return;
       } else {
         if (firebaseUser != null) {
@@ -328,6 +335,14 @@ class AuthBloc extends Cubit<AuthState> {
     return AuthRepository().retrieveLoginData();
   }
 
+  Future<bool> storeUpdatedLoginData(UserChangedPlan userWithPlanChanged) async {
+    if (userWithPlanChanged.userDataUpdated != null && userWithPlanChanged.userDataUpdated is UserResponse) {
+      return AuthRepository().storeLoginData(userWithPlanChanged.userDataUpdated);
+    } else {
+      return false;
+    }
+  }
+
   void updateAuthSuccess(UserResponse userResponse, User firebaseUser) {
     emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
   }
@@ -379,6 +394,9 @@ class AuthBloc extends Cubit<AuthState> {
         BlocProvider.of<CourseRecommendedByFriendBloc>(context).dispose();
         BlocProvider.of<LikedCoursesBloc>(context).dispose();
         BlocProvider.of<CoachAssignmentBloc>(context).dispose();
+        BlocProvider.of<AssessmentAssignmentBloc>(context).dispose();
+        BlocProvider.of<AssessmentBloc>(context).dispose();
+        BlocProvider.of<UserPlanSubscriptionBloc>(context).dispose();
       } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {

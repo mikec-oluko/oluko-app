@@ -167,7 +167,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     controller: _panelController,
                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                    maxHeight: recordAgainRequested ? panelSize : 100,
+                    maxHeight: panelSize,
                     panel: recordAgainRequested
                         ? recordAgainDialogContent()
                         : Container(

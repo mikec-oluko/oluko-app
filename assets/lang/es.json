@@ -417,6 +417,12 @@
     "askCancelSubscription": "Estas seguro de que deseas cancelar tu suscripción? esta accion no se puede deshacer.",
     "subCancelledSuccessfully": "Subscripción cancelada con éxito",
     "deletionInstructions": "Por favor, revisa la bandeja de entrada de tu correo electrónico para finalizar el proceso de eliminación.",
+    "planChangedAlertMessage": "¡Tu membresía ha sido actualizada!",
+    "planCanceledAlertMessage": "Su membresía ha sido cancelada. Inicie sesión en su cuenta en la web para seleccionar una nueva membresía y método de pago.",
     "microphone": "Microfono",
-    "gallery": "Galeria"
+    "gallery": "Galeria",
+    "seeTextForTermsAndConditions": "Ver ",
+    "contact": "contact",
+    "prxPerformance": "PRx Performance",
+    "attention":"Atención!"
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/config/project_settings.dart';
+import 'services/route_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +33,7 @@ Future<void> main() async {
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
   final bool firstTime = await UserUtils.isFirstTime();
-  final String route = await getInitialRoute(alreadyLoggedUser, firstTime,alreadyLoggedUserResponse);
+  final String route = await RouteService.getInitialRoute(alreadyLoggedUser, firstTime, alreadyLoggedUserResponse);
   final MyApp myApp = MyApp(
     initialRoute: route,
   );
@@ -45,30 +48,6 @@ Future<void> main() async {
       },
       appRunner: () => runApp(myApp),
     );
-  }
-}
-
-Future<String> getInitialRoute(User alreadyLoggedUser, bool isFirstTime, UserResponse alreadyLoggedUserResponse) async {
-  if (alreadyLoggedUser == null) {
-    if (isFirstTime != null && isFirstTime && OlukoNeumorphism.isNeumorphismDesign) {
-      return routeLabels[RouteEnum.introVideo];
-    } else {
-      if (OlukoNeumorphism.isNeumorphismDesign) {
-        return routeLabels[RouteEnum.loginNeumorphic];
-      } else {
-        return routeLabels[RouteEnum.signUp];
-      }
-    }
-  } else {
-    if (alreadyLoggedUserResponse.currentPlan < 0 || alreadyLoggedUserResponse.currentPlan == null) {
-      return routeLabels[RouteEnum.profileSubscription];
-    }
-    AssessmentAssignment assesmentA = await AssessmentAssignmentRepository.getByUserId(alreadyLoggedUser.uid);
-    if (assesmentA != null && (assesmentA.seenByUser == null || !assesmentA.seenByUser)) {
-      return routeLabels[RouteEnum.assessmentVideos];
-    } else {
-      return routeLabels[RouteEnum.root];
-    }
   }
 }
 

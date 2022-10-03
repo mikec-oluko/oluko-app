@@ -32,7 +32,7 @@ class Permissions {
   }
 
   static Future<void> askForPermissions(
-      {bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true, bool checkContacts = true}) async {
+      {bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true}) async {
     if (checkCamera) {
       await Permission.camera.request();
     }
@@ -45,9 +45,6 @@ class Permissions {
     }
     if (checkMicrophone) {
       await Permission.microphone.request();
-    }
-    if (checkContacts) {
-      await Permission.contacts.request();
     }
   }
 }

@@ -22,6 +22,7 @@ import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:headset_connection_event/headset_event.dart';
 
 class Clock extends StatefulWidget {
   final WorkState workState;
@@ -58,13 +59,19 @@ class Clock extends StatefulWidget {
 
 class _State extends State<Clock> {
   Timer countdownTimer;
-
   int AMRAPRound = 0;
-
   Duration stopwatch = Duration();
+  final _headsetPlugin = HeadsetEvent();
+  HeadsetState _headsetState;
 
   @override
   void initState() {
+    _headsetPlugin.getCurrentState.then((headsetStatus) {
+      setState(() {
+        _headsetState = headsetStatus;
+      });
+    });
+
     if (AMRAPRound != 0) {
       AMRAPRound = 0;
     }
@@ -73,7 +80,7 @@ class _State extends State<Clock> {
     }
     if (!isWorkStateFinished() && isCurrentTaskTimed()) {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
-      _playCountdown(() => widget.goToNextStep(), () => widget.setPaused());
+      _playCountdown(() => widget.goToNextStep(), () => widget.setPaused(), headsetState: _headsetState);
     }
   }
 
@@ -118,7 +125,7 @@ class _State extends State<Clock> {
               child: BlocListener<ClocksTimerBloc, ClocksTimerState>(
                   listener: (context, state) {
                     if (state is ClocksTimerPlay) {
-                      _playCountdown(() => state.goToNextStep(), () => state.setPaused());
+                      _playCountdown(() => state.goToNextStep(), () => state.setPaused(), headsetState: _headsetState);
                     } else if (state is ClocksTimerPause) {
                       _pauseCountdown(() => state.setPaused());
                     } else if (state is UpdateTimeLeft) {
@@ -595,10 +602,11 @@ class _State extends State<Clock> {
           widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance ||
           widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight));
 
-  void _playCountdown(Function() goToNextStep, Function() setPaused) {
+  void _playCountdown(Function() goToNextStep, Function() setPaused, {HeadsetState headsetState}) {
     if (countdownTimer == null || !countdownTimer.isActive) {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-        await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index));
+        await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
+            headsetState: headsetState, isForWatch: true);
         if (widget.timeLeft.inSeconds == 0) {
           _pauseCountdown(setPaused);
           goToNextStep();

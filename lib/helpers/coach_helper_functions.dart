@@ -32,14 +32,13 @@ class CoachHelperFunctions {
               userId: coachAssignment.userId,
               id: defaultIntroVideoId,
               favorite: coachAssignment.isFavorite,
-              createdAt: coachAssignment.createdAt ?? Timestamp.now(),
+              createdAt: coachAssignment.welcomeVideoUploadedAt ?? coachAssignment.createdAt ?? Timestamp.now(),
               video: Video(
                 url: coachAssignment.videoHLS ?? (coachAssignment.video != null ? coachAssignment.video.url : null),
                 aspectRatio: coachAssignment.video != null ? coachAssignment.video.aspectRatio ?? 0.60 : 0.60,
                 thumbUrl: coachAssignment.video != null ? coachAssignment.video.thumbUrl ?? null : null,
               ),
-              videoHLS: coachAssignment.videoHLS ??
-                  (coachAssignment.video != null ? coachAssignment.video.url : coachAssignment.introductionVideo),
+              videoHLS: coachAssignment.videoHLS ?? (coachAssignment.video != null ? coachAssignment.video.url : coachAssignment.introductionVideo),
               notificationViewed: coachAssignment.introductionCompleted)
           : null;
     }
@@ -53,8 +52,7 @@ class CoachHelperFunctions {
         annotationVideosContent.add(updatedOrNewAnnotation);
       } else {
         if (repeatedAnnotation.first != updatedOrNewAnnotation) {
-          annotationVideosContent[annotationVideosContent.indexWhere((element) => element.id == updatedOrNewAnnotation.id)] =
-              updatedOrNewAnnotation;
+          annotationVideosContent[annotationVideosContent.indexWhere((element) => element.id == updatedOrNewAnnotation.id)] = updatedOrNewAnnotation;
         }
       }
     });
@@ -97,16 +95,14 @@ class CoachHelperFunctions {
       List<CoachRecommendationDefault> coachRecommendationContent, List<CoachRecommendationDefault> coachRecommendationList) {
     if (coachRecommendationContent.isNotEmpty) {
       coachRecommendationContent.forEach((updatedOrNewRecommedation) {
-        List<CoachRecommendationDefault> repeatedRecommendation = coachRecommendationList
-            .where((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)
-            .toList();
+        List<CoachRecommendationDefault> repeatedRecommendation =
+            coachRecommendationList.where((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id).toList();
         if (repeatedRecommendation.isEmpty) {
           coachRecommendationList.add(updatedOrNewRecommedation);
         } else {
           if (repeatedRecommendation.first != updatedOrNewRecommedation) {
             coachRecommendationList[coachRecommendationList
-                    .indexWhere((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)] =
-                updatedOrNewRecommedation;
+                .indexWhere((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)] = updatedOrNewRecommedation;
           }
         }
       });
@@ -114,11 +110,9 @@ class CoachHelperFunctions {
     return coachRecommendationList;
   }
 
-  static List<CoachTimelineItem> checkTimelineItemsUpdate(
-      List<CoachTimelineItem> updatedTimelineItems, List<CoachTimelineItem> actualTimelineContent) {
+  static List<CoachTimelineItem> checkTimelineItemsUpdate(List<CoachTimelineItem> updatedTimelineItems, List<CoachTimelineItem> actualTimelineContent) {
     updatedTimelineItems.forEach((updatedTimelineItem) {
-      List<CoachTimelineItem> repeatedTimelineItem =
-          actualTimelineContent.where((element) => element.contentName == updatedTimelineItem.contentName).toList();
+      List<CoachTimelineItem> repeatedTimelineItem = actualTimelineContent.where((element) => element.contentName == updatedTimelineItem.contentName).toList();
       if (repeatedTimelineItem.isEmpty) {
         actualTimelineContent.add(updatedTimelineItem);
       }
@@ -126,8 +120,8 @@ class CoachHelperFunctions {
     return actualTimelineContent;
   }
 
-  static List<CoachRecommendationDefault> getRecommendedContentByType(List<CoachRecommendationDefault> coachRecommendations,
-      TimelineInteractionType contentTypeRequired, List<CoachRecommendationDefault> listToFill) {
+  static List<CoachRecommendationDefault> getRecommendedContentByType(
+      List<CoachRecommendationDefault> coachRecommendations, TimelineInteractionType contentTypeRequired, List<CoachRecommendationDefault> listToFill) {
     for (CoachRecommendationDefault recommendation in coachRecommendations) {
       if (recommendation.contentType == contentTypeRequired) {
         listToFill.add(recommendation);
@@ -150,8 +144,7 @@ class CoachHelperFunctions {
     return carouselContent;
   }
 
-  static Widget sentVideosSection(
-      {BuildContext context, List<SegmentSubmission> sentVideosContent, bool introductionCompleted, Function onNavigation}) {
+  static Widget sentVideosSection({BuildContext context, List<SegmentSubmission> sentVideosContent, bool introductionCompleted, Function onNavigation}) {
     return sentVideosContent != null && sentVideosContent.isNotEmpty
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.sentVideos,
@@ -196,15 +189,10 @@ class CoachHelperFunctions {
     if (videoMessages != null && videoMessages.isNotEmpty) {
       videoMessages.forEach((coachMessage) {
         CoachPersonalizedVideo newPersonalizedVideo = CoachPersonalizedVideo(
-            createdAt: coachMessage.createdAt,
-            videoContent: coachMessage.video,
-            videoHls: coachMessage.videoHls,
-            videoMessageContent: coachMessage);
+            createdAt: coachMessage.createdAt, videoContent: coachMessage.video, videoHls: coachMessage.videoHls, videoMessageContent: coachMessage);
         if (personalizedContent.isNotEmpty) {
           if (personalizedContent
-              .where((content) => content.videoMessageContent != null
-                  ? content.videoMessageContent.id == newPersonalizedVideo.videoMessageContent.id
-                  : false)
+              .where((content) => content.videoMessageContent != null ? content.videoMessageContent.id == newPersonalizedVideo.videoMessageContent.id : false)
               .toList()
               .isEmpty) {
             personalizedContent.add(newPersonalizedVideo);
@@ -223,8 +211,7 @@ class CoachHelperFunctions {
             createdAt: annotation.createdAt, videoContent: annotation.video, videoHls: annotation.videoHLS, annotationContent: annotation);
         if (personalizedContent.isNotEmpty) {
           if (personalizedContent
-              .where((content) =>
-                  content.annotationContent != null ? content.annotationContent.id == newPersonalizedVideo.annotationContent.id : false)
+              .where((content) => content.annotationContent != null ? content.annotationContent.id == newPersonalizedVideo.annotationContent.id : false)
               .toList()
               .isEmpty) {
             personalizedContent.add(newPersonalizedVideo);
@@ -250,31 +237,22 @@ class CoachHelperFunctions {
 
     if (!coachAssignment.welcomeVideoSeen) {
       carouselContent.add(CoachNotificationVideoCard(
-          cardImage: assessment.videoThumbnail,
-          fileType: CoachFileTypeEnum.welcomeVideo,
-          onCloseCard: onCloseCard,
-          onOpenCard: onOpenCard));
+          cardImage: assessment.videoThumbnail, fileType: CoachFileTypeEnum.welcomeVideo, onCloseCard: onCloseCard, onOpenCard: onOpenCard));
     }
 
     if (coachRecommendations.isNotEmpty) {
-      contentForNotificationPanel =
-          CoachTimelineFunctions.coachRecommendationsForInteraction(coachRecommendations: coachRecommendations, context: context);
-      carouselContent = CoachHelperFunctions.notificationsWidget(
-          contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
+      contentForNotificationPanel = CoachTimelineFunctions.coachRecommendationsForInteraction(coachRecommendations: coachRecommendations, context: context);
+      carouselContent = CoachHelperFunctions.notificationsWidget(contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
     }
 
     if (annotationVideos.isNotEmpty) {
-      contentForNotificationPanel =
-          CoachTimelineFunctions.mentoredVideoForInteraction(annotationContent: annotationVideos, context: context);
-      carouselContent = CoachHelperFunctions.notificationsWidget(
-          contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
+      contentForNotificationPanel = CoachTimelineFunctions.mentoredVideoForInteraction(annotationContent: annotationVideos, context: context);
+      carouselContent = CoachHelperFunctions.notificationsWidget(contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
     }
 
     if (coachVideoMessages.isNotEmpty) {
-      contentForNotificationPanel =
-          CoachTimelineFunctions.messageVideoForInteraction(messageVideoContent: coachVideoMessages, context: context);
-      carouselContent = CoachHelperFunctions.notificationsWidget(
-          contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
+      contentForNotificationPanel = CoachTimelineFunctions.messageVideoForInteraction(messageVideoContent: coachVideoMessages, context: context);
+      carouselContent = CoachHelperFunctions.notificationsWidget(contentForNotificationPanel, carouselContent, coachAssignment.coachId, coachAssignment.userId);
     }
     return carouselContent;
   }
@@ -313,8 +291,7 @@ class CoachHelperFunctions {
     if (coachRecommendations != null && coachRecommendations.isNotEmpty) {
       if (contentType == TimelineInteractionType.movement) {
         widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedMovements'));
-        movementsRecommended =
-            CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
+        movementsRecommended = CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
         if (movementsRecommended.isNotEmpty) {
           widgetToReturn = GestureDetector(
               onTap: () => onTap(movementsRecommended),
@@ -326,8 +303,7 @@ class CoachHelperFunctions {
       }
       if (contentType == TimelineInteractionType.course) {
         widgetToReturn = CoachContentSectionCard(title: OlukoLocalizations.of(context).find('recommendedCourses'));
-        coursesRecommended =
-            CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.course, coursesRecommended);
+        coursesRecommended = CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.course, coursesRecommended);
         if (coursesRecommended.isNotEmpty) {
           widgetToReturn = GestureDetector(
               onTap: () => onTap(coursesRecommended),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/basic_tiles.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ChildTileWidget extends StatefulWidget {
   final BasicTile tile;
@@ -22,20 +23,16 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
     final tiles = widget.tile.tiles;
     if (tiles.isEmpty) {
       return Container(
-        decoration: BoxDecoration(
-            color: OlukoColors.primary,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+        width: ScreenUtils.width(context),
+        decoration: BoxDecoration(color: OlukoColors.primary, borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text(displayText,
-              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)),
+          child: displayText != null ? Text(displayText, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)) : widget.tile.child,
         ),
       );
     }
     return Container(
-      decoration: BoxDecoration(
-          color: OlukoColors.listGrayColor,
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+      decoration: BoxDecoration(color: OlukoColors.listGrayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
       child: ExpansionTile(
           initiallyExpanded: widget.tile.isExpanded,
           backgroundColor: OlukoColors.listGrayColor,
@@ -55,9 +52,7 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
             });
           },
           trailing: iconToUse,
-          title: Text(displayText,
-              style: OlukoFonts.olukoMediumFont(
-                  customColor: OlukoColors.grayColor)),
+          title: Text(displayText, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
           children: tiles.map((tile) => ChildTileWidget(tile: tile)).toList()),
     );
   }

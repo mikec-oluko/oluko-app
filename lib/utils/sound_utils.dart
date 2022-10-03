@@ -1,3 +1,4 @@
+import 'package:headset_connection_event/headset_event.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/models/sound.dart';
@@ -12,8 +13,8 @@ enum SoundTypeEnum { fixed, calculated }
 const assetsFileAddress = 'sounds/';
 
 class SoundUtils {
-  static Future<void> playSound(int timeLeft, int totalTime, int workState) async {
-    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled() && await SoundUtils.canPlaySound()) {
+  static Future<void> playSound(int timeLeft, int totalTime, int workState, {HeadsetState headsetState, bool isForWatch = false}) async {
+    if (NotificationSettingsBloc.areSegmentClockNotificationEnabled() && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
       final List<Sound> segmentClockSounds = ProjectConfigurationBloc().getSegmentClockSounds();
       if (segmentClockSounds.isNotEmpty) {
         final List<Sound> posibleSounds = segmentClockSounds.where((sound) {
@@ -34,17 +35,18 @@ class SoundUtils {
           if (posibleSounds.length > 1) {
             final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
             if (existSoundAsset(soundToPlay)) {
-              _playAsset(soundToPlay);
+              _playAsset(soundToPlay, headsetState: headsetState);
             }
           } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
-            _playAsset(posibleSounds[0]);
+            _playAsset(posibleSounds[0], headsetState: headsetState);
           }
         }
       }
     }
   }
 
-  static dynamic _playAsset(Sound soundToPlay) => SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset);
+  static dynamic _playAsset(Sound soundToPlay, {HeadsetState headsetState, bool isForWatch = false}) =>
+      SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState, isForWatch: isForWatch);
 
   static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 
@@ -58,8 +60,11 @@ class SoundUtils {
     });
   }
 
-  static Future<bool> canPlaySound() async {
+  static Future<bool> canPlaySound({HeadsetState headsetState, bool isForWatch = false}) async {
     final RingerModeStatus _deviceSoundStatus = await SoundMode.ringerModeStatus;
-    return _deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown;
+    return !isForWatch
+        ? (_deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown) ||
+            (headsetState != null && headsetState == HeadsetState.CONNECT)
+        : true;
   }
 }
