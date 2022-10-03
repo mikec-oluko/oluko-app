@@ -142,6 +142,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           BlocListener<UserPlanSubscriptionBloc, UserPlanSubscriptionState>(listener: (context, state) async {
             if (state is UserChangedPlan) {
               final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
+              BlocProvider.of<AuthBloc>(context).updateAuthSuccess(state.userDataUpdated, alreadyLoggedUser);
               final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
               if (!_needLogoutAction(route)) {
                 _authBloc.storeUpdatedLoginData(state);
@@ -163,7 +164,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             if (authState is AuthSuccess) {
               BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
               BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
-              BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(loggedUser: authState.user);
+              BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream();
             }
             return SafeArea(
               child: Scaffold(

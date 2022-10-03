@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -44,8 +45,9 @@ class UserPlanSubscriptionBloc extends Cubit<UserPlanSubscriptionState> {
     }
   }
 
-  Future<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>> getPlanSubscriptionStream({@required UserResponse loggedUser}) async {
+  Future<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>> getPlanSubscriptionStream() async {
     try {
+      final loggedUser = await AuthRepository().retrieveLoginData();
       return planSubscription ??= _userRepository.getUserPlanStream(userId: loggedUser.id).listen((snapshot) {
         UserResponse actualUserData;
         emit(Loading());
