@@ -164,7 +164,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             if (authState is AuthSuccess) {
               BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
               BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
-              BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream();
+              BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
             }
             return SafeArea(
               child: Scaffold(
