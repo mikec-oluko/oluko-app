@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -44,16 +45,18 @@ class UserPlanSubscriptionBloc extends Cubit<UserPlanSubscriptionState> {
     }
   }
 
-  Future<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>> getPlanSubscriptionStream({@required UserResponse loggedUser}) async {
+  Future<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>> getPlanSubscriptionStream(String userId) async {
     try {
-      return planSubscription ??= _userRepository.getUserPlanStream(userId: loggedUser.id).listen((snapshot) {
+      return planSubscription ??= _userRepository.getUserPlanStream(userId: userId).listen((snapshot) async {
+      final loggedUser = await AuthRepository().retrieveLoginData();
         UserResponse actualUserData;
         emit(Loading());
         if (snapshot.exists) {
           final Map<String, dynamic> userDocument = snapshot.data() as Map<String, dynamic>;
           actualUserData = UserResponse.fromJson(userDocument);
         }
-        if (loggedUser.currentPlan != actualUserData.currentPlan) {
+        if (loggedUser.currentPlan!=-1 && loggedUser.currentPlan != actualUserData.currentPlan) {
+          await AuthRepository().storeLoginData(actualUserData);
           emit(UserChangedPlan(userDataUpdated: actualUserData));
         } else if (actualUserData.currentPlan <= 0) {
           emit(UserIsNotSuscribed());

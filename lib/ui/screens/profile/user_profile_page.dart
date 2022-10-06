@@ -290,7 +290,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             exceptionSource: state.exceptionSource);
       }
       if (state is ProfileCoverRequirePermissions) {
-        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
+        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
       }
       return _contentForPanel;
     });
@@ -322,7 +322,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             exceptionSource: state.exceptionSource);
       }
       if (state is ProfileAvatarRequirePermissions) {
-        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
+        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
       }
       return _contentForPanel;
     });
@@ -477,8 +477,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
         _assessmentVideosContent = state.taskSubmissions;
-        if(!_isCurrentUser){
-          _assessmentVideosContent=_assessmentVideosContent.where((assessment) => assessment.isPublic).toList();
+        if (!_isCurrentUser) {
+          _assessmentVideosContent = _assessmentVideosContent.where((assessment) => assessment.isPublic).toList();
         }
       }
 

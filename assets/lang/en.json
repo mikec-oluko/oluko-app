@@ -225,7 +225,7 @@
     "timelineCourse": "Course: ",
     "timelineDuration": "Duration: ",
     "requiredPermitsTitle": "Required permits",
-    "requiredPermitsBody": "You need to enable app permissions",
+    "requiredPermitsBody": "You need to enable the following permissions:",
     "goToClass": "Go to Class",
     "nextSegment": "Next Segment",
     "errorLoadingImage": "Error loading image!",

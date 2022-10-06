@@ -22,8 +22,7 @@ class SegmentCameraPreview extends StatefulWidget {
   final int courseIndex;
   final UserResponse coach;
 
-  SegmentCameraPreview({Key key, this.coach, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
-      : super(key: key);
+  SegmentCameraPreview({Key key, this.coach, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -119,20 +118,18 @@ class _State extends State<SegmentCameraPreview> {
             padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
             child: Column(children: [
               Text(OlukoLocalizations.of(context).find('cameraInfo'),
-                  textAlign: TextAlign.left,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
+                  textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
               startButton(),
               Text(OlukoLocalizations.of(context).find('cameraWarning'),
-                  textAlign: TextAlign.left,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
+                  textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
             ])));
   }
 
   Widget startButton() {
     return GestureDetector(
         onTap: () {
-          TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(),
-              widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0);
+          TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(), widget.segments[widget.segmentIndex].initialTimer,
+              widget.segments[widget.segmentIndex].rounds, 0);
         },
         child: recordIcon());
   }
@@ -158,7 +155,7 @@ class _State extends State<SegmentCameraPreview> {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
-        PermissionsUtils.showSettingsMessage(context);
+        PermissionsUtils.showSettingsMessage(context, permissionsRequired: [DeviceContentFrom.camera.name, DeviceContentFrom.microphone.name]);
         return;
       }
       cameras = await availableCameras();

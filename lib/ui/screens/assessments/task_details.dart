@@ -404,7 +404,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   'fromCompletedClass': false
                 });
               } else if (state is PermissionsRequired) {
-                PermissionsUtils.showSettingsMessage(context);
+                PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]);
               } else if (state is UploadFailure && state.badFormat) {
                 AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
               }
