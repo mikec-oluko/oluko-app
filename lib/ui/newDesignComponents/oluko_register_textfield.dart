@@ -23,6 +23,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   TextEditingController controller = TextEditingController();
   String errorMessage;
   bool existError = false;
+  Country defaultCountry = Country(name: '-');
   List<Country> countries = [];
   Country _selectedCountry;
   Country newCountryWithStates;
@@ -359,18 +360,44 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           if (countries == null || countries.isEmpty) {
             setState(() {
               countries = state.countries;
+              countries.insert(0, defaultCountry);
             });
           }
         }
       },
       child: countries != null && countries.isNotEmpty
           ? Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: OlukoColors.grayColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    errorText: existError ? errorMessage : '',
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    ),
+                    errorBorder: existError
+                        ? const OutlineInputBorder(
+                            borderSide: BorderSide(color: OlukoColors.error),
+                          )
+                        : OutlineInputBorder(
+                            borderSide: const BorderSide(color: OlukoColors.grayColor),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                    labelText: widget.title,
+                    labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(width: 2, color: OlukoColors.grayColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: OlukoColors.grayColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    filled: true,
+                    hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary),
+                    hintText: widget.title,
+                    fillColor: OlukoColors.white,
+                  ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
                   isExpanded: true,
@@ -389,6 +416,22 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     );
                   }).toList(),
                   onChanged: (String item) async {
+                    stringValidator = AppValidators().getStringValidationState(item);
+                    switch (widget.fieldType) {
+                      case RegisterFieldEnum.COUNTRY:
+                        if (stringValidator != null) {
+                          if (!stringValidator[StringValidation.containsSpecialChars]) {
+                            setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                          } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                            setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
+                          } else {
+                            _clearFieldErrors();
+                          }
+                        }
+                        break;
+                      default:
+                    }
+                    widget.onInputUpdated(item);
                     _selectedCountry = countries.firstWhere((country) => country.name == item);
                     final List<String> statesOfSelectedCountry = _selectedCountry?.states;
                     var newFieldsState = '';
@@ -408,6 +451,23 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                       countries = newCountries;
                     });
                     widget.onInputUpdated(item);
+                  },
+                  validator: (String value) {
+                    if (value == '-' || value == null) {
+                      return OlukoLocalizations.get(context, 'required');
+                    } else {
+                      stringValidator = AppValidators().getStringValidationState(value);
+                      if (stringValidator != null) {
+                        if (!stringValidator[StringValidation.containsSpecialChars]) {
+                          return _getErrorMessage(specialCharsError: true);
+                        } else if (!stringValidator[StringValidation.isAlphanumeric]) {
+                          return _getErrorMessage(alphaNumericError: true);
+                        } else {
+                          return null;
+                        }
+                      }
+                    }
+                    return null;
                   },
                 ),
               ),
@@ -482,14 +542,38 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
               ),
             )
           : Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: OlukoColors.grayColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    errorText: existError ? errorMessage : '',
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    ),
+                    errorBorder: existError
+                        ? const OutlineInputBorder(
+                            borderSide: BorderSide(color: OlukoColors.error),
+                          )
+                        : OutlineInputBorder(
+                            borderSide: const BorderSide(color: OlukoColors.grayColor),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                    labelText: widget.title,
+                    labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(width: 2, color: OlukoColors.grayColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: OlukoColors.grayColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    filled: true,
+                    hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary),
+                    hintText: widget.title,
+                    fillColor: OlukoColors.white,
+                  ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                  borderRadius: BorderRadius.circular(5),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
                   isExpanded: true,
                   value: '-',
@@ -507,9 +591,36 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     );
                   }).toList(),
                   onChanged: (String item) async {
+                    stringValidator = AppValidators().getStringValidationState(item);
+                    if (stringValidator != null) {
+                      if (!stringValidator[StringValidation.containsSpecialChars]) {
+                        setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
+                      } else if (!stringValidator[StringValidation.isAlphabetic]) {
+                        setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
+                      } else {
+                        _clearFieldErrors();
+                      }
+                    }
                     setState(() {
                       _selectedState = item;
                     });
+                  },
+                  validator: (String value) {
+                    if (value == '-' ||value == null ) {
+                      return OlukoLocalizations.get(context, 'required');
+                    } else {
+                      stringValidator = AppValidators().getStringValidationState(value);
+                      if (stringValidator != null) {
+                         if (!stringValidator[StringValidation.containsSpecialChars]) {
+                          return _getErrorMessage(specialCharsError: true);
+                        } else if (!stringValidator[StringValidation.isAlphanumeric]) {
+                          return _getErrorMessage(alphaNumericError: true);
+                        } else {
+                          return null;
+                        }
+                      }
+                    }
+                    return null;
                   },
                 ),
               ),
