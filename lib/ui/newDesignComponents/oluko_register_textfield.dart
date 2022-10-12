@@ -51,16 +51,10 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   Widget _getDropDown(RegisterFieldEnum fieldType) {
     Widget _dropDownSelected;
     if (widget.fieldType == RegisterFieldEnum.COUNTRY) {
-      _dropDownSelected = Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: countriesDropdown(),
-      );
+      _dropDownSelected = countriesDropdown();
     }
     if (widget.fieldType == RegisterFieldEnum.STATE) {
-      _dropDownSelected = Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: statesDropdown(),
-      );
+      _dropDownSelected = statesDropdown();
     }
     return _dropDownSelected;
   }
@@ -382,20 +376,12 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                             borderSide: const BorderSide(color: OlukoColors.grayColor),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                    labelText: widget.title,
                     labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(width: 2, color: OlukoColors.grayColor),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: OlukoColors.grayColor),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     filled: true,
-                    hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary),
-                    hintText: widget.title,
                     fillColor: OlukoColors.white,
                   ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
@@ -406,7 +392,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     return DropdownMenuItem<String>(
                       value: country.name,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 10),
                         child: Text(
                           country.name,
                           overflow: TextOverflow.ellipsis,
@@ -416,21 +402,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     );
                   }).toList(),
                   onChanged: (String item) async {
-                    stringValidator = AppValidators().getStringValidationState(item);
-                    switch (widget.fieldType) {
-                      case RegisterFieldEnum.COUNTRY:
-                        if (stringValidator != null) {
-                          if (!stringValidator[StringValidation.containsSpecialChars]) {
-                            setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
-                          } else if (!stringValidator[StringValidation.isAlphabetic]) {
-                            setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
-                          } else {
-                            _clearFieldErrors();
-                          }
-                        }
-                        break;
-                      default:
-                    }
                     widget.onInputUpdated(item);
                     _selectedCountry = countries.firstWhere((country) => country.name == item);
                     final List<String> statesOfSelectedCountry = _selectedCountry?.states;
@@ -455,17 +426,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   validator: (String value) {
                     if (value == '-' || value == null) {
                       return OlukoLocalizations.get(context, 'required');
-                    } else {
-                      stringValidator = AppValidators().getStringValidationState(value);
-                      if (stringValidator != null) {
-                        if (!stringValidator[StringValidation.containsSpecialChars]) {
-                          return _getErrorMessage(specialCharsError: true);
-                        } else if (!stringValidator[StringValidation.isAlphanumeric]) {
-                          return _getErrorMessage(alphaNumericError: true);
-                        } else {
-                          return null;
-                        }
-                      }
                     }
                     return null;
                   },
@@ -557,20 +517,12 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                             borderSide: const BorderSide(color: OlukoColors.grayColor),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                    labelText: widget.title,
                     labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(width: 2, color: OlukoColors.grayColor),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: OlukoColors.grayColor),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     filled: true,
-                    hintStyle: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary),
-                    hintText: widget.title,
                     fillColor: OlukoColors.white,
                   ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
@@ -581,7 +533,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     return DropdownMenuItem<String>(
                       value: countryState,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 10),
                         child: Text(
                           countryState,
                           overflow: TextOverflow.ellipsis,
@@ -591,36 +543,9 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     );
                   }).toList(),
                   onChanged: (String item) async {
-                    stringValidator = AppValidators().getStringValidationState(item);
-                    if (stringValidator != null) {
-                      if (!stringValidator[StringValidation.containsSpecialChars]) {
-                        setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
-                      } else if (!stringValidator[StringValidation.isAlphabetic]) {
-                        setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
-                      } else {
-                        _clearFieldErrors();
-                      }
-                    }
                     setState(() {
                       _selectedState = item;
                     });
-                  },
-                  validator: (String value) {
-                    if (value == '-' ||value == null ) {
-                      return OlukoLocalizations.get(context, 'required');
-                    } else {
-                      stringValidator = AppValidators().getStringValidationState(value);
-                      if (stringValidator != null) {
-                         if (!stringValidator[StringValidation.containsSpecialChars]) {
-                          return _getErrorMessage(specialCharsError: true);
-                        } else if (!stringValidator[StringValidation.isAlphanumeric]) {
-                          return _getErrorMessage(alphaNumericError: true);
-                        } else {
-                          return null;
-                        }
-                      }
-                    }
-                    return null;
                   },
                 ),
               ),

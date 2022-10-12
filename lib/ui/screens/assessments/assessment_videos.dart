@@ -409,7 +409,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
       return GestureDetector(
           onTap: () {
             BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
-            Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+            Navigator.pop(context);
           },
           child: Align(
               child: Padding(

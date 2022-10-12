@@ -30,12 +30,7 @@ class RouteService {
           }
         }
       }
-      AssessmentAssignment assesmentA = await AssessmentAssignmentRepository.getByUserId(alreadyLoggedUser.uid);
-      if (assesmentA != null && (assesmentA.seenByUser == null || !assesmentA.seenByUser)) {
-        return routeLabels[RouteEnum.assessmentVideos];
-      } else {
         return routeLabels[RouteEnum.root];
-      }
     }
   }
 }
