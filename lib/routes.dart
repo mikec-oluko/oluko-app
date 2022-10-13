@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibilIty_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
@@ -347,6 +348,7 @@ class Routes {
   final FavoriteFriendBloc _favoriteFriendBloc = FavoriteFriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
   final AssessmentAssignmentBloc _assessmentAssignmentBloc = AssessmentAssignmentBloc();
+  final AssessmentVisibilityBloc _assessmentVisibilityBloc = AssessmentVisibilityBloc();
   final TaskSubmissionBloc _taskSubmissionBloc = TaskSubmissionBloc();
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc = TransformationJourneyBloc();
@@ -513,6 +515,7 @@ class Routes {
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<HiFiveSendBloc>.value(
             value: _hiFiveSendBloc,
@@ -1036,6 +1039,7 @@ class Routes {
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
@@ -1050,6 +1054,7 @@ class Routes {
         providers = [
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),

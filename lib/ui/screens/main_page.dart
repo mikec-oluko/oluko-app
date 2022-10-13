@@ -2,7 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibilIty_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
@@ -84,7 +84,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.initState();
     tabs = getTabs();
     loggedUser = AuthRepository.getLoggedUser();
-    BlocProvider.of<AssessmentAssignmentBloc>(context).assignmentSeen(loggedUser.uid);
+    BlocProvider.of<AssessmentVisibilityBloc>(context).assignmentSeen(loggedUser.uid);
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
     tabController = TabController(length: this.tabs.length, vsync: this);
     tabController.addListener(() {
@@ -160,9 +160,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 showExitButton: false);
           }
         }),
-        BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+        BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           listener: (context, state) async{
-            if (state is UnSeenAssessmentAssignmentSuccess) {
+            if (state is UnSeenAssignmentSuccess) {
               Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
             }
           },
@@ -174,9 +174,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
         }
-        return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+        return BlocBuilder<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           builder: (context, state) {
-            if (state is AssessmentAssignmentLoading ||state is UnSeenAssessmentAssignmentSuccess  ) {
+            if (state is AssessmentVisibilityLoading ||state is UnSeenAssignmentSuccess  ) {
               return Scaffold(
                 body: Container(
                   decoration: const BoxDecoration(

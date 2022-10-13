@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibilIty_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -241,7 +242,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                         title: OlukoLocalizations.get(context, 'done'),
                                         onPressed: () async {
                                           if (widget.isFirstTime) {
-                                            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                                            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
                                           }
                                           if (await popUp(context)) Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                                           return false;
@@ -290,7 +291,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   _controller.pause();
                 }
                 if (widget.isFirstTime) {
-                  BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                  BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
                 }
                 Navigator.pushNamed(
                   context,
@@ -408,7 +409,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (widget.isFirstTime) {
       return GestureDetector(
           onTap: () {
-            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
             Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
           },
           child: Align(
