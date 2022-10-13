@@ -16,6 +16,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/services/push_notification_service.dart';
@@ -52,6 +53,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   List<Widget> tabs = [];
   TabController tabController;
   final AuthBloc _authBloc = AuthBloc();
+  User loggedUser;
 
   List<Widget> getTabs() {
     return [
@@ -81,6 +83,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     tabs = getTabs();
+    loggedUser = AuthRepository.getLoggedUser();
+    BlocProvider.of<AssessmentAssignmentBloc>(context).assignmentSeen(loggedUser.uid);
     BlocProvider.of<InternetConnectionBloc>(context).getConnectivityType();
     tabController = TabController(length: this.tabs.length, vsync: this);
     tabController.addListener(() {
@@ -157,7 +161,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           }
         }),
         BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-          listener: (context, state) async {
+          listener: (context, state)  {
             if (state is UnSeenAssessmentAssignmentSuccess) {
               Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
             }
@@ -167,13 +171,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
-          BlocProvider.of<AssessmentAssignmentBloc>(context).assignmentSeen(authState.user.id);
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
         }
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           builder: (context, state) {
-            if (state is AssessmentAssignmentLoading) {
+            if (state is AssessmentAssignmentLoading ||state is UnSeenAssessmentAssignmentSuccess  ) {
               return Scaffold(
                 body: Container(
                   decoration: const BoxDecoration(
