@@ -161,7 +161,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           }
         }),
         BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-          listener: (context, state)  {
+          listener: (context, state) async{
             if (state is UnSeenAssessmentAssignmentSuccess) {
               Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
             }

@@ -448,17 +448,31 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         if (state is CountryWithStateSuccess) {
           setState(() {
             _countryWithStates = state.country;
+            _selectedState = _countryWithStates.states[0];
+            widget.onInputUpdated(_countryWithStates.states[0]);
           });
         }
       },
       child: _countryWithStates != null && _countryWithStates.states.isNotEmpty
           ? Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: OlukoColors.grayColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    errorText: existError ? errorMessage : '',
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    ),
+                    errorBorder: existError
+                        ? const OutlineInputBorder(
+                            borderSide: BorderSide(color: OlukoColors.error),
+                          )
+                        : OutlineInputBorder(
+                            borderSide: const BorderSide(color: OlukoColors.grayColor),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                    filled: true,
+                    fillColor: OlukoColors.white,
+                  ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
                   isExpanded: true,
@@ -470,7 +484,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                           return DropdownMenuItem<String>(
                             value: countryState,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
+                              padding: const EdgeInsets.only(left: 10),
                               child: Text(
                                 countryState,
                                 overflow: TextOverflow.ellipsis,
