@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -25,7 +26,7 @@ import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -241,7 +242,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                         title: OlukoLocalizations.get(context, 'done'),
                                         onPressed: () async {
                                           if (widget.isFirstTime) {
-                                            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                                            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
                                           }
                                           if (await popUp(context)) Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                                           return false;
@@ -290,7 +291,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   _controller.pause();
                 }
                 if (widget.isFirstTime) {
-                  BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                  BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
                 }
                 Navigator.pushNamed(
                   context,
@@ -407,9 +408,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Widget skipButton() {
     if (widget.isFirstTime) {
       return GestureDetector(
-          onTap: () {
-            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
-            Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+          onTap: () async {
+            await BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
+            AppNavigator().returnToHome(context);
+            BlocProvider.of<AssessmentVisibilityBloc>(context).setAssessmentVisibilityDefaultState();
           },
           child: Align(
               child: Padding(

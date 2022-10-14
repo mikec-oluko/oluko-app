@@ -158,13 +158,8 @@ class AuthBloc extends Cubit<AuthState> {
     if (await UserUtils.isFirstTime()) {
       await Permissions.askForPermissions();
     }
-    final AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
-    if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
-      await AppNavigator().goToAssessmentVideosViaMain(context);
-    } else {
-      UserUtils.checkFirstTimeAndUpdate();
-      await AppNavigator().returnToHome(context);
-    }
+    UserUtils.checkFirstTimeAndUpdate();
+    await AppNavigator().returnToHome(context);
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {

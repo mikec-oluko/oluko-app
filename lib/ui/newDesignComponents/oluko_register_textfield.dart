@@ -23,6 +23,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   TextEditingController controller = TextEditingController();
   String errorMessage;
   bool existError = false;
+  Country defaultCountry = Country(name: '-');
   List<Country> countries = [];
   Country _selectedCountry;
   Country newCountryWithStates;
@@ -50,16 +51,10 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   Widget _getDropDown(RegisterFieldEnum fieldType) {
     Widget _dropDownSelected;
     if (widget.fieldType == RegisterFieldEnum.COUNTRY) {
-      _dropDownSelected = Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: countriesDropdown(),
-      );
+      _dropDownSelected = countriesDropdown();
     }
     if (widget.fieldType == RegisterFieldEnum.STATE) {
-      _dropDownSelected = Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: statesDropdown(),
-      );
+      _dropDownSelected = statesDropdown();
     }
     return _dropDownSelected;
   }
@@ -359,18 +354,36 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           if (countries == null || countries.isEmpty) {
             setState(() {
               countries = state.countries;
+              countries.insert(0, defaultCountry);
             });
           }
         }
       },
       child: countries != null && countries.isNotEmpty
           ? Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: OlukoColors.grayColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    errorText: existError ? errorMessage : '',
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    ),
+                    errorBorder: existError
+                        ? const OutlineInputBorder(
+                            borderSide: BorderSide(color: OlukoColors.error),
+                          )
+                        : OutlineInputBorder(
+                            borderSide: const BorderSide(color: OlukoColors.grayColor),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                    labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: OlukoColors.grayColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    filled: true,
+                    fillColor: OlukoColors.white,
+                  ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
                   isExpanded: true,
@@ -379,7 +392,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     return DropdownMenuItem<String>(
                       value: country.name,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 10),
                         child: Text(
                           country.name,
                           overflow: TextOverflow.ellipsis,
@@ -389,6 +402,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     );
                   }).toList(),
                   onChanged: (String item) async {
+                    widget.onInputUpdated(item);
                     _selectedCountry = countries.firstWhere((country) => country.name == item);
                     final List<String> statesOfSelectedCountry = _selectedCountry?.states;
                     var newFieldsState = '';
@@ -409,6 +423,12 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     });
                     widget.onInputUpdated(item);
                   },
+                  validator: (String value) {
+                    if (value == '-' || value == null) {
+                      return OlukoLocalizations.get(context, 'required');
+                    }
+                    return null;
+                  },
                 ),
               ),
             )
@@ -428,17 +448,31 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         if (state is CountryWithStateSuccess) {
           setState(() {
             _countryWithStates = state.country;
+            _selectedState = _countryWithStates.states[0];
+            widget.onInputUpdated(_countryWithStates.states[0]);
           });
         }
       },
       child: _countryWithStates != null && _countryWithStates.states.isNotEmpty
           ? Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: OlukoColors.grayColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    errorText: existError ? errorMessage : '',
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    ),
+                    errorBorder: existError
+                        ? const OutlineInputBorder(
+                            borderSide: BorderSide(color: OlukoColors.error),
+                          )
+                        : OutlineInputBorder(
+                            borderSide: const BorderSide(color: OlukoColors.grayColor),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                    filled: true,
+                    fillColor: OlukoColors.white,
+                  ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
                   isExpanded: true,
@@ -450,7 +484,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                           return DropdownMenuItem<String>(
                             value: countryState,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
+                              padding: const EdgeInsets.only(left: 10),
                               child: Text(
                                 countryState,
                                 overflow: TextOverflow.ellipsis,
@@ -482,14 +516,30 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
               ),
             )
           : Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: OlukoColors.grayColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    errorText: existError ? errorMessage : '',
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    ),
+                    errorBorder: existError
+                        ? const OutlineInputBorder(
+                            borderSide: BorderSide(color: OlukoColors.error),
+                          )
+                        : OutlineInputBorder(
+                            borderSide: const BorderSide(color: OlukoColors.grayColor),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                    labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: OlukoColors.grayColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    filled: true,
+                    fillColor: OlukoColors.white,
+                  ),
                   style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                  borderRadius: BorderRadius.circular(5),
                   dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent,
                   isExpanded: true,
                   value: '-',
@@ -497,7 +547,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                     return DropdownMenuItem<String>(
                       value: countryState,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 10),
                         child: Text(
                           countryState,
                           overflow: TextOverflow.ellipsis,
