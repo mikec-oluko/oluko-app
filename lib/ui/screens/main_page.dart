@@ -161,7 +161,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           }
         }),
         BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
-          listener: (context, state) async{
+          listener: (context, state) async {
             if (state is UnSeenAssignmentSuccess) {
               Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
             }
@@ -176,7 +176,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         }
         return BlocBuilder<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           builder: (context, state) {
-            if (state is AssessmentVisibilityLoading ||state is UnSeenAssignmentSuccess  ) {
+            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess) {
               return Scaffold(
                 body: Container(
                   decoration: const BoxDecoration(

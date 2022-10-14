@@ -19,6 +19,9 @@ class AssessmentVisibilityFailure extends AssessmentVisibilityState {
 class SeenAssignmentSuccess extends AssessmentVisibilityState {
   SeenAssignmentSuccess();
 }
+class AssessmentVisibilityDefault extends AssessmentVisibilityState {
+  AssessmentVisibilityDefault();
+}
 
 class AssessmentVisibilityBloc extends Cubit<AssessmentVisibilityState> {
   AssessmentVisibilityBloc() : super(AssessmentVisibilityLoading());
@@ -41,9 +44,9 @@ class AssessmentVisibilityBloc extends Cubit<AssessmentVisibilityState> {
     }
   }
 
-  void setAsSeen(String userId) async {
+  Future<void> setAsSeen(String userId) async {
     try {
-      AssessmentAssignmentRepository.setAsSeen(userId);
+      await AssessmentAssignmentRepository.setAsSeen(userId);
       emit(SeenAssignmentSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -53,5 +56,8 @@ class AssessmentVisibilityBloc extends Cubit<AssessmentVisibilityState> {
       emit(AssessmentVisibilityFailure(exception: exception));
       rethrow;
     }
+  }
+    void setAssessmentVisibilityDefaultState() {
+    emit(AssessmentVisibilityDefault());
   }
 }

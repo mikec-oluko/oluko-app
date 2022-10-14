@@ -29,8 +29,9 @@ class RouteService {
             return routeLabels[RouteEnum.signUp];
           }
         }
-      }
+      } else {
         return routeLabels[RouteEnum.root];
+      }
     }
   }
 }

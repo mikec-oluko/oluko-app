@@ -26,7 +26,7 @@ import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -408,9 +408,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Widget skipButton() {
     if (widget.isFirstTime) {
       return GestureDetector(
-          onTap: () {
-            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
-            Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
+          onTap: () async {
+            await BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
+            AppNavigator().returnToHome(context);
+            BlocProvider.of<AssessmentVisibilityBloc>(context).setAssessmentVisibilityDefaultState();
           },
           child: Align(
               child: Padding(
