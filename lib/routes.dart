@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
-import 'package:oluko_app/blocs/assessment_visibilIty_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
