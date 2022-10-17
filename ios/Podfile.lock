@@ -825,6 +825,8 @@ PODS:
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
   - GTMSessionFetcher/Core (2.1.0)
+  - headset_connection_event (2.1.1):
+    - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
   - in_app_purchase_ios (0.0.1):
@@ -918,6 +920,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_sound_lite (from `.symlinks/plugins/flutter_sound_lite/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
+  - headset_connection_event (from `.symlinks/plugins/headset_connection_event/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_purchase_ios (from `.symlinks/plugins/in_app_purchase_ios/ios`)
   - native_device_orientation (from `.symlinks/plugins/native_device_orientation/ios`)
@@ -1011,6 +1014,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_sound_lite/ios"
   google_sign_in_ios:
     :path: ".symlinks/plugins/google_sign_in_ios/ios"
+  headset_connection_event:
+    :path: ".symlinks/plugins/headset_connection_event/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   in_app_purchase_ios:
@@ -1092,6 +1097,7 @@ SPEC CHECKSUMS:
   gRPC-Core: 943e491cb0d45598b0b0eb9e910c88080369290b
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: ffbb25ec00ebcb5201adab0a56d808f6f1902d9f
+  headset_connection_event: 4284fa8d292d76609c278a97024dc82df94c63bc
   image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
   in_app_purchase_ios: 04ed55fdd1012db54095d6801335b5f5de0a475f
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
