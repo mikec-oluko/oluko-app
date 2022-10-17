@@ -9,9 +9,9 @@ import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'dialog_utils.dart';
 
 class PermissionsUtils {
-  static void showSettingsMessage(BuildContext context) {
+  static void showSettingsMessage(BuildContext context, {List<String> permissionsRequired}) {
     if (OlukoNeumorphism.isNeumorphismDesign) {
-      BottomDialogUtils.showBottomDialog(context: context, content: SettingsModalNeumorphic(context));
+      BottomDialogUtils.showBottomDialog(context: context, content: SettingsModalNeumorphic(context, permissionsRequired: permissionsRequired));
     } else {
       DialogUtils.getDialog(context, [SettingsDialog(context)], showExitButton: false);
     }

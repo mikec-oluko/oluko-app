@@ -23,7 +23,10 @@ class ProfileAvatarFailure extends OlukoException with ProfileAvatarState {
       : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
 }
 
-class ProfileAvatarRequirePermissions extends ProfileAvatarState {}
+class ProfileAvatarRequirePermissions extends ProfileAvatarState {
+  String permissionRequired;
+  ProfileAvatarRequirePermissions({this.permissionRequired});
+}
 
 class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   ProfileAvatarBloc() : super(ProfileAvatarDefault());
@@ -33,7 +36,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
     XFile _image;
     try {
       if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
-        emit(ProfileAvatarRequirePermissions());
+        emit(ProfileAvatarRequirePermissions(permissionRequired: uploadedFrom.name));
         return;
       }
 
@@ -47,9 +50,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
 
       if (_image == null && _image is! XFile) {
         emit(ProfileAvatarFailure(
-            exception: Exception(),
-            exceptionType: ExceptionTypeEnum.loadFileFailed,
-            exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
+            exception: Exception(), exceptionType: ExceptionTypeEnum.loadFileFailed, exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
         return;
       } else if (!(p.extension(_image.path) == ImageUtils.jpegFormat ||
           p.extension(_image.path) == ImageUtils.jpgFormat ||

@@ -225,8 +225,8 @@
     "timelineCourse": "Course: ",
     "timelineDuration": "Duration: ",
     "requiredPermitsTitle": "Required permits",
-    "requiredPermitsBody": "You need to enable app permissions",
-    "goToClass": "Go To Class",
+    "requiredPermitsBody": "You need to enable the following permissions:",
+    "goToClass": "Go to Class",
     "nextSegment": "Next Segment",
     "errorLoadingImage": "Error loading image!",
     "friendAdded": "Friend added",
@@ -419,7 +419,13 @@
     "deleteUser": "delete user",
     "deletionInstructions": "Please check your email inbox to finish the delete process.",
     "deleteMyAccount": "Delete My Account",
+    "planChangedAlertMessage": "Your membership is now updated!",
+    "planCanceledAlertMessage": "Your membership has been canceled. Please log into your account on the web to select a new membership and payment method.",
     "microphone": "Microphone",
     "gallery": "Gallery",
-    "seeTextForTermsAndConditions": "See "
+    "seeTextForTermsAndConditions": "See ",
+    "contact": "contact",
+    "prxPerformance": "PRx Performance",
+    "attention":"Attention!"
+    
 }

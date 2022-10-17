@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -25,7 +26,7 @@ import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -55,6 +56,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _assessmentAssignment = null;
+    super.dispose();
   }
 
   @override
@@ -235,7 +242,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                         title: OlukoLocalizations.get(context, 'done'),
                                         onPressed: () async {
                                           if (widget.isFirstTime) {
-                                            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                                            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
                                           }
                                           if (await popUp(context)) Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                                           return false;
@@ -259,8 +266,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             height: 50,
                           ),
                       ])),
-                  Visibility(
-                      visible: OlukoNeumorphism.isNeumorphismDesign ? _showDonePanel : false, child: assessmentDoneBottomPanel(context)),
+                  Visibility(visible: OlukoNeumorphism.isNeumorphismDesign ? _showDonePanel : false, child: assessmentDoneBottomPanel(context)),
                 ]))));
   }
 
@@ -285,7 +291,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   _controller.pause();
                 }
                 if (widget.isFirstTime) {
-                  BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                  BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
                 }
                 Navigator.pushNamed(
                   context,
@@ -327,12 +333,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
@@ -366,8 +368,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 padding: const EdgeInsets.all(50.0),
                 child: OlukoNeumorphism.isNeumorphismDesign
                     ? Container(
-                        color:
-                            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                         child: OlukoCircularProgressIndicator())
                     : OlukoCircularProgressIndicator());
           }
@@ -389,11 +390,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         });
       }
       BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
-      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-        'taskIndex': index,
-        'isLastTask': isLastTask,
-        'taskCompleted': taskSubmission != null && taskSubmission.video != null
-      }).then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
+      return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+              arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null && taskSubmission.video != null})
+          .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
     }
     ;
   }
@@ -409,9 +408,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Widget skipButton() {
     if (widget.isFirstTime) {
       return GestureDetector(
-          onTap: () {
-            BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
-            Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
+          onTap: () async {
+            await BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
+            AppNavigator().returnToHome(context);
+            BlocProvider.of<AssessmentVisibilityBloc>(context).setAssessmentVisibilityDefaultState();
           },
           child: Align(
               child: Padding(

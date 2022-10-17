@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
@@ -10,8 +11,7 @@ import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TaskSubmissionRepository {
-  static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
 
   FirebaseFirestore firestoreInstance;
 
@@ -19,8 +19,7 @@ class TaskSubmissionRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static Future<TaskSubmission> createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
+  static Future<TaskSubmission> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
     DocumentReference assessmentAReference = projectReference.collection('assessmentAssignments').doc(assessmentAssignment.id);
 
     DocumentReference taskReference = projectReference.collection("tasks").doc(task.id);
@@ -43,21 +42,54 @@ class TaskSubmissionRepository {
     return taskSubmission;
   }
 
+  static Future<TaskSubmission> createTaskSubmissionUpdated(
+      {@required AssessmentAssignment assessmentAssignment, @required Task task, bool isPublic = true, @required bool isLastTask}) async {
+    DocumentReference _taskReference = projectReference.collection('tasks').doc(task.id);
+    ObjectSubmodel _taskSubmodel = ObjectSubmodel(id: task.id, reference: _taskReference, name: task.name);
+    TaskSubmission taskSubmission = TaskSubmission(task: _taskSubmodel, isPublic: isPublic, createdBy: assessmentAssignment.createdBy);
+    DocumentReference _assessmentAssignmentReference = projectReference.collection('assessmentAssignments').doc(assessmentAssignment.id);
+    CollectionReference _taskSubmissionColReference = _assessmentAssignmentReference.collection('taskSubmissions');
+    final DocumentReference _taskSubmissionDocReference = _taskSubmissionColReference.doc();
+    taskSubmission.id = _taskSubmissionDocReference.id;
+    return taskSubmission;
+  }
+
+  static Future<bool> saveTaskSubmission(AssessmentAssignment assessmentA, TaskSubmission taskSubmission, Video video, bool isLastTask) async {
+    DocumentReference reference = projectReference.collection('assessmentAssignments').doc(assessmentA.id).collection('taskSubmissions').doc(taskSubmission.id);
+    try {
+      taskSubmission.video = video;
+      DocumentSnapshot<Object> taskSubmitted = await reference.get();
+      if (taskSubmitted.exists) {
+        Map<String, dynamic> data = taskSubmitted.data() as Map<String, dynamic>;
+        TaskSubmission existingTask = TaskSubmission.fromJson(data);
+        if (existingTask.video != taskSubmission.video) {
+          reference.update({'video': taskSubmission.video.toJson()});
+        }
+      } else {
+        reference.set(taskSubmission.toJson());
+      }
+      if (isLastTask != null && isLastTask) {
+        UserResponse userToUpdate = await UserRepository().getById(taskSubmission.createdBy);
+        await UserRepository().updateUserLastAssessmentUploaded(userToUpdate, Timestamp.now());
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static updateTaskSubmissionVideo(AssessmentAssignment assessmentA, String id, Video video) async {
-    DocumentReference reference =
-        projectReference.collection('assessmentAssignments').doc(assessmentA.id).collection('taskSubmissions').doc(id);
+    DocumentReference reference = projectReference.collection('assessmentAssignments').doc(assessmentA.id).collection('taskSubmissions').doc(id);
     reference.update({'video': video.toJson()});
   }
 
   static updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String id, bool isPublic) async {
-    DocumentReference reference =
-        projectReference.collection('assessmentAssignments').doc(assessmentA.id).collection('taskSubmissions').doc(id);
+    DocumentReference reference = projectReference.collection('assessmentAssignments').doc(assessmentA.id).collection('taskSubmissions').doc(id);
     reference.update({'is_public': isPublic});
   }
 
   static Future<List<TaskSubmission>> getTaskSubmissions(AssessmentAssignment assessmentAssignment) async {
-    CollectionReference reference =
-        projectReference.collection("assessmentAssignments").doc(assessmentAssignment.id).collection('taskSubmissions');
+    CollectionReference reference = projectReference.collection("assessmentAssignments").doc(assessmentAssignment.id).collection('taskSubmissions');
     QuerySnapshot qs = await reference.get();
     return mapQueryTaskSubmission(qs);
   }
@@ -72,8 +104,7 @@ class TaskSubmissionRepository {
       if (tasksSubmittedFiltered.isEmpty) {
         tasksSubmittedFiltered.add(element);
       } else {
-        var taskFiltered =
-            tasksSubmittedFiltered.firstWhere((elementFiltered) => elementFiltered.task.id == element.task.id, orElse: () => null);
+        var taskFiltered = tasksSubmittedFiltered.firstWhere((elementFiltered) => elementFiltered.task.id == element.task.id, orElse: () => null);
         if (taskFiltered == null) {
           tasksSubmittedFiltered.add(element);
         } else {
@@ -141,8 +172,7 @@ class TaskSubmissionRepository {
     }
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getTaskSubmissionOfTaskSubscription(
-      AssessmentAssignment assessmentAssignment, Task task) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTaskSubmissionOfTaskSubscription(AssessmentAssignment assessmentAssignment, Task task) {
     Stream<QuerySnapshot<Map<String, dynamic>>> taskSubmissionStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -153,8 +183,7 @@ class TaskSubmissionRepository {
   }
 
   static Future<TaskSubmission> getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, String taskId) async {
-    CollectionReference reference =
-        projectReference.collection("assessmentAssignments").doc(assessmentAssignment.id).collection('taskSubmissions');
+    CollectionReference reference = projectReference.collection("assessmentAssignments").doc(assessmentAssignment.id).collection('taskSubmissions');
     final querySnapshot = await reference.where("task.id", isEqualTo: taskId).get();
     if (querySnapshot.docs.length > 0) {
       var mapped = mapQueryTaskSubmission(querySnapshot);

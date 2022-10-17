@@ -23,7 +23,10 @@ class ProfileCoverImageFailure extends OlukoException with ProfileCoverImageStat
       : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
 }
 
-class ProfileCoverRequirePermissions extends ProfileCoverImageState {}
+class ProfileCoverRequirePermissions extends ProfileCoverImageState {
+  String permissionRequired;
+  ProfileCoverRequirePermissions({this.permissionRequired});
+}
 
 class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
   ProfileCoverImageBloc() : super(ProfileCoverImageDefault());
@@ -34,7 +37,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
 
     try {
       if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
-        emit(ProfileCoverRequirePermissions());
+        emit(ProfileCoverRequirePermissions(permissionRequired: uploadedFrom.name));
         return;
       }
 
@@ -46,9 +49,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       }
       if (_image == null && _image is! XFile) {
         emit(ProfileCoverImageFailure(
-            exception: Exception(),
-            exceptionType: ExceptionTypeEnum.loadFileFailed,
-            exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
+            exception: Exception(), exceptionType: ExceptionTypeEnum.loadFileFailed, exceptionSource: ExceptionTypeSourceEnum.noFileSelected));
         return;
       } else if (!(p.extension(_image.path) == ImageUtils.jpegFormat ||
           p.extension(_image.path) == ImageUtils.jpgFormat ||

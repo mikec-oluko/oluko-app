@@ -167,7 +167,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     controller: _panelController,
                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                    maxHeight: recordAgainRequested ? panelSize : 100,
+                    maxHeight: panelSize,
                     panel: recordAgainRequested
                         ? recordAgainDialogContent()
                         : Container(
@@ -404,7 +404,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   'fromCompletedClass': false
                 });
               } else if (state is PermissionsRequired) {
-                PermissionsUtils.showSettingsMessage(context);
+                PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]);
               } else if (state is UploadFailure && state.badFormat) {
                 AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
               }

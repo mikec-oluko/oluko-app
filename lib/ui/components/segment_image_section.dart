@@ -107,15 +107,15 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(segmentId: widget.segment.id, userId: widget.userId);
     }
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
-    if(widget.challenge!=null){
-      _audioQty =AudioService.getUnseenAudios(widget.challenge.audios);
+    if (widget.challenge != null) {
+      _audioQty = AudioService.getUnseenAudios(widget.challenge.audios);
     }
     super.initState();
   }
 
   bool canStartSegment() {
     if (widget.currentSegmentStep < 2) return true;
-    return widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null;
+    return widget.segment.isChallenge ? widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null : true;
   }
 
   @override
@@ -165,6 +165,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
                       if (state is ChallengeHistoricalResult) {
                         isFinishedBefore = state.wasCompletedBefore;
+                        _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
                       }
                       return startWorkoutsButton(isFinishedBefore);
                     })))),
@@ -226,16 +227,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton(bool isFinihedBefore) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? ((widget.segment.isChallenge && _canStartSegment) || widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge
+        ? ((widget.segment.isChallenge && _canStartSegment) || ((widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge))
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: OlukoNeumorphicPrimaryButton(
                   useBorder: true,
                   thinPadding: true,
                   isExpanded: false,
-                  title: OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoLocalizations.get(context, 'start')
-                      : OlukoLocalizations.get(context, 'startWorkout'),
+                  title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
                   onPressed: () {
                     BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
 
@@ -272,9 +271,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 OlukoPrimaryButton(
-                  title: OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoLocalizations.get(context, 'start')
-                      : OlukoLocalizations.get(context, 'startWorkout'),
+                  title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
                   color: OlukoColors.primary,
                   onPressed: () {
                     BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
@@ -363,8 +360,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget topButtons() {
     EdgeInsetsGeometry padding;
     if (_coachRequest != null) {
-      padding =
-          const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+      padding = const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
     } else {
       padding = const EdgeInsets.only(
           top: OlukoNeumorphism.isNeumorphismDesign ? 60 : 15,
@@ -404,11 +400,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
                 if (_coachRequest != null) {
                   showCoachDialog();
-                } else {                      
-                  
-                    if (widget.segment.isChallenge && !_canStartSegment) {
-
-                    } else {
+                } else {
+                  if (widget.segment.isChallenge) {
+                    if (_canStartSegment) {
                       BottomDialogUtils.showBottomDialog(
                         context: context,
                         content: SelfRecordingContent(
@@ -416,7 +410,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                         ),
                       );
                     }
-                  
+                  } else {
+                    if (_canStartSegment) {
+                      BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content: SelfRecordingContent(
+                          onRecordingAction: navigateToSegmentWithRecording,
+                        ),
+                      );
+                    }
+                  }
                 }
               },
               child: getCameraIcon(),
@@ -634,13 +637,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget getAudioButton() {
     return BlocBuilder<ChallengeAudioBloc, ChallengeAudioState>(
       builder: (context, state) {
-        if(state is MarkAsSeenChallengeAudioSuccess){
-          _audioQty=0;
+        if (state is MarkAsSeenChallengeAudioSuccess) {
+          _audioQty = 0;
         }
         return GestureDetector(
-          onTap: () { 
+          onTap: () {
             widget.audioAction(_challengeAudios, widget.challenge);
-           BlocProvider.of<ChallengeAudioBloc>(context).markAsSeen(_challengeAudios,widget.challenge.id);
+            BlocProvider.of<ChallengeAudioBloc>(context).markAsSeen(_challengeAudios, widget.challenge.id);
           },
           child: AudioSection(audioMessageQty: _audioQty),
         );

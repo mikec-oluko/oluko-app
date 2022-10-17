@@ -23,7 +23,7 @@ enum UploadFrom { profileImage, transformationJourney, profileCoverImage, segmen
 //Enum to share route where data for user is Requested on Profile views
 enum ActualProfileRoute { rootProfile, userProfile, userAssessmentVideos, transformationJourney }
 //Enum of options for upload content
-enum DeviceContentFrom { camera, gallery }
+enum DeviceContentFrom { camera, gallery, microphone }
 
 enum ProfileOptionsTitle { myAccount, assessmentVideos, transformationJourney, subscription, settings, helpAndSupport, logout }
 
@@ -62,18 +62,7 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
   IntroductionMediaTypeEnum.coachTabCorePlan: 'coach tab core plan',
 };
 
-enum TimelineInteractionType {
-  course,
-  classes,
-  segment,
-  movement,
-  mentoredVideo,
-  sentVideo,
-  recommendedVideo,
-  introductionVideo,
-  messageVideo,
-  welcomeVideo
-}
+enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo, recommendedVideo, introductionVideo, messageVideo, welcomeVideo }
 
 enum ExceptionTypeEnum { uploadFailed, appFailed, permissionsFailed, loadFileFailed }
 

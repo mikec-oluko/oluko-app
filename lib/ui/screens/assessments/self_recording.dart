@@ -215,8 +215,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                                     width: 50,
                                     height: 50,
                                     child: OlukoBlurredButton(
-                                        childContent: Center(
-                                            child: Text(OlukoLocalizations.get(context, 'close'), style: OlukoFonts.olukoSmallFont()))))),
+                                        childContent: Center(child: Text(OlukoLocalizations.get(context, 'close'), style: OlukoFonts.olukoSmallFont()))))),
                           ),
                           Positioned(
                             top: 40,
@@ -336,7 +335,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
     try {
       if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
-        PermissionsUtils.showSettingsMessage(context);
+        PermissionsUtils.showSettingsMessage(context, permissionsRequired: [DeviceContentFrom.camera.name, DeviceContentFrom.microphone.name]);
         return;
       }
       cameras = await availableCameras();
@@ -476,7 +475,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         },
                       );
                     } else if (state is PermissionsRequired) {
-                      PermissionsUtils.showSettingsMessage(context);
+                      PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]);
                     } else if (state is UploadFailure && state.badFormat) {
                       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'badVideoFormat'));
                     }

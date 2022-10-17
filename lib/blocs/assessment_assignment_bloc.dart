@@ -10,9 +10,19 @@ abstract class AssessmentAssignmentState {}
 
 class AssessmentAssignmentLoading extends AssessmentAssignmentState {}
 
+class AssessmentAssignmentDispose extends AssessmentAssignmentState {}
+
 class AssessmentAssignmentSuccess extends AssessmentAssignmentState {
   final AssessmentAssignment assessmentAssignment;
   AssessmentAssignmentSuccess({this.assessmentAssignment});
+}
+
+class UnSeenAssessmentAssignmentSuccess extends AssessmentAssignmentState {
+  UnSeenAssessmentAssignmentSuccess();
+}
+
+class SeenAssessmentAssignmentSuccess extends AssessmentAssignmentState {
+  SeenAssessmentAssignmentSuccess();
 }
 
 class AssessmentAssignmentFailure extends AssessmentAssignmentState {
@@ -42,16 +52,5 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
     }
   }
 
-  void setAsSeen(String userId) async {
-    try {
-      await AssessmentAssignmentRepository.setAsSeen(userId);
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(AssessmentAssignmentFailure(exception: exception));
-      rethrow;
-    }
-  }
+  void dispose() => emit(AssessmentAssignmentDispose());
 }

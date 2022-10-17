@@ -9,6 +9,7 @@ import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/video_thumbnail.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/enums/file_extension_enum.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
@@ -42,6 +43,8 @@ class VideoSuccess extends VideoState {
   TaskSubmission taskSubmission;
   int taskIndex;
   double aspectRatio;
+  bool isLastTask;
+  CoachRequest coachRequest;
   VideoSuccess(
       {this.video,
       this.segmentSubmission,
@@ -49,7 +52,9 @@ class VideoSuccess extends VideoState {
       this.assessmentAssignment,
       this.taskSubmission,
       this.taskIndex,
-      this.aspectRatio});
+      this.aspectRatio,
+      this.coachRequest,
+      this.isLastTask});
 }
 
 class VideoProcessing extends VideoState {
@@ -87,6 +92,8 @@ class VideoBloc extends Cubit<VideoState> {
     AssessmentAssignment assessmentAssignment,
     Assessment assessment,
     TaskSubmission taskSubmission,
+    bool isLastTask,
+    CoachRequest coachRequest,
     int tries = 0,
     int durationInMilliseconds = 0,
   }) async {
@@ -129,12 +136,13 @@ class VideoBloc extends Cubit<VideoState> {
               if (isolateMessage.status == IsolateStatusEnum.success) {
                 emit(
                   VideoSuccess(
-                    video: Video.fromJson(isolateMessage.video),
-                    segmentSubmission: segmentSubmission,
-                    taskSubmission: taskSubmission,
-                    assessment: assessment,
-                    assessmentAssignment: assessmentAssignment,
-                  ),
+                      video: Video.fromJson(isolateMessage.video),
+                      segmentSubmission: segmentSubmission,
+                      taskSubmission: taskSubmission,
+                      assessment: assessment,
+                      assessmentAssignment: assessmentAssignment,
+                      isLastTask: isLastTask,
+                      coachRequest: coachRequest),
                 );
               } else {
                 emit(VideoFailure());
@@ -155,12 +163,13 @@ class VideoBloc extends Cubit<VideoState> {
         if (video != null) {
           emit(
             VideoSuccess(
-              video: video,
-              segmentSubmission: segmentSubmission,
-              taskSubmission: taskSubmission,
-              assessment: assessment,
-              assessmentAssignment: assessmentAssignment,
-            ),
+                video: video,
+                segmentSubmission: segmentSubmission,
+                taskSubmission: taskSubmission,
+                assessment: assessment,
+                assessmentAssignment: assessmentAssignment,
+                isLastTask: isLastTask,
+                coachRequest: coachRequest),
           );
         } else {
           emit(VideoFailure());
@@ -182,6 +191,8 @@ class VideoBloc extends Cubit<VideoState> {
             assessmentAssignment: assessmentAssignment,
             assessment: assessment,
             taskSubmission: taskSubmission,
+            isLastTask: isLastTask,
+            coachRequest: coachRequest,
             tries: tries + 1,
           );
         });

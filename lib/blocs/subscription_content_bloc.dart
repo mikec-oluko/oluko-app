@@ -91,7 +91,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     final List<Plan> plans = await PlanRepository.getAll();
     final UserResponse user = await UserRepository().getById(userId);
     if (plans != null && plans.isNotEmpty) {
-      final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.id).toSet());
+      final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.appleId).toSet());
       products = appleProducts;
     }
     emit(SubscriptionContentInitialized(plans: plans, user: user));

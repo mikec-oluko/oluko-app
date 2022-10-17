@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/carrousel_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
@@ -87,6 +88,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user/user_information_bloc.dart';
+import 'package:oluko_app/blocs/user/user_plan_subscription_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
@@ -346,6 +348,7 @@ class Routes {
   final FavoriteFriendBloc _favoriteFriendBloc = FavoriteFriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
   final AssessmentAssignmentBloc _assessmentAssignmentBloc = AssessmentAssignmentBloc();
+  final AssessmentVisibilityBloc _assessmentVisibilityBloc = AssessmentVisibilityBloc();
   final TaskSubmissionBloc _taskSubmissionBloc = TaskSubmissionBloc();
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc = TransformationJourneyBloc();
@@ -446,6 +449,7 @@ class Routes {
   final MyAccountBloc _myAccountBloc = MyAccountBloc();
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
+  final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -511,6 +515,7 @@ class Routes {
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<HiFiveSendBloc>.value(
             value: _hiFiveSendBloc,
@@ -534,6 +539,7 @@ class Routes {
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
+          BlocProvider<UserPlanSubscriptionBloc>.value(value: _userPlanSubscriptionBloc),
           BlocProvider<UserBloc>.value(value: _userBloc)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
@@ -1033,6 +1039,7 @@ class Routes {
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
@@ -1047,6 +1054,7 @@ class Routes {
         providers = [
           BlocProvider<TaskCardBloc>.value(value: _taskCardBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),

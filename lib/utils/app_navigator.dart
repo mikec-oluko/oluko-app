@@ -17,7 +17,6 @@ class AppNavigator {
   }
 
   Future<void> goToSubscriptionsFromRegister(BuildContext context) async {
-    Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.root], (route) => false);
     Navigator.pushNamed(context, routeLabels[RouteEnum.profileSubscription], arguments: {'fromRegister': true});
   }
 

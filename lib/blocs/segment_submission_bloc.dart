@@ -23,6 +23,11 @@ class UpdateSegmentSubmissionSuccess extends SegmentSubmissionState {
   UpdateSegmentSubmissionSuccess({this.segmentSubmission});
 }
 
+class SaveSegmentSubmissionSuccess extends SegmentSubmissionState {
+  SegmentSubmission segmentSubmission;
+  SaveSegmentSubmissionSuccess({this.segmentSubmission});
+}
+
 class EncodedSegmentSubmissionSuccess extends SegmentSubmissionState {}
 
 class ErrorSegmentSubmissionSuccess extends SegmentSubmissionState {}
@@ -42,7 +47,8 @@ class CourseEnrollmentListSuccess extends SegmentSubmissionState {
 class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   SegmentSubmissionBloc() : super(Loading());
 
-  void create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, String classId, CoachRequest coachRequest) async {
+  void create(
+      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, String classId, CoachRequest coachRequest) async {
     try {
       SegmentSubmission segmentSubmission =
           await SegmentSubmissionRepository.create(user, courseEnrollment, segment, videoPath, coachId, classId, coachRequest);
@@ -74,6 +80,20 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
     try {
       await SegmentSubmissionRepository.updateVideo(segmentSubmission);
       emit(UpdateSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void saveSegmentSubmissionWithVideo(SegmentSubmission segmentSubmission, CoachRequest coachRequest) async {
+    try {
+      await SegmentSubmissionRepository.saveSegmentSubmissionWithVideo(segmentSubmission, coachRequest);
+      emit(SaveSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

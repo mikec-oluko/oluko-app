@@ -16,6 +16,7 @@ class CoachAssignment extends Base {
       this.videoHLS,
       this.isFavorite,
       this.welcomeVideoSeen,
+      this.welcomeVideoUploadedAt,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -23,14 +24,7 @@ class CoachAssignment extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   String userId, coachId, introductionVideo;
   DocumentReference coachReference;
@@ -39,6 +33,7 @@ class CoachAssignment extends Base {
   Video video;
   String videoHLS;
   VideoState videoState;
+  Timestamp welcomeVideoUploadedAt;
 
   factory CoachAssignment.fromJson(Map<String, dynamic> json) {
     CoachAssignment coachAssignmentObject = CoachAssignment(
@@ -50,6 +45,7 @@ class CoachAssignment extends Base {
       introductionCompleted: json['introduction_completed'] == null ? false : json['introduction_completed'] as bool,
       isFavorite: json['is_favorite'] == null ? false : json['is_favorite'] as bool,
       welcomeVideoSeen: json['welcome_video_seen'] == null ? false : json['welcome_video_seen'] as bool,
+      welcomeVideoUploadedAt: json['welcome_video_uploaded_at'] != null ? json['welcome_video_uploaded_at'] as Timestamp : null,
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
       videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
       videoHLS: json['video_hls'] as String,
@@ -70,7 +66,8 @@ class CoachAssignment extends Base {
       'video_state': videoState == null ? null : videoState.toJson(),
       'video_hls': videoHLS,
       'is_favorite': isFavorite,
-      'welcome_video_seen': welcomeVideoSeen
+      'welcome_video_seen': welcomeVideoSeen,
+      'welcome_video_uploaded_at': welcomeVideoUploadedAt
     };
     coachAssignmentJson.addEntries(super.toJson().entries);
     return coachAssignmentJson;
