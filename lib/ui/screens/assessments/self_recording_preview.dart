@@ -53,6 +53,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   TaskSubmission _taskSubmission;
   Assessment _assessment;
   VideoState videoState;
+  bool lastTaskValue = false;
 
   @override
   void initState() {
@@ -63,6 +64,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        final double currentPlan = authState.user.currentPlan;
         return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
           return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
             builder: (context, assessmentAssignmentState) {
@@ -76,6 +78,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
+                    _checkLastAssessmentDone(currentPlan);
                     if (taskSubmissionState is GetSuccess &&
                         taskSubmissionState.taskSubmission != null &&
                         taskSubmissionState.taskSubmission.task.id == widget.taskId) {
@@ -83,7 +86,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     }
                     if (taskSubmissionState is CreateSuccess) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
-                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, widget.isLastTask);
+                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, lastTaskValue ?? widget.isLastTask);
                     }
                     return form();
                   } else {
@@ -98,6 +101,14 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         return const SizedBox();
       }
     });
+  }
+
+  void _checkLastAssessmentDone(double currentPlan) {
+    if (currentPlan < 1) {
+      lastTaskValue = _assessment.tasks.getRange(0, 2).toList().length - widget.taskIndex == 1;
+    } else {
+      lastTaskValue = _assessment.tasks.length - widget.taskIndex == 1;
+    }
   }
 
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment, bool isLastTask) async {

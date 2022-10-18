@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
 import '../../../helpers/video_player_helper.dart';
@@ -35,9 +36,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
     fullScreenByDefault: true,
   );
   videoPlayerController.addListener(() async {
-    if (videoPlayerController != null &&
-        videoPlayerController.value != null &&
-        videoPlayerController.value.position == videoPlayerController.value.duration) {
+    if (videoPlayerController != null && videoPlayerController.value != null && videoPlayerController.value.position == videoPlayerController.value.duration) {
       await videoPlayerController.dispose();
       Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
     }
@@ -46,6 +45,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
 }
 
 class _IntroductionVideoState extends State<IntroductionVideo> {
+  final ImageProvider _defaultImage = const AssetImage('assets/home/splash_screen.jpg');
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -63,7 +63,11 @@ class _IntroductionVideoState extends State<IntroductionVideo> {
               controller: snapshot.data,
             );
           } else {
-            return const SizedBox();
+            return Container(
+                width: ScreenUtils.width(context),
+                height: ScreenUtils.height(context),
+                decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.cover, image: _defaultImage)),
+                child: const SizedBox());
           }
         },
       ),
