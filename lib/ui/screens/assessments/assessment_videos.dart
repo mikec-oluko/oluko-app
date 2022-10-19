@@ -467,10 +467,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
                         } else {
-                          Navigator.pushNamed(
-                            context,
-                            routeLabels[RouteEnum.root],
-                          );
+                          AppNavigator().returnToHome(context);
                         }
                       },
                     ),
@@ -481,7 +478,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         if (_controller != null) {
                           _controller.pause();
                         }
-                        return Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                        return AppNavigator().returnToHome(context);
                       },
                     ),
                   ],

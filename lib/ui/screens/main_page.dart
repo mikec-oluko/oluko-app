@@ -145,12 +145,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             listenWhen: (UserPlanSubscriptionState previous, UserPlanSubscriptionState current) => previous != current,
             listener: (context, state) async {
               if (state is UserChangedPlan) {
-                final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
-                BlocProvider.of<AuthBloc>(context).updateAuthSuccess(state.userDataUpdated, alreadyLoggedUser);
-                final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
-                if (!_needLogoutAction(route)) {
-                  _authBloc.storeUpdatedLoginData(state);
-                }
+                String route = await _userPlanChanged(context, state);
                 DialogUtils.getDialog(
                     context,
                     [
@@ -220,6 +215,16 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         );
       }),
     );
+  }
+
+  Future<String> _userPlanChanged(BuildContext context, UserChangedPlan state) async {
+    final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
+    BlocProvider.of<AuthBloc>(context).updateAuthSuccess(state.userDataUpdated, alreadyLoggedUser);
+    final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
+    if (!_needLogoutAction(route)) {
+      _authBloc.storeUpdatedLoginData(state);
+    }
+    return route;
   }
 
   void goToRoute(BuildContext context, String route) => Navigator.pushNamedAndRemoveUntil(
