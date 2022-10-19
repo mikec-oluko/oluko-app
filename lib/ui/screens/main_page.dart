@@ -141,25 +141,27 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             }
           },
         ),
-        BlocListener<UserPlanSubscriptionBloc, UserPlanSubscriptionState>(listener: (context, state) async {
-          if (state is UserChangedPlan) {
-            final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
-            BlocProvider.of<AuthBloc>(context).updateAuthSuccess(state.userDataUpdated, alreadyLoggedUser);
-            final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
-            if (!_needLogoutAction(route)) {
-              _authBloc.storeUpdatedLoginData(state);
-            }
-            DialogUtils.getDialog(
-                context,
-                [
-                  ChangePlanPopUpContent(
-                    primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : goToRoute(context, route),
-                    isPlanCanceled: state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null,
-                  )
-                ],
-                showExitButton: false);
-          }
-        }),
+        BlocListener<UserPlanSubscriptionBloc, UserPlanSubscriptionState>(
+            listenWhen: (UserPlanSubscriptionState previous, UserPlanSubscriptionState current) => previous != current,
+            listener: (context, state) async {
+              if (state is UserChangedPlan) {
+                final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
+                BlocProvider.of<AuthBloc>(context).updateAuthSuccess(state.userDataUpdated, alreadyLoggedUser);
+                final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
+                if (!_needLogoutAction(route)) {
+                  _authBloc.storeUpdatedLoginData(state);
+                }
+                DialogUtils.getDialog(
+                    context,
+                    [
+                      ChangePlanPopUpContent(
+                        primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : goToRoute(context, route),
+                        isPlanCanceled: state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null,
+                      )
+                    ],
+                    showExitButton: false);
+              }
+            }),
         BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           listener: (context, state) async {
             if (state is UnSeenAssignmentSuccess) {
