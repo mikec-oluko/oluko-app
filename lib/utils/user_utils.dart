@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 
@@ -61,4 +62,10 @@ class UserUtils {
 
   static bool userDeviceIsIOS() => Platform.isIOS;
   static bool userDeviceIsAndrioid() => Platform.isAndroid;
+
+  static int getUserAssesmentsQty(Assessment assessment, double userCurrentPlan) => userCurrentPlan != -1
+      ? userCurrentPlan == 0
+          ? assessment.tasks.getRange(0, 2).toList().length
+          : assessment.tasks.length
+      : null;
 }

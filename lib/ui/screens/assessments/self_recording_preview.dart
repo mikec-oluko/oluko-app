@@ -26,6 +26,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 import '../../../services/video_service.dart';
 
@@ -53,7 +54,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   TaskSubmission _taskSubmission;
   Assessment _assessment;
   VideoState videoState;
-  bool lastTaskValue = false;
+  bool currentTaskIsLast = false;
 
   @override
   void initState() {
@@ -86,7 +87,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     }
                     if (taskSubmissionState is CreateSuccess) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
-                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, lastTaskValue ?? widget.isLastTask);
+                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, currentTaskIsLast ?? widget.isLastTask);
                     }
                     return form();
                   } else {
@@ -104,11 +105,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   }
 
   void _checkLastAssessmentDone(double currentPlan) {
-    if (currentPlan < 1) {
-      lastTaskValue = _assessment.tasks.getRange(0, 2).toList().length - widget.taskIndex == 1;
-    } else {
-      lastTaskValue = _assessment.tasks.length - widget.taskIndex == 1;
-    }
+    currentTaskIsLast = UserUtils.getUserAssesmentsQty(_assessment, currentPlan) - widget.taskIndex == 1;
   }
 
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment, bool isLastTask) async {
