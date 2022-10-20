@@ -145,16 +145,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             listenWhen: (UserPlanSubscriptionState previous, UserPlanSubscriptionState current) => previous != current,
             listener: (context, state) async {
               if (state is UserChangedPlan) {
-                String route = await _userPlanChanged(context, state);
-                DialogUtils.getDialog(
-                    context,
-                    [
-                      ChangePlanPopUpContent(
-                        primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : goToRoute(context, route),
-                        isPlanCanceled: state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null,
-                      )
-                    ],
-                    showExitButton: false);
+                final String nextRouteForUser = await _userPlanChangedActions(context, state);
+                _showPopUp(context, nextRouteForUser, state);
               }
             }),
         BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
@@ -217,13 +209,25 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     );
   }
 
-  Future<String> _userPlanChanged(BuildContext context, UserChangedPlan state) async {
+  void _showPopUp(BuildContext context, String route, UserChangedPlan state) {
+    DialogUtils.getDialog(
+        context,
+        [
+          ChangePlanPopUpContent(
+            primaryPress: () => _needLogoutAction(route) ? _authBloc.logout(context) : goToRoute(context, route),
+            isPlanCanceled: _userIsUnsubscribe(state),
+          )
+        ],
+        showExitButton: false);
+  }
+
+  bool _userIsUnsubscribe(UserChangedPlan state) => state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null;
+
+  Future<String> _userPlanChangedActions(BuildContext context, UserChangedPlan state) async {
     final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
     BlocProvider.of<AuthBloc>(context).updateAuthSuccess(state.userDataUpdated, alreadyLoggedUser);
     final String route = await RouteService.getInitialRoute(alreadyLoggedUser, false, state.userDataUpdated);
-    if (!_needLogoutAction(route)) {
-      _authBloc.storeUpdatedLoginData(state);
-    }
+    if (!_needLogoutAction(route)) _authBloc.storeUpdatedLoginData(state);
     return route;
   }
 
