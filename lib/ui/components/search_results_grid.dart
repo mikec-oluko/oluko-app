@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 import '../../routes.dart';
 import 'course_card.dart';
@@ -29,6 +30,7 @@ class _State extends State<SearchResultsGrid> {
         childAspectRatio: widget.childAspectRatio,
         shrinkWrap: true,
         crossAxisCount: widget.crossAxisCount,
+        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.15),
         children: widget.itemList
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
