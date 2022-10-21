@@ -26,6 +26,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 import '../../../services/video_service.dart';
 
@@ -53,6 +54,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   TaskSubmission _taskSubmission;
   Assessment _assessment;
   VideoState videoState;
+  bool currentTaskIsLast = false;
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        final double currentPlan = authState.user.currentPlan;
         return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
           return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
             builder: (context, assessmentAssignmentState) {
@@ -76,6 +79,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
+                    _checkLastAssessmentDone(currentPlan);
                     if (taskSubmissionState is GetSuccess &&
                         taskSubmissionState.taskSubmission != null &&
                         taskSubmissionState.taskSubmission.task.id == widget.taskId) {
@@ -83,7 +87,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     }
                     if (taskSubmissionState is CreateSuccess) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
-                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, widget.isLastTask);
+                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, currentTaskIsLast ?? widget.isLastTask);
                     }
                     return form();
                   } else {
@@ -98,6 +102,10 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         return const SizedBox();
       }
     });
+  }
+
+  void _checkLastAssessmentDone(double currentPlan) {
+    currentTaskIsLast = UserUtils.getUserAssesmentsQty(_assessment, currentPlan) - widget.taskIndex == 1;
   }
 
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment, bool isLastTask) async {

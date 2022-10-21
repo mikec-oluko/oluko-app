@@ -48,17 +48,17 @@ class UserPlanSubscriptionBloc extends Cubit<UserPlanSubscriptionState> {
   Future<StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>> getPlanSubscriptionStream(String userId) async {
     try {
       return planSubscription ??= _userRepository.getUserPlanStream(userId: userId).listen((snapshot) async {
-      final loggedUser = await AuthRepository().retrieveLoginData();
+        final loggedUser = await AuthRepository().retrieveLoginData();
         UserResponse actualUserData;
         emit(Loading());
         if (snapshot.exists) {
           final Map<String, dynamic> userDocument = snapshot.data() as Map<String, dynamic>;
           actualUserData = UserResponse.fromJson(userDocument);
         }
-        if (loggedUser.currentPlan!=-1 && loggedUser.currentPlan != actualUserData.currentPlan) {
+        if (loggedUser.currentPlan != -1 && loggedUser.currentPlan != actualUserData.currentPlan) {
           await AuthRepository().storeLoginData(actualUserData);
           emit(UserChangedPlan(userDataUpdated: actualUserData));
-        } else if (actualUserData.currentPlan <= 0) {
+        } else if (actualUserData.currentPlan < 0) {
           emit(UserIsNotSuscribed());
         } else {
           emit(UserIsSubscribed());
