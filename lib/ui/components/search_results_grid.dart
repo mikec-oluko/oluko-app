@@ -30,7 +30,7 @@ class _State extends State<SearchResultsGrid> {
         childAspectRatio: widget.childAspectRatio,
         shrinkWrap: true,
         crossAxisCount: widget.crossAxisCount,
-        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.15),
+        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.20),
         children: widget.itemList
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
