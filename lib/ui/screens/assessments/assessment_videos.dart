@@ -48,7 +48,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   UserResponse _user;
   AssessmentAssignment _assessmentAssignment;
   List<TaskSubmission> taskSubmissionsCompleted;
-  List<AssessmentTask> assessmentsTasksList;
+  int assessmentsTasksQty;
   bool isLastTask = false;
   bool _showDonePanel = false;
   Widget contentToShow = SizedBox.shrink();
@@ -101,11 +101,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
               return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
                 if (assessmentState is AssessmentSuccess && assessmentState.assessment != null) {
                   _assessment = assessmentState.assessment;
-                  if (_user.currentPlan < 1) {
-                    assessmentsTasksList = _assessment.tasks.getRange(0, 2).toList();
-                  } else {
-                    assessmentsTasksList = _assessment.tasks;
-                  }
+                  assessmentsTasksQty = UserUtils.getUserAssesmentsQty(_assessment, _user.currentPlan);
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
 
                   BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
@@ -208,7 +204,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
                                     final completedTask = taskSubmissionListState.taskSubmissions.length;
                                     var enabledTask = 0;
-                                    for (var i = 0; i < assessmentsTasksList.length; i++) {
+                                    for (var i = 0; i < assessmentsTasksQty; i++) {
                                       if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
                                         enabledTask++;
                                       }
@@ -384,7 +380,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
     } else {
-      if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
+      if (assessmentsTasksQty - taskSubmissionsCompleted.length == 1) {
         setState(() {
           isLastTask = true;
         });
@@ -467,10 +463,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
                         } else {
-                          Navigator.pushNamed(
-                            context,
-                            routeLabels[RouteEnum.root],
-                          );
+                          AppNavigator().returnToHome(context);
                         }
                       },
                     ),
@@ -481,7 +474,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         if (_controller != null) {
                           _controller.pause();
                         }
-                        return Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                        return AppNavigator().returnToHome(context);
                       },
                     ),
                   ],

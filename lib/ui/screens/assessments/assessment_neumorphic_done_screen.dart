@@ -5,6 +5,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -42,7 +43,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                           shadowLightColorEmboss: OlukoColors.black,
                           surfaceIntensity: 1,
                           shadowLightColor: OlukoColors.grayColor,
-                          shadowDarkColor:OlukoColors.black),
+                          shadowDarkColor: OlukoColors.black),
                       child: Container(
                         width: 60,
                         height: 60,
@@ -92,7 +93,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                         isExpanded: false,
                         title: OlukoLocalizations.get(context, 'ok'),
                         onPressed: () {
-                          return Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                          return AppNavigator().returnToHome(context);
                         },
                       ),
                     ),
