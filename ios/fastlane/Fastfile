@@ -24,6 +24,7 @@ platform :ios do
 
   desc "Push a new beta build to TestFlight"
   lane :beta do
+    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = "true"
     if is_ci
       # xcversion(version: "~> 12.4.0")
       create_keychain(
