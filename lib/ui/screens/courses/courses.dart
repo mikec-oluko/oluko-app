@@ -227,7 +227,7 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
-        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.05),
+        padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.10),
         children: [
           _activeCoursesSection(),
           _myListSection(),
