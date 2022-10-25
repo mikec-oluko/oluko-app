@@ -1,6 +1,7 @@
+import 'package:audio_session/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound_lite/public/flutter_sound_player.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:headset_connection_event/headset_event.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
@@ -20,7 +21,14 @@ class SoundPlayer {
 
   Future init() async {
     _audioPlayer = FlutterSoundPlayer();
-    await _audioPlayer.openAudioSession();
+    await _audioPlayer.openAudioSession(
+        category: SessionCategory.playAndRecord, focus: AudioFocus.requestFocusAndDuckOthers, mode: SessionMode.modeSpokenAudio);
+  }
+
+  static Future<AudioSession> setSessionConfig() async {
+    AudioSession session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    return session ??= await setSessionConfig();
   }
 
   Future dispose() async {
@@ -37,6 +45,7 @@ class SoundPlayer {
   }
 
   static Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState, bool isForWatch = false}) async {
+    AudioSession newSession = await setSessionConfig();
     if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
       final AudioCache player = AudioCache(duckAudio: true);
       String assetToPlay = asset;
@@ -45,7 +54,9 @@ class SoundPlayer {
         assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
       }
       if (assetToPlay != null && assetToPlay != 'null') {
-        await player.play(assetToPlay, mode: PlayerMode.LOW_LATENCY);
+        if (await newSession.setActive(true)) {
+          await player.play(assetToPlay, mode: PlayerMode.LOW_LATENCY);
+        }
       }
     }
   }

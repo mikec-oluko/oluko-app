@@ -35,10 +35,10 @@ class SoundUtils {
           if (posibleSounds.length > 1) {
             final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
             if (existSoundAsset(soundToPlay)) {
-              _playAsset(soundToPlay, headsetState: headsetState);
+              _playAsset(soundToPlay, headsetState: headsetState, isForWatch: isForWatch);
             }
           } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
-            _playAsset(posibleSounds[0], headsetState: headsetState);
+            _playAsset(posibleSounds[0], headsetState: headsetState, isForWatch: isForWatch);
           }
         }
       }
@@ -61,10 +61,12 @@ class SoundUtils {
   }
 
   static Future<bool> canPlaySound({HeadsetState headsetState, bool isForWatch = false}) async {
-    final RingerModeStatus _deviceSoundStatus = await SoundMode.ringerModeStatus;
-    return !isForWatch
-        ? (_deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown) ||
-            (headsetState != null && headsetState == HeadsetState.CONNECT)
-        : true;
+    final RingerModeStatus deviceSoundStatus = await SoundMode.ringerModeStatus;
+    if (isForWatch) {
+      return true;
+    } else {
+      return (deviceSoundStatus == RingerModeStatus.normal || deviceSoundStatus == RingerModeStatus.unknown) ||
+          (headsetState != null && headsetState == HeadsetState.CONNECT);
+    }
   }
 }
