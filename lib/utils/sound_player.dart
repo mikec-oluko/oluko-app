@@ -18,10 +18,9 @@ class SoundPlayer {
   FlutterSoundPlayer _audioPlayer;
   bool get isPlaying => _audioPlayer.isPlaying;
 
-  Future init() async {
+  Future init(SessionCategory categoryToSet) async {
     _audioPlayer = FlutterSoundPlayer();
-    await _audioPlayer.openAudioSession(
-        category: SessionCategory.playAndRecord, focus: AudioFocus.requestFocusAndDuckOthers, mode: SessionMode.modeSpokenAudio);
+    await _audioPlayer.openAudioSession(category: categoryToSet, focus: AudioFocus.abandonFocus, mode: SessionMode.modeSpokenAudio);
   }
 
   Future dispose() async {
@@ -37,7 +36,7 @@ class SoundPlayer {
     }
   }
 
-  static Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState, bool isForWatch = false}) async {
+  Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState, bool isForWatch = false}) async {
     if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
       final AudioCache player = AudioCache(duckAudio: true);
       String assetToPlay = asset;

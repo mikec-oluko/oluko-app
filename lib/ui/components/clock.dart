@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
@@ -19,6 +20,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
@@ -63,6 +65,7 @@ class _State extends State<Clock> {
   Duration stopwatch = Duration();
   final _headsetPlugin = HeadsetEvent();
   HeadsetState _headsetState;
+  final SoundPlayer _soundPlayer = SoundPlayer();
 
   @override
   void initState() {
@@ -82,6 +85,7 @@ class _State extends State<Clock> {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused(), headsetState: _headsetState);
     }
+    _soundPlayer.init(SessionCategory.playback);
   }
 
   @override
@@ -97,6 +101,7 @@ class _State extends State<Clock> {
     if (countdownTimer != null && countdownTimer.isActive) {
       countdownTimer.cancel();
     }
+    _soundPlayer?.dispose();
     super.dispose();
   }
 

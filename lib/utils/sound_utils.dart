@@ -11,6 +11,7 @@ enum ClockStateEnum { work, rest, segmentStart }
 enum SoundTypeEnum { fixed, calculated }
 
 const assetsFileAddress = 'sounds/';
+final SoundPlayer _soundPlayer = SoundPlayer();
 
 class SoundUtils {
   static Future<void> playSound(int timeLeft, int totalTime, int workState, {HeadsetState headsetState, bool isForWatch = false}) async {
@@ -46,7 +47,7 @@ class SoundUtils {
   }
 
   static dynamic _playAsset(Sound soundToPlay, {HeadsetState headsetState, bool isForWatch = false}) =>
-      SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState, isForWatch: isForWatch);
+      _soundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState, isForWatch: isForWatch);
 
   static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 

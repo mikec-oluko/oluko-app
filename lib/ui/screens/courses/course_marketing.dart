@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
@@ -72,6 +73,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   bool _courseLiked = false;
   final ScrollController _scrollController = ScrollController();
   double _pixelsToReload;
+  final SoundPlayer _soundPlayer = SoundPlayer();
 
   @override
   void initState() {
@@ -93,7 +95,14 @@ class _CourseMarketingState extends State<CourseMarketing> {
           }
         });
     _courseLiked = false;
+    _soundPlayer.init(SessionCategory.playback);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _soundPlayer?.dispose();
+    super.dispose();
   }
 
   void _getMoreClasses() => _growingClassList = _allCourseClasses.isNotEmpty
@@ -384,7 +393,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (!widget.isCoachRecommendation) {
         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
       }
-      await SoundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
+      await _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
     _disableAction = true;
   }
