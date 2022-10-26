@@ -35,14 +35,17 @@ class CoachRecommendationsFailure extends CoachRecommendationsState {
 
 class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   final CoachRepository _coachRepository = CoachRepository();
+  final SoundPlayer _soundPlayer = SoundPlayer();
   CoachRecommendationsBloc() : super(LoadingCoachRecommendations());
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+
   @override
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
+      _soundPlayer?.dispose();
       emitCoachRecommendationDispose();
     }
   }
@@ -72,7 +75,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
 
         if (_recommendationsUpdatedContent.isNotEmpty) {
           if (_newNotificationIncoming(_recommendationsUpdatedContent)) {
-            await SoundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+            await _soundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
           }
           emit(
             CoachRecommendationsUpdate(

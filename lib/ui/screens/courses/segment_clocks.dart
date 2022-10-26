@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:headset_connection_event/headset_event.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
@@ -159,6 +160,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool _progressCreated = false;
   bool _areDiferentMovsWithRepCouter = false;
   List<FriendModel> _friends = [];
+  final SoundPlayer _soundPlayer = SoundPlayer();
 
   @override
   void initState() {
@@ -180,6 +182,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         _headsetState = _val;
       });
     });
+    _soundPlayer.init(SessionCategory.playback);
     super.initState();
   }
 
@@ -631,7 +634,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         },
       );
     } else {
-      await SoundPlayer.playAsset(soundEnum: SoundsEnum.classFinished, headsetState: _headsetState, isForWatch: true);
+      await _soundPlayer.playAsset(soundEnum: SoundsEnum.classFinished, headsetState: _headsetState, isForWatch: true);
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.completedClass],
@@ -1087,6 +1090,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       alertTimer.cancel();
     }
     cameraController?.dispose();
+    _soundPlayer?.dispose();
     super.dispose();
   }
 

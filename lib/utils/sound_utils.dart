@@ -11,6 +11,7 @@ enum ClockStateEnum { work, rest, segmentStart }
 enum SoundTypeEnum { fixed, calculated }
 
 const assetsFileAddress = 'sounds/';
+final SoundPlayer _soundPlayer = SoundPlayer();
 
 class SoundUtils {
   static Future<void> playSound(int timeLeft, int totalTime, int workState, {HeadsetState headsetState, bool isForWatch = false}) async {
@@ -35,10 +36,10 @@ class SoundUtils {
           if (posibleSounds.length > 1) {
             final Sound soundToPlay = getHighestPrioritySound(posibleSounds);
             if (existSoundAsset(soundToPlay)) {
-              _playAsset(soundToPlay, headsetState: headsetState);
+              _playAsset(soundToPlay, headsetState: headsetState, isForWatch: isForWatch);
             }
           } else if (posibleSounds != null && existSoundAsset(posibleSounds[0])) {
-            _playAsset(posibleSounds[0], headsetState: headsetState);
+            _playAsset(posibleSounds[0], headsetState: headsetState, isForWatch: isForWatch);
           }
         }
       }
@@ -46,7 +47,7 @@ class SoundUtils {
   }
 
   static dynamic _playAsset(Sound soundToPlay, {HeadsetState headsetState, bool isForWatch = false}) =>
-      SoundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState, isForWatch: isForWatch);
+      _soundPlayer.playAsset(asset: assetsFileAddress + soundToPlay.soundAsset, headsetState: headsetState, isForWatch: isForWatch);
 
   static bool existSoundAsset(Sound soundToPlay) => soundToPlay != null && soundToPlay.soundAsset != null;
 
@@ -61,10 +62,12 @@ class SoundUtils {
   }
 
   static Future<bool> canPlaySound({HeadsetState headsetState, bool isForWatch = false}) async {
-    final RingerModeStatus _deviceSoundStatus = await SoundMode.ringerModeStatus;
-    return !isForWatch
-        ? (_deviceSoundStatus == RingerModeStatus.normal || _deviceSoundStatus == RingerModeStatus.unknown) ||
-            (headsetState != null && headsetState == HeadsetState.CONNECT)
-        : true;
+    final RingerModeStatus deviceSoundStatus = await SoundMode.ringerModeStatus;
+    if (isForWatch) {
+      return true;
+    } else {
+      return (deviceSoundStatus == RingerModeStatus.normal || deviceSoundStatus == RingerModeStatus.unknown) ||
+          (headsetState != null && headsetState == HeadsetState.CONNECT);
+    }
   }
 }
