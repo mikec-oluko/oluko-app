@@ -67,7 +67,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
               child: Scaffold(
                   appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'class')),
                   body: Container(
-                      color:OlukoColors.black,
+                      color: OlukoColors.black,
                       child: Stack(
                         children: [
                           ListView(children: [
@@ -78,7 +78,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                   if (existsEnrollment) {
                                     return showVideoPlayer(classState.classes[0].video);
                                   } else {
-                                    return showVideoPlayer(widget.course.video);
+                                    return showVideoPlayer(widget.course.videoHls ?? widget.course.video);
                                   }
                                 },
                               ),
@@ -97,18 +97,15 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                                         child: Text(
                                           //TODO: change weeks number
-                                          CourseUtils.toCourseDuration(
-                                              6, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                                          style: OlukoFonts.olukoBigFont(
-                                              customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                          CourseUtils.toCourseDuration(6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                         ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                                         child: Text(
                                           widget.course.description,
-                                          style: OlukoFonts.olukoBigFont(
-                                              customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                         ),
                                       ),
                                       Padding(
@@ -120,10 +117,9 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                       ),
                                       ClassExpansionPanels(
                                         classes: classState.classes,
-                                        onPressedMovement: (BuildContext context, MovementSubmodel movement) => Navigator.pushNamed(
-                                            context, routeLabels[RouteEnum.movementIntro],
-                                            arguments: {'movementSubmodel': movement}),
-                                      )                            
+                                        onPressedMovement: (BuildContext context, MovementSubmodel movement) =>
+                                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement}),
+                                      )
                                     ]))),
                             SizedBox(
                               height: 150,
@@ -174,12 +170,8 @@ class _EnrolledClassState extends State<EnrolledClass> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
