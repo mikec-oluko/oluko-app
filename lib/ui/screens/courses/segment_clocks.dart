@@ -161,6 +161,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool _areDiferentMovsWithRepCouter = false;
   List<FriendModel> _friends = [];
   final SoundPlayer _soundPlayer = SoundPlayer();
+  bool storyShared = false;
 
   @override
   void initState() {
@@ -352,26 +353,29 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget getLowerSection() {
-    return ClocksLowerSection(
-      areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
-      workState: workState,
-      segments: widget.segments,
-      segmentIndex: widget.segmentIndex,
-      timerEntries: timerEntries,
-      timerTaskIndex: timerTaskIndex,
-      createStory: _createStory,
-      workoutType: workoutType,
-      originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
-      segmentSubmission: _segmentSubmission,
-      scores: scores,
-      totalScore: totalScore,
-      counter: counter,
-      isCameraReady: _isCameraReady,
-      cameraController: cameraController,
-      pauseButton: pauseButton(),
-      classIndex: widget.classIndex,
-      courseEnrollment: widget.courseEnrollment,
-      segmentId: widget.segments[widget.segmentIndex].id,
+    return BlocBuilder<TimerTaskBloc, TimerTaskState>(
+      builder: (context, timerTaskState) => ClocksLowerSection(
+        areDiferentMovsWithRepCouter: _areDiferentMovsWithRepCouter,
+        workState: workState,
+        segments: widget.segments,
+        segmentIndex: widget.segmentIndex,
+        timerEntries: timerEntries,
+        timerTaskIndex: timerTaskIndex,
+        createStory: _createStory,
+        workoutType: workoutType,
+        originalWorkoutType: _recordingPaused ? workoutType : widget.workoutType,
+        segmentSubmission: _segmentSubmission,
+        scores: scores,
+        totalScore: totalScore,
+        counter: counter,
+        isCameraReady: _isCameraReady,
+        cameraController: cameraController,
+        pauseButton: pauseButton(),
+        classIndex: widget.classIndex,
+        courseEnrollment: widget.courseEnrollment,
+        segmentId: widget.segments[widget.segmentIndex].id,
+        storyShared: timerTaskState is SetShareDone ? timerTaskState.shareDone : false,
+      ),
     );
   }
 

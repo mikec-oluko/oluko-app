@@ -38,6 +38,7 @@ class ClocksLowerSection extends StatefulWidget {
   final int classIndex;
   final String segmentId;
   final bool areDiferentMovsWithRepCouter;
+  final bool storyShared;
 
   ClocksLowerSection(
       {this.workState,
@@ -58,7 +59,8 @@ class ClocksLowerSection extends StatefulWidget {
       this.pauseButton,
       this.courseEnrollment,
       this.classIndex,
-      this.segmentId});
+      this.segmentId,
+      this.storyShared});
 
   @override
   _State createState() => _State();
@@ -70,15 +72,12 @@ class _State extends State<ClocksLowerSection> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TimerTaskBloc, TimerTaskState>(
-        listener: (context, timerTaskState) {
-          if (timerTaskState is SetShareDone) {
-            setState(() {
-              shareDone = timerTaskState.shareDone;
-            });
-          }
-        },
-        child: _lowerSection());
+    return BlocBuilder<TimerTaskBloc, TimerTaskState>(builder: (context, timerTaskState) {
+      if (timerTaskState is SetShareDone) {
+        shareDone = widget.storyShared ? widget.storyShared : timerTaskState.shareDone;
+      }
+      return _lowerSection();
+    });
   }
 
   Widget _lowerSection() {
@@ -169,18 +168,22 @@ class _State extends State<ClocksLowerSection> {
   Widget getCard() {
     return widget.originalWorkoutType == WorkoutType.segment || shareDone
         ? FeedbackCard(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId)
-        : BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
-            builder: (context, state) {
-              if (state is SaveSegmentSubmissionSuccess) {
-                _updatedSegmentSubmission = state.segmentSubmission;
-              }
-              return ShareCard(
-                createStory: widget.createStory,
-                whistleAction: _whistleAction,
-                videoRecordedThumbnail: _updatedSegmentSubmission?.video?.thumbUrl,
-              );
-            },
-          );
+        : shareCardComponent();
+  }
+
+  BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState> shareCardComponent() {
+    return BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
+      builder: (context, state) {
+        if (state is SaveSegmentSubmissionSuccess) {
+          _updatedSegmentSubmission = state.segmentSubmission;
+        }
+        return ShareCard(
+          createStory: widget.createStory,
+          whistleAction: _whistleAction,
+          videoRecordedThumbnail: _updatedSegmentSubmission?.video?.thumbUrl,
+        );
+      },
+    );
   }
 
   _whistleAction(bool delete) {
