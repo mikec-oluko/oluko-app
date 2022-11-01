@@ -568,6 +568,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                             ),
                           ),
                           onPressed: () {
+                            setState(() {
+                              panelSize = 100;
+                            });
                             if (_controller != null) {
                               _controller.pause();
                             }
@@ -587,6 +590,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             OlukoNeumorphism.isNeumorphismDesign
                                 ? setState(() {
                                     recordAgainRequested = !recordAgainRequested;
+                                    panelSize = 100;
                                   })
                                 : Navigator.pop(context);
                           },
@@ -604,6 +608,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                               OlukoNeumorphism.isNeumorphismDesign
                                   ? setState(() {
                                       recordAgainRequested = !recordAgainRequested;
+                                      panelSize = 100;
                                     })
                                   : Navigator.pop(context);
                             },
