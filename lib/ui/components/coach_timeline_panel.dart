@@ -137,7 +137,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                         ? Container(
                             width: _timelineContentItems.length == 1
                                 ? MediaQuery.of(context).size.width
-                                : (MediaQuery.of(context).size.width / (_timelineContentItems.length < 3 ? 2 : (_timelineContentItems.length - 1))),
+                                : (MediaQuery.of(context).size.width / _splitMiddleOrDivideEach()),
                             child: _tabTitleContent(content),
                           )
                         : Container(
@@ -147,6 +147,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               .toList()),
     );
   }
+
+  int _splitMiddleOrDivideEach() => _timelineContentItems.length < 3 ? 2 : (_timelineContentItems.length - 1);
 
   Text _tabTitleContent(CoachTimelineGroup content) {
     return Text(content.courseName,
