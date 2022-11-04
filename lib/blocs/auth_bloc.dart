@@ -128,7 +128,6 @@ class AuthBloc extends Cubit<AuthState> {
     if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
       //TODO: trigger to send another email
       await firebaseUser?.updateEmail(user.email);
-      firebaseUser?.sendEmailVerification();
       FirebaseAuth.instance.signOut();
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
