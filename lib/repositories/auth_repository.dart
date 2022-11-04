@@ -62,12 +62,12 @@ class AuthRepository {
     return apiResponse;
   }
 
-  Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
+  /*Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
     await firebaseAuthInstance.signInWithEmailAndPassword(email: signUpRequest.email, password: signUpRequest.password);
     final currentUser = firebaseAuthInstance.currentUser;
     await currentUser.sendEmailVerification();
     await firebaseAuthInstance.signOut();
-  }
+  }*/
 
   Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();

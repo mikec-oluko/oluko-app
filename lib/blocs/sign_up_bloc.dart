@@ -50,7 +50,6 @@ class SignupBloc extends Cubit<UserState> {
     if (apiResponse.statusCode == 200) {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
       UserResponse _userCreated = await UserRepository().get(response.email);
-      _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
       BlocProvider.of<AuthBloc>(context).login(context,
           LoginRequest(email: request.email, password: request.password, userName: request.username, projectId: GlobalConfiguration().getValue('projectId')));
