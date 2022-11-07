@@ -76,7 +76,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                               child: OrientationBuilder(
                                 builder: (context, orientation) {
                                   if (existsEnrollment) {
-                                    return showVideoPlayer(classState.classes[0].video);
+                                    return showVideoPlayer(classState.classes[0].videoHls ?? classState.classes[0].video);
                                   } else {
                                     return showVideoPlayer(widget.course.videoHls ?? widget.course.video);
                                   }

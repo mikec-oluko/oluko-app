@@ -249,7 +249,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   SliverList getClassView(int index, BuildContext context) {
-    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.courses[index].video);
+    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.courses[index].videoHls ?? widget.courses[index].video);
     return SliverList(
       delegate: SliverChildListDelegate([
         GestureDetector(
@@ -273,7 +273,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               },
               child: OlukoVideoPreview(
                 image: widget.courses[index].image,
-                video: widget.courses[index].video,
+                video: widget.courses[index].videoHls ?? widget.courses[index].video,
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,
@@ -305,17 +305,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             if (classState is ClassSubscriptionSuccess) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: EnrolledCourse().buildClassEnrolledCards(
-                  context,
-                  classState.classes,
-                  outsideCourse: widget.courses[index],
-                  outsideCourseEnrollment: widget.courseEnrollments[index],
-                  outsideCourseIndex: index,
-                  outSideCloseVideo: closeVideo,
-                  onPressed: () => Future.delayed(Duration(milliseconds: 500),(){
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
-                  })
-                ),
+                child: EnrolledCourse().buildClassEnrolledCards(context, classState.classes,
+                    outsideCourse: widget.courses[index],
+                    outsideCourseEnrollment: widget.courseEnrollments[index],
+                    outsideCourseIndex: index,
+                    outSideCloseVideo: closeVideo,
+                    onPressed: () => Future.delayed(Duration(milliseconds: 500), () {
+                          BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+                        })),
               );
             } else {
               return const SizedBox();
