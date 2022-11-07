@@ -131,7 +131,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
           BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
-          BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
+          BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.videoHls ?? widget.course.video);
         }
         BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
 
@@ -163,7 +163,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                   padding: const EdgeInsets.only(bottom: 3),
                                   child: OverlayVideoPreview(
                                       image: widget.course.image,
-                                      video: widget.course.video,
+                                      video: widget.course.videoHls ?? widget.course.video,
                                       showBackButton: true,
                                       showHeartButton: true,
                                       showShareButton: true,
@@ -243,7 +243,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               SliverToBoxAdapter(
                 child: OlukoVideoPreview(
                   image: widget.course.posterImage ?? widget.course.image,
-                  video: widget.course.video,
+                  video: widget.course.videoHls ?? widget.course.video,
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
@@ -395,7 +395,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
       }
       await _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
-    _disableAction = true;
+    _setDisableUnrollAction();
+  }
+
+  void _setDisableUnrollAction() {
+    setState(() {
+      _disableAction = true;
+    });
   }
 
   Widget enrollButton() {
@@ -415,7 +421,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                   }
                 }
-                _disableAction = true;
+                _setDisableUnrollAction();
               },
             )
           else
@@ -428,7 +434,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                   }
                 }
-                _disableAction = true;
+                _setDisableUnrollAction();
               },
             ),
         ],

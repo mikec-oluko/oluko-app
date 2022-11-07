@@ -550,7 +550,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   Padding recordAgainDialogContent() {
     return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(children: [
+        child: Wrap(children: [
           Padding(padding: const EdgeInsets.only(bottom: 15.0), child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
           Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
           Padding(
@@ -568,6 +568,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                             ),
                           ),
                           onPressed: () {
+                            setState(() {
+                              panelSize = 100;
+                            });
                             if (_controller != null) {
                               _controller.pause();
                             }
@@ -587,6 +590,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             OlukoNeumorphism.isNeumorphismDesign
                                 ? setState(() {
                                     recordAgainRequested = !recordAgainRequested;
+                                    panelSize = 100;
                                   })
                                 : Navigator.pop(context);
                           },
@@ -604,6 +608,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                               OlukoNeumorphism.isNeumorphismDesign
                                   ? setState(() {
                                       recordAgainRequested = !recordAgainRequested;
+                                      panelSize = 100;
                                     })
                                   : Navigator.pop(context);
                             },

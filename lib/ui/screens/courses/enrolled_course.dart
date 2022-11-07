@@ -44,13 +44,7 @@ class EnrolledCourse extends StatefulWidget {
   Function closeVideo;
 
   EnrolledCourse(
-      {Key key,
-      this.course,
-      this.fromCoach = false,
-      this.isCoachRecommendation = false,
-      this.courseEnrollment,
-      this.courseIndex,
-      this.fromHome = false})
+      {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex, this.fromHome = false})
       : super(key: key);
 
   get progress => null;
@@ -70,7 +64,7 @@ class EnrolledCourse extends StatefulWidget {
     final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
     final int index = courseIndex ?? outsideCourseIndex;
 
-    final List<Class> _coursesClases = CourseService.getCourseClasses(classes,courseEnrollment: outsideCourseEnrollment??courseEnrollment);
+    final List<Class> _coursesClases = CourseService.getCourseClasses(classes, courseEnrollment: outsideCourseEnrollment ?? courseEnrollment);
     final List<ClassItem> _classItems = [];
     for (final element in _coursesClases) {
       final ClassItem classItem = ClassItem(classObj: element, expanded: false);
@@ -90,30 +84,38 @@ class EnrolledCourse extends StatefulWidget {
       shrinkWrap: true,
       children: [
         ..._classItemsToUse.map(
-          (item) => getIncompletedClasses(_classItemsToUse, enrollment, outSideCloseVideo, closeVideo, context, index, item,onPressed: onPressed),
+          (item) => getIncompletedClasses(_classItemsToUse, enrollment, outSideCloseVideo, closeVideo, context, index, item, onPressed: onPressed),
         ),
         ..._classItemsToUse.map(
-          (item) => getCompletedClasses(enrollment, _classItemsToUse, item, context, index, onPressed:onPressed),
+          (item) => getCompletedClasses(enrollment, _classItemsToUse, item, context, index, onPressed: onPressed),
         )
       ],
     );
   }
 
   Widget getCompletedClasses(
-      CourseEnrollment enrollment, List<ClassItem> _classItemsToUse, ClassItem item, BuildContext context, int index,{Function onPressed,}) {
+    CourseEnrollment enrollment,
+    List<ClassItem> _classItemsToUse,
+    ClassItem item,
+    BuildContext context,
+    int index, {
+    Function onPressed,
+  }) {
     final classIndex = _classItemsToUse.indexOf(item);
     return enrollment.classes[classIndex] != null && enrollment.classes[classIndex].completedAt != null
         ? GestureDetector(
             onTap: () {
               Navigator.pushNamed(
-              context,
-              routeLabels[RouteEnum.insideClass],
-              arguments: {
-                'courseEnrollment': enrollment,
-                'classIndex': classIndex,
-                'courseIndex': index,
-              },
-            );onPressed!=null?onPressed():null;},
+                context,
+                routeLabels[RouteEnum.insideClass],
+                arguments: {
+                  'courseEnrollment': enrollment,
+                  'classIndex': classIndex,
+                  'courseIndex': index,
+                },
+              );
+              onPressed != null ? onPressed() : null;
+            },
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: ClassSection(
@@ -129,8 +131,16 @@ class EnrolledCourse extends StatefulWidget {
   }
 }
 
-Widget getIncompletedClasses(List<ClassItem> _classItemsToUse, CourseEnrollment enrollment, Function outSideCloseVideo, Function closeVideo,
-    BuildContext context, int index, ClassItem item, { Function onPressed, }) {
+Widget getIncompletedClasses(
+  List<ClassItem> _classItemsToUse,
+  CourseEnrollment enrollment,
+  Function outSideCloseVideo,
+  Function closeVideo,
+  BuildContext context,
+  int index,
+  ClassItem item, {
+  Function onPressed,
+}) {
   final classIndex = _classItemsToUse.indexOf(item);
   final classProgress = CourseEnrollmentService.getClassProgress(enrollment, classIndex);
   return enrollment.classes[classIndex].completedAt == null
@@ -142,7 +152,7 @@ Widget getIncompletedClasses(List<ClassItem> _classItemsToUse, CourseEnrollment 
               ),
               child: GestureDetector(
                 onTap: () {
-                  onPressed!=null?onPressed():null;
+                  onPressed != null ? onPressed() : null;
                   if (closeVideo != null) {
                     closeVideo();
                   } else {
@@ -239,7 +249,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
             BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
             BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
             BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
-            BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
+            BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.videoHls ?? widget.course.video);
           }
           return form();
         } else {
@@ -269,7 +279,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                   OlukoVideoPreview(
                                     showBackButton: true,
                                     image: widget.course.posterImage ?? widget.course.image,
-                                    video: widget.course.video,
+                                    video: widget.course.videoHls ?? widget.course.video,
                                     onBackPressed: () => Navigator.pop(context),
                                     onPlay: () => widget.playPauseVideo(),
                                     videoVisibilty: _isVideoPlaying,
@@ -319,7 +329,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           ),
                         )
                       : Container(
-                          color:OlukoColors.black,
+                          color: OlukoColors.black,
                           child: Stack(
                             children: [
                               ListView(
@@ -328,7 +338,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                     padding: const EdgeInsets.only(bottom: 3),
                                     child: OverlayVideoPreview(
                                       image: widget.course.posterImage ?? widget.course.image,
-                                      video: widget.course.video,
+                                      video: widget.course.videoHls ?? widget.course.video,
                                       showBackButton: true,
                                       showHeartButton: true,
                                       showShareButton: true,
@@ -405,8 +415,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
-        (courseEnrollment == null || courseEnrollment.completion >= 1)) {
+    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1)) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
         listener: (context, courseEnrollmentState) {
           if (courseEnrollmentState is CreateEnrollmentSuccess) {
@@ -459,8 +468,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
     return BlocBuilder<StatisticsSubscriptionBloc, StatisticsSubscriptionState>(
       builder: (context, statisticsState) {
         if (statisticsState is StatisticsSubscriptionSuccess) {
-          final CourseStatistics courseStatistics =
-              statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList()[0];
+          final CourseStatistics courseStatistics = statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList()[0];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: StatisticChart(
@@ -500,7 +508,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
-      classes: CourseService.getCourseClasses(_classes,course:widget.course),
+      classes: CourseService.getCourseClasses(_classes, course: widget.course),
       onPressedMovement: (BuildContext context, MovementSubmodel movement) {
         widget.playPauseVideo();
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});

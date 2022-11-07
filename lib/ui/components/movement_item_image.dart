@@ -11,17 +11,15 @@ class MovementItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl != null) {
-      return Neumorphic(
-        style: referenceMovementsSection
-            ? OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-            : OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-        child: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(imageUrl),
-          maxRadius: maxRadius ?? 30,
-        ),
-      );
-    }
-    return const SizedBox(); //TODO: add placeholder
+    const ImageProvider defaultImage = AssetImage('assets/home/mvtthumbnail.png');
+    return Neumorphic(
+      style: referenceMovementsSection
+          ? OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
+          : OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+      child: CircleAvatar(
+        backgroundImage: imageUrl == null ? defaultImage : CachedNetworkImageProvider(imageUrl),
+        maxRadius: maxRadius ?? 30,
+      ),
+    );
   }
 }

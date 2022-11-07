@@ -4,6 +4,7 @@ import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class Class extends Base {
   String video;
+  String videoHls;
   String image;
   String thumbnailImage;
   String name;
@@ -13,6 +14,7 @@ class Class extends Base {
 
   Class(
       {this.video,
+      this.videoHls,
       this.name,
       this.segments,
       this.description,
@@ -26,18 +28,12 @@ class Class extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory Class.fromJson(Map<String, dynamic> json) {
     Class classObject = Class(
       video: json['video']?.toString(),
+      videoHls: json['video_hls']?.toString(),
       name: json['name']?.toString(),
       image: json['image']?.toString(),
       thumbnailImage: json['poster_image']?.toString(),
@@ -49,8 +45,7 @@ class Class extends Base {
       description: json['description']?.toString(),
       segments: json['segments'] == null
           ? null
-          : List<SegmentSubmodel>.from(
-              (json['segments'] as Iterable).map((segment) => SegmentSubmodel.fromJson(segment as Map<String, dynamic>))),
+          : List<SegmentSubmodel>.from((json['segments'] as Iterable).map((segment) => SegmentSubmodel.fromJson(segment as Map<String, dynamic>))),
     );
     classObject.setBase(json);
     return classObject;
@@ -59,6 +54,7 @@ class Class extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> classJson = {
       'video': video,
+      'video_hls': videoHls,
       'name': name,
       'description': description,
       'image': image,

@@ -153,11 +153,11 @@ class _InsideClassesState extends State<InsideClass> {
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                   minHeight: 5,
                   collapsed: Container(
-                    color:OlukoColors.black,
+                    color: OlukoColors.black,
                   ),
                   panel: panelDetail(),
                   body: Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom :OlukoColors.black,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : OlukoColors.black,
                     child: classInfoSection(coachState.coaches),
                   ),
                 ),
@@ -258,22 +258,18 @@ class _InsideClassesState extends State<InsideClass> {
     List<ChallengeNavigation> challengesForNavigation = [];
     _class.segments.forEach((SegmentSubmodel segment) {
       if (segment.image != null && segment.isChallenge) {
-       int segmentPos = _class.segments.indexOf(segment);
-       
-          SegmentSubmodel previousSegment = segmentPos > 0 ? _class.segments.elementAt(segmentPos - 1) : null;
-          
-          EnrollmentClass classWithSegments =
-              widget.courseEnrollment.classes.where((actualClass) => actualClass.id == _class.id).toList().first;
-          List<EnrollmentSegment> segmentFromClass =
-              classWithSegments.segments.where((segmentElement) => segmentElement.id == segment.id).toList();
-          if(segmentFromClass.isNotEmpty){
+        int segmentPos = _class.segments.indexOf(segment);
 
+        SegmentSubmodel previousSegment = segmentPos > 0 ? _class.segments.elementAt(segmentPos - 1) : null;
+
+        EnrollmentClass classWithSegments = widget.courseEnrollment.classes.where((actualClass) => actualClass.id == _class.id).toList().first;
+        List<EnrollmentSegment> segmentFromClass = classWithSegments.segments.where((segmentElement) => segmentElement.id == segment.id).toList();
+        if (segmentFromClass.isNotEmpty) {
           setChallengeImageIfNotFound(segmentFromClass.first, segment);
-          
-          EnrollmentSegment lastSegment = previousSegment != null
-              ? classWithSegments.segments.where((segmentElement) => segmentElement.id == previousSegment.id).toList().first
-              : null;
-          
+
+          EnrollmentSegment lastSegment =
+              previousSegment != null ? classWithSegments.segments.where((segmentElement) => segmentElement.id == previousSegment.id).toList().first : null;
+
           challengesForNavigation.add(createChallengeForNavigation(
             segmentFromCourseEnrollment: segmentFromClass.first,
             classFromCourseEnrollment: classWithSegments,
@@ -282,9 +278,7 @@ class _InsideClassesState extends State<InsideClass> {
             segmentId: segmentFromClass.first.id,
             classId: classWithSegments.id,
           ));
-
-          }
-
+        }
       }
     });
     return challengesForNavigation;
@@ -441,8 +435,7 @@ class _InsideClassesState extends State<InsideClass> {
             BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
               builder: (context, subscribedCourseUsersState) {
                 if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
-                  final int favorites =
-                      subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+                  final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
                   return GestureDetector(
@@ -514,7 +507,7 @@ class _InsideClassesState extends State<InsideClass> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 3),
       child: OverlayVideoPreview(
-        video: _class.video,
+        video: _class.videoHls ?? _class.video,
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
         bottomWidgets: [_getCourseInfoSection(_classImage)],
@@ -531,7 +524,7 @@ class _InsideClassesState extends State<InsideClass> {
       padding: const EdgeInsets.only(bottom: 3),
       child: OlukoVideoPreview(
         randomImages: _class.userSelfies,
-        video: _class.video,
+        video: _class.videoHls ?? _class.video,
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
         bottomWidgets: [_getCourseInfoSection(_classImage)],
