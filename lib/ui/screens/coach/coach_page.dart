@@ -409,7 +409,7 @@ class _CoachPageState extends State<CoachPage> {
       onCloseCard: () => BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment),
       onOpenCard: () {
         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
-            arguments: {'videoUrl': _assessment.video, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
+            arguments: {'videoUrl': _assessment.videoHls ?? _assessment.video, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
         BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment);
       },
     );
