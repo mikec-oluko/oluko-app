@@ -162,9 +162,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                               return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                                      child: showVideoPlayer(_assessment.video),
+                                      child: showVideoPlayer(_assessment.videoHls ?? _assessment.video),
                                     )
-                                  : showVideoPlayer(_assessment.video);
+                                  : showVideoPlayer(_assessment.videoHls ?? _assessment.video);
                             },
                           ),
                         ),

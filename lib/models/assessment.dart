@@ -6,6 +6,7 @@ class Assessment extends Base {
   Assessment(
       {this.name,
       this.video,
+      this.videoHls,
       this.videoThumbnail,
       this.coverImage,
       this.thumbnailImage,
@@ -18,17 +19,11 @@ class Assessment extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   String name;
   String video;
+  String videoHls;
   String videoThumbnail;
   String coverImage;
   String thumbnailImage;
@@ -39,6 +34,7 @@ class Assessment extends Base {
     Assessment assessment = Assessment(
       name: json['name']?.toString(),
       video: json['video']?.toString(),
+      videoHls: json['video_hls']?.toString(),
       videoThumbnail: json['video_thumbnail']?.toString(),
       coverImage: json['cover_image']?.toString(),
       thumbnailImage: json['thumbnail_image']?.toString(),
@@ -58,6 +54,7 @@ class Assessment extends Base {
     Map<String, dynamic> assessmentJson = {
       'name': name,
       'video': video,
+      'video_hls': videoHls,
       'video_thumbnail': videoThumbnail,
       'cover_image': coverImage,
       'thumbnail_image': thumbnailImage,
