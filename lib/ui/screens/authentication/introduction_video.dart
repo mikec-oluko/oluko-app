@@ -26,22 +26,29 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
   if (mediaURL == null || mediaURL.isEmpty) {
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
   }
-  final VideoPlayerController videoPlayerController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(mediaURL);
-  await videoPlayerController.initialize();
-  final ChewieController chewieController = ChewieController(
-    videoPlayerController: videoPlayerController,
-    autoPlay: true,
-    autoInitialize: true,
-    showControls: false,
-    fullScreenByDefault: true,
-  );
-  videoPlayerController.addListener(() async {
-    if (videoPlayerController != null && videoPlayerController.value != null && videoPlayerController.value.position == videoPlayerController.value.duration) {
-      await videoPlayerController.dispose();
-      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
-    }
-  });
-  return chewieController;
+  try {
+    final VideoPlayerController videoPlayerController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(mediaURL);
+    await videoPlayerController.initialize();
+    final ChewieController chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      autoInitialize: true,
+      showControls: false,
+      fullScreenByDefault: true,
+    );
+    videoPlayerController.addListener(() async {
+      if (videoPlayerController != null &&
+          videoPlayerController.value != null &&
+          videoPlayerController.value.position == videoPlayerController.value.duration) {
+        await videoPlayerController.dispose();
+        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
+      }
+    });
+    return chewieController;
+  } catch (e) {
+    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
+  }
+  return null;
 }
 
 class _IntroductionVideoState extends State<IntroductionVideo> {
