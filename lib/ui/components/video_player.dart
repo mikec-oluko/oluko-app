@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock/wakelock.dart';
 import 'dart:io';
 
 import '../../helpers/video_player_helper.dart';
@@ -50,6 +51,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   void initState() {
+    Wakelock.enabled;
     super.initState();
 
     if (widget.filePath != null) {
@@ -61,20 +63,21 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         _controller = null;
       }
     }
-    if (widget.onVideoFinished != null) {
-      _controller.addListener(() {
-        if (_controller.value.position == _controller.value.duration) {
-          widget.onVideoFinished();
-        }
-      });
-    }
-    if (widget.closeVideoPlayer != null) {
-      _controller.addListener(() {
-        if (_controller.value.position == _controller.value.duration) {
-          widget.closeVideoPlayer();
-        }
-      });
-    }
+    _addListenersToController();
+    // if (widget.onVideoFinished != null) {
+    //   _controller.addListener(() {
+    //     if (_controller.value.position == _controller.value.duration) {
+    //       widget.onVideoFinished();
+    //     }
+    //   });
+    // }
+    // if (widget.closeVideoPlayer != null) {
+    //   _controller.addListener(() {
+    //     if (_controller.value.position == _controller.value.duration) {
+    //       widget.closeVideoPlayer();
+    //     }
+    //   });
+    // }
 
     Widget controls;
     if (Platform.isAndroid) {
@@ -126,6 +129,27 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
     }
   }
 
+  void _addListenersToController() {
+    if (widget.onVideoFinished != null) {
+      _controller.addListener(() {
+        if ((_controller.value.buffered.isNotEmpty && _controller.value.isBuffering) && _controller.value.duration.inSeconds > 0) {
+          if (_controller.value.position == _controller.value.duration) {
+            widget.onVideoFinished();
+          }
+        }
+      });
+    }
+    if (widget.closeVideoPlayer != null) {
+      _controller.addListener(() {
+        if ((_controller.value.buffered.isNotEmpty && _controller.value.isBuffering) && _controller.value.duration.inSeconds > 0) {
+          if (_controller.value.position == _controller.value.duration) {
+            widget.closeVideoPlayer();
+          }
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return chewieController != null
@@ -137,6 +161,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   void dispose() {
+    Wakelock.disable();
     if (_controller != null) {
       _controller.dispose();
     }

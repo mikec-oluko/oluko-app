@@ -279,8 +279,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                   OlukoVideoPreview(
                                     showBackButton: true,
                                     image: widget.course.posterImage ?? widget.course.image,
-                                    video: widget.course.video,
-                                    // video: widget.course.videoHls ?? widget.course.video,
+                                    // video: widget.course.video,
+                                    video: widget.course.videoHls ?? widget.course.video,
                                     onBackPressed: () => Navigator.pop(context),
                                     onPlay: () => widget.playPauseVideo(),
                                     videoVisibilty: _isVideoPlaying,
