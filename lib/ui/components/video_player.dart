@@ -63,21 +63,20 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         _controller = null;
       }
     }
-    _addListenersToController();
-    // if (widget.onVideoFinished != null) {
-    //   _controller.addListener(() {
-    //     if (_controller.value.position == _controller.value.duration) {
-    //       widget.onVideoFinished();
-    //     }
-    //   });
-    // }
-    // if (widget.closeVideoPlayer != null) {
-    //   _controller.addListener(() {
-    //     if (_controller.value.position == _controller.value.duration) {
-    //       widget.closeVideoPlayer();
-    //     }
-    //   });
-    // }
+    if (widget.onVideoFinished != null) {
+      _controller.addListener(() {
+        if (_controller.value.position == _controller.value.duration) {
+          widget.onVideoFinished();
+        }
+      });
+    }
+    if (widget.closeVideoPlayer != null) {
+      _controller.addListener(() {
+        if (_controller.value.position == _controller.value.duration) {
+          widget.closeVideoPlayer();
+        }
+      });
+    }
 
     Widget controls;
     if (Platform.isAndroid) {
@@ -125,27 +124,6 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
           widget.whenInitialized(chewieController);
         }
         setState(() {});
-      });
-    }
-  }
-
-  void _addListenersToController() {
-    if (widget.onVideoFinished != null) {
-      _controller.addListener(() {
-        if ((_controller.value.buffered.isNotEmpty && _controller.value.isBuffering) && _controller.value.duration.inSeconds > 0) {
-          if (_controller.value.position == _controller.value.duration) {
-            widget.onVideoFinished();
-          }
-        }
-      });
-    }
-    if (widget.closeVideoPlayer != null) {
-      _controller.addListener(() {
-        if ((_controller.value.buffered.isNotEmpty && _controller.value.isBuffering) && _controller.value.duration.inSeconds > 0) {
-          if (_controller.value.position == _controller.value.duration) {
-            widget.closeVideoPlayer();
-          }
-        }
       });
     }
   }

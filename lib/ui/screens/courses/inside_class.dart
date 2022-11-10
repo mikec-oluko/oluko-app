@@ -524,8 +524,7 @@ class _InsideClassesState extends State<InsideClass> {
       padding: const EdgeInsets.only(bottom: 3),
       child: OlukoVideoPreview(
         randomImages: _class.userSelfies,
-        // video: _class.video,
-        video: _class.videoHls ?? _class.video,
+        video: _class.video,
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
         bottomWidgets: [_getCourseInfoSection(_classImage)],
