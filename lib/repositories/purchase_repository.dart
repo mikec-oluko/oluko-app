@@ -49,8 +49,6 @@ class PurchaseRepository {
     if (productDetails != null) {
       purchase.finalAmount = productDetails.rawPrice is int || productDetails.rawPrice is double ? productDetails.rawPrice.toInt() : purchase.finalAmount;
     }
-    final now = DateTime.now();
-    DateTime.now().add(const Duration(days: 30));
     purchase.currentPeriodEnd = DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch;
     await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.update({'current_plan': plan.metadata['level']});
