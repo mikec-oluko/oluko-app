@@ -249,7 +249,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   SliverList getClassView(int index, BuildContext context) {
-    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.courses[index].videoHls ?? widget.courses[index].video);
+    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.courses[index].video);
     return SliverList(
       delegate: SliverChildListDelegate([
         GestureDetector(

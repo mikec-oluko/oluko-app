@@ -249,7 +249,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
             BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
             BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
             BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
-            BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.videoHls ?? widget.course.video);
+            BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
           }
           return form();
         } else {
@@ -338,7 +338,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                     padding: const EdgeInsets.only(bottom: 3),
                                     child: OverlayVideoPreview(
                                       image: widget.course.posterImage ?? widget.course.image,
-                                      video: widget.course.videoHls ?? widget.course.video,
+                                      video: widget.course.video,
                                       showBackButton: true,
                                       showHeartButton: true,
                                       showShareButton: true,
