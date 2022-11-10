@@ -5,6 +5,7 @@ import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/purchase.dart';
 import 'package:oluko_app/models/user_response.dart';
 
+
 class PurchaseRepository {
   FirebaseFirestore firestoreInstance;
 
@@ -48,24 +49,22 @@ class PurchaseRepository {
     if (productDetails != null) {
       purchase.finalAmount = productDetails.rawPrice is int || productDetails.rawPrice is double ? productDetails.rawPrice.toInt() : purchase.finalAmount;
     }
-    await proyectReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
+    final now = DateTime.now();
+    DateTime.now().add(const Duration(days: 30));
+    purchase.currentPeriodEnd = DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch;
     await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
     await userReference.update({'current_plan': plan.metadata['level']});
-    final userDoc=await userReference.get();
-    final userJson = userDoc.data() as  Map<String, dynamic>;
+    final userDoc = await userReference.get();
+    final userJson = userDoc.data() as Map<String, dynamic>;
     return UserResponse.fromJson(userJson);
   }
 
   static restore(String userId, String productId) async {
     final DocumentReference userReference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
-    QuerySnapshot<Map<String, dynamic>> purchasesSnapshot =
-        await userReference.collection('purchases').where('appPlanId', isEqualTo: productId).get();
+    QuerySnapshot<Map<String, dynamic>> purchasesSnapshot = await userReference.collection('purchases').where('appPlanId', isEqualTo: productId).get();
     purchasesSnapshot.docs.forEach((purchase) {
-      purchase.reference.update({
-                'status': 'inactive',
-                'is_deleted': true
-              });
+      purchase.reference.update({'status': 'inactive', 'is_deleted': true});
     });
     await userReference.update({'current_plan': -1});
   }
