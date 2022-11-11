@@ -395,7 +395,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
       }
       await _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
-    _disableAction = true;
+    _setDisableUnrollAction();
+  }
+
+  void _setDisableUnrollAction() {
+    setState(() {
+      _disableAction = true;
+    });
   }
 
   Widget enrollButton() {
@@ -415,7 +421,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                   }
                 }
-                _disableAction = true;
+                _setDisableUnrollAction();
               },
             )
           else
@@ -428,7 +434,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                   }
                 }
-                _disableAction = true;
+                _setDisableUnrollAction();
               },
             ),
         ],

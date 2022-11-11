@@ -5,6 +5,7 @@ import 'base.dart';
 class Course extends Base {
   String name;
   String video;
+  String videoHls;
   String duration;
   String description;
   List<ObjectSubmodel> classes;
@@ -24,6 +25,7 @@ class Course extends Base {
       this.posterImage,
       this.images,
       this.video,
+      this.videoHls,
       this.description,
       String id,
       Timestamp createdAt,
@@ -32,14 +34,7 @@ class Course extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory Course.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -49,14 +44,13 @@ class Course extends Base {
       name: json['name']?.toString(),
       statisticsReference: json['statistics_reference'] != null ? json['statistics_reference'] as DocumentReference : null,
       video: json['video']?.toString(),
+      videoHls: json['video_hls']?.toString(),
       duration: json['duration'] == null ? '0' : json['duration'].toString(),
       description: json['description']?.toString(),
       classes: json['classes'] != null
           ? List<ObjectSubmodel>.from((json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
           : null,
-      tags: json['tags'] != null
-          ? List<ObjectSubmodel>.from((json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
-          : null,
+      tags: json['tags'] != null ? List<ObjectSubmodel>.from((json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>))) : null,
       image: json['image']?.toString(),
       images: json['images'] as List<dynamic>,
       posterImage: json['poster_image']?.toString(),
@@ -70,6 +64,7 @@ class Course extends Base {
       'name': name,
       'statistics_reference': statisticsReference,
       'video': video,
+      'video_hls': videoHls,
       'duration': duration,
       'description': description,
       'tags': tags == null ? null : tags,

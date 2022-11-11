@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock/wakelock.dart';
 import 'dart:io';
 
 import '../../helpers/video_player_helper.dart';
@@ -50,6 +51,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   void initState() {
+    Wakelock.enabled;
     super.initState();
 
     if (widget.filePath != null) {
@@ -137,6 +139,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   void dispose() {
+    Wakelock.disable();
     if (_controller != null) {
       _controller.dispose();
     }

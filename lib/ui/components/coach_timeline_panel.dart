@@ -133,15 +133,26 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           },
           tabs: _timelineContentItems
               .map((content) => Tab(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / _timelineContentItems.length,
-                      child: Text(content.courseName,
-                          textAlign: TextAlign.center,
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)),
-                    ),
+                    child: _timelineContentItems.length < 5
+                        ? Container(
+                            width: _timelineContentItems.length == 1
+                                ? MediaQuery.of(context).size.width
+                                : (MediaQuery.of(context).size.width / _splitMiddleOrDivideEach()),
+                            child: _tabTitleContent(content),
+                          )
+                        : Container(
+                            child: _tabTitleContent(content),
+                          ),
                   ))
               .toList()),
     );
+  }
+
+  int _splitMiddleOrDivideEach() => _timelineContentItems.length < 3 ? 2 : (_timelineContentItems.length - 1);
+
+  Text _tabTitleContent(CoachTimelineGroup content) {
+    return Text(content.courseName,
+        textAlign: TextAlign.center, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700));
   }
 
   Expanded _timelineListContentSection() {
@@ -310,8 +321,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                   if (!widget.isIntroductionVideoComplete) {
                     BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
                   }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
-                      arguments: {'movement': content.movementForNavigation});
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementForNavigation});
                 },
           child: Container(
             color: OlukoNeumorphismColors.appBackgroundColor,
@@ -448,10 +458,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
           onTap: _isForFriend
               ? () {}
               : () {
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.mentoredVideosForNavigation,
-                    'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')
-                  });
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
+                      arguments: {'videoUrl': content.mentoredVideosForNavigation, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
                 },
           child: Container(
             child: Column(

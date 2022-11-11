@@ -46,7 +46,7 @@ class _HiFivePageState extends State<HiFivePage> {
             builder: (context, hiFiveState) {
               if (hiFiveState is HiFiveSuccess && hiFiveState.users != null && hiFiveState.users.isNotEmpty) {
                 BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
-                _hiFiveState = hiFiveState;
+                hiFiveState.users.removeWhere((user) => user == null || user.id == null);
                 return Scaffold(
                   appBar: _appBar(),
                   backgroundColor: OlukoColors.black,
@@ -77,7 +77,7 @@ class _HiFivePageState extends State<HiFivePage> {
             listener: (context, hiFiveState) {
               if (hiFiveState is HiFiveSuccess) {
                 if (hiFiveState.alertMessage != null) {
-                 AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
+                  AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
                 }
                 if (hiFiveState.users == null || hiFiveState.users.isEmpty) {
                   Navigator.pop(context);

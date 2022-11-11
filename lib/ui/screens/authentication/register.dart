@@ -150,6 +150,7 @@ class _RegisterState extends State<RegisterPage> {
                 onChanged: (value) {
                   setState(() {
                     _newsletterSettings = value;
+                    _newUserFromRegister.newsletter = value;
                   });
                 }),
           ),
