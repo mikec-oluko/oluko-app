@@ -2,20 +2,19 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 import 'dart:io';
 
-import '../../helpers/video_player_helper.dart';
-
 class OlukoVideoPlayer extends StatefulWidget {
   final String videoUrl;
+  final String filePath;
   final double aspectRatio;
   final bool showControls;
   final bool autoPlay;
-  final String filePath;
   final bool allowFullScreen;
   final bool isOlukoControls;
   final bool showOptions;
@@ -48,84 +47,83 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   VideoPlayerController _controller;
   ChewieController chewieController;
   bool isLoading = true;
+  final _placeHolder = const Center(child: CircularProgressIndicator());
 
   @override
   void initState() {
-    Wakelock.enabled;
     super.initState();
+    Wakelock.enable();
+    _controller = buildControllerBySource(file: widget.filePath, url: widget.videoUrl)
+      ..initialize().then((_) {
+        chewieController = _buildChewieController();
+      })
+      ..addListener(() {
+        if ((_controller.value.isBuffering || _controller.value.buffered.isNotEmpty) && _controller.value.duration != 0) {
+          if (widget.onVideoFinished != null) {
+            if (_controller.value.position == _controller.value.duration) {
+              widget.onVideoFinished();
+            }
+          }
+          if (widget.closeVideoPlayer != null) {
+            if (_controller.value.position == _controller.value.duration) {
+              widget.closeVideoPlayer();
+            }
+          }
+        }
+        if (widget.whenInitialized != null) {
+          widget.whenInitialized(chewieController);
+        }
+        setState(() {});
+      });
+  }
 
+  ChewieController _buildChewieController() {
+    return ChewieController(
+        videoPlayerController: _controller,
+        allowFullScreen: widget.allowFullScreen,
+        aspectRatio: widget.aspectRatio ?? _controller.value.aspectRatio,
+        customControls: getOlukoControls(),
+        autoPlay: widget.autoPlay,
+        autoInitialize: true,
+        showControls: widget.showControls,
+        deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+        deviceOrientationsOnEnterFullScreen: VideoPlayerHelper.fullScreenOptions,
+        placeholder: _placeHolder,
+        cupertinoProgressColors: VideoPlayerHelper.chewieProgressColors,
+        materialProgressColors: VideoPlayerHelper.chewieProgressColors,
+        errorBuilder: (context, text) => Center(
+              child: Text(
+                text,
+                style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+              ),
+            ));
+  }
+
+  VideoPlayerController buildControllerBySource({@required String file, @required String url}) {
     if (widget.filePath != null) {
-      _controller = VideoPlayerHelper.VideoPlayerControllerFromFile(File(widget.filePath));
+      return VideoPlayerHelper.VideoPlayerControllerFromFile(File(widget.filePath));
     } else {
       if (widget.videoUrl != null) {
-        _controller = VideoPlayerHelper.VideoPlayerControllerFromNetwork(widget.videoUrl);
+        return VideoPlayerHelper.VideoPlayerControllerFromNetwork(widget.videoUrl);
       } else {
-        _controller = null;
+        return null;
       }
     }
-    if (widget.onVideoFinished != null) {
-      _controller.addListener(() {
-        if (_controller.value.position == _controller.value.duration) {
-          widget.onVideoFinished();
-        }
-      });
-    }
-    if (widget.closeVideoPlayer != null) {
-      _controller.addListener(() {
-        if (_controller.value.position == _controller.value.duration) {
-          widget.closeVideoPlayer();
-        }
-      });
-    }
+  }
 
+  Widget getOlukoControls() {
     Widget controls;
     if (Platform.isAndroid) {
       OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
           ? controls = OlukoMaterialControls(showOptions: widget.showOptions)
-          : controls = MaterialControls();
+          : controls = const MaterialControls();
     } else if (Platform.isIOS) {
       //TODO:Change IOS controls
       OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
           ? controls = OlukoCupertinoControls(showOptions: widget.showOptions)
           : controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black);
     }
-    if (_controller != null) {
-      _controller.initialize().then((value) {
-        chewieController = ChewieController(
-          allowFullScreen: widget.allowFullScreen,
-          aspectRatio: widget.aspectRatio,
-          customControls: controls,
-          videoPlayerController: _controller,
-          autoPlay: widget.autoPlay,
-          autoInitialize: true,
-          showControls: widget.showControls,
-          placeholder: Center(child: CircularProgressIndicator()),
-          deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
-          deviceOrientationsOnEnterFullScreen: [
-            DeviceOrientation.portraitUp,
-            DeviceOrientation.portraitDown,
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight
-          ],
-          cupertinoProgressColors: ChewieProgressColors(
-            handleColor: OlukoColors.black,
-            backgroundColor: OlukoColors.black,
-            bufferedColor: OlukoColors.black,
-            playedColor: OlukoColors.black,
-          ),
-          materialProgressColors: ChewieProgressColors(
-            handleColor: OlukoColors.black,
-            backgroundColor: OlukoColors.black,
-            bufferedColor: OlukoColors.black,
-            playedColor: OlukoColors.black,
-          ),
-        );
-        if (widget.whenInitialized != null) {
-          widget.whenInitialized(chewieController);
-        }
-        setState(() {});
-      });
-    }
+    return controls;
   }
 
   @override
@@ -134,7 +132,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         ? Chewie(
             controller: chewieController,
           )
-        : const SizedBox();
+        : const SizedBox.shrink();
   }
 
   @override

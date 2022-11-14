@@ -273,7 +273,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               },
               child: OlukoVideoPreview(
                 image: widget.courses[index].image,
-                video: widget.courses[index].video,
+                video: widget.courses[index].videoHls ?? widget.courses[index].video,
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,

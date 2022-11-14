@@ -101,6 +101,14 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   @override
+  void dispose() {
+    if (_controller != null) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
@@ -507,7 +515,8 @@ class _InsideClassesState extends State<InsideClass> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 3),
       child: OverlayVideoPreview(
-        video: _class.video,
+        // video: _class.video,
+        video: _class.videoHls ?? _class.video,
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
         bottomWidgets: [_getCourseInfoSection(_classImage)],
@@ -524,7 +533,8 @@ class _InsideClassesState extends State<InsideClass> {
       padding: const EdgeInsets.only(bottom: 3),
       child: OlukoVideoPreview(
         randomImages: _class.userSelfies,
-        video: _class.video,
+        video: _class.videoHls ?? _class.video,
+        // video: _class.video,
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
         bottomWidgets: [_getCourseInfoSection(_classImage)],

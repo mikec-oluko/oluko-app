@@ -163,7 +163,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                   padding: const EdgeInsets.only(bottom: 3),
                                   child: OverlayVideoPreview(
                                       image: widget.course.image,
-                                      video: widget.course.video,
+                                      video: widget.course.videoHls ?? widget.course.video,
                                       showBackButton: true,
                                       showHeartButton: true,
                                       showShareButton: true,
@@ -243,7 +243,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               SliverToBoxAdapter(
                 child: OlukoVideoPreview(
                   image: widget.course.posterImage ?? widget.course.image,
-                  video: widget.course.video,
+                  video: widget.course.videoHls ?? widget.course.video,
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,

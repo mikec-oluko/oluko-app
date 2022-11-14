@@ -62,6 +62,14 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   }
 
   @override
+  void dispose() {
+    if (_controller != null) {
+      _controller?.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return widget.bottomWidgets != null
         ? Stack(
