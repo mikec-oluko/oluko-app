@@ -39,6 +39,7 @@ class FriendRequestBloc extends Cubit<FriendRequestState> {
       if (friendInformation != null) {
         List<UserResponse> friendRequestUsers =
             await Future.wait(friendInformation.friendRequestReceived.map((e) => UserRepository().getById(e.id)).toList());
+        friendRequestUsers?.removeWhere((element) => element == null);
         emit(GetFriendRequestsSuccess(friendData: friendInformation, friendRequestList: friendRequestUsers));
       } else {
         emit(GetFriendRequestsSuccess(friendData: null, friendRequestList: []));
