@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/submodels/assessment_task.dart';
@@ -163,9 +164,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                               return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                                      child: showVideoPlayer(_assessment.videoHls ?? _assessment.video),
+                                      child: showVideoPlayer(
+                                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video)),
                                     )
-                                  : showVideoPlayer(_assessment.videoHls ?? _assessment.video);
+                                  : showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video));
                             },
                           ),
                         ),

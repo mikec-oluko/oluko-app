@@ -29,6 +29,7 @@ import 'package:oluko_app/helpers/coach_segment_info.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -408,8 +409,10 @@ class _CoachPageState extends State<CoachPage> {
       coachVideoMessages: _coachVideoMessages,
       onCloseCard: () => BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment),
       onOpenCard: () {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
-            arguments: {'videoUrl': _assessment.videoHls ?? _assessment.video, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
+        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+          'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video),
+          'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')
+        });
         BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment);
       },
     );

@@ -17,6 +17,7 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -532,7 +533,7 @@ class _InsideClassesState extends State<InsideClass> {
       padding: const EdgeInsets.only(bottom: 3),
       child: OlukoVideoPreview(
         randomImages: _class.userSelfies,
-        video: _class.videoHls ?? _class.video,
+        video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _class.videoHls, videoUrl: _class.video),
         // video: _class.video,
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,

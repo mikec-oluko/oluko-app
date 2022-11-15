@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/task_card_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -333,7 +334,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             ListView(
               children: [
                 const SizedBox(height: 20),
-                showVideoPlayer(_task.videoHls ?? _task.video),
+                showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _task.videoHls, videoUrl: _task.video)),
                 formSection(),
               ],
             ),
@@ -349,7 +350,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         return ListView(
           children: [
             const SizedBox(height: 20),
-            showVideoPlayer(_task.videoHls ?? _task.video),
+            showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _task.videoHls, videoUrl: _task.video)),
             formSection(state.taskSubmission),
             if (OlukoNeumorphism.isNeumorphismDesign) SizedBox(height: ScreenUtils.height(context) * 0.4) else recordAgainButtons(state.taskSubmission)
           ],
@@ -361,7 +362,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             ListView(
               children: [
                 const SizedBox(height: 20),
-                showVideoPlayer(_task.videoHls ?? _task.video),
+                showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _task.videoHls, videoUrl: _task.video)),
                 formSection(),
               ],
             ),

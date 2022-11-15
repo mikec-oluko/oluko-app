@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/movement_info_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -417,8 +418,14 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   height: 180,
                   child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      child: Stack(children: _videoPlayer(movement.videoHls ?? movement.video, tabController.index))))
-              : Container(height: 200, child: Stack(children: _videoPlayer(movement.videoHls ?? movement.video, tabController.index))),
+                      child: Stack(
+                          children: _videoPlayer(
+                              VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index))))
+              : Container(
+                  height: 200,
+                  child: Stack(
+                      children: _videoPlayer(
+                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index))),
         ),
         Padding(
           padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(15.0) : const EdgeInsets.all(8.0),

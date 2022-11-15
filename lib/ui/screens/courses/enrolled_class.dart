@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -76,9 +77,11 @@ class _EnrolledClassState extends State<EnrolledClass> {
                               child: OrientationBuilder(
                                 builder: (context, orientation) {
                                   if (existsEnrollment) {
-                                    return showVideoPlayer(classState.classes[0].videoHls ?? classState.classes[0].video);
+                                    return showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(
+                                        videoHlsUrl: classState.classes[0].videoHls, videoUrl: classState.classes[0].video));
                                   } else {
-                                    return showVideoPlayer(widget.course.videoHls ?? widget.course.video);
+                                    return showVideoPlayer(
+                                        VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video));
                                   }
                                 },
                               ),

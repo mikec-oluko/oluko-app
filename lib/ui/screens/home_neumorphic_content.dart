@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/routes.dart';
@@ -273,7 +274,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               },
               child: OlukoVideoPreview(
                 image: widget.courses[index].image,
-                video: widget.courses[index].videoHls ?? widget.courses[index].video,
+                video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.courses[index].videoHls, videoUrl: widget.courses[index].video),
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,
