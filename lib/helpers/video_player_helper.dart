@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -32,7 +33,7 @@ class VideoPlayerHelper {
     return VideoPlayerController.network(url, videoPlayerOptions: VideoPlayerHelper.videoPlayerOptions);
   }
 
-  static String getVideoFromSourceActive({String videoHlsUrl, String videoUrl}) {
+  static String getVideoFromSourceActive({@required String videoHlsUrl, @required String videoUrl}) {
     return GlobalService().appUseVideoHls ? videoHlsUrl ?? videoUrl : videoUrl;
   }
 }
