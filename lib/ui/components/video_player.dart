@@ -58,7 +58,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         chewieController = _buildChewieController();
       })
       ..addListener(() {
-        if ((_controller.value.isBuffering || _controller.value.buffered.isNotEmpty) && _controller.value.duration != 0) {
+        if ((_controller.value.isBuffering || _controller.value.buffered.isNotEmpty) && _controller.value.duration != Duration.zero) {
           if (widget.onVideoFinished != null) {
             if (_controller.value.position == _controller.value.duration) {
               widget.onVideoFinished();
