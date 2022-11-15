@@ -74,11 +74,11 @@ class InsideClass extends StatefulWidget {
   _InsideClassesState createState() => _InsideClassesState();
 }
 
-class FirebaseUser {}
+// class FirebaseUser {}
 
 class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
-  ChewieController _controller;
+  // ChewieController _controller;
   Class _class;
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
@@ -97,14 +97,17 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   void initState() {
+    BlocProvider.of<DownloadAssetBloc>(context).getVideo();
+    BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
+    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
     super.initState();
   }
 
   @override
   void dispose() {
-    if (_controller != null) {
-      _controller.dispose();
-    }
+    // if (_controller != null) {
+    //   _controller?.dispose();
+    // }
     super.dispose();
   }
 
@@ -112,11 +115,7 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {
-          BlocProvider.of<DownloadAssetBloc>(context).getVideo();
-        }
-        BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
-        BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
+        if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {}
         return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
@@ -130,7 +129,7 @@ class _InsideClassesState extends State<InsideClass> {
               BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
               return WillPopScope(
                   onWillPop: () {
-                    _buttonController.close();
+                    _buttonController?.close();
                     Navigator.pop(context);
                     return Future(() => false);
                   },
@@ -545,11 +544,11 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  void pauseVideo() {
-    if (_controller != null) {
-      _controller.pause();
-    }
-  }
+  // void pauseVideo() {
+  //   if (_controller != null) {
+  //     _controller.pause();
+  //   }
+  // }
 
   void isVideoPlaying() {
     return setState(() {
