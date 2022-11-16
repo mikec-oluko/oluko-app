@@ -33,6 +33,7 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_text_button.dart';
 import 'package:oluko_app/ui/screens/courses/challenge_detail_section.dart';
@@ -129,7 +130,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                 maxHeight: 250,
                 minHeight: 5,
                 collapsed: Container(
-                  color:OlukoColors.black,
+                  color: OlukoColors.black,
                 ),
                 panel: DeleteAudioPanel(panelController: panelController),
                 body: Container(
@@ -188,26 +189,14 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoVideoPlayer(
+    return OlukoCustomVideoPlayer(
         videoUrl: videoUrl,
+        useConstraints: true,
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
+        whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
-            })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+            }));
   }
 
   Widget classInfoSection() {

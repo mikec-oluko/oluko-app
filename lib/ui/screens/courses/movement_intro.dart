@@ -92,6 +92,14 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   }
 
   @override
+  void dispose() {
+    _videoControllers.forEach((controller) {
+      controller?.dispose();
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     BlocProvider.of<MovementInfoBloc>(context).get(_movementSubmodel.id);
     return Scaffold(

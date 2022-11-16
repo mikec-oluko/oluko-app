@@ -20,6 +20,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -71,7 +72,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                       color: OlukoColors.black,
                       child: Stack(
                         children: [
-                          ListView(children: [
+                          Wrap(children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 3),
                               child: OrientationBuilder(
@@ -160,22 +161,13 @@ class _EnrolledClassState extends State<EnrolledClass> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoVideoPlayer(
+    return OlukoCustomVideoPlayer(
+        useConstraints: true,
         videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => this.setState(() {
               _controller = chewieController;
-            })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+            }));
   }
 
   List<Widget> _confirmDialogContent() {

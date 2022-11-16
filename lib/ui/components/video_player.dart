@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
@@ -18,14 +19,13 @@ class OlukoVideoPlayer extends StatefulWidget {
   final bool allowFullScreen;
   final bool isOlukoControls;
   final bool showOptions;
+  final bool useRoundBorder;
   final Function(ChewieController chewieController) whenInitialized;
   final Function() onVideoFinished;
   final Function() closeVideoPlayer;
 
   OlukoVideoPlayer({
-    this.videoUrl =
-        //TODO: update me harcoded test
-        'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
+    this.videoUrl,
     this.showControls = true,
     this.autoPlay = true,
     this.filePath,
@@ -35,6 +35,7 @@ class OlukoVideoPlayer extends StatefulWidget {
     Key key,
     this.allowFullScreen = true,
     this.isOlukoControls = false,
+    this.useRoundBorder = false,
     this.closeVideoPlayer,
     this.showOptions = false,
   }) : super(key: key);
@@ -53,6 +54,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   void initState() {
     super.initState();
     Wakelock.enable();
+
     _controller = buildControllerBySource(file: widget.filePath, url: widget.videoUrl)
       ..initialize().then((_) {
         chewieController = _buildChewieController();
@@ -132,7 +134,15 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         ? Chewie(
             controller: chewieController,
           )
-        : const SizedBox.shrink();
+        : _neumorphicBackgroundLoader();
+  }
+
+  Neumorphic _neumorphicBackgroundLoader() {
+    return Neumorphic(
+      style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
+          boxShape: widget.useRoundBorder ? NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(15))) : const NeumorphicBoxShape.rect()),
+      child: const Center(child: CircularProgressIndicator()),
+    );
   }
 
   @override

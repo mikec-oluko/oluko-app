@@ -25,6 +25,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_switch.dart';
@@ -236,24 +237,15 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    final List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoVideoPlayer(
-        isOlukoControls: !UserUtils.userDeviceIsIOS(),
-        showOptions: true,
+    return OlukoCustomVideoPlayer(
         videoUrl: videoUrl,
+        useConstraints: true,
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        isOlukoControls: !UserUtils.userDeviceIsIOS(),
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) {
-          _controller = chewieController;
-        }));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
   }
 
   Widget formSection([TaskSubmission taskSubmission]) {
