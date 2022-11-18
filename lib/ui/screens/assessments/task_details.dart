@@ -158,13 +158,11 @@ class _TaskDetailsState extends State<TaskDetails> {
         if (state is GetSuccess) {
           if (state.taskSubmission != null && state.taskSubmission.task.id == _task.id) {
             isAssessmentDone = true;
-            // _makePublic = state.taskSubmission.isPublic;
             _taskSubmission = state.taskSubmission;
-            _makePublic ??= _taskSubmission.isPublic;
+            _makePublic = _taskSubmission.isPublic;
           }
           isLoading = false;
           canShowPanel = true;
-          // _panelContent = isAssessmentDone ? recordAgainButtons(_taskSubmission) : startRecordingButton();
         }
         if (state is TaskSubmissionLoading) {
           isLoading = true;
@@ -178,31 +176,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                 onPressed: () {
                   _onButtonBackPress();
                 }),
-            body: Container(
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-              child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                children: [
-                  const SizedBox(height: 20),
-                  showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _task.videoHls, videoUrl: _task.video)),
-                  formSection(_taskSubmission),
-                  if (OlukoNeumorphism.isNeumorphismDesign) SizedBox(height: ScreenUtils.height(context) * 0.2) else recordAgainButtons(_taskSubmission)
-                ],
-              ),
-            ),
-            bottomSheet: Container(
-              width: ScreenUtils.width(context),
-              height: panelSize,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              ),
-              child: canShowPanel
-                  ? showPanel()
-                  : isLoading
-                      ? Center(child: OlukoCircularProgressIndicator())
-                      : SizedBox.shrink(),
-            ));
+            body: _ligthBody(context),
+            bottomSheet: _bottomPanel(context));
       },
     );
 
@@ -273,6 +248,37 @@ class _TaskDetailsState extends State<TaskDetails> {
     //     ),
     //   ),
     // );
+  }
+
+  Container _bottomPanel(BuildContext context) {
+    return Container(
+      width: ScreenUtils.width(context),
+      height: panelSize,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      ),
+      child: canShowPanel
+          ? showPanel()
+          : isLoading
+              ? Center(child: OlukoCircularProgressIndicator())
+              : SizedBox.shrink(),
+    );
+  }
+
+  Container _ligthBody(BuildContext context) {
+    return Container(
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+      child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        children: [
+          const SizedBox(height: 20),
+          showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _task.videoHls, videoUrl: _task.video)),
+          formSection(_taskSubmission),
+          if (OlukoNeumorphism.isNeumorphismDesign) SizedBox(height: ScreenUtils.height(context) * 0.2) else recordAgainButtons(_taskSubmission)
+        ],
+      ),
+    );
   }
 
   Widget showPanel() {
