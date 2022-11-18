@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -94,37 +95,15 @@ class _NoCoachPageState extends State<NoCoachPage> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoNeumorphism.isNeumorphismDesign
-        ? ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: OlukoVideoPlayer(
-                isOlukoControls: !UserUtils.userDeviceIsIOS(),
-                showOptions: true,
-                videoUrl: videoUrl,
-                autoPlay: false,
-                whenInitialized: (ChewieController chewieController) => setState(() {
-                      _controller = chewieController;
-                    })),
-          )
-        : OlukoVideoPlayer(
-            videoUrl: videoUrl,
-            autoPlay: false,
-            whenInitialized: (ChewieController chewieController) => setState(() {
-                  _controller = chewieController;
-                })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+    return OlukoCustomVideoPlayer(
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        useConstraints: true,
+        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+        showOptions: true,
+        videoUrl: videoUrl,
+        autoPlay: false,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
   }
 }

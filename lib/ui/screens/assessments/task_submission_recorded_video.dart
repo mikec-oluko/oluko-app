@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 
 class TaskSubmissionRecordedVideo extends StatefulWidget {
   TaskSubmissionRecordedVideo({this.videoUrl, this.task, key}) : super(key: key as Key);
@@ -50,32 +51,19 @@ class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVide
                       child: Stack(
                         children: [
                           ConstrainedBox(
-                              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5),
-                              child: Stack(children: showVideoPlayer()))
+                              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: [showVideoPlayer()]))
                         ],
                       ),
                     )))));
   }
 
-  List<Widget> showVideoPlayer() {
-    List<Widget> widgets = [];
-    widgets.add(OlukoNeumorphism.isNeumorphismDesign
-        ? ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: OlukoVideoPlayer(
-                videoUrl: widget.videoUrl,
-                whenInitialized: (ChewieController chewieController) => setState(() {
-                      _controller = chewieController;
-                    })),
-          )
-        : OlukoVideoPlayer(
-            videoUrl: widget.videoUrl,
-            whenInitialized: (ChewieController chewieController) => this.setState(() {
-                  _controller = chewieController;
-                })));
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
-    return widgets;
+  Widget showVideoPlayer() {
+    return OlukoCustomVideoPlayer(
+        videoUrl: widget.videoUrl,
+        useConstraints: true,
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
   }
 }

@@ -7,6 +7,7 @@ import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_media_grid_gallery.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -62,8 +63,7 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
                   child: Container(
                     width: ScreenUtils.width(context),
                     height: ScreenUtils.height(context) / 4,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.appBackgroundColor),
+                    decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.appBackgroundColor),
                     child: Stack(
                       fit: StackFit.expand,
                       clipBehavior: Clip.none,
@@ -86,35 +86,13 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoNeumorphism.isNeumorphismDesign
-        ? ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: OlukoVideoPlayer(
-                videoUrl: videoUrl,
-                autoPlay: false,
-                whenInitialized: (ChewieController chewieController) => setState(() {
-                      _controller = chewieController;
-                    })),
-          )
-        : OlukoVideoPlayer(
-            videoUrl: videoUrl,
-            autoPlay: false,
-            whenInitialized: (ChewieController chewieController) => setState(() {
-                  _controller = chewieController;
-                })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+    return OlukoCustomVideoPlayer(
+        videoUrl: videoUrl,
+        useConstraints: true,
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        autoPlay: false,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
   }
 }
