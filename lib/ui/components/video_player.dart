@@ -134,7 +134,9 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         ? Chewie(
             controller: chewieController,
           )
-        : _neumorphicBackgroundLoader();
+        : OlukoNeumorphism.isNeumorphismDesign
+            ? _neumorphicBackgroundLoader()
+            : const Center(child: CircularProgressIndicator());
   }
 
   Neumorphic _neumorphicBackgroundLoader() {
