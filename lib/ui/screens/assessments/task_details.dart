@@ -29,6 +29,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart'
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_switch.dart';
+import 'package:oluko_app/ui/newDesignComponents/task_recorded_preview_card.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -87,21 +88,19 @@ class _TaskDetailsState extends State<TaskDetails> {
                     _task = _tasks[widget.taskIndex];
                     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task.id);
                   }
-                  return neumorphicForm();
+                  return _taskDetailsView();
                 },
               );
             },
           );
         } else {
-          return Container(
-            child: Text("NO AUTH"),
-          );
+          return nil;
         }
       },
     );
   }
 
-  Widget neumorphicForm() {
+  Widget _taskDetailsView() {
     return BlocListener<TaskCardBloc, TaskCardState>(
       listener: (context, taskCardState) {
         if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
@@ -147,7 +146,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                       _onButtonBackPress();
                     }),
                 body: _ligthBody(context),
-                bottomSheet: OlukoNeumorphism.isNeumorphismDesign ? _bottomPanel(context) : SizedBox.shrink()),
+                bottomSheet: OlukoNeumorphism.isNeumorphismDesign ? _bottomPanel(context) : const SizedBox.shrink()),
           );
         },
       ),
@@ -588,101 +587,12 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget taskResponse(String timeLabel, String thumbnail, TaskSubmission taskSubmission) {
     return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
-      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
-        return Padding(padding: const EdgeInsets.only(left: 45), child: OlukoCircularProgressIndicator());
-      } else if (taskCardState is TaskCardVideoUploaded && taskCardState.taskId == _task.id) {
-        return Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Image(image: AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
-              Align(
-                  alignment: Alignment.center,
-                  child: OlukoNeumorphism.isNeumorphismDesign
-                      ? Container(
-                          width: 50,
-                          height: 50,
-                          child: OlukoBlurredButton(
-                            childContent: Icon(
-                              Icons.play_arrow,
-                              color: OlukoColors.white,
-                            ),
-                          ),
-                        )
-                      : Image.asset(
-                          'assets/assessment/play.png',
-                          scale: 5,
-                          height: 40,
-                          width: 60,
-                        )),
-              Positioned(
-                  top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
-                  bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
-                  left: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: OlukoColors.black.withAlpha(150),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        timeLabel,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )),
-            ]),
-          ),
-        );
-      } else {
-        return Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Image(image: AssetImage('assets/assessment/thumbnail.jpg')) else Image(image: CachedNetworkImageProvider(thumbnail)),
-              Align(
-                  alignment: Alignment.center,
-                  child: OlukoNeumorphism.isNeumorphismDesign
-                      ? Container(
-                          width: 50,
-                          height: 50,
-                          child: OlukoBlurredButton(
-                            childContent: Icon(
-                              Icons.play_arrow,
-                              color: OlukoColors.white,
-                            ),
-                          ),
-                        )
-                      : Image.asset(
-                          'assets/assessment/play.png',
-                          scale: 5,
-                          height: 40,
-                          width: 60,
-                        )),
-              Positioned(
-                  top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
-                  bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
-                  left: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: OlukoColors.black.withAlpha(150),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        timeLabel,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )),
-            ]),
-          ),
-        );
-      }
+      return TaskRecordedPreviewCard(
+        thumbnail: thumbnail,
+        timeLabel: timeLabel,
+        taskReady: timeLabel != null,
+      );
+      // }
     });
   }
 }
