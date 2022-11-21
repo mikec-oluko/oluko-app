@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -23,12 +22,11 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_switch.dart';
+import 'package:oluko_app/ui/newDesignComponents/record_again_panel_options.dart';
+import 'package:oluko_app/ui/newDesignComponents/task_details_form_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/task_recorded_preview_card.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -37,7 +35,6 @@ import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/user_utils.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class TaskDetails extends StatefulWidget {
   const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false, this.taskCompleted = false}) : super(key: key);
@@ -50,7 +47,7 @@ class TaskDetails extends StatefulWidget {
 }
 
 class _TaskDetailsState extends State<TaskDetails> {
-  GlobalService _globalService = GlobalService();
+  final GlobalService _globalService = GlobalService();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
@@ -141,7 +138,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     showTitle: true,
                     showBackButton: true,
                     title: _task.name,
-                    actions: [SizedBox(width: 30)],
+                    actions: const [SizedBox(width: 30)],
                     onPressed: () {
                       _onButtonBackPress();
                     }),
@@ -223,56 +220,24 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget formSection([TaskSubmission taskSubmission]) {
-    return Container(
-        child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              OlukoLocalizations.get(context, 'makeThisPublic'),
-              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
-            ),
-            if (OlukoNeumorphism.isNeumorphismDesign)
-              OlukoNeumorphicSwitch(
-                value: _makePublic ?? false,
-                onSwitchChange: (bool value) {
-                  if (taskSubmission != null) {
-                    setState(() {
-                      _makePublic = value;
-                      //BlocProvider.of<TaskPrivacityBloc>(context).set(value);
-                      BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
-                    });
-                  } else {
-                    AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
-                  }
-                  ;
-                },
-              )
-            else
-              Switch(
-                value: _makePublic ?? false,
-                onChanged: (bool value) => setState(() {
-                  if (taskSubmission != null) {
-                    _makePublic = value;
-                    BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
-                  } else {
-                    AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
-                  }
-                }),
-                trackColor: MaterialStateProperty.all(Colors.grey),
-                activeColor: OlukoColors.primary,
-              )
-          ],
-        ),
-      ),
-      Text(
-        _task.description,
-        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-      ),
-      recordedVideos(_taskSubmission),
-    ]));
+    return TaskDetailsFormSection(
+      makeThisPublic: _makePublic,
+      taskDescription: _task.description,
+      recordedVideo: recordedVideos(_taskSubmission),
+      switchUpdated: (value) => switchChanged(taskSubmission, value),
+    );
+  }
+
+  void switchChanged(TaskSubmission taskSubmission, bool value) {
+    if (taskSubmission != null) {
+      setState(() {
+        _makePublic = value;
+        //BlocProvider.of<TaskPrivacityBloc>(context).set(value);
+        BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+      });
+    } else {
+      AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
+    }
   }
 
   Widget startRecordingButton() {
@@ -349,7 +314,7 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
     return Padding(
-        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20, vertical: 20) : EdgeInsets.only(top: 20.0),
+        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20, vertical: 20) : const EdgeInsets.only(top: 20.0),
         child: Row(
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
@@ -361,7 +326,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                 textColor: OlukoColors.grayColor,
                 onPressed: () {
                   if (OlukoNeumorphism.isNeumorphismDesign) {
-                    // _panelController.animatePanelToPosition(1.0);
                     setState(() {
                       recordAgainRequested = !recordAgainRequested;
                       panelSize = 250;
@@ -411,7 +375,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         context,
         [
           Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
                 OlukoLocalizations.get(context, 'videoIsStillProcessing'),
                 textAlign: TextAlign.center,
@@ -435,7 +399,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
           'taskIndex': widget.taskIndex + 1,
           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-          'taskCompleted': false /**TODO: */
+          'taskCompleted': false
         });
       } else {
         goToAssessmentVideos();
@@ -454,150 +418,106 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) => [recordAgainDialogContent()];
 
-  Padding recordAgainDialogContent() {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Wrap(children: [
-          Padding(padding: const EdgeInsets.only(bottom: 15.0), child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
-          Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-          Padding(
-              padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 80 : 25.0),
-              child: Row(
-                mainAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? MainAxisAlignment.end : MainAxisAlignment.center,
-                children: [
-                  OlukoNeumorphism.isNeumorphismDesign
-                      ? TextButton(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              OlukoLocalizations.get(context, 'yes'),
-                              style: OlukoFonts.olukoBigFont(),
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              panelSize = 100;
-                            });
-                            if (_controller != null) {
-                              _controller.pause();
-                            }
-                            Navigator.pop(context);
-                            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                              'taskId': _task.id,
-                              'taskIndex': widget.taskIndex,
-                              'isPublic': _makePublic,
-                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-                              'fromCompletedClass': false
-                            });
-                          },
-                        )
-                      : OlukoPrimaryButton(
-                          title: OlukoLocalizations.get(context, 'no'),
-                          onPressed: () {
-                            OlukoNeumorphism.isNeumorphismDesign
-                                ? setState(() {
-                                    recordAgainRequested = !recordAgainRequested;
-                                    panelSize = 100;
-                                  })
-                                : Navigator.pop(context);
-                          },
-                        ),
-                  const SizedBox(width: 20),
-                  OlukoNeumorphism.isNeumorphismDesign
-                      ? Container(
-                          width: 80,
-                          height: 50,
-                          child: OlukoNeumorphicPrimaryButton(
-                            thinPadding: true,
-                            isExpanded: false,
-                            title: OlukoLocalizations.get(context, 'no'),
-                            onPressed: () {
-                              OlukoNeumorphism.isNeumorphismDesign
-                                  ? setState(() {
-                                      recordAgainRequested = !recordAgainRequested;
-                                      panelSize = 100;
-                                    })
-                                  : Navigator.pop(context);
-                            },
-                          ),
-                        )
-                      : OlukoOutlinedButton(
-                          title: OlukoLocalizations.get(context, 'yes'),
-                          onPressed: () {
-                            if (_controller != null) {
-                              _controller.pause();
-                            }
-                            Navigator.pop(context);
-                            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                              'taskId': _task.id,
-                              'taskIndex': widget.taskIndex,
-                              'isPublic': _makePublic,
-                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-                              'fromCompletedClass': false
-                            });
-                          },
-                        ),
-                ],
-              ))
-        ]));
+  RecordAgainPanelOptions recordAgainDialogContent() {
+    return RecordAgainPanelOptions(
+      recordAgainActions: () => _recordAgainAcceptAction(),
+      cancelRecordAction: () => _recordAgainCancel(),
+    );
+  }
+
+  void _recordAgainCancel() {
+    OlukoNeumorphism.isNeumorphismDesign
+        ? setState(() {
+            recordAgainRequested = !recordAgainRequested;
+            panelSize = 100;
+          })
+        : Navigator.pop(context);
+  }
+
+  Future<Object> _recordAgainAcceptAction() {
+    setState(() {
+      panelSize = 100;
+    });
+    if (_controller != null) {
+      _controller.pause();
+    }
+    Navigator.pop(context);
+    return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+      'taskId': _task.id,
+      'taskIndex': widget.taskIndex,
+      'isPublic': _makePublic,
+      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+      'fromCompletedClass': false
+    });
   }
 
   Widget recordedVideos(TaskSubmission taskSubmission) {
-    return taskSubmission == null
-        ? const SizedBox.shrink()
-        : BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
-            if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex ||
-                isAssessmentDone ||
-                widget.taskCompleted ||
-                _isLoading) {
-              return Column(children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TitleBody(
-                        OlukoLocalizations.get(context, 'recordedVideo'),
-                        bold: true,
-                      )),
-                ),
-                Align(
+    return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
+      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex || isAssessmentDone || widget.taskCompleted || _isLoading) {
+        return Column(children: [
+          if (taskSubmission == null)
+            const SizedBox(
+              height: 20,
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
+              child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Container(
-                    height: 150,
-                    child: ListView(scrollDirection: Axis.horizontal, children: [
-                      GestureDetector(
-                          onTap: () {
-                            if (_controller != null) {
-                              _controller.pause();
-                            }
-                            if (taskSubmission.video != null && taskSubmission.video.url != null) {
-                              Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                                  arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-                            }
-                          },
-                          child: taskResponse(
-                              TimeConverter.durationToString(
-                                  Duration(milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
-                              taskSubmission?.video?.thumbUrl,
-                              taskSubmission)),
-                    ]),
-                  ),
-                ),
-              ]);
-            } else {
-              return const SizedBox();
-            }
-          });
+                  child: TitleBody(
+                    OlukoLocalizations.get(context, 'recordedVideo'),
+                    bold: true,
+                  )),
+            ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              height: 150,
+              child: ListView(scrollDirection: Axis.horizontal, children: [
+                GestureDetector(
+                    onTap: () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      if (taskSubmission.video != null && taskSubmission.video.url != null) {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
+                            arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+                      }
+                    },
+                    child: taskResponse(
+                        TimeConverter.durationToString(
+                            Duration(milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
+                        taskSubmission?.video?.thumbUrl,
+                        taskSubmission)),
+              ]),
+            ),
+          ),
+        ]);
+      } else {
+        return const SizedBox.shrink();
+      }
+    });
   }
 
   Widget taskResponse(String timeLabel, String thumbnail, TaskSubmission taskSubmission) {
     return BlocBuilder<TaskCardBloc, TaskCardState>(builder: (context, taskCardState) {
-      return TaskRecordedPreviewCard(
-        thumbnail: thumbnail,
-        timeLabel: timeLabel,
-        taskReady: thumbnail != null,
-      );
-      // }
+      if (taskCardState is TaskCardVideoProcessing && taskCardState.taskIndex == widget.taskIndex) {
+        return const TaskRecordedPreviewCard();
+      } else if (taskCardState is TaskCardVideoUploaded && taskCardState.taskId == _task.id) {
+        return TaskRecordedPreviewCard(
+          thumbnail: thumbnail,
+          timeLabel: timeLabel,
+          taskReady: thumbnail != null,
+        );
+      } else {
+        return taskSubmission != null
+            ? TaskRecordedPreviewCard(
+                thumbnail: thumbnail,
+                timeLabel: timeLabel,
+                taskReady: thumbnail != null,
+              )
+            : const SizedBox.shrink();
+      }
     });
   }
 }
