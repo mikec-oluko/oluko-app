@@ -4,7 +4,7 @@ SetupDevEnv () {
     echo "Setting up development environment" && flutter clean && \
     cp environments/dev/icon.png assets/icon && \
     cp ios/Flutter/src/development/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/development/google-services.json android/app && \
+    cp -a android/app/src/development/ android/app && \
     cp -a android/fastlane/src/dev/metadata android/fastlane && \
     cp lib/config/src/development/project_settings.dart lib/config/src/development/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
@@ -15,7 +15,7 @@ SetupProdEnv () {
     echo "Setting up production environment" && flutter clean && \
     cp environments/prod/icon.png assets/icon && \
     cp ios/Flutter/src/production/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/production/google-services.json android/app && \
+    cp -a android/app/src/prod/ android/app && \
     cp -a android/fastlane/src/production/metadata android/fastlane && \
     cp lib/config/src/production/project_settings.dart lib/config/src/production/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
@@ -26,7 +26,7 @@ SetupStagingEnv () {
     echo "Setting up staging environment" && flutter clean && \
     cp environments/staging/icon.png assets/icon && \
     cp ios/Flutter/src/staging/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/staging/google-services.json android/app && \
+    cp -a android/app/src/staging/ android/app && \
     cp -a android/fastlane/src/staging/metadata android/fastlane && \
     cp lib/config/src/staging/project_settings.dart lib/config/src/staging/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
@@ -37,7 +37,7 @@ SetupQAEnv () {
     echo "Setting up qa environment" && flutter clean && \
     cp environments/qa/icon.png assets/icon && \
     cp ios/Flutter/src/qa/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/qa/google-services.json android/app && \
+    cp -a android/app/src/qa/ android/app && \
     cp -a android/fastlane/src/qa/metadata android/fastlane && \
     cp lib/config/src/qa/project_settings.dart lib/config/src/qa/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
