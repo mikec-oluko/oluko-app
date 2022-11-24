@@ -2,9 +2,9 @@
 
 copyByOS ()  {
     case "$OSTYPE" in
-        msys*) copy $1 $2;;
-        cygwin*) copy $1 $2;;
-        *) cp $1 $2;;
+        msys*) copy $3 $1 $2;;
+        cygwin*) copy $3 $1 $2;;
+        *) cp $3 $1 $2;;
     esac
 }
 
@@ -12,9 +12,10 @@ SetupDevEnv () {
     echo "Setting up development environment" && flutter clean && \
     copyByOS environments/dev/icon.png assets/icon && \
     copyByOS ios/Flutter/src/development/GoogleService-Info.plist ios/Flutter && \
-    copyByOS -a android/app/src/development/ android/app && \
-    copyByOS -a android/fastlane/src/dev/metadata android/fastlane && \
-    copyByOS lib/config/src/development/project_settings.dart lib/config/src/development/s3_settings.dart lib/config && \
+    copyByOS android/app/src/development/ android/app -a && \
+    copyByOS android/fastlane/src/dev/metadata android/fastlane -a && \
+    copyByOS lib/config/src/development/project_settings.dart lib/config && \
+    copyByOS lib/config/src/development/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main
 }
@@ -23,9 +24,10 @@ SetupProdEnv () {
     echo "Setting up production environment" && flutter clean && \
     copyByOS environments/prod/icon.png assets/icon && \
     copyByOS ios/Flutter/src/production/GoogleService-Info.plist ios/Flutter && \
-    copyByOS -a android/app/src/prod/ android/app && \
-    copyByOS -a android/fastlane/src/production/metadata android/fastlane && \
-    copyByOS lib/config/src/production/project_settings.dart lib/config/src/production/s3_settings.dart lib/config && \
+    copyByOS android/app/src/prod/ android/app -a && \
+    copyByOS android/fastlane/src/production/metadata android/fastlane -a && \
+    copyByOS lib/config/src/production/project_settings.dart lib/config && \
+    copyByOS lib/config/src/production/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main 
 }
@@ -34,9 +36,10 @@ SetupStagingEnv () {
     echo "Setting up staging environment" && flutter clean && \
     copyByOS environments/staging/icon.png assets/icon && \
     copyByOS ios/Flutter/src/staging/GoogleService-Info.plist ios/Flutter && \
-    copyByOS -a android/app/src/staging/ android/app && \
-    copyByOS -a android/fastlane/src/staging/metadata android/fastlane && \
-    copyByOS lib/config/src/staging/project_settings.dart lib/config/src/staging/s3_settings.dart lib/config && \
+    copyByOS android/app/src/staging/ android/app -a && \
+    copyByOS android/fastlane/src/staging/metadata android/fastlane -a && \
+    copyByOS lib/config/src/staging/project_settings.dart lib/config && \
+    copyByOS lib/config/src/staging/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main 
 }
@@ -45,9 +48,10 @@ SetupQAEnv () {
     echo "Setting up qa environment" && flutter clean && \
     copyByOS environments/qa/icon.png assets/icon && \
     copyByOS ios/Flutter/src/qa/GoogleService-Info.plist ios/Flutter && \
-    copyByOS -a android/app/src/qa/ android/app && \
-    copyByOS -a android/fastlane/src/qa/metadata android/fastlane && \
-    copyByOS lib/config/src/qa/project_settings.dart lib/config/src/qa/s3_settings.dart lib/config && \
+    copyByOS android/app/src/qa/ android/app -a && \
+    copyByOS android/fastlane/src/qa/metadata android/fastlane -a && \
+    copyByOS lib/config/src/qa/project_settings.dart lib/config && \
+    copyByOS lib/config/src/qa/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main
 }
