@@ -28,7 +28,7 @@ SetupStagingEnv () {
     cp ios/Flutter/src/staging/GoogleService-Info.plist ios/Flutter && \
     cp android/app/src/staging/google-services.json android/app && \
     cp -a android/fastlane/src/staging/metadata android/fastlane && \
-    cp lib/config/src/staging/project_settings.dart lib/config/src/production/s3_settings.dart lib/config && \
+    cp lib/config/src/staging/project_settings.dart lib/config/src/staging/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main 
 }
