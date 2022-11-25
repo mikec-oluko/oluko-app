@@ -24,7 +24,7 @@ SetupProdEnv () {
     echo "Setting up production environment" && flutter clean && \
     copyByOS environments/prod/icon.png assets/icon && \
     copyByOS ios/Flutter/src/production/GoogleService-Info.plist ios/Flutter && \
-    copyByOS android/app/src/prod/ android/app -a && \
+    copyByOS android/app/src/production/ android/app -a && \
     copyByOS android/fastlane/src/production/metadata android/fastlane -a && \
     copyByOS lib/config/src/production/project_settings.dart lib/config && \
     copyByOS lib/config/src/production/s3_settings.dart lib/config && \
