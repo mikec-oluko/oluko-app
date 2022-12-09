@@ -4,9 +4,10 @@ SetupDevEnv () {
     echo "Setting up development environment" && flutter clean && \
     cp environments/dev/icon.png assets/icon && \
     cp ios/Flutter/src/development/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/development/google-services.json android/app && \
+    cp -a android/app/src/development/ android/app && \
     cp -a android/fastlane/src/dev/metadata android/fastlane && \
-    cp lib/config/src/development/project_settings.dart lib/config/src/development/s3_settings.dart lib/config && \
+    cp lib/config/src/development/project_settings.dart lib/config && \
+    cp lib/config/src/development/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main
 }
@@ -15,9 +16,22 @@ SetupProdEnv () {
     echo "Setting up production environment" && flutter clean && \
     cp environments/prod/icon.png assets/icon && \
     cp ios/Flutter/src/production/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/production/google-services.json android/app && \
+    cp -a android/app/src/production/ android/app && \
     cp -a android/fastlane/src/production/metadata android/fastlane && \
-    cp lib/config/src/production/project_settings.dart lib/config/src/production/s3_settings.dart lib/config && \
+    cp lib/config/src/production/project_settings.dart lib/config && \
+    cp lib/config/src/production/s3_settings.dart lib/config && \
+    flutter pub get && cd ios && pod install && cd .. && \
+    flutter pub run flutter_launcher_icons:main 
+}
+
+SetupStagingEnv () {
+    echo "Setting up staging environment" && flutter clean && \
+    cp environments/staging/icon.png assets/icon && \
+    cp ios/Flutter/src/staging/GoogleService-Info.plist ios/Flutter && \
+    cp -a android/app/src/staging/ android/app && \
+    cp -a android/fastlane/src/staging/metadata android/fastlane && \
+    cp lib/config/src/staging/project_settings.dart lib/config && \
+    cp lib/config/src/staging/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main 
 }
@@ -26,9 +40,10 @@ SetupQAEnv () {
     echo "Setting up qa environment" && flutter clean && \
     cp environments/qa/icon.png assets/icon && \
     cp ios/Flutter/src/qa/GoogleService-Info.plist ios/Flutter && \
-    cp android/app/src/qa/google-services.json android/app && \
+    cp -a android/app/src/qa/ android/app  && \
     cp -a android/fastlane/src/qa/metadata android/fastlane && \
-    cp lib/config/src/qa/project_settings.dart lib/config/src/qa/s3_settings.dart lib/config && \
+    cp lib/config/src/qa/project_settings.dart lib/config && \
+    cp lib/config/src/qa/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd .. && \
     flutter pub run flutter_launcher_icons:main
 }
@@ -46,6 +61,10 @@ if [ "$1" = "prod" ]
     then
         SetupProdEnv
 fi
+if [ "$1" = "staging" ]
+    then
+        SetupStagingEnv
+fi
 if [ "$1" = "qa" ]
     then 
         SetupQAEnv
@@ -56,10 +75,10 @@ fi
 if [ "$1" = "increment_build" ]
     then perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
 fi
-if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]] && [[ "$1" != "deepclean" ]]
+if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "staging" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]] && [[ "$1" != "deepclean" ]]
     then
         echo "Invalid argument supplied"
-        echo "Arguments allowed qa / dev / prod / appbundle / increment_build / deploy / deepclean"
+        echo "Arguments allowed qa / dev / prod / staging / appbundle / increment_build / deploy / deepclean"
 fi
 if [ "$1" = "deploy" ]
     then
@@ -73,6 +92,10 @@ if [ "$1" = "deploy" ]
         if [ "$2" = "prod" ]
             then
                 SetupProdEnv
+        fi
+        if [ "$1" = "staging" ]
+            then
+                SetupStagingEnv
         fi
         if [ "$2" = "qa" ]
             then 

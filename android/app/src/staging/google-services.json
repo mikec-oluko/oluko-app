@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "231078006866",
+    "project_id": "oluko-staging",
+    "storage_bucket": "oluko-staging.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231078006866:android:24a6f3412c664961f60f8b",
+        "android_client_info": {
+          "package_name": "com.app.oluko.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231078006866-lccrbsgp9ag07ff5n2lsr0t10lcagcae.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlhjuHXVdvLG9LmHoczNRvoGJi3QdoOV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231078006866-lccrbsgp9ag07ff5n2lsr0t10lcagcae.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "231078006866-aqokslt4ub94ljfarpoilofrtpma06li.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.oluko.staging",
+                "app_store_id": "1620038869"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
