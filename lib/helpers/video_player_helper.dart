@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
@@ -19,7 +20,7 @@ class VideoPlayerHelper {
   static final chewieProgressColors = ChewieProgressColors(
     handleColor: OlukoColors.black,
     backgroundColor: OlukoColors.black,
-    bufferedColor: OlukoColors.grayColor,
+    bufferedColor: OlukoColors.black,
     playedColor: OlukoColors.black,
   );
 

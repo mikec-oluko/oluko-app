@@ -68,6 +68,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
           }
           if (widget.closeVideoPlayer != null) {
             if (_controller.value.position == _controller.value.duration) {
+              _controller.seekTo(Duration.zero);
               widget.closeVideoPlayer();
             }
           }
@@ -123,7 +124,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
       //TODO:Change IOS controls
       OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
           ? controls = OlukoCupertinoControls(showOptions: widget.showOptions)
-          : controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black);
+          : controls = CupertinoControls(backgroundColor: Colors.black.withOpacity(0.3), iconColor: Colors.black);
     }
     return controls;
   }

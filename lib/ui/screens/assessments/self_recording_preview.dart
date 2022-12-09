@@ -259,26 +259,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
             }));
-    // List<Widget> widgets = [];
-    // widgets.add(OlukoVideoPlayer(
-    //     autoPlay: false,
-    //     isOlukoControls: true,
-    //     filePath: widget.filePath,
-    //     whenInitialized: (ChewieController chewieController) => setState(() {
-    //           _controller = chewieController;
-    //         })));
-    // if (_controller == null) {
-    //   widgets.add(const Center(child: CircularProgressIndicator()));
-    // } else {
-    //   if (!_controller.isPlaying) {
-    //     //This is done because of an issue on IOS pausing the video with autoplay
-    //     Future.delayed(Duration(milliseconds: 100), () {
-    //       _controller.play();
-    //     });
-    //   }
-    // }
-
-    // return widgets;
   }
 
   playChewieController() {
