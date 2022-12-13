@@ -538,7 +538,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         videoUrl: videoUrl,
         storiesGap: showStories,
         useOverlay: true,
-        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+        isOlukoControls: true,
         closeVideoPlayer: () => setState(() {
           _controller = null;
           isVideoVisible = !isVideoVisible;

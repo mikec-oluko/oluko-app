@@ -18,9 +18,9 @@ class VideoPlayerHelper {
   ];
 
   static final chewieProgressColors = ChewieProgressColors(
-    handleColor: OlukoColors.coral,
-    backgroundColor: OlukoColors.white,
-    bufferedColor: OlukoColors.warning,
+    handleColor: OlukoColors.black,
+    backgroundColor: OlukoColors.black,
+    bufferedColor: OlukoColors.grayColor,
     playedColor: OlukoColors.black,
   );
 
