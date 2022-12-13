@@ -67,7 +67,9 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
             }
           }
           if (widget.closeVideoPlayer != null) {
-            widget.closeVideoPlayer();
+            if (_controller.value.position == _controller.value.duration) {
+              widget.closeVideoPlayer();
+            }
           }
         }
         if (widget.whenInitialized != null) {
