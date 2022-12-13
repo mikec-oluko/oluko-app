@@ -88,7 +88,7 @@ class _OlukoCustomVideoPlayerState extends State<OlukoCustomVideoPlayer> {
         top: widget.storiesGap ? 25 : 15,
         right: 10,
         child: GestureDetector(
-          onTap: () => widget.closeVideoPlayer, //widget.onPlay(),
+          onTap: () => widget.closeVideoPlayer(), //widget.onPlay(),
           child: SizedBox(
             height: 46,
             width: 46,
