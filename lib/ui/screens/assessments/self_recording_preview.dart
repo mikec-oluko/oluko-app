@@ -21,6 +21,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -250,27 +251,14 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         ));
   }
 
-  List<Widget> showVideoPlayer() {
-    List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayer(
-        autoPlay: false,
+  Widget showVideoPlayer() {
+    return OlukoCustomVideoPlayer(
+        autoPlay: true,
         isOlukoControls: true,
         filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
-            })));
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    } else {
-      if (!_controller.isPlaying) {
-        //This is done because of an issue on IOS pausing the video with autoplay
-        Future.delayed(Duration(milliseconds: 100), () {
-          _controller.play();
-        });
-      }
-    }
-
-    return widgets;
+            }));
   }
 
   playChewieController() {
@@ -303,7 +291,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   Widget content() {
     return Column(children: [
-      ConstrainedBox(constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: showVideoPlayer())),
+      ConstrainedBox(constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: [showVideoPlayer()])),
       Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(children: [
@@ -324,7 +312,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   Widget neumorphicContent() {
     return Column(children: [
-      ConstrainedBox(constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: showVideoPlayer())),
+      ConstrainedBox(constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: [showVideoPlayer()])),
     ]);
   }
 }

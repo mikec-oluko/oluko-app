@@ -20,7 +20,7 @@ class OverlayVideoPreview extends StatefulWidget {
   final List<Widget> bottomWidgets;
   final Widget audioWidget;
 
-  OverlayVideoPreview(
+  const OverlayVideoPreview(
       {this.video,
       this.image,
       this.showBackButton = false,
@@ -38,7 +38,7 @@ class OverlayVideoPreview extends StatefulWidget {
 }
 
 class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
-  ChewieController _controller;
+  // ChewieController _controller;
 
   @override
   void initState() {
@@ -47,9 +47,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.bottomWidgets != null
-        ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets)
-        : videoWithButtons();
+    return widget.bottomWidgets != null ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets) : videoWithButtons();
   }
 
   Widget videoWithButtons() {

@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/routes.dart';
@@ -26,6 +27,7 @@ import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -273,7 +275,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               },
               child: OlukoVideoPreview(
                 image: widget.courses[index].image,
-                video: widget.courses[index].video,
+                video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.courses[index].videoHls, videoUrl: widget.courses[index].video),
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,
@@ -529,14 +531,18 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget showVideoPlayer(String videoUrl, bool showStories) {
-    final List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(
-      OlukoVideoPlayer(
-        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+    return SizedBox(
+      width: ScreenUtils.width(context),
+      height: showStories ? ScreenUtils.height(context) * 0.72 : ScreenUtils.height(context) * 0.77,
+      child: OlukoCustomVideoPlayer(
         videoUrl: videoUrl,
+        storiesGap: showStories,
+        useOverlay: true,
+        isOlukoControls: true,
+        closeVideoPlayer: () => setState(() {
+          _controller = null;
+          isVideoVisible = !isVideoVisible;
+        }),
         onVideoFinished: () => setState(() {
           _controller = null;
           isVideoVisible = !isVideoVisible;
@@ -544,37 +550,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         whenInitialized: (ChewieController chewieController) => setState(() {
           _controller = chewieController;
         }),
-      ),
-    );
-    return SizedBox(
-      width: ScreenUtils.width(context),
-      height: showStories ? ScreenUtils.height(context) * 0.72 : ScreenUtils.height(context) * 0.77,
-      child: Stack(
-        children: widgets +
-            [
-              Positioned(
-                top: showStories ? 25 : 15,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _controller = null;
-                      isVideoVisible = !isVideoVisible;
-                    });
-                  },
-                  child: SizedBox(
-                    height: 46,
-                    width: 46,
-                    child: OlukoBlurredButton(
-                      childContent: Image.asset(
-                        'assets/courses/white_cross.png',
-                        scale: 3.5,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
       ),
     );
   }

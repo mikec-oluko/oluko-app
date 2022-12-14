@@ -6,6 +6,7 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -206,27 +207,6 @@ class _State extends State<ImageAndVideoPreviewCard> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    int loaderWidgetIndex;
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-      loaderWidgetIndex = widgets.length - 1;
-    }
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => {
-              if (_controller == null && loaderWidgetIndex != null) {widgets.removeAt(loaderWidgetIndex)}
-            }));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+    return OlukoCustomVideoPlayer(videoUrl: videoUrl, useConstraints: true, autoPlay: false, whenInitialized: (ChewieController chewieController) => {});
   }
 }

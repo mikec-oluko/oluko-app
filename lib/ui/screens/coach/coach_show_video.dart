@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 
 class CoachShowVideo extends StatefulWidget {
   final String videoUrl;
@@ -58,32 +59,14 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   }
 
   Widget showVideoPlayer(String videoUrl, double aspectRatio) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoNeumorphism.isNeumorphismDesign
-        ? ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: OlukoVideoPlayer(
-                videoUrl: videoUrl,
-                aspectRatio: aspectRatio,
-                autoPlay: false,
-                whenInitialized: (ChewieController chewieController) => setState(() {
-                      _controller = chewieController;
-                    })),
-          )
-        : OlukoVideoPlayer(
-            videoUrl: videoUrl,
-            autoPlay: false,
-            whenInitialized: (ChewieController chewieController) => setState(() {
-                  _controller = chewieController;
-                })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+    return OlukoCustomVideoPlayer(
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        useConstraints: true,
+        videoUrl: videoUrl,
+        aspectRatio: aspectRatio,
+        autoPlay: false,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
   }
 }

@@ -12,6 +12,7 @@ import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -343,7 +344,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.mentoredVideosForNavigation.first.videoHLS ?? content.mentoredVideosForNavigation.first.video.url,
+                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                        videoHlsUrl: content.mentoredVideosForNavigation.first.videoHLS, videoUrl: content.mentoredVideosForNavigation.first.video.url),
                     'titleForContent': OlukoLocalizations.of(context).find('personalizedVideo')
                   });
                 },
@@ -390,7 +392,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.recommendationMedia.videoHls ?? content.recommendationMedia.video.url,
+                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                        videoHlsUrl: content.recommendationMedia.videoHls, videoUrl: content.recommendationMedia.video.url),
                     'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
                   });
                 },
@@ -413,7 +416,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.coachMediaMessage.videoHls ?? content.coachMediaMessage.video.url,
+                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                        videoHlsUrl: content.coachMediaMessage.videoHls, videoUrl: content.coachMediaMessage.video.url),
                     'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
                   });
                 },

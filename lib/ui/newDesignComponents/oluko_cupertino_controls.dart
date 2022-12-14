@@ -76,12 +76,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
           absorbing: notifier.hideStuff,
           child: Stack(
             children: [
-              if (_latestValue.isBuffering && (_latestValue.buffered[0].end.inSeconds < 10 || _latestValue.buffered[0].end >= _latestValue.position))
-                const Center(
-                  child: CircularProgressIndicator(),
-                )
-              else
-                _buildHitArea(),
+              _buildHitArea(),
               _buildActionBar(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -173,7 +168,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
     final options = <OptionItem>[
       OptionItem(
         onTap: () {
-         _onSpeedButtonTap();
+          _onSpeedButtonTap();
         },
         iconData: Icons.speed,
         title: chewieController.optionsTranslation?.playbackSpeedButtonText ?? 'Playback speed',
