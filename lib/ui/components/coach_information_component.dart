@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_user.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -24,8 +25,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
     _userLocation = getUserLocation(widget.coachUser);
     setState(() {
       if (widget.coachUser != null) {
-        defaultCoachPic =
-            '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
+        defaultCoachPic = '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
       }
     });
     super.initState();
@@ -91,8 +91,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
                   Text(
                     OlukoLocalizations.get(context, 'coach'),
                     style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                        customFontWeight: FontWeight.w500),
+                        customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, customFontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
                     width: 5.0,
@@ -101,15 +100,14 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
                     Text(
                       widget.coachUser.firstName,
                       style: OlukoFonts.olukoBigFont(
-                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                          customFontWeight: FontWeight.w500),
+                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, customFontWeight: FontWeight.w500),
                     )
                   else
                     const SizedBox.shrink()
                 ],
               ),
             ),
-            if (_userLocation != null)
+            if (_userLocation != null && GlobalService().showUserLocation)
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Text(
@@ -142,8 +140,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
 
   CircleAvatar avatarName() {
     return CircleAvatar(
-      backgroundColor:
-          widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
+      backgroundColor: widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
       radius: 24.0,
       child: Text(
           widget.coachUser != null
@@ -155,8 +152,7 @@ class _CoachInformationComponentState extends State<CoachInformationComponent> {
 
   String getUserLocation(CoachUser user) {
     String userLocationContent = '';
-    if ((user.city != null && user.city != 'null') &&
-        ((user.state != null && user.state != 'null') && (user.country != null && user.country != 'null'))) {
+    if ((user.city != null && user.city != 'null') && ((user.state != null && user.state != 'null') && (user.country != null && user.country != 'null'))) {
       userLocationContent = '${user.city}, ${user.state} ${user.country}';
     }
     return userLocationContent;
