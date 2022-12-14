@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -279,8 +280,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                   OlukoVideoPreview(
                                     showBackButton: true,
                                     image: widget.course.posterImage ?? widget.course.image,
-                                    video: widget.course.videoHls ?? widget.course.video,
-                                    // video: widget.course.video,
+                                    video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
                                     onBackPressed: () => Navigator.pop(context),
                                     onPlay: () => widget.playPauseVideo(),
                                     videoVisibilty: _isVideoPlaying,
@@ -339,8 +339,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                     padding: const EdgeInsets.only(bottom: 3),
                                     child: OverlayVideoPreview(
                                       image: widget.course.posterImage ?? widget.course.image,
-                                      video: widget.course.videoHls ?? widget.course.video,
-                                      // video: widget.course.video,
+                                      video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
                                       showBackButton: true,
                                       showHeartButton: true,
                                       showShareButton: true,

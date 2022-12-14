@@ -75,8 +75,6 @@ class InsideClass extends StatefulWidget {
   _InsideClassesState createState() => _InsideClassesState();
 }
 
-// class FirebaseUser {}
-
 class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
   // ChewieController _controller;

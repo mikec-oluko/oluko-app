@@ -16,7 +16,6 @@ class TaskRecordedPreviewCard extends StatefulWidget {
 }
 
 class _TaskRecordedPreviewCardState extends State<TaskRecordedPreviewCard> {
-  // bool isLoading = true;
   @override
   Widget build(BuildContext context) {
     return !widget.taskReady ? getLoadingCard() : _previewCardReady();
