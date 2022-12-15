@@ -87,7 +87,7 @@ class _State extends State<SegmentCameraPreview> {
 
   Widget closeButton() {
     return Padding(
-        padding: const EdgeInsets.only(right: 10, top: 15),
+        padding: const EdgeInsets.only(right: 10, top: 55),
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
             'assets/courses/grey_circle.png',

@@ -16,10 +16,14 @@ import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
+import 'package:oluko_app/ui/newDesignComponents/logout_pop_up_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -193,10 +197,21 @@ class _ProfilePageState extends State<ProfilePage> {
                           arguments: {'profileInfo': profileInfo, 'viewAllPage': false});
                       break;
                     case ProfileOptionsTitle.logout:
-                      BlocProvider.of<AuthBloc>(context).logout(context);
-                      AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
-                      Navigator.popUntil(context, ModalRoute.withName('/'));
-                      setState(() {});
+                      DialogUtils.getDialog(
+                          context,
+                          [
+                            LogoutPopUpContent(
+                                acceptAction: () {
+                                  BlocProvider.of<AuthBloc>(context).logout(context);
+                                  AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
+                                  Navigator.of(context, rootNavigator: true).pop();
+                                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                                  setState(() {});
+                                },
+                                cancelAction: () => Navigator.of(context, rootNavigator: true).pop())
+                          ],
+                          showExitButton: false);
+
                       break;
                     case ProfileOptionsTitle.assessmentVideos:
                       Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],

@@ -426,6 +426,7 @@
     "seeTextForTermsAndConditions": "See ",
     "contact": "contact",
     "prxPerformance": "PRx Performance",
-    "attention":"Attention!"
+    "attention":"Attention!",
+    "logoutPopUpMessage": "Are you sure you want to log out?"
     
 }

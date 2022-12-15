@@ -425,5 +425,7 @@
     "seeTextForTermsAndConditions": "Ver ",
     "contact": "contact",
     "prxPerformance": "PRx Performance",
-    "attention":"Atención!"
+    "attention":"Atención!",
+    "logoutPopUpMessage": "Estás seguro de que quieres cerrar sesión?"
+
 }

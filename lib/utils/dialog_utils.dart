@@ -5,6 +5,7 @@ class DialogUtils {
   static Future<dynamic> getDialog(BuildContext context, List<Widget> content, {bool showExitButton = true}) {
     return showDialog(
       context: context,
+      // useRootNavigator: false,
       builder: (context) => new AlertDialog(
           backgroundColor: OlukoColors.black,
           content: Stack(
