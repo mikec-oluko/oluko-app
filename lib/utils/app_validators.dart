@@ -6,6 +6,7 @@ enum StringValidation {
   containsBlankSpaces,
   startorEndWithBlankSpace,
   containsMinChars,
+  containsMinCharsFirstName,
   containsSpecialChars,
   isAlphabetic,
   isAlphanumeric,
@@ -64,6 +65,7 @@ class AppValidators {
 
     stringValidator[StringValidation.containsBlankSpaces] = validatePattern(value, r'\s+');
     stringValidator[StringValidation.startorEndWithBlankSpace] = validatePattern(value, r'^\s[a-z]+$') || validatePattern(value, r'^[a-z]+\s+$');
+    stringValidator[StringValidation.containsMinCharsFirstName] = validatePattern(value, r'^.{2,}');
     stringValidator[StringValidation.containsMinChars] = validatePattern(value, r'^.{3,}');
     stringValidator[StringValidation.containsSpecialChars] = validatePattern(value, r'^[a-zA-Z0-9]+$');
     stringValidator[StringValidation.isValidEmail] = validatePattern(value,
@@ -84,8 +86,7 @@ class AppValidators {
   }
 
   bool validatePattern(String value, Pattern pattern) {
-    RegExp regex = new RegExp(pattern.toString());
-    // print(value);
+    RegExp regex = RegExp(pattern.toString());
     if (value.isEmpty) {
       return false;
     } else {

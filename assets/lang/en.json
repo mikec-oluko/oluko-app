@@ -391,6 +391,7 @@
     "errorMessageBlankSpace": "Blank spaces are not allowed at the beginning or end of the field",
     "errorMessageContainBlankSpace": ", cannot contain blank spaces",
     "errorMessageMustContainAtLeast": ", must contain at least 3 ",
+    "errorMessageMustContainAtLeastFirstName": ", must contain at least 2 ",
     "errorMessageSpecialCharacters": ", cannot contain special characters.",
     "passwordRequirements": "Password Requirements",
     "registerByContinuing": "I agree to ",

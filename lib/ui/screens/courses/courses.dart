@@ -203,11 +203,11 @@ class _State extends State<Courses> {
                   : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
-      onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
+      onSearchSubmit: (SearchResults<Course> results) => setState(() {
         showSearchSuggestions = false;
         searchResults = results;
       }),
-      onSearchResults: (SearchResults results) => this.setState(() {
+      onSearchResults: (SearchResults results) => setState(() {
         showSearchSuggestions = true;
         searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.searchResults));
       }),

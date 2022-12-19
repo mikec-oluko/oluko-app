@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/register_fields_enum.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -299,7 +300,7 @@ class _RegisterState extends State<RegisterPage> {
     return Form(
       key: formKey,
       child: Column(
-        children: [
+        children: <OlukoRegisterTextfield>[
           OlukoRegisterTextfield(
               key: formKey,
               title: OlukoLocalizations.get(context, 'firstName'),
@@ -318,33 +319,7 @@ class _RegisterState extends State<RegisterPage> {
                   _newUserFromRegister.lastName = value;
                 });
               }),
-          OlukoRegisterTextfield(
-              key: formKey,
-              title: OlukoLocalizations.get(context, 'country'),
-              fieldType: RegisterFieldEnum.COUNTRY,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.country = value;
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
-              title: OlukoLocalizations.get(context, 'state'),
-              fieldType: RegisterFieldEnum.STATE,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.state = value;
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
-              title: OlukoLocalizations.get(context, 'city'),
-              fieldType: RegisterFieldEnum.CITY,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.city = value;
-                });
-              }),
+          if (!GlobalService().showUserLocation) ...getLocationFields(),
           OlukoRegisterTextfield(
               key: formKey,
               title: OlukoLocalizations.get(context, 'email'),
@@ -377,6 +352,38 @@ class _RegisterState extends State<RegisterPage> {
         ],
       ),
     );
+  }
+
+  List<OlukoRegisterTextfield> getLocationFields() {
+    return [
+      OlukoRegisterTextfield(
+          key: formKey,
+          title: OlukoLocalizations.get(context, 'country'),
+          fieldType: RegisterFieldEnum.COUNTRY,
+          onInputUpdated: (value) {
+            setState(() {
+              _newUserFromRegister.country = value;
+            });
+          }),
+      OlukoRegisterTextfield(
+          key: formKey,
+          title: OlukoLocalizations.get(context, 'state'),
+          fieldType: RegisterFieldEnum.STATE,
+          onInputUpdated: (value) {
+            setState(() {
+              _newUserFromRegister.state = value;
+            });
+          }),
+      OlukoRegisterTextfield(
+          key: formKey,
+          title: OlukoLocalizations.get(context, 'city'),
+          fieldType: RegisterFieldEnum.CITY,
+          onInputUpdated: (value) {
+            setState(() {
+              _newUserFromRegister.city = value;
+            });
+          }),
+    ];
   }
 
   void _passwordValidationStatus(Map<ValidatorNames, bool> passwordValidationState) {
