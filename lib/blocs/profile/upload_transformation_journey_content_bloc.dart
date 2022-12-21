@@ -21,6 +21,8 @@ class TransformationJourneyContentOpen extends TransformationJourneyContentState
 
 class TransformationJourneyContentSuccess extends TransformationJourneyContentState {}
 
+class TransformationJourneyContentDelete extends TransformationJourneyContentState {}
+
 class TransformationJourneyContentFailure extends OlukoException with TransformationJourneyContentState {
   TransformationJourneyContentFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
       : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
@@ -82,5 +84,13 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
 
   void openPanel() {
     emit(TransformationJourneyContentOpen());
+  }
+
+  void markContentAsDelete() {
+    emit(TransformationJourneyContentDelete());
+  }
+
+  void setElementAsDeleted() {
+    // TODO: STATE FOR ELEMENT DELETED, UPDATE PANEL IN VIEW
   }
 }

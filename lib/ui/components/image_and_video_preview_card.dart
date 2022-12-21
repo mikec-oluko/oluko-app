@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/ui/components/three_dots_menu.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
@@ -22,6 +25,8 @@ class ImageAndVideoPreviewCard extends StatefulWidget {
   final dynamic originalContent;
   final bool isCoach;
   final bool isCoachMediaContent;
+  final bool isEditing;
+  final Function() editAction;
 
   ImageAndVideoPreviewCard(
       {this.backgroundImage,
@@ -30,7 +35,9 @@ class ImageAndVideoPreviewCard extends StatefulWidget {
       this.showTitle = false,
       this.originalContent,
       this.isCoach = false,
-      this.isCoachMediaContent = false});
+      this.isCoachMediaContent = false,
+      this.isEditing = false,
+      this.editAction});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -72,36 +79,46 @@ class _State extends State<ImageAndVideoPreviewCard> {
     return _widgetToReturn;
   }
 
-  Stack imagePreview(BuildContext context) {
-    return Stack(children: [
-      InkWell(
-        onTap: () {
-          if (widget.originalContent is TransformationJourneyUpload && widget.showTitle) {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
-                arguments: {'TransformationJourneyUpload': transformationJourneyContent});
-          }
+  Widget imagePreview(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        if (widget.originalContent is TransformationJourneyUpload && widget.showTitle) {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
+              arguments: {'TransformationJourneyUpload': transformationJourneyContent});
+        }
 
-          if (widget.isCoachMediaContent) {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
-                arguments: {'coachMedia': widget.originalContent as CoachMedia});
-          }
-        },
-        child: Align(
-            alignment: Alignment.bottomCenter,
-            child: widget.showTitle
-                ? Container(
-                    width: 120,
-                    height: 30,
-                    child: Center(
-                      child: Text(
-                        titleForPreviewImage != null ? titleForPreviewImage : '',
-                        style: OlukoFonts.olukoSmallFont(),
-                      ),
-                    ),
-                  )
-                : SizedBox()),
-      )
-    ]);
+        if (widget.isCoachMediaContent) {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
+              arguments: {'coachMedia': widget.originalContent as CoachMedia});
+        }
+      },
+      child: Align(
+          alignment: Alignment.bottomCenter,
+          child: widget.showTitle
+              ? Container(
+                  width: 120,
+                  height: widget.isEditing ? 100 : 30,
+                  child: Center(
+                    child: widget.isEditing
+                        ? GestureDetector(
+                            onTap: () {
+                              if (widget.editAction != null) {
+                                widget.editAction();
+                              }
+                            },
+                            child: Image.asset(
+                              'assets/neumorphic/bin.png',
+                              scale: 3,
+                            ),
+                          )
+                        : Text(
+                            titleForPreviewImage != null ? titleForPreviewImage : '',
+                            style: OlukoFonts.olukoSmallFont().copyWith(fontSize: 9),
+                          ),
+                  ),
+                )
+              : SizedBox()),
+    );
   }
 
   Stack videoPreview(BuildContext context) {
@@ -179,6 +196,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
         borderRadius: BorderRadius.all(Radius.circular(10)),
         color: OlukoColors.black,
         image: DecorationImage(
+            opacity: widget.isEditing ? 0.15 : 1,
             fit: BoxFit.cover,
             alignment: Alignment.center,
             image: Image(
