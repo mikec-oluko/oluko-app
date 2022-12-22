@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
@@ -21,7 +22,10 @@ class TransformationJourneyContentOpen extends TransformationJourneyContentState
 
 class TransformationJourneyContentSuccess extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentDelete extends TransformationJourneyContentState {}
+class TransformationJourneyContentDelete extends TransformationJourneyContentState {
+  TransformationJourneyUpload elementToMarkAsDelete;
+  TransformationJourneyContentDelete({this.elementToMarkAsDelete});
+}
 
 class TransformationJourneyContentFailure extends OlukoException with TransformationJourneyContentState {
   TransformationJourneyContentFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
@@ -86,11 +90,7 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
     emit(TransformationJourneyContentOpen());
   }
 
-  void markContentAsDelete() {
-    emit(TransformationJourneyContentDelete());
-  }
-
-  void setElementAsDeleted() {
-    // TODO: STATE FOR ELEMENT DELETED, UPDATE PANEL IN VIEW
+  void markContentAsDelete(TransformationJourneyUpload elementToDelete) {
+    emit(TransformationJourneyContentDelete(elementToMarkAsDelete: elementToDelete));
   }
 }

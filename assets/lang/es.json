@@ -427,6 +427,10 @@
     "contact": "contact",
     "prxPerformance": "PRx Performance",
     "attention":"Atención!",
-    "logoutPopUpMessage": "Estás seguro de que quieres cerrar sesión?"
+    "logoutPopUpMessage": "¿Estás seguro de que quieres cerrar sesión?",
+    "deleteContentAlert": "¿Está seguro de que desea eliminar este contenido?",
+    "editContent":"Editar"
+
+
 
 }

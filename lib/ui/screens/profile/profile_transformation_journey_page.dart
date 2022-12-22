@@ -174,7 +174,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                       isEdit = !isEdit;
                                     });
                                   },
-                                  child: Text('Edit', style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary))),
+                                  child: Text(OlukoLocalizations.get(context, 'edit'),
+                                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary))),
                           ],
                         ),
                       ),
@@ -212,7 +213,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         if (state is TransformationJourneyContentDelete) {
           _panelController.open();
           _contentForPanel = ModalUploadOptions(
-            deleteAction: () => BlocProvider.of<TransformationJourneyContentBloc>(context).setElementAsDeleted(),
+            deleteAction: () => BlocProvider.of<TransformationJourneyBloc>(context).markContentAsDeleted(_profileInfo.id, state.elementToMarkAsDelete),
+            deleteCancelAction: () => BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState(),
             isDeleteRequested: true,
           );
         }
@@ -242,11 +244,11 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       builder: (context, state) {
         return SlidingUpPanel(
           onPanelClosed: () {
-            if (state is! TransformationJourneyContentDelete && state is! TransformationJourneyContentOpen) {
+            if (state is! TransformationJourneyContentDelete && (state is! TransformationJourneyContentOpen)) {
               BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
               BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
-              Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                  arguments: {'profileInfo': widget.userRequested, 'viewAllPage': false});
+              // Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
+              //     arguments: {'profileInfo': widget.userRequested, 'viewAllPage': false});
             }
           },
           backdropEnabled: canHidePanel,
@@ -350,7 +352,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                               displayOnViewNamed: ActualProfileRoute.transformationJourney,
                               originalContent: _transformationJourneyContent[index],
                               isEdit: isEdit,
-                              editAction: () => BlocProvider.of<TransformationJourneyContentBloc>(context).markContentAsDelete());
+                              editAction: () =>
+                                  BlocProvider.of<TransformationJourneyContentBloc>(context).markContentAsDelete(_transformationJourneyContent[index]));
                         },
                       ),
                     ),
@@ -371,7 +374,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                           displayOnViewNamed: ActualProfileRoute.transformationJourney,
                           originalContent: _transformationJourneyContent[index],
                           isEdit: isEdit,
-                          editAction: () => BlocProvider.of<TransformationJourneyContentBloc>(context).markContentAsDelete())),
+                          editAction: () =>
+                              BlocProvider.of<TransformationJourneyContentBloc>(context).markContentAsDelete(_transformationJourneyContent[index]))),
                 ),
         ),
       ),
@@ -390,6 +394,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         }
         if (state is TransformationJourneyFailure || state is TransformationJourneyDefault) {
           BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userToUse.id);
+        }
+        if (state is TransformationJourneyDeleteSuccess) {
+          BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userToUse.id);
+          BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
         }
         return page(context, _profileInfo);
       },

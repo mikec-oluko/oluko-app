@@ -428,6 +428,8 @@
     "contact": "contact",
     "prxPerformance": "PRx Performance",
     "attention":"Attention!",
-    "logoutPopUpMessage": "Are you sure you want to log out?"
+    "logoutPopUpMessage": "¿Are you sure you want to log out?",
+    "deleteContentAlert": "¿Are you sure you want to delete this content?",
+    "editContent":"Edit"
     
 }

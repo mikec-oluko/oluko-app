@@ -15,7 +15,8 @@ class ModalUploadOptions extends StatefulWidget {
   final int indexValue;
   final bool isDeleteRequested;
   final Function() deleteAction;
-  ModalUploadOptions({this.contentFrom, this.indexValue, this.isDeleteRequested = false, this.deleteAction});
+  final Function() deleteCancelAction;
+  ModalUploadOptions({this.contentFrom, this.indexValue, this.isDeleteRequested = false, this.deleteAction, this.deleteCancelAction});
   @override
   _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }
@@ -57,7 +58,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
       child: Column(
         children: [
           Row(
-            children: [Text("Delete content?", style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold))],
+            children: [Text(OlukoLocalizations.get(context, 'deleteContentAlert'), style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold))],
           ),
           SizedBox(
             height: 20,
@@ -65,7 +66,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
           Row(
             children: [
               OlukoNeumorphicPrimaryButton(
-                  title: 'Ok',
+                  title: OlukoLocalizations.get(context, 'ok'),
                   onPressed: () {
                     if (widget.deleteAction != null) {
                       widget.deleteAction();
@@ -74,30 +75,18 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
               SizedBox(
                 width: 20,
               ),
-              OlukoNeumorphicSecondaryButton(title: 'Cancel', onPressed: () {})
+              OlukoNeumorphicSecondaryButton(
+                  title: OlukoLocalizations.get(context, 'cancel'),
+                  onPressed: () {
+                    if (widget.deleteCancelAction != null) {
+                      widget.deleteCancelAction();
+                    }
+                  })
             ],
           )
         ],
       ),
     );
-    // return ListTile(
-    //   onTap: () {
-    //     if (isOptionSelected == false) {
-    //       setState(() {
-    //         isOptionSelected = true;
-    //       });
-    //       //TODO: Make a delete file
-    //       print("deleteElement");
-    //       // uploadContentFromGallery(context);
-    //     }
-    //   },
-    //   leading: const Icon(
-    //     Icons.delete,
-    //     color: Colors.red,
-    //   ),
-    //   title: Text('Delete Content', style: OlukoFonts.olukoSmallFont(customColor: Colors.red)),
-    //   // OlukoLocalizations.get(context, 'fromGallery')
-    // );
   }
 
   List<Widget> getUploadMethods(BuildContext context) {
