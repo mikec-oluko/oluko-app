@@ -13,10 +13,12 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 class ModalUploadOptions extends StatefulWidget {
   final UploadFrom contentFrom;
   final int indexValue;
+  final bool showDeleteOnList;
   final bool isDeleteRequested;
   final Function() deleteAction;
   final Function() deleteCancelAction;
-  ModalUploadOptions({this.contentFrom, this.indexValue, this.isDeleteRequested = false, this.deleteAction, this.deleteCancelAction});
+  ModalUploadOptions(
+      {this.contentFrom, this.indexValue, this.isDeleteRequested = false, this.deleteAction, this.deleteCancelAction, this.showDeleteOnList = false});
   @override
   _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }
@@ -45,6 +47,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
       width: MediaQuery.of(context).size.width,
       height: widget.isDeleteRequested ? 120 : 100,
       child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         shrinkWrap: true,
         children: widget.isDeleteRequested ? [getDeleteMethod(context)] : getUploadMethods(context),
@@ -122,6 +125,23 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
                 color: Colors.white,
               ),
         title: Text(OlukoLocalizations.get(context, 'fromGallery'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+      ),
+      ListTile(
+        onTap: () {
+          if (isOptionSelected == false) {
+            setState(() {
+              isOptionSelected = true;
+            });
+            // TODO: Add delete function by uploadFrom content (only profile/cover pictures)
+          }
+        },
+        leading: Image.asset(
+          'assets/neumorphic/bin.png',
+          color: Colors.red,
+          scale: 4.5,
+        ),
+        title: Text("Delete image", style: OlukoFonts.olukoSmallFont(customColor: Colors.red)),
+        // OlukoLocalizations.get(context, 'fromGallery')
       ),
     ];
   }
