@@ -132,7 +132,9 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
             setState(() {
               isOptionSelected = true;
             });
-            // TODO: Add delete function by uploadFrom content (only profile/cover pictures)
+            if (widget.deleteAction != null) {
+              widget.deleteAction();
+            }
           }
         },
         leading: Image.asset(

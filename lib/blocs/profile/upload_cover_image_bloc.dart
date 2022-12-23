@@ -18,6 +18,8 @@ class ProfileCoverImageDefault extends ProfileCoverImageState {}
 
 class ProfileCoverSuccess extends ProfileCoverImageState {}
 
+class ProfileCoverDeleteRequested extends ProfileCoverImageState {}
+
 class ProfileCoverImageFailure extends OlukoException with ProfileCoverImageState {
   ProfileCoverImageFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
       : super(exceptionType: exceptionType, exception: exception, exceptionSource: exceptionSource);
@@ -78,5 +80,9 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
 
   void openPanel() {
     emit(ProfileCoverImageOpen());
+  }
+
+  void emitDeleteRequest() {
+    emit(ProfileCoverDeleteRequested());
   }
 }

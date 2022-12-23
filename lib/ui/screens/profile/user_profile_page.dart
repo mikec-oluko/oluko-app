@@ -68,31 +68,31 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   UserResponse _currentAuthUser;
   UserResponse _userProfileToDisplay;
-  bool _isCurrentUser = false;
-  bool _isFollow = false;
   UserConnectStatus connectStatus;
+  UserStatistics userStats;
   Friend friendData;
   FriendModel friendModel;
-  List<UserResponse> friendUsers = [];
-  List<ChallengeNavigation> listOfChallenges = [];
-  String _connectButtonTitle = '';
-  List<TransformationJourneyUpload> _transformationJourneyContent = [];
-  List<TaskSubmission> _assessmentVideosContent = [];
-  List<Challenge> _activeChallenges = [];
-  List<Course> _coursesToUse = [];
-  List<CourseEnrollment> _courseEnrollmentList = [];
-  UserStatistics userStats;
-  final PanelController _panelController = PanelController();
-  final PanelController _coursesPanelController = PanelController();
-  double _panelMaxHeight = 100.0;
-  double _panelExtendedMaxHeight = 300.0;
+  UniqueChallengesSuccess _challengesCardsState;
+  bool _isCurrentUser = false;
+  bool _isFollow = false;
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
   bool canHidePanel = true;
   bool canDeleteProfilePic = false;
   bool canDeleteCoverPic = false;
+  double _panelMaxHeight = 100.0;
+  double _panelExtendedMaxHeight = 300.0;
+  String _connectButtonTitle = '';
+  List<UserResponse> friendUsers = [];
+  List<ChallengeNavigation> listOfChallenges = [];
+  List<TransformationJourneyUpload> _transformationJourneyContent = [];
+  List<TaskSubmission> _assessmentVideosContent = [];
+  List<Challenge> _activeChallenges = [];
+  List<Course> _coursesToUse = [];
+  List<CourseEnrollment> _courseEnrollmentList = [];
   Widget defaultWidgetNoContent = const SizedBox.shrink();
-  UniqueChallengesSuccess _challengesCardsState;
+  final PanelController _coursesPanelController = PanelController();
+  final PanelController _panelController = PanelController();
 
   @override
   void initState() {
@@ -102,6 +102,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       } else {
         _isCurrentUser = false;
       }
+      _userProfileToDisplay = widget.userRequested;
     });
     super.initState();
   }
@@ -109,28 +110,24 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      _userProfileToDisplay = widget.userRequested;
-
       if (state is AuthSuccess) {
         _currentAuthUser = state.user;
         BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
         if (_isOwnerProfile(authUser: _currentAuthUser, userRequested: widget.userRequested)) {
-          _userProfileToDisplay = _currentAuthUser;
           _isCurrentUser = true;
+          _userProfileToDisplay = _currentAuthUser;
           if (_isCurrentUser) {
             canDeleteProfilePic = _userProfileToDisplay.avatar != null;
             canDeleteCoverPic = _userProfileToDisplay.coverImage != null;
           }
         }
         _requestContentForUser(context: context, userRequested: _userProfileToDisplay);
-
         if (!_isCurrentUser && !_friendsRequested) {
           BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
           _friendsRequested = true;
         }
         return SlidingUpPanel(
             backdropEnabled: canHidePanel,
-            isDraggable: true,
             margin: EdgeInsets.zero,
             header: defaultWidgetNoContent,
             padding: EdgeInsets.zero,
@@ -181,46 +178,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
         listeners: [
           BlocListener<ProfileCoverImageBloc, ProfileCoverImageState>(
             listener: (context, state) {
-              if (state is ProfileCoverImageDefault || state is ProfileCoverImageOpen) {
-                setState(() {
-                  updatePanelProperties(_panelMaxHeight, true);
-                });
-              } else {
-                setState(() {
-                  updatePanelProperties(_panelExtendedMaxHeight, false);
-                });
-              }
-              if (state is ProfileCoverImageFailure) {
-                setState(() {
-                  updatePanelProperties(_panelMaxHeight, true);
-                });
-              }
+              _manageCoverImagePanelSize(state);
             },
           ),
           BlocListener<ProfileAvatarBloc, ProfileAvatarState>(
             listener: (context, state) {
-              if (state is ProfileAvatarDefault) {
-                setState(() {
-                  updatePanelProperties(_panelMaxHeight, true);
-                });
-              } else if (state is ProfileAvatarOpenPanel) {
-                setState(() {
-                  if (canDeleteProfilePic) {
-                    updatePanelProperties(160, true);
-                  } else {
-                    updatePanelProperties(_panelMaxHeight, true);
-                  }
-                });
-              } else {
-                setState(() {
-                  updatePanelProperties(_panelExtendedMaxHeight, false);
-                });
-              }
-              if (state is ProfileAvatarFailure) {
-                setState(() {
-                  updatePanelProperties(_panelMaxHeight, true);
-                });
-              }
+              _manageAvatarPanelSize(state);
+              // else {
+              //   setState(() {
+              //     updatePanelProperties(_panelExtendedMaxHeight, false);
+              //   });
+              // }
             },
           ),
           BlocListener<FriendBloc, FriendState>(
@@ -252,14 +220,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ],
         child: SlidingUpPanel(
           onPanelClosed: () {
-            if (_isNewCoverImage) {
-              setState(() {
-                _isNewCoverImage = !_isNewCoverImage;
-              });
-              BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
-            } else {
-              BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
-            }
+            _panelCloseBehavior();
           },
           backdropEnabled: canHidePanel,
           isDraggable: false,
@@ -280,72 +241,121 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
+  void _panelCloseBehavior() {
+    if (_isNewCoverImage) {
+      setState(() {
+        _isNewCoverImage = !_isNewCoverImage;
+      });
+      BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
+    } else {
+      BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+    }
+  }
+
   BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState> profileCoverImageBuilder(BuildContext profileViewContext) {
     return BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(builder: (context, state) {
-      Widget _contentForPanel = defaultWidgetNoContent;
-      if (state is ProfileCoverImageOpen) {
-        _panelController.isPanelClosed ? _panelController.open() : null;
-        _contentForPanel = ModalUploadOptions(
-          contentFrom: UploadFrom.profileCoverImage,
-          showDeleteOnList: canDeleteCoverPic,
-        );
-      }
-      if (state is ProfileCoverImageDefault) {
-        _contentForPanel = defaultWidgetNoContent;
-        _panelController.isPanelOpen ? _panelController.close() : null;
-      }
-      if (state is ProfileCoverImageLoading) {
-        _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
-      }
-      if (state is ProfileCoverSuccess) {
-        _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
-      }
-      if (state is ProfileCoverImageFailure) {
-        _contentForPanel = ModalExceptionMessage(
-            exceptionType: state.exceptionType,
-            onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
-            exceptionSource: state.exceptionSource);
-      }
-      if (state is ProfileCoverRequirePermissions) {
-        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
-      }
-      return _contentForPanel;
+      return _buildPanelContentForCoverImage(state, context);
     });
   }
 
   BlocBuilder<ProfileAvatarBloc, ProfileAvatarState> profileAvatarBuilder(BuildContext profileViewContext) {
     return BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(builder: (context, state) {
-      Widget _contentForPanel = defaultWidgetNoContent;
-
-      if (state is ProfileAvatarOpenPanel) {
-        _panelController.isPanelClosed ? _panelController.open() : null;
-        _contentForPanel = ModalUploadOptions(
-          contentFrom: UploadFrom.profileImage,
-          showDeleteOnList: canDeleteProfilePic,
-        );
-      }
-      if (state is ProfileAvatarDefault) {
-        _contentForPanel = defaultWidgetNoContent;
-
-        _panelController.isPanelOpen ? _panelController.close() : null;
-      }
-      if (state is ProfileAvatarLoading) {
-        _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
-      }
-      if (state is ProfileAvatarSuccess) {
-        _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
-      }
-      if (state is ProfileAvatarFailure) {
-        _contentForPanel = ModalExceptionMessage(
-            exceptionType: state.exceptionType,
-            onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
-            exceptionSource: state.exceptionSource);
-      }
-      if (state is ProfileAvatarRequirePermissions) {
-        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
-      }
-      return _contentForPanel;
+      return _buildPanelContentForAvatar(state, context);
     });
+  }
+
+  void _manageAvatarPanelSize(ProfileAvatarState state) {
+    if (state is ProfileAvatarDefault || state is ProfileAvatarFailure) {
+      setState(() {
+        updatePanelProperties(_panelMaxHeight, true);
+      });
+    }
+    if (state is ProfileAvatarDeleteRequested) {
+      setState(() {
+        updatePanelProperties(120, false);
+      });
+    }
+    if (state is ProfileAvatarOpenPanel) {
+      setState(() {
+        if (canDeleteProfilePic) {
+          updatePanelProperties(160, true);
+        } else {
+          updatePanelProperties(_panelMaxHeight, true);
+        }
+      });
+    }
+  }
+
+  void _manageCoverImagePanelSize(ProfileCoverImageState state) {
+    if (state is ProfileCoverImageDefault) {
+      setState(() {
+        updatePanelProperties(_panelMaxHeight, true);
+      });
+    } else {
+      setState(() {
+        updatePanelProperties(_panelExtendedMaxHeight, false);
+      });
+    }
+    if (state is ProfileCoverDeleteRequested) {
+      setState(() {
+        updatePanelProperties(120, false);
+      });
+    }
+    if (state is ProfileCoverImageOpen) {
+      setState(() {
+        if (canDeleteCoverPic) {
+          updatePanelProperties(160, true);
+        } else {
+          updatePanelProperties(_panelMaxHeight, true);
+        }
+      });
+    }
+    if (state is ProfileCoverImageFailure) {
+      setState(() {
+        updatePanelProperties(_panelMaxHeight, true);
+      });
+    }
+  }
+
+  Widget _buildPanelContentForCoverImage(ProfileCoverImageState state, BuildContext context) {
+    Widget _contentForPanel = defaultWidgetNoContent;
+    if (state is ProfileCoverImageOpen) {
+      _panelController.isPanelClosed ? _panelController.open() : null;
+      _contentForPanel = ModalUploadOptions(
+        contentFrom: UploadFrom.profileCoverImage,
+        showDeleteOnList: canDeleteCoverPic,
+        deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDeleteRequest(),
+      );
+    }
+    if (state is ProfileCoverImageDefault) {
+      _contentForPanel = defaultWidgetNoContent;
+      _panelController.isPanelOpen ? _panelController.close() : null;
+    }
+    if (state is ProfileCoverImageLoading) {
+      _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
+    }
+    if (state is ProfileCoverSuccess) {
+      _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
+    }
+    if (state is ProfileCoverDeleteRequested) {
+      _panelController.isPanelClosed ? _panelController.open() : null;
+      _contentForPanel = ModalUploadOptions(
+        contentFrom: UploadFrom.profileCoverImage,
+        isDeleteRequested: true,
+        deleteAction: () => print("Delete"),
+        deleteCancelAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState(),
+      );
+    }
+    if (state is ProfileCoverImageFailure) {
+      _contentForPanel = ModalExceptionMessage(
+          exceptionType: state.exceptionType,
+          onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
+          exceptionSource: state.exceptionSource);
+    }
+    if (state is ProfileCoverRequirePermissions) {
+      _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
+    }
+    return _contentForPanel;
   }
 
   Container buildProfileView(UserResponse userRequested) {
@@ -387,6 +397,51 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ],
       ),
     );
+  }
+
+  Widget _buildPanelContentForAvatar(ProfileAvatarState state, BuildContext context) {
+    Widget _contentForPanel = defaultWidgetNoContent;
+    if (state is ProfileAvatarOpenPanel) {
+      _checkOrOpenPanel();
+      _contentForPanel = ModalUploadOptions(
+        contentFrom: UploadFrom.profileImage,
+        showDeleteOnList: canDeleteProfilePic,
+        deleteAction: () => BlocProvider.of<ProfileAvatarBloc>(context).emitDeleteRequest(),
+      );
+    }
+    if (state is ProfileAvatarDeleteRequested) {
+      _checkOrOpenPanel();
+      _contentForPanel = ModalUploadOptions(
+        contentFrom: UploadFrom.profileImage,
+        isDeleteRequested: true,
+        deleteAction: () => print("Delete"),
+        deleteCancelAction: () => BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState(),
+      );
+    }
+    if (state is ProfileAvatarDefault) {
+      _contentForPanel = defaultWidgetNoContent;
+      _checkOrOpenPanel();
+    }
+    if (state is ProfileAvatarLoading) {
+      _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
+    }
+    if (state is ProfileAvatarSuccess) {
+      _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
+    }
+    if (state is ProfileAvatarFailure) {
+      _contentForPanel = ModalExceptionMessage(
+          exceptionType: state.exceptionType,
+          onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
+          exceptionSource: state.exceptionSource);
+    }
+    if (state is ProfileAvatarRequirePermissions) {
+      _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
+    }
+    return _contentForPanel;
+  }
+
+  void _checkOrOpenPanel() {
+    if (_panelController.isPanelClosed) _panelController.open();
   }
 
   Widget activeChallengesSlider(bool isCurrentUserRequested) {
@@ -467,7 +522,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         }
         return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
             ? Padding(
-                padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.symmetric(),
+                padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
                 child: buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList)))
             : defaultWidgetNoContent;
       },
@@ -577,11 +632,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
       child: SizedBox(
           width: ScreenUtils.width(context),
-          height: OlukoNeumorphism.isNeumorphismDesign
-              ? ScreenUtils.height(context) < 700
-                  ? ScreenUtils.height(context) / 2.5
-                  : ScreenUtils.height(context) / 2.8
-              : ScreenUtils.height(context) / 5,
+          height: getAdaptativeHeight(),
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
@@ -667,7 +718,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 )),
           )
         else
-          SizedBox.shrink(),
+          const SizedBox.shrink(),
       ]),
     );
   }
@@ -705,14 +756,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
             Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
                 arguments: {'courses': _coursesToUse, 'title': OlukoLocalizations.get(context, 'activeCourses')});
           },
-          children: contentForCourse != null
-              ? contentForCourse
-              : [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 150),
-                    child: OlukoCircularProgressIndicator(),
-                  )
-                ]),
+          children: contentForCourse ??
+              [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 150),
+                  child: OlukoCircularProgressIndicator(),
+                )
+              ]),
     );
   }
 
@@ -770,12 +820,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 arguments: {'isCurrentUser': _isCurrentUser, 'userRequested': _userProfileToDisplay, 'challengesCardsState': _challengesCardsState});
           }
         },
-        children: challengeList.isNotEmpty ? challengeList : [SizedBox.shrink()]);
+        children: challengeList.isNotEmpty ? challengeList : [const SizedBox.shrink()]);
   }
 
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
     return Padding(
-        padding: const EdgeInsets.only(top: 0),
+        padding: EdgeInsets.zero,
         child: CarouselSmallSection(
             routeToGo: routeForSection,
             title: titleForSection,
@@ -864,5 +914,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
         _connectButtonTitle = ProfileHelperFunctions.returnTitleForConnectButton(connectStatus, context);
       });
     }
+  }
+
+  double getAdaptativeHeight() {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? ScreenUtils.height(context) < 700
+            ? ScreenUtils.height(context) / 2.5
+            : ScreenUtils.height(context) / 2.8
+        : ScreenUtils.height(context) / 5;
   }
 }

@@ -16,6 +16,8 @@ class ProfileAvatarDefault extends ProfileAvatarState {}
 
 class ProfileAvatarOpenPanel extends ProfileAvatarState {}
 
+class ProfileAvatarDeleteRequested extends ProfileAvatarState {}
+
 class ProfileAvatarSuccess extends ProfileAvatarState {}
 
 class ProfileAvatarFailure extends OlukoException with ProfileAvatarState {
@@ -78,5 +80,9 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
 
   void openPanel() {
     emit(ProfileAvatarOpenPanel());
+  }
+
+  void emitDeleteRequest() {
+    emit(ProfileAvatarDeleteRequested());
   }
 }
