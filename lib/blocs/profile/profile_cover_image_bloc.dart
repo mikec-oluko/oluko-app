@@ -61,7 +61,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         return;
       }
       emit(ProfileCoverImageLoading());
-      await _profileRepository.uploadProfileCoverImage(_image);
+      await _profileRepository.uploadProfileCoverImage(image: _image);
       emit(ProfileCoverSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -82,7 +82,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
     emit(ProfileCoverImageOpen());
   }
 
-  void emitDeleteRequest() {
-    emit(ProfileCoverDeleteRequested());
+  Future<void> removeProfileCoverImage({String userId}) async {
+    await _profileRepository.uploadProfileCoverImage(isDeleteRequested: true);
   }
 }

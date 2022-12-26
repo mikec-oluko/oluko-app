@@ -12,6 +12,8 @@ abstract class ProfileAvatarState {}
 
 class ProfileAvatarLoading extends ProfileAvatarState {}
 
+class ProfileAvatarDeleted extends ProfileAvatarState {}
+
 class ProfileAvatarDefault extends ProfileAvatarState {}
 
 class ProfileAvatarOpenPanel extends ProfileAvatarState {}
@@ -62,8 +64,22 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         return;
       }
       emit(ProfileAvatarLoading());
-      await _profileRepository.updateProfileAvatar(_image);
+      await _profileRepository.updateProfileAvatar(image: _image);
       emit(ProfileAvatarSuccess());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(ProfileAvatarFailure(exception: exception, exceptionType: ExceptionTypeEnum.appFailed));
+      return;
+    }
+  }
+
+  Future<void> removeProfilePicture() async {
+    try {
+      await _profileRepository.updateProfileAvatar(isDeleteRequest: true);
+      emit(ProfileAvatarDeleted());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

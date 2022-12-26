@@ -135,14 +135,18 @@ class UserRepository {
     return null;
   }
 
-  Future<UserResponse> updateUserAvatar(UserResponse user, XFile file) async {
-    final DocumentReference<Object> userReference = getUserReference(user);
-
-    final thumbnail = await ImageUtils().getThumbnailForImage(file, 500);
-    final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path, 'avatar');
-    user.avatar = downloadUrl;
+  Future<UserResponse> updateUserAvatar(UserResponse user, XFile file, {bool isDeleteRequest = false}) async {
+    final DocumentReference<Object> userReference = getUserReference(user.id);
+    if (isDeleteRequest) {
+      user.avatar = null;
+      user.avatarThumbnail = null;
+    } else {
+      final thumbnail = await ImageUtils().getThumbnailForImage(file, 500);
+      final downloadUrl = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path, 'avatar');
+      user.avatar = downloadUrl;
+    }
     try {
-      //await userReference.update(user.toJson()); This will be done by the extesion
+      await userReference.update(user.toJson()); //This will be done by the extesion
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
@@ -154,14 +158,17 @@ class UserRepository {
     }
   }
 
-  Future<UserResponse> updateUserCoverImage({UserResponse user, XFile coverImage}) async {
-    final DocumentReference<Object> userReference = getUserReference(user);
-
-    final thumbnail = await ImageUtils().getThumbnailForImage(coverImage, 1000);
-    final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path, 'cover_image');
-    user.coverImage = coverDownloadImage;
+  Future<UserResponse> updateUserCoverImage(UserResponse user, XFile coverImage, {bool isDeleteRequest = false}) async {
+    final DocumentReference<Object> userReference = getUserReference(user.id);
+    if (isDeleteRequest) {
+      user.coverImage = null;
+    } else {
+      final thumbnail = await ImageUtils().getThumbnailForImage(coverImage, 1000);
+      final coverDownloadImage = await ImageUploadService.uploadImageToStorage(thumbnail, userReference.path, 'cover_image');
+      user.coverImage = coverDownloadImage;
+    }
     try {
-      //await userReference.update(user.toJson()); This will be done by the extesion
+      await userReference.update(user.toJson()); //This will be done by the extesion
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
@@ -173,14 +180,14 @@ class UserRepository {
     }
   }
 
-  DocumentReference<Object> getUserReference(UserResponse user) {
+  DocumentReference<Object> getUserReference(String userId) {
     final DocumentReference userReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(user.id);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
     return userReference;
   }
 
   Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex) async {
-    final DocumentReference<Object> userReference = getUserReference(user);
+    final DocumentReference<Object> userReference = getUserReference(user.id);
 
     user.privacy = privacyIndex;
     try {
@@ -197,7 +204,7 @@ class UserRepository {
   }
 
   Future<UserResponse> updateRecordingAlert(UserResponse user) async {
-    final DocumentReference<Object> userReference = getUserReference(user);
+    final DocumentReference<Object> userReference = getUserReference(user.id);
     user.showRecordingAlert = !user.showRecordingAlert;
     try {
       final userJson = user.toJson();
@@ -214,7 +221,7 @@ class UserRepository {
   }
 
   Future<UserResponse> updateUserLastAssessmentUploaded(UserResponse user, Timestamp lastAssessmentDate) async {
-    final DocumentReference<Object> userReference = getUserReference(user);
+    final DocumentReference<Object> userReference = getUserReference(user.id);
     user.assessmentsCompletedAt = lastAssessmentDate;
     try {
       await userReference.update(user.toJson());

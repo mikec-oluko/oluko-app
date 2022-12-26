@@ -13,8 +13,8 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -275,6 +275,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         updatePanelProperties(120, false);
       });
     }
+    if (state is ProfileAvatarDeleted) {
+      setState(() {
+        updatePanelProperties(_panelMaxHeight, true);
+      });
+      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    }
     if (state is ProfileAvatarOpenPanel) {
       setState(() {
         if (canDeleteProfilePic) {
@@ -324,12 +330,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
       _contentForPanel = ModalUploadOptions(
         contentFrom: UploadFrom.profileCoverImage,
         showDeleteOnList: canDeleteCoverPic,
-        deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDeleteRequest(),
+        deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).removeProfileCoverImage(),
       );
     }
     if (state is ProfileCoverImageDefault) {
       _contentForPanel = defaultWidgetNoContent;
-      _panelController.isPanelOpen ? _panelController.close() : null;
     }
     if (state is ProfileCoverImageLoading) {
       _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
@@ -414,13 +419,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
       _contentForPanel = ModalUploadOptions(
         contentFrom: UploadFrom.profileImage,
         isDeleteRequested: true,
-        deleteAction: () => print("Delete"),
+        deleteAction: () => BlocProvider.of<ProfileAvatarBloc>(context).removeProfilePicture(),
         deleteCancelAction: () => BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState(),
       );
     }
     if (state is ProfileAvatarDefault) {
       _contentForPanel = defaultWidgetNoContent;
-      _checkOrOpenPanel();
+    }
+    if (state is ProfileAvatarDeleted) {
+      _contentForPanel = defaultWidgetNoContent;
+      _panelController.isPanelClosed ? _panelController.open() : _panelController.close();
     }
     if (state is ProfileAvatarLoading) {
       _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
