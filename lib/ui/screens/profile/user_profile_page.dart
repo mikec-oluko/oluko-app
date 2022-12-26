@@ -184,11 +184,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
           BlocListener<ProfileAvatarBloc, ProfileAvatarState>(
             listener: (context, state) {
               _manageAvatarPanelSize(state);
-              // else {
-              //   setState(() {
-              //     updatePanelProperties(_panelExtendedMaxHeight, false);
-              //   });
-              // }
             },
           ),
           BlocListener<FriendBloc, FriendState>(
@@ -293,15 +288,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   void _manageCoverImagePanelSize(ProfileCoverImageState state) {
-    if (state is ProfileCoverImageDefault) {
-      setState(() {
-        updatePanelProperties(_panelMaxHeight, true);
-      });
-    } else {
-      setState(() {
-        updatePanelProperties(_panelExtendedMaxHeight, false);
-      });
-    }
     if (state is ProfileCoverDeleteRequested) {
       setState(() {
         updatePanelProperties(120, false);
@@ -321,33 +307,47 @@ class _UserProfilePageState extends State<UserProfilePage> {
         updatePanelProperties(_panelMaxHeight, true);
       });
     }
+    if (state is ProfileCoverImageDeleted) {
+      setState(() {
+        updatePanelProperties(_panelMaxHeight, true);
+      });
+      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    }
+    if (state is ProfileCoverImageDefault) {
+      setState(() {
+        updatePanelProperties(_panelMaxHeight, true);
+      });
+    }
   }
 
   Widget _buildPanelContentForCoverImage(ProfileCoverImageState state, BuildContext context) {
     Widget _contentForPanel = defaultWidgetNoContent;
     if (state is ProfileCoverImageOpen) {
-      _panelController.isPanelClosed ? _panelController.open() : null;
+      _openOrClosePanel(PanelState.open);
       _contentForPanel = ModalUploadOptions(
-        contentFrom: UploadFrom.profileCoverImage,
-        showDeleteOnList: canDeleteCoverPic,
-        deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).removeProfileCoverImage(),
-      );
+          contentFrom: UploadFrom.profileCoverImage,
+          showDeleteOnList: canDeleteCoverPic,
+          deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDeleteRequest());
     }
     if (state is ProfileCoverImageDefault) {
       _contentForPanel = defaultWidgetNoContent;
     }
     if (state is ProfileCoverImageLoading) {
-      _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
+      _contentForPanel = const UploadingModalLoader(UploadFrom.profileCoverImage);
+    }
+    if (state is ProfileCoverImageDeleted) {
+      _contentForPanel = defaultWidgetNoContent;
+      _openOrClosePanel(PanelState.close);
     }
     if (state is ProfileCoverSuccess) {
       _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
     }
     if (state is ProfileCoverDeleteRequested) {
-      _panelController.isPanelClosed ? _panelController.open() : null;
+      _openOrClosePanel(PanelState.open);
       _contentForPanel = ModalUploadOptions(
         contentFrom: UploadFrom.profileCoverImage,
         isDeleteRequested: true,
-        deleteAction: () => print("Delete"),
+        deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).removeProfileCoverImage(),
         deleteCancelAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState(),
       );
     }
@@ -407,7 +407,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget _buildPanelContentForAvatar(ProfileAvatarState state, BuildContext context) {
     Widget _contentForPanel = defaultWidgetNoContent;
     if (state is ProfileAvatarOpenPanel) {
-      _checkOrOpenPanel();
+      _openOrClosePanel(PanelState.open);
       _contentForPanel = ModalUploadOptions(
         contentFrom: UploadFrom.profileImage,
         showDeleteOnList: canDeleteProfilePic,
@@ -415,7 +415,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       );
     }
     if (state is ProfileAvatarDeleteRequested) {
-      _checkOrOpenPanel();
+      _openOrClosePanel(PanelState.close);
       _contentForPanel = ModalUploadOptions(
         contentFrom: UploadFrom.profileImage,
         isDeleteRequested: true,
@@ -428,7 +428,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
     if (state is ProfileAvatarDeleted) {
       _contentForPanel = defaultWidgetNoContent;
-      _panelController.isPanelClosed ? _panelController.open() : _panelController.close();
+      _openOrClosePanel(PanelState.close);
     }
     if (state is ProfileAvatarLoading) {
       _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
@@ -448,8 +448,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return _contentForPanel;
   }
 
-  void _checkOrOpenPanel() {
-    if (_panelController.isPanelClosed) _panelController.open();
+  void _openOrClosePanel(PanelState action) {
+    switch (action) {
+      case PanelState.open:
+        if (_panelController.isPanelClosed) _panelController.open();
+        break;
+      case PanelState.close:
+        if (_panelController.isPanelOpen) _panelController.close();
+        break;
+      default:
+        if (_panelController.isPanelOpen) _panelController.close();
+    }
   }
 
   Widget activeChallengesSlider(bool isCurrentUserRequested) {
@@ -932,3 +941,5 @@ class _UserProfilePageState extends State<UserProfilePage> {
         : ScreenUtils.height(context) / 5;
   }
 }
+
+enum PanelState { open, close }
