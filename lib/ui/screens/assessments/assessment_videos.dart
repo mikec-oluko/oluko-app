@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/submodels/assessment_task.dart';
@@ -24,6 +25,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
@@ -60,6 +62,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   @override
   void dispose() {
+    _controller.dispose();
     _assessmentAssignment = null;
     super.dispose();
   }
@@ -162,9 +165,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                               return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                                      child: showVideoPlayer(_assessment.videoHls ?? _assessment.video),
+                                      child: showVideoPlayer(
+                                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video)),
                                     )
-                                  : showVideoPlayer(_assessment.videoHls ?? _assessment.video);
+                                  : showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video));
                             },
                           ),
                         ),
@@ -304,34 +308,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoNeumorphism.isNeumorphismDesign
-        ? ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: OlukoVideoPlayer(
-                isOlukoControls: !UserUtils.userDeviceIsIOS(),
-                videoUrl: videoUrl,
-                autoPlay: false,
-                whenInitialized: (ChewieController chewieController) => setState(() {
-                      _controller = chewieController;
-                    })),
-          )
-        : OlukoVideoPlayer(
-            isOlukoControls: !UserUtils.userDeviceIsIOS(),
-            videoUrl: videoUrl,
-            autoPlay: false,
-            whenInitialized: (ChewieController chewieController) => setState(() {
-                  _controller = chewieController;
-                })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+    return OlukoCustomVideoPlayer(
+        videoUrl: videoUrl,
+        useConstraints: true,
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+        autoPlay: false,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
   }
 
   Widget taskCardsSection(List<TaskSubmission> taskSubmissions) {

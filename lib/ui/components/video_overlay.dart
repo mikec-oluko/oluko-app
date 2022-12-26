@@ -10,14 +10,13 @@ class VideoOverlay extends StatefulWidget {
   final Function() onPlay;
   final bool autoPlay;
   final bool isOlukoControls;
-  VideoOverlay(
-      {this.videoUrl,
-      this.onPlay,
-      Key key,
-      this.autoPlay = false,
-      this.isOlukoControls = false,
-      })
-      : super(key: key);
+  VideoOverlay({
+    this.videoUrl,
+    this.onPlay,
+    Key key,
+    this.autoPlay = false,
+    this.isOlukoControls = false,
+  }) : super(key: key);
 
   @override
   _VideoOverlayState createState() => _VideoOverlayState();
@@ -34,7 +33,7 @@ class _VideoOverlayState extends State<VideoOverlay> {
   @override
   Widget build(BuildContext context) {
     if (OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls) {
-      return Scaffold(backgroundColor:OlukoColors.black, body: showVideoPlayer(widget.videoUrl));
+      return Scaffold(backgroundColor: OlukoColors.black, body: showVideoPlayer(widget.videoUrl));
     } else {
       return Scaffold(
           backgroundColor: OlukoColors.black.withOpacity(0.5),
@@ -68,7 +67,7 @@ class _VideoOverlayState extends State<VideoOverlay> {
       widgets.add(
         OlukoVideoPlayer(
           isOlukoControls: widget.isOlukoControls,
-          videoUrl:videoUrl,
+          videoUrl: videoUrl,
           autoPlay: widget.autoPlay,
           whenInitialized: (ChewieController chewieController) => setState(() {
             _controller = chewieController;
@@ -112,12 +111,8 @@ class _VideoOverlayState extends State<VideoOverlay> {
 
       return ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-              ? ScreenUtils.height(context) / 4
-              : ScreenUtils.height(context) / 1.5,
-          minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-              ? ScreenUtils.height(context) / 4
-              : ScreenUtils.height(context) / 1.5,
+          maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
+          minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
         ),
         child: SizedBox(height: 400, child: Stack(children: widgets)),
       );

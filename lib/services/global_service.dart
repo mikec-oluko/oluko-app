@@ -9,15 +9,19 @@ class GlobalService with ChangeNotifier {
   bool _videoProcessing;
   bool _comesFromCoach;
   bool _hasInternetConnection;
+  bool _videoHlsIsActive;
   ConnectivityResult _connectivityType;
 
   GlobalService._internal() {
     _videoProcessing = false;
     _comesFromCoach = false;
     _hasInternetConnection = true;
+    _videoHlsIsActive = true;
   }
 
   bool get videoProcessing => _videoProcessing;
+
+  bool get appUseVideoHls => _videoHlsIsActive;
 
   set videoProcessing(bool value) => _videoProcessing = value;
 

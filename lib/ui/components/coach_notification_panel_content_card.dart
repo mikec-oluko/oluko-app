@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_notification_card.dart';
 import 'package:oluko_app/ui/components/coach_notification_video_card.dart';
@@ -65,8 +66,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             cardImage: content.contentImage,
             fileType: CoachFileTypeEnum.sentVideo,
             onCloseCard: () {
-              BlocProvider.of<CoachRequestBloc>(context)
-                  .setRequestSegmentNotificationAsViewed(content.coachRequest.id, widget.userId, true);
+              BlocProvider.of<CoachRequestBloc>(context).setRequestSegmentNotificationAsViewed(content.coachRequest.id, widget.userId, true);
             },
             onOpenCard: () {});
 
@@ -93,7 +93,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             },
             onOpenCard: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
+                'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: content.mentoredContent.videoHLS, videoUrl: content.videoUrl),
                 'aspectRatio': content.mentoredContent.video.aspectRatio,
                 'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
               });
@@ -131,7 +131,8 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             },
             onOpenCard: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                'videoUrl': content.recommendationMedia.videoHls ?? content.recommendationMedia.video.url,
+                'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                    videoHlsUrl: content.recommendationMedia.videoHls, videoUrl: content.recommendationMedia.video.url),
                 'aspectRatio': content.recommendationMedia.video.aspectRatio,
                 'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
               });
@@ -146,7 +147,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             },
             onOpenCard: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
+                'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: content.mentoredContent.videoHLS, videoUrl: content.videoUrl),
                 'aspectRatio': content.mentoredContent.video.aspectRatio,
                 'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
               });
@@ -158,8 +159,8 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
   }
 
   void updateAnnotationNotificationAsViewed(CoachNotificationContent content) {
-    BlocProvider.of<CoachMentoredVideosBloc>(context).setMentoredVideoNotificationAsViewed(
-        content.mentoredContent.createdBy, content.mentoredContent.userId, content.mentoredContent.id, true);
+    BlocProvider.of<CoachMentoredVideosBloc>(context)
+        .setMentoredVideoNotificationAsViewed(content.mentoredContent.createdBy, content.mentoredContent.userId, content.mentoredContent.id, true);
   }
 
   void updateRecommendationViewedProperty(CoachNotificationContent content) {
@@ -172,7 +173,6 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
   }
 
   void messageVideoAsViewed({CoachNotificationContent content, String userId}) {
-    BlocProvider.of<CoachVideoMessageBloc>(context)
-        .markVideoMessageNotificationAsSeen(userId: userId, messageVideoContent: content.coachMediaMessage);
+    BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageNotificationAsSeen(userId: userId, messageVideoContent: content.coachMediaMessage);
   }
 }
