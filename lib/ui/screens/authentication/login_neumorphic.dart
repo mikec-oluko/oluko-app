@@ -247,7 +247,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           title: OlukoLocalizations.get(context, 'login'),
         ),
       ),
-      if (Platform.isIOS || Platform.isMacOS)
+      // if (Platform.isIOS || Platform.isMacOS)
       Padding(
         padding: const EdgeInsets.only(top: 5),
         child: SizedBox(

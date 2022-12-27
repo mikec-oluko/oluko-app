@@ -322,6 +322,15 @@ class _RegisterState extends State<RegisterPage> {
           if (!GlobalService().showUserLocation) ...getLocationFields(),
           OlukoRegisterTextfield(
               key: formKey,
+              title: OlukoLocalizations.get(context, 'zipCode'),
+              fieldType: RegisterFieldEnum.ZIPCODE,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.zipCode = int.parse(value);
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
               title: OlukoLocalizations.get(context, 'email'),
               fieldType: RegisterFieldEnum.EMAIL,
               onInputUpdated: (value) {

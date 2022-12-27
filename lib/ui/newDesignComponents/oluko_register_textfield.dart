@@ -81,10 +81,16 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
     return TextFormField(
       controller: controller,
       focusNode: _inputFocusNode,
-      maxLength: 60,
+      maxLength: widget.fieldType == RegisterFieldEnum.ZIPCODE ? 5 : 60,
+      keyboardType: widget.fieldType == RegisterFieldEnum.ZIPCODE
+          ? TextInputType.number
+          : widget.fieldType == RegisterFieldEnum.EMAIL
+              ? TextInputType.emailAddress
+              : TextInputType.text,
       style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.black),
       decoration: InputDecoration(
         errorText: existError ? errorMessage : '',
+        counterText: '',
         focusedErrorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
         ),
@@ -226,6 +232,15 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           }
         }
         break;
+      case RegisterFieldEnum.ZIPCODE:
+        if (stringValidator != null) {
+          if (!stringValidator[StringValidation.isZipCode]) {
+            setErrorMessage(errorMessageToShow: _getErrorMessage(badZipCodeError: true));
+          } else {
+            _clearFieldErrors();
+          }
+        }
+        break;
       case RegisterFieldEnum.PASSWORD:
         widget.onPasswordValidate(AppValidators().getPasswordValidationState(value));
         break;
@@ -248,7 +263,10 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       bool alphabeticError = false,
       bool emailError = false,
       bool minLengthFirstName = false,
-      bool minCharsError = false}) {
+      bool minCharsError = false,
+      bool badZipCodeError = false}) {
+    String _endMessage = 'Is invalid';
+    final String _errorMessageBase = '${OlukoLocalizations.get(context, 'errorMessageTheField')} ${widget.title}';
     final String _specialChar = OlukoLocalizations.get(context, 'errorMessageSpecialCharacters');
     final String _onlyAlphabetic = OlukoLocalizations.get(context, 'errorMessageOnlyAlphabetic');
     final String _onlyAlphaNumeric = OlukoLocalizations.get(context, 'errorMessageOnlyAlphanumeric');
@@ -258,8 +276,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
     final String _invalidFirstNameLength =
         OlukoLocalizations.get(context, 'errorMessageMustContainAtLeastFirstName') + OlukoLocalizations.get(context, 'characters');
     final String _isNotEmail = OlukoLocalizations.get(context, 'errorMessageInvalidEmail');
-    final String _errorMessageBase = '${OlukoLocalizations.get(context, 'errorMessageTheField')} ${widget.title}';
-    String _endMessage = 'Is invalid';
+    final String _badZipCodeError = OlukoLocalizations.get(context, 'zipCodeErrorMessage');
 
     if (specialCharsError) _endMessage = _specialChar;
     if (startOrEndBlankError) _endMessage = _startOrEndWithBlankSpace;
@@ -269,6 +286,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
     if (emailError) _endMessage = _isNotEmail;
     if (minCharsError) _endMessage = _invalidLength;
     if (minLengthFirstName) _endMessage = _invalidFirstNameLength;
+    if (badZipCodeError) _endMessage = _badZipCodeError;
 
     return _errorMessageBase + _endMessage;
   }

@@ -10,7 +10,9 @@ enum StringValidation {
   containsSpecialChars,
   isAlphabetic,
   isAlphanumeric,
-  isValidEmail
+  isValidEmail,
+  isNumeric,
+  isZipCode
 }
 
 class AppValidators {
@@ -74,6 +76,8 @@ class AppValidators {
     stringValidator[StringValidation.isAlphanumeric] = validatePattern(value, r'^[a-zA-Z0-9]+$');
     stringValidator[StringValidation.isValidUserName] = validatePattern(value, r'^\S[a-zA-Z0-9_.-]{3,}$');
     stringValidator[StringValidation.isValidFirstAndLastName] = validatePattern(value, r'^[^0-9 ]+([a-zA-Z]+\s?)+[a-zA-Z]+$');
+    stringValidator[StringValidation.isNumeric] = validatePattern(value, r'^[0-9]*$');
+    stringValidator[StringValidation.isZipCode] = validatePattern(value, r'^[0-9]{5}$');
 
     List<StringValidation> validatorsWithError = [];
     stringValidator.forEach((key, value) {
