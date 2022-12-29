@@ -31,6 +31,7 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_course_list_of_classes.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -48,168 +49,8 @@ class EnrolledCourse extends StatefulWidget {
       {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex, this.fromHome = false})
       : super(key: key);
 
-  get progress => null;
-
   @override
   _EnrolledCourseState createState() => _EnrolledCourseState();
-
-  Widget buildClassEnrolledCards(
-    BuildContext context,
-    List<Class> classes, {
-    Function outSideCloseVideo,
-    Course outsideCourse,
-    CourseEnrollment outsideCourseEnrollment,
-    int outsideCourseIndex,
-    Function onPressed,
-  }) {
-    final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
-    final int index = courseIndex ?? outsideCourseIndex;
-
-    final List<Class> _coursesClases = CourseService.getCourseClasses(classes, courseEnrollment: outsideCourseEnrollment ?? courseEnrollment);
-    final List<ClassItem> _classItems = [];
-    for (final element in _coursesClases) {
-      final ClassItem classItem = ClassItem(classObj: element, expanded: false);
-      _classItems.add(classItem);
-    }
-    final List<ClassItem> _classItemsToUse = [];
-    for (final enrolledClass in enrollment.classes) {
-      for (final courseClass in _classItems) {
-        if (enrolledClass.id == courseClass.classObj.id) {
-          _classItemsToUse.add(courseClass);
-        }
-      }
-    }
-
-    return ListView(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      children: [
-        ..._classItemsToUse.map(
-          (item) => getIncompletedClasses(_classItemsToUse, enrollment, outSideCloseVideo, closeVideo, context, index, item, onPressed: onPressed),
-        ),
-        ..._classItemsToUse.map(
-          (item) => getCompletedClasses(enrollment, _classItemsToUse, item, context, index, onPressed: onPressed),
-        )
-      ],
-    );
-  }
-
-  Widget getCompletedClasses(
-    CourseEnrollment enrollment,
-    List<ClassItem> _classItemsToUse,
-    ClassItem item,
-    BuildContext context,
-    int index, {
-    Function onPressed,
-  }) {
-    final classIndex = _classItemsToUse.indexOf(item);
-    return enrollment.classes[classIndex] != null && enrollment.classes[classIndex].completedAt != null
-        ? GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                routeLabels[RouteEnum.insideClass],
-                arguments: {
-                  'courseEnrollment': enrollment,
-                  'classIndex': classIndex,
-                  'courseIndex': index,
-                },
-              );
-              onPressed != null ? onPressed() : null;
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: ClassSection(
-                classProgress: 1,
-                isCourseEnrolled: true,
-                index: classIndex,
-                total: _classItemsToUse.length,
-                classObj: item.classObj,
-              ),
-            ),
-          )
-        : const SizedBox();
-  }
-}
-
-Widget getIncompletedClasses(
-  List<ClassItem> _classItemsToUse,
-  CourseEnrollment enrollment,
-  Function outSideCloseVideo,
-  Function closeVideo,
-  BuildContext context,
-  int index,
-  ClassItem item, {
-  Function onPressed,
-}) {
-  final classIndex = _classItemsToUse.indexOf(item);
-  final classProgress = CourseEnrollmentService.getClassProgress(enrollment, classIndex);
-  return enrollment.classes[classIndex].completedAt == null
-      ? classProgress == 0
-          ? Neumorphic(
-              margin: const EdgeInsets.all(15),
-              style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
-                classProgress > 0,
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  onPressed != null ? onPressed() : null;
-                  if (closeVideo != null) {
-                    closeVideo();
-                  } else {
-                    outSideCloseVideo();
-                  }
-                  Navigator.pushNamed(
-                    context,
-                    routeLabels[RouteEnum.insideClass],
-                    arguments: {
-                      'courseEnrollment': enrollment,
-                      'classIndex': classIndex,
-                      'courseIndex': index,
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: ClassSection(
-                    classProgress: classProgress,
-                    isCourseEnrolled: true,
-                    index: classIndex,
-                    total: _classItemsToUse.length,
-                    classObj: item.classObj,
-                  ),
-                ),
-              ),
-            )
-          : GestureDetector(
-              onTap: () {
-                if (closeVideo != null) {
-                  closeVideo();
-                } else {
-                  outSideCloseVideo();
-                }
-                Navigator.pushNamed(
-                  context,
-                  routeLabels[RouteEnum.insideClass],
-                  arguments: {
-                    'courseEnrollment': enrollment,
-                    'classIndex': classIndex,
-                    'courseIndex': index,
-                  },
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: ClassSection(
-                  classProgress: classProgress,
-                  isCourseEnrolled: true,
-                  index: classIndex,
-                  total: _classItemsToUse.length,
-                  classObj: item.classObj,
-                ),
-              ),
-            )
-      : const SizedBox();
 }
 
 class _EnrolledCourseState extends State<EnrolledCourse> {
@@ -287,10 +128,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                     bottomWidgets: [
                                       Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                                        child: Text(
-                                          widget.course.name,
-                                          style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-                                        ),
+                                        child: _courseTitle(),
                                       ),
                                     ],
                                   ),
@@ -304,19 +142,18 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
-                                            child: Text(
-                                              widget.course.description ?? '',
-                                              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal),
-                                            ),
+                                            child: _courseDescription(),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 25.0),
-                                            child: Text(
-                                              OlukoLocalizations.get(context, 'classes'),
-                                              style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
-                                            ),
+                                            child: _classesText(context),
                                           ),
-                                          widget.buildClassEnrolledCards(context, _classes)
+                                          CourseClassCardsList(
+                                            classes: _classes,
+                                            course: widget.course,
+                                            courseEnrollment: widget.courseEnrollment,
+                                            courseIndex: widget.courseIndex,
+                                          )
                                         ],
                                       ),
                                     ),
@@ -354,42 +191,19 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            widget.course.name,
-                                            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-                                          ),
+                                          _courseTitle(),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
-                                            child: Text(
-                                              //TODO: change weeks number
-                                              CourseUtils.toCourseDuration(
-                                                int.tryParse(widget.course.duration) ?? 0,
-                                                widget.course.classes != null ? widget.course.classes.length : 0,
-                                                context,
-                                              ),
-                                              style: OlukoFonts.olukoBigFont(
-                                                customFontWeight: FontWeight.normal,
-                                                customColor: OlukoColors.grayColor,
-                                              ),
-                                            ),
+                                            child: _courseDuration(context),
                                           ),
                                           buildStatistics(),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
-                                            child: Text(
-                                              widget.course.description ?? '',
-                                              style: OlukoFonts.olukoBigFont(
-                                                customFontWeight: FontWeight.normal,
-                                                customColor: OlukoColors.grayColor,
-                                              ),
-                                            ),
+                                            child: _courseDescription(),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 25.0),
-                                            child: Text(
-                                              OlukoLocalizations.get(context, 'classes'),
-                                              style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
-                                            ),
+                                            child: _classesText(context),
                                           ),
                                           buildClassExpansionPanels()
                                         ],
@@ -412,6 +226,45 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
           },
         );
       },
+    );
+  }
+
+  Text _classesText(BuildContext context) {
+    return Text(
+      OlukoLocalizations.get(context, 'classes'),
+      style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
+    );
+  }
+
+  Text _courseDescription() {
+    return Text(
+      widget.course.description ?? '',
+      style: OlukoFonts.olukoBigFont(
+        customFontWeight: FontWeight.normal,
+        customColor: OlukoColors.grayColor,
+      ),
+    );
+  }
+
+  Text _courseDuration(BuildContext context) {
+    return Text(
+      //TODO: change weeks number
+      CourseUtils.toCourseDuration(
+        int.tryParse(widget.course.duration) ?? 0,
+        widget.course.classes != null ? widget.course.classes.length : 0,
+        context,
+      ),
+      style: OlukoFonts.olukoBigFont(
+        customFontWeight: FontWeight.normal,
+        customColor: OlukoColors.grayColor,
+      ),
+    );
+  }
+
+  Text _courseTitle() {
+    return Text(
+      widget.course.name,
+      style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
     );
   }
 
