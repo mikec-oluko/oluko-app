@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CoachMentoredVideosState {}
@@ -31,6 +32,8 @@ class CoachMentoredVideoFailure extends CoachMentoredVideosState {
 
 class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   final CoachRepository _coachRepository = CoachRepository();
+    final SoundPlayer _soundPlayer = SoundPlayer();
+
   CoachMentoredVideosBloc() : super(Loading());
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
@@ -68,6 +71,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
         }
 
         if (coachAnnotationsChangedItems.isNotEmpty) {
+         await _soundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
           emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsChangedItems.toList()));
         } else {
           emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations.toList()));
