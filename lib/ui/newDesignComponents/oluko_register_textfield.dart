@@ -90,6 +90,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.black),
       decoration: InputDecoration(
         errorText: existError ? errorMessage : '',
+        errorMaxLines: 2,
         counterText: '',
         focusedErrorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),

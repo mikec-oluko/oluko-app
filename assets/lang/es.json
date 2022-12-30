@@ -430,7 +430,7 @@
     "logoutPopUpMessage": "¿Estás seguro de que quieres cerrar sesión?",
     "deleteContentAlert": "¿Está seguro de que desea eliminar este contenido?",
     "editContent":"Editar",
-    "zipCode":"Código postal",
+    "zipCode":"Código postal ",
     "zipCodeErrorMessage": "Contiene un código postal no válido."
 
 
