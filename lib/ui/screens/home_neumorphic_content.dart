@@ -55,7 +55,6 @@ class HomeNeumorphicContent extends StatefulWidget {
 
 class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   ScrollController horizontalScrollController;
-  // ScrollController verticalScrollController;
   CarouselController carouselController = CarouselController();
   ChewieController _controller;
   bool isVideoVisible = false;
@@ -67,11 +66,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool _isBottomTabActive = true;
   List<Course> _activeCourses = [];
   UserResponse _currentAuthUser;
+  List<Course> _growListOfCourses = [];
+  final int _courseChunkMaxValue = 5; 
 
   @override
   void initState() {
     super.initState();
-    // verticalScrollController = ScrollController();
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
     horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
     BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
@@ -85,7 +85,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   @override
   void dispose() {
     horizontalScrollController.dispose();
-    // verticalScrollController.dispose();
     if (_controller != null) _controller.dispose();
     super.dispose();
   }
@@ -111,6 +110,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         builder: (context, courseState) {
           if (courseState is GetByCourseEnrollmentsSuccess) {
             _activeCourses = courseState.courses;
+            if(_growListOfCourses.isEmpty){
+                _addFirstChunkOfCourses();
+            }
             if (_activeCourses.isNotEmpty) {
               return enrolled();
             } else {
@@ -123,6 +125,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       );
     } else {
       return notEnrolled();
+    }
+  }
+
+  void _addFirstChunkOfCourses() {
+    if(_activeCourses.length > _courseChunkMaxValue){
+    _growListOfCourses = _activeCourses.getRange(0, _courseChunkMaxValue).toList();
+    }else{
+    _growListOfCourses = _activeCourses;
     }
   }
 
@@ -139,17 +149,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
             ];
           },
-
-          // TODO: MAKE LIST DYNAMIC, ADD ELEMENTS ON CHANGE INDEX
           body: CarouselSlider.builder(
             carouselController: carouselController,
-            itemCount: widget.courseEnrollments.length + 1,
+            itemCount: widget.courseEnrollments.length + 1, 
             itemBuilder: (context, index) {
-              if (_activeCourses.length - 1 >= index) {
-                if (_activeCourses[index] != null) {
+             _populateGrowListOfCourses(index);
+              if (_growListOfCourses.length - 1 >= index) {
+                if (_growListOfCourses[index] != null) {
                   return CustomScrollView(
-                    // controller: verticalScrollController,
-                    cacheExtent: 105.0 * _activeCourses[index].classes.length,
+                    cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
                     slivers: <Widget>[
                       SliverStack(children: [
                         getClassView(index, context),
@@ -238,6 +246,26 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       return OlukoCircularProgressIndicator();
     }
   }
+
+  void _populateGrowListOfCourses(int index) {
+     List<Course> newBatchOfCourses = [];
+    if (_growListOfCourses.length - 1 == index) {
+       if(_growListNewLength < _activeCourses.length){
+           if((_activeCourses.length - _growListNewLength) >= _courseChunkMaxValue){
+           newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length,_growListNewLength).toList();
+           }else{
+           newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length,_activeCourses.length).toList();
+           }
+          _growListOfCourses.addAll(newBatchOfCourses);
+       }else{
+         if(_growListNewLength == _activeCourses.length){
+             _growListOfCourses = _activeCourses;
+         }
+       }
+    }
+  }
+
+  int get _growListNewLength => _growListOfCourses.length + _courseChunkMaxValue;
 
   SliverAppBar getLogo() {
     return SliverAppBar(
