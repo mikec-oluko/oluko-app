@@ -41,6 +41,7 @@ import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
+import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
@@ -450,6 +451,7 @@ class Routes {
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
+  final CommonFriendPanelBloc _commonFriendPanelBloc = CommonFriendPanelBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -540,7 +542,9 @@ class Routes {
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<UserPlanSubscriptionBloc>.value(value: _userPlanSubscriptionBloc),
-          BlocProvider<UserBloc>.value(value: _userBloc)
+          BlocProvider<UserBloc>.value(value: _userBloc),
+          BlocProvider<CommonFriendPanelBloc>.value(value: _commonFriendPanelBloc),
+          // CommonFriendPanelBloc _commonFriendPanelBloc
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -999,6 +1003,7 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CommonFriendPanelBloc>.value(value: _commonFriendPanelBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(

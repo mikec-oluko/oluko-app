@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -77,7 +78,6 @@ class InsideClass extends StatefulWidget {
 
 class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
-  // ChewieController _controller;
   Class _class;
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
@@ -96,7 +96,9 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   void initState() {
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
+    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
     super.initState();
@@ -104,9 +106,6 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   void dispose() {
-    // if (_controller != null) {
-    //   _controller?.dispose();
-    // }
     super.dispose();
   }
 
@@ -114,7 +113,7 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {}
+        // if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {}
         return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
@@ -125,16 +124,17 @@ class _InsideClassesState extends State<InsideClass> {
               _audios = AudioService.getNotDeletedAudios(classAudios);
               _audioQty = _audios == null ? 0 : _audios.length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
-              BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
               return WillPopScope(
                   onWillPop: () {
-                    _buttonController?.close();
-                    Navigator.pop(context);
-                    return Future(() => false);
+                    return _onBackButtonPress(context);
                   },
                   child: form());
             } else {
-              return OlukoCircularProgressIndicator();
+              return Container(
+                  width: ScreenUtils.width(context),
+                  height: ScreenUtils.height(context),
+                  color: OlukoNeumorphismColors.appBackgroundColor,
+                  child: OlukoCircularProgressIndicator());
             }
           });
         });
@@ -144,8 +144,13 @@ class _InsideClassesState extends State<InsideClass> {
     });
   }
 
+  Future<bool> _onBackButtonPress(BuildContext context) {
+    _buttonController?.close();
+    Navigator.pop(context);
+    return Future(() => false);
+  }
+
   Widget form() {
-    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     return Form(
       key: _formKey,
       child: Scaffold(body: BlocBuilder<CoachAudioBloc, CoachAudioState>(
