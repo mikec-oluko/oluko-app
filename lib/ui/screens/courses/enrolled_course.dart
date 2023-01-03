@@ -64,7 +64,9 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   @override
   void initState() {
     super.initState();
-
+    BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
+    BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
+    BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
     widget.playPauseVideo = () => setState(() {
           _isVideoPlaying = !_isVideoPlaying;
         });
@@ -87,11 +89,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
           _user = authState.firebaseUser;
           if (_userState == null) {
             _userState = authState;
-            BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
-            BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-            BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
             BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
-            BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
+            BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
           }
           return form();
         } else {
@@ -102,7 +101,13 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   }
 
   Widget form() {
-    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+    return BlocConsumer<CourseEnrollmentBloc, CourseEnrollmentState>(
+      listener: (context, enrollmentState) {
+        if (enrollmentState is CreateEnrollmentSuccess) {
+          BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
+          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+        }
+      },
       builder: (context, enrollmentState) {
         return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
           builder: (context, classState) {
@@ -269,54 +274,98 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1)) {
-      return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-        listener: (context, courseEnrollmentState) {
-          if (courseEnrollmentState is CreateEnrollmentSuccess) {
-            BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              if (OlukoNeumorphism.isNeumorphismDesign)
-                OlukoNeumorphicPrimaryButton(
-                  thinPadding: true,
-                  title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
-                    if (_disableAction == false) {
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
+    if (_isCourseActive(courseEnrollment)) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              OlukoNeumorphicPrimaryButton(
+                thinPadding: true,
+                title: OlukoLocalizations.get(context, 'enroll'),
+                onPressed: () {
+                  if (_disableAction == false) {
+                    BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                    if (!widget.isCoachRecommendation) {
+                      BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                     }
-                    _disableAction = true;
-                  },
-                )
-              else
-                OlukoPrimaryButton(
-                  title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
-                    if (_disableAction == false) {
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      if (!widget.isCoachRecommendation) {
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-                      }
+                  }
+                  _disableAction = true;
+                },
+              )
+            else
+              OlukoPrimaryButton(
+                title: OlukoLocalizations.get(context, 'enroll'),
+                onPressed: () {
+                  if (_disableAction == false) {
+                    BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                    if (!widget.isCoachRecommendation) {
+                      BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                     }
-                    _disableAction = true;
-                  },
-                ),
-            ],
-          ),
+                  }
+                  _disableAction = true;
+                },
+              ),
+          ],
         ),
       );
     } else {
       return const SizedBox();
     }
   }
+  // Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
+  //   if (_isCourseActive(courseEnrollment)) {
+  //     return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
+  //       listener: (context, courseEnrollmentState) {
+  //         if (courseEnrollmentState is CreateEnrollmentSuccess) {
+  //           BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
+  //           Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+  //         }
+  //       },
+  //       child: Padding(
+  //         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+  //         child: Row(
+  //           mainAxisSize: MainAxisSize.max,
+  //           children: [
+  //             if (OlukoNeumorphism.isNeumorphismDesign)
+  //               OlukoNeumorphicPrimaryButton(
+  //                 thinPadding: true,
+  //                 title: OlukoLocalizations.get(context, 'enroll'),
+  //                 onPressed: () {
+  //                   if (_disableAction == false) {
+  //                     BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+  //                     if (!widget.isCoachRecommendation) {
+  //                       BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+  //                     }
+  //                   }
+  //                   _disableAction = true;
+  //                 },
+  //               )
+  //             else
+  //               OlukoPrimaryButton(
+  //                 title: OlukoLocalizations.get(context, 'enroll'),
+  //                 onPressed: () {
+  //                   if (_disableAction == false) {
+  //                     BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+  //                     if (!widget.isCoachRecommendation) {
+  //                       BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+  //                     }
+  //                   }
+  //                   _disableAction = true;
+  //                 },
+  //               ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   } else {
+  //     return const SizedBox();
+  //   }
+  // }
+
+  bool _isCourseActive(CourseEnrollment courseEnrollment) =>
+      (courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1);
 
   Widget buildStatistics() {
     return BlocBuilder<StatisticsSubscriptionBloc, StatisticsSubscriptionState>(

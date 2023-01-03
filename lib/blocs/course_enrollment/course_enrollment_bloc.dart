@@ -9,7 +9,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseEnrollmentState {}
 
-class Loading extends CourseEnrollmentState {}
+class CourseEnrollmentLoading extends CourseEnrollmentState {}
 
 class MarkSegmentSuccess extends CourseEnrollmentState {}
 
@@ -46,7 +46,7 @@ class CourseEnrollmentListSuccess extends CourseEnrollmentState {
 }
 
 class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
-  CourseEnrollmentBloc() : super(Loading());
+  CourseEnrollmentBloc() : super(CourseEnrollmentLoading());
 
   void create(User user, Course course) async {
     try {
@@ -63,7 +63,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   }
 
   Future<CourseEnrollment> get(User user, Course course) async {
-    emit(Loading());
+    emit(CourseEnrollmentLoading());
     try {
       CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
