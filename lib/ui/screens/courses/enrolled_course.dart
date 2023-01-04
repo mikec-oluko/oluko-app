@@ -89,7 +89,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
           _user = authState.firebaseUser;
           if (_userState == null) {
             _userState = authState;
-            BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
+            BlocProvider.of<CourseEnrollmentBloc>(context).get(_userState.user.id, widget.course);
             BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
           }
           return form();

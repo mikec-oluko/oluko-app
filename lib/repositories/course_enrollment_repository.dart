@@ -25,11 +25,12 @@ class CourseEnrollmentRepository {
 
   CourseEnrollmentRepository.test({this.firestoreInstance});
 
-  static Future<CourseEnrollment> get(Course course, User user) async {
+  static Future<CourseEnrollment> get(Course course, String userId) async {
     final CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
 
-    final QuerySnapshot qs = await reference.where('course.id', isEqualTo: course.id).where('created_by', isEqualTo: user.uid).get();
+    final Query<Object> userEnrollments = reference.where('created_by', isEqualTo: userId);
+    final QuerySnapshot qs = await userEnrollments.where('course.id', isEqualTo: course.id).get();
 
     if (qs.docs.isNotEmpty) {
       if (qs.docs.length > 1) {
@@ -44,6 +45,16 @@ class CourseEnrollmentRepository {
       }
     }
     return null;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCourseEnrollmentStream(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> courseEnrollmentStream = firestoreInstance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .where('created_by', isEqualTo: userId)
+        .snapshots(includeMetadataChanges: true);
+    return courseEnrollmentStream;
   }
 
   static Future<CourseEnrollment> getById(String id) async {
@@ -113,8 +124,7 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    final DocumentReference projectReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
@@ -129,7 +139,7 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
-    for (final ObjectSubmodel classObj in course.classes) { 
+    for (final ObjectSubmodel classObj in course.classes) {
       EnrollmentClass enrollmentClass =
           EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
 
@@ -349,8 +359,8 @@ class CourseEnrollmentRepository {
     return courseEnrollmentsStream;
   }
 
-  static Future<void> saveSectionStopwatch(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, int sectionIndex,
-      int totalRounds, int currentRound, int stopwatch) async {
+  static Future<void> saveSectionStopwatch(
+      CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, int sectionIndex, int totalRounds, int currentRound, int stopwatch) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))

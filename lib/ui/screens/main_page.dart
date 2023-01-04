@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -159,6 +160,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
+          BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
