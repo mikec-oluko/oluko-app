@@ -60,6 +60,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   List<Class> _classes;
   bool _disableAction = false;
   bool _isVideoPlaying = false;
+  bool isCourseEnrolled = false;
 
   @override
   void initState() {
@@ -67,14 +68,12 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
     BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
     BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
-    widget.playPauseVideo = () => setState(() {
-          _isVideoPlaying = !_isVideoPlaying;
-        });
-    widget.closeVideo = () => setState(() {
-          if (_isVideoPlaying) {
-            _isVideoPlaying = !_isVideoPlaying;
-          }
-        });
+    _videoPlayerActions();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -89,7 +88,6 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
           _user = authState.firebaseUser;
           if (_userState == null) {
             _userState = authState;
-            BlocProvider.of<CourseEnrollmentBloc>(context).get(_userState.user.id, widget.course);
             BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
           }
           return form();
@@ -109,9 +107,12 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
         }
       },
       builder: (context, enrollmentState) {
+        if (enrollmentState is GetAllEnrollmentSuccess) {
+          isCourseEnrolled = enrollmentState.enrolledCourses.where((courseEnrollment) => courseEnrollment.course.id == widget.course.id).toList().isNotEmpty;
+        }
         return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
           builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess) && classState is ClassSubscriptionSuccess) {
+            if (classState is ClassSubscriptionSuccess) {
               _classes = classState.classes;
               return Form(
                 key: _formKey,
@@ -137,7 +138,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                       ),
                                     ],
                                   ),
-                                  showEnrollButton(enrollmentState.courseEnrollment, context),
+                                  showEnrollButton(context),
                                   Padding(
                                     padding: const EdgeInsets.only(right: 15, left: 15, top: 5),
                                     child: Container(
@@ -188,7 +189,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                       onBackPressed: () => Navigator.pop(context),
                                     ),
                                   ),
-                                  showEnrollButton(enrollmentState.courseEnrollment, context),
+                                  showEnrollButton(context),
                                   Padding(
                                     padding: const EdgeInsets.only(right: 15, left: 15, top: 0),
                                     child: Container(
@@ -273,8 +274,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
     );
   }
 
-  Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if (_isCourseActive(courseEnrollment)) {
+  Widget showEnrollButton(BuildContext context) {
+    if (!isCourseEnrolled) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         child: Row(
@@ -314,58 +315,6 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
       return const SizedBox();
     }
   }
-  // Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-  //   if (_isCourseActive(courseEnrollment)) {
-  //     return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-  //       listener: (context, courseEnrollmentState) {
-  //         if (courseEnrollmentState is CreateEnrollmentSuccess) {
-  //           BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
-  //           Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-  //         }
-  //       },
-  //       child: Padding(
-  //         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-  //         child: Row(
-  //           mainAxisSize: MainAxisSize.max,
-  //           children: [
-  //             if (OlukoNeumorphism.isNeumorphismDesign)
-  //               OlukoNeumorphicPrimaryButton(
-  //                 thinPadding: true,
-  //                 title: OlukoLocalizations.get(context, 'enroll'),
-  //                 onPressed: () {
-  //                   if (_disableAction == false) {
-  //                     BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-  //                     if (!widget.isCoachRecommendation) {
-  //                       BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-  //                     }
-  //                   }
-  //                   _disableAction = true;
-  //                 },
-  //               )
-  //             else
-  //               OlukoPrimaryButton(
-  //                 title: OlukoLocalizations.get(context, 'enroll'),
-  //                 onPressed: () {
-  //                   if (_disableAction == false) {
-  //                     BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-  //                     if (!widget.isCoachRecommendation) {
-  //                       BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
-  //                     }
-  //                   }
-  //                   _disableAction = true;
-  //                 },
-  //               ),
-  //           ],
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     return const SizedBox();
-  //   }
-  // }
-
-  bool _isCourseActive(CourseEnrollment courseEnrollment) =>
-      (courseEnrollment != null && courseEnrollment.isUnenrolled == true) || (courseEnrollment == null || courseEnrollment.completion >= 1);
 
   Widget buildStatistics() {
     return BlocBuilder<StatisticsSubscriptionBloc, StatisticsSubscriptionState>(
@@ -417,5 +366,16 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
         Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
+  }
+
+  void _videoPlayerActions() {
+    widget.playPauseVideo = () => setState(() {
+          _isVideoPlaying = !_isVideoPlaying;
+        });
+    widget.closeVideo = () => setState(() {
+          if (_isVideoPlaying) {
+            _isVideoPlaying = !_isVideoPlaying;
+          }
+        });
   }
 }

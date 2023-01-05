@@ -130,7 +130,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       try {
         snapshot.docs.forEach((doc) {
           CourseEnrollment enrollmentElement = CourseEnrollment.fromJson(doc.data());
-          if (enrollmentElement.isUnenrolled) {
+          if (enrollmentElement.isUnenrolled || enrollmentElement.completion >= 1) {
             previousEnrolledCourses.add(enrollmentElement);
           } else {
             actualEnrolledCourses.add(enrollmentElement);
