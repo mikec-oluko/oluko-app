@@ -75,12 +75,7 @@ class StoriesItem extends StatefulWidget {
       } else {
         _hasUnseenStories = false;
       }
-    } else if (addUnseenStoriesRing &&
-        currentUserId != null &&
-        itemUserId != null &&
-        currentUserId.isNotEmpty &&
-        itemUserId.isNotEmpty &&
-        bloc != null) {
+    } else if (addUnseenStoriesRing && currentUserId != null && itemUserId != null && currentUserId.isNotEmpty && itemUserId.isNotEmpty && bloc != null) {
       bloc.checkForUnseenStories(currentUserId, itemUserId);
     }
   }
@@ -127,8 +122,7 @@ class _State extends State<StoriesItem> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (widget._hasUnseenStories)
-                    Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
+                  if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
                   widget.showUserProgress ? Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()) : SizedBox(),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
@@ -198,21 +192,53 @@ class _State extends State<StoriesItem> {
       return OlukoNeumorphism.isNeumorphismDesign && !widget.isSegmentSection
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(widget.imageUrl),
-                maxRadius: widget.maxRadius ?? 30,
+
+// CachedNetworkImage(
+//       placeholder: (context, url) => CircularProgressIndicator(),
+//       errorWidget: (context, url, error) => new Icon(Icons.error),
+//       fit: BoxFit.contain,
+//       imageUrl: imagePath,
+//       imageBuilder: (context, imageProvider) { // you can access to imageProvider
+//         return CircleAvatar( // or any widget that use imageProvider like (PhotoView)
+//           backgroundImage: imageProvider,
+//         );
+//       },
+//     )
+
+              child: CachedNetworkImage(
+                width: 50,
+                height: 50,
+                maxWidthDiskCache: 100,
+                maxHeightDiskCache: 100,
+                fit: BoxFit.cover,
+                imageBuilder: (context, imageProvider) => CircleAvatar(
+                  backgroundImage: imageProvider,
+                  // backgroundImage: CachedNetworkImageProvider(widget.imageUrl,
+                  // ),
+                  maxRadius: widget.maxRadius ?? 30,
+                ),
+                imageUrl: widget.imageUrl,
               ),
             )
-          : CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(widget.imageUrl),
-              maxRadius: widget.maxRadius ?? 30,
+          : CachedNetworkImage(
+              fit: BoxFit.contain,
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                backgroundImage: imageProvider,
+                // backgroundImage: CachedNetworkImageProvider(widget.imageUrl,
+                // ),
+                maxRadius: widget.maxRadius ?? 30,
+              ),
+              imageUrl: widget.imageUrl,
             );
+      // : CircleAvatar(
+      //     backgroundImage: CachedNetworkImageProvider(widget.imageUrl),
+      //     maxRadius: widget.maxRadius ?? 30,
+      //   );
     } else {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname,circleColor: widget.color)
-            )
+              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname, circleColor: widget.color))
           : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
     }
   }

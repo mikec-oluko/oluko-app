@@ -168,8 +168,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     }
   }
 
-  Future<void> processVideo(User user, File rawVideoFile, CollectionReference reference, bool addToList,
-      {double givenAspectRatio, List<Event> events}) async {
+  Future<void> processVideo(User user, File rawVideoFile, CollectionReference reference, bool addToList, {double givenAspectRatio, List<Event> events}) async {
     Video video;
     if (givenAspectRatio == null) {
       video = await createVideo(rawVideoFile);
@@ -193,7 +192,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
 
     final rawVideoPath = rawVideoFile.path;
 
-    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(rawVideoFile);
+    VideoPlayerController controller = VideoPlayerHelper.videoPlayerControllerFromFile(rawVideoFile);
     await controller.initialize();
     var controllerAspectRatio = controller.value.aspectRatio;
 

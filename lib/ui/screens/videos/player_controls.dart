@@ -34,7 +34,7 @@ class _PlayerControlsState extends State<PlayerControls> {
   }
 
   void initializeVideo() {
-    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _videoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.videoInfo.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();
@@ -152,8 +152,6 @@ class _PlayerControlsState extends State<PlayerControls> {
   }
 
   num getMaxValue() {
-    return _videoController != null && _videoController.value.duration != null
-        ? _videoController.value.duration.inMilliseconds.toDouble()
-        : 100;
+    return _videoController != null && _videoController.value.duration != null ? _videoController.value.duration.inMilliseconds.toDouble() : 100;
   }
 }

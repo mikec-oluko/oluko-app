@@ -21,8 +21,7 @@ class PlayerDouble extends StatefulWidget {
   final DocumentReference videoReference;
   final OnCameraCallBack onCamera;
 
-  const PlayerDouble({Key key, this.user, @required this.parentVideoInfo, @required this.videoInfo, this.videoReference, this.onCamera})
-      : super(key: key);
+  const PlayerDouble({Key key, this.user, @required this.parentVideoInfo, @required this.videoInfo, this.videoReference, this.onCamera}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _PlayerDoubleState();
@@ -73,10 +72,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
 
     checkEventToPerform(events, controllerPos);
 
-    if (_parentVideoController.value != null &&
-        _parentVideoController.value.duration != null &&
-        controllerPos >= 0 &&
-        controllerPos <= 700) {
+    if (_parentVideoController.value != null && _parentVideoController.value.duration != null && controllerPos >= 0 && controllerPos <= 700) {
       setState(() {
         index = 0;
       });
@@ -304,14 +300,14 @@ class _PlayerDoubleState extends State<PlayerDouble> {
 
   initializeVideos() {
     //parentVideo
-    _parentVideoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _parentVideoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.parentVideoInfo.video.url,
     );
     _initializeParentVideoPlayerFuture = _parentVideoController.initialize();
     _parentVideoController.setLooping(true);
 
     //video
-    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _videoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.videoInfo.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();

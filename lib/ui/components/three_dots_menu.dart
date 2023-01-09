@@ -29,7 +29,7 @@ class _ThreeDotsMenuState extends State<ThreeDotsMenu> {
         return <PopupMenuEntry<Unenroll>>[
           PopupMenuItem(
             onTap: () {
-              // BlocProvider.of<CourseEnrollmentListBloc>(context).unenrollCourseForUser(widget.actualCourse, isUnenrolledValue: true);
+              BlocProvider.of<CourseEnrollmentListBloc>(context).unenrollCourseForUser(widget.actualCourse, isUnenrolledValue: true);
               if (widget.unrolledFunction != null) {
                 widget.unrolledFunction();
               }

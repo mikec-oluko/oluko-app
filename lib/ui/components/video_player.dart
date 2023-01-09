@@ -103,10 +103,10 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   VideoPlayerController buildControllerBySource({@required String file, @required String url}) {
     if (widget.filePath != null) {
-      return VideoPlayerHelper.VideoPlayerControllerFromFile(File(widget.filePath));
+      return VideoPlayerHelper.videoPlayerControllerFromFile(File(widget.filePath));
     } else {
       if (widget.videoUrl != null) {
-        return VideoPlayerHelper.VideoPlayerControllerFromNetwork(widget.videoUrl);
+        return VideoPlayerHelper.videoPlayerControllerFromNetwork(widget.videoUrl);
       } else {
         return null;
       }

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:chewie/chewie.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -24,12 +24,12 @@ class VideoPlayerHelper {
     playedColor: OlukoColors.black,
   );
 
-  static VideoPlayerController VideoPlayerControllerFromFile(File file) {
+  static VideoPlayerController videoPlayerControllerFromFile(File file) {
     assert(file != null);
     return VideoPlayerController.file(file, videoPlayerOptions: VideoPlayerHelper.videoPlayerOptions);
   }
 
-  static VideoPlayerController VideoPlayerControllerFromNetwork(String url) {
+  static VideoPlayerController videoPlayerControllerFromNetwork(String url) {
     assert(url != null);
     return VideoPlayerController.network(url, videoPlayerOptions: VideoPlayerHelper.videoPlayerOptions);
   }
