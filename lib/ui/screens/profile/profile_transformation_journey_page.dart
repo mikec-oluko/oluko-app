@@ -174,7 +174,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                       isEdit = !isEdit;
                                     });
                                   },
-                                  child: Text(OlukoLocalizations.get(context, 'edit'),
+                                  child: Text(OlukoLocalizations.get(context, 'editContent'),
                                       style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary))),
                           ],
                         ),
