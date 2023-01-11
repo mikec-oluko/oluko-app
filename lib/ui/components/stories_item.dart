@@ -189,32 +189,18 @@ class _State extends State<StoriesItem> {
 
   Widget getCircularAvatar() {
     if (widget.imageUrl != null && widget.imageUrl != 'null') {
+      final _sizeBasedOnRadius = widget.maxRadius * 2;
       return OlukoNeumorphism.isNeumorphismDesign && !widget.isSegmentSection
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-
-// CachedNetworkImage(
-//       placeholder: (context, url) => CircularProgressIndicator(),
-//       errorWidget: (context, url, error) => new Icon(Icons.error),
-//       fit: BoxFit.contain,
-//       imageUrl: imagePath,
-//       imageBuilder: (context, imageProvider) { // you can access to imageProvider
-//         return CircleAvatar( // or any widget that use imageProvider like (PhotoView)
-//           backgroundImage: imageProvider,
-//         );
-//       },
-//     )
-
               child: CachedNetworkImage(
-                width: 50,
-                height: 50,
-                maxWidthDiskCache: 100,
-                maxHeightDiskCache: 100,
+                width: _sizeBasedOnRadius ?? 50,
+                height: _sizeBasedOnRadius ?? 50,
+                maxWidthDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
+                maxHeightDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
                 fit: BoxFit.cover,
                 imageBuilder: (context, imageProvider) => CircleAvatar(
                   backgroundImage: imageProvider,
-                  // backgroundImage: CachedNetworkImageProvider(widget.imageUrl,
-                  // ),
                   maxRadius: widget.maxRadius ?? 30,
                 ),
                 imageUrl: widget.imageUrl,
@@ -224,16 +210,10 @@ class _State extends State<StoriesItem> {
               fit: BoxFit.contain,
               imageBuilder: (context, imageProvider) => CircleAvatar(
                 backgroundImage: imageProvider,
-                // backgroundImage: CachedNetworkImageProvider(widget.imageUrl,
-                // ),
                 maxRadius: widget.maxRadius ?? 30,
               ),
               imageUrl: widget.imageUrl,
             );
-      // : CircleAvatar(
-      //     backgroundImage: CachedNetworkImageProvider(widget.imageUrl),
-      //     maxRadius: widget.maxRadius ?? 30,
-      //   );
     } else {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(

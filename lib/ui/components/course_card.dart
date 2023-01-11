@@ -12,7 +12,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCard extends StatefulWidget {
-  final Image imageCover;
+  final Widget imageCover;
   final double progress;
   final double width;
   final double height;

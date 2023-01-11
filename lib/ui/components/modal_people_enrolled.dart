@@ -35,6 +35,8 @@ class ModalPeopleEnrolled extends StatefulWidget {
 
 class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
   Map<String, UserProgress> _usersProgress = {};
+  List<UserSubmodel> _usersSubModelList = [];
+  List<UserResponse> _userResponseList = [];
 
   @override
   void initState() {
@@ -101,6 +103,8 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
 
   Widget usersGrid(List<dynamic> users) {
     if (users != null && users.isNotEmpty) {
+      if (users is List<UserSubmodel>) {
+      } else if (users is List<UserResponse>) {}
       return GridView.count(
           childAspectRatio: 0.7,
           crossAxisCount: 4,

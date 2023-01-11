@@ -42,8 +42,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                   topRight: OlukoNeumorphism.radiusValue,
                 ),
                 child: Container(
-                    decoration: const BoxDecoration(border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
-                    child: getBottomNavigationBar()))
+                    decoration: const BoxDecoration(border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))), child: getBottomNavigationBar()))
             : getBottomNavigationBar();
       },
     );
@@ -54,7 +53,7 @@ class _State extends State<OlukoBottomNavigationBar> {
         currentIndex: widget.selectedIndex,
         showUnselectedLabels: true,
         unselectedItemColor: Colors.white,
-        selectedItemColor:OlukoColors.black,
+        selectedItemColor: OlukoColors.black,
         type: BottomNavigationBarType.fixed,
         backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         selectedFontSize: 0,
@@ -69,8 +68,7 @@ class _State extends State<OlukoBottomNavigationBar> {
   }
 
   BottomNavigationBarItem getBottomNavigationBarWidget(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
-    double blockSize =
-        MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.width(context) / 5 : ScreenUtils.width(context) / 5;
+    double blockSize = MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.width(context) / 5 : ScreenUtils.width(context) / 5;
     return BottomNavigationBarItem(icon: buildBottomNavigationItem(olukoBottomNavigationBarItem, blockSize), label: '');
   }
 
@@ -90,18 +88,29 @@ class _State extends State<OlukoBottomNavigationBar> {
                     children: [
                       if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
                         if (userInformation?.avatar != null)
-                          CircleAvatar(
-                            radius: 15,
-                            backgroundImage: Image(
-                              image: CachedNetworkImageProvider(userInformation.avatar),
-                              fit: BoxFit.contain,
-                            ).image,
+                          CachedNetworkImage(
+                            width: 30,
+                            height: 30,
+                            maxWidthDiskCache: 100,
+                            maxHeightDiskCache: 100,
+                            fit: BoxFit.cover,
+                            imageBuilder: (context, imageProvider) => CircleAvatar(
+                              backgroundImage: imageProvider,
+                              maxRadius: 15,
+                            ),
+                            imageUrl: userInformation.avatar,
                           )
+                        // CircleAvatar(
+                        //   radius: 15,
+                        //   backgroundImage: Image(
+                        //     image: CachedNetworkImageProvider(userInformation.avatar),
+                        //     fit: BoxFit.contain,
+                        //   ).image,
+                        // )
                         else
                           CircleAvatar(
-                            backgroundColor: userInformation != null
-                                ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName)
-                                : OlukoColors.black,
+                            backgroundColor:
+                                userInformation != null ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName) : OlukoColors.black,
                             radius: 15.0,
                             child: FittedBox(
                               fit: BoxFit.fitWidth,
@@ -140,7 +149,7 @@ class _State extends State<OlukoBottomNavigationBar> {
         : Container(
             decoration: BoxDecoration(
               border: Border(top: BorderSide(color: Colors.white24, width: 1)),
-              color: olukoBottomNavigationBarItem.selected ? OlukoColors.primary :OlukoColors.black,
+              color: olukoBottomNavigationBarItem.selected ? OlukoColors.primary : OlukoColors.black,
             ),
             width: blockSize,
             height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
@@ -175,9 +184,8 @@ class _State extends State<OlukoBottomNavigationBar> {
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_home.png'),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'coach'),
-          disabledAssetImageUrl: OlukoNeumorphism.isNeumorphismDesign
-              ? 'assets/bottom_navigation_bar/coach_neumorphic.png'
-              : 'assets/bottom_navigation_bar/coach.png',
+          disabledAssetImageUrl:
+              OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/coach_neumorphic.png' : 'assets/bottom_navigation_bar/coach.png',
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_coach.png',
           route: RouteEnum.coach),
       //TODO: Item for testing (remove it later)
@@ -187,23 +195,19 @@ class _State extends State<OlukoBottomNavigationBar> {
           route: '/segment-progress'),*/
       OlukoBottomNavigationBarItem(
         title: OlukoLocalizations.get(context, 'friends'),
-        disabledAssetImageUrl: OlukoNeumorphism.isNeumorphismDesign
-            ? 'assets/bottom_navigation_bar/friends_neumorphic.png'
-            : 'assets/bottom_navigation_bar/friends.png',
+        disabledAssetImageUrl:
+            OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/friends_neumorphic.png' : 'assets/bottom_navigation_bar/friends.png',
         selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
         route: RouteEnum.friends,
       ),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'courses'),
-          disabledAssetImageUrl: OlukoNeumorphism.isNeumorphismDesign
-              ? 'assets/bottom_navigation_bar/course_neumorphic.png'
-              : 'assets/bottom_navigation_bar/course.png',
+          disabledAssetImageUrl:
+              OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/course_neumorphic.png' : 'assets/bottom_navigation_bar/course.png',
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_courses.png',
           route: RouteEnum.courses),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.get(context, 'profile'),
-          selectedAssetImageUrl: 'assets/bottom_navigation_bar/profile.png',
-          route: RouteEnum.profile),
+          title: OlukoLocalizations.get(context, 'profile'), selectedAssetImageUrl: 'assets/bottom_navigation_bar/profile.png', route: RouteEnum.profile),
     ];
     return items;
   }
