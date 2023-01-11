@@ -100,13 +100,6 @@ class _State extends State<OlukoBottomNavigationBar> {
                             ),
                             imageUrl: userInformation.avatar,
                           )
-                        // CircleAvatar(
-                        //   radius: 15,
-                        //   backgroundImage: Image(
-                        //     image: CachedNetworkImageProvider(userInformation.avatar),
-                        //     fit: BoxFit.contain,
-                        //   ).image,
-                        // )
                         else
                           CircleAvatar(
                             backgroundColor:

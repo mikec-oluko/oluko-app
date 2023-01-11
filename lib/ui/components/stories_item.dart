@@ -208,6 +208,8 @@ class _State extends State<StoriesItem> {
             )
           : CachedNetworkImage(
               fit: BoxFit.contain,
+              maxWidthDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
+              maxHeightDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
               imageBuilder: (context, imageProvider) => CircleAvatar(
                 backgroundImage: imageProvider,
                 maxRadius: widget.maxRadius ?? 30,

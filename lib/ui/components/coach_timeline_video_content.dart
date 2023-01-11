@@ -22,6 +22,8 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
+    final double _height = 70;
+    final double _width = 140;
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -33,20 +35,34 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                 ),
-                width: 140,
-                height: 70,
+                width: _width,
+                height: _height,
                 child: Stack(
                   children: [
                     Align(
                         child: Neumorphic(
                       style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
-                      child: Container(
+                      child: CachedNetworkImage(
+                        imageUrl: widget.videoThumbnail,
+                        width: _width,
+                        height: _height,
+                        maxWidthDiskCache: _width.toInt(),
+                        maxHeightDiskCache: _height.toInt(),
+                        memCacheWidth: _width.toInt(),
+                        memCacheHeight: _height.toInt(),
+                        fit: BoxFit.cover,
+                        imageBuilder: (BuildContext context, ImageProvider<Object> imageProvider) => Container(
                           decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(5)),
                               image: DecorationImage(
-                                image: widget.videoThumbnail != null ? CachedNetworkImageProvider(widget.videoThumbnail) : defaultImage,
+                                image: imageProvider,
                                 fit: BoxFit.cover,
-                              ))),
+                              ),
+                              color: OlukoColors.warning,
+                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                          width: 60,
+                          height: 90,
+                        ),
+                      ),
                     )),
                     Align(
                       child: SizedBox(
@@ -55,8 +71,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                                 width: 40,
                                 height: 40,
                                 child: OlukoBlurredButton(
-                                    childContent: Image.asset('assets/courses/play_arrow.png',
-                                        height: 5, width: 5, scale: 4, color: OlukoColors.white)),
+                                    childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
                               )
                             : Image.asset(
                                 'assets/self_recording/play_button.png',
@@ -81,8 +96,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                             children: [
                               Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
                                   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500)),
-                              Text(widget.videoTitle,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
+                              Text(widget.videoTitle, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
                             ],
                           ),
                         )
@@ -103,8 +117,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
           ),
           Padding(
             padding: const EdgeInsets.all(5),
-            child:
-                Text(DateFormat.jm().format(widget.date).toString(), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor)),
+            child: Text(DateFormat.jm().format(widget.date).toString(), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor)),
           ),
         ],
       ),
