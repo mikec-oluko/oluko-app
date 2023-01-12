@@ -142,6 +142,12 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
       obscureText: _isPasswordField(widget.fieldType) && !_peekPassword,
       cursorColor: OlukoColors.primary,
       cursorWidth: 1.5,
+      onChanged: (value) {
+        if (_isPasswordField(widget.fieldType)) {
+          stringValidator = AppValidators().getStringValidationState(value);
+          _textFieldCheckErrors(value);
+        }
+      },
       validator: (value) {
         if (value == null || value.isEmpty) {
           setErrorMessage(errorMessageToShow: OlukoLocalizations.get(context, 'required'));

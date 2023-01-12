@@ -319,7 +319,7 @@ class _RegisterState extends State<RegisterPage> {
                   _newUserFromRegister.lastName = value;
                 });
               }),
-          if (GlobalService().showUserLocation) ...getLocationFields(),
+          if (GlobalService().showUserLocationOnRegister) ...getLocationFields(),
           OlukoRegisterTextfield(
               key: formKey,
               title: OlukoLocalizations.get(context, 'zipCode'),
