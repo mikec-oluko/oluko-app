@@ -146,6 +146,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         if (_isPasswordField(widget.fieldType)) {
           stringValidator = AppValidators().getStringValidationState(value);
           _textFieldCheckErrors(value);
+          widget.onInputUpdated(controller.value.text);
         }
       },
       validator: (value) {
@@ -200,14 +201,10 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         if (stringValidator != null) {
           if (!stringValidator[StringValidation.containsMinChars]) {
             setErrorMessage(errorMessageToShow: _getErrorMessage(minCharsError: true));
-          } else if (stringValidator[StringValidation.containsBlankSpaces]) {
-            setErrorMessage(errorMessageToShow: _getErrorMessage(blankSpacesError: true));
           } else if (stringValidator[StringValidation.startorEndWithBlankSpace]) {
             setErrorMessage(errorMessageToShow: _getErrorMessage(startOrEndBlankError: true));
-          } else if (!stringValidator[StringValidation.containsSpecialChars]) {
+          } else if (!stringValidator[StringValidation.containsOnlyAlphabeticOrSpace]) {
             setErrorMessage(errorMessageToShow: _getErrorMessage(specialCharsError: true));
-          } else if (!stringValidator[StringValidation.isAlphabetic]) {
-            setErrorMessage(errorMessageToShow: _getErrorMessage(alphabeticError: true));
           } else {
             _clearFieldErrors();
           }

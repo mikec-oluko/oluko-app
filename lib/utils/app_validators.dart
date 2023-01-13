@@ -1,5 +1,13 @@
 enum PasswordStrength { weak, medium, strong }
-enum ValidatorNames { containsUppercase, containsLowercase, containsDigit, containsSpecialChar, containsRecommendedChars, containsMinChars }
+enum ValidatorNames {
+  containsUppercase,
+  containsLowercase,
+  containsDigit,
+  containsSpecialChar,
+  containsRecommendedChars,
+  containsOnlyAlphabeticOrSpace,
+  containsMinChars
+}
 enum StringValidation {
   isValidUserName,
   isValidFirstAndLastName,
@@ -8,6 +16,7 @@ enum StringValidation {
   containsMinChars,
   containsMinCharsFirstName,
   containsSpecialChars,
+  containsOnlyAlphabeticOrSpace,
   isAlphabetic,
   isAlphanumeric,
   isValidEmail,
@@ -78,6 +87,7 @@ class AppValidators {
     stringValidator[StringValidation.isValidFirstAndLastName] = validatePattern(value, r'^[^0-9 ]+([a-zA-Z]+\s?)+[a-zA-Z]+$');
     stringValidator[StringValidation.isNumeric] = validatePattern(value, r'^[0-9]*$');
     stringValidator[StringValidation.isZipCode] = validatePattern(value, r'^[0-9]{5}$');
+    stringValidator[StringValidation.containsOnlyAlphabeticOrSpace] = validatePattern(value, r'^[a-zA-Z\s]+$');
 
     List<StringValidation> validatorsWithError = [];
     stringValidator.forEach((key, value) {
