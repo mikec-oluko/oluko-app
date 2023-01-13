@@ -16,6 +16,7 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -96,6 +97,7 @@ List<CoachSegmentContent> _allSegmentsForUser = [];
 List<Challenge> _activeChallenges = [];
 List<SegmentSubmission> segmentsWithReview = [];
 List<CoachMediaMessage> _coachVideoMessages = [];
+String _welcomeVideoUrl = '';
 const Widget _separatorBox = SizedBox(
   width: 10,
 );
@@ -162,7 +164,14 @@ class _CoachPageState extends State<CoachPage> {
                                               },
                                               builder: (context, coachRecommendationsState) {
                                                 _coachRecommendationsBuilderActions(state: coachRecommendationsState);
-                                                return _panelAndViewCreation(context);
+                                                return BlocBuilder<IntroductionMediaBloc, IntroductionMediaState>(
+                                                  builder: (context, state) {
+                                                    if (state is Success) {
+                                                      _welcomeVideoUrl = state.mediaURL;
+                                                    }
+                                                    return _panelAndViewCreation(context);
+                                                  },
+                                                );
                                               },
                                             );
                                           },
@@ -400,6 +409,7 @@ class _CoachPageState extends State<CoachPage> {
       segments: _allSegmentsForUser.where((segment) => segment.isChallenge && segment.completedAt == null).toList());
 
   List<Widget> _carouselNotificationWidget(BuildContext context) {
+    // TODO: AGREGAR VIDEO
     return CoachHelperFunctions.notificationPanel(
       context: context,
       assessment: _assessment,
@@ -409,10 +419,8 @@ class _CoachPageState extends State<CoachPage> {
       coachVideoMessages: _coachVideoMessages,
       onCloseCard: () => BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment),
       onOpenCard: () {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-          'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video),
-          'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')
-        });
+        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
+            arguments: {'videoUrl': _welcomeVideoUrl, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
         BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment);
       },
     );

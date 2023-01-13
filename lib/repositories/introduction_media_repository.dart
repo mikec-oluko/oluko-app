@@ -9,7 +9,7 @@ class IntroductionMediaRepository {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static Future<String> getVideoURL(IntroductionMediaTypeEnum type) async {
+  static Future<String> getVideoURL(IntroductionMediaTypeEnum type, {bool useStreamUrl = false}) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -20,6 +20,6 @@ class IntroductionMediaRepository {
       return null;
     }
     final response = docRef.docs[0].data() as Map<String, dynamic>;
-    return response['url'] as String;
+    return !useStreamUrl ? response['url'] as String : response['video_hls'] as String ?? response['url'] as String;
   }
 }

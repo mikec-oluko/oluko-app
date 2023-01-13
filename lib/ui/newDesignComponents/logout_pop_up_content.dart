@@ -20,13 +20,13 @@ class _LogoutPopUpContentState extends State<LogoutPopUpContent> {
       width: 250,
       height: 120,
       child: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               OlukoLocalizations.get(context, 'logoutPopUpMessage'),
-              style: OlukoFonts.olukoMediumFont(),
+              style: OlukoFonts.olukoBigFont(),
             ),
             Row(
               children: [
@@ -34,11 +34,6 @@ class _LogoutPopUpContentState extends State<LogoutPopUpContent> {
                     title: OlukoLocalizations.get(context, 'yes'),
                     onPressed: () {
                       widget.acceptAction();
-                      // BlocProvider.of<AuthBloc>(context).logout(context);
-                      // AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
-                      // Navigator.of(context, rootNavigator: true).pop();
-                      // Navigator.popUntil(context, ModalRoute.withName('/'));
-                      // setState(() {});
                     }),
                 SizedBox(
                   width: 10,
@@ -47,7 +42,6 @@ class _LogoutPopUpContentState extends State<LogoutPopUpContent> {
                     title: OlukoLocalizations.get(context, 'cancel'),
                     onPressed: () {
                       widget.cancelAction();
-                      // Navigator.of(context, rootNavigator: true).pop();
                     })
               ],
             )

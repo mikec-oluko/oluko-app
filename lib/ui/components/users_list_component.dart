@@ -75,7 +75,7 @@ class _UserListComponentState extends State<UserListComponent> {
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
           OlukoLocalizations.get(context, 'noUsers'),
-          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
+          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
         )
       ]),
     );

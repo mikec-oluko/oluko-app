@@ -62,6 +62,8 @@ class _CoachMainPageState extends State<CoachMainPage> {
                       if (_coachAssignment.userId == _currentUser.id) {
                         if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
                             CoachAssignmentStatusEnum.approved) {
+                          BlocProvider.of<IntroductionMediaBloc>(context)
+                              .getVideo(IntroductionMediaTypeEnum.coachTabWelcomeVideo, useStreamVideo: GlobalService().appUseVideoHls);
                           return CoachPage(userId: _currentUser.id, coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
                         } else {
                           return CoachAssignedCountDown(
