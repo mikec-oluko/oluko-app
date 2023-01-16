@@ -428,8 +428,8 @@
     "contact": "contact",
     "prxPerformance": "PRx Performance",
     "attention":"Attention!",
-    "logoutPopUpMessage": "¿Are you sure you want to log out?",
-    "deleteContentAlert": "¿Are you sure you want to delete this content?",
+    "logoutPopUpMessage": "Are you sure you want to log out?",
+    "deleteContentAlert": "Are you sure you want to delete this content?",
     "editContent":"Edit",
     "zipCode":"Zip code",
     "zipCodeErrorMessage": ", Does not meet the required format. Numeric characters only, 5 digits long."

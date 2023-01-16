@@ -79,6 +79,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
 
   TextFormField _getTextFormField(BuildContext context) {
     return TextFormField(
+      key: widget.key,
       controller: controller,
       focusNode: _inputFocusNode,
       maxLength: widget.fieldType == RegisterFieldEnum.ZIPCODE ? 5 : 60,
@@ -320,6 +321,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           ? Container(
               child: DropdownButtonHideUnderline(
                 child: DropdownButtonFormField(
+                  key: widget.key,
                   decoration: InputDecoration(
                     errorText: existError ? errorMessage : '',
                     focusedErrorBorder: OutlineInputBorder(
@@ -414,6 +416,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           ? Container(
               child: DropdownButtonHideUnderline(
                 child: DropdownButtonFormField(
+                  key: widget.key,
                   decoration: InputDecoration(
                     errorText: existError ? errorMessage : '',
                     focusedErrorBorder: OutlineInputBorder(
@@ -481,6 +484,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           : Container(
               child: DropdownButtonHideUnderline(
                 child: DropdownButtonFormField(
+                  key: widget.key,
                   decoration: InputDecoration(
                     errorText: existError ? errorMessage : '',
                     focusedErrorBorder: OutlineInputBorder(

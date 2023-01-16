@@ -406,8 +406,10 @@ class _RegisterState extends State<RegisterPage> {
 
   Future<void> validateAndSave() async {
     final FormState form = formKey.currentState;
-    if (form.validate() && isPasswordValid()) {
+    if (checkFieldsCompleted(_newUserFromRegister) && isPasswordValid()) {
       await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
+    } else {
+      // TODO: ADD NOTIFICATION
     }
   }
 
@@ -434,4 +436,18 @@ class _RegisterState extends State<RegisterPage> {
   bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase];
 
   String _getValue(String value) => value.trim();
+
+  bool checkFieldsCompleted(SignUpRequest userToRegister) {
+    bool allCompleted = true;
+    if (allCompleted) allCompleted = userToRegister.firstName != null || userToRegister.firstName != '';
+    if (allCompleted) allCompleted = userToRegister.lastName != null || userToRegister.lastName != '';
+    if (allCompleted) allCompleted = userToRegister.email != null || userToRegister.email != '';
+    if (allCompleted) allCompleted = userToRegister.username != null || userToRegister.username != '';
+    if (allCompleted) allCompleted = userToRegister.password != null || userToRegister.password != '';
+    if (allCompleted) allCompleted = userToRegister.country != null || userToRegister.country != '';
+    if (allCompleted) allCompleted = userToRegister.city != null || userToRegister.city != '';
+    if (allCompleted) allCompleted = userToRegister.state != null || userToRegister.state != '';
+    if (allCompleted) allCompleted = userToRegister.zipCode != null;
+    return allCompleted;
+  }
 }

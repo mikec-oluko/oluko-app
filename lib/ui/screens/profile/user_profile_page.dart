@@ -77,6 +77,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _isFollow = false;
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
+  bool _isProfileDeleteActive = false;
   bool canHidePanel = true;
   bool canDeleteProfilePic = false;
   bool canDeleteCoverPic = false;
@@ -243,7 +244,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
       });
       BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
     } else {
-      BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+      if (_isProfileDeleteActive) {
+        setState(() {
+          _isProfileDeleteActive = !_isProfileDeleteActive;
+        });
+      } else {
+        BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+      }
     }
   }
 
@@ -268,6 +275,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
     if (state is ProfileAvatarDeleteRequested) {
       setState(() {
         updatePanelProperties(120, false);
+        _isProfileDeleteActive = true;
+      });
+    }
+    if (state is ProfileAvatarLoading || state is ProfileAvatarSuccess) {
+      setState(() {
+        updatePanelProperties(300, false);
       });
     }
     if (state is ProfileAvatarDeleted) {
@@ -313,6 +326,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
       });
       BlocProvider.of<AuthBloc>(context).checkCurrentUser();
     }
+    if (state is ProfileCoverImageLoading || state is ProfileCoverSuccess) {
+      setState(() {
+        updatePanelProperties(300, true);
+      });
+      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    }
     if (state is ProfileCoverImageDefault) {
       setState(() {
         updatePanelProperties(_panelMaxHeight, true);
@@ -330,6 +349,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDeleteRequest());
     }
     if (state is ProfileCoverImageDefault) {
+      _openOrClosePanel(PanelState.close);
       _contentForPanel = defaultWidgetNoContent;
     }
     if (state is ProfileCoverImageLoading) {
@@ -415,7 +435,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
       );
     }
     if (state is ProfileAvatarDeleteRequested) {
-      _openOrClosePanel(PanelState.close);
       _contentForPanel = ModalUploadOptions(
         contentFrom: UploadFrom.profileImage,
         isDeleteRequested: true,
@@ -424,6 +443,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       );
     }
     if (state is ProfileAvatarDefault) {
+      _openOrClosePanel(PanelState.close);
       _contentForPanel = defaultWidgetNoContent;
     }
     if (state is ProfileAvatarDeleted) {

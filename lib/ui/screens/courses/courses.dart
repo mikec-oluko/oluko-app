@@ -545,13 +545,13 @@ class _State extends State<Courses> {
     if (imageUrl != null) {
       return CachedNetworkImage(
         imageUrl: imageUrl,
-        height: (ScreenUtils.height(context) * 0.20),
-        // width: 90,
+        height: ScreenUtils.height(context) * 0.20,
+        width: ScreenUtils.width(context) * 0.35,
         maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
         maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
         memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
         memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
-        fit: BoxFit.fitHeight,
+        fit: BoxFit.fill,
       );
     }
     return Image.asset("assets/courses/course_sample_7.png");
