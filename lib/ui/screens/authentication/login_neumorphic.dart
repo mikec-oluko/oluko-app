@@ -247,22 +247,22 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           title: OlukoLocalizations.get(context, 'login'),
         ),
       ),
-      // if (Platform.isIOS || Platform.isMacOS)
-      Padding(
-        padding: const EdgeInsets.only(top: 5),
-        child: SizedBox(
-          height: 50,
-          child: OlukoNeumorphicPrimaryButton(
-            useBorder: true,
-            isExpanded: false,
-            thinPadding: true,
-            onPressed: () {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
-            },
-            title: OlukoLocalizations.get(context, 'register'),
+      if (Platform.isIOS || Platform.isMacOS)
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: SizedBox(
+            height: 50,
+            child: OlukoNeumorphicPrimaryButton(
+              useBorder: true,
+              isExpanded: false,
+              thinPadding: true,
+              onPressed: () {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.registerUser]);
+              },
+              title: OlukoLocalizations.get(context, 'register'),
+            ),
           ),
         ),
-      ),
       /*const SizedBox(
         height: 15,
       ),
