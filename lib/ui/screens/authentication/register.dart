@@ -6,7 +6,6 @@ import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/register_fields_enum.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
-import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -289,7 +288,7 @@ class _RegisterState extends State<RegisterPage> {
     return Form(
       key: formKey,
       child: Column(
-        children: <OlukoRegisterTextfield>[
+        children: [
           OlukoRegisterTextfield(
               key: formKey,
               title: OlukoLocalizations.get(context, 'firstName'),
@@ -308,7 +307,33 @@ class _RegisterState extends State<RegisterPage> {
                   _newUserFromRegister.lastName = _getValue(value);
                 });
               }),
-          if (GlobalService().showUserLocationOnRegister) ...getLocationFields(),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'country'),
+              fieldType: RegisterFieldEnum.COUNTRY,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.country = _getValue(value);
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'state'),
+              fieldType: RegisterFieldEnum.STATE,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.state = _getValue(value);
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'city'),
+              fieldType: RegisterFieldEnum.CITY,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.city = _getValue(value);
+                });
+              }),
           OlukoRegisterTextfield(
               key: formKey,
               title: OlukoLocalizations.get(context, 'zipCode'),
@@ -352,36 +377,17 @@ class _RegisterState extends State<RegisterPage> {
     );
   }
 
-  List<OlukoRegisterTextfield> getLocationFields() {
-    return [
-      OlukoRegisterTextfield(
-          key: formKey,
-          title: OlukoLocalizations.get(context, 'country'),
-          fieldType: RegisterFieldEnum.COUNTRY,
-          onInputUpdated: (value) {
-            setState(() {
-              _newUserFromRegister.country = _getValue(value);
-            });
-          }),
-      OlukoRegisterTextfield(
-          key: formKey,
-          title: OlukoLocalizations.get(context, 'state'),
-          fieldType: RegisterFieldEnum.STATE,
-          onInputUpdated: (value) {
-            setState(() {
-              _newUserFromRegister.state = _getValue(value);
-            });
-          }),
-      OlukoRegisterTextfield(
-          key: formKey,
-          title: OlukoLocalizations.get(context, 'city'),
-          fieldType: RegisterFieldEnum.CITY,
-          onInputUpdated: (value) {
-            setState(() {
-              _newUserFromRegister.city = _getValue(value);
-            });
-          }),
-    ];
+  void _passwordValidationStatus(Map<ValidatorNames, bool> passwordValidationState) {
+    setState(() {
+      _passwordValidationState = passwordValidationState;
+    });
+  }
+
+  Future<void> validateAndSave() async {
+    final FormState form = formKey.currentState;
+    if (form.validate() && isPasswordValid()) {
+      await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
+    }
   }
 
   Widget checkBox({bool isAgree = false}) {
@@ -404,50 +410,21 @@ class _RegisterState extends State<RegisterPage> {
     );
   }
 
-  Future<void> validateAndSave() async {
-    final FormState form = formKey.currentState;
-    if (checkFieldsCompleted(_newUserFromRegister) && isPasswordValid()) {
-      await BlocProvider.of<SignupBloc>(context).signUp(context, _newUserFromRegister);
-    } else {
-      // TODO: ADD NOTIFICATION
-    }
-  }
-
-  void agreeWithTermsAndConditions(bool value) {
-    setState(() {
-      _agreeWithRequirements = value;
-    });
-  }
-
-  void _passwordValidationStatus(Map<ValidatorNames, bool> passwordValidationState) {
-    setState(() {
-      _passwordValidationState = passwordValidationState;
-    });
-  }
-
-  bool isPasswordValid() => (_containsMinChars() && _containsUppercase()) && (_containsDigit() && _containsLowercase());
-
   bool _containsMinChars() => _passwordValidationState[ValidatorNames.containsMinChars];
 
   bool _containsUppercase() => _passwordValidationState[ValidatorNames.containsUppercase];
 
   bool _containsDigit() => _passwordValidationState[ValidatorNames.containsDigit];
 
-  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase];
+  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase] == true;
+
+  bool isPasswordValid() => (_containsMinChars() && _containsUppercase()) && (_containsDigit() && _containsLowercase());
 
   String _getValue(String value) => value.trim();
 
-  bool checkFieldsCompleted(SignUpRequest userToRegister) {
-    bool allCompleted = true;
-    if (allCompleted) allCompleted = userToRegister.firstName != null || userToRegister.firstName != '';
-    if (allCompleted) allCompleted = userToRegister.lastName != null || userToRegister.lastName != '';
-    if (allCompleted) allCompleted = userToRegister.email != null || userToRegister.email != '';
-    if (allCompleted) allCompleted = userToRegister.username != null || userToRegister.username != '';
-    if (allCompleted) allCompleted = userToRegister.password != null || userToRegister.password != '';
-    if (allCompleted) allCompleted = userToRegister.country != null || userToRegister.country != '';
-    if (allCompleted) allCompleted = userToRegister.city != null || userToRegister.city != '';
-    if (allCompleted) allCompleted = userToRegister.state != null || userToRegister.state != '';
-    if (allCompleted) allCompleted = userToRegister.zipCode != null;
-    return allCompleted;
+  agreeWithTermsAndConditions(bool value) {
+    setState(() {
+      _agreeWithRequirements = value;
+    });
   }
 }
