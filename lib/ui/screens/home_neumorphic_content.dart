@@ -67,7 +67,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   List<Course> _activeCourses = [];
   UserResponse _currentAuthUser;
   List<Course> _growListOfCourses = [];
-  final int _courseChunkMaxValue = 5; 
+  final int _courseChunkMaxValue = 5;
 
   @override
   void initState() {
@@ -110,9 +110,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         builder: (context, courseState) {
           if (courseState is GetByCourseEnrollmentsSuccess) {
             _activeCourses = courseState.courses;
-            if(_growListOfCourses.isEmpty){
-                _addFirstChunkOfCourses();
-            }
+            _addFirstChunkOfCourses();
             if (_activeCourses.isNotEmpty) {
               return enrolled();
             } else {
@@ -129,10 +127,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   void _addFirstChunkOfCourses() {
-    if(_activeCourses.length > _courseChunkMaxValue){
-    _growListOfCourses = _activeCourses.getRange(0, _courseChunkMaxValue).toList();
-    }else{
-    _growListOfCourses = _activeCourses;
+    if (_activeCourses.length >= _courseChunkMaxValue) {
+      _growListOfCourses = _activeCourses.getRange(0, _courseChunkMaxValue).toList();
+    } else {
+      _growListOfCourses = _activeCourses;
     }
   }
 
@@ -151,62 +149,17 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           },
           body: CarouselSlider.builder(
             carouselController: carouselController,
-            itemCount: widget.courseEnrollments.length + 1, 
+            itemCount: widget.courseEnrollments.length + 1,
             itemBuilder: (context, index) {
-             _populateGrowListOfCourses(index);
+              _populateGrowListOfCourses(index);
               if (_growListOfCourses.length - 1 >= index) {
                 if (_growListOfCourses[index] != null) {
-                  return CustomScrollView(
-                    cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
-                    slivers: <Widget>[
-                      SliverStack(children: [
-                        getClassView(index, context),
-                        getTabBar(context, index),
-                      ]),
-                    ],
-                  );
+                  return _getCourseContentView(index, context);
                 } else {
                   return const SizedBox();
                 }
               } else {
-                return Container(
-                  color: OlukoNeumorphismColors.appBackgroundColor,
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.15),
-                        child: Image.asset(
-                          OlukoNeumorphism.mvtLogo,
-                          scale: 2,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: ScreenUtils.height(context) * 0.1,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
-                              'homeEnrollTocourse': true,
-                              'showBottomTab': () => setState(() {
-                                    _isBottomTabActive = !_isBottomTabActive;
-                                  })
-                            });
-                          },
-                          child: Neumorphic(
-                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Image.asset(
-                                'assets/home/plus.png',
-                                scale: 4,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return _getEnrollAndPlusButtonContent(context);
               }
             },
             options: CarouselOptions(
@@ -247,21 +200,74 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     }
   }
 
+  CustomScrollView _getCourseContentView(int index, BuildContext context) {
+    return CustomScrollView(
+      cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
+      slivers: <Widget>[
+        SliverStack(children: [
+          getClassView(index, context),
+          getTabBar(context, index),
+        ]),
+      ],
+    );
+  }
+
+  Container _getEnrollAndPlusButtonContent(BuildContext context) {
+    return Container(
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.15),
+            child: Image.asset(
+              OlukoNeumorphism.mvtLogo,
+              scale: 2,
+            ),
+          ),
+          Positioned(
+            bottom: ScreenUtils.height(context) * 0.1,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
+                  'homeEnrollTocourse': true,
+                  'showBottomTab': () => setState(() {
+                        _isBottomTabActive = !_isBottomTabActive;
+                      })
+                });
+              },
+              child: Neumorphic(
+                style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                child: Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Image.asset(
+                    'assets/home/plus.png',
+                    scale: 4,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _populateGrowListOfCourses(int index) {
-     List<Course> newBatchOfCourses = [];
+    List<Course> newBatchOfCourses = [];
     if (_growListOfCourses.length - 1 == index) {
-       if(_growListNewLength < _activeCourses.length){
-           if((_activeCourses.length - _growListNewLength) >= _courseChunkMaxValue){
-           newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length,_growListNewLength).toList();
-           }else{
-           newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length,_activeCourses.length).toList();
-           }
-          _growListOfCourses.addAll(newBatchOfCourses);
-       }else{
-         if(_growListNewLength == _activeCourses.length){
-             _growListOfCourses = _activeCourses;
-         }
-       }
+      if (_growListNewLength < _activeCourses.length) {
+        if ((_activeCourses.length - _growListNewLength) >= _courseChunkMaxValue) {
+          newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length, _growListNewLength).toList();
+        } else {
+          newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length, _activeCourses.length).toList();
+        }
+        _growListOfCourses.addAll(newBatchOfCourses);
+      } else {
+        if (_growListNewLength == _activeCourses.length) {
+          _growListOfCourses = _activeCourses;
+        }
+      }
     }
   }
 
