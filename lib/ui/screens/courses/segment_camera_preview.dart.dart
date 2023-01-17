@@ -121,8 +121,7 @@ class _State extends State<SegmentCameraPreview> {
                   textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
               startButton(),
               Text(OlukoLocalizations.of(context).find('cameraWarning'),
-                  textAlign: TextAlign.left,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary).copyWith(fontSize: 17))
+                  textAlign: TextAlign.left, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
             ])));
   }
 
