@@ -45,7 +45,6 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
 
   ImageProvider<Object> getImageToShowOnPreview(String imageUrl) {
     if (imageUrl != null && imageUrl != _useDefaultImage) {
-      // return NetworkImage(imageUrl);
       return NetworkImage(imageUrl);
     } else {
       return _defaultImage;

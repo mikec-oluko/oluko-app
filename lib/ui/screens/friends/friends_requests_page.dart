@@ -129,19 +129,21 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
           ? [
               Padding(
                 padding: const EdgeInsets.all(32.0),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody(OlukoLocalizations.of(context).find('noRequests'))]),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  TitleBody(
+                    OlukoLocalizations.of(context).find('noRequests'),
+                    customColor: OlukoColors.grayColor,
+                  )
+                ]),
               )
             ]
           : friendsRequestState.friendRequestList
                   .map<Widget>((UserResponse friend) => FriendRequestCard(
                         friendUser: friend,
                         onFriendRequestIgnore: (UserResponse friend) {
-                          FriendRequestModel friendRequestModel = friendsRequestState.friendData.friendRequestReceived
-                              .where((friendRequest) => friendRequest.id == friend.id)
-                              .toList()
-                              .first;
-                          BlocProvider.of<IgnoreFriendRequestBloc>(context)
-                              .ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
+                          FriendRequestModel friendRequestModel =
+                              friendsRequestState.friendData.friendRequestReceived.where((friendRequest) => friendRequest.id == friend.id).toList().first;
+                          BlocProvider.of<IgnoreFriendRequestBloc>(context).ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                         onFriendConfirmation: (UserResponse friend) {
                           if (disabledActions) {
@@ -149,12 +151,9 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                           }
                           disabledActions = true;
                           AppMessages().showDialogActionMessage(context, OlukoLocalizations.of(context).find(''), 2);
-                          FriendRequestModel friendRequestModel = friendsRequestState.friendData.friendRequestReceived
-                              .where((friendRequest) => friendRequest.id == friend.id)
-                              .toList()
-                              .first;
-                          BlocProvider.of<ConfirmFriendBloc>(context)
-                              .confirmFriend(context, friendsRequestState.friendData, friendRequestModel);
+                          FriendRequestModel friendRequestModel =
+                              friendsRequestState.friendData.friendRequestReceived.where((friendRequest) => friendRequest.id == friend.id).toList().first;
+                          BlocProvider.of<ConfirmFriendBloc>(context).confirmFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                       ))
                   .toList() +

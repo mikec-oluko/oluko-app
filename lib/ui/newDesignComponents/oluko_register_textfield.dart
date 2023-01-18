@@ -297,7 +297,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
             _clearFieldErrors();
           }
         }
-
         break;
       case RegisterFieldEnum.LASTNAME:
         if (stringValidator != null) {
