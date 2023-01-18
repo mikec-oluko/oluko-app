@@ -32,7 +32,7 @@ class CoachMentoredVideoFailure extends CoachMentoredVideosState {
 
 class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   final CoachRepository _coachRepository = CoachRepository();
-    final SoundPlayer _soundPlayer = SoundPlayer();
+  final SoundPlayer _soundPlayer = SoundPlayer();
 
   CoachMentoredVideosBloc() : super(Loading());
 
@@ -71,9 +71,11 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
         }
 
         if (coachAnnotationsChangedItems.isNotEmpty) {
-         await _soundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
           emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsChangedItems.toList()));
         } else {
+          if (_newAnnotation(coachAnnotations, coachAnnotationsUpdated)) {
+            await _soundPlayer.playAsset(soundEnum: SoundsEnum.newCoachRecomendation);
+          }
           emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations.toList()));
         }
       } catch (exception, stackTrace) {
@@ -91,6 +93,9 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
       emit(CoachMentoredVideoFailure(exception: error));
     });
   }
+
+  bool _newAnnotation(Set<Annotation> coachAnnotations, Set<Annotation> coachAnnotationsUpdated) =>
+      coachAnnotations.length != coachAnnotationsUpdated.length && !coachAnnotationsUpdated.first.notificationViewed;
 
   void handleDocuments(QuerySnapshot<Map<String, dynamic>> snapshot, Set<Annotation> coachAnnotations) {
     if (snapshot.docs.isNotEmpty) {
