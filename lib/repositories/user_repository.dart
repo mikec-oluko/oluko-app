@@ -146,7 +146,7 @@ class UserRepository {
       user.avatar = downloadUrl;
     }
     try {
-      await userReference.update(user.toJson()); //This will be done by the extesion
+      await userReference.update(user.toJson());
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
