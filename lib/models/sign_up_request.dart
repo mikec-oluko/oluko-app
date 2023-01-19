@@ -37,7 +37,7 @@ class SignUpRequest {
         'country': country == null ? '' : country.toString(),
         'state': state == null ? '' : state.toString(),
         'city': city == null ? '' : city.toString(),
-        'zip_code': zipCode,
+        'zipCode': zipCode,
         'newsletter': newsletter
       };
 
@@ -51,7 +51,7 @@ class SignUpRequest {
         'country': country,
         'state': state,
         'city': city,
-        'zip_code': zipCode,
+        'zipCode': zipCode,
         'newsletter': newsletter
       };
 }
