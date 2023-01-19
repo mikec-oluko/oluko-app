@@ -52,52 +52,77 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
   }
 
   Positioned thirdElementPreview(String imageUrl) {
+    final double updatedWidth = _maxWidth - 15;
     return Positioned(
       top: 15,
       child: Center(
         child: Neumorphic(
-          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
-          child: Container(
-            decoration: videoCardDecoration(image: imageUrl),
-            width: _maxWidth - 15,
-            height: _maxHeight,
-          ),
-        ),
+            style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              height: _maxHeight,
+              width: updatedWidth,
+              maxWidthDiskCache: updatedWidth.toInt(),
+              maxHeightDiskCache: _maxHeight.toInt(),
+              memCacheWidth: updatedWidth.toInt(),
+              memCacheHeight: _maxHeight.toInt(),
+              fit: BoxFit.cover,
+            )),
       ),
     );
   }
 
   Positioned secondElementPreview(String imageUrl) {
+    final double updatedWidth = _maxWidth - 7.5;
     return Positioned(
       top: 7.5,
       child: Center(
         child: Neumorphic(
-          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
-          child: Container(
-            decoration: videoCardDecoration(image: imageUrl),
-            width: _maxWidth - 7.5,
-            height: _maxHeight,
-          ),
-        ),
+            style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              height: _maxHeight,
+              width: updatedWidth,
+              maxWidthDiskCache: updatedWidth.toInt(),
+              maxHeightDiskCache: _maxHeight.toInt(),
+              memCacheWidth: updatedWidth.toInt(),
+              memCacheHeight: _maxHeight.toInt(),
+              fit: BoxFit.cover,
+            )),
       ),
     );
   }
 
   Positioned firstElementPreview(String imageUrl) {
     return Positioned(
-      top: 0,
-      child: Center(
-        child: Neumorphic(
-          style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
-          child: Container(
-            decoration: videoCardDecoration(image: imageUrl),
-            width: _maxWidth,
-            height: _maxHeight,
-            child: Center(child: playIconButton()),
+        top: 0,
+        child: Center(
+          child: Neumorphic(
+            style: OlukoNeumorphism.getNeumorphicStyleForStackCardElement(),
+            child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                height: _maxHeight,
+                width: _maxWidth,
+                maxWidthDiskCache: (_maxWidth * 2.5).toInt(),
+                maxHeightDiskCache: (_maxHeight * 2.5).toInt(),
+                memCacheWidth: (_maxWidth * 2.5).toInt(),
+                memCacheHeight: (_maxHeight * 2.5).toInt(),
+                fit: BoxFit.fitWidth,
+                imageBuilder: (BuildContext context, ImageProvider<Object> imageProvider) => Stack(
+                      children: [
+                        Image(
+                          image: imageProvider,
+                          height: _maxHeight,
+                          width: _maxWidth,
+                          fit: BoxFit.fitWidth,
+                        ),
+                        Center(
+                          child: playIconButton(),
+                        )
+                      ],
+                    )),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   BoxDecoration videoCardDecoration({String image}) {

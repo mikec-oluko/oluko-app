@@ -157,19 +157,20 @@ class _CoachAppBarState extends State<CoachAppBar> {
   }
 
   Padding coachAvatarImage() {
+    final double _imageRadius = 24;
     return Padding(
       padding: const EdgeInsets.only(right: 5),
-      child: CircleAvatar(
-        backgroundColor: OlukoColors.black,
-        backgroundImage: Image(
-          image: CachedNetworkImageProvider(widget.coachUser.avatar),
-          fit: BoxFit.contain,
-          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-              ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 24, width: 24),
-          height: 24,
-          width: 24,
-        ).image,
-        radius: 24.0,
+      child: CachedNetworkImage(
+        height: _imageRadius * 2,
+        width: _imageRadius * 2,
+        maxWidthDiskCache: (_imageRadius * 2).toInt(),
+        maxHeightDiskCache: (_imageRadius * 2).toInt(),
+        fit: BoxFit.cover,
+        imageBuilder: (context, imageProvider) => CircleAvatar(
+          backgroundImage: imageProvider,
+          maxRadius: _imageRadius ?? 30,
+        ),
+        imageUrl: widget.coachUser.avatar,
       ),
     );
   }

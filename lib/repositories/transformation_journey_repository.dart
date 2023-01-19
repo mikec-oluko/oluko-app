@@ -15,8 +15,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
 
-  static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
 
   TransformationJourneyRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -50,8 +49,7 @@ class TransformationJourneyRepository {
     }
   }
 
-  static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type, XFile file, String userId, int index) async {
+  static Future<TransformationJourneyUpload> createTransformationJourneyUpload(FileTypeEnum type, XFile file, String userId, int index) async {
     try {
       final CollectionReference transformationJourneyUploadsReference =
           projectReference.collection('users').doc(userId).collection('transformationJourneyUploads');
@@ -112,8 +110,7 @@ class TransformationJourneyRepository {
     return downloadUrl;
   }
 
-  static Future<bool> reorderElementsIndex(
-      {TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced, String userId}) async {
+  static Future<bool> reorderElementsIndex({TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced, String userId}) async {
     updateIndexOfElements(elementMoved, elementReplaced);
 
     try {
@@ -125,6 +122,18 @@ class TransformationJourneyRepository {
         print(e);
       }
 
+      return false;
+    }
+  }
+
+  Future<bool> markElementAsDeleted({String userId, TransformationJourneyUpload transformationJourneyItem}) async {
+    try {
+      final DocumentReference contentReference =
+          projectReference.collection('users').doc(userId).collection('transformationJourneyUploads').doc(transformationJourneyItem.id);
+      transformationJourneyItem.isDeleted = true;
+      await contentReference.update(transformationJourneyItem.toJson());
+      return true;
+    } catch (e) {
       return false;
     }
   }

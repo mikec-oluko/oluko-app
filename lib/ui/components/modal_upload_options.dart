@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ModalUploadOptions extends StatefulWidget {
   final UploadFrom contentFrom;
   final int indexValue;
-  ModalUploadOptions({this.contentFrom, this.indexValue});
+  final bool showDeleteOnList;
+  final bool isDeleteRequested;
+  final Function() deleteAction;
+  final Function() deleteCancelAction;
+  ModalUploadOptions(
+      {this.contentFrom, this.indexValue, this.isDeleteRequested = false, this.deleteAction, this.deleteCancelAction, this.showDeleteOnList = false});
   @override
   _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }
@@ -28,58 +35,117 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
 
   @override
   Widget build(BuildContext context) {
-    return returnList(context);
+    return _panelContent(context);
   }
 
-  Widget returnList(BuildContext context) {
+  Widget _panelContent(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        borderRadius: OlukoNeumorphism.isNeumorphismDesign
-            ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
-            : BorderRadius.zero,
+        borderRadius: OlukoNeumorphism.isNeumorphismDesign ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)) : BorderRadius.zero,
         color: OlukoNeumorphismColors.appBackgroundColor,
       ),
       width: MediaQuery.of(context).size.width,
-      height: 100,
+      height: widget.isDeleteRequested ? 120 : 100,
       child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         shrinkWrap: true,
+        children: widget.isDeleteRequested ? [getDeleteMethod(context)] : getUploadMethods(context),
+      ),
+    );
+  }
+
+  Widget getDeleteMethod(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
         children: [
-          ListTile(
-            onTap: () {
-              if (isOptionSelected == false) {
-                setState(() {
-                  isOptionSelected = true;
-                });
-                uploadContentFromCamera(context);
-              }
-            },
-            leading: const Icon(
-              Icons.camera_alt_outlined,
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
-            ),
-            title: Text(OlukoLocalizations.get(context, 'camera'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+          Row(
+            children: [Text(OlukoLocalizations.get(context, 'deleteContentAlert'), style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold))],
           ),
-          ListTile(
-            onTap: () {
-              if (isOptionSelected == false) {
-                setState(() {
-                  isOptionSelected = true;
-                });
-                uploadContentFromGallery(context);
-              }
-            },
-            leading: OlukoNeumorphism.isNeumorphismDesign
-                ? imageWrapper()
-                : const Icon(
-                    Icons.image,
-                    color: Colors.white,
-                  ),
-            title: Text(OlukoLocalizations.get(context, 'fromGallery'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+          SizedBox(
+            height: 20,
           ),
+          Row(
+            children: [
+              OlukoNeumorphicPrimaryButton(
+                  title: OlukoLocalizations.get(context, 'ok'),
+                  onPressed: () {
+                    if (widget.deleteAction != null) {
+                      widget.deleteAction();
+                    }
+                  }),
+              SizedBox(
+                width: 20,
+              ),
+              OlukoNeumorphicSecondaryButton(
+                  title: OlukoLocalizations.get(context, 'cancel'),
+                  onPressed: () {
+                    if (widget.deleteCancelAction != null) {
+                      widget.deleteCancelAction();
+                    }
+                  })
+            ],
+          )
         ],
       ),
     );
+  }
+
+  List<Widget> getUploadMethods(BuildContext context) {
+    return [
+      ListTile(
+        onTap: () {
+          if (isOptionSelected == false) {
+            setState(() {
+              isOptionSelected = true;
+            });
+            uploadContentFromCamera(context);
+          }
+        },
+        leading: const Icon(
+          Icons.camera_alt_outlined,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
+        ),
+        title: Text(OlukoLocalizations.get(context, 'camera'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+      ),
+      ListTile(
+        onTap: () {
+          if (isOptionSelected == false) {
+            setState(() {
+              isOptionSelected = true;
+            });
+            uploadContentFromGallery(context);
+          }
+        },
+        leading: OlukoNeumorphism.isNeumorphismDesign
+            ? imageWrapper()
+            : const Icon(
+                Icons.image,
+                color: Colors.white,
+              ),
+        title: Text(OlukoLocalizations.get(context, 'fromGallery'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+      ),
+      ListTile(
+        onTap: () {
+          if (isOptionSelected == false) {
+            setState(() {
+              isOptionSelected = true;
+            });
+            if (widget.deleteAction != null) {
+              widget.deleteAction();
+            }
+          }
+        },
+        leading: Image.asset(
+          'assets/neumorphic/bin.png',
+          color: Colors.red,
+          scale: 4.5,
+        ),
+        title: Text(OlukoLocalizations.get(context, 'deleteImage'), style: OlukoFonts.olukoSmallFont(customColor: Colors.red)),
+        //
+      ),
+    ];
   }
 
   Widget imageWrapper() {
@@ -108,8 +174,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromCamera(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context)
-            .uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera, contentFor: UploadFrom.profileImage);
+        BlocProvider.of<ProfileAvatarBloc>(context).uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera, contentFor: UploadFrom.profileImage);
         break;
       case UploadFrom.profileCoverImage:
         BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(
@@ -127,8 +192,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromGallery(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context)
-            .uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery, contentFor: UploadFrom.profileImage);
+        BlocProvider.of<ProfileAvatarBloc>(context).uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery, contentFor: UploadFrom.profileImage);
         break;
       case UploadFrom.profileCoverImage:
         BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(

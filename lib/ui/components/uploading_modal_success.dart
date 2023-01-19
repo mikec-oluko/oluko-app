@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -29,9 +29,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
       decoration: const BoxDecoration(
-        borderRadius: OlukoNeumorphism.isNeumorphismDesign
-            ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
-            : BorderRadius.zero,
+        borderRadius: OlukoNeumorphism.isNeumorphismDesign ? BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)) : BorderRadius.zero,
         color: OlukoNeumorphismColors.appBackgroundColor,
       ),
       width: MediaQuery.of(context).size.width,
@@ -46,9 +44,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                 Padding(
                   padding: const EdgeInsets.only(top: 50.0),
                   child: OlukoNeumorphism.isNeumorphismDesign
-                      ? Neumorphic(
-                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElement().copyWith(shape: NeumorphicShape.convex),
-                          child: UploadSuccess())
+                      ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement().copyWith(shape: NeumorphicShape.convex), child: UploadSuccess())
                       : UploadSuccess(),
                 ),
                 Padding(
@@ -121,8 +117,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     return CircleAvatar(
       backgroundColor: OlukoColors.primary,
       radius: 40.0,
-      child: IconButton(
-          icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black), onPressed: () {}),
+      child: IconButton(icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black), onPressed: () {}),
     );
   }
 }

@@ -29,14 +29,7 @@ class UserResponse extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   String firstName, lastName, email, username, firebaseId, avatar, avatarThumbnail, coverImage, city, state, country;
   double currentPlan;
@@ -112,17 +105,18 @@ class UserResponse extends Base {
     return avatarThumbnail ?? avatar;
   }
 
-  String getFullName() {
-    if(firstName!=null&&lastName!=null){
-      return '${getSingleName() ?? ''} ${lastName ?? ''}';
-      }
+  String getFullName({bool showFullName = false}) {
+    if (firstName != null && lastName != null) {
+      return showFullName ? '${getSingleName() ?? ''} ${lastName ?? ''}' : '${getSingleName()} ${lastName[0].toUpperCase()}.';
+    }
     return username;
   }
+
   String getSingleName() {
-    String singleName='';
-    if (firstName != null&&firstName.isNotEmpty) {
+    String singleName = '';
+    if (firstName != null && firstName.isNotEmpty) {
       singleName = firstName.split(' ')[0];
     }
     return singleName;
-    }
+  }
 }

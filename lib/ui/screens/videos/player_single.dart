@@ -27,7 +27,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
 
   @override
   void initState() {
-    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _videoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.videoInfo.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();

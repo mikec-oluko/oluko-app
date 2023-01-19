@@ -49,6 +49,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
   bool canHidePanel = true;
+  bool isEdit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -155,13 +156,27 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                         padding: widget.viewAllPage
                             ? const EdgeInsets.fromLTRB(30, 20, 10, 10)
                             : isCurrenUser
-                                ? const EdgeInsets.fromLTRB(30, 110, 10, 10)
+                                ? const EdgeInsets.fromLTRB(30, 110, 30, 10)
                                 : const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                        child: Text(
-                          widget.viewAllPage
-                              ? ProfileViewConstants.profileOptionsTransformationJourney
-                              : getTitleForContent(uploadListContent: _transformationJourneyContent),
-                          style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.viewAllPage
+                                  ? ProfileViewConstants.profileOptionsTransformationJourney
+                                  : getTitleForContent(uploadListContent: _transformationJourneyContent),
+                              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold),
+                            ),
+                            if (isCurrenUser)
+                              GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isEdit = !isEdit;
+                                    });
+                                  },
+                                  child: Text(OlukoLocalizations.get(context, 'editContent'),
+                                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary))),
+                          ],
                         ),
                       ),
                     )
@@ -182,13 +197,25 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
           _statePanelMaxHeight = _panelMaxHeight;
         } else {
-          _statePanelMaxHeight = 300;
+          if (state is TransformationJourneyContentDelete) {
+            _statePanelMaxHeight = 120;
+          } else {
+            _statePanelMaxHeight = 300;
+          }
         }
         if (state is TransformationJourneyContentOpen) {
           _panelController.open();
           _contentForPanel = ModalUploadOptions(
             contentFrom: UploadFrom.transformationJourney,
             indexValue: _transformationJourneyContent.length,
+          );
+        }
+        if (state is TransformationJourneyContentDelete) {
+          _panelController.open();
+          _contentForPanel = ModalUploadOptions(
+            deleteAction: () => BlocProvider.of<TransformationJourneyBloc>(context).markContentAsDeleted(_profileInfo.id, state.elementToMarkAsDelete),
+            deleteCancelAction: () => BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState(),
+            isDeleteRequested: true,
           );
         }
         if (state is TransformationJourneyContentDefault) {
@@ -217,10 +244,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       builder: (context, state) {
         return SlidingUpPanel(
           onPanelClosed: () {
-            BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
-            BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
-            Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                arguments: {'profileInfo': widget.userRequested, 'viewAllPage': false});
+            if (state is! TransformationJourneyContentDelete && (state is! TransformationJourneyContentOpen)) {
+              BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
+              BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
+            }
           },
           backdropEnabled: canHidePanel,
           isDraggable: false,
@@ -317,12 +344,14 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                             _variableSet++;
                           }
                           return ImageAndVideoContainer(
-                            backgroundImage: _transformationJourneyContent[index].thumbnail,
-                            isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
-                            videoUrl: _transformationJourneyContent[index].file,
-                            displayOnViewNamed: ActualProfileRoute.transformationJourney,
-                            originalContent: _transformationJourneyContent[index],
-                          );
+                              backgroundImage: _transformationJourneyContent[index].thumbnail,
+                              isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
+                              videoUrl: _transformationJourneyContent[index].file,
+                              displayOnViewNamed: ActualProfileRoute.transformationJourney,
+                              originalContent: _transformationJourneyContent[index],
+                              isEdit: isEdit,
+                              editAction: () =>
+                                  BlocProvider.of<TransformationJourneyContentBloc>(context).markContentAsDelete(_transformationJourneyContent[index]));
                         },
                       ),
                     ),
@@ -337,12 +366,14 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   itemBuilder: (context, index) => Card(
                       color: Colors.transparent,
                       child: ImageAndVideoContainer(
-                        backgroundImage: _transformationJourneyContent[index].thumbnail,
-                        isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
-                        videoUrl: _transformationJourneyContent[index].file,
-                        displayOnViewNamed: ActualProfileRoute.transformationJourney,
-                        originalContent: _transformationJourneyContent[index],
-                      )),
+                          backgroundImage: _transformationJourneyContent[index].thumbnail,
+                          isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
+                          videoUrl: _transformationJourneyContent[index].file,
+                          displayOnViewNamed: ActualProfileRoute.transformationJourney,
+                          originalContent: _transformationJourneyContent[index],
+                          isEdit: isEdit,
+                          editAction: () =>
+                              BlocProvider.of<TransformationJourneyContentBloc>(context).markContentAsDelete(_transformationJourneyContent[index]))),
                 ),
         ),
       ),
@@ -355,10 +386,16 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         if (state is TransformationJourneySuccess) {
           _transformationJourneyContent = state.contentFromUser;
           _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
-              tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
+            tansformationJourneyData: _transformationJourneyContent,
+            requestedFromRoute: ActualProfileRoute.transformationJourney,
+          );
         }
         if (state is TransformationJourneyFailure || state is TransformationJourneyDefault) {
           BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userToUse.id);
+        }
+        if (state is TransformationJourneyDeleteSuccess) {
+          BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userToUse.id);
+          BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
         }
         return page(context, _profileInfo);
       },

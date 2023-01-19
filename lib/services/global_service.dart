@@ -10,6 +10,8 @@ class GlobalService with ChangeNotifier {
   bool _comesFromCoach;
   bool _hasInternetConnection;
   bool _videoHlsIsActive;
+  bool _showUserLocation;
+  bool _showUserLocationOnRegister;
   ConnectivityResult _connectivityType;
 
   GlobalService._internal() {
@@ -17,9 +19,15 @@ class GlobalService with ChangeNotifier {
     _comesFromCoach = false;
     _hasInternetConnection = true;
     _videoHlsIsActive = true;
+    _showUserLocation = false;
+    _showUserLocationOnRegister = true;
   }
 
   bool get videoProcessing => _videoProcessing;
+
+  bool get showUserLocation => _showUserLocation;
+
+  bool get showUserLocationOnRegister => _showUserLocationOnRegister;
 
   bool get appUseVideoHls => _videoHlsIsActive;
 

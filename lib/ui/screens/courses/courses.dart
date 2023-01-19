@@ -203,11 +203,11 @@ class _State extends State<Courses> {
                   : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
-      onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
+      onSearchSubmit: (SearchResults<Course> results) => setState(() {
         showSearchSuggestions = false;
         searchResults = results;
       }),
-      onSearchResults: (SearchResults results) => this.setState(() {
+      onSearchResults: (SearchResults results) => setState(() {
         showSearchSuggestions = true;
         searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.searchResults));
       }),
@@ -272,7 +272,7 @@ class _State extends State<Courses> {
     );
   }
 
-  CourseCard _getCourseCard(Image image,
+  CourseCard _getCourseCard(Widget image,
       {double progress, double width, double height, List<String> userRecommendationsAvatarUrls, bool friendRecommended = false}) {
     return CourseCard(
         width: width,
@@ -541,13 +541,17 @@ class _State extends State<Courses> {
     }).toList();
   }
 
-  Image _generateImageCourse(String imageUrl) {
+  Widget _generateImageCourse(String imageUrl) {
     if (imageUrl != null) {
-      return Image(
-        image: CachedNetworkImageProvider(imageUrl),
-        fit: BoxFit.cover,
-        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
+      return CachedNetworkImage(
+        imageUrl: imageUrl,
+        height: ScreenUtils.height(context) * 0.20,
+        width: ScreenUtils.width(context) * 0.35,
+        maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
+        maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
+        memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
+        memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
+        fit: BoxFit.fill,
       );
     }
     return Image.asset("assets/courses/course_sample_7.png");

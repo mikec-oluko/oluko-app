@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -35,8 +36,8 @@ class SegmentUtils {
 
   static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
       {bool roundTitle = true, bool restTime = true, List<Movement> movements = const [], bool viewDetailsScreen = false}) {
-    List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
-        restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
+    List<Widget> workoutWidgets =
+        getWorkoutsforNeumorphic(segment, color, restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
     if (roundTitle) {
       return [
             Text(
@@ -82,7 +83,8 @@ class SegmentUtils {
   }
 
   static String getEMOMTitle(Segment segment, BuildContext context) {
-    return 'EMOM: ${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${segment.totalTime} ${OlukoLocalizations.get(context, 'seconds')}';
+    final duration = Duration(seconds: segment.totalTime);
+    return 'EMOM: ${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${TimeConverter.durationToString(duration)} ${OlukoLocalizations.get(context, 'minute')}';
   }
 
   static List<String> getWorkouts(Segment segment) {
@@ -254,8 +256,7 @@ class SegmentUtils {
   static List<Widget> getJoinedLabel(List<String> labels) {
     List<Widget> labelWidgets = [];
     labels.forEach((label) {
-      labelWidgets.add(
-          Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
+      labelWidgets.add(Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
       labelWidgets.add(OlukoNeumorphism.isNeumorphismDesign
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
@@ -278,8 +279,7 @@ class SegmentUtils {
   static Column workouts(Segment segment, BuildContext context, Color color) {
     final List<String> workoutWidgets = getWorkouts(segment);
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
+        crossAxisAlignment: CrossAxisAlignment.start, children: titleList(segment, context) + workoutWidgets.map((e) => getTextWidget(e, color))?.toList());
   }
 
   static List<Widget> titleList(Segment segment, BuildContext context) {
@@ -295,12 +295,9 @@ class SegmentUtils {
         : [];
   }
 
-  static CoachRequest getSegmentCoachRequest(
-      List<CoachRequest> coachRequests, String segmentId, String courseEnrollmentId, String classId) {
+  static CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId, String courseEnrollmentId, String classId) {
     for (var i = 0; i < coachRequests.length; i++) {
-      if (coachRequests[i].segmentId == segmentId &&
-          coachRequests[i].courseEnrollmentId == courseEnrollmentId &&
-          coachRequests[i].classId == classId) {
+      if (coachRequests[i].segmentId == segmentId && coachRequests[i].courseEnrollmentId == courseEnrollmentId && coachRequests[i].classId == classId) {
         return coachRequests[i];
       }
     }

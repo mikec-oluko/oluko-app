@@ -35,6 +35,8 @@ class ModalPeopleEnrolled extends StatefulWidget {
 
 class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
   Map<String, UserProgress> _usersProgress = {};
+  List<UserSubmodel> _usersSubModelList = [];
+  List<UserResponse> _userResponseList = [];
 
   @override
   void initState() {
@@ -132,8 +134,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                           Text(user.getFullName()?.toString(),
                               textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
                           const SizedBox(height: 1),
-                          Text(user.username?.toString() ?? '',
-                              style: OlukoFonts.olukoSmallFont(customColor: Colors.grey), textAlign: TextAlign.center),
+                          Text(user.username?.toString() ?? '', style: OlukoFonts.olukoSmallFont(customColor: Colors.grey), textAlign: TextAlign.center),
                         ],
                       ),
                     ),
@@ -143,7 +144,10 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20, top: 10),
-          child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
+          child: TitleBody(
+            OlukoLocalizations.get(context, 'noUsers'),
+            customColor: OlukoColors.grayColor,
+          ),
         ),
       );
     }

@@ -11,6 +11,7 @@ class SignUpRequest {
   String country;
   String state;
   String city;
+  int zipCode;
   bool newsletter;
 
   SignUpRequest.fromJson(Map json)
@@ -23,6 +24,7 @@ class SignUpRequest {
         country = json['country'] == null ? '' : json['country']?.toString(),
         state = json['state'] == null ? '' : json['state']?.toString(),
         city = json['city'] == null ? '' : json['city']?.toString(),
+        zipCode = json['zip_code'] as int,
         newsletter = json['newsletter'] == null || json['newsletter'] is! bool ? false : json['newsletter'] as bool;
 
   Map<String, dynamic> toJson() => {
@@ -35,6 +37,7 @@ class SignUpRequest {
         'country': country == null ? '' : country.toString(),
         'state': state == null ? '' : state.toString(),
         'city': city == null ? '' : city.toString(),
+        'zip_code': zipCode,
         'newsletter': newsletter
       };
 
@@ -48,6 +51,7 @@ class SignUpRequest {
         'country': country,
         'state': state,
         'city': city,
+        'zip_code': zipCode,
         'newsletter': newsletter
       };
 }

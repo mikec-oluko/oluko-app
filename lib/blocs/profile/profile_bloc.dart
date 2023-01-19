@@ -52,11 +52,11 @@ class ProfileBloc extends Cubit<ProfileState> {
       emit(ProfileLoading());
 
       if (contentFor == UploadFrom.profileCoverImage) {
-        UserResponse userUpdatedCoverImage = await _profileRepository.uploadProfileCoverImage(_image);
+        UserResponse userUpdatedCoverImage = await _profileRepository.uploadProfileCoverImage(image: _image);
         emit(ProfileUploadSuccess(userUpdated: userUpdatedCoverImage));
       }
       if (contentFor == UploadFrom.profileImage) {
-        UserResponse userUpdated = await _profileRepository.updateProfileAvatar(_image);
+        UserResponse userUpdated = await _profileRepository.updateProfileAvatar(image: _image);
         emit(ProfileUploadSuccess(userUpdated: userUpdated));
       }
     } catch (exception, stackTrace) {

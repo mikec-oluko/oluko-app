@@ -51,7 +51,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
   }
 
   void initializeVideo() {
-    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _videoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.taskSubmission.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();
@@ -93,7 +93,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
         child: Scaffold(
             appBar: OlukoAppBar(title: "Record review"),
             bottomNavigationBar: BottomAppBar(
-              color:OlukoColors.black,
+              color: OlukoColors.black,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
@@ -140,8 +140,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                           _recording = !_recording;
                         });
                       },
-                      child:
-                          _recording ? Image.asset('assets/self_recording/recording.png') : Image.asset('assets/self_recording/record.png'),
+                      child: _recording ? Image.asset('assets/self_recording/recording.png') : Image.asset('assets/self_recording/record.png'),
                     ),
                     Image.asset('assets/self_recording/gallery.png'),
                   ],
@@ -168,7 +167,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                                   child: VideoPlayer(_videoController),
                                 );
                               } else {
-                                return Container(color:OlukoColors.black, child: Center(child: CircularProgressIndicator()));
+                                return Container(color: OlukoColors.black, child: Center(child: CircularProgressIndicator()));
                               }
                             },
                           ),
@@ -179,9 +178,8 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                         child: Container(
                           height: MediaQuery.of(context).size.height / 4.3,
                           width: MediaQuery.of(context).size.width / 3.3,
-                          child: (!isReady)
-                              ? Container()
-                              : AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController)),
+                          child:
+                              (!isReady) ? Container() : AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController)),
                         )),
                   ])),
               Positioned(

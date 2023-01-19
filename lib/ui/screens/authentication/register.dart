@@ -58,25 +58,28 @@ class _RegisterState extends State<RegisterPage> {
           title: '',
           actions: [],
         ),
-        body: Container(
-          alignment: Alignment.center,
-          color: OlukoColors.white,
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              _defaultWidgetSpacer(context),
-              _getSignUpText(context),
-              _defaultWidgetSpacer(context),
-              _textfieldsSection(),
-              _passwordRequirementsSection(context),
-              _defaultWidgetSpacer(context),
-              _termsAndConditionsPrivacyPolicy(),
-              _mvtNewsInfoAndOffers(context),
-              _defaultWidgetSpacer(context),
-              _registerConfirmButton(context),
-              _registerCancelButton(context),
-              _defaultWidgetSpacer(context),
-            ],
+        body: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Container(
+            alignment: Alignment.center,
+            color: OlukoColors.white,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                _defaultWidgetSpacer(context),
+                _getSignUpText(context),
+                _defaultWidgetSpacer(context),
+                _textfieldsSection(),
+                _passwordRequirementsSection(context),
+                _defaultWidgetSpacer(context),
+                _termsAndConditionsPrivacyPolicy(),
+                _mvtNewsInfoAndOffers(context),
+                _defaultWidgetSpacer(context),
+                _registerConfirmButton(context),
+                _registerCancelButton(context),
+                _defaultWidgetSpacer(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -157,12 +160,6 @@ class _RegisterState extends State<RegisterPage> {
         ));
   }
 
-  agreeWithTermsAndConditions(bool value) {
-    setState(() {
-      _agreeWithRequirements = value;
-    });
-  }
-
   Expanded _widgetSpacer() => const Expanded(child: SizedBox());
 
   Padding _passwordRequirementsSection(BuildContext context) {
@@ -207,14 +204,6 @@ class _RegisterState extends State<RegisterPage> {
       ],
     );
   }
-
-  bool _containsMinChars() => _passwordValidationState[ValidatorNames.containsMinChars];
-
-  bool _containsUppercase() => _passwordValidationState[ValidatorNames.containsUppercase];
-
-  bool _containsDigit() => _passwordValidationState[ValidatorNames.containsDigit];
-
-  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase] == true;
 
   Widget _passwordRequirementsTile({@required bool Function() evaluate, @required String errorText}) {
     return Container(
@@ -306,7 +295,7 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.FIRSTNAME,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.firstName = value;
+                  _newUserFromRegister.firstName = _getValue(value);
                 });
               }),
           OlukoRegisterTextfield(
@@ -315,7 +304,7 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.LASTNAME,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.lastName = value;
+                  _newUserFromRegister.lastName = _getValue(value);
                 });
               }),
           OlukoRegisterTextfield(
@@ -324,7 +313,7 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.COUNTRY,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.country = value;
+                  _newUserFromRegister.country = _getValue(value);
                 });
               }),
           OlukoRegisterTextfield(
@@ -333,7 +322,7 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.STATE,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.state = value;
+                  _newUserFromRegister.state = _getValue(value);
                 });
               }),
           OlukoRegisterTextfield(
@@ -342,7 +331,16 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.CITY,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.city = value;
+                  _newUserFromRegister.city = _getValue(value);
+                });
+              }),
+          OlukoRegisterTextfield(
+              key: formKey,
+              title: OlukoLocalizations.get(context, 'zipCode'),
+              fieldType: RegisterFieldEnum.ZIPCODE,
+              onInputUpdated: (value) {
+                setState(() {
+                  _newUserFromRegister.zipCode = int.parse(_getValue(value));
                 });
               }),
           OlukoRegisterTextfield(
@@ -351,7 +349,7 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.EMAIL,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.email = value;
+                  _newUserFromRegister.email = _getValue(value);
                 });
               }),
           OlukoRegisterTextfield(
@@ -360,7 +358,7 @@ class _RegisterState extends State<RegisterPage> {
               fieldType: RegisterFieldEnum.USERNAME,
               onInputUpdated: (value) {
                 setState(() {
-                  _newUserFromRegister.username = value;
+                  _newUserFromRegister.username = _getValue(value);
                 });
               }),
           OlukoRegisterTextfield(
@@ -369,7 +367,7 @@ class _RegisterState extends State<RegisterPage> {
             fieldType: RegisterFieldEnum.PASSWORD,
             onInputUpdated: (value) {
               setState(() {
-                _newUserFromRegister.password = value;
+                _newUserFromRegister.password = _getValue(value);
               });
             },
             onPasswordValidate: (passwordValidateState) => _passwordValidationStatus(passwordValidateState),
@@ -392,8 +390,6 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
-  bool isPasswordValid() => (_containsMinChars() && _containsUppercase()) && (_containsDigit() && _containsLowercase());
-
   Widget checkBox({bool isAgree = false}) {
     return Theme(
       data: ThemeData(unselectedWidgetColor: OlukoColors.primary),
@@ -412,5 +408,23 @@ class _RegisterState extends State<RegisterPage> {
         },
       ),
     );
+  }
+
+  bool _containsMinChars() => _passwordValidationState[ValidatorNames.containsMinChars];
+
+  bool _containsUppercase() => _passwordValidationState[ValidatorNames.containsUppercase];
+
+  bool _containsDigit() => _passwordValidationState[ValidatorNames.containsDigit];
+
+  bool _containsLowercase() => _passwordValidationState[ValidatorNames.containsLowercase] == true;
+
+  bool isPasswordValid() => (_containsMinChars() && _containsUppercase()) && (_containsDigit() && _containsLowercase());
+
+  String _getValue(String value) => value.trim();
+
+  agreeWithTermsAndConditions(bool value) {
+    setState(() {
+      _agreeWithRequirements = value;
+    });
   }
 }

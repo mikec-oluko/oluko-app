@@ -11,14 +11,23 @@ class MovementItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _sizeBasedOnRadius = maxRadius * 2;
     const ImageProvider defaultImage = AssetImage('assets/home/mvtthumbnail.png');
     return Neumorphic(
       style: referenceMovementsSection
           ? OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
           : OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-      child: CircleAvatar(
-        backgroundImage: imageUrl == null ? defaultImage : CachedNetworkImageProvider(imageUrl),
-        maxRadius: maxRadius ?? 30,
+      child: CachedNetworkImage(
+        width: _sizeBasedOnRadius ?? 50,
+        height: _sizeBasedOnRadius ?? 50,
+        maxWidthDiskCache: maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
+        maxHeightDiskCache: maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
+        fit: BoxFit.cover,
+        imageBuilder: (context, imageProvider) => CircleAvatar(
+          backgroundImage: imageProvider,
+          maxRadius: maxRadius ?? 30,
+        ),
+        imageUrl: imageUrl,
       ),
     );
   }

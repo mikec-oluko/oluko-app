@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
@@ -25,13 +27,16 @@ class TransformListOfItemsToWidget {
       List<ChallengeNavigation> challengeSegments,
       ActualProfileRoute requestedFromRoute,
       UserResponse requestedUser,
+      bool isEdit = false,
+      Function() editAction,
       bool isFriend,
       bool useAudio = true}) {
     final List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
       for (final contentUploaded in tansformationJourneyData) {
-        contentForSection.add(getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
+        contentForSection.add(getImageAndVideoCard(
+            transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute, isEdit: isEdit, editAction: () => editAction));
       }
     }
 
@@ -44,14 +49,14 @@ class TransformListOfItemsToWidget {
     }
     if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
       for (final challenge in upcomingChallenges) {
-        contentForSection.add(getImageAndVideoCard(
-            upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
+        contentForSection.add(
+            getImageAndVideoCard(upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
       }
     }
     if ((challengeSegments != null && upcomingChallenges == null) && (tansformationJourneyData == null && assessmentVideoData == null)) {
       challengeSegments.forEach((challengeSegment) {
-        contentForSection.add(getImageAndVideoCard(
-            challengeSegment: challengeSegment, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
+        contentForSection.add(
+            getImageAndVideoCard(challengeSegment: challengeSegment, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
       });
     }
     return contentForSection.toList();
@@ -65,6 +70,8 @@ class TransformListOfItemsToWidget {
       ChallengeNavigation challengeSegment,
       ActualProfileRoute routeForContent,
       bool useAudio = false,
+      bool isEdit = false,
+      Function() editAction,
       UserResponse requestedUser}) {
     Widget contentForReturn = SizedBox();
 
@@ -77,6 +84,8 @@ class TransformListOfItemsToWidget {
           videoUrl: transformationJourneyContent.file,
           displayOnViewNamed: routeForContent,
           originalContent: transformationJourneyContent,
+          editAction: editAction,
+          isEdit: isEdit,
         ),
       );
     }
@@ -96,10 +105,7 @@ class TransformListOfItemsToWidget {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: ChallengesCard(
-            segmentChallenge: upcomingChallengesContent as ChallengeNavigation,
-            routeToGo: "/",
-            userRequested: requestedUser,
-            useAudio: useAudio),
+            segmentChallenge: upcomingChallengesContent as ChallengeNavigation, routeToGo: "/", userRequested: requestedUser, useAudio: useAudio),
       );
     }
     if (challengeSegment != null) {
@@ -146,8 +152,7 @@ class TransformListOfItemsToWidget {
     return contentForReturn;
   }
 
-  static List<Widget> getAssessmentCards(
-      {List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone, bool verticalList}) {
+  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone, bool verticalList}) {
     final List<Widget> contentForSection = [];
     for (final task in tasks) {
       contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone, OlukoNeumorphism.isNeumorphismDesign));
@@ -209,9 +214,9 @@ class TransformListOfItemsToWidget {
           indexSegment: challenge.indexSegment);
       for (final segment in segments) {
         for (final actualSegment in segment.enrollmentSegments) {
-          if (challenge.segmentId == actualSegment.id && challenge.courseEnrollmentId==segment.courseEnrollment.id) {
+          if (challenge.segmentId == actualSegment.id && challenge.courseEnrollmentId == segment.courseEnrollment.id) {
             coachSegmentContent.segmentName = actualSegment.name;
-            coachSegmentContent.indexCourse=segment.courseIndex;
+            coachSegmentContent.indexCourse = segment.courseIndex;
             coachSegmentContent.courseEnrollment = segment.courseEnrollment;
           }
         }

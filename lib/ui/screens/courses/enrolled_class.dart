@@ -51,7 +51,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-        BlocProvider.of<CourseEnrollmentBloc>(context)..get(authState.firebaseUser, widget.course);
+        BlocProvider.of<CourseEnrollmentBloc>(context)..get(authState.user.id, widget.course);
         return form(authState.firebaseUser);
       } else {
         return SizedBox();

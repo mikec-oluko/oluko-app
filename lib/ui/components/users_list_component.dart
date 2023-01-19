@@ -75,7 +75,7 @@ class _UserListComponentState extends State<UserListComponent> {
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
           OlukoLocalizations.get(context, 'noUsers'),
-          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
+          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
         )
       ]),
     );
@@ -110,7 +110,7 @@ class _UserListComponentState extends State<UserListComponent> {
                     bloc: BlocProvider.of<StoryListBloc>(context),
                     from: StoriesItemFrom.friends,
                   ),
-                  _printName(friendElement),
+                  _printName(friendElement, _isCurrentUser(friendElement)),
                   _printUsername(friendElement)
                 ],
               ),
@@ -119,6 +119,8 @@ class _UserListComponentState extends State<UserListComponent> {
           .toList(),
     );
   }
+
+  bool _isCurrentUser(UserResponse friendElement) => widget.authUser.id == friendElement.id;
 
   Widget _printUsername(UserResponse friendUser) {
     return Padding(
@@ -132,11 +134,11 @@ class _UserListComponentState extends State<UserListComponent> {
     );
   }
 
-  Padding _printName(UserResponse user) {
+  Padding _printName(UserResponse user, bool isCurrentUser) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
       child: Text(
-        user.getFullName(),
+        user.getFullName(showFullName: isCurrentUser),
         overflow: TextOverflow.ellipsis,
         style: OlukoFonts.olukoMediumFont(customColor: Colors.white),
         textAlign: TextAlign.center,

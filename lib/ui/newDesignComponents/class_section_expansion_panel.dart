@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -21,6 +22,7 @@ class ClassSectionExpansionPanel extends StatefulWidget {
 class _State extends State<ClassSectionExpansionPanel> {
   @override
   Widget build(BuildContext context) {
+    final double _imageSize = 90;
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
@@ -36,11 +38,13 @@ class _State extends State<ClassSectionExpansionPanel> {
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: Image.network(
-                      widget.classObj.image,
-                      height: 90,
-                      width: 90,
+                    child: CachedNetworkImage(
+                      height: _imageSize,
+                      width: _imageSize,
+                      maxWidthDiskCache: (_imageSize * 3).toInt(),
+                      maxHeightDiskCache: (_imageSize * 3).toInt(),
                       fit: BoxFit.cover,
+                      imageUrl: widget.classObj.image,
                     ),
                   ),
                   Expanded(
@@ -82,29 +86,29 @@ class _State extends State<ClassSectionExpansionPanel> {
                   ),
                 ],
               ),
-              OlukoNeumorphism.isNeumorphismDesign
-                  ? SizedBox()
-                  : Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16.0, bottom: 0, right: 10),
-                              child: () {
-                                if (widget.classObj.description != null) {
-                                  return Text(widget.classObj.description,
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor));
-                                } else {
-                                  return const SizedBox();
-                                }
-                              }(),
-                            ),
-                          ],
+              if (OlukoNeumorphism.isNeumorphismDesign)
+                SizedBox()
+              else
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0, bottom: 0, right: 10),
+                          child: () {
+                            if (widget.classObj.description != null) {
+                              return Text(widget.classObj.description,
+                                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor));
+                            } else {
+                              return const SizedBox();
+                            }
+                          }(),
                         ),
-                      ),
-                    ]),
+                      ],
+                    ),
+                  ),
+                ]),
             ],
           ),
         ),

@@ -247,13 +247,13 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
   }
 
   void initializeVideos() {
-    _videoController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _videoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.taskSubmission.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize().then((value) => _videoController.setVolume(0.0));
     _videoController.setLooping(true);
 
-    _videoRecordedController = VideoPlayerHelper.VideoPlayerControllerFromFile(File(widget.filePath));
+    _videoRecordedController = VideoPlayerHelper.videoPlayerControllerFromFile(File(widget.filePath));
     _initializeVideoPlayerRecordedFuture = _videoRecordedController.initialize().then((value) => setDuration());
     _videoRecordedController.setLooping(true);
   }

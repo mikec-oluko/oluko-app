@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -44,6 +45,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
+import 'package:oluko_app/ui/newDesignComponents/full_screen_loading_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -77,7 +79,6 @@ class InsideClass extends StatefulWidget {
 
 class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
-  // ChewieController _controller;
   Class _class;
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
@@ -96,17 +97,16 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   void initState() {
+    super.initState();
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
     BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
+    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
-    super.initState();
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
   }
 
   @override
   void dispose() {
-    // if (_controller != null) {
-    //   _controller?.dispose();
-    // }
     super.dispose();
   }
 
@@ -114,7 +114,6 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        if (widget.classIndex == widget.courseEnrollment.classes.length - 1) {}
         return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
@@ -125,16 +124,13 @@ class _InsideClassesState extends State<InsideClass> {
               _audios = AudioService.getNotDeletedAudios(classAudios);
               _audioQty = _audios == null ? 0 : _audios.length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
-              BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
               return WillPopScope(
                   onWillPop: () {
-                    _buttonController?.close();
-                    Navigator.pop(context);
-                    return Future(() => false);
+                    return _onBackButtonPress(context);
                   },
                   child: form());
             } else {
-              return OlukoCircularProgressIndicator();
+              return const FullScreenLoadingComponent();
             }
           });
         });
@@ -144,8 +140,13 @@ class _InsideClassesState extends State<InsideClass> {
     });
   }
 
+  Future<bool> _onBackButtonPress(BuildContext context) {
+    _buttonController?.close();
+    Navigator.pop(context);
+    return Future(() => false);
+  }
+
   Widget form() {
-    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     return Form(
       key: _formKey,
       child: Scaffold(body: BlocBuilder<CoachAudioBloc, CoachAudioState>(
@@ -493,15 +494,16 @@ class _InsideClassesState extends State<InsideClass> {
             value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
           ),
         ),
-        _class.description != null
-            ? Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: Text(
-                  _class.description,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                ),
-              )
-            : const SizedBox(),
+        if (_class.description != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Text(
+              _class.description,
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+            ),
+          )
+        else
+          const SizedBox(),
         buildChallengeSection(),
         classMovementSection(),
       ],
@@ -542,12 +544,6 @@ class _InsideClassesState extends State<InsideClass> {
       ),
     );
   }
-
-  // void pauseVideo() {
-  //   if (_controller != null) {
-  //     _controller.pause();
-  //   }
-  // }
 
   void isVideoPlaying() {
     return setState(() {
@@ -704,7 +700,7 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  goToSegmentDetail() {
+  void goToSegmentDetail() {
     closeVideo();
     int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
     if (segmentIndex == -1 || widget.courseEnrollment.classes[widget.classIndex].completedAt != null) {
