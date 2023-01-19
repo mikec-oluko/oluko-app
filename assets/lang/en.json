@@ -432,6 +432,7 @@
     "deleteContentAlert": "Are you sure you want to delete this content?",
     "editContent":"Edit",
     "zipCode":"Zip code",
-    "zipCodeErrorMessage": ", Does not meet the required format. Numeric characters only, 5 digits long."
+    "zipCodeErrorMessage": ", Does not meet the required format. Numeric characters only, 5 digits long.",
+    "deleteImage": "Delete image"
     
 }

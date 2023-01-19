@@ -409,7 +409,6 @@ class _CoachPageState extends State<CoachPage> {
       segments: _allSegmentsForUser.where((segment) => segment.isChallenge && segment.completedAt == null).toList());
 
   List<Widget> _carouselNotificationWidget(BuildContext context) {
-    // TODO: AGREGAR VIDEO
     return CoachHelperFunctions.notificationPanel(
       context: context,
       assessment: _assessment,

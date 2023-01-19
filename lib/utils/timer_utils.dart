@@ -116,7 +116,6 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       strokeWidth: _progressIndicatorStroke, value: progressValue, color: getGreenOrCoral, backgroundColor: backgroundColor)),
-              //TODO: COUNT YOUR AIR SQUADS
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 if (OlukoNeumorphism.isNeumorphismDesign) const Expanded(child: SizedBox()) else const SizedBox.shrink(),
                 Text(duration,
@@ -128,7 +127,6 @@ class TimerUtils {
                       ? neumorphicContentWithPadding(context, getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true))
                       : getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true)
                 else
-                  // const Expanded(child: SizedBox()),
                   SizedBox(height: 5),
                 if (bothSide) getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) else const SizedBox.shrink(),
                 if (bothSide) getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) else SizedBox(),

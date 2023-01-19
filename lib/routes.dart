@@ -451,7 +451,6 @@ class Routes {
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
-  // final CommonFriendPanelBloc _commonFriendPanelBloc = CommonFriendPanelBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -543,8 +542,6 @@ class Routes {
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<UserPlanSubscriptionBloc>.value(value: _userPlanSubscriptionBloc),
           BlocProvider<UserBloc>.value(value: _userBloc),
-          // BlocProvider<CommonFriendPanelBloc>.value(value: _commonFriendPanelBloc),
-          // CommonFriendPanelBloc _commonFriendPanelBloc
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1003,7 +1000,6 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          // BlocProvider<CommonFriendPanelBloc>.value(value: _commonFriendPanelBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(

@@ -142,8 +142,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
           color: Colors.red,
           scale: 4.5,
         ),
-        title: Text("Delete image", style: OlukoFonts.olukoSmallFont(customColor: Colors.red)),
-        // OlukoLocalizations.get(context, 'fromGallery')
+        title: Text(OlukoLocalizations.get(context, 'deleteImage'), style: OlukoFonts.olukoSmallFont(customColor: Colors.red)),
+        //
       ),
     ];
   }

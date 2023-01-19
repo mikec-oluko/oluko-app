@@ -127,18 +127,6 @@ class _State extends State<ChallengesCard> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // CachedNetworkImage(
-              //   maxWidthDiskCache: 100,
-              //   maxHeightDiskCache: 100,
-              //   fit: BoxFit.contain,
-              //   imageBuilder: (context, imageProvider) => CircleAvatar(
-              //     backgroundImage: imageProvider,
-              //     // backgroundImage: CachedNetworkImageProvider(widget.imageUrl,
-              //     // ),
-              //     maxRadius: widget.maxRadius ?? 30,
-              //   ),
-              //   imageUrl: widget.imageUrl,
-              // ),
               CachedNetworkImage(
                 maxWidthDiskCache: 100,
                 maxHeightDiskCache: 100,
@@ -152,12 +140,7 @@ class _State extends State<ChallengesCard> {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                        image: widget.segmentChallenge.challengeSegment.image != null
-                            ?
-
-                            //  CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
-                            imageProvider
-                            : defaultImage),
+                        image: widget.segmentChallenge.challengeSegment.image != null ? imageProvider : defaultImage),
                   ),
                 ),
               ),

@@ -247,8 +247,6 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
             if (state is! TransformationJourneyContentDelete && (state is! TransformationJourneyContentOpen)) {
               BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
               BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault();
-              // Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-              //     arguments: {'profileInfo': widget.userRequested, 'viewAllPage': false});
             }
           },
           backdropEnabled: canHidePanel,
