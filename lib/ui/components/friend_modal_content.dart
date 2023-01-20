@@ -15,6 +15,7 @@ import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -36,8 +37,8 @@ class FriendModalContent extends StatefulWidget {
   UserProgressStreamBloc userProgressStreamBloc;
   Map<String, UserProgress> usersProgess;
 
-  FriendModalContent(this.user, this.currentUserId, this.usersProgess, this.blocFriends, this.friendRequestBloc, this.blocHifiveSend,
-      this.blocHifiveReceived, this.blocUserStatistics, this.blocFavoriteFriend,
+  FriendModalContent(this.user, this.currentUserId, this.usersProgess, this.blocFriends, this.friendRequestBloc, this.blocHifiveSend, this.blocHifiveReceived,
+      this.blocUserStatistics, this.blocFavoriteFriend,
       [this.userProgressStreamBloc]);
   @override
   _FriendModalContentState createState() => _FriendModalContentState();
@@ -213,8 +214,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                   userIsFriend = friendUsers.where((friend) => friend.id == widget.user.id).toList().isNotEmpty;
                   friendModelList = friend.friends.where((element) => element.id == widget.user.id).toList();
                   friendModel = friendModelList.isNotEmpty ? friendModelList.first : null;
-                  connectionRequested =
-                      friend.friendRequestSent.where((friendRequest) => friendRequest.id == widget.user.id).toList().isNotEmpty;
+                  connectionRequested = friend.friendRequestSent.where((friendRequest) => friendRequest.id == widget.user.id).toList().isNotEmpty;
                   friendButtons = _getButtons(connectionRequested, friendState, userIsFriend);
                 }
                 return Padding(
@@ -284,7 +284,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
             UserHelper.printUsername(widget.user.username, widget.user.id),
             style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
           ),
-          _getUserLocation(),
+          if (GlobalService().showUserLocation) _getUserLocation(),
         ],
       );
     } else {
@@ -455,8 +455,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
           title: _buttonTextContent,
           onPressed: () {
             if (friendState is GetFriendsSuccess) {
-              BottomDialogUtils.removeConfirmationPopup(
-                  widget.currentUserId, widget.user, friendState.friendData, context, widget.blocFriends);
+              BottomDialogUtils.removeConfirmationPopup(widget.currentUserId, widget.user, friendState.friendData, context, widget.blocFriends);
               setState(() {
                 _buttonTextContent = OlukoLocalizations.of(context).find('connect');
               });

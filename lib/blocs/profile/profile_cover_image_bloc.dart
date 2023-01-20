@@ -16,7 +16,11 @@ class ProfileCoverImageLoading extends ProfileCoverImageState {}
 
 class ProfileCoverImageDefault extends ProfileCoverImageState {}
 
+class ProfileCoverImageDeleted extends ProfileCoverImageState {}
+
 class ProfileCoverSuccess extends ProfileCoverImageState {}
+
+class ProfileCoverDeleteRequested extends ProfileCoverImageState {}
 
 class ProfileCoverImageFailure extends OlukoException with ProfileCoverImageState {
   ProfileCoverImageFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
@@ -59,7 +63,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         return;
       }
       emit(ProfileCoverImageLoading());
-      await _profileRepository.uploadProfileCoverImage(_image);
+      await _profileRepository.uploadProfileCoverImage(image: _image);
       emit(ProfileCoverSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -78,5 +82,23 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
 
   void openPanel() {
     emit(ProfileCoverImageOpen());
+  }
+
+  Future<void> removeProfileCoverImage() async {
+    try {
+      await _profileRepository.uploadProfileCoverImage(isDeleteRequested: true);
+      emit(ProfileCoverImageDeleted());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(ProfileCoverImageFailure(exception: exception));
+      return;
+    }
+  }
+
+  void emitDeleteRequest() {
+    emit(ProfileCoverDeleteRequested());
   }
 }

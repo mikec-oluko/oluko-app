@@ -107,12 +107,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
                 }
                 if (friendState is FriendFailure || userListState is UserListFailure) {
-                  _friendUsersWidget = friendState is FriendFailure
-                      ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends')
-                      : _friendUsersWidget;
-                  _appUsersWidget = userListState is UserListFailure
-                      ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users')
-                      : _appUsersWidget;
+                  _friendUsersWidget =
+                      friendState is FriendFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends') : _friendUsersWidget;
+                  _appUsersWidget = userListState is UserListFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users') : _appUsersWidget;
                 }
                 return _scrollView();
               },
@@ -134,11 +131,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
           child: Column(
             children: [
               _listSection(
-                  titleForSection: OlukoLocalizations.get(context, 'myFriends'), content: _friendUsersWidget, listLength: _friends.length),
+                  titleForSection: OlukoLocalizations.get(context, 'myFriends'),
+                  content: _friends.isNotEmpty ? Expanded(child: _friendUsersWidget) : _friendUsersWidget,
+                  listLength: _friends.length),
               _listSection(
-                  titleForSection: OlukoLocalizations.get(context, 'otherUsers'),
-                  content: _appUsersWidget,
-                  listLength: _appUsersList.length),
+                  titleForSection: OlukoLocalizations.get(context, 'otherUsers'), content: Expanded(child: _appUsersWidget), listLength: _appUsersList.length),
             ],
           )),
     );
@@ -171,7 +168,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               padding: const EdgeInsets.all(20),
               child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
             ),
-            Expanded(child: content),
+            content,
           ],
         ));
   }
@@ -269,15 +266,13 @@ class _FriendsListPageState extends State<FriendsListPage> {
   }
 
   Widget dialogContainer({BuildContext context, UserResponse user, FriendState friendState}) {
-    bool connectionRequested =
-        friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+    bool connectionRequested = friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
     BlocProvider.of<HiFiveReceivedBloc>(context).get(context, widget.currentUser.id, user.id);
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(user.id);
     return BlocBuilder<FriendBloc, FriendState>(
       bloc: BlocProvider.of<FriendBloc>(context),
       builder: (friendContext, friendState) {
-        connectionRequested =
-            friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+        connectionRequested = friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
         final bool userIsFriend = friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
         return Container(
           height: 350,
@@ -437,11 +432,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               onTap: () {
                                 if (friendState is GetFriendsSuccess) {
                                   final bool userIsFriend = friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
-                                  final FriendModel friendModel =
-                                      friendState.friendData.friends.where((element) => element.id == user.id).first;
+                                  final FriendModel friendModel = friendState.friendData.friends.where((element) => element.id == user.id).first;
                                   if (friendState is GetFriendsSuccess && userIsFriend) {
-                                    BlocProvider.of<FavoriteFriendBloc>(context)
-                                        .favoriteFriend(context, friendState.friendData, friendModel);
+                                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
                                   }
                                 }
                               },
@@ -465,24 +458,19 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             title: OlukoLocalizations.of(context).find('cancel'),
                             onPressed: () {
                               if (friendState is GetFriendsSuccess) {
-                                BlocProvider.of<FriendRequestBloc>(context)
-                                    .removeRequestSent(widget.currentUser.id, friendState.friendData, user.id);
+                                BlocProvider.of<FriendRequestBloc>(context).removeRequestSent(widget.currentUser.id, friendState.friendData, user.id);
                               }
                             },
                           )
                         else
                           OlukoOutlinedButton(
                             thinPadding: true,
-                            title: userIsFriend
-                                ? OlukoLocalizations.of(context).find('remove')
-                                : OlukoLocalizations.of(context).find('connect'),
+                            title: userIsFriend ? OlukoLocalizations.of(context).find('remove') : OlukoLocalizations.of(context).find('connect'),
                             onPressed: () {
                               if (friendState is GetFriendsSuccess) {
                                 userIsFriend
-                                    ? BlocProvider.of<FriendBloc>(context)
-                                        .removeFriend(widget.currentUser.id, friendState.friendData, user.id)
-                                    : BlocProvider.of<FriendRequestBloc>(context)
-                                        .sendRequestOfConnect(widget.currentUser.id, friendState.friendData, user.id);
+                                    ? BlocProvider.of<FriendBloc>(context).removeFriend(widget.currentUser.id, friendState.friendData, user.id)
+                                    : BlocProvider.of<FriendRequestBloc>(context).sendRequestOfConnect(widget.currentUser.id, friendState.friendData, user.id);
                               }
                             },
                           ),

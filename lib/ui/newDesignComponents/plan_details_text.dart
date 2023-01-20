@@ -16,6 +16,7 @@ class PlanDetailsTextComponent extends StatefulWidget {
 
 class _PlanDetailsTextComponentState extends State<PlanDetailsTextComponent> {
   final DateTime _today = DateTime.now();
+  final String _subscriptionBottomText = 'You will automatically enter a waitlist for 24 hours until your coach has been assigned. For any questions regarding your coaching subscription, please';
   @override
   Widget build(BuildContext context) {
     return getTextDetailsForPlan(currentIndex: widget.currentIndex, currentIndexPlan: widget.plan);
@@ -43,6 +44,7 @@ class _PlanDetailsTextComponentState extends State<PlanDetailsTextComponent> {
         padding: const EdgeInsets.only(bottom: 5),
         child: Text(
             'Your account will be charged ${_getCurrency(plan)} ${_getPrice(plan.applePrice.toString())} USD plus any tax on the ${_today.day} day of the month until you cancel or upgrade your membership.',
+                  textAlign: TextAlign.center,
             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black)),
       );
 
@@ -53,14 +55,18 @@ class _PlanDetailsTextComponentState extends State<PlanDetailsTextComponent> {
       );
 
   Wrap _contactUsFullContent() => Wrap(
+        alignment: WrapAlignment.center,
         children: [
-          _planDetailsCoachAssignText(),
-          _contactUsLink(),
+          ..._getSubscriptionTextAsParagraphElements(),
+           _contactUsLink(),
         ],
       );
 
+  List<Text> _getSubscriptionTextAsParagraphElements() => _subscriptionBottomText.split(' ').map((pElement) => Text('$pElement ', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black))).toList();
+
   Text _planDetailsCoachAssignText() => Text(
       'You will automatically enter a waitlist for 24 hours until your coach has been assigned. For any questions regarding your coaching subscription, please.',
+      textAlign: TextAlign.center,
       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black));
 
   GestureDetector _contactUsLink() {
@@ -71,7 +77,7 @@ class _PlanDetailsTextComponentState extends State<PlanDetailsTextComponent> {
             routeLabels[RouteEnum.profileContactUs],
           );
         },
-        child: Text('contact us',
+        child: Text('contact us.',
             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w800).copyWith(
               decoration: TextDecoration.underline,
             )));

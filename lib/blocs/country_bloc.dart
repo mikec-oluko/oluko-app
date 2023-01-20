@@ -25,6 +25,7 @@ class CountryFailure extends CountryState {
 class CountryBloc extends Cubit<CountryState> {
   CountryBloc() : super(Loading());
   List<Country> countries;
+  final String _mainCountryName = 'United States';
 
   Future<void> getCountriesWithStates(String country) async {
     try {
@@ -75,6 +76,7 @@ class CountryBloc extends Cubit<CountryState> {
     try {
       countries = await CountryRepository.getAllCountries();
       if (countries.isNotEmpty) {
+        _orderCountryList();
         emit(CountrySuccess(countries: countries));
       } else {
         emit(CountryFailure());
@@ -85,6 +87,16 @@ class CountryBloc extends Cubit<CountryState> {
         stackTrace: stackTrace,
       );
       rethrow;
+    }
+  }
+
+  void _orderCountryList() {
+    final _mainCountryResult = countries.where((country) => country.name == _mainCountryName).toList();
+    if (_mainCountryResult.isNotEmpty) {
+      final int _indexOfMainCountry = countries.indexOf(_mainCountryResult.first);
+      Country _mainCountry = countries.elementAt(_indexOfMainCountry);
+      countries.removeAt(_indexOfMainCountry);
+      countries.insert(0, _mainCountry);
     }
   }
 

@@ -5,7 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
-import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -16,6 +16,7 @@ import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
@@ -421,7 +422,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           child: Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
             child: Text(
-              UserHelper.getFullName(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
+              UserHelper.getFullName(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName, isCurrentUser: _isOwner),
               style: OlukoFonts.olukoBigFont(
                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, customFontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
@@ -450,7 +451,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 3),
                   ),
-                  if (_userLocation != null)
+                  if (_userLocation != null && GlobalService().showUserLocation)
                     Text(
                       location.trim(),
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300),

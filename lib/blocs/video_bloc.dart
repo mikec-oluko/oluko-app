@@ -217,7 +217,7 @@ class VideoBloc extends Cubit<VideoState> {
     final videosDir = new Directory(outDirPath);
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
-    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(videoFile);
+    VideoPlayerController controller = VideoPlayerHelper.videoPlayerControllerFromFile(videoFile);
     controller.initialize();
     var durationInSeconds = controller.value.duration;
     controller.dispose();
@@ -356,7 +356,7 @@ class VideoBloc extends Cubit<VideoState> {
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
     // final info = await EncodingProvider.getMediaInformation(videoPath);
-    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(videoFile);
+    VideoPlayerController controller = VideoPlayerHelper.videoPlayerControllerFromFile(videoFile);
     await controller.initialize();
     double durationInSeconds = controller.value.duration.inSeconds.toDouble(); //EncodingProvider.getDuration(info.getMediaProperties());
     controller.dispose();

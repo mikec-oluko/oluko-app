@@ -41,6 +41,7 @@ import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
+import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
@@ -195,8 +196,8 @@ import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
 import 'blocs/oluko_panel_bloc.dart';
-import 'blocs/profile/upload_avatar_bloc.dart';
-import 'blocs/profile/upload_cover_image_bloc.dart';
+import 'blocs/profile/profile_avatar_bloc.dart';
+import 'blocs/profile/profile_cover_image_bloc.dart';
 import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
@@ -540,7 +541,7 @@ class Routes {
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<UserPlanSubscriptionBloc>.value(value: _userPlanSubscriptionBloc),
-          BlocProvider<UserBloc>.value(value: _userBloc)
+          BlocProvider<UserBloc>.value(value: _userBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([

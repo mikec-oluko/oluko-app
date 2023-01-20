@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -15,16 +17,21 @@ class ImageAndVideoContainer extends StatefulWidget {
   final bool isCoach;
   final bool isForCarousel;
   final bool isCoachMediaContent;
+  final bool isEdit;
+  final Function() editAction;
 
-  ImageAndVideoContainer(
-      {this.backgroundImage,
-      this.isContentVideo,
-      this.videoUrl,
-      this.displayOnViewNamed,
-      this.originalContent,
-      this.isCoach = false,
-      this.isForCarousel = false,
-      this.isCoachMediaContent = false});
+  ImageAndVideoContainer({
+    this.backgroundImage,
+    this.isContentVideo,
+    this.videoUrl,
+    this.displayOnViewNamed,
+    this.originalContent,
+    this.isCoach = false,
+    this.isForCarousel = false,
+    this.isCoachMediaContent = false,
+    this.isEdit = false,
+    this.editAction,
+  });
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -45,11 +52,13 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               backgroundImage: backgroundCachedNetworkImageProvider(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
-              showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
-                  widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
+              showTitle:
+                  widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos || widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
               originalContent: widget.originalContent,
               isCoach: widget.isCoach,
               isCoachMediaContent: widget.isCoachMediaContent,
+              isEditing: widget.isEdit,
+              editAction: widget.editAction,
             ))
         : Container(
             height: 150,
@@ -58,15 +67,20 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: OlukoColors.black,
             ),
-            child: ImageAndVideoPreviewCard(
-              backgroundImage: backgroundCachedNetworkImageProvider(),
-              videoUrl: widget.videoUrl,
-              isContentVideo: widget.isContentVideo,
-              showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
-                  widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
-              originalContent: widget.originalContent,
-              isCoach: widget.isCoach,
-              isCoachMediaContent: widget.isCoachMediaContent,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: ImageAndVideoPreviewCard(
+                backgroundImage: backgroundCachedNetworkImageProvider(),
+                videoUrl: widget.videoUrl,
+                isContentVideo: widget.isContentVideo,
+                showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
+                    widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
+                originalContent: widget.originalContent,
+                isCoach: widget.isCoach,
+                isCoachMediaContent: widget.isCoachMediaContent,
+                isEditing: widget.isEdit,
+                editAction: widget.editAction,
+              ),
             ));
   }
 

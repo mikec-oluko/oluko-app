@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/ui/components/unenroll_menu.dart';
+import 'package:oluko_app/ui/components/three_dots_menu.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCarouselGallery extends StatefulWidget {
@@ -11,8 +11,7 @@ class CourseCarouselGallery extends StatefulWidget {
   final Function(int) onCourseChange;
   final Function(int) onCourseDeleted;
 
-  const CourseCarouselGallery(
-      {Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted})
+  const CourseCarouselGallery({Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted})
       : super(key: key);
 
   @override
@@ -49,19 +48,22 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              if (widget.courseEnrollments[i].course.image != null) Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: CachedNetworkImageProvider(widget.courseEnrollments[i].course.image),
-                        ),
-                        borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      ),
-                    ) else const SizedBox(),
+              if (widget.courseEnrollments[i].course.image != null)
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: CachedNetworkImageProvider(widget.courseEnrollments[i].course.image),
+                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                )
+              else
+                const SizedBox(),
               Positioned(
                 top: 0,
                 right: 0,
-                child: UnenrollCourse(
+                child: ThreeDotsMenu(
                   actualCourse: widget.courseEnrollments[selected],
                   unrolledFunction: () => widget.onCourseDeleted(i),
                 ),

@@ -9,6 +9,11 @@ abstract class TransformationJourneyState {}
 
 class TransformationJourneyLoading extends TransformationJourneyState {}
 
+class TransformationJourneyDeleteSuccess extends TransformationJourneyState {
+  bool elementDeleted;
+  TransformationJourneyDeleteSuccess({this.elementDeleted});
+}
+
 class TransformationJourneyDefault extends TransformationJourneyState {}
 
 class TransformationJourneyDefaultValue extends TransformationJourneyState {
@@ -84,15 +89,28 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  Future<void> changeContentOrder(
-      TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced, String userId) async {
-    final bool isUpdated = await TransformationJourneyRepository.reorderElementsIndex(
-        elementMoved: elementMoved, elementReplaced: elementReplaced, userId: userId);
+  Future<void> changeContentOrder(TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced, String userId) async {
+    final bool isUpdated =
+        await TransformationJourneyRepository.reorderElementsIndex(elementMoved: elementMoved, elementReplaced: elementReplaced, userId: userId);
     if (isUpdated) {
       List<TransformationJourneyUpload> contentUploaded = await TransformationJourneyRepository().getUploadedContentByUserId(userId);
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
     } else {
       return;
+    }
+  }
+
+  void markContentAsDeleted(String userId, TransformationJourneyUpload elementRemoved) async {
+    try {
+      bool isElementDeleted = await TransformationJourneyRepository().markElementAsDeleted(userId: userId, transformationJourneyItem: elementRemoved);
+      emit(TransformationJourneyDeleteSuccess(elementDeleted: isElementDeleted));
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      emit(TransformationJourneyFailure(exception: e));
+      rethrow;
     }
   }
 }

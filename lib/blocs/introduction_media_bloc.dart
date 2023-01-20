@@ -20,9 +20,9 @@ class Success extends IntroductionMediaState {
 class IntroductionMediaBloc extends Cubit<IntroductionMediaState> {
   IntroductionMediaBloc() : super(Loading());
 
-  Future<String> getVideo(IntroductionMediaTypeEnum type) async {
+  Future<String> getVideo(IntroductionMediaTypeEnum type, {bool useStreamVideo = false}) async {
     try {
-      final String mediaURL = await IntroductionMediaRepository.getVideoURL(type);
+      final String mediaURL = await IntroductionMediaRepository.getVideoURL(type, useStreamUrl: useStreamVideo);
       emit(Success(mediaURL: mediaURL));
       return mediaURL;
     } catch (exception, stackTrace) {

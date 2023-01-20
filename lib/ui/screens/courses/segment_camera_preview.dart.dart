@@ -87,7 +87,7 @@ class _State extends State<SegmentCameraPreview> {
 
   Widget closeButton() {
     return Padding(
-        padding: const EdgeInsets.only(right: 10, top: 15),
+        padding: const EdgeInsets.only(right: 10, top: 55),
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
             'assets/courses/grey_circle.png',
@@ -115,13 +115,13 @@ class _State extends State<SegmentCameraPreview> {
               fit: BoxFit.cover,
             )),
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
-            child: Column(children: [
+            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
+            child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(OlukoLocalizations.of(context).find('cameraInfo'),
                   textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
               startButton(),
               Text(OlukoLocalizations.of(context).find('cameraWarning'),
-                  textAlign: TextAlign.left, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
+                  textAlign: TextAlign.left, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary))
             ])));
   }
 

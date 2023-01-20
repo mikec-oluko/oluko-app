@@ -49,7 +49,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
     super.initState();
     _setupCameras();
 
-    _controller = VideoPlayerHelper.VideoPlayerControllerFromNetwork(
+    _controller = VideoPlayerHelper.videoPlayerControllerFromNetwork(
       widget.parentVideoInfo.video.url,
     );
     _initializeVideoPlayerFuture = _controller.initialize();
@@ -116,9 +116,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                     child: Container(
                       height: MediaQuery.of(context).size.height / 3,
                       width: MediaQuery.of(context).size.width / 2,
-                      child: (!_isReady)
-                          ? Container()
-                          : AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController)),
+                      child: (!_isReady) ? Container() : AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController)),
                     )),
                 Positioned(
                   bottom: 200,

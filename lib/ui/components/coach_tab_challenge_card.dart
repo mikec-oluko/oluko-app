@@ -55,9 +55,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
       },
       child: Container(
         decoration: BoxDecoration(
-            color: OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                : OlukoColors.challengesGreyBackground,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.challengesGreyBackground,
             borderRadius: BorderRadius.all(Radius.circular(5))),
         height: 100,
         width: ScreenUtils.width(context),
@@ -70,24 +68,30 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                   child: widget.challenge.classImage == null
                       ? Container(
                           child: CircularProgressIndicator(),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
                           width: 60,
                           height: 90,
                         )
-                      : Container(
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(widget.challenge.classImage),
-                                fit: BoxFit.cover,
-                                onError: (exception, stackTrace) {
-                                  return Text('Your error widget...');
-                                },
-                              ),
-                              color: OlukoColors.warning,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                      : CachedNetworkImage(
+                          imageUrl: widget.challenge.classImage,
                           width: 60,
                           height: 90,
+                          maxWidthDiskCache: (60 * 2).toInt(),
+                          maxHeightDiskCache: (90 * 2).toInt(),
+                          memCacheWidth: (60 * 2).toInt(),
+                          memCacheHeight: (90 * 2).toInt(),
+                          fit: BoxFit.fitWidth,
+                          imageBuilder: (BuildContext context, ImageProvider<Object> imageProvider) => Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                                color: OlukoColors.warning,
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                            width: 60,
+                            height: 90,
+                          ),
                         ),
                 ),
                 OlukoNeumorphism.isNeumorphismDesign

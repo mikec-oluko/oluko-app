@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoursePoster extends StatefulWidget {
   final String image;
@@ -37,19 +38,15 @@ class _State extends State<CoursePoster> {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(3)),
-                child: Image(
-                  image: CachedNetworkImageProvider(widget.image),
+                child: CachedNetworkImage(
+                  imageUrl: widget.image,
                   height: height,
                   width: width,
+                  maxWidthDiskCache: (width * 3).toInt(),
+                  maxHeightDiskCache: (height * 3).toInt(),
+                  memCacheWidth: (width * 3).toInt(),
+                  memCacheHeight: (height * 3).toInt(),
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.white,
-                    height: height,
-                    width: width,
-                    child: Image.asset(
-                      'assets/home/mvtthumbnail.png',
-                    ),
-                  ),
                 ),
               ),
             ],

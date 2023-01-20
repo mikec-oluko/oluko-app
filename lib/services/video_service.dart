@@ -63,7 +63,7 @@ class VideoService {
   }
 
   static Future<int> getVideoDuration(File videoFile) async {
-    VideoPlayerController controller = VideoPlayerHelper.VideoPlayerControllerFromFile(videoFile);
+    VideoPlayerController controller = VideoPlayerHelper.videoPlayerControllerFromFile(videoFile);
     double durationInSeconds = 0;
     try {
       await controller.initialize();

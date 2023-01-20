@@ -1,3 +1,4 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
@@ -21,10 +22,8 @@ class TimerUtils {
   static const double _watchWidth = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchProgressSize : _olukoWatchProgressSize;
   static const double _roundWatchWidthWithKeyboard = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchSize : _olukoWatchFullSize;
   static const double _progressIndicatorStroke = OlukoNeumorphism.isNeumorphismDesign ? 2 : 4;
-  static const Color getGreenOrCoral =
-      OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.coral;
-  static const Color getGreenOrSkyBlue =
-      OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.skyblue;
+  static const Color getGreenOrCoral = OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.coral;
+  static const Color getGreenOrSkyBlue = OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.skyblue;
   static const Color backgroundColor =
       OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorSemiTransparent;
   static const _maxStepsForSegmentedClock = 50;
@@ -40,10 +39,7 @@ class TimerUtils {
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
-                strokeWidth: _progressIndicatorStroke,
-                value: getProgress(totalTime, countDown),
-                color: getGreenOrCoral,
-                backgroundColor: backgroundColor)),
+                strokeWidth: _progressIndicatorStroke, value: getProgress(totalTime, countDown), color: getGreenOrCoral, backgroundColor: backgroundColor)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(countDown.toString(),
@@ -66,8 +62,7 @@ class TimerUtils {
             child: Text(getRepsTimerText(type, context),
                 textAlign: TextAlign.center,
                 style: OlukoFonts.olukoMediumFont(
-                    customFontWeight: FontWeight.bold,
-                    customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
+                    customFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
       ])
     ]);
   }
@@ -84,8 +79,8 @@ class TimerUtils {
             if (keyboardVisibilty) return _roundWatchWidthWithKeyboard;
             return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
           }(),
-          child: getSegmentedProgressBar(totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
-              currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)));
+          child: getSegmentedProgressBar(
+              totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1, currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1)));
 
   static Widget getSegmentedProgressBar(double totalRounds, double currentRound) {
     if (totalRounds < _maxStepsForSegmentedClock) {
@@ -120,27 +115,18 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      strokeWidth: _progressIndicatorStroke,
-                      value: progressValue,
-                      color: getGreenOrCoral,
-                      backgroundColor: backgroundColor)),
-              //TODO: COUNT YOUR AIR SQUADS
+                      strokeWidth: _progressIndicatorStroke, value: progressValue, color: getGreenOrCoral, backgroundColor: backgroundColor)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 if (OlukoNeumorphism.isNeumorphismDesign) const Expanded(child: SizedBox()) else const SizedBox.shrink(),
                 Text(duration,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontSize: OlukoNeumorphism.isNeumorphismDesign ? 35 : 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                        fontFamily: 'Gilroy', fontSize: OlukoNeumorphism.isNeumorphismDesign ? 35 : 25, fontWeight: FontWeight.bold, color: Colors.white)),
                 if (counter != null)
                   OlukoNeumorphism.isNeumorphismDesign
-                      ? neumorphicContentWithPadding(
-                          context, getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true))
+                      ? neumorphicContentWithPadding(context, getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true))
                       : getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true)
                 else
-                  // const Expanded(child: SizedBox()),
                   SizedBox(height: 5),
                 if (bothSide) getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) else const SizedBox.shrink(),
                 if (bothSide) getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) else SizedBox(),
@@ -182,9 +168,7 @@ class TimerUtils {
                           textAlign: TextAlign.center,
                           style: OlukoFonts.olukoSuperBigFont(
                               customFontWeight: FontWeight.bold,
-                              customColor: OlukoNeumorphism.isNeumorphismDesign
-                                  ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
-                                  : Colors.white)),
+                              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : Colors.white)),
                       const SizedBox(height: 8),
                       if (rounds != null)
                         Text(rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
@@ -206,9 +190,7 @@ class TimerUtils {
                           textAlign: TextAlign.center,
                           style: OlukoFonts.olukoSubtitleFont(
                               customFontWeight: FontWeight.bold,
-                              customColor: OlukoNeumorphism.isNeumorphismDesign
-                                  ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
-                                  : Colors.white)),
+                              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : Colors.white)),
                     ],
                   )
                 ])));
@@ -229,21 +211,14 @@ class TimerUtils {
                 backgroundColor: backgroundColor)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(
-            OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoLocalizations.get(context, 'paused')
-                : OlukoLocalizations.get(context, 'paused').toUpperCase(),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue, fontFamily: 'Gilroy')),
+        Text(OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'paused') : OlukoLocalizations.get(context, 'paused').toUpperCase(),
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue, fontFamily: 'Gilroy')),
         duration != null ? SizedBox(height: 12) : SizedBox(),
         duration != null
             ? Text(duration,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: OlukoNeumorphism.isNeumorphismDesign ? 30 : 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: 'Gilroy'))
+                style:
+                    TextStyle(fontSize: OlukoNeumorphism.isNeumorphismDesign ? 30 : 20, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Gilroy'))
             : SizedBox()
       ])
     ]));
@@ -260,10 +235,7 @@ class TimerUtils {
             child: AspectRatio(
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
-                    strokeWidth: _progressIndicatorStroke,
-                    value: progressValue,
-                    color: getGreenOrSkyBlue,
-                    backgroundColor: backgroundColor)),
+                    strokeWidth: _progressIndicatorStroke, value: progressValue, color: getGreenOrSkyBlue, backgroundColor: backgroundColor)),
           ),
           if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
             Align(
@@ -272,16 +244,11 @@ class TimerUtils {
             )
           else
             Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(
-                  OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoLocalizations.get(context, 'rest')
-                      : OlukoLocalizations.get(context, 'rest').toUpperCase(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
+              Text(OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'rest') : OlukoLocalizations.get(context, 'rest').toUpperCase(),
+                  textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: getGreenOrSkyBlue)),
               SizedBox(height: 12),
               Text(duration,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Gilroy')),
+                  textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Gilroy')),
             ]),
           if (OlukoNeumorphism.isNeumorphismDesign && addCounterValue != null)
             Positioned(
@@ -290,10 +257,7 @@ class TimerUtils {
                     ? Text(duration,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontFamily: 'Gilroy'))
+                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 20 : 15, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Gilroy'))
                     : SizedBox())
         ],
       ),
@@ -301,6 +265,7 @@ class TimerUtils {
   }
 
   static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide, String duration]) {
+    final withOpacity = OlukoNeumorphismColors.finalGradientColorDark.withOpacity(0.0);
     return Container(
         child: SizedBox(
             height: _watchHeight,
@@ -323,15 +288,12 @@ class TimerUtils {
                             fontFamily: 'Gilroy',
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: OlukoNeumorphism.isNeumorphismDesign
-                                ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
-                                : OlukoColors.primary)),
+                            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.primary)),
                     SizedBox(height: 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
                         style: OlukoFonts.olukoBigFont(
-                            customFontWeight: FontWeight.w400,
-                            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
+                            customFontWeight: FontWeight.w400, customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
                     SizedBox(height: 5),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
                     bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox(),
@@ -343,47 +305,41 @@ class TimerUtils {
   static Widget AMRAPTimer(double progressValue, String duration, BuildContext context, Function() onTap, int roundsValue) {
     return GestureDetector(
         onTap: onTap,
-        child: Container(
-            child: SizedBox(
-                width: getProgressCircleSize(context),
-                height: getProgressCircleSize(context),
-                child: Stack(alignment: Alignment.center, children: [
-                  AspectRatio(
-                      aspectRatio: 1,
-                      child: CircularProgressIndicator(
-                          strokeWidth: _progressIndicatorStroke,
-                          value: progressValue,
-                          color: getGreenOrCoral,
-                          backgroundColor: backgroundColor)),
-                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
-                    const SizedBox(height: 12),
-                    Text(OlukoLocalizations.get(context, 'tapHere'),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Gilroy',
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: OlukoNeumorphism.isNeumorphismDesign
-                                ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
-                                : OlukoColors.primary)),
-                    SizedBox(height: 3),
-                    Text(OlukoLocalizations.get(context, 'forNextRound'),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Gilroy',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? SizedBox(
-                            height: 10,
-                          )
-                        : const SizedBox.shrink(),
-                    OlukoNeumorphism.isNeumorphismDesign && roundsValue != null ? getRoundLabel(roundsValue) : const SizedBox.shrink(),
-                    !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
-                  ])
-                ]))));
+        child: SizedBox(
+            width: getProgressCircleSize(context),
+            height: getProgressCircleSize(context),
+            child: Stack(alignment: Alignment.center, children: [
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      strokeWidth: _progressIndicatorStroke, value: progressValue, color: getGreenOrCoral, backgroundColor: backgroundColor)),
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
+                const SizedBox(height: 12),
+                Text(OlukoLocalizations.get(context, 'tapHere'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.primary)),
+                SizedBox(height: 3),
+                Text(OlukoLocalizations.get(context, 'forNextRound'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
+                OlukoNeumorphism.isNeumorphismDesign
+                    ? SizedBox(
+                        height: 10,
+                      )
+                    : const SizedBox.shrink(),
+                OlukoNeumorphism.isNeumorphismDesign && roundsValue != null ? getRoundLabel(roundsValue) : const SizedBox.shrink(),
+                !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
+              ])
+            ])));
   }
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
@@ -412,8 +368,7 @@ class TimerUtils {
         if (round != null)
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(OlukoLocalizations.get(context, 'round') + "  ",
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary)),
+                textAlign: TextAlign.center, style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold, customColor: OlukoColors.primary)),
             Text((round + 1).toString(),
                 textAlign: TextAlign.center,
                 style: OlukoFonts.olukoBigFont(
@@ -441,8 +396,8 @@ class TimerUtils {
       padding: const EdgeInsets.only(top: 10),
       child: Text(duration,
           textAlign: TextAlign.center,
-          style: OlukoFonts.olukoSubtitleFont(
-              customFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? color : OlukoColors.white)),
+          style:
+              OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold, customColor: OlukoNeumorphism.isNeumorphismDesign ? color : OlukoColors.white)),
     );
   }
 
@@ -468,16 +423,14 @@ class TimerUtils {
         child: Text(text,
             textAlign: TextAlign.center,
             style: OlukoFonts.olukoMediumFont(
-                customFontWeight: FontWeight.w300,
-                customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
+                customFontWeight: FontWeight.w300, customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
   }
 
   static Widget getRoundLabel(int round) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text('Round',
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontFamily: 'Gilroy', fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
+          style: TextStyle(fontFamily: 'Gilroy', fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
       SizedBox(width: 10),
       Text((round + 1).toString(),
           textAlign: TextAlign.center,
@@ -501,8 +454,7 @@ class TimerUtils {
     );
   }
 
-  static startCountdown(
-      WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound) {
+  static startCountdown(WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound) {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
   }

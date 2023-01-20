@@ -7,12 +7,12 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/classes_menu.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
-import 'package:oluko_app/ui/components/unenroll_menu.dart';
+import 'package:oluko_app/ui/components/three_dots_menu.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCard extends StatefulWidget {
-  final Image imageCover;
+  final Widget imageCover;
   final double progress;
   final double width;
   final double height;
@@ -56,10 +56,7 @@ class _State extends State<CourseCard> {
     return Container(
       width: widget.width,
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        if (widget.userRecommendationsAvatarUrls != null)
-          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
-        else
-          SizedBox(),
+        if (widget.userRecommendationsAvatarUrls != null) Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls)) else SizedBox(),
         Expanded(
             flex: 9,
             child: Stack(
@@ -72,7 +69,7 @@ class _State extends State<CourseCard> {
                     visible: widget.canUnenrollCourse,
                     child: Align(
                         alignment: Alignment.topRight,
-                        child: UnenrollCourse(
+                        child: ThreeDotsMenu(
                           actualCourse: widget.actualCourse,
                           unrolledFunction: widget.unrolledFunction,
                         )),
@@ -88,8 +85,7 @@ class _State extends State<CourseCard> {
               child: FractionallySizedBox(
                 heightFactor: 1,
                 widthFactor: 0.6,
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0), child: CourseProgressBar(value: widget.progress)),
+                child: Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0), child: CourseProgressBar(value: widget.progress)),
               ),
             ),
           )
@@ -144,7 +140,7 @@ class _State extends State<CourseCard> {
         visible: widget.canUnenrollCourse,
         child: Align(
             alignment: Alignment.topRight,
-            child: UnenrollCourse(
+            child: ThreeDotsMenu(
               actualCourse: widget.actualCourse,
               unrolledFunction: widget.unrolledFunction,
             )),
@@ -161,20 +157,16 @@ class _State extends State<CourseCard> {
         child: Align(
             alignment: Alignment.topRight,
             child: ClassesMenu(
-                challengeNavigations: widget.challengeNavigations,
-                closePanelFunction: widget.closePanelFunction,
-                audioNavigation: widget.audioNavigation)),
+                challengeNavigations: widget.challengeNavigations, closePanelFunction: widget.closePanelFunction, audioNavigation: widget.audioNavigation)),
       ),
     );
   }
 
   Widget _userRecommendations(List<String> userRecommendationImageUrls, {bool friendRecommended = false}) {
     List<String> userImageList = [];
-    userImageList = userRecommendationImageUrls.length < _imageStackMaxLength
-        ? userRecommendationImageUrls
-        : userRecommendationImageUrls.sublist(0, _imageStackMaxLength);
-    String _friendsText =
-        userRecommendationImageUrls.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
+    userImageList =
+        userRecommendationImageUrls.length < _imageStackMaxLength ? userRecommendationImageUrls : userRecommendationImageUrls.sublist(0, _imageStackMaxLength);
+    String _friendsText = userRecommendationImageUrls.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
     return Padding(
       padding: const EdgeInsets.only(bottom: 1.0),
       child: Stack(

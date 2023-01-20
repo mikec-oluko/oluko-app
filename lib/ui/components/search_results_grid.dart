@@ -40,21 +40,22 @@ class _State extends State<SearchResultsGrid> {
                     onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                         arguments: {'course': e as Course, 'fromCoach': false, 'isCoachRecommendation': false}),
                     child: e.image != null
-                        ? _getCourseCard(
-                            Image(
-                              image: CachedNetworkImageProvider(e.image as String),
-                              fit: BoxFit.cover,
-                              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                  ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
-                            ),
-                          )
+                        ? _getCourseCard(CachedNetworkImage(
+                            imageUrl: e.image as String,
+                            height: (ScreenUtils.height(context) * 0.20),
+                            maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
+                            maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
+                            memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
+                            memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
+                            fit: BoxFit.fitHeight,
+                          ))
                         : Image(image: defaultImage),
                   )),
                 ))
             .toList());
   }
 
-  CourseCard _getCourseCard(Image image, {double progress, double width, double height}) {
+  CourseCard _getCourseCard(Widget image, {double progress, double width, double height}) {
     return CourseCard(
       width: width,
       height: height,

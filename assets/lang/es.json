@@ -169,6 +169,7 @@
     "connectionRequestCancelled": "Cancelar conexión",
     "profileUploadAborted": "Carga de perfil cancelada",
     "cameraInfo": "Presiona el botón para comenzar a grabar",
+    "cameraWarningUpdated": "El botón Detener cancelará la grabación y no enviará el video. El flujo natural del temporizador de entrenamiento enviará un video a su entrenador.",
     "cameraWarning": "Configure su cámara en la orientación y posición deseada",
     "startsIn": "Comienza en",
     "endsIn": "Termina en",
@@ -287,7 +288,7 @@
     "enterWeight": "Ingrese peso: ",
     "lbs": "lbs",
     "cancelSession": "Cancelar esta sesión?",
-    "cancelMessage": "Esta acción paró la grabación. Deberas reiniciar la sesión desde el principio si quieres grabar el segmento.",
+    "cancelMessage": "Tu video no fue enviado. Para volver a grabar, presione Reiniciar. Para continuar sin grabar, presione Reanudar.",
     "restart": "Reiniciar",
     "reps": "Reps",
     "reviewsPending": "revision(es) pendiente",
@@ -371,7 +372,7 @@
     "friendAdded": "Amigo añadido",
     "badVideoFormat": "Este formato de video no está permitido",
     "updateEmailUserNameMsg": "¿Está seguro de que desea actualizar su correo electrónico/nombre de usuario? Esto lo desconectará del sistema.",
-    "shareYourVideo": "Comparte tu vídeo.",
+    "shareYourVideo": "Comparte Tu Vídeo",
     "save": "guardar",
     "changes": "cambios",
     "tokenExpired": "El token ha caducado, cierre la sesión para obtener uno nuevo.",
@@ -389,7 +390,8 @@
     "errorMessageInvalidEmail": ", debe ser un correo electrónico válido.",
     "errorMessageBlankSpace": "No se permiten espacios en blanco al principio o al final del campo.",
     "errorMessageContainBlankSpace": ", no puede contener espacios en blanco",
-    "errorMessageMustContainAtLeast": ", debe contener al menos",
+    "errorMessageMustContainAtLeast": ", debe contener al menos 3 ",
+    "errorMessageMustContainAtLeastFirstName": ", debe contener al menos 2 ",
     "errorMessageSpecialCharacters": ", no puede contener caracteres especiales.",
     "passwordRequirements": "Requisitos de contraseña",
     "registerByContinuing": "Estoy de acuerdo con ",
@@ -424,5 +426,17 @@
     "seeTextForTermsAndConditions": "Ver ",
     "contact": "contact",
     "prxPerformance": "PRx Performance",
-    "attention":"Atención!"
+    "attention":"Atención!",
+    "logoutPopUpMessage": "¿Estás seguro de que quieres cerrar sesión?",
+    "deleteContentAlert": "¿Está seguro de que desea eliminar este contenido?",
+    "editContent":"Editar",
+    "zipCode":"Código postal",
+    "zipCodeErrorMessage": ", No cumple con el formato requerido. Solo caracteres numéricos, 5 dígitos de longitud.",
+    "deleteImage": "Eliminar imagen"
+
+
+
+
+
+
 }

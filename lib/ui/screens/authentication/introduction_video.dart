@@ -27,7 +27,7 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.loginNeumorphic], arguments: {'dontShowWelcomeTest': true});
   }
   try {
-    final VideoPlayerController videoPlayerController = VideoPlayerHelper.VideoPlayerControllerFromNetwork(mediaURL);
+    final VideoPlayerController videoPlayerController = VideoPlayerHelper.videoPlayerControllerFromNetwork(mediaURL);
     await videoPlayerController.initialize();
     final ChewieController chewieController = ChewieController(
       videoPlayerController: videoPlayerController,

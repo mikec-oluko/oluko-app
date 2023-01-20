@@ -49,8 +49,7 @@ class _State extends State<ChallengesCard> {
     ;
   }
 
-  Widget _challengeCard(BuildContext context) =>
-      widget.customValueForChallenge ? _unlockedCardByCustomValue(context) : _unlockedCardByPreviousSegment(context);
+  Widget _challengeCard(BuildContext context) => widget.customValueForChallenge ? _unlockedCardByCustomValue(context) : _unlockedCardByPreviousSegment(context);
 
   Column _unlockedCardByPreviousSegment(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -92,8 +91,8 @@ class _State extends State<ChallengesCard> {
         if (needAudioComponent)
           Padding(
             padding: const EdgeInsets.only(left: 5.0),
-            child: SizedBox(       
-              width:  ScreenUtils.width(context)*0.17 ,     
+            child: SizedBox(
+                width: ScreenUtils.width(context) * 0.17,
                 child: Text(
                   '${OlukoLocalizations.get(context, 'saveFor')}${widget.userRequested.firstName}',
                   style: OlukoFonts.olukoSmallFont(),
@@ -119,28 +118,30 @@ class _State extends State<ChallengesCard> {
           : () {},
       child: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black, Colors.black, Colors.red]),
+          gradient: LinearGradient(end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black, Colors.black, Colors.red]),
           borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-          color:OlukoColors.black,
+          color: OlukoColors.black,
         ),
         child: Padding(
           padding: const EdgeInsets.all(2),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Container(
-                height: 160,
-                width: 115,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  color: OlukoColors.challengeLockedFilterColor,
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                      image: widget.segmentChallenge.challengeSegment.image != null
-                          ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
-                          : defaultImage),
+              CachedNetworkImage(
+                maxWidthDiskCache: 100,
+                maxHeightDiskCache: 100,
+                imageUrl: widget.segmentChallenge.challengeSegment.image,
+                imageBuilder: (context, imageProvider) => Container(
+                  height: 160,
+                  width: 115,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                    color: OlukoColors.challengeLockedFilterColor,
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
+                        image: widget.segmentChallenge.challengeSegment.image != null ? imageProvider : defaultImage),
+                  ),
                 ),
               ),
               Image.asset(
@@ -163,7 +164,7 @@ class _State extends State<ChallengesCard> {
     }
   }
 
-  void navigateToPanel([bool navigateToAudio=false]) {
+  void navigateToPanel([bool navigateToAudio = false]) {
     widget.panelController.open();
     BlocProvider.of<CoursePanelBloc>(context)
         .setPanelChallenges(widget.challengeNavigations, navigateToAudio ? (challenge) => navigateToAudioSegment(challenge) : null);
@@ -194,8 +195,8 @@ class _State extends State<ChallengesCard> {
           : () {},
       child: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black,OlukoColors.black, Colors.red]),
+          gradient:
+              LinearGradient(end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, OlukoColors.black, OlukoColors.black, Colors.red]),
           borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
           color: Colors.black,
         ),

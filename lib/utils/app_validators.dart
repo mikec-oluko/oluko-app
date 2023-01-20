@@ -1,15 +1,27 @@
 enum PasswordStrength { weak, medium, strong }
-enum ValidatorNames { containsUppercase, containsLowercase, containsDigit, containsSpecialChar, containsRecommendedChars, containsMinChars }
+enum ValidatorNames {
+  containsUppercase,
+  containsLowercase,
+  containsDigit,
+  containsSpecialChar,
+  containsRecommendedChars,
+  containsOnlyAlphabeticOrSpace,
+  containsMinChars
+}
 enum StringValidation {
   isValidUserName,
   isValidFirstAndLastName,
   containsBlankSpaces,
   startorEndWithBlankSpace,
   containsMinChars,
+  containsMinCharsFirstName,
   containsSpecialChars,
+  containsOnlyAlphabeticOrSpace,
   isAlphabetic,
   isAlphanumeric,
-  isValidEmail
+  isValidEmail,
+  isNumeric,
+  isZipCode
 }
 
 class AppValidators {
@@ -64,6 +76,7 @@ class AppValidators {
 
     stringValidator[StringValidation.containsBlankSpaces] = validatePattern(value, r'\s+');
     stringValidator[StringValidation.startorEndWithBlankSpace] = validatePattern(value, r'^\s[a-z]+$') || validatePattern(value, r'^[a-z]+\s+$');
+    stringValidator[StringValidation.containsMinCharsFirstName] = validatePattern(value, r'^.{2,}');
     stringValidator[StringValidation.containsMinChars] = validatePattern(value, r'^.{3,}');
     stringValidator[StringValidation.containsSpecialChars] = validatePattern(value, r'^[a-zA-Z0-9]+$');
     stringValidator[StringValidation.isValidEmail] = validatePattern(value,
@@ -72,6 +85,9 @@ class AppValidators {
     stringValidator[StringValidation.isAlphanumeric] = validatePattern(value, r'^[a-zA-Z0-9]+$');
     stringValidator[StringValidation.isValidUserName] = validatePattern(value, r'^\S[a-zA-Z0-9_.-]{3,}$');
     stringValidator[StringValidation.isValidFirstAndLastName] = validatePattern(value, r'^[^0-9 ]+([a-zA-Z]+\s?)+[a-zA-Z]+$');
+    stringValidator[StringValidation.isNumeric] = validatePattern(value, r'^[0-9]*$');
+    stringValidator[StringValidation.isZipCode] = validatePattern(value, r'^[0-9]{5}$');
+    stringValidator[StringValidation.containsOnlyAlphabeticOrSpace] = validatePattern(value, r'^[a-zA-Z\s]+$');
 
     List<StringValidation> validatorsWithError = [];
     stringValidator.forEach((key, value) {
@@ -84,8 +100,7 @@ class AppValidators {
   }
 
   bool validatePattern(String value, Pattern pattern) {
-    RegExp regex = new RegExp(pattern.toString());
-    // print(value);
+    RegExp regex = RegExp(pattern.toString());
     if (value.isEmpty) {
       return false;
     } else {

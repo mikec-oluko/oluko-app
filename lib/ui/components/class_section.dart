@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ClassSection extends StatefulWidget {
   final Class classObj;
@@ -55,9 +56,11 @@ class _State extends State<ClassSection> {
                     ? BorderRadius.only(bottomLeft: (Radius.circular(22)), topLeft: (Radius.circular(22)))
                     : const BorderRadius.all(Radius.circular(10)),
                 child: CachedNetworkImage(
-                  imageUrl: /*widget.classObj.thumbnailImage??*/widget.classObj.image,
+                  imageUrl: widget.classObj.thumbnailImage ?? widget.classObj.image,
                   height: 100,
                   width: 90,
+                  maxWidthDiskCache: (ScreenUtils.width(context) * 0.40).toInt(),
+                  maxHeightDiskCache: (ScreenUtils.height(context) * 0.25).toInt(),
                   fit: BoxFit.cover,
                 ),
               ),

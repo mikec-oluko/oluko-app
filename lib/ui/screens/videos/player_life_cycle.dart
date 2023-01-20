@@ -62,6 +62,6 @@ abstract class _PlayerLifeCycleState extends State<PlayerLifeCycle> {
 class _NetworkPlayerLifeCycleState extends _PlayerLifeCycleState {
   @override
   VideoPlayerController createVideoPlayerController() {
-    return VideoPlayerHelper.VideoPlayerControllerFromNetwork(widget.dataSource);
+    return VideoPlayerHelper.videoPlayerControllerFromNetwork(widget.dataSource);
   }
 }
