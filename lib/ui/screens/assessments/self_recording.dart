@@ -139,6 +139,8 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: ListView(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
           shrinkWrap: true,
           children: [
             ConstrainedBox(

@@ -57,6 +57,8 @@ class _HiFivePageState extends State<HiFivePage> {
                           _usersProgress = userProgressListState.usersProgress;
                         }
                         return ListView(
+                          addAutomaticKeepAlives: false,
+                          addRepaintBoundaries: false,
                           children: hiFiveState.users
                               .map(
                                 (targetUser) => _listItem(

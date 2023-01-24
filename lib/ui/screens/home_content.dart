@@ -55,6 +55,8 @@ class _HomeContentState extends State<HomeContent> {
         showTitle: false,
       ),
       body: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         children: [
           Center(child: StoriesHeader(widget.user.uid)),
           WillPopScope(

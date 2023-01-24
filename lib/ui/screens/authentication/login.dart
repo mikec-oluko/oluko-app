@@ -31,14 +31,13 @@ class _LoginPageState extends State<LoginPage> {
         key: _formKey,
         child: Scaffold(
             body: Container(
-                color:OlukoColors.black,
-                child: ListView(children: [
+                color: OlukoColors.black,
+                child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(
-                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
+                          child: Column(children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
                 ]))));
   }
 

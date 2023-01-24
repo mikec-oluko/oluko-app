@@ -61,27 +61,25 @@ class _State extends State<AudioPanel> {
               fit: BoxFit.cover,
             ),
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        child: Column(
-            crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-            children: [
-              Center(
-                  child: Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 10),
-                      child: Image.asset(
-                        'assets/courses/horizontal_vector.png',
-                        scale: 3,
-                      ))),
-              Padding(
-                padding: OlukoNeumorphism.isNeumorphismDesign
-                    ? EdgeInsets.only(top: 15, left: 15, bottom: 10)
-                    : EdgeInsets.only(top: 15, bottom: 5),
-                child: Text(
-                  OlukoLocalizations.get(context, 'voiceMessages'),
-                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white),
-                ),
-              ),
-              Container(height: 360, child: ListView(key: ValueKey(_audios.length), children: getAudioWidgets(_audios)))
-            ]));
+        child: Column(crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center, children: [
+          Center(
+              child: Padding(
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
+                  child: Image.asset(
+                    'assets/courses/horizontal_vector.png',
+                    scale: 3,
+                  ))),
+          Padding(
+            padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(top: 15, left: 15, bottom: 10) : EdgeInsets.only(top: 15, bottom: 5),
+            child: Text(
+              OlukoLocalizations.get(context, 'voiceMessages'),
+              style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+            ),
+          ),
+          Container(
+              height: 360,
+              child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, key: ValueKey(_audios.length), children: getAudioWidgets(_audios)))
+        ]));
   }
 
   List<Widget> getAudioWidgets(List<Audio> audios) {

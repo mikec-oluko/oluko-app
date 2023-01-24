@@ -55,6 +55,8 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      addAutomaticKeepAlives: false,
+      addRepaintBoundaries: false,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [

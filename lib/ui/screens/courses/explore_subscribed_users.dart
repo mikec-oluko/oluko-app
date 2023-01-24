@@ -58,7 +58,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
         body: SizedBox(
           height: ScreenUtils.height(context),
           width: ScreenUtils.width(context),
-          child: ListView(children: [
+          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
             Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
@@ -167,9 +167,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0, bottom: 0.0),
                           child: Text(
-                            user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
-                                ? user.getFullName()
-                                : '',
+                            user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty ? user.getFullName() : '',
                             style: OlukoFonts.olukoMediumFont(),
                             textAlign: TextAlign.center,
                           ),

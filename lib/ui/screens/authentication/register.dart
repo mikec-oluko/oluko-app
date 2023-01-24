@@ -64,6 +64,8 @@ class _RegisterState extends State<RegisterPage> {
             alignment: Alignment.center,
             color: OlukoColors.white,
             child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
               shrinkWrap: true,
               children: [
                 _defaultWidgetSpacer(context),

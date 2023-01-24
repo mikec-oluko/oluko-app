@@ -55,6 +55,8 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
             coachUploadedContent = state.coachMediaContent;
           }
           return ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             padding: EdgeInsets.zero,
             children: [
               if (widget.coachBannerVideo != null)

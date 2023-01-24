@@ -361,6 +361,8 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget classInfoSection(List<UserResponse> coaches) {
     return ListView(
+      addAutomaticKeepAlives: false,
+      addRepaintBoundaries: false,
       children: [
         if (OlukoNeumorphism.isNeumorphismDesign) getNeumorphicVideoPreview() else getVideoPreview(),
         Padding(

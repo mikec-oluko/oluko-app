@@ -75,6 +75,8 @@ class _State extends State<CarouselSection> {
                       child: Align(
                     alignment: Alignment.centerLeft,
                     child: ListView(
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
                       children: widget.children,

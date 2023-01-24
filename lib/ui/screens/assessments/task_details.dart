@@ -170,6 +170,8 @@ class _TaskDetailsState extends State<TaskDetails> {
     return Container(
       color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       child: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         padding: const EdgeInsets.symmetric(horizontal: 15),
         children: [
           const SizedBox(height: 20),
@@ -473,7 +475,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             alignment: Alignment.centerLeft,
             child: Container(
               height: 150,
-              child: ListView(scrollDirection: Axis.horizontal, children: [
+              child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, scrollDirection: Axis.horizontal, children: [
                 GestureDetector(
                     onTap: () {
                       if (_controller != null) {

@@ -12,6 +12,8 @@ class SubscriptionModalOption extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         shrinkWrap: true,
         children: [
           ListTile(
@@ -20,9 +22,7 @@ class SubscriptionModalOption extends StatelessWidget {
               Icons.credit_card,
               color: Colors.white,
             ),
-            title: Text(ProfileViewConstants.profileChangePaymentMethodTitle,
-                style:
-                    OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+            title: Text(ProfileViewConstants.profileChangePaymentMethodTitle, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
           ListTile(
             onTap: () {},
@@ -30,9 +30,7 @@ class SubscriptionModalOption extends StatelessWidget {
               Icons.emoji_emotions_outlined,
               color: Colors.white,
             ),
-            title: Text(ProfileViewConstants.profileUnsuscribeTitle,
-                style:
-                    OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+            title: Text(ProfileViewConstants.profileUnsuscribeTitle, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
         ],
       ),

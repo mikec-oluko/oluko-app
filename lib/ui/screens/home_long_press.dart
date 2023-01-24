@@ -46,6 +46,8 @@ class _HomeLongPressState extends State<HomeLongPress> {
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(showLogo: true, showBackButton: true, showDivider: false, showTitle: false),
       body: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         children: [
           body(),
         ],
@@ -54,77 +56,77 @@ class _HomeLongPressState extends State<HomeLongPress> {
   }
 
   Widget body() {
-    return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
-    }, builder: (context, userProgressListState) {
-      if (userProgressListState is GetUserProgressSuccess) {
-        _usersProgress = userProgressListState.usersProgress;
-      }
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
+    return BlocConsumer<UserProgressListBloc, UserProgressListState>(
+        listener: (context, userProgressListState) {},
+        builder: (context, userProgressListState) {
+          if (userProgressListState is GetUserProgressSuccess) {
+            _usersProgress = userProgressListState.usersProgress;
+          }
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(OlukoLocalizations.get(context, 'enrolledCourses'), style: OlukoFonts.olukoBigFont()),
+                const SizedBox(
+                  height: 20,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: CourseCarouselGallery(
+                      courseEnrollments: widget.courseEnrollments,
+                      courseIndex: widget.index,
+                      onCourseChange: (index) => _onCourseChange(index),
+                      onCourseDeleted: (index) => _onCourseDeleted(index)),
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Text(widget.courseEnrollments[widget.index].course.name, style: OlukoFonts.olukoTitleFont()),
+                const SizedBox(
+                  height: 20,
+                ),
+                BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+                  builder: (context, state) {
+                    if (state is SubscribedCourseUsersLoading) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont()),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: Center(child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'), style: OlukoFonts.olukoMediumFont())),
+                          ),
+                        ],
+                      );
+                    } else if (state is SubscribedCourseUsersSuccess && state.users.isNotEmpty) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${OlukoLocalizations.get(context, 'activeNow')} (${state.users.length})', style: OlukoFonts.olukoBigFont()),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          UserItemBubbles(
+                            userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+                            usersProgess: _usersProgress,
+                            content: state.users,
+                            currentUserId: widget.courseEnrollments[widget.index].createdBy,
+                          )
+                        ],
+                      );
+                    } else {
+                      return Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont());
+                    }
+                  },
+                ),
+              ],
             ),
-            Text(OlukoLocalizations.get(context, 'enrolledCourses'), style: OlukoFonts.olukoBigFont()),
-            const SizedBox(
-              height: 20,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: CourseCarouselGallery(
-                  courseEnrollments: widget.courseEnrollments,
-                  courseIndex: widget.index,
-                  onCourseChange: (index) => _onCourseChange(index),
-                  onCourseDeleted: (index) => _onCourseDeleted(index)),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            Text(widget.courseEnrollments[widget.index].course.name, style: OlukoFonts.olukoTitleFont()),
-            const SizedBox(
-              height: 20,
-            ),
-            BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
-              builder: (context, state) {
-                if (state is SubscribedCourseUsersLoading) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont()),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15),
-                        child:
-                            Center(child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'), style: OlukoFonts.olukoMediumFont())),
-                      ),
-                    ],
-                  );
-                } else if (state is SubscribedCourseUsersSuccess && state.users.isNotEmpty) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${OlukoLocalizations.get(context, 'activeNow')} (${state.users.length})', style: OlukoFonts.olukoBigFont()),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      UserItemBubbles(
-                        userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
-                        usersProgess: _usersProgress,
-                        content: state.users,
-                        currentUserId: widget.courseEnrollments[widget.index].createdBy,
-                      )
-                    ],
-                  );
-                } else {
-                  return Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont());
-                }
-              },
-            ),
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
 
   _onCourseChange(int index) {

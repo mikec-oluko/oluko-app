@@ -38,16 +38,16 @@ class _State extends State<CarouselSmallSection> {
               ),
               Spacer(),
               Padding(
-         padding: const EdgeInsets.only(top: 3.0),
+                padding: const EdgeInsets.only(top: 3.0),
                 child: TextButton(
                   onPressed: () {
                     goToRoute(widget.routeToGo);
                   },
                   child: Text(
-                                OlukoLocalizations.get(context, 'viewAll'),
-                                overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
-                              ),
+                    OlukoLocalizations.get(context, 'viewAll'),
+                    overflow: TextOverflow.ellipsis,
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
+                  ),
                 ),
               ),
               GestureDetector(
@@ -68,6 +68,8 @@ class _State extends State<CarouselSmallSection> {
                 alignment: Alignment.centerLeft,
                 child: OlukoNeumorphism.isNeumorphismDesign
                     ? ListView.builder(
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         itemCount: 1,
@@ -76,6 +78,8 @@ class _State extends State<CarouselSmallSection> {
                         })
                     : ListView(
                         shrinkWrap: true,
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
                         scrollDirection: Axis.horizontal,
                         children: widget.children,
                       ),
@@ -89,7 +93,11 @@ class _State extends State<CarouselSmallSection> {
   goToRoute(RouteEnum routeToGo) {
     switch (routeToGo) {
       case RouteEnum.profileTransformationJourney:
-        Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney], arguments: {'profileInfo': widget.userToGetData,'viewAllPage':true},);
+        Navigator.pushNamed(
+          context,
+          routeLabels[RouteEnum.profileTransformationJourney],
+          arguments: {'profileInfo': widget.userToGetData, 'viewAllPage': true},
+        );
         break;
       case RouteEnum.profileAssessmentVideos:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos], arguments: {'profileInfo': widget.userToGetData});

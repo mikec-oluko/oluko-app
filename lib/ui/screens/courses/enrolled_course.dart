@@ -123,6 +123,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           child: Stack(
                             children: [
                               ListView(
+                                addAutomaticKeepAlives: false,
+                                addRepaintBoundaries: false,
                                 children: [
                                   OlukoVideoPreview(
                                     showBackButton: true,
@@ -177,6 +179,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           child: Stack(
                             children: [
                               ListView(
+                                addAutomaticKeepAlives: false,
+                                addRepaintBoundaries: false,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 3),

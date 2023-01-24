@@ -25,6 +25,8 @@ class _ExpansionPanelListState extends State<ExpansionPanelListWidget> {
     return Container(
       color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       child: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         children: [
           for (var type in FAQCategoriesEnum.values)
             ParentTileWidget(

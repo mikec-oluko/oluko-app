@@ -227,6 +227,8 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.10),
         children: [
           _activeCoursesSection(),
@@ -241,6 +243,8 @@ class _State extends State<Courses> {
 
   ListView _courseCategoriesSections() {
     return ListView.builder(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         physics: NeverScrollableScrollPhysics(),
         itemCount: _coursesByCategories.length,
         shrinkWrap: true,

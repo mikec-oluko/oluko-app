@@ -43,6 +43,8 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
               shrinkWrap: true,
               children: widget.recommendedContent != null && widget.recommendedContent.isNotEmpty
                   ? getRecommendedContentByType(widget.recommendedContent)
