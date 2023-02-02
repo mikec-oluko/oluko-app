@@ -23,7 +23,6 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   TextEditingController controller = TextEditingController();
   String errorMessage;
   bool existError = false;
-  Country defaultCountry = Country(name: '-');
   List<Country> countries = [];
   Country _selectedCountry;
   Country newCountryWithStates;
@@ -399,84 +398,76 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           if (countries == null || countries.isEmpty) {
             setState(() {
               countries = state.countries;
-              countries.insert(0, defaultCountry);
             });
           }
         }
       },
       child: countries != null && countries.isNotEmpty
-          ? Container(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    errorText: existError ? errorMessage : '',
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    ),
-                    errorBorder: existError
-                        ? const OutlineInputBorder(
-                            borderSide: BorderSide(color: OlukoColors.error),
-                          )
-                        : OutlineInputBorder(
-                            borderSide: const BorderSide(color: OlukoColors.grayColor),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                    labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: OlukoColors.grayColor),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    filled: true,
-                    fillColor: OlukoColors.white,
-                  ),
-                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                  dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
-                  isExpanded: true,
-                  value: _selectedCountry?.name ?? countries[0].name,
-                  items: countries.map<DropdownMenuItem<String>>((Country country) {
-                    return DropdownMenuItem<String>(
-                      value: country.name,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(
-                          country.name,
-                          overflow: TextOverflow.ellipsis,
-                          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String item) async {
-                    widget.onInputUpdated(item);
-                    _selectedCountry = countries.firstWhere((country) => country.name == item);
-                    final List<String> statesOfSelectedCountry = _selectedCountry?.states;
-                    var newFieldsState = '';
-                    var newCountries = countries;
-                    if (statesOfSelectedCountry != null && statesOfSelectedCountry.isNotEmpty) {
-                      newFieldsState = statesOfSelectedCountry[0];
-                      BlocProvider.of<CountryBloc>(context).emitSelectedCountryState(_selectedCountry);
-                    } else {
-                      newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(_selectedCountry.id);
-                      newCountryWithStates = newCountries.firstWhere((element) => element.id == _selectedCountry.id);
-                      BlocProvider.of<CountryBloc>(context).emitSelectedCountryState(newCountryWithStates);
-                      newFieldsState = newCountryWithStates != null && AppValidators.isNeitherNullNorEmpty(newCountryWithStates.states)
-                          ? newCountryWithStates.states[0]
-                          : '-';
-                    }
-                    setState(() {
-                      countries = newCountries;
-                    });
-                    widget.onInputUpdated(item);
-                  },
-                  validator: (String value) {
-                    if (value == '-' || value == null) {
-                      return OlukoLocalizations.get(context, 'required');
-                    }
-                    return null;
-                  },
+          ? DropdownButtonHideUnderline(
+            child: DropdownButtonFormField(
+              decoration: InputDecoration(
+                errorText: existError ? errorMessage : '',
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
                 ),
+                errorBorder: existError
+                    ? const OutlineInputBorder(
+                        borderSide: BorderSide(color: OlukoColors.error),
+                      )
+                    : OutlineInputBorder(
+                        borderSide: const BorderSide(color: OlukoColors.grayColor),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: OlukoColors.grayColor),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                filled: true,
+                fillColor: OlukoColors.white,
               ),
-            )
+              style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+              dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
+              isExpanded: true,
+              value: _selectedCountry?.name ?? countries[0].name,
+              items: countries.map<DropdownMenuItem<String>>((Country country) {
+                return DropdownMenuItem<String>(
+                  value: country.name,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      country.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: (String item) async {
+                widget.onInputUpdated(item);
+                _selectedCountry = countries.firstWhere((country) => country.name == item);
+                final List<String> statesOfSelectedCountry = _selectedCountry?.states;
+                var newCountries = countries;
+                if (statesOfSelectedCountry != null && statesOfSelectedCountry.isNotEmpty) {
+                  BlocProvider.of<CountryBloc>(context).emitSelectedCountryState(_selectedCountry);
+                } else {
+                  newCountries = await BlocProvider.of<CountryBloc>(context).getStatesForCountry(_selectedCountry.id);
+                  newCountryWithStates = newCountries.firstWhere((element) => element.id == _selectedCountry.id);
+                  BlocProvider.of<CountryBloc>(context).emitSelectedCountryState(newCountryWithStates);
+                }
+                setState(() {
+                  countries = newCountries;
+                });
+                widget.onInputUpdated(item);
+              },
+              validator: (String value) {
+                if (value == '-' || value == null) {
+                  return OlukoLocalizations.get(context, 'required');
+                }
+                return null;
+              },
+            ),
+          )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
               child: Text(
@@ -499,116 +490,112 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
         }
       },
       child: _countryWithStates != null && _countryWithStates.states.isNotEmpty
-          ? Container(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    errorText: existError ? errorMessage : '',
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    ),
-                    errorBorder: existError
-                        ? const OutlineInputBorder(
-                            borderSide: BorderSide(color: OlukoColors.error),
-                          )
-                        : OutlineInputBorder(
-                            borderSide: const BorderSide(color: OlukoColors.grayColor),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                    filled: true,
-                    fillColor: OlukoColors.white,
-                  ),
-                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                  dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
-                  isExpanded: true,
-                  value: _selectedState != null && (_countryWithStates.states.isNotEmpty && _countryWithStates.states.contains(_selectedState))
-                      ? _selectedState
-                      : _countryWithStates.states[0],
-                  items: _countryWithStates.states.isNotEmpty
-                      ? _countryWithStates.states.map<DropdownMenuItem<String>>((String countryState) {
-                          return DropdownMenuItem<String>(
-                            value: countryState,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                countryState,
-                                overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                              ),
-                            ),
-                          );
-                        }).toList()
-                      : defaultStates.map<DropdownMenuItem<String>>((String countryState) {
-                          return DropdownMenuItem<String>(
-                            value: countryState,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: Text(
-                                countryState,
-                                overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  onChanged: (String item) async {
-                    setState(() {
-                      _selectedState = item;
-                    });
-                    widget.onInputUpdated(item);
-                  },
+          ? DropdownButtonHideUnderline(
+            child: DropdownButtonFormField(
+              decoration: InputDecoration(
+                errorText: existError ? errorMessage : '',
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
                 ),
-              ),
-            )
-          : Container(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    errorText: existError ? errorMessage : '',
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    ),
-                    errorBorder: existError
-                        ? const OutlineInputBorder(
-                            borderSide: BorderSide(color: OlukoColors.error),
-                          )
-                        : OutlineInputBorder(
-                            borderSide: const BorderSide(color: OlukoColors.grayColor),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                    labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: OlukoColors.grayColor),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    filled: true,
-                    fillColor: OlukoColors.white,
-                  ),
-                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                  dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
-                  isExpanded: true,
-                  value: '-',
-                  items: defaultStates.map<DropdownMenuItem<String>>((String countryState) {
-                    return DropdownMenuItem<String>(
-                      value: countryState,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(
-                          countryState,
-                          overflow: TextOverflow.ellipsis,
-                          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                        ),
+                errorBorder: existError
+                    ? const OutlineInputBorder(
+                        borderSide: BorderSide(color: OlukoColors.error),
+                      )
+                    : OutlineInputBorder(
+                        borderSide: const BorderSide(color: OlukoColors.grayColor),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (String item) async {
-                    setState(() {
-                      _selectedState = item;
-                    });
-                  },
-                ),
+                filled: true,
+                fillColor: OlukoColors.white,
               ),
+              style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+              dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
+              isExpanded: true,
+              value: _selectedState != null && (_countryWithStates.states.isNotEmpty && _countryWithStates.states.contains(_selectedState))
+                  ? _selectedState
+                  : _countryWithStates.states[0],
+              items: _countryWithStates.states.isNotEmpty
+                  ? _countryWithStates.states.map<DropdownMenuItem<String>>((String countryState) {
+                      return DropdownMenuItem<String>(
+                        value: countryState,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            countryState,
+                            overflow: TextOverflow.ellipsis,
+                            style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                          ),
+                        ),
+                      );
+                    }).toList()
+                  : defaultStates.map<DropdownMenuItem<String>>((String countryState) {
+                      return DropdownMenuItem<String>(
+                        value: countryState,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(
+                            countryState,
+                            overflow: TextOverflow.ellipsis,
+                            style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              onChanged: (String item) async {
+                setState(() {
+                  _selectedState = item;
+                });
+                widget.onInputUpdated(item);
+              },
             ),
+          )
+          : DropdownButtonHideUnderline(
+            child: DropdownButtonFormField(
+              decoration: InputDecoration(
+                errorText: existError ? errorMessage : '',
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                ),
+                errorBorder: existError
+                    ? const OutlineInputBorder(
+                        borderSide: BorderSide(color: OlukoColors.error),
+                      )
+                    : OutlineInputBorder(
+                        borderSide: const BorderSide(color: OlukoColors.grayColor),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                labelStyle: TextStyle(height: 1, color: existError ? OlukoColors.error : OlukoColors.grayColor),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: OlukoColors.grayColor),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                filled: true,
+                fillColor: OlukoColors.white,
+              ),
+              style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+              dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
+              isExpanded: true,
+              value: '-',
+              items: defaultStates.map<DropdownMenuItem<String>>((String countryState) {
+                return DropdownMenuItem<String>(
+                  value: countryState,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      countryState,
+                      overflow: TextOverflow.ellipsis,
+                      style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: (String item) async {
+                setState(() {
+                  _selectedState = item;
+                });
+              },
+            ),
+          ),
     );
   }
 }
