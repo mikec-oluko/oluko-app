@@ -154,7 +154,7 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
-    PushNotificationService.initializePushNotifications(context, userId);
+    await PushNotificationService.initializePushNotifications(context, userId);
     if (await UserUtils.isFirstTime()) {
       await Permissions.askForPermissions();
     }
