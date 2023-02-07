@@ -84,8 +84,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
-        if (authState is AuthSuccess) {
-        }
+        if (authState is AuthSuccess) {}
         return homeContainer();
       },
     );
@@ -194,10 +193,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return CustomScrollView(
       cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
       slivers: <Widget>[
-        SliverStack(children: [
-          getClassView(index, context),
-          getTabBar(context, index),
-        ],),
+        SliverStack(
+          children: [
+            getClassView(index, context),
+            getTabBar(context, index),
+          ],
+        ),
       ],
     );
   }
@@ -219,12 +220,16 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             bottom: ScreenUtils.height(context) * 0.1,
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
-                  'homeEnrollTocourse': true,
-                  'showBottomTab': () => setState(() {
-                        _isBottomTabActive = !_isBottomTabActive;
-                      })
-                },);
+                Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.courses],
+                  arguments: {
+                    'homeEnrollTocourse': true,
+                    'showBottomTab': () => setState(() {
+                          _isBottomTabActive = !_isBottomTabActive;
+                        })
+                  },
+                );
               },
               child: Neumorphic(
                 style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
@@ -278,7 +283,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               OlukoNeumorphism.mvtLogo,
               scale: 4,
             ),
-            HandWidget(authState: widget.authState),
+            HandWidget(authState: widget.authState, onTap: closeVideo),
           ],
         ),
       ),
@@ -296,18 +301,19 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   Widget enrolledContent(bool showStories) {
     return SliverToBoxAdapter(
-        child: Container(
-      alignment: Alignment.centerLeft,
-      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      child: showStories
-          ? StoriesHeader(
-              widget.user.uid,
-              onTap: closeVideo,
-              maxRadius: 30,
-              color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
-            )
-          : const SizedBox(),
-    ),);
+      child: Container(
+        alignment: Alignment.centerLeft,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        child: showStories
+            ? StoriesHeader(
+                widget.user.uid,
+                onTap: closeVideo,
+                maxRadius: 30,
+                color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
+              )
+            : const SizedBox(),
+      ),
+    );
   }
 
   SliverList getClassView(int index, BuildContext context) {
@@ -532,7 +538,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       ),
                     ),
                   ),
-                  HandWidget(authState: widget.authState),
+                  HandWidget(authState: widget.authState, onTap: closeVideo),
                 ],
               ),
               notEnrolledStoriesHeader(showStories),
@@ -575,13 +581,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                                 : ScreenUtils.height(context) * 0.35
                             : ScreenUtils.height(context) * 0.255),
                     width: ScreenUtils.width(context),
-                    child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
-                      if (state is UsersSelfiesSuccess) {
-                        return SelfiesGrid(images: state.usersSelfies.selfies);
-                      } else {
-                        return OlukoCircularProgressIndicator();
-                      }
-                    },),
+                    child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(
+                      builder: (context, state) {
+                        if (state is UsersSelfiesSuccess) {
+                          return SelfiesGrid(images: state.usersSelfies.selfies);
+                        } else {
+                          return OlukoCircularProgressIndicator();
+                        }
+                      },
+                    ),
                   ),
                 ),
                 Center(child: notErolledContent(showStories))
@@ -641,12 +649,16 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             useBorder: true,
             title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
-                'backButtonWithFilters': true,
-                'showBottomTab': () => setState(() {
-                      _isBottomTabActive = !_isBottomTabActive;
-                    })
-              },);
+              Navigator.pushNamed(
+                context,
+                routeLabels[RouteEnum.courses],
+                arguments: {
+                  'backButtonWithFilters': true,
+                  'showBottomTab': () => setState(() {
+                        _isBottomTabActive = !_isBottomTabActive;
+                      })
+                },
+              );
             },
           )
         ],

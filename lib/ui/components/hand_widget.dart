@@ -1,7 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/routes.dart';
@@ -9,10 +8,12 @@ import 'package:oluko_app/routes.dart';
 class HandWidget extends StatefulWidget {
   const HandWidget({
     Key key,
+    this.onTap,
     @required this.authState,
   }) : super(key: key);
 
   final AuthSuccess authState;
+  final Function onTap;
 
   @override
   State<HandWidget> createState() => _HandWidgetState();
@@ -26,6 +27,9 @@ class _HandWidgetState extends State<HandWidget> {
         if (notificationState is NotificationSuccess && notificationState.notifications.isNotEmpty) {
           return GestureDetector(
             onTap: () async {
+              if(widget.onTap != null) {
+                await widget.onTap();
+              }
               await BlocProvider.of<NotificationBloc>(context).clearAll(widget.authState.user.id);
               Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage]);
             },

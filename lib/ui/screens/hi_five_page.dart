@@ -48,7 +48,7 @@ class _HiFivePageState extends State<HiFivePage> {
                 BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
                 hiFiveState.users.removeWhere((user) => user == null || user.id == null);
                 return Scaffold(
-                  appBar: _appBar(),
+                  appBar: _appBar(hiFiveState),
                   backgroundColor: OlukoColors.black,
                   body: BlocConsumer<UserProgressListBloc, UserProgressListState>(
                       listener: (context, userProgressListState) {},
@@ -190,7 +190,7 @@ class _HiFivePageState extends State<HiFivePage> {
     );
   }
 
-  OlukoAppBar _appBar() {
+  OlukoAppBar _appBar(HiFiveSuccess hiFiveState) {
     return OlukoAppBar(
       title: OlukoLocalizations.get(context, 'hiFive'),
       showBackButton: true,
@@ -198,10 +198,10 @@ class _HiFivePageState extends State<HiFivePage> {
       showActions: true,
       actions: [
         Visibility(
-          visible: _hiFiveState != null && _hiFiveState.users.length > 1,
+          visible: hiFiveState != null && hiFiveState.users.length > 1,
           child: GestureDetector(
             onTap: () {
-              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState);
+              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, hiFiveState);
             },
             child: OlukoNeumorphism.isNeumorphismDesign
                 ? Padding(
