@@ -137,35 +137,35 @@ class _HiFivePageState extends State<HiFivePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                StoriesItem(
-                  showUserProgress: true,
-                  userProgress: _usersProgress[targetUser.id],
-                  itemUserId: targetUser.id,
-                  imageUrl: targetUser.getAvatarThumbnail(),
-                  name: targetUser.firstName,
-                  lastname: targetUser.lastName,
-                  maxRadius: 30,
-                  userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+            StoriesItem(
+              showUserProgress: true,
+              userProgress: _usersProgress[targetUser.id],
+              itemUserId: targetUser.id,
+              imageUrl: targetUser.getAvatarThumbnail(),
+              name: targetUser.firstName,
+              lastname: targetUser.lastName,
+              maxRadius: 30,
+              userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      targetUser.firstName,
+                      overflow: TextOverflow.ellipsis,
+                      style: OlukoFonts.olukoSuperBigFont(),
+                    ),
+                    Text(
+                      UserHelper.printUsername(targetUser.username, targetUser.id),
+                      overflow: TextOverflow.ellipsis,
+                      style: OlukoFonts.olukoMediumFont(),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        targetUser.firstName,
-                        style: OlukoFonts.olukoSuperBigFont(),
-                      ),
-                      Text(
-                        UserHelper.printUsername(targetUser.username, targetUser.id),
-                        style: OlukoFonts.olukoMediumFont(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
             if (hiFives > 1)
               Text(
