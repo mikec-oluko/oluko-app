@@ -77,7 +77,9 @@ class CountryBloc extends Cubit<CountryState> {
       countries = await CountryRepository.getAllCountries();
       if (countries.isNotEmpty) {
         _orderCountryList();
+        await getStatesForCountry(countries[0].id);
         emit(CountrySuccess(countries: countries));
+         emit(CountryWithStateSuccess(country: countries[0]));
       } else {
         emit(CountryFailure());
       }

@@ -48,7 +48,7 @@ class _HiFivePageState extends State<HiFivePage> {
                 BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false);
                 hiFiveState.users.removeWhere((user) => user == null || user.id == null);
                 return Scaffold(
-                  appBar: _appBar(),
+                  appBar: _appBar(hiFiveState),
                   backgroundColor: OlukoColors.black,
                   body: BlocConsumer<UserProgressListBloc, UserProgressListState>(
                       listener: (context, userProgressListState) {},
@@ -139,35 +139,35 @@ class _HiFivePageState extends State<HiFivePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                StoriesItem(
-                  showUserProgress: true,
-                  userProgress: _usersProgress[targetUser.id],
-                  itemUserId: targetUser.id,
-                  imageUrl: targetUser.getAvatarThumbnail(),
-                  name: targetUser.firstName,
-                  lastname: targetUser.lastName,
-                  maxRadius: 30,
-                  userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+            StoriesItem(
+              showUserProgress: true,
+              userProgress: _usersProgress[targetUser.id],
+              itemUserId: targetUser.id,
+              imageUrl: targetUser.getAvatarThumbnail(),
+              name: targetUser.firstName,
+              lastname: targetUser.lastName,
+              maxRadius: 30,
+              userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      targetUser.firstName,
+                      overflow: TextOverflow.ellipsis,
+                      style: OlukoFonts.olukoSuperBigFont(),
+                    ),
+                    Text(
+                      UserHelper.printUsername(targetUser.username, targetUser.id),
+                      overflow: TextOverflow.ellipsis,
+                      style: OlukoFonts.olukoMediumFont(),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        targetUser.firstName,
-                        style: OlukoFonts.olukoSuperBigFont(),
-                      ),
-                      Text(
-                        UserHelper.printUsername(targetUser.username, targetUser.id),
-                        style: OlukoFonts.olukoMediumFont(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
             if (hiFives > 1)
               Text(
@@ -192,7 +192,7 @@ class _HiFivePageState extends State<HiFivePage> {
     );
   }
 
-  OlukoAppBar _appBar() {
+  OlukoAppBar _appBar(HiFiveSuccess hiFiveState) {
     return OlukoAppBar(
       title: OlukoLocalizations.get(context, 'hiFive'),
       showBackButton: true,
@@ -200,10 +200,10 @@ class _HiFivePageState extends State<HiFivePage> {
       showActions: true,
       actions: [
         Visibility(
-          visible: _hiFiveState != null && _hiFiveState.users.length > 1,
+          visible: hiFiveState != null && hiFiveState.users.length > 1,
           child: GestureDetector(
             onTap: () {
-              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState);
+              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, hiFiveState);
             },
             child: OlukoNeumorphism.isNeumorphismDesign
                 ? Padding(
