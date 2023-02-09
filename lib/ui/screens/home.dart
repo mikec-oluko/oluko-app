@@ -11,6 +11,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/screens/home_content.dart';
 import 'package:oluko_app/ui/screens/home_neumorphic_content.dart';
+import 'package:oluko_app/ui/screens/home_neumorphic_latest_design.dart';
 
 class Home extends StatefulWidget {
   Home({this.classIndex, this.index, Key key}) : super(key: key);
@@ -46,14 +47,16 @@ class _HomeState extends State<Home> {
           return true;
         }, builder: (context, courseEnrollmentListStreamState) {
           if (courseEnrollmentListStreamState is CourseEnrollmentsByUserStreamSuccess) {
-            _courseEnrollments =
-                courseEnrollmentListStreamState.courseEnrollments /*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
+            _courseEnrollments = courseEnrollmentListStreamState.courseEnrollments /*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments(_courseEnrollments);
             return OlukoNeumorphism.isNeumorphismDesign
-                ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
+                // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
+                ? HomeNeumorphicLatestDesign(
+                    currentUserId: _user.uid,
+                  )
                 : HomeContent(widget.classIndex, widget.index, _courseEnrollments, _authState, _courses, _user);
           } else {
-            return Container(color:OlukoColors.black, child: const Center(child: CircularProgressIndicator()));
+            return Container(color: OlukoColors.black, child: const Center(child: CircularProgressIndicator()));
           }
         });
       } else {

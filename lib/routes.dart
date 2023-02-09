@@ -153,6 +153,7 @@ import 'package:oluko_app/ui/screens/courses/user_challenge_detail.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/home_long_press.dart';
+import 'package:oluko_app/ui/screens/home_neumorphic_latest_design.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/oluko_no_internet_connection.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
@@ -264,7 +265,8 @@ enum RouteEnum {
   aboutCoach,
   noInternetConnection,
   courseShareView,
-  registerUser
+  registerUser,
+  homeLatestDesign
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -327,6 +329,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.noInternetConnection: '/no-internet-connection',
   RouteEnum.courseShareView: '/course-share-view',
   RouteEnum.registerUser: '/register-user',
+  RouteEnum.homeLatestDesign: '/home-view',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -1364,6 +1367,14 @@ class Routes {
           BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const RegisterPage();
+        break;
+      case RouteEnum.homeLatestDesign:
+        providers = [
+          // BlocProvider<CountryBloc>.value(value: _countryBloc),
+          // BlocProvider<SignupBloc>.value(value: _signUpBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+        ];
+        newRouteView = const HomeNeumorphicLatestDesign();
         break;
       default:
         newRouteView = MainPage();
