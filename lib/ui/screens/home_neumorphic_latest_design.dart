@@ -1,25 +1,40 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_category.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
+import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
+import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
+import 'package:oluko_app/utils/course_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class HomeNeumorphicLatestDesign extends StatefulWidget {
   final String currentUserId;
-  const HomeNeumorphicLatestDesign({this.currentUserId}) : super();
+  final List<CourseEnrollment> courseEnrollments;
+
+  const HomeNeumorphicLatestDesign({this.currentUserId, this.courseEnrollments}) : super();
 
   @override
   State<HomeNeumorphicLatestDesign> createState() => _HomeNeumorphicLatestDesignState();
@@ -30,10 +45,15 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   final bool showLogo = true;
   bool showStories = false;
   UserStatistics userStats;
+  Map<String, UserProgress> _usersProgress = {};
+  int courseIndex = 0;
+  List<Course> _courses;
 
   @override
   void initState() {
     BlocProvider.of<StoryBloc>(context).hasStories(widget.currentUserId);
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).getEnrolled(widget.courseEnrollments[0].course.id, widget.courseEnrollments[0].createdBy);
+    BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUserId);
     super.initState();
   }
 
@@ -60,8 +80,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                   children: [
                     _userCoverAndProfileDetails(),
                     _enrolledCoursesAndPeople(),
-                    _myListOfCourses(),
-                    _friendsRecommended(),
+                    myListOfCoursesAndFriendsRecommended(),
                     _upcomingChallenges(),
                     _completedChallenges(),
                     _transformationPhotos(),
@@ -103,11 +122,34 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   Widget _enrolledCoursesAndPeople() {
-    return Container();
+    return BlocBuilder<UserProgressListBloc, UserProgressListState>(
+      builder: (context, userProgressListState) {
+        if (userProgressListState is GetUserProgressSuccess) {
+          _usersProgress = userProgressListState.usersProgress;
+        }
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 100, 20, 50),
+          child: _courseAndPeopleContent(context),
+        );
+      },
+    );
   }
 
-  Widget _myListOfCourses() {
-    return Container();
+  Widget _courseAndPeopleContent(
+    BuildContext context,
+  ) {
+    return HomeCoursesAndPeople(
+      courseEnrollments: widget.courseEnrollments,
+      usersProgress: _usersProgress,
+      courseIndex: courseIndex,
+      onCourseChange: (index) {
+        setState(() {
+          courseIndex = index;
+        });
+        BlocProvider.of<SubscribedCourseUsersBloc>(context)
+            .getEnrolled(widget.courseEnrollments[courseIndex].course.id, widget.courseEnrollments[courseIndex].createdBy);
+      },
+    );
   }
 
   Widget _friendsRecommended() {
@@ -186,7 +228,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
       child: SizedBox(
           width: ScreenUtils.width(context),
-          height: getAdaptativeHeight(),
+          height: ScreenUtils.getAdaptativeHeight(context),
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
@@ -205,11 +247,37 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     );
   }
 
-  double getAdaptativeHeight() {
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? ScreenUtils.height(context) < 700
-            ? ScreenUtils.height(context) / 2.5
-            : ScreenUtils.height(context) / 2.8
-        : ScreenUtils.height(context) / 5;
+  Widget myListOfCoursesAndFriendsRecommended() {
+    return BlocBuilder<CourseSubscriptionBloc, CourseSubscriptionState>(builder: (context, courseSubscriptionState) {
+      if (courseSubscriptionState is CourseSubscriptionSuccess) {
+        _courses = courseSubscriptionState.values;
+      }
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            _myListOfCourses(),
+            _friendsRecommended(),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _myListOfCourses() {
+    return Container(
+      child: BlocBuilder<LikedCoursesBloc, LikedCourseState>(builder: (context, state) {
+        Map<CourseCategory, List<Course>> myListOfCourses = {};
+        if (state is CourseLikedListSuccess) {
+          CourseCategory _myListCategory = state.myLikedCourses;
+          if (_myListCategory != null) {
+            myListOfCourses = CourseUtils.mapCoursesByCategories(_courses, [_myListCategory]);
+          }
+          return MyListOfCourses(myListOfCourses: myListOfCourses);
+        } else {
+          return const SizedBox();
+        }
+      }),
+    );
   }
 }

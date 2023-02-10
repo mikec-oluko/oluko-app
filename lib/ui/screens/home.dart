@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -49,10 +51,13 @@ class _HomeState extends State<Home> {
           if (courseEnrollmentListStreamState is CourseEnrollmentsByUserStreamSuccess) {
             _courseEnrollments = courseEnrollmentListStreamState.courseEnrollments /*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments(_courseEnrollments);
+            BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_user.uid);
+            BlocProvider.of<CourseSubscriptionBloc>(context).getStream();
             return OlukoNeumorphism.isNeumorphismDesign
                 // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
                 ? HomeNeumorphicLatestDesign(
                     currentUserId: _user.uid,
+                    courseEnrollments: _courseEnrollments,
                   )
                 : HomeContent(widget.classIndex, widget.index, _courseEnrollments, _authState, _courses, _user);
           } else {
