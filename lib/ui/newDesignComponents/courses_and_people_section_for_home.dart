@@ -14,7 +14,8 @@ class HomeCoursesAndPeople extends StatefulWidget {
   final int courseIndex;
   final Map<String, UserProgress> usersProgress;
   final Function(int) onCourseChange;
-  const HomeCoursesAndPeople({this.courseEnrollments, this.courseIndex, this.usersProgress, this.onCourseChange}) : super();
+  final Function(int) onCourseTap;
+  const HomeCoursesAndPeople({this.courseEnrollments, this.courseIndex, this.usersProgress, this.onCourseChange, this.onCourseTap}) : super();
 
   @override
   State<HomeCoursesAndPeople> createState() => _HomeCoursesAndPeopleState();
@@ -42,7 +43,12 @@ class _HomeCoursesAndPeopleState extends State<HomeCoursesAndPeople> {
         Align(
           alignment: Alignment.centerLeft,
           child: CourseCarouselGallery(
-              courseEnrollments: widget.courseEnrollments, onCourseChange: (index) => widget.onCourseChange(index), onCourseDeleted: (index) => () {}),
+            courseEnrollments: widget.courseEnrollments,
+            onCourseChange: (index) => widget.onCourseChange(index),
+            onCourseDeleted: (index) => () {},
+            onCourseTap: (index) => widget.onCourseTap(index),
+            courseIndex: widget.courseIndex,
+          ),
         ),
         const SizedBox(
           height: 25,

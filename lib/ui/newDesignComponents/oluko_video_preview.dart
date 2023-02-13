@@ -24,6 +24,7 @@ class OlukoVideoPreview extends StatefulWidget {
   final bool showShareButton;
   final bool showHeartButton;
   final bool showVideoOptions;
+  final bool fromHomeContent;
   final Function() onBackPressed;
   final Function() onPlay;
   //final Function() onSharePressed;
@@ -46,6 +47,7 @@ class OlukoVideoPreview extends StatefulWidget {
       this.bannerVideo = false,
       this.audioWidget,
       this.showVideoOptions = false,
+      this.fromHomeContent = false,
       this.showCrossButton = true})
       : super(key: key);
 
@@ -247,11 +249,32 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                           ),
                         ),
                     ])),
-                  ))
+                  )),
+            if (widget.fromHomeContent) buttonBack(context),
           ]);
         },
       );
     }
+  }
+
+  Widget buttonBack(BuildContext context) {
+    return Positioned(
+      top: MediaQuery.of(context).size.height / 10,
+      left: 20,
+      child: ClipRRect(
+          borderRadius: BorderRadius.circular(50),
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                width: 52,
+                height: 52,
+                child: Image.asset(
+                  'assets/courses/left_back_arrow.png',
+                  scale: 3.5,
+                )),
+          )),
+    );
   }
 
   Widget showVideoPlayer(String videoUrl) {

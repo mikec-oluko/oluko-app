@@ -17,6 +17,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -33,13 +34,22 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeNeumorphicContent extends StatefulWidget {
-  HomeNeumorphicContent(this.courseEnrollments, this.authState, this.courses, this.user, {Key key, this.index = 0}) : super(key: key);
+  HomeNeumorphicContent({
+    this.courseEnrollments,
+    this.authState,
+    this.courses,
+    this.user,
+    Key key,
+    this.isFromHome = false,
+    this.index = 0,
+  }) : super(key: key);
 
   int index;
-  final User user;
+  final UserResponse user;
   final List<CourseEnrollment> courseEnrollments;
-  List<Course> courses;
+  final List<Course> courses;
   final AuthSuccess authState;
+  final bool isFromHome;
 
   @override
   _HomeNeumorphicContentState createState() => _HomeNeumorphicContentState();
@@ -62,20 +72,20 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   @override
   void initState() {
-    super.initState();
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-    horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
-    BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
+    // horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
+    BlocProvider.of<StoryBloc>(context).hasStories(widget.user.id);
     if (_existsCourses()) {
       setState(() {
         _activeCourses = widget.courses;
       });
     }
+    super.initState();
   }
 
   @override
   void dispose() {
-    horizontalScrollController.dispose();
+    // horizontalScrollController.dispose();
     if (_controller != null) _controller.dispose();
     super.dispose();
   }
@@ -98,7 +108,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(
         builder: (context, courseState) {
           if (courseState is GetByCourseEnrollmentsSuccess) {
-            _activeCourses = courseState.courses;
+            // _activeCourses = courseState.courses;
             _addFirstChunkOfCourses();
             if (_activeCourses.isNotEmpty) {
               return enrolled();
@@ -140,16 +150,16 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             carouselController: carouselController,
             itemCount: widget.courseEnrollments.length + 1,
             itemBuilder: (context, index) {
-              _populateGrowListOfCourses(index);
-              if (_growListOfCourses.length - 1 >= index) {
-                if (_growListOfCourses[index] != null) {
-                  return _getCourseContentView(index, context);
-                } else {
-                  return const SizedBox();
-                }
-              } else {
-                return _getEnrollAndPlusButtonContent(context);
-              }
+              // _populateGrowListOfCourses(index);
+              // if (_growListOfCourses.length - 1 >= index) {
+              // if (_growListOfCourses[index] != null) {
+              return _getCourseContentView(index, context);
+              // } else {
+              // return const SizedBox();
+              // }
+              // } else {
+              //   return _getEnrollAndPlusButtonContent(context);
+              // }
             },
             options: CarouselOptions(
               disableCenter: true,
@@ -306,7 +316,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: showStories
             ? StoriesHeader(
-                widget.user.uid,
+                widget.user.id,
                 onTap: closeVideo,
                 maxRadius: 30,
                 color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
@@ -345,6 +355,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,
+                fromHomeContent: widget.isFromHome,
                 bottomWidgets: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -629,7 +640,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       return Align(
         alignment: Alignment.centerLeft,
         child: StoriesHeader(
-          widget.user.uid,
+          widget.user.id,
           onTap: closeVideo,
           maxRadius: 30,
           color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),

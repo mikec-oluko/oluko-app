@@ -2,6 +2,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -153,6 +154,7 @@ import 'package:oluko_app/ui/screens/courses/user_challenge_detail.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/home_long_press.dart';
+import 'package:oluko_app/ui/screens/home_neumorphic_content.dart';
 import 'package:oluko_app/ui/screens/home_neumorphic_latest_design.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/oluko_no_internet_connection.dart';
@@ -266,7 +268,8 @@ enum RouteEnum {
   noInternetConnection,
   courseShareView,
   registerUser,
-  homeLatestDesign
+  homeLatestDesign,
+  courseHomePage
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -330,6 +333,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.courseShareView: '/course-share-view',
   RouteEnum.registerUser: '/register-user',
   RouteEnum.homeLatestDesign: '/home-view',
+  RouteEnum.courseHomePage: '/course-home-page',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -1377,6 +1381,26 @@ class Routes {
           BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const HomeNeumorphicLatestDesign();
+        break;
+      case RouteEnum.courseHomePage:
+        providers = [
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
+          BlocProvider<StoryBloc>.value(value: _storyBloc),
+          BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
+          BlocProvider<CarouselBloc>.value(value: _carouselBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = HomeNeumorphicContent(
+          courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
+          authState: argumentsToAdd['authState'] as AuthSuccess,
+          courses: argumentsToAdd['courses'] as List<Course>,
+          user: argumentsToAdd['user'] as UserResponse,
+          index: argumentsToAdd['index'] as int,
+          isFromHome: argumentsToAdd['isFromHome'] as bool,
+        );
         break;
       default:
         newRouteView = MainPage();
