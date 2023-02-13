@@ -99,7 +99,7 @@ class _State extends State<Courses> {
 
   @override
   Widget build(BuildContext context) {
-    carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + carSecHeigthPlus;
+    carouselSectionHeight = CourseUtils.getCarouselSectionHeight(context);
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         if (authState is AuthSuccess) {
@@ -271,7 +271,7 @@ class _State extends State<Courses> {
       child: GestureDetector(
         onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
             arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false}),
-        child: _getCourseCard(_generateImageCourse(course.image), width: ScreenUtils.width(context) / (padding + _cardsToShow())),
+        child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context), width: ScreenUtils.width(context) / (padding + _cardsToShow())),
       ),
     );
   }
@@ -448,7 +448,7 @@ class _State extends State<Courses> {
             child: GestureDetector(
               onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                   arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false}),
-              child: _getCourseCard(_generateImageCourse(course.image),
+              child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context),
                   width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendationsAvatarUrls: userRecommendationAvatars),
             ),
           );
@@ -491,7 +491,7 @@ class _State extends State<Courses> {
                 'courseIndex': courseIndex
               }),
               child: _getCourseCard(
-                _generateImageCourse(course.image),
+                CourseUtils.generateImageCourse(course.image, context),
                 progress: courseEnrollment.completion,
                 width: ScreenUtils.width(context) / (padding + _cardsToShow()),
               ),
@@ -517,7 +517,7 @@ class _State extends State<Courses> {
                   arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
             },
             child: _getCourseCard(
-              _generateImageCourse(courseElement.image),
+              CourseUtils.generateImageCourse(courseElement.image, context),
               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
             ),
           ),
@@ -536,29 +536,12 @@ class _State extends State<Courses> {
         child: GestureDetector(
           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),
-          child: _getCourseCard(_generateImageCourse(courseRecommended.image),
+          child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended.image, context),
               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
               userRecommendationsAvatarUrls: courseRecommendedMapEntry.values.first.map((user) => user.avatar).toList(),
               friendRecommended: true),
         ),
       );
     }).toList();
-  }
-
-  Widget _generateImageCourse(String imageUrl) {
-    if (imageUrl != null) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        height: ScreenUtils.height(context) * 0.20,
-        width: ScreenUtils.width(context) * 0.35,
-        maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
-        maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
-        memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
-        memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
-        fit: BoxFit.fill,
-      );
-    }
-    return Image.asset("assets/courses/course_sample_7.png");
-    //TODO: fill space with default image or message
   }
 }

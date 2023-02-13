@@ -6,6 +6,7 @@ import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -48,7 +49,7 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
                   arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
             },
             child: _getCourseCard(
-              _generateImageCourse(courseElement.image),
+              CourseUtils.generateImageCourse(courseElement.image, context),
               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
             ),
           ),
@@ -68,23 +69,6 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
         progress: progress,
         userRecommendationsAvatarUrls: userRecommendationsAvatarUrls,
         friendRecommended: friendRecommended);
-  }
-
-  Widget _generateImageCourse(String imageUrl) {
-    if (imageUrl != null) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        height: ScreenUtils.height(context) * 0.20,
-        width: ScreenUtils.width(context) * 0.35,
-        maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
-        maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
-        memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
-        memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
-        fit: BoxFit.fill,
-      );
-    }
-    return Image.asset("assets/courses/course_sample_7.png");
-    //TODO: fill space with default image or message
   }
 
   int _cardsToShow() {

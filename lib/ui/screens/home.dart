@@ -56,16 +56,17 @@ class _HomeState extends State<Home> {
             return OlukoNeumorphism.isNeumorphismDesign
                 // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
                 ? HomeNeumorphicLatestDesign(
-                    currentUserId: _user.uid,
+                    currentUser: authState.user,
+                    authState: authState,
                     courseEnrollments: _courseEnrollments,
                   )
                 : HomeContent(widget.classIndex, widget.index, _courseEnrollments, _authState, _courses, _user);
           } else {
-            return Container(color: OlukoColors.black, child: const Center(child: CircularProgressIndicator()));
+            return Container(color: OlukoNeumorphismColors.appBackgroundColor, child: const Center(child: CircularProgressIndicator()));
           }
         });
       } else {
-        return Container(color: OlukoColors.black, child: const Center(child: CircularProgressIndicator()));
+        return Container(color: OlukoNeumorphismColors.appBackgroundColor, child: const Center(child: CircularProgressIndicator()));
       }
     });
   }
