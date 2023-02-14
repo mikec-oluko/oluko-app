@@ -13,18 +13,21 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/helpers/profile_helper_functions.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
@@ -37,6 +40,7 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
+import 'package:oluko_app/ui/newDesignComponents/user_assessments_videos_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_section.dart';
@@ -66,6 +70,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   List<ChallengeNavigation> _listOfChallenges = [];
   UpcomingChallengesState _challengesCardsState;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
+  List<TaskSubmission> _assessmentVideosContent = [];
 
   @override
   void initState() {
@@ -74,6 +79,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<SubscribedCourseUsersBloc>(context).getEnrolled(widget.courseEnrollments[0].course.id, widget.courseEnrollments[0].createdBy);
     BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUser.id);
     BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
+    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
 
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
@@ -84,6 +90,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+      buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserStreamSuccess) {
           _courseEnrollmentList = state.courseEnrollments;
@@ -244,7 +251,15 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   Widget _assessmentVideos() {
-    return Container();
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
+      if (state is GetUserTaskSubmissionSuccess) {
+        _assessmentVideosContent = state.taskSubmissions;
+      }
+      return AssessmentVideosComponent(
+        assessmentVideosContent: _assessmentVideosContent,
+        currentUser: widget.currentUser,
+      );
+    });
   }
 
   // TODO: MOVE AS WIDGET
