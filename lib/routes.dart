@@ -1377,6 +1377,7 @@ class Routes {
         break;
       case RouteEnum.homeLatestDesign:
         providers = [
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),

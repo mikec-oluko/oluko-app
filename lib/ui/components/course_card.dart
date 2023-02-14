@@ -98,7 +98,7 @@ class _State extends State<CourseCard> {
   Widget buildNeumorphicCourseCard() {
     return Container(
       width: widget.width,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
         if (widget.userRecommendationsAvatarUrls != null && !widget.friendRecommended)
           Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
         else

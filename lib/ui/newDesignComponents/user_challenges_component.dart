@@ -5,6 +5,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class UserChallengeSection extends StatefulWidget {
   final UserResponse userToDisplay;
@@ -30,7 +31,7 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
 
   Widget getCarouselSection(List<Widget> challengeList, String title) {
     return CarouselSection(
-        height: 280,
+        height: ScreenUtils.height(context) / 4,
         width: MediaQuery.of(context).size.width,
         title: title,
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),

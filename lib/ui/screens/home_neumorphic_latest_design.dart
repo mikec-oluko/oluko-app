@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -24,6 +25,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
@@ -37,6 +39,7 @@ import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dar
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
+import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_section.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -62,6 +65,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   List<CourseEnrollment> _courseEnrollmentList = [];
   List<ChallengeNavigation> _listOfChallenges = [];
   UpcomingChallengesState _challengesCardsState;
+  List<TransformationJourneyUpload> _transformationJourneyContent = [];
 
   @override
   void initState() {
@@ -69,6 +73,8 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<StoryBloc>(context).hasStories(widget.currentUser.id);
     BlocProvider.of<SubscribedCourseUsersBloc>(context).getEnrolled(widget.courseEnrollments[0].course.id, widget.courseEnrollments[0].createdBy);
     BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUser.id);
+    BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
+
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
     });
@@ -105,7 +111,11 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                   myListOfCoursesAndFriendsRecommended(),
                   _challengesSection(),
                   _transformationPhotos(),
-                  _assessmentVideos()
+                  _assessmentVideos(),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    width: MediaQuery.of(context).size.width,
+                  )
                 ],
               ),
             ),
@@ -222,7 +232,15 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   Widget _transformationPhotos() {
-    return Container();
+    return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(builder: (context, state) {
+      if (state is TransformationJourneySuccess) {
+        _transformationJourneyContent = state.contentFromUser;
+      }
+      return TransformationJourneyComponent(
+        transformationJourneyContent: _transformationJourneyContent,
+        userToDisplay: widget.currentUser,
+      );
+    });
   }
 
   Widget _assessmentVideos() {
