@@ -4,16 +4,22 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/profile_helper_functions.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -21,6 +27,7 @@ import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
@@ -28,6 +35,7 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
+import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -51,6 +59,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   Map<String, UserProgress> _usersProgress = {};
   int courseIndex = 0;
   List<Course> _courses;
+  List<CourseEnrollment> _courseEnrollmentList = [];
+  List<ChallengeNavigation> _listOfChallenges = [];
+  UpcomingChallengesState _challengesCardsState;
 
   @override
   void initState() {
@@ -58,38 +69,49 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<StoryBloc>(context).hasStories(widget.currentUser.id);
     BlocProvider.of<SubscribedCourseUsersBloc>(context).getEnrolled(widget.courseEnrollments[0].course.id, widget.courseEnrollments[0].createdBy);
     BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUser.id);
-
+    setState(() {
+      _courseEnrollmentList = widget.courseEnrollments;
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return _stories(widget.authState);
-        },
-        body: Container(
-          color: OlukoNeumorphismColors.appBackgroundColor,
-          constraints: const BoxConstraints.expand(),
-          child: ListView(
-            addAutomaticKeepAlives: false,
-            addRepaintBoundaries: false,
-            clipBehavior: Clip.none,
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            children: [
-              _userCoverAndProfileDetails(),
-              _enrolledCoursesAndPeople(),
-              myListOfCoursesAndFriendsRecommended(),
-              _upcomingChallenges(),
-              _completedChallenges(),
-              _transformationPhotos(),
-              _assessmentVideos()
-            ],
+    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+      builder: (context, state) {
+        if (state is CourseEnrollmentsByUserStreamSuccess) {
+          _courseEnrollmentList = state.courseEnrollments;
+          _listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
+          BlocProvider.of<UpcomingChallengesBloc>(context)
+              .getUniqueChallengeCards(userId: widget.currentUser.id, listOfChallenges: _listOfChallenges, userRequested: widget.currentUser);
+        }
+        return Scaffold(
+          body: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return _stories(widget.authState);
+            },
+            body: Container(
+              color: OlukoNeumorphismColors.appBackgroundColor,
+              constraints: const BoxConstraints.expand(),
+              child: ListView(
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                clipBehavior: Clip.none,
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                children: [
+                  _userCoverAndProfileDetails(),
+                  _enrolledCoursesAndPeople(),
+                  myListOfCoursesAndFriendsRecommended(),
+                  _challengesSection(),
+                  _transformationPhotos(),
+                  _assessmentVideos()
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -166,18 +188,37 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           _coursesRecommendedMap = state.recommendedCourses;
           return FriendsRecommendedCourses(listOfCoursesRecommended: _coursesRecommendedMap, courses: _courses);
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       },
     );
   }
 
-  Widget _upcomingChallenges() {
-    return Container();
-  }
-
-  Widget _completedChallenges() {
-    return Container();
+  Widget _challengesSection() {
+    List<Challenge> _activeChallenges = [];
+    return BlocBuilder<ChallengeStreamBloc, ChallengeStreamState>(builder: (context, state) {
+      if (state is GetChallengeStreamSuccess) {
+        _activeChallenges = state.challenges;
+        _listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, _listOfChallenges);
+      }
+      if (state is ChallengesForUserRequested) {
+        _activeChallenges = state.challenges;
+        _listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, _listOfChallenges);
+      }
+      return BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
+        builder: (context, state) {
+          if (state is UniqueChallengesSuccess) {
+            _challengesCardsState = state;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: UserChallengeSection(userToDisplay: widget.currentUser, isCurrentUser: true, challengeState: state),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      );
+    });
   }
 
   Widget _transformationPhotos() {

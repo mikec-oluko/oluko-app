@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
@@ -54,6 +55,7 @@ class _HomeState extends State<Home> {
             BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments(_courseEnrollments);
             BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_user.id);
             BlocProvider.of<CourseSubscriptionBloc>(context).getStream();
+            BlocProvider.of<ChallengeStreamBloc>(context).getStream(_user.id);
             return OlukoNeumorphism.isNeumorphismDesign
                 // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
                 ? HomeNeumorphicLatestDesign(

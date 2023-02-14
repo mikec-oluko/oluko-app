@@ -432,7 +432,9 @@
     "editContent":"Editar",
     "zipCode":"Código postal",
     "zipCodeErrorMessage": ", No cumple con el formato requerido. Solo caracteres numéricos, 5 dígitos de longitud.",
-    "deleteImage": "Eliminar imagen"
+    "deleteImage": "Eliminar imagen",
+    "completedChallenges": "Desafios Completados"
+
 
 
 

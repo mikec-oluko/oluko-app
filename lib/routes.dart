@@ -525,6 +525,8 @@ class Routes {
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<AssessmentVisibilityBloc>.value(value: _assessmentVisibilityBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
+          BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<HiFiveSendBloc>.value(
             value: _hiFiveSendBloc,
           ),
@@ -1375,9 +1377,9 @@ class Routes {
         break;
       case RouteEnum.homeLatestDesign:
         providers = [
-          // BlocProvider<CountryBloc>.value(value: _countryBloc),
-          // BlocProvider<SignupBloc>.value(value: _signUpBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const HomeNeumorphicLatestDesign();
