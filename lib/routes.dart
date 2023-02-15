@@ -527,6 +527,7 @@ class Routes {
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<HiFiveSendBloc>.value(
             value: _hiFiveSendBloc,
           ),
@@ -1381,6 +1382,7 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<AuthBloc>.value(value: _authBloc),
         ];
         newRouteView = const HomeNeumorphicLatestDesign();
