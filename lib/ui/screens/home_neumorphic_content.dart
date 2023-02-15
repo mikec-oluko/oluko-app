@@ -69,11 +69,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   List<Course> _activeCourses = [];
   List<Course> _growListOfCourses = [];
   final int _courseChunkMaxValue = 5;
+  final bool _horizontalScrollingAvailable = false;
 
   @override
   void initState() {
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-    // horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
+    if (_horizontalScrollingAvailable) {
+      horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
+    }
     BlocProvider.of<StoryBloc>(context).hasStories(widget.user.id);
     if (_existsCourses()) {
       setState(() {
@@ -85,7 +88,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   @override
   void dispose() {
-    // horizontalScrollController.dispose();
+    if (horizontalScrollController != null) {
+      horizontalScrollController.dispose();
+    }
     if (_controller != null) _controller.dispose();
     super.dispose();
   }
@@ -108,7 +113,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(
         builder: (context, courseState) {
           if (courseState is GetByCourseEnrollmentsSuccess) {
-            // _activeCourses = courseState.courses;
+            if (_horizontalScrollingAvailable) {
+              _activeCourses = courseState.courses;
+            }
             _addFirstChunkOfCourses();
             if (_activeCourses.isNotEmpty) {
               return enrolled();
@@ -146,52 +153,54 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
             ];
           },
-          body: CarouselSlider.builder(
-            carouselController: carouselController,
-            itemCount: widget.courseEnrollments.length + 1,
-            itemBuilder: (context, index) {
-              // _populateGrowListOfCourses(index);
-              // if (_growListOfCourses.length - 1 >= index) {
-              // if (_growListOfCourses[index] != null) {
-              return _getCourseContentView(index, context);
-              // } else {
-              // return const SizedBox();
-              // }
-              // } else {
-              //   return _getEnrollAndPlusButtonContent(context);
-              // }
-            },
-            options: CarouselOptions(
-              disableCenter: true,
-              enableInfiniteScroll: false,
-              height: ScreenUtils.height(context),
-              initialPage: widget.index ?? 0,
-              viewportFraction: 1,
-              onPageChanged: (index, reason) {
-                if (index <= _activeCourses.length - 1) {
-                  courseIndex = index;
-                  if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
-                  }
-                  if (!showLogo) {
-                    setState(() {
-                      showLogo = true;
-                    });
-                  }
-                } else {
-                  courseIndex = _activeCourses.length + 1;
-                  setState(() {
-                    showLogo = false;
-                  });
-                }
-                if (horizontalScrollController.hasClients) {
-                  horizontalScrollController.jumpTo(
-                    index * ScreenUtils.width(context) * 0.42,
-                  );
-                }
-              },
-            ),
-          ),
+          body: !_horizontalScrollingAvailable
+              ? _getCourseContentView(0, context)
+              : CarouselSlider.builder(
+                  carouselController: carouselController,
+                  itemCount: widget.courseEnrollments.length + 1,
+                  itemBuilder: (context, index) {
+                    _populateGrowListOfCourses(index);
+                    if (_growListOfCourses.length - 1 >= index) {
+                      if (_growListOfCourses[index] != null) {
+                        return _getCourseContentView(index, context);
+                      } else {
+                        return const SizedBox();
+                      }
+                    } else {
+                      return _getEnrollAndPlusButtonContent(context);
+                    }
+                  },
+                  options: CarouselOptions(
+                    disableCenter: true,
+                    enableInfiniteScroll: false,
+                    height: ScreenUtils.height(context),
+                    initialPage: widget.index ?? 0,
+                    viewportFraction: 1,
+                    onPageChanged: (index, reason) {
+                      if (index <= _activeCourses.length - 1) {
+                        courseIndex = index;
+                        if (mounted) {
+                          BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                        }
+                        if (!showLogo) {
+                          setState(() {
+                            showLogo = true;
+                          });
+                        }
+                      } else {
+                        courseIndex = _activeCourses.length + 1;
+                        setState(() {
+                          showLogo = false;
+                        });
+                      }
+                      if (horizontalScrollController.hasClients) {
+                        horizontalScrollController.jumpTo(
+                          index * ScreenUtils.width(context) * 0.42,
+                        );
+                      }
+                    },
+                  ),
+                ),
         ),
       );
     } else {
@@ -206,7 +215,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         SliverStack(
           children: [
             getClassView(index, context),
-            getTabBar(context, index),
+            if (_horizontalScrollingAvailable) getTabBar(context, index),
           ],
         ),
       ],
