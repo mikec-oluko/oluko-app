@@ -62,7 +62,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool isVideoVisible = false;
   String mediaURL;
   bool showStories = false;
-  bool showLogo = true;
+  bool showLogo = false;
   int courseIndex = 0;
   bool _isVideoPlaying = false;
   bool _isBottomTabActive = true;
@@ -149,7 +149,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              if (showLogo) getLogo() else const SliverToBoxAdapter(),
+              // if (showLogo) getLogo() else const SliverToBoxAdapter(),
+              getLogo(),
               if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
             ];
           },
@@ -296,12 +297,26 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       title: Container(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset(
-              OlukoNeumorphism.mvtLogo,
-              scale: 4,
-            ),
+            ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                      width: 52,
+                      height: 52,
+                      child: Image.asset(
+                        'assets/courses/left_back_arrow.png',
+                        scale: 3.5,
+                      )),
+                )),
+            if (showLogo)
+              Image.asset(
+                OlukoNeumorphism.mvtLogo,
+                scale: 4,
+              ),
             HandWidget(authState: widget.authState, onTap: closeVideo),
           ],
         ),

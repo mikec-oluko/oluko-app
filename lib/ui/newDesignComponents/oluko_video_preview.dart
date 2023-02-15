@@ -250,7 +250,6 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                         ),
                     ])),
                   )),
-            if (widget.fromHomeContent) buttonBack(context),
           ]);
         },
       );
