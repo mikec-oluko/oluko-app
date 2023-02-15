@@ -7,6 +7,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/ui/components/course_carousel_galery.dart';
 import 'package:oluko_app/ui/components/user_item_bubbles.dart';
+import 'package:oluko_app/ui/newDesignComponents/not_enrolled_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class HomeCoursesAndPeople extends StatefulWidget {
@@ -24,7 +25,7 @@ class HomeCoursesAndPeople extends StatefulWidget {
 class _HomeCoursesAndPeopleState extends State<HomeCoursesAndPeople> {
   @override
   Widget build(BuildContext context) {
-    return _courseAndPeopleContent(context);
+    return widget.courseEnrollments.isEmpty ? const NotEnrolledComponent() : _courseAndPeopleContent(context);
   }
 
   Column _courseAndPeopleContent(

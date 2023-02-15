@@ -76,7 +76,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   void initState() {
     BlocProvider.of<CourseRecommendedByFriendBloc>(context).getStreamOfCoursesRecommendedByFriends(userId: widget.currentUser.id);
     BlocProvider.of<StoryBloc>(context).hasStories(widget.currentUser.id);
-    BlocProvider.of<SubscribedCourseUsersBloc>(context).getEnrolled(widget.courseEnrollments[0].course.id, widget.courseEnrollments[0].createdBy);
+    if (widget.courseEnrollments.isNotEmpty) {
+      BlocProvider.of<SubscribedCourseUsersBloc>(context).getEnrolled(widget.courseEnrollments[0].course.id, widget.courseEnrollments[0].createdBy);
+    }
     BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUser.id);
     BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);

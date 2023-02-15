@@ -24,7 +24,7 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
     return Column(
       children: [
         getCarouselSection(buildChallengeCards()[0], OlukoLocalizations.get(context, 'upcomingChallenges')),
-        getCarouselSection(buildChallengeCards()[1], OlukoLocalizations.get(context, 'completedChallenges')),
+        if (buildChallengeCards()[1].isNotEmpty) getCarouselSection(buildChallengeCards()[1], OlukoLocalizations.get(context, 'completedChallenges')),
       ],
     );
   }
