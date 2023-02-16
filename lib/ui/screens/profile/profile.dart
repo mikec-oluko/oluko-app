@@ -130,11 +130,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     userStats = state.userStats;
                   }
                   return UserProfileInformation(
-                    userToDisplayInformation: profileInfo,
-                    actualRoute: ActualProfileRoute.rootProfile,
-                    currentUser: profileInfo,
-                    userStats: userStats,
-                  );
+                      userToDisplayInformation: profileInfo,
+                      actualRoute: ActualProfileRoute.rootProfile,
+                      currentUser: profileInfo,
+                      userStats: userStats,
+                      minimalRequested: true);
                 },
               )),
         ],

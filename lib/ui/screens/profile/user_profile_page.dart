@@ -596,7 +596,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         }
       }
 
-      return _assessmentVideosContent.isNotEmpty
+      return _assessmentVideosContent.isNotEmpty && _isCurrentUser
           ? _buildCarouselSection(
               titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
               routeForSection: RouteEnum.profileAssessmentVideos,

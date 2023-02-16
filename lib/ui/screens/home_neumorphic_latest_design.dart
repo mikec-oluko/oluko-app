@@ -27,6 +27,8 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -188,13 +190,18 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       },
       onCourseTap: (index) {
         Course courseSelected = _courses.where((course) => course.id == widget.courseEnrollments[index].course.id).first;
-        Navigator.pushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
-          'courseEnrollments': [widget.courseEnrollments[index]],
-          'authState': widget.authState,
-          'courses': [_courses[_courses.indexOf(courseSelected)]],
-          'user': widget.currentUser,
-          'isFromHome': true
-        });
+        EnrollmentClass firstIncompletedClass = getClassToGo(widget.courseEnrollments[index].classes);
+        ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompletedClass.id).first;
+        Navigator.pushNamed(
+          context,
+          routeLabels[RouteEnum.insideClass],
+          arguments: {
+            'courseEnrollment': widget.courseEnrollments[index],
+            'classIndex': _courses[_courses.indexOf(courseSelected)].classes.indexOf(classToGo),
+            'courseIndex': _courses.indexOf(courseSelected),
+            'actualCourse': courseSelected
+          },
+        );
       },
     );
   }
@@ -372,4 +379,8 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       }),
     );
   }
+}
+
+EnrollmentClass getClassToGo(List<EnrollmentClass> classes) {
+  return classes.firstWhere((element) => element.completedAt == null);
 }

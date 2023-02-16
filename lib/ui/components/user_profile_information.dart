@@ -32,7 +32,10 @@ class UserProfileInformation extends StatefulWidget {
   final UserResponse currentUser;
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
-  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats}) : super();
+  final bool minimalRequested;
+  const UserProfileInformation(
+      {this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats, this.minimalRequested = false})
+      : super();
 
   @override
   _UserProfileInformationState createState() => _UserProfileInformationState();
@@ -88,11 +91,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             child: Container(
               decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
               width: MediaQuery.of(context).size.width,
-              height: OlukoNeumorphism.isNeumorphismDesign
-                  ? MediaQuery.of(context).size.height < 700
-                      ? MediaQuery.of(context).size.height / 2.7
-                      : MediaQuery.of(context).size.height / 3.1
-                  : null,
+              height: widget.minimalRequested
+                  ? 160
+                  : OlukoNeumorphism.isNeumorphismDesign
+                      ? MediaQuery.of(context).size.height < 700
+                          ? MediaQuery.of(context).size.height / 2.7
+                          : MediaQuery.of(context).size.height / 3.1
+                      : null,
               child: Padding(
                   padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 10 : 10),
                   child: OlukoNeumorphism.isNeumorphismDesign
@@ -330,7 +335,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             ),
           ],
         ),
-        getUserProfileProgress(widget.userStats, canShowDetails)
+        if (!widget.minimalRequested) getUserProfileProgress(widget.userStats, canShowDetails)
       ],
     );
   }
@@ -347,6 +352,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         challengesCompleted: widget.userStats.completedChallenges.toString(),
         coursesCompleted: widget.userStats.completedCourses.toString(),
         classesCompleted: widget.userStats.completedClasses.toString(),
+        isMinimalRequested: widget.minimalRequested,
       );
     }
   }

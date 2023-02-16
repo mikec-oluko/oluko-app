@@ -21,6 +21,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enrollment_audio.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -67,11 +68,13 @@ class InsideClass extends StatefulWidget {
     this.courseEnrollment,
     this.classIndex,
     this.courseIndex,
+    this.actualCourse,
     Key key,
   }) : super(key: key);
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int courseIndex;
+  final Course actualCourse;
 
   @override
   _InsideClassesState createState() => _InsideClassesState();
@@ -94,6 +97,8 @@ class _InsideClassesState extends State<InsideClass> {
   List<Segment> _classSegments;
   List<ChallengeNavigation> _challengeNavigations = [];
   List<bool> _completedBefore = [];
+  UserResponse currentUser;
+  AuthSuccess currentAuthState;
 
   @override
   void initState() {
@@ -114,6 +119,8 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        currentUser = authState.user;
+        currentAuthState = authState;
         return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
@@ -142,8 +149,18 @@ class _InsideClassesState extends State<InsideClass> {
 
   Future<bool> _onBackButtonPress(BuildContext context) {
     _buttonController?.close();
-    Navigator.pop(context);
+    _goBackToCourseDetails(context);
     return Future(() => false);
+  }
+
+  void _goBackToCourseDetails(BuildContext context) {
+    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
+      'courseEnrollments': [widget.courseEnrollment],
+      'authState': currentAuthState,
+      'courses': [widget.actualCourse],
+      'user': currentUser,
+      'isFromHome': false
+    });
   }
 
   Widget form() {
@@ -540,7 +557,7 @@ class _InsideClassesState extends State<InsideClass> {
         showBackButton: true,
         audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
         bottomWidgets: [_getCourseInfoSection(_classImage)],
-        onBackPressed: () => Navigator.pop(context),
+        onBackPressed: () => _goBackToCourseDetails(context), // Navigator.pop(context),
         onPlay: () => isVideoPlaying(),
         videoVisibilty: _isVideoPlaying,
       ),

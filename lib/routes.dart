@@ -1017,6 +1017,7 @@ class Routes {
           courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
           classIndex: argumentsToAdd['classIndex'] as int,
           courseIndex: argumentsToAdd['courseIndex'] as int,
+          actualCourse: argumentsToAdd['actualCourse'] as Course,
         );
         break;
       case RouteEnum.userChallengeDetail:
