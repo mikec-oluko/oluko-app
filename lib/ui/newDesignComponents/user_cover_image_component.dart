@@ -47,7 +47,7 @@ class _UserCoverImageComponentState extends State<UserCoverImageComponent> {
                   height: MediaQuery.of(context).size.height,
                 ),
         ),
-        if (OlukoNeumorphism.isNeumorphismDesign)
+        if (OlukoNeumorphism.isNeumorphismDesign && !widget.isHomeImage)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
             child: ClipRRect(

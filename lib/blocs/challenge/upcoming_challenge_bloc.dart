@@ -10,6 +10,8 @@ abstract class UpcomingChallengesState {}
 
 class LoadingUpcomingChallenges extends UpcomingChallengesState {}
 
+class ChallengesDefaultState extends UpcomingChallengesState {}
+
 class Failure extends UpcomingChallengesState {
   final dynamic exception;
   Failure({this.exception});
@@ -25,10 +27,7 @@ class UpcomingChallengesBloc extends Cubit<UpcomingChallengesState> {
   UpcomingChallengesBloc() : super(LoadingUpcomingChallenges());
 
   Future<void> getUniqueChallengeCards(
-      {@required String userId,
-      @required List<ChallengeNavigation> listOfChallenges,
-      bool isCurrentUser = true,
-      UserResponse userRequested}) async {
+      {@required String userId, @required List<ChallengeNavigation> listOfChallenges, bool isCurrentUser = true, UserResponse userRequested}) async {
     List<Widget> challengesCards = [];
     Map<String, List<ChallengeNavigation>> challengeMap = {};
     Map<String, bool> lockedChallenges = {};
@@ -58,4 +57,6 @@ class UpcomingChallengesBloc extends Cubit<UpcomingChallengesState> {
       rethrow;
     }
   }
+
+  void dispose() => emit(ChallengesDefaultState());
 }

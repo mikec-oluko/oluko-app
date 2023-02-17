@@ -6,13 +6,15 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserChallengeSection extends StatefulWidget {
   final UserResponse userToDisplay;
   final bool isCurrentUser;
   final UniqueChallengesSuccess challengeState;
+  final PanelController panelController;
 
-  const UserChallengeSection({this.userToDisplay, this.isCurrentUser, this.challengeState}) : super();
+  const UserChallengeSection({this.userToDisplay, this.isCurrentUser, this.challengeState, this.panelController}) : super();
 
   @override
   State<UserChallengeSection> createState() => _UserChallengeSectionState();
@@ -31,7 +33,7 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
 
   Widget getCarouselSection(List<Widget> challengeList, String title) {
     return CarouselSection(
-        height: ScreenUtils.height(context) / 4,
+        height: ScreenUtils.height(context) / 3.5,
         width: MediaQuery.of(context).size.width,
         title: title,
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),
@@ -70,6 +72,7 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
 
   ChallengesCard _buildChallengeCard(String id) {
     return ChallengesCard(
+        panelController: widget.panelController,
         challengeNavigations: widget.challengeState.challengeMap[id],
         userRequested: !widget.isCurrentUser ? widget.userToDisplay : null,
         useAudio: !widget.isCurrentUser,

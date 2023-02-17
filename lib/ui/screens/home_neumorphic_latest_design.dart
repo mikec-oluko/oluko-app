@@ -231,6 +231,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         _activeChallenges = state.challenges;
         _listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, _listOfChallenges);
       }
+      if (state is ChallengesDefaultState) {
+        _activeChallenges = [];
+        _listOfChallenges = [];
+      }
       return BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
         builder: (context, state) {
           if (state is UniqueChallengesSuccess) {

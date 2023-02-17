@@ -47,6 +47,7 @@ import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/screens/profile/challenge_courses_panel_content.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -816,7 +817,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         builder: (context, state) {
           if (state is UniqueChallengesSuccess) {
             _challengesCardsState = state;
-            return getCarouselSection(buildChallengeCards(state));
+            return UserChallengeSection(
+              userToDisplay: _userProfileToDisplay,
+              isCurrentUser: _isCurrentUser,
+              challengeState: state,
+              panelController: _coursesPanelController,
+            );
           } else {
             return getCarouselSection([
               Padding(
