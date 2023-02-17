@@ -1379,6 +1379,7 @@ class Routes {
         break;
       case RouteEnum.homeLatestDesign:
         providers = [
+          BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
@@ -1390,6 +1391,7 @@ class Routes {
         break;
       case RouteEnum.courseHomePage:
         providers = [
+          BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
