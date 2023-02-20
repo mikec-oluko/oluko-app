@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
@@ -154,6 +155,7 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   void _goBackToCourseDetails(BuildContext context) {
+    BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([widget.courseEnrollment]);
     Navigator.popAndPushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
       'courseEnrollments': [widget.courseEnrollment],
       'authState': currentAuthState,

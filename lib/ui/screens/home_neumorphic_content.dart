@@ -113,9 +113,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(
         builder: (context, courseState) {
           if (courseState is GetByCourseEnrollmentsSuccess) {
-            if (_horizontalScrollingAvailable) {
-              _activeCourses = courseState.courses;
-            }
+            _activeCourses = courseState.courses;
             _addFirstChunkOfCourses();
             if (_activeCourses.isNotEmpty) {
               return enrolled();

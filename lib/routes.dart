@@ -1011,6 +1011,7 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
