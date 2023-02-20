@@ -822,6 +822,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               isCurrentUser: _isCurrentUser,
               challengeState: state,
               panelController: _coursesPanelController,
+              defaultNavigation: true,
             );
           } else {
             return getCarouselSection([

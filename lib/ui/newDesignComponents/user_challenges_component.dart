@@ -13,8 +13,9 @@ class UserChallengeSection extends StatefulWidget {
   final bool isCurrentUser;
   final UniqueChallengesSuccess challengeState;
   final PanelController panelController;
+  final bool defaultNavigation;
 
-  const UserChallengeSection({this.userToDisplay, this.isCurrentUser, this.challengeState, this.panelController}) : super();
+  const UserChallengeSection({this.userToDisplay, this.isCurrentUser, this.challengeState, this.panelController, this.defaultNavigation = false}) : super();
 
   @override
   State<UserChallengeSection> createState() => _UserChallengeSectionState();
@@ -25,22 +26,43 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        getCarouselSection(buildChallengeCards()[0], OlukoLocalizations.get(context, 'upcomingChallenges')),
-        if (buildChallengeCards()[1].isNotEmpty) getCarouselSection(buildChallengeCards()[1], OlukoLocalizations.get(context, 'completedChallenges')),
+        getCarouselSection(buildChallengeCards()[0], OlukoLocalizations.get(context, 'upcomingChallenges'),
+            isUpcomingChallenges: widget.defaultNavigation ? false : true),
+        if (buildChallengeCards()[1].isNotEmpty)
+          getCarouselSection(buildChallengeCards()[1], OlukoLocalizations.get(context, 'completedChallenges'),
+              isCompletedChallenges: widget.defaultNavigation ? false : true),
       ],
     );
   }
 
-  Widget getCarouselSection(List<Widget> challengeList, String title) {
+  Widget getCarouselSection(List<Widget> challengeList, String title, {bool isCompletedChallenges = false, bool isUpcomingChallenges = false}) {
     return CarouselSection(
         height: ScreenUtils.height(context) / 3.5,
         width: MediaQuery.of(context).size.width,
         title: title,
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),
         onOptionTap: () {
-          if (widget.challengeState != null) {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
-                arguments: {'isCurrentUser': widget.isCurrentUser, 'userRequested': widget.userToDisplay, 'challengesCardsState': widget.challengeState});
+          if (widget.defaultNavigation) {
+            if (widget.challengeState != null) {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges],
+                  arguments: {'isCurrentUser': widget.isCurrentUser, 'userRequested': widget.userToDisplay, 'challengesCardsState': widget.challengeState});
+            }
+          }
+          if (isCompletedChallenges) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
+              'isCurrentUser': widget.isCurrentUser,
+              'userRequested': widget.userToDisplay,
+              'challengesCardsState': widget.challengeState,
+              'isCompletedChallenges': true
+            });
+          }
+          if (isUpcomingChallenges) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {
+              'isCurrentUser': widget.isCurrentUser,
+              'userRequested': widget.userToDisplay,
+              'challengesCardsState': widget.challengeState,
+              'isUpcomingChallenge': true
+            });
           }
         },
         children: challengeList.isNotEmpty ? challengeList : [const SizedBox.shrink()]);

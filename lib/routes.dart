@@ -766,6 +766,8 @@ class Routes {
           challengesCardsState: argumentsToAdd['challengesCardsState'] as UniqueChallengesSuccess,
           isCurrentUser: argumentsToAdd == null || argumentsToAdd['isCurrentUser'] == null ? false : argumentsToAdd['isCurrentUser'] as bool,
           userRequested: argumentsToAdd['userRequested'] as UserResponse,
+          isUpcomingChallenge: argumentsToAdd['isUpcomingChallenge'] != null ? argumentsToAdd['isUpcomingChallenge'] as bool : false,
+          isCompletedChallenges: argumentsToAdd['isCompletedChallenges'] != null ? argumentsToAdd['isCompletedChallenges'] as bool : false,
         );
         break;
       case RouteEnum.profileTransformationJourney:

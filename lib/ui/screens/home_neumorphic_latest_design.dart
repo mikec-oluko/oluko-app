@@ -241,7 +241,12 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
             _challengesCardsState = state;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: UserChallengeSection(userToDisplay: widget.currentUser, isCurrentUser: true, challengeState: state),
+              child: UserChallengeSection(
+                userToDisplay: widget.currentUser,
+                isCurrentUser: true,
+                challengeState: state,
+                defaultNavigation: false,
+              ),
             );
           } else {
             return const SizedBox();
