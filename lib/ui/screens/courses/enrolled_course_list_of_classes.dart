@@ -155,7 +155,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   }
 
   void getNavigationToClass(CourseEnrollment enrollment, int classIndex, int courseIndex) {
-    Navigator.pushNamed(
+    Navigator.popAndPushNamed(
       context,
       routeLabels[RouteEnum.insideClass],
       arguments: {

@@ -154,6 +154,7 @@ class _InsideClassesState extends State<InsideClass> {
     return Future(() => false);
   }
 
+  //TODO: CHECK NAVIGATION
   void _goBackToCourseDetails(BuildContext context) {
     BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([widget.courseEnrollment]);
     Navigator.popAndPushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
@@ -756,7 +757,7 @@ class _InsideClassesState extends State<InsideClass> {
 
   void navigateToSegmentDetail(int segmentIndex) {
     if (_classSegments != null) {
-      Navigator.pushNamed(
+      Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.segmentDetail],
         arguments: {
