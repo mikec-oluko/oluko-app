@@ -757,7 +757,7 @@ class _InsideClassesState extends State<InsideClass> {
 
   void navigateToSegmentDetail(int segmentIndex) {
     if (_classSegments != null) {
-      Navigator.popAndPushNamed(
+      Navigator.pushNamed(
         context,
         routeLabels[RouteEnum.segmentDetail],
         arguments: {

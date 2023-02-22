@@ -407,6 +407,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: CourseClassCardsList(
+                  isFromHome: true,
                   course: _activeCourses[index],
                   courseEnrollment: widget.courseEnrollments[index],
                   classes: classState.classes,
