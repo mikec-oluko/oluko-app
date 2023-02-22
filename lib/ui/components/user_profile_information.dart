@@ -228,7 +228,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           else
             const SizedBox.shrink(),
           //TODO: CHECK IF NEU
-          Expanded(child: getUserProfileProgress(widget.userStats, canShowDetails))
+          if (!widget.minimalRequested) Expanded(child: getUserProfileProgress(widget.userStats, canShowDetails))
         ],
       );
     });

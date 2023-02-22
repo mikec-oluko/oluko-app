@@ -553,6 +553,7 @@ class Routes {
           BlocProvider<UserPlanSubscriptionBloc>.value(value: _userPlanSubscriptionBloc),
           BlocProvider<UserBloc>.value(value: _userBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1389,6 +1390,7 @@ class Routes {
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<AuthBloc>.value(value: _authBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
         ];
         newRouteView = const HomeNeumorphicLatestDesign();
         break;
