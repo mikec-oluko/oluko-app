@@ -1167,6 +1167,7 @@ class Routes {
         newRouteView = Courses(
             homeEnrollTocourse: args['homeEnrollTocourse'] as bool,
             showBottomTab: args['showBottomTab'] as Function(),
+            firstTimeEnroll: args['firstTimeEnroll'] as bool,
             backButtonWithFilters: args['backButtonWithFilters'] as bool);
         break;
 

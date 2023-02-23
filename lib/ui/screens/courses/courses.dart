@@ -42,9 +42,10 @@ import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   bool homeEnrollTocourse;
+  bool firstTimeEnroll;
   bool backButtonWithFilters;
   Function showBottomTab;
-  Courses({this.homeEnrollTocourse = false, this.showBottomTab, this.backButtonWithFilters = false, Key key}) : super(key: key);
+  Courses({this.homeEnrollTocourse = false, this.showBottomTab, this.backButtonWithFilters = false, this.firstTimeEnroll = false, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -201,7 +202,7 @@ class _State extends State<Courses> {
               : showFilterSelector
                   ? 'filters'
                   : 'courses'),
-      actions: [_filterWidget()],
+      actions: widget.firstTimeEnroll ? [] : [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
       onSearchSubmit: (SearchResults<Course> results) => setState(() {
         showSearchSuggestions = false;

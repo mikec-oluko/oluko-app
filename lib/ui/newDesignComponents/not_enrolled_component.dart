@@ -43,6 +43,7 @@ class _NotEnrolledComponentState extends State<NotEnrolledComponent> {
                 routeLabels[RouteEnum.courses],
                 arguments: {
                   'homeEnrollTocourse': true,
+                  'firstTimeEnroll': true,
                   'showBottomTab': () => setState(() {
                         _isBottomTabActive = !_isBottomTabActive;
                       })
