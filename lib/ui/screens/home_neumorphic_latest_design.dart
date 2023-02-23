@@ -273,10 +273,12 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       if (state is GetUserTaskSubmissionSuccess) {
         _assessmentVideosContent = state.taskSubmissions;
       }
-      return AssessmentVideosComponent(
-        assessmentVideosContent: _assessmentVideosContent,
-        currentUser: widget.currentUser,
-      );
+      return _assessmentVideosContent.isNotEmpty
+          ? AssessmentVideosComponent(
+              assessmentVideosContent: _assessmentVideosContent,
+              currentUser: widget.currentUser,
+            )
+          : const SizedBox.shrink();
     });
   }
 
