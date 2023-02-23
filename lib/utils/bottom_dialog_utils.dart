@@ -17,8 +17,7 @@ class BottomDialogUtils {
         });
   }
 
-  static void removeConfirmationPopup(
-      String userId, UserResponse userToDelete, Friend friend, BuildContext context, FriendBloc blocFriends) {
+  static void removeConfirmationPopup(String userId, UserResponse userToDelete, Friend friend, BuildContext context, FriendBloc blocFriends) {
     showBottomDialog(
       content: Container(
         height: ScreenUtils.height(context) * 0.3,
@@ -30,6 +29,8 @@ class BottomDialogUtils {
           ),
         ),
         child: ListView(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),

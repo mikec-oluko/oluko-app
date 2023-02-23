@@ -62,13 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
                 builder: (context, tagState) {
                   return Scaffold(
-                      backgroundColor:OlukoColors.black,
+                      backgroundColor: OlukoColors.black,
                       appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'home'), showBackButton: false),
                       body: courseState is CourseSuccess && tagState is TagSuccess
                           ? WillPopScope(
                               onWillPop: () => AppNavigator.onWillPop(context),
                               child: OrientationBuilder(builder: (context, orientation) {
                                 return ListView(
+                                  addAutomaticKeepAlives: false,
+                                  addRepaintBoundaries: false,
                                   shrinkWrap: true,
                                   children: [
                                     Container(
@@ -132,6 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: ListView(
         children: [
           ListView.builder(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
               physics: NeverScrollableScrollPhysics(),
               itemCount: courseState.coursesByCategories.length,
               shrinkWrap: true,
@@ -147,8 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: GestureDetector(
                               //TODO: Change to RouteEnum.courseMarketing
                               //when finish with enrolledClass
-                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass],
-                                  arguments: {'course': course, 'fromCoach': false}),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass], arguments: {'course': course, 'fromCoach': false}),
                               child: _getCourseCard(
                                   Image(
                                     image: CachedNetworkImageProvider(

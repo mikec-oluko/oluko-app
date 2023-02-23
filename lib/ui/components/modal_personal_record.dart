@@ -47,10 +47,7 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
                   ),
                 ],
               ),
-              if (personalRecordState is PersonalRecordSuccess)
-                personalRecordGrid(personalRecordState.personalRecords)
-              else
-                const SizedBox()
+              if (personalRecordState is PersonalRecordSuccess) personalRecordGrid(personalRecordState.personalRecords) else const SizedBox()
             ],
           ),
         );
@@ -63,7 +60,7 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
       return Container(
           height: ScreenUtils.height(context) / 1.8,
           width: ScreenUtils.width(context),
-          child: ListView(children: getPRWidgets(personalRecords)));
+          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: getPRWidgets(personalRecords)));
     } else {
       return Padding(
         padding: const EdgeInsets.only(bottom: 20, top: 10),
@@ -102,7 +99,7 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
   }
 
   Widget getPRImage(PersonalRecord record) {
-    if (record.doneFromProfile!=null && record.doneFromProfile) {
+    if (record.doneFromProfile != null && record.doneFromProfile) {
       return record.segmentImage != null
           ? Image(image: CachedNetworkImageProvider(record.segmentImage), fit: BoxFit.cover, width: 65, height: 90)
           : SizedBox.shrink();

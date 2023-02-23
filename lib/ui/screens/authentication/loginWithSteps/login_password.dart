@@ -37,6 +37,8 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
         body: Container(
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
           child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),

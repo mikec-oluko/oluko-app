@@ -29,12 +29,9 @@ import 'package:wakelock/wakelock.dart';
 enum WorkoutType { segment, segmentWithRecording }
 
 class SegmentClocksUtils {
-  static List<Widget> getScoresByRound(
-      BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores,
+  static List<Widget> getScoresByRound(BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex, int totalScore, List<String> scores,
       [bool areDiferentMovsWithRepCouter]) {
-    List<String> lbls = counterText(
-        context,
-        timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter,
+    List<String> lbls = counterText(context, timerEntries[timerEntries[timerTaskIndex - 1].movement.isRestTime ? timerTaskIndex : timerTaskIndex - 1].counter,
         timerEntries[timerTaskIndex - 1].movement.name);
     final List<Widget> widgets = [];
     String totalText = '${OlukoLocalizations.get(context, 'total')}: $totalScore ';
@@ -193,8 +190,8 @@ class SegmentClocksUtils {
     return result;
   }
 
-  static PreferredSizeWidget getAppBar(BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout,
-      Function() resetAMRAP, Function() deleteUserProgress) {
+  static PreferredSizeWidget getAppBar(
+      BuildContext context, Widget topBarIcon, bool segmentWithRecording, WorkoutType workout, Function() resetAMRAP, Function() deleteUserProgress) {
     PreferredSizeWidget appBarToUse;
     if (OlukoNeumorphism.isNeumorphismDesign) {
       appBarToUse = OlukoWatchAppBar(
@@ -272,7 +269,11 @@ class SegmentClocksUtils {
         return SizedBox(
           width: ScreenUtils.width(context),
           height: ScreenUtils.height(context) * 0.4,
-          child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)),
+          child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              padding: EdgeInsets.zero,
+              children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)),
         );
       } else {
         return SizedBox(
@@ -356,8 +357,7 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget cameraSection(
-      BuildContext context, bool isWorkStatePaused, bool isCameraReady, CameraController cameraController, Widget pauseButton) {
+  static Widget cameraSection(BuildContext context, bool isWorkStatePaused, bool isCameraReady, CameraController cameraController, Widget pauseButton) {
     return isWorkStatePaused
         ? const SizedBox()
         : SizedBox(
@@ -377,9 +377,7 @@ class SegmentClocksUtils {
                     ),
                     child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController))),
                   ),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0), child: pauseButton)),
+                Align(alignment: Alignment.bottomCenter, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0), child: pauseButton)),
               ],
             ),
           );
@@ -434,8 +432,8 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget finishedButtonsWithoutRecording(BuildContext context, Function() goToClass, Function() nextSegmentAction,
-      List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
+  static Widget finishedButtonsWithoutRecording(
+      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -453,9 +451,7 @@ class SegmentClocksUtils {
             width: 15,
           ),
           OlukoPrimaryButton(
-            title: segmentIndex == segments.length - 1
-                ? OlukoLocalizations.get(context, 'done')
-                : OlukoLocalizations.get(context, 'nextSegment'),
+            title: segmentIndex == segments.length - 1 ? OlukoLocalizations.get(context, 'done') : OlukoLocalizations.get(context, 'nextSegment'),
             thinPadding: true,
             onPressed: () {
               nextSegmentAction();
@@ -467,17 +463,15 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget showButtonsWhenFinished(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
-      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
+  static Widget showButtonsWhenFinished(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction, Function() goToClass,
+      Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     return !OlukoNeumorphism.isNeumorphismDesign
-        ? showFinishedButtons(
-            workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress)
-        : neumorphicFinishedButtons(
-            workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
+        ? showFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress)
+        : neumorphicFinishedButtons(workoutType, shareDone, context, shareDoneAction, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
   }
 
-  static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
-      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
+  static Widget showFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction, Function() goToClass,
+      Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return finishedButtonsWithRecording(context, shareDoneAction);
     } else {
@@ -485,8 +479,8 @@ class SegmentClocksUtils {
     }
   }
 
-  static Widget neumorphicFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction,
-      Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
+  static Widget neumorphicFinishedButtons(WorkoutType workoutType, bool shareDone, BuildContext context, Function() shareDoneAction, Function() goToClass,
+      Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     Wakelock.disable();
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return neumporphicFinishedButtonsWithRecording(context, shareDoneAction);
@@ -495,8 +489,8 @@ class SegmentClocksUtils {
     }
   }
 
-  static Widget neumorphicFinishedButtonsWithoutRecording(BuildContext context, Function() goToClass, Function() nextSegmentAction,
-      List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
+  static Widget neumorphicFinishedButtonsWithoutRecording(
+      BuildContext context, Function() goToClass, Function() nextSegmentAction, List<Segment> segments, int segmentIndex, Function() deleteUserProgress) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topLeft: OlukoNeumorphism.radiusValue,
@@ -529,9 +523,7 @@ class SegmentClocksUtils {
                     width: 15,
                   ),
                   OlukoNeumorphicPrimaryButton(
-                    title: segmentIndex == segments.length - 1
-                        ? OlukoLocalizations.get(context, 'done')
-                        : OlukoLocalizations.get(context, 'nextSegment'),
+                    title: segmentIndex == segments.length - 1 ? OlukoLocalizations.get(context, 'done') : OlukoLocalizations.get(context, 'nextSegment'),
                     thinPadding: true,
                     onPressed: () {
                       nextSegmentAction();

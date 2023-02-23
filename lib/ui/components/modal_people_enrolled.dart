@@ -74,6 +74,8 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
           children: [
             Row(
               children: [

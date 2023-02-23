@@ -34,13 +34,14 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
             return Container(
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: ListView(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
                   children: [
                     SizedBox(
                       height: 20.0,
                     ),
                     SizedBox(
-                        height:
-                            OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.6 : ScreenUtils.height(context) * 0.65,
+                        height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.6 : ScreenUtils.height(context) * 0.65,
                         child: ExpansionPanelListWidget(faqList: state.faqList)),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -49,10 +50,10 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height / 5,
-                          color: OlukoNeumorphism.isNeumorphismDesign
-                              ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                              : OlukoColors.black,
+                          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                           child: ListView(
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries: false,
                             clipBehavior: Clip.none,
                             children: [
                               OlukoNeumorphism.isNeumorphismDesign
@@ -71,9 +72,7 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
                                     ),
                               SizedBox(height: 20.0),
                               Container(
-                                  color: OlukoNeumorphism.isNeumorphismDesign
-                                      ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                                      : OlukoColors.black,
+                                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                                   child: Padding(
                                     padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(20) : const EdgeInsets.all(15),
                                     child: OlukoNeumorphism.isNeumorphismDesign

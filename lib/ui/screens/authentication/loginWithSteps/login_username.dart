@@ -34,6 +34,8 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
         body: Container(
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
           child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -62,8 +64,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child:
-              Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400)),
+          child: Text(OlukoLocalizations.get(context, 'usernameOrEmail'), style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400)),
         ),
         const SizedBox(height: 12),
         Text(OlukoLocalizations.get(context, 'loginSubtitle'), style: OlukoFonts.olukoMediumFont(customColor: Colors.grey)),

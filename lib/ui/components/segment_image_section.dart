@@ -137,6 +137,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return Stack(
       children: [
         ListView(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
           padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null,
           children: [
             Stack(

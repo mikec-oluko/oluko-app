@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -22,32 +21,35 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/overlay_video_preview.dart';
-import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
-import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_course_list_of_classes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeNeumorphicContent extends StatefulWidget {
-  HomeNeumorphicContent(this.courseEnrollments, this.authState, this.courses, this.user, {Key key, this.index = 0}) : super(key: key);
+  HomeNeumorphicContent({
+    this.courseEnrollments,
+    this.authState,
+    this.courses,
+    this.user,
+    Key key,
+    this.isFromHome = false,
+    this.index = 0,
+  }) : super(key: key);
 
   int index;
-  final User user;
+  final UserResponse user;
   final List<CourseEnrollment> courseEnrollments;
-  List<Course> courses;
+  final List<Course> courses;
   final AuthSuccess authState;
+  final bool isFromHome;
 
   @override
   _HomeNeumorphicContentState createState() => _HomeNeumorphicContentState();
@@ -60,31 +62,35 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   bool isVideoVisible = false;
   String mediaURL;
   bool showStories = false;
-  bool showLogo = true;
+  bool showLogo = false;
   int courseIndex = 0;
   bool _isVideoPlaying = false;
   bool _isBottomTabActive = true;
   List<Course> _activeCourses = [];
-  UserResponse _currentAuthUser;
   List<Course> _growListOfCourses = [];
   final int _courseChunkMaxValue = 5;
+  final bool _horizontalScrollingAvailable = false;
 
   @override
   void initState() {
-    super.initState();
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-    horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
-    BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
+    if (_horizontalScrollingAvailable) {
+      horizontalScrollController = ScrollController(initialScrollOffset: widget.index != null ? widget.index * ScreenUtils.width(context) * 0.42 : 0);
+    }
+    BlocProvider.of<StoryBloc>(context).hasStories(widget.user.id);
     if (_existsCourses()) {
       setState(() {
         _activeCourses = widget.courses;
       });
     }
+    super.initState();
   }
 
   @override
   void dispose() {
-    horizontalScrollController.dispose();
+    if (horizontalScrollController != null) {
+      horizontalScrollController.dispose();
+    }
     if (_controller != null) _controller.dispose();
     super.dispose();
   }
@@ -93,9 +99,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
-        if (authState is AuthSuccess) {
-          _currentAuthUser = authState.user;
-        }
+        if (authState is AuthSuccess) {}
         return homeContainer();
       },
     );
@@ -143,56 +147,59 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              if (showLogo) getLogo() else const SliverToBoxAdapter(),
+              // if (showLogo) getLogo() else const SliverToBoxAdapter(),
+              getLogo(),
               if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
             ];
           },
-          body: CarouselSlider.builder(
-            carouselController: carouselController,
-            itemCount: widget.courseEnrollments.length + 1,
-            itemBuilder: (context, index) {
-              _populateGrowListOfCourses(index);
-              if (_growListOfCourses.length - 1 >= index) {
-                if (_growListOfCourses[index] != null) {
-                  return _getCourseContentView(index, context);
-                } else {
-                  return const SizedBox();
-                }
-              } else {
-                return _getEnrollAndPlusButtonContent(context);
-              }
-            },
-            options: CarouselOptions(
-              disableCenter: true,
-              enableInfiniteScroll: false,
-              height: ScreenUtils.height(context),
-              initialPage: widget.index ?? 0,
-              viewportFraction: 1,
-              onPageChanged: (index, reason) {
-                if (index <= _activeCourses.length - 1) {
-                  courseIndex = index;
-                  if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
-                  }
-                  if (!showLogo) {
-                    setState(() {
-                      showLogo = true;
-                    });
-                  }
-                } else {
-                  courseIndex = _activeCourses.length + 1;
-                  setState(() {
-                    showLogo = false;
-                  });
-                }
-                if (horizontalScrollController.hasClients) {
-                  horizontalScrollController.jumpTo(
-                    index * ScreenUtils.width(context) * 0.42,
-                  );
-                }
-              },
-            ),
-          ),
+          body: !_horizontalScrollingAvailable
+              ? _getCourseContentView(0, context)
+              : CarouselSlider.builder(
+                  carouselController: carouselController,
+                  itemCount: widget.courseEnrollments.length + 1,
+                  itemBuilder: (context, index) {
+                    _populateGrowListOfCourses(index);
+                    if (_growListOfCourses.length - 1 >= index) {
+                      if (_growListOfCourses[index] != null) {
+                        return _getCourseContentView(index, context);
+                      } else {
+                        return const SizedBox();
+                      }
+                    } else {
+                      return _getEnrollAndPlusButtonContent(context);
+                    }
+                  },
+                  options: CarouselOptions(
+                    disableCenter: true,
+                    enableInfiniteScroll: false,
+                    height: ScreenUtils.height(context),
+                    initialPage: widget.index ?? 0,
+                    viewportFraction: 1,
+                    onPageChanged: (index, reason) {
+                      if (index <= _activeCourses.length - 1) {
+                        courseIndex = index;
+                        if (mounted) {
+                          BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                        }
+                        if (!showLogo) {
+                          setState(() {
+                            showLogo = true;
+                          });
+                        }
+                      } else {
+                        courseIndex = _activeCourses.length + 1;
+                        setState(() {
+                          showLogo = false;
+                        });
+                      }
+                      if (horizontalScrollController.hasClients) {
+                        horizontalScrollController.jumpTo(
+                          index * ScreenUtils.width(context) * 0.42,
+                        );
+                      }
+                    },
+                  ),
+                ),
         ),
       );
     } else {
@@ -204,10 +211,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return CustomScrollView(
       cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
       slivers: <Widget>[
-        SliverStack(children: [
-          getClassView(index, context),
-          getTabBar(context, index),
-        ]),
+        SliverStack(
+          children: [
+            getClassView(index, context),
+            if (_horizontalScrollingAvailable) getTabBar(context, index),
+          ],
+        ),
       ],
     );
   }
@@ -229,12 +238,16 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             bottom: ScreenUtils.height(context) * 0.1,
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
-                  'homeEnrollTocourse': true,
-                  'showBottomTab': () => setState(() {
-                        _isBottomTabActive = !_isBottomTabActive;
-                      })
-                });
+                Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.courses],
+                  arguments: {
+                    'homeEnrollTocourse': true,
+                    'showBottomTab': () => setState(() {
+                          _isBottomTabActive = !_isBottomTabActive;
+                        })
+                  },
+                );
               },
               child: Neumorphic(
                 style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
@@ -282,13 +295,27 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       title: Container(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset(
-              OlukoNeumorphism.mvtLogo,
-              scale: 4,
-            ),
-            HandWidget(authState: widget.authState),
+            ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                      width: 52,
+                      height: 52,
+                      child: Image.asset(
+                        'assets/courses/left_back_arrow.png',
+                        scale: 3.5,
+                      )),
+                )),
+            if (showLogo)
+              Image.asset(
+                OlukoNeumorphism.mvtLogo,
+                scale: 4,
+              ),
+            if (!widget.isFromHome) HandWidget(authState: widget.authState, onTap: closeVideo),
           ],
         ),
       ),
@@ -306,17 +333,19 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   Widget enrolledContent(bool showStories) {
     return SliverToBoxAdapter(
-        child: Container(
-      alignment: Alignment.centerLeft,
-      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      child: showStories
-          ? StoriesHeader(
-              widget.user.uid,
-              maxRadius: 30,
-              color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
-            )
-          : const SizedBox(),
-    ));
+      child: Container(
+        alignment: Alignment.centerLeft,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        child: showStories
+            ? StoriesHeader(
+                widget.user.id,
+                onTap: closeVideo,
+                maxRadius: 30,
+                color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
+              )
+            : const SizedBox(),
+      ),
+    );
   }
 
   SliverList getClassView(int index, BuildContext context) {
@@ -332,7 +361,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 3),
             child: VisibilityDetector(
-              key: Key('video${index}'),
+              key: Key('video$index'),
               onVisibilityChanged: (VisibilityInfo info) {
                 if (info.visibleFraction < 0.1 && mounted && courseIndex == index && !_isVideoPlaying && courseIndex <= _activeCourses.length) {
                   BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
@@ -348,6 +377,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 onBackPressed: () => Navigator.pop(context),
                 onPlay: () => isVideoPlaying(),
                 videoVisibilty: _isVideoPlaying,
+                fromHomeContent: widget.isFromHome,
                 bottomWidgets: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -377,6 +407,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: CourseClassCardsList(
+                  isFromHome: true,
                   course: _activeCourses[index],
                   courseEnrollment: widget.courseEnrollments[index],
                   classes: classState.classes,
@@ -440,7 +471,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     List<GlobalKey> _keys = [];
     return SliverPinnedHeader(
       child: VisibilityDetector(
-        key: Key('tabBar'),
+        key: const Key('tabBar'),
         onVisibilityChanged: (VisibilityInfo info) {
           if (info.visibleFraction == 1) {
             horizontalScrollController.position.ensureVisible(
@@ -541,7 +572,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       ),
                     ),
                   ),
-                  HandWidget(authState: widget.authState),
+                  HandWidget(authState: widget.authState, onTap: closeVideo),
                 ],
               ),
               notEnrolledStoriesHeader(showStories),
@@ -576,7 +607,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       colors: OlukoNeumorphismColors.homeGradientColorList,
                     ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
                   },
-                  child: Container(
+                  child: SizedBox(
                     height: ScreenUtils.height(context) -
                         (showStories
                             ? ScreenUtils.smallScreen(context)
@@ -584,13 +615,15 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                                 : ScreenUtils.height(context) * 0.35
                             : ScreenUtils.height(context) * 0.255),
                     width: ScreenUtils.width(context),
-                    child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(builder: (context, state) {
-                      if (state is UsersSelfiesSuccess) {
-                        return SelfiesGrid(images: state.usersSelfies.selfies);
-                      } else {
-                        return OlukoCircularProgressIndicator();
-                      }
-                    }),
+                    child: BlocBuilder<UsersSelfiesBloc, UsersSelfiesState>(
+                      builder: (context, state) {
+                        if (state is UsersSelfiesSuccess) {
+                          return SelfiesGrid(images: state.usersSelfies.selfies);
+                        } else {
+                          return OlukoCircularProgressIndicator();
+                        }
+                      },
+                    ),
                   ),
                 ),
                 Center(child: notErolledContent(showStories))
@@ -630,7 +663,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
       return Align(
         alignment: Alignment.centerLeft,
         child: StoriesHeader(
-          widget.user.uid,
+          widget.user.id,
+          onTap: closeVideo,
           maxRadius: 30,
           color: OlukoColors.userColor(widget.authState.user.firstName, widget.authState.user.lastName),
         ),
@@ -649,12 +683,16 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             useBorder: true,
             title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {
-                'backButtonWithFilters': true,
-                'showBottomTab': () => setState(() {
-                      _isBottomTabActive = !_isBottomTabActive;
-                    })
-              });
+              Navigator.pushNamed(
+                context,
+                routeLabels[RouteEnum.courses],
+                arguments: {
+                  'backButtonWithFilters': true,
+                  'showBottomTab': () => setState(() {
+                        _isBottomTabActive = !_isBottomTabActive;
+                      })
+                },
+              );
             },
           )
         ],

@@ -433,6 +433,8 @@
     "editContent":"Edit",
     "zipCode":"Zip code",
     "zipCodeErrorMessage": ", Does not meet the required format. Numeric characters only, 5 digits long.",
-    "deleteImage": "Delete image"
+    "deleteImage": "Delete image",
+    "completedChallenges": "Completed Challenges"
+
     
 }

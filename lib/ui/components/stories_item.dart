@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
-import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -32,26 +31,29 @@ class StoriesItem extends StatefulWidget {
   UserProgress userProgress;
   bool showUserProgress;
   Color color;
+  final Function onTap;
 
-  StoriesItem(
-      {this.maxRadius,
-      this.imageUrl,
-      this.userProgress,
-      this.name,
-      this.lastname,
-      this.stories,
-      this.progressValue = 0,
-      this.showName = false,
-      this.showUserProgress = false,
-      this.getStories = false,
-      this.addUnseenStoriesRing = false,
-      this.currentUserId,
-      this.userProgressStreamBloc,
-      this.itemUserId,
-      this.bloc,
-      this.from = StoriesItemFrom.home,
-      this.isSegmentSection = false,
-      this.color}) {
+  StoriesItem({
+    this.maxRadius,
+    this.imageUrl,
+    this.userProgress,
+    this.name,
+    this.lastname,
+    this.stories,
+    this.progressValue = 0,
+    this.showName = false,
+    this.showUserProgress = false,
+    this.getStories = false,
+    this.addUnseenStoriesRing = false,
+    this.currentUserId,
+    this.userProgressStreamBloc,
+    this.itemUserId,
+    this.bloc,
+    this.from = StoriesItemFrom.home,
+    this.isSegmentSection = false,
+    this.color,
+    this.onTap,
+  }) {
     if (getStories == true &&
         currentUserId != null &&
         itemUserId != null &&
@@ -123,7 +125,7 @@ class _State extends State<StoriesItem> {
                 alignment: Alignment.center,
                 children: [
                   if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
-                  widget.showUserProgress ? Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()) : SizedBox(),
+                  if (widget.showUserProgress) Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()) else const SizedBox(),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
                       widget.currentUserId != null &&
@@ -131,15 +133,25 @@ class _State extends State<StoriesItem> {
                       widget.name != null &&
                       GlobalConfiguration().getValue('showStories') == 'true')
                     GestureDetector(
-                        child: getCircularAvatar(),
-                        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {
-                              'stories': widget.stories,
-                              'userId': widget.currentUserId,
-                              'userStoriesId': widget.itemUserId,
-                              'name': widget.name,
-                              'lastname': widget.lastname,
-                              'avatarThumbnail': widget.imageUrl
-                            }))
+                      child: getCircularAvatar(),
+                      onTap: () {
+                        if (widget.onTap != null) {
+                          widget.onTap();
+                        }
+                        Navigator.pushNamed(
+                          context,
+                          routeLabels[RouteEnum.story],
+                          arguments: {
+                            'stories': widget.stories,
+                            'userId': widget.currentUserId,
+                            'userStoriesId': widget.itemUserId,
+                            'name': widget.name,
+                            'lastname': widget.lastname,
+                            'avatarThumbnail': widget.imageUrl
+                          },
+                        );
+                      },
+                    )
                   else
                     getCircularAvatar()
                 ],
@@ -250,19 +262,23 @@ class _State extends State<StoriesItem> {
   Widget userProgressIndicator() {
     if (widget.userProgressStreamBloc != null) {
       return BlocConsumer<UserProgressStreamBloc, UserProgressStreamState>(
-          bloc: widget.userProgressStreamBloc,
-          listener: (context, userProgressStreamState) {
-            blocConsumerCondition(userProgressStreamState);
-          },
-          builder: (context, userProgressStreamState) {
-            return greenCircle();
-          });
+        bloc: widget.userProgressStreamBloc,
+        listener: (context, userProgressStreamState) {
+          blocConsumerCondition(userProgressStreamState);
+        },
+        builder: (context, userProgressStreamState) {
+          return greenCircle();
+        },
+      );
     } else {
-      return BlocConsumer<UserProgressStreamBloc, UserProgressStreamState>(listener: (context, userProgressStreamState) {
-        blocConsumerCondition(userProgressStreamState);
-      }, builder: (context, userProgressStreamState) {
-        return greenCircle();
-      });
+      return BlocConsumer<UserProgressStreamBloc, UserProgressStreamState>(
+        listener: (context, userProgressStreamState) {
+          blocConsumerCondition(userProgressStreamState);
+        },
+        builder: (context, userProgressStreamState) {
+          return greenCircle();
+        },
+      );
     }
   }
 

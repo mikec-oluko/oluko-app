@@ -28,6 +28,8 @@ class _CoachUpcomingChallengesState extends State<CoachUpcomingChallenges> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: ListView(
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,

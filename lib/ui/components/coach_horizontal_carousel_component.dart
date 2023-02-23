@@ -21,6 +21,8 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
         width: MediaQuery.of(context).size.width,
         height: 155,
         child: ListView(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           children: [
@@ -40,19 +42,31 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
           color: OlukoColors.black,
           width: MediaQuery.of(context).size.width,
           height: 200,
-          child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [
-            Wrap(
-              children: widget.contentToDisplay,
-            )
-          ]));
+          child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              children: [
+                Wrap(
+                  children: widget.contentToDisplay,
+                )
+              ]));
     } else {
       contentToReturn = Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
           width: MediaQuery.of(context).size.width,
           height: 120,
-          child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [
-            Wrap(children: widget.contentToDisplay),
-          ]));
+          child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              children: [
+                Wrap(children: widget.contentToDisplay),
+              ]));
     }
     return contentToReturn;
   }

@@ -148,6 +148,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         body: Container(
           color: OlukoColors.black,
           child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             children: [
               content(),
             ],

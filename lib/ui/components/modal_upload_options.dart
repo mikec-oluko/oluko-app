@@ -47,6 +47,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
       width: MediaQuery.of(context).size.width,
       height: widget.isDeleteRequested ? 120 : 100,
       child: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         shrinkWrap: true,

@@ -107,6 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: MediaQuery.of(context).size.width,
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: ListView(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
                   padding: EdgeInsets.zero,
                   children: [
                     userInformationSection(),
@@ -128,11 +130,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     userStats = state.userStats;
                   }
                   return UserProfileInformation(
-                    userToDisplayInformation: profileInfo,
-                    actualRoute: ActualProfileRoute.rootProfile,
-                    currentUser: profileInfo,
-                    userStats: userStats,
-                  );
+                      userToDisplayInformation: profileInfo,
+                      actualRoute: ActualProfileRoute.rootProfile,
+                      currentUser: profileInfo,
+                      userStats: userStats,
+                      minimalRequested: true);
                 },
               )),
         ],
@@ -140,6 +142,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildOptionsList() {
     return ListView.builder(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         padding: EdgeInsets.only(bottom: ScreenUtils.height(context) / 20),
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

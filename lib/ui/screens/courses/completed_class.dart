@@ -82,7 +82,7 @@ class _CompletedClassState extends State<CompletedClass> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ListView(children: [
+              child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
                 getClassCard(),
                 SizedBox(height: 20),
                 getCompletedSegments(),
@@ -118,11 +118,10 @@ class _CompletedClassState extends State<CompletedClass> {
                             title: OlukoLocalizations.get(context, 'done'),
                             onPressed: () {
                               if (widget.selfie != null) {
-                                BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
-                                    .saveSelfie(widget.courseEnrollment, widget.classIndex, widget.selfie);
+                                BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, widget.selfie);
                               }
                               if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
-                                Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root])); 
+                                Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
                                 Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root], arguments: {
                                   'index': widget.courseIndex,
                                   'classIndex': widget.classIndex + 1,

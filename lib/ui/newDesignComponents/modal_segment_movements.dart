@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+
 class MovementsModal {
   static modalContent({BuildContext context, List<Widget> content}) {
     showModalBottomSheet(
@@ -12,6 +13,8 @@ class MovementsModal {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: ListView(
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
                     shrinkWrap: true,
                     children: content,
                   ),

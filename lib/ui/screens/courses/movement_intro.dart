@@ -137,6 +137,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
         }
         return Container(
           child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -208,6 +210,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
         }
         return Container(
           child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),

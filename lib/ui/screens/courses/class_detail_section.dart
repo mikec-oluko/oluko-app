@@ -45,9 +45,9 @@ class _State extends State<ClassDetailSection> {
     List<Widget> getClassWidgets() {
       List<Widget> widgets = [];
       for (int i = 0; i < widget.classObj.segments.length; i++) {
-        if(widget.segments!=null && widget.segments.length>i){
-        List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, _movements);
-        /*for (int j = 0; j < widget.segments.length; j++) {
+        if (widget.segments != null && widget.segments.length > i) {
+          List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, _movements);
+          /*for (int j = 0; j < widget.segments.length; j++) {
           if (widget.segments[j].id == widget.classObj.segments[i].id && widget.segments[j].isChallenge == true) {
             for (int k = 0; k < widget.challengeNavigations[0].enrolledCourse.classes.length; k++) {
               if (widget.challengeNavigations[0].enrolledCourse.classes[k].id == widget.classObj.id) {
@@ -65,13 +65,13 @@ class _State extends State<ClassDetailSection> {
             }
           }
         }*/
-        widgets.add(ClassSegmentSection(
-            challengeNavigation: getChallengeNavigation(i, widget.segments[i].id),
-            showTopDivider: i != 0,
-            segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
-            movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
-            movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
-            onPressedMovement: widget.onPressedMovement)); //TODO:check null value
+          widgets.add(ClassSegmentSection(
+              challengeNavigation: getChallengeNavigation(i, widget.segments[i].id),
+              showTopDivider: i != 0,
+              segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
+              movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
+              movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
+              onPressedMovement: widget.onPressedMovement)); //TODO:check null value
 
         }
       }
@@ -98,7 +98,7 @@ class _State extends State<ClassDetailSection> {
               child: BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
                 if (movementState is GetAllSuccess) {
                   _movements = movementState.movements;
-                  return ListView(children: getClassWidgets());
+                  return ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: getClassWidgets());
                 } else {
                   return SizedBox();
                 }

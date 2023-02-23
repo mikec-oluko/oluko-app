@@ -333,6 +333,8 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: state.plans != null
               ? ListView(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
                   shrinkWrap: true,
                   children: [
                     _subscriptionTitleSection(context),

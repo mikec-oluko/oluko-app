@@ -10,6 +10,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_section.dart';
@@ -27,7 +28,7 @@ class HomeContent extends StatefulWidget {
 
   final int index;
   final int classIndex;
-  final User user;
+  final UserResponse user;
   final List<CourseEnrollment> courseEnrollments;
   List<Course> courses;
   final AuthSuccess authState;
@@ -55,8 +56,10 @@ class _HomeContentState extends State<HomeContent> {
         showTitle: false,
       ),
       body: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         children: [
-          Center(child: StoriesHeader(widget.user.uid)),
+          Center(child: StoriesHeader(widget.user.id)),
           WillPopScope(
             onWillPop: () => AppNavigator.onWillPop(context),
             child: OrientationBuilder(
