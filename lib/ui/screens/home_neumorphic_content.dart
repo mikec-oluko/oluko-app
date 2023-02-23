@@ -315,7 +315,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 OlukoNeumorphism.mvtLogo,
                 scale: 4,
               ),
-            HandWidget(authState: widget.authState, onTap: closeVideo),
+            if (!widget.isFromHome) HandWidget(authState: widget.authState, onTap: closeVideo),
           ],
         ),
       ),

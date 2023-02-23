@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/three_dots_menu.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCarouselGallery extends StatefulWidget {
@@ -65,6 +68,20 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                     ),
+                    child: Center(
+                        child: Container(
+                      width: ScreenUtils.width(context) / 3,
+                      height: ScreenUtils.height(context) / 15,
+                      // color: Colors.red,
+                      child: OlukoBlurredButton(
+                        childContent: Center(
+                          child: Text(
+                            OlukoLocalizations.of(context).find('goToClass'),
+                            style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    )),
                   ),
                 )
               else
