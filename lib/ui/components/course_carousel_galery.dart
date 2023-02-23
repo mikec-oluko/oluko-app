@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/three_dots_menu.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCarouselGallery extends StatefulWidget {
@@ -10,8 +13,10 @@ class CourseCarouselGallery extends StatefulWidget {
   final int courseIndex;
   final Function(int) onCourseChange;
   final Function(int) onCourseDeleted;
+  final Function(int) onCourseTap;
 
-  const CourseCarouselGallery({Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted})
+  const CourseCarouselGallery(
+      {Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted, this.onCourseTap})
       : super(key: key);
 
   @override
@@ -49,13 +54,34 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
             fit: StackFit.expand,
             children: [
               if (widget.courseEnrollments[i].course.image != null)
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: CachedNetworkImageProvider(widget.courseEnrollments[i].course.image),
+                GestureDetector(
+                  onTap: () {
+                    if (widget.onCourseTap != null) {
+                      widget.onCourseTap(selected);
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: CachedNetworkImageProvider(widget.courseEnrollments[i].course.image),
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    child: Center(
+                        child: Container(
+                      width: ScreenUtils.width(context) / 3,
+                      height: ScreenUtils.height(context) / 15,
+                      // color: Colors.red,
+                      child: OlukoBlurredButton(
+                        childContent: Center(
+                          child: Text(
+                            OlukoLocalizations.of(context).find('goToClass'),
+                            style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    )),
                   ),
                 )
               else

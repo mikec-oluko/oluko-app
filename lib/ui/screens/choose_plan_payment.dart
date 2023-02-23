@@ -34,7 +34,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
         child: Scaffold(
             body: Container(
                 color: OlukoColors.black,
-                child: ListView(children: [
+                child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(

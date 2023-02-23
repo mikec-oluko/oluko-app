@@ -124,6 +124,8 @@ class _State extends State<ClocksLowerSection> {
                 height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
                 width: ScreenUtils.width(context),
                 child: ListView(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
                   padding: EdgeInsets.zero,
                   children:
                       SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
@@ -138,6 +140,8 @@ class _State extends State<ClocksLowerSection> {
     return SizedBox(
         height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 6.4 : ScreenUtils.height(context) / 5.2,
         child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             children: SegmentClocksUtils.getScoresByRound(

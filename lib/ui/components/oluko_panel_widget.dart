@@ -5,8 +5,7 @@ class PanelWidget extends StatefulWidget {
   final ScrollController scrollController;
   final PanelController panelController;
   final Widget contentForPanel;
-  const PanelWidget(
-      {this.scrollController, this.panelController, this.contentForPanel});
+  const PanelWidget({this.scrollController, this.panelController, this.contentForPanel});
 
   @override
   _PanelWidgetState createState() => _PanelWidgetState();
@@ -16,6 +15,8 @@ class _PanelWidgetState extends State<PanelWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      addAutomaticKeepAlives: false,
+      addRepaintBoundaries: false,
       shrinkWrap: true,
       children: [widget.contentForPanel],
     );

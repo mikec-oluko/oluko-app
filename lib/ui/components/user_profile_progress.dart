@@ -7,8 +7,9 @@ class UserProfileProgress extends StatefulWidget {
   final String challengesCompleted;
   final String coursesCompleted;
   final String classesCompleted;
+  final bool isMinimalRequested;
 
-  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted}) : super();
+  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false}) : super();
 
   @override
   _UserProfileProgressState createState() => _UserProfileProgressState();
@@ -19,7 +20,11 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: OlukoNeumorphism.isNeumorphismDesign ? buildUserNeumorphicStatistics() : buildUserStatistics(),
+      child: widget.isMinimalRequested
+          ? SizedBox.shrink()
+          : OlukoNeumorphism.isNeumorphismDesign
+              ? buildUserNeumorphicStatistics()
+              : buildUserStatistics(),
     );
   }
 

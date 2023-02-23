@@ -154,7 +154,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             ),
             body: Container(
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: [
+                child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, shrinkWrap: true, padding: EdgeInsets.zero, children: [
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(children: [
@@ -325,6 +325,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
           if (taskState is TaskSuccess) {
             return ListView.builder(
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: taskState.values.length,
                 shrinkWrap: true,

@@ -42,9 +42,10 @@ import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   bool homeEnrollTocourse;
+  bool firstTimeEnroll;
   bool backButtonWithFilters;
   Function showBottomTab;
-  Courses({this.homeEnrollTocourse = false, this.showBottomTab, this.backButtonWithFilters = false, Key key}) : super(key: key);
+  Courses({this.homeEnrollTocourse = false, this.showBottomTab, this.backButtonWithFilters = false, this.firstTimeEnroll = false, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -99,7 +100,7 @@ class _State extends State<Courses> {
 
   @override
   Widget build(BuildContext context) {
-    carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + carSecHeigthPlus;
+    carouselSectionHeight = CourseUtils.getCarouselSectionHeight(context);
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         if (authState is AuthSuccess) {
@@ -201,7 +202,7 @@ class _State extends State<Courses> {
               : showFilterSelector
                   ? 'filters'
                   : 'courses'),
-      actions: [_filterWidget()],
+      actions: widget.firstTimeEnroll ? [] : [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
       onSearchSubmit: (SearchResults<Course> results) => setState(() {
         showSearchSuggestions = false;
@@ -227,6 +228,8 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.10),
         children: [
           _activeCoursesSection(),
@@ -241,6 +244,8 @@ class _State extends State<Courses> {
 
   ListView _courseCategoriesSections() {
     return ListView.builder(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         physics: NeverScrollableScrollPhysics(),
         itemCount: _coursesByCategories.length,
         shrinkWrap: true,
@@ -267,7 +272,7 @@ class _State extends State<Courses> {
       child: GestureDetector(
         onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
             arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false}),
-        child: _getCourseCard(_generateImageCourse(course.image), width: ScreenUtils.width(context) / (padding + _cardsToShow())),
+        child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context), width: ScreenUtils.width(context) / (padding + _cardsToShow())),
       ),
     );
   }
@@ -444,7 +449,7 @@ class _State extends State<Courses> {
             child: GestureDetector(
               onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                   arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false}),
-              child: _getCourseCard(_generateImageCourse(course.image),
+              child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context),
                   width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendationsAvatarUrls: userRecommendationAvatars),
             ),
           );
@@ -487,7 +492,7 @@ class _State extends State<Courses> {
                 'courseIndex': courseIndex
               }),
               child: _getCourseCard(
-                _generateImageCourse(course.image),
+                CourseUtils.generateImageCourse(course.image, context),
                 progress: courseEnrollment.completion,
                 width: ScreenUtils.width(context) / (padding + _cardsToShow()),
               ),
@@ -513,7 +518,7 @@ class _State extends State<Courses> {
                   arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
             },
             child: _getCourseCard(
-              _generateImageCourse(courseElement.image),
+              CourseUtils.generateImageCourse(courseElement.image, context),
               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
             ),
           ),
@@ -532,29 +537,12 @@ class _State extends State<Courses> {
         child: GestureDetector(
           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),
-          child: _getCourseCard(_generateImageCourse(courseRecommended.image),
+          child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended.image, context),
               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
               userRecommendationsAvatarUrls: courseRecommendedMapEntry.values.first.map((user) => user.avatar).toList(),
               friendRecommended: true),
         ),
       );
     }).toList();
-  }
-
-  Widget _generateImageCourse(String imageUrl) {
-    if (imageUrl != null) {
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        height: ScreenUtils.height(context) * 0.20,
-        width: ScreenUtils.width(context) * 0.35,
-        maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
-        maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
-        memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
-        memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
-        fit: BoxFit.fill,
-      );
-    }
-    return Image.asset("assets/courses/course_sample_7.png");
-    //TODO: fill space with default image or message
   }
 }

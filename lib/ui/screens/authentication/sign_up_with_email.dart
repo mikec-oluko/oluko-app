@@ -52,8 +52,10 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
       key: _formKey,
       child: Scaffold(
         body: Container(
-          color:OlukoColors.black,
+          color: OlukoColors.black,
           child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
@@ -113,8 +115,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                                     Align(
                                       alignment: Alignment.center,
                                       child: CachedNetworkImage(
-                                        imageUrl:
-                                            'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                                        imageUrl: 'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
                                         width: 30,
                                       ),
                                     ),

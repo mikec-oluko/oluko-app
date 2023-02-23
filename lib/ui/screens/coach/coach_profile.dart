@@ -153,6 +153,8 @@ class _CoachProfileState extends State<CoachProfile> {
                           color: OlukoNeumorphismColors.appBackgroundColor,
                           constraints: const BoxConstraints.expand(),
                           child: ListView(
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries: false,
                             clipBehavior: Clip.none,
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,

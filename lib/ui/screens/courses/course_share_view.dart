@@ -45,7 +45,7 @@ class _CourseShareViewState extends State<CourseShareView> {
     return Material(
       child: Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
-          child: ListView(children: [
+          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
             topAppBarBackButton(context),
             BlocConsumer<UserProgressListBloc, UserProgressListState>(
               listener: (context, userProgressListState) {
@@ -86,8 +86,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                                     Text(
                                       OlukoLocalizations.get(context, 'sendFriendRecommendation'),
                                       textAlign: TextAlign.start,
-                                      style:
-                                          OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                                      style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
                                     ),
                                     IgnorePointer(
                                       ignoring: userSelectedList.isEmpty,
@@ -107,9 +106,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                                               },
                                               icon: Icon(
                                                 Icons.send_rounded,
-                                                color: userSelectedList.isEmpty
-                                                    ? OlukoNeumorphismColors.finalGradientColorDark
-                                                    : OlukoColors.primary,
+                                                color: userSelectedList.isEmpty ? OlukoNeumorphismColors.finalGradientColorDark : OlukoColors.primary,
                                               ))),
                                     )
                                   ],

@@ -160,7 +160,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         color: OlukoColors.black,
         child: Stack(
           children: [
-            ListView(children: [
+            ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 3),
                 child: OverlayVideoPreview(
@@ -291,9 +291,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     child: ListView(
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
                       shrinkWrap: true,
                       primary: false,
-                      //crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildStatistics(),
                         Padding(

@@ -99,6 +99,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             height: 80,
             child: _friendUsersList.isNotEmpty
                 ? ListView(
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.zero,
                     children: _friendUsersList

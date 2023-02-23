@@ -201,7 +201,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
 
   Widget classInfoSection() {
     return Stack(children: [
-      ListView(children: [
+      ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
         Padding(
             padding: const EdgeInsets.only(bottom: 3),
             child: Column(children: [

@@ -253,6 +253,8 @@ class _CoachPageState extends State<CoachPage> {
             child: Theme(
               data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent)),
               child: ListView(
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
                 children: [
                   _reviewsPendingSection(),
                   _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),

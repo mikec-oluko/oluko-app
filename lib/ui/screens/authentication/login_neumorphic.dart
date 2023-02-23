@@ -83,6 +83,8 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
               ),
             ),
             child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width,

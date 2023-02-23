@@ -29,6 +29,8 @@ Widget _dialogContent(BuildContext context, List<Widget> content) {
           BlocProvider.value(value: BlocProvider.of<TransformationJourneyBloc>(context))
         ],
         child: ListView(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
           shrinkWrap: true,
           children: content,
         ),

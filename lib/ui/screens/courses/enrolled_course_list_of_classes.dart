@@ -23,18 +23,20 @@ class CourseClassCardsList extends StatefulWidget {
   final Function playPauseVideo;
   final Function closeVideo;
   final Function onPressed;
-  const CourseClassCardsList({
-    this.course,
-    this.courseEnrollment,
-    this.classes,
-    this.courseIndex,
-    this.fromCoach,
-    this.isCoachRecommendation,
-    this.fromHome,
-    this.playPauseVideo,
-    this.closeVideo,
-    this.onPressed,
-  }) : super();
+  final bool isFromHome;
+  const CourseClassCardsList(
+      {this.course,
+      this.courseEnrollment,
+      this.classes,
+      this.courseIndex,
+      this.fromCoach,
+      this.isCoachRecommendation,
+      this.fromHome,
+      this.playPauseVideo,
+      this.closeVideo,
+      this.onPressed,
+      this.isFromHome = false})
+      : super();
 
   @override
   State<CourseClassCardsList> createState() => _CourseClassCardsListState();
@@ -55,6 +57,8 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      addAutomaticKeepAlives: false,
+      addRepaintBoundaries: false,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
@@ -153,14 +157,26 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   }
 
   void getNavigationToClass(CourseEnrollment enrollment, int classIndex, int courseIndex) {
-    Navigator.pushNamed(
-      context,
-      routeLabels[RouteEnum.insideClass],
-      arguments: {
-        'courseEnrollment': enrollment,
-        'classIndex': classIndex,
-        'courseIndex': courseIndex,
-      },
-    );
+    if (widget.isFromHome) {
+      Navigator.popAndPushNamed(
+        context,
+        routeLabels[RouteEnum.insideClass],
+        arguments: {
+          'courseEnrollment': enrollment,
+          'classIndex': classIndex,
+          'courseIndex': courseIndex,
+        },
+      );
+    } else {
+      Navigator.pushNamed(
+        context,
+        routeLabels[RouteEnum.insideClass],
+        arguments: {
+          'courseEnrollment': enrollment,
+          'classIndex': classIndex,
+          'courseIndex': courseIndex,
+        },
+      );
+    }
   }
 }

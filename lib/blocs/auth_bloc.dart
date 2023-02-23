@@ -7,6 +7,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_media_bloc.dart';
@@ -393,6 +394,7 @@ class AuthBloc extends Cubit<AuthState> {
         BlocProvider.of<AssessmentBloc>(context).dispose();
         BlocProvider.of<UserPlanSubscriptionBloc>(context).dispose();
         BlocProvider.of<CourseEnrollmentBloc>(context).dispose();
+        BlocProvider.of<UpcomingChallengesBloc>(context).dispose();
       } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {

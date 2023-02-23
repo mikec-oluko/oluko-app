@@ -165,7 +165,9 @@ class _State extends State<ChallengesCard> {
   }
 
   void navigateToPanel([bool navigateToAudio = false]) {
-    widget.panelController.open();
+    if (widget.panelController != null) {
+      widget.panelController.open();
+    }
     BlocProvider.of<CoursePanelBloc>(context)
         .setPanelChallenges(widget.challengeNavigations, navigateToAudio ? (challenge) => navigateToAudioSegment(challenge) : null);
   }

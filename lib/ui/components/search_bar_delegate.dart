@@ -49,7 +49,7 @@ class SearchbarDelegate extends SearchDelegate<String> {
             Text(
               query,
               style: TextStyle(
-                color:OlukoColors.black,
+                color: OlukoColors.black,
                 fontSize: 64,
                 fontWeight: FontWeight.bold,
               ),
@@ -73,6 +73,8 @@ class SearchbarDelegate extends SearchDelegate<String> {
   }
 
   Widget buildSuggestionsSuccess(List<String> suggestions) => ListView.builder(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
         itemCount: suggestions.length,
         itemBuilder: (context, index) {
           final suggestion = suggestions[index];

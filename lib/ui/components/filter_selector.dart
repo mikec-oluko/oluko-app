@@ -102,8 +102,7 @@ class _State<T extends Base> extends State<FilterSelector> {
       ),
       child: Container(
           decoration: const BoxDecoration(
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
           width: ScreenUtils.width(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -145,6 +144,8 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   Widget _getFilterSelectorContent() {
     return ListView(
+      addAutomaticKeepAlives: false,
+      addRepaintBoundaries: false,
       children: widget.itemList.entries
           .map((entry) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,9 +190,7 @@ class _State<T extends Base> extends State<FilterSelector> {
     _updatedTagSelected = selectedItemsUpdated ?? _selected;
     final List<MapEntry<String, bool>> selectedEntries = _updatedTagSelected.entries.where((element) => element.value == true).toList();
 
-    List<T> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>)
-        .map((item) => item.key)
-        .toList();
+    List<T> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>).map((item) => item.key).toList();
     final List<Base> selectedItems = selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
     BlocProvider.of<SelectedTagsBloc>(context).updateSelectedTags(selectedItems.length);
     return selectedItems;
@@ -206,11 +205,10 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   //Populate selected items array for first time at widget init
   void initializeSelectedItems() {
-    List<MapEntry<T, String>> allItems =
-        _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>).toList();
+    List<MapEntry<T, String>> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>).toList();
 
-    _selected = Map.fromIterable(allItems,
-        key: (item) => item.key.id as String, value: (item) => widget.selectedTags.map((tag) => tag.id).contains(item.key.id));
+    _selected =
+        Map.fromIterable(allItems, key: (item) => item.key.id as String, value: (item) => widget.selectedTags.map((tag) => tag.id).contains(item.key.id));
   }
 
   void submit() {
@@ -224,11 +222,9 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   Map<String, bool> tagsToMap(List<Base> tags) {
     Map<String, bool> mappedTags;
-    List<MapEntry<T, String>> allItems =
-        _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>).toList();
+    List<MapEntry<T, String>> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>).toList();
 
-    mappedTags =
-        Map.fromIterable(allItems, key: (item) => item.key.id as String, value: (item) => tags.map((tag) => tag.id).contains(item.key.id));
+    mappedTags = Map.fromIterable(allItems, key: (item) => item.key.id as String, value: (item) => tags.map((tag) => tag.id).contains(item.key.id));
     return mappedTags;
   }
 }

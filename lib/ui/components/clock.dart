@@ -562,7 +562,11 @@ class _State extends State<Clock> {
       return SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context) * 0.4,
-        child: ListView(padding: EdgeInsets.zero, children: SegmentUtils.getJoinedLabel(widget.timerEntries[widget.timerTaskIndex].labels)),
+        child: ListView(
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
+            padding: EdgeInsets.zero,
+            children: SegmentUtils.getJoinedLabel(widget.timerEntries[widget.timerTaskIndex].labels)),
       );
     } else {
       String currentTask = widget.timerEntries[widget.timerTaskIndex].labels[0];
