@@ -167,38 +167,36 @@ class _State extends State<CourseCard> {
     userImageList =
         userRecommendationImageUrls.length < _imageStackMaxLength ? userRecommendationImageUrls : userRecommendationImageUrls.sublist(0, _imageStackMaxLength);
     String _friendsText = userRecommendationImageUrls.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 1.0),
-      child: Stack(
-          alignment: Alignment.bottomRight,
-          children: userImageList
-              .asMap()
-              .map((index, userUrl) => MapEntry(
-                  friendRecommended
-                      ? Positioned(
-                          left: (index * (userRadius / 1.5)),
-                          child: _userAvatar(userUrl),
-                        )
-                      : Positioned(
-                          right: (index + (userRecommendationImageUrls.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
-                          child: _userAvatar(userUrl)),
-                  index))
-              .keys
-              .toList()
-            ..add(Positioned(
-              right: 0,
-              bottom: userRadius * 0.5,
-              child: friendRecommended
-                  ? Text(
-                      '${userRecommendationImageUrls.length} $_friendsText',
-                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-                    )
-                  : Text(
-                      userRecommendationImageUrls.length > _imageStackMaxLength ? '...' : '',
-                      style: TextStyle(color: Colors.white),
-                    ),
-            ))),
-    );
+    return Stack(
+        fit: StackFit.expand,
+        alignment: Alignment.bottomRight,
+        children: userImageList
+            .asMap()
+            .map((index, userUrl) => MapEntry(
+                friendRecommended
+                    ? Positioned(
+                        left: (index * (userRadius / 1.5)),
+                        child: _userAvatar(userUrl),
+                      )
+                    : Positioned(
+                        right: (index + (userRecommendationImageUrls.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
+                        child: _userAvatar(userUrl)),
+                index))
+            .keys
+            .toList()
+          ..add(Positioned(
+            right: 0,
+            bottom: userRadius * 0.5,
+            child: friendRecommended
+                ? Text(
+                    '${userRecommendationImageUrls.length} $_friendsText',
+                    style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                  )
+                : Text(
+                    userRecommendationImageUrls.length > _imageStackMaxLength ? '...' : '',
+                    style: TextStyle(color: Colors.white),
+                  ),
+          )));
   }
 
   CircleAvatar _userAvatar(String userUrl) {
