@@ -333,6 +333,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               OlukoNeumorphicPrimaryButton(
+                isDisabled: _disableAction,
                 thinPadding: true,
                 title: OlukoLocalizations.get(context, 'enroll'),
                 onPressed: () {
@@ -342,6 +343,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
             else
               OlukoPrimaryButton(
                 title: OlukoLocalizations.get(context, 'enroll'),
+                isDisabled: _disableAction,
                 onPressed: () {
                   enrollAction(context);
                 },
