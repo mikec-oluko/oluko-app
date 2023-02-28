@@ -183,11 +183,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       courseIndex: courseIndex > _courseEnrollmentList.length ? _courseEnrollmentList.length : courseIndex,
       onCourseDeleted: (index) {
         setState(() {
-          courseIndex = index - 1 < 0
-              ? 0
-              : index - 1 < _courseEnrollmentList.length
-                  ? _courseEnrollmentList.length
-                  : index - 1;
+          courseIndex = 0;
         });
       },
       onCourseChange: (index) {
