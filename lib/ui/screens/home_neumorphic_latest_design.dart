@@ -254,6 +254,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                 isCurrentUser: true,
                 challengeState: state,
                 defaultNavigation: false,
+                isForHome: true,
               ),
             );
           } else {
