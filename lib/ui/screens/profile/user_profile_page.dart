@@ -420,6 +420,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               transformationJourneySlider(),
               activeCoursesSlider(_isCurrentUser),
               activeChallengesSlider(_isCurrentUser),
+              SizedBox(height: ScreenUtils.height(context) / 10, width: ScreenUtils.width(context))
             ],
           ),
         ],
