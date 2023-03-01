@@ -94,7 +94,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
-      buildWhen: (previous, current) => previous != current,
+      // buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserStreamSuccess) {
           _courseEnrollmentList = state.courseEnrollments;
@@ -178,25 +178,33 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BuildContext context,
   ) {
     return HomeCoursesAndPeople(
-      courseEnrollments: widget.courseEnrollments,
+      courseEnrollments: _courseEnrollmentList,
       usersProgress: _usersProgress,
-      courseIndex: courseIndex,
+      courseIndex: courseIndex > _courseEnrollmentList.length ? _courseEnrollmentList.length : courseIndex,
+      onCourseDeleted: (index) {
+        setState(() {
+          courseIndex = 0;
+        });
+      },
       onCourseChange: (index) {
         setState(() {
-          courseIndex = index;
+          courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
         });
         BlocProvider.of<SubscribedCourseUsersBloc>(context)
-            .getEnrolled(widget.courseEnrollments[courseIndex].course.id, widget.courseEnrollments[courseIndex].createdBy);
+            .getEnrolled(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
       },
       onCourseTap: (index) {
-        Course courseSelected = _courses.where((course) => course.id == widget.courseEnrollments[index].course.id).first;
-        EnrollmentClass firstIncompletedClass = getClassToGo(widget.courseEnrollments[index].classes);
+        setState(() {
+          courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
+        });
+        Course courseSelected = _courses.where((course) => course.id == _courseEnrollmentList[courseIndex].course.id).first;
+        EnrollmentClass firstIncompletedClass = getClassToGo(_courseEnrollmentList[courseIndex].classes);
         ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompletedClass.id).first;
         Navigator.pushNamed(
           context,
           routeLabels[RouteEnum.insideClass],
           arguments: {
-            'courseEnrollment': widget.courseEnrollments[index],
+            'courseEnrollment': _courseEnrollmentList[courseIndex],
             'classIndex': _courses[_courses.indexOf(courseSelected)].classes.indexOf(classToGo),
             'courseIndex': _courses.indexOf(courseSelected),
             'actualCourse': courseSelected
@@ -246,6 +254,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                 isCurrentUser: true,
                 challengeState: state,
                 defaultNavigation: false,
+                isForHome: true,
               ),
             );
           } else {

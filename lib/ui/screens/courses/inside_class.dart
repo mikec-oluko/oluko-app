@@ -162,7 +162,7 @@ class _InsideClassesState extends State<InsideClass> {
       'authState': currentAuthState,
       'courses': [widget.actualCourse],
       'user': currentUser,
-      'isFromHome': false
+      'isFromHome': true
     });
   }
 

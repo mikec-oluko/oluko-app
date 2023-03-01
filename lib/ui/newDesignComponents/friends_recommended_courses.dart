@@ -51,7 +51,7 @@ class _FriendsRecommendedCoursesState extends State<FriendsRecommendedCourses> {
     return coursesRecommendedMap.map((Map<String, List<UserResponse>> courseRecommendedMapEntry) {
       Course courseRecommended = CourseUtils.getCourseById(courseRecommendedMapEntry.keys.first, widget.courses);
       return Padding(
-        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
+        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 5, horizontal: 5) : const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),

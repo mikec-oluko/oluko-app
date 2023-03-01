@@ -31,6 +31,8 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/cancel_bottom_panel.dart';
+import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
+import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
@@ -398,13 +400,18 @@ class _State extends State<Courses> {
           }
         }
         return myListOfCourses != null && myListOfCourses.values.toList().isNotEmpty
-            ? CarouselSection(
-                optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-                onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
-                    arguments: {'courses': myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
-                title: OlukoLocalizations.get(context, 'myList'),
-                height: carouselSectionHeight,
-                children: myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(myListOfCourses) : [])
+            ? Container(
+                child: MyListOfCourses(
+                  myListOfCourses: myListOfCourses,
+                ),
+              )
+            // ? CarouselSection(
+            //     optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+            //     onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+            //         arguments: {'courses': myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
+            //     title: OlukoLocalizations.get(context, 'myList'),
+            //     height: carouselSectionHeight,
+            //     children: myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(myListOfCourses) : [])
             : const SizedBox.shrink();
       },
     ));
@@ -418,17 +425,18 @@ class _State extends State<Courses> {
           _coursesRecommendedMap = state.recommendedCourses;
         }
         return _coursesRecommendedMap.isNotEmpty
-            ? CarouselSection(
-                optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-                onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll], arguments: {
-                      'courses': _coursesRecommendedMap
-                          .map((courseRecommendedMapEntry) => CourseUtils.getCourseById(courseRecommendedMapEntry.keys.first, _courses))
-                          .toList(),
-                      'title': OlukoLocalizations.get(context, 'friendsRecommended')
-                    }),
-                title: OlukoLocalizations.get(context, 'friendsRecommended'),
-                height: carouselSectionHeight + 10,
-                children: _getFriendsRecommendedCoursesList(_coursesRecommendedMap))
+            ? FriendsRecommendedCourses(listOfCoursesRecommended: _coursesRecommendedMap, courses: _courses)
+            // ? CarouselSection(
+            //     optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+            //     onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll], arguments: {
+            //           'courses': _coursesRecommendedMap
+            //               .map((courseRecommendedMapEntry) => CourseUtils.getCourseById(courseRecommendedMapEntry.keys.first, _courses))
+            //               .toList(),
+            //           'title': OlukoLocalizations.get(context, 'friendsRecommended')
+            //         }),
+            //     title: OlukoLocalizations.get(context, 'friendsRecommended'),
+            //     height: carouselSectionHeight + 10,
+            //     children: _getFriendsRecommendedCoursesList(_coursesRecommendedMap))
             : const SizedBox.shrink();
       },
     ));

@@ -34,7 +34,7 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
         onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
             arguments: {'courses': widget.myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
         title: OlukoLocalizations.get(context, 'myList'),
-        height: 300,
+        height: 230,
         children: widget.myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(widget.myListOfCourses) : []);
   }
 
