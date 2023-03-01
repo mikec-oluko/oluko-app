@@ -14,8 +14,11 @@ class UserChallengeSection extends StatefulWidget {
   final UniqueChallengesSuccess challengeState;
   final PanelController panelController;
   final bool defaultNavigation;
+  final bool isForHome;
 
-  const UserChallengeSection({this.userToDisplay, this.isCurrentUser, this.challengeState, this.panelController, this.defaultNavigation = false}) : super();
+  const UserChallengeSection(
+      {this.userToDisplay, this.isCurrentUser, this.challengeState, this.panelController, this.defaultNavigation = false, this.isForHome = false})
+      : super();
 
   @override
   State<UserChallengeSection> createState() => _UserChallengeSectionState();
@@ -37,7 +40,7 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
 
   Widget getCarouselSection(List<Widget> challengeList, String title, {bool isCompletedChallenges = false, bool isUpcomingChallenges = false}) {
     return CarouselSection(
-        height: ScreenUtils.height(context) / 3.5,
+        height: widget.isForHome ? ScreenUtils.height(context) / 3.5 : ScreenUtils.height(context) / 3,
         width: MediaQuery.of(context).size.width,
         title: title,
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),

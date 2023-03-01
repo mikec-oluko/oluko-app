@@ -41,7 +41,6 @@ class ChallengeStreamBloc extends Cubit<ChallengeStreamState> {
 
   void getStream(String userId) async {
     try {
-      emit(LoadingChallengeStream());
       subscription ??= CourseEnrollmentRepository.getUserChallengesByUserIdSubscription(userId).listen((snapshot) async {
         List<Challenge> userChallenges = [];
         snapshot.docs.forEach((doc) {

@@ -16,7 +16,9 @@ class HomeCoursesAndPeople extends StatefulWidget {
   final Map<String, UserProgress> usersProgress;
   final Function(int) onCourseChange;
   final Function(int) onCourseTap;
-  const HomeCoursesAndPeople({this.courseEnrollments, this.courseIndex, this.usersProgress, this.onCourseChange, this.onCourseTap}) : super();
+  final Function(int) onCourseDeleted;
+  const HomeCoursesAndPeople({this.courseEnrollments, this.courseIndex, this.usersProgress, this.onCourseChange, this.onCourseTap, this.onCourseDeleted})
+      : super();
 
   @override
   State<HomeCoursesAndPeople> createState() => _HomeCoursesAndPeopleState();
@@ -46,7 +48,7 @@ class _HomeCoursesAndPeopleState extends State<HomeCoursesAndPeople> {
           child: CourseCarouselGallery(
             courseEnrollments: widget.courseEnrollments,
             onCourseChange: (index) => widget.onCourseChange(index),
-            onCourseDeleted: (index) => () {},
+            onCourseDeleted: (index) => widget.onCourseDeleted(index),
             onCourseTap: (index) => widget.onCourseTap(index),
             courseIndex: widget.courseIndex,
           ),
