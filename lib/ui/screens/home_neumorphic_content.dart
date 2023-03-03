@@ -144,62 +144,65 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     if (widget.courseEnrollments.length == _activeCourses.length) {
       return Scaffold(
         backgroundColor: OlukoColors.black,
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              // if (showLogo) getLogo() else const SliverToBoxAdapter(),
-              getLogo(),
-              if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
-            ];
-          },
-          body: !_horizontalScrollingAvailable
-              ? _getCourseContentView(0, context)
-              : CarouselSlider.builder(
-                  carouselController: carouselController,
-                  itemCount: widget.courseEnrollments.length + 1,
-                  itemBuilder: (context, index) {
-                    _populateGrowListOfCourses(index);
-                    if (_growListOfCourses.length - 1 >= index) {
-                      if (_growListOfCourses[index] != null) {
-                        return _getCourseContentView(index, context);
-                      } else {
-                        return const SizedBox();
-                      }
-                    } else {
-                      return _getEnrollAndPlusButtonContent(context);
-                    }
-                  },
-                  options: CarouselOptions(
-                    disableCenter: true,
-                    enableInfiniteScroll: false,
-                    height: ScreenUtils.height(context),
-                    initialPage: widget.index ?? 0,
-                    viewportFraction: 1,
-                    onPageChanged: (index, reason) {
-                      if (index <= _activeCourses.length - 1) {
-                        courseIndex = index;
-                        if (mounted) {
-                          BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
-                        }
-                        if (!showLogo) {
-                          setState(() {
-                            showLogo = true;
-                          });
+        body: Container(
+          color: OlukoNeumorphismColors.appBackgroundColor,
+          child: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                // if (showLogo) getLogo() else const SliverToBoxAdapter(),
+                getLogo(),
+                if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+              ];
+            },
+            body: !_horizontalScrollingAvailable
+                ? _getCourseContentView(0, context)
+                : CarouselSlider.builder(
+                    carouselController: carouselController,
+                    itemCount: widget.courseEnrollments.length + 1,
+                    itemBuilder: (context, index) {
+                      _populateGrowListOfCourses(index);
+                      if (_growListOfCourses.length - 1 >= index) {
+                        if (_growListOfCourses[index] != null) {
+                          return _getCourseContentView(index, context);
+                        } else {
+                          return const SizedBox();
                         }
                       } else {
-                        courseIndex = _activeCourses.length + 1;
-                        setState(() {
-                          showLogo = false;
-                        });
-                      }
-                      if (horizontalScrollController.hasClients) {
-                        horizontalScrollController.jumpTo(
-                          index * ScreenUtils.width(context) * 0.42,
-                        );
+                        return _getEnrollAndPlusButtonContent(context);
                       }
                     },
+                    options: CarouselOptions(
+                      disableCenter: true,
+                      enableInfiniteScroll: false,
+                      height: ScreenUtils.height(context),
+                      initialPage: widget.index ?? 0,
+                      viewportFraction: 1,
+                      onPageChanged: (index, reason) {
+                        if (index <= _activeCourses.length - 1) {
+                          courseIndex = index;
+                          if (mounted) {
+                            BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                          }
+                          if (!showLogo) {
+                            setState(() {
+                              showLogo = true;
+                            });
+                          }
+                        } else {
+                          courseIndex = _activeCourses.length + 1;
+                          setState(() {
+                            showLogo = false;
+                          });
+                        }
+                        if (horizontalScrollController.hasClients) {
+                          horizontalScrollController.jumpTo(
+                            index * ScreenUtils.width(context) * 0.42,
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
+          ),
         ),
       );
     } else {

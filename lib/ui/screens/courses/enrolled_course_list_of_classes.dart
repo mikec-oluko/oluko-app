@@ -119,12 +119,12 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
             getNavigationToClass(widget.courseEnrollment, _classItemList.indexOf(item), widget.courseIndex);
           },
           child: Neumorphic(
-              margin: const EdgeInsets.all(15),
+              margin: const EdgeInsets.all(5),
               style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                 classProgress > 0,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(10),
                 child: _getClassCards(classIndex, item, CourseEnrollmentService.getClassProgress(widget.courseEnrollment, classIndex)),
               )),
         );
