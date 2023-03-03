@@ -12,6 +12,7 @@ import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -56,18 +57,21 @@ class _HiFivePageState extends State<HiFivePage> {
                         if (userProgressListState is GetUserProgressSuccess) {
                           _usersProgress = userProgressListState.usersProgress;
                         }
-                        return ListView(
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: false,
-                          children: hiFiveState.users
-                              .map(
-                                (targetUser) => _listItem(
-                                  authState.user,
-                                  targetUser,
-                                  hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
-                                ),
-                              )
-                              .toList(),
+                        return Container(
+                          color: OlukoNeumorphismColors.appBackgroundColor,
+                          child: ListView(
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries: false,
+                            children: hiFiveState.users
+                                .map(
+                                  (targetUser) => _listItem(
+                                    authState.user,
+                                    targetUser,
+                                    hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         );
                       }),
                 );
@@ -136,55 +140,63 @@ class _HiFivePageState extends State<HiFivePage> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            StoriesItem(
-              showUserProgress: true,
-              userProgress: _usersProgress[targetUser.id],
-              itemUserId: targetUser.id,
-              imageUrl: targetUser.getAvatarThumbnail(),
-              name: targetUser.firstName,
-              lastname: targetUser.lastName,
-              maxRadius: 30,
-              userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      targetUser.firstName,
-                      overflow: TextOverflow.ellipsis,
-                      style: OlukoFonts.olukoSuperBigFont(),
-                    ),
-                    Text(
-                      UserHelper.printUsername(targetUser.username, targetUser.id),
-                      overflow: TextOverflow.ellipsis,
-                      style: OlukoFonts.olukoMediumFont(),
-                    ),
-                  ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                StoriesItem(
+                  showUserProgress: true,
+                  userProgress: _usersProgress[targetUser.id],
+                  itemUserId: targetUser.id,
+                  imageUrl: targetUser.getAvatarThumbnail(),
+                  name: targetUser.firstName,
+                  lastname: targetUser.lastName,
+                  maxRadius: 30,
+                  userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                 ),
-              ),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          targetUser.firstName,
+                          overflow: TextOverflow.ellipsis,
+                          style: OlukoFonts.olukoSuperBigFont(),
+                        ),
+                        Text(
+                          UserHelper.printUsername(targetUser.username, targetUser.id),
+                          overflow: TextOverflow.ellipsis,
+                          style: OlukoFonts.olukoMediumFont(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (hiFives > 1)
+                  Text(
+                    '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
+                    style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
+                  )
+                else
+                  const SizedBox(),
+                GestureDetector(
+                  onTap: () => BlocProvider.of<HiFiveBloc>(context).sendHiFive(context, user.id, targetUser.id),
+                  child: Image.asset(
+                    'assets/profile/hiFive.png',
+                    fit: BoxFit.cover,
+                    colorBlendMode: BlendMode.lighten,
+                    height: 60,
+                    width: 60,
+                  ),
+                )
+              ],
             ),
-            if (hiFives > 1)
-              Text(
-                '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
-                style: OlukoFonts.olukoMediumFont(customColor: Colors.grey),
-              )
-            else
-              const SizedBox(),
-            GestureDetector(
-              onTap: () => BlocProvider.of<HiFiveBloc>(context).sendHiFive(context, user.id, targetUser.id),
-              child: Image.asset(
-                'assets/profile/hiFive.png',
-                fit: BoxFit.cover,
-                colorBlendMode: BlendMode.lighten,
-                height: 60,
-                width: 60,
-              ),
+            const OlukoNeumorphicDivider(
+              isForList: true,
+              isFadeOut: true,
             )
           ],
         ),
