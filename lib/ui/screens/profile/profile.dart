@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
   UserStatistics userStats;
   final String profileTitle = ProfileViewConstants.profileTitle;
   GlobalService _globalService = GlobalService();
-  final bool _showUserInformationComponent = false;
+  final bool _showUserInformationComponent = true;
 
   @override
   void initState() {

@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -73,6 +74,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   UpcomingChallengesState _challengesCardsState;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
+  Success successState;
 
   @override
   void initState() {
@@ -84,6 +86,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUser.id);
     BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
+    BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
 
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
@@ -355,11 +358,19 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                   if (state is StatisticsSuccess) {
                     userStats = state.userStats;
                   }
-                  return UserProfileInformation(
-                    userToDisplayInformation: widget.currentUser,
-                    actualRoute: ActualProfileRoute.homePage,
-                    currentUser: widget.currentUser,
-                    userStats: userStats,
+                  return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
+                    builder: (context, state) {
+                      if (state is Success) {
+                        successState = state;
+                      }
+                      return UserProfileInformation(
+                        userToDisplayInformation: widget.currentUser,
+                        actualRoute: ActualProfileRoute.homePage,
+                        currentUser: widget.currentUser,
+                        userStats: userStats,
+                        galleryState: successState,
+                      );
+                    },
                   );
                 },
               ))),
