@@ -43,6 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
   UserStatistics userStats;
   final String profileTitle = ProfileViewConstants.profileTitle;
   GlobalService _globalService = GlobalService();
+  final bool _showUserInformationComponent = false;
 
   @override
   void initState() {
@@ -61,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
           BlocProvider.of<SubscriptionContentBloc>(context).subscriptionPlatform(profileInfo.id);
         }
         BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(profileInfo.id);
-        BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
+        if (_showUserInformationComponent) BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(profileInfo.id);
         return BlocListener<UserInformationBloc, UserInformationState>(
           listener: (context, userInformationState) {
             if (userInformationState is UserInformationSuccess && userInformationState.userResponse != null) {
@@ -111,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   addRepaintBoundaries: false,
                   padding: EdgeInsets.zero,
                   children: [
-                    userInformationSection(),
+                    if (_showUserInformationComponent) userInformationSection(),
                     buildOptionsList(),
                   ],
                 )),

@@ -101,7 +101,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
             getNavigationToClass(widget.courseEnrollment, _classItemList.indexOf(item), widget.courseIndex);
           },
           child: Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
             child: _getClassCards(classIndex, item, 1),
           ));
     } else {
