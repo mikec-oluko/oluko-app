@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/oluko_bloc_exception.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -20,7 +22,10 @@ class ProfileAvatarOpenPanel extends ProfileAvatarState {}
 
 class ProfileAvatarDeleteRequested extends ProfileAvatarState {}
 
-class ProfileAvatarSuccess extends ProfileAvatarState {}
+class ProfileAvatarSuccess extends ProfileAvatarState {
+  UserResponse updatedUser;
+  ProfileAvatarSuccess({this.updatedUser});
+}
 
 class ProfileAvatarFailure extends OlukoException with ProfileAvatarState {
   ProfileAvatarFailure({ExceptionTypeEnum exceptionType, ExceptionTypeSourceEnum exceptionSource, dynamic exception})
@@ -64,8 +69,8 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         return;
       }
       emit(ProfileAvatarLoading());
-      await _profileRepository.updateProfileAvatar(image: _image);
-      emit(ProfileAvatarSuccess());
+      UserResponse userUpdated = await _profileRepository.updateProfileAvatar(image: _image);
+      emit(ProfileAvatarSuccess(updatedUser: userUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

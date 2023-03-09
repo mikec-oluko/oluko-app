@@ -156,7 +156,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   lastname: widget.userToDisplayInformation.lastName,
                   userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                 ),
-                getVisibility(widget, context, _isOwner),
+                uploadContentComponent(widget, context, _isOwner),
               ]),
               /*if (widget.userToDisplayInformation.avatar != null)
                   /*Padding(
@@ -267,7 +267,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         ).image,
                         radius: 30.0,
                       ),
-                      getVisibility(widget, context, _isOwner),
+                      uploadContentComponent(widget, context, _isOwner),
                     ]),
                   )
                 else
@@ -282,7 +282,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
                             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                       ),
-                      getVisibility(widget, context, _isOwner),
+                      uploadContentComponent(widget, context, _isOwner),
                     ]),
                   ),
                 Padding(
@@ -360,7 +360,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     }
   }
 
-  Visibility getVisibility(UserProfileInformation userProfileWidget, BuildContext context, bool isOwner) {
+  Visibility uploadContentComponent(UserProfileInformation userProfileWidget, BuildContext context, bool isOwner) {
     return Visibility(
       visible: userProfileWidget.actualRoute == ActualProfileRoute.homePage && isOwner,
       child: Positioned(
@@ -371,13 +371,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             height: 40,
             child: UploadProfileMediaMenu(
               galleryState: widget.galleryState,
-            )
-            //  TextButton(
-            //     onPressed: () {
-            //       BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
-            //     },
-            //     child: Image.asset('assets/profile/uploadImage.png')),
-            ),
+              contentFrom: UploadFrom.profileImage,
+              deleteContent: widget.currentUser.getAvatarThumbnail() != null,
+            )),
       ),
     );
   }

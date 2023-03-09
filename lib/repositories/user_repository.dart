@@ -147,7 +147,7 @@ class UserRepository {
     }
     try {
       await userReference.update(user.toJson());
-      AuthRepository().storeLoginData(user);
+      await AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(
@@ -169,7 +169,7 @@ class UserRepository {
     }
     try {
       await userReference.update(user.toJson());
-      AuthRepository().storeLoginData(user);
+      await AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(

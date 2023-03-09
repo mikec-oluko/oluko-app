@@ -11,7 +11,9 @@ import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -43,6 +45,7 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
+import 'package:oluko_app/ui/newDesignComponents/upload_profile_media_menu.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_assessments_videos_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
@@ -147,18 +150,53 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   Widget _userCoverAndProfileDetails() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          UserCoverImageComponent(
-            currentAuthUser: widget.currentUser,
-            isHomeImage: true,
+    return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
+      builder: (context, state) {
+        if (state is Success) {
+          successState = state;
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(
+                builder: (context, state) {
+                  if (state is ProfileCoverSuccess) {
+                    return UserCoverImageComponent(
+                      currentAuthUser: state.userUpdated,
+                      isHomeImage: true,
+                    );
+                  } else {
+                    return UserCoverImageComponent(
+                      currentAuthUser: widget.currentUser,
+                      isHomeImage: true,
+                    );
+                  }
+                },
+              ),
+              userInformationPanel(),
+              coverImageWidget(),
+            ],
           ),
-          userInformationPanel(),
-        ],
+        );
+      },
+    );
+  }
+
+  Positioned coverImageWidget() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height / 5,
+      right: 10,
+      child: Visibility(
+        visible: true,
+        child: Container(
+          width: 40,
+          height: 40,
+          child: UploadProfileMediaMenu(
+              galleryState: successState, contentFrom: UploadFrom.profileCoverImage, deleteContent: widget.currentUser.coverImage != null),
+        ),
       ),
     );
   }
@@ -363,12 +401,25 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                       if (state is Success) {
                         successState = state;
                       }
-                      return UserProfileInformation(
-                        userToDisplayInformation: widget.currentUser,
-                        actualRoute: ActualProfileRoute.homePage,
-                        currentUser: widget.currentUser,
-                        userStats: userStats,
-                        galleryState: successState,
+                      return BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(
+                        builder: (context, state) {
+                          if (state is ProfileAvatarSuccess) {
+                            return UserProfileInformation(
+                              userToDisplayInformation: state.updatedUser,
+                              actualRoute: ActualProfileRoute.homePage,
+                              currentUser: widget.currentUser,
+                              userStats: userStats,
+                              galleryState: successState,
+                            );
+                          }
+                          return UserProfileInformation(
+                            userToDisplayInformation: widget.currentUser,
+                            actualRoute: ActualProfileRoute.homePage,
+                            currentUser: widget.currentUser,
+                            userStats: userStats,
+                            galleryState: successState,
+                          );
+                        },
                       );
                     },
                   );
