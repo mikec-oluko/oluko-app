@@ -24,6 +24,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/helpers/oluko_exception_message.dart';
 import 'package:oluko_app/helpers/profile_helper_functions.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
@@ -50,6 +51,7 @@ import 'package:oluko_app/ui/newDesignComponents/user_assessments_videos_compone
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_section.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -78,6 +80,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   Success successState;
+  UserResponse currentUserLatestVersion;
 
   @override
   void initState() {
@@ -93,6 +96,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
+      currentUserLatestVersion = widget.currentUser;
     });
     super.initState();
   }
@@ -161,15 +165,24 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(
+              BlocConsumer<ProfileCoverImageBloc, ProfileCoverImageState>(
+                listener: (context, state) {
+                  if (state is ProfileCoverImageFailure) {
+                    AppMessages.showSnackbar(context,
+                        OlukoExceptionMessage.getExceptionMessage(exceptionType: state.exceptionType, exceptionSource: state.exceptionSource, context: context),
+                        textColor: Colors.white);
+                  }
+                },
                 builder: (context, state) {
                   if (state is ProfileCoverImageDeleted) {
-                    return _getUserCoverImageComponent(userToDisplay: state.removedCoverImageUser);
+                    currentUserLatestVersion = state.removedCoverImageUser;
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
                   }
                   if (state is ProfileCoverSuccess) {
-                    return _getUserCoverImageComponent(userToDisplay: state.userUpdated);
+                    currentUserLatestVersion = state.userUpdated;
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
                   } else {
-                    return _getUserCoverImageComponent(userToDisplay: widget.currentUser);
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
                   }
                 },
               ),
@@ -405,15 +418,26 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                       if (state is Success) {
                         successState = state;
                       }
-                      return BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(
+                      return BlocConsumer<ProfileAvatarBloc, ProfileAvatarState>(
+                        listener: (context, state) {
+                          if (state is ProfileAvatarFailure) {
+                            AppMessages.showSnackbar(
+                              context,
+                              OlukoExceptionMessage.getExceptionMessage(
+                                  exceptionType: state.exceptionType, exceptionSource: state.exceptionSource, context: context),
+                            );
+                          }
+                        },
                         builder: (context, state) {
                           if (state is ProfileAvatarDeleted) {
-                            return _getUserInformationComponent(userToDisplay: state.removedAvatarUser);
+                            currentUserLatestVersion = state.removedAvatarUser;
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
                           }
                           if (state is ProfileAvatarSuccess) {
-                            return _getUserInformationComponent(userToDisplay: state.updatedUser);
+                            currentUserLatestVersion = state.updatedUser;
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
                           } else {
-                            return _getUserInformationComponent(userToDisplay: widget.currentUser);
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
                           }
                         },
                       );
