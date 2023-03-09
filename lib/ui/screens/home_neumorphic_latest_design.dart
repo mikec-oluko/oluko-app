@@ -163,16 +163,13 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
             children: [
               BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(
                 builder: (context, state) {
+                  if (state is ProfileCoverImageDeleted) {
+                    return _getUserCoverImageComponent(userToDisplay: state.removedCoverImageUser);
+                  }
                   if (state is ProfileCoverSuccess) {
-                    return UserCoverImageComponent(
-                      currentAuthUser: state.userUpdated,
-                      isHomeImage: true,
-                    );
+                    return _getUserCoverImageComponent(userToDisplay: state.userUpdated);
                   } else {
-                    return UserCoverImageComponent(
-                      currentAuthUser: widget.currentUser,
-                      isHomeImage: true,
-                    );
+                    return _getUserCoverImageComponent(userToDisplay: widget.currentUser);
                   }
                 },
               ),
@@ -182,6 +179,13 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           ),
         );
       },
+    );
+  }
+
+  UserCoverImageComponent _getUserCoverImageComponent({@required UserResponse userToDisplay}) {
+    return UserCoverImageComponent(
+      currentAuthUser: userToDisplay,
+      isHomeImage: true,
     );
   }
 
@@ -403,28 +407,30 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                       }
                       return BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(
                         builder: (context, state) {
-                          if (state is ProfileAvatarSuccess) {
-                            return UserProfileInformation(
-                              userToDisplayInformation: state.updatedUser,
-                              actualRoute: ActualProfileRoute.homePage,
-                              currentUser: widget.currentUser,
-                              userStats: userStats,
-                              galleryState: successState,
-                            );
+                          if (state is ProfileAvatarDeleted) {
+                            return _getUserInformationComponent(userToDisplay: state.removedAvatarUser);
                           }
-                          return UserProfileInformation(
-                            userToDisplayInformation: widget.currentUser,
-                            actualRoute: ActualProfileRoute.homePage,
-                            currentUser: widget.currentUser,
-                            userStats: userStats,
-                            galleryState: successState,
-                          );
+                          if (state is ProfileAvatarSuccess) {
+                            return _getUserInformationComponent(userToDisplay: state.updatedUser);
+                          } else {
+                            return _getUserInformationComponent(userToDisplay: widget.currentUser);
+                          }
                         },
                       );
                     },
                   );
                 },
               ))),
+    );
+  }
+
+  UserProfileInformation _getUserInformationComponent({@required UserResponse userToDisplay}) {
+    return UserProfileInformation(
+      userToDisplayInformation: userToDisplay,
+      actualRoute: ActualProfileRoute.homePage,
+      currentUser: userToDisplay,
+      userStats: userStats,
+      galleryState: successState,
     );
   }
 

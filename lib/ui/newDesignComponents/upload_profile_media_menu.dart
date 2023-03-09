@@ -59,7 +59,9 @@ class _UploadProfileMediaMenuState extends State<UploadProfileMediaMenu> {
           ),
           if (widget.deleteContent)
             PopupMenuItem(
-              onTap: () {},
+              onTap: () {
+                deleteContentAction(context);
+              },
               padding: EdgeInsets.zero,
               child: Container(
                   color: OlukoNeumorphismColors.appBackgroundColor,
@@ -130,6 +132,19 @@ class _UploadProfileMediaMenuState extends State<UploadProfileMediaMenu> {
         BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(
           uploadedFrom: DeviceContentFrom.gallery,
         );
+        break;
+      default:
+        return;
+    }
+  }
+
+  void deleteContentAction(BuildContext context) {
+    switch (widget.contentFrom) {
+      case UploadFrom.profileImage:
+        BlocProvider.of<ProfileAvatarBloc>(context).removeProfilePicture();
+        break;
+      case UploadFrom.profileCoverImage:
+        BlocProvider.of<ProfileCoverImageBloc>(context).removeProfileCoverImage();
         break;
       default:
         return;

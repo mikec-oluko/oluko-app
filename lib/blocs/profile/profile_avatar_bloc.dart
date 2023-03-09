@@ -14,7 +14,10 @@ abstract class ProfileAvatarState {}
 
 class ProfileAvatarLoading extends ProfileAvatarState {}
 
-class ProfileAvatarDeleted extends ProfileAvatarState {}
+class ProfileAvatarDeleted extends ProfileAvatarState {
+  UserResponse removedAvatarUser;
+  ProfileAvatarDeleted({this.removedAvatarUser});
+}
 
 class ProfileAvatarDefault extends ProfileAvatarState {}
 
@@ -83,8 +86,8 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
 
   Future<void> removeProfilePicture() async {
     try {
-      await _profileRepository.updateProfileAvatar(isDeleteRequest: true);
-      emit(ProfileAvatarDeleted());
+      UserResponse userRemovedAvatar = await _profileRepository.updateProfileAvatar(isDeleteRequest: true);
+      emit(ProfileAvatarDeleted(removedAvatarUser: userRemovedAvatar));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
