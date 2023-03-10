@@ -238,8 +238,12 @@ class _State extends State<StoriesItem> {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname, circleColor: widget.color))
-          : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
+              child: widget.isLoadingState
+                  ? OlukoCircularProgressIndicator()
+                  : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname, circleColor: widget.color))
+          : widget.isLoadingState
+              ? OlukoCircularProgressIndicator()
+              : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
     }
   }
 
