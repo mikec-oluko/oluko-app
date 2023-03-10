@@ -304,6 +304,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       if (state is ChallengesDefaultState) {
         _activeChallenges = [];
         _listOfChallenges = [];
+        _challengesCardsState = null;
       }
       return BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
         builder: (context, state) {
@@ -471,6 +472,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       if (courseSubscriptionState is CourseSubscriptionSuccess) {
         _courses = courseSubscriptionState.values;
       }
+      if (courseSubscriptionState is CourseDisposeState) {
+        _courses = [];
+      }
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -487,6 +491,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return Container(
       child: BlocBuilder<LikedCoursesBloc, LikedCourseState>(builder: (context, state) {
         Map<CourseCategory, List<Course>> myListOfCourses = {};
+        if (state is LikedCoursesDispose) {
+          myListOfCourses = null;
+        }
         if (state is CourseLikedListSuccess) {
           CourseCategory _myListCategory = state.myLikedCourses;
           if (_myListCategory != null) {
