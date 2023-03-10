@@ -8,7 +8,7 @@ class ProfileRoutes {
         return routeLabels[RouteEnum.profileMyAccount];
       case ProfileOptionsTitle.assessmentVideos:
         return routeLabels[RouteEnum.assessmentVideos];
-      case ProfileOptionsTitle.transformationJourney:
+      case ProfileOptionsTitle.transformationPhotos:
         return routeLabels[RouteEnum.profileTransformationJourney];
       case ProfileOptionsTitle.subscription:
         return routeLabels[RouteEnum.profileSubscription];

@@ -15,6 +15,7 @@ class ProfileViewConstants {
   static const profileOptionsMyAccount = "My Account";
   static const profileOptionsAssessmentVideos = "Assessment Videos";
   static const profileOptionsTransformationJourney = "Transformation Journey";
+  static const profileOptionsTransformationPhotos = "Transformation Photos";
   static const profileOptionsSubscription = "Subscription";
   static const profileOptionsSettings = "Settings";
   static const profileOptionsHelpAndSupport = "Help and Support";

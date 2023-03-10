@@ -197,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     case ProfileOptionsTitle.settings:
                       Navigator.pushNamed(context, routeLabels[RouteEnum.profileSettings], arguments: {'profileInfo': profileInfo}).then((value) => onGoBack());
                       break;
-                    case ProfileOptionsTitle.transformationJourney:
+                    case ProfileOptionsTitle.transformationPhotos:
                       Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
                           arguments: {'profileInfo': profileInfo, 'viewAllPage': false});
                       break;
