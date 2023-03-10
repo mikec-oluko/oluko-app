@@ -36,8 +36,16 @@ class UserProfileInformation extends StatefulWidget {
   final UserStatistics userStats;
   final bool minimalRequested;
   final Success galleryState;
+  final bool isLoadingState;
   const UserProfileInformation(
-      {this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats, this.minimalRequested = false, this.galleryState})
+      {this.userToDisplayInformation,
+      this.actualRoute,
+      this.currentUser,
+      this.connectStatus,
+      this.userStats,
+      this.minimalRequested = false,
+      this.isLoadingState = false,
+      this.galleryState})
       : super();
 
   @override
@@ -155,6 +163,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   name: widget.userToDisplayInformation.firstName,
                   lastname: widget.userToDisplayInformation.lastName,
                   userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                  isLoadingState: widget.isLoadingState,
                 ),
                 uploadContentComponent(widget, context, _isOwner),
               ]),

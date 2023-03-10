@@ -3,12 +3,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 
 class UserCoverImageComponent extends StatefulWidget {
   final UserResponse currentAuthUser;
   final bool isHomeImage;
+  final bool isLoadingState;
 
-  const UserCoverImageComponent({this.currentAuthUser, this.isHomeImage = false}) : super();
+  const UserCoverImageComponent({this.currentAuthUser, this.isHomeImage = false, this.isLoadingState = false}) : super();
 
   @override
   State<UserCoverImageComponent> createState() => _UserCoverImageComponentState();
@@ -35,18 +37,24 @@ class _UserCoverImageComponentState extends State<UserCoverImageComponent> {
       },
       blendMode: BlendMode.dstIn,
       child: Stack(children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: widget.isHomeImage ? MediaQuery.of(context).size.height / 2 : MediaQuery.of(context).size.height / 3,
-          child: widget.currentAuthUser.coverImage == null
-              ? defaultWidgetNoContent
-              : Image(
-                  image: CachedNetworkImageProvider(widget.currentAuthUser.coverImage),
-                  fit: BoxFit.cover,
-                  colorBlendMode: BlendMode.colorBurn,
-                  height: MediaQuery.of(context).size.height,
-                ),
-        ),
+        if (widget.isLoadingState)
+          Padding(
+            padding: EdgeInsets.only(bottom: widget.isHomeImage ? MediaQuery.of(context).size.height / 4 : MediaQuery.of(context).size.height / 6),
+            child: OlukoCircularProgressIndicator(),
+          )
+        else
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: widget.isHomeImage ? MediaQuery.of(context).size.height / 2 : MediaQuery.of(context).size.height / 3,
+            child: widget.currentAuthUser.coverImage == null
+                ? defaultWidgetNoContent
+                : Image(
+                    image: CachedNetworkImageProvider(widget.currentAuthUser.coverImage),
+                    fit: BoxFit.cover,
+                    colorBlendMode: BlendMode.colorBurn,
+                    height: MediaQuery.of(context).size.height,
+                  ),
+          ),
         if (OlukoNeumorphism.isNeumorphismDesign && !widget.isHomeImage)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),

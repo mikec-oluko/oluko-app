@@ -174,6 +174,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                   }
                 },
                 builder: (context, state) {
+                  if (state is ProfileCoverImageLoading) {
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion, isLoadingState: true);
+                  }
                   if (state is ProfileCoverImageDeleted) {
                     currentUserLatestVersion = state.removedCoverImageUser;
                     return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
@@ -195,10 +198,11 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     );
   }
 
-  UserCoverImageComponent _getUserCoverImageComponent({@required UserResponse userToDisplay}) {
+  UserCoverImageComponent _getUserCoverImageComponent({@required UserResponse userToDisplay, bool isLoadingState = false}) {
     return UserCoverImageComponent(
       currentAuthUser: userToDisplay,
       isHomeImage: true,
+      isLoadingState: isLoadingState,
     );
   }
 
@@ -429,6 +433,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                           }
                         },
                         builder: (context, state) {
+                          if (state is ProfileAvatarLoading) {
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion, isLoadingState: true);
+                          }
                           if (state is ProfileAvatarDeleted) {
                             currentUserLatestVersion = state.removedAvatarUser;
                             return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
@@ -448,13 +455,14 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     );
   }
 
-  UserProfileInformation _getUserInformationComponent({@required UserResponse userToDisplay}) {
+  UserProfileInformation _getUserInformationComponent({@required UserResponse userToDisplay, bool isLoadingState = false}) {
     return UserProfileInformation(
       userToDisplayInformation: userToDisplay,
       actualRoute: ActualProfileRoute.homePage,
       currentUser: userToDisplay,
       userStats: userStats,
       galleryState: successState,
+      isLoadingState: isLoadingState,
     );
   }
 
