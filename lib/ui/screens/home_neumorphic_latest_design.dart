@@ -51,6 +51,7 @@ import 'package:oluko_app/ui/newDesignComponents/user_assessments_videos_compone
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_section.dart';
+import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -81,6 +82,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   List<TaskSubmission> _assessmentVideosContent = [];
   Success successState;
   UserResponse currentUserLatestVersion;
+  bool videoSeen = false;
 
   @override
   void initState() {
@@ -103,47 +105,56 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
-      // buildWhen: (previous, current) => previous != current,
-      builder: (context, state) {
-        if (state is CourseEnrollmentsByUserStreamSuccess) {
-          _courseEnrollmentList = state.courseEnrollments;
-          _listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
-          BlocProvider.of<UpcomingChallengesBloc>(context)
-              .getUniqueChallengeCards(userId: widget.currentUser.id, listOfChallenges: _listOfChallenges, userRequested: widget.currentUser);
-        }
-        return Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return _stories(widget.authState);
-            },
-            body: Container(
-              color: OlukoNeumorphismColors.appBackgroundColor,
-              constraints: const BoxConstraints.expand(),
-              child: ListView(
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
-                clipBehavior: Clip.none,
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                children: [
-                  _userCoverAndProfileDetails(),
-                  _enrolledCoursesAndPeople(),
-                  myListOfCoursesAndFriendsRecommended(),
-                  _challengesSection(),
-                  _transformationPhotos(),
-                  _assessmentVideos(),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    width: MediaQuery.of(context).size.width,
-                  )
-                ],
+    if (!videoSeen) {
+      return WelcomeVideoFirstTimeLogin(
+        videoSeen: (value) {
+          setState(() {
+            videoSeen = value;
+          });
+        },
+      );
+    } else {
+      return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+        builder: (context, state) {
+          if (state is CourseEnrollmentsByUserStreamSuccess) {
+            _courseEnrollmentList = state.courseEnrollments;
+            _listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
+            BlocProvider.of<UpcomingChallengesBloc>(context)
+                .getUniqueChallengeCards(userId: widget.currentUser.id, listOfChallenges: _listOfChallenges, userRequested: widget.currentUser);
+          }
+          return Scaffold(
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return _stories(widget.authState);
+              },
+              body: Container(
+                color: OlukoNeumorphismColors.appBackgroundColor,
+                constraints: const BoxConstraints.expand(),
+                child: ListView(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  clipBehavior: Clip.none,
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  children: [
+                    _userCoverAndProfileDetails(),
+                    _enrolledCoursesAndPeople(),
+                    myListOfCoursesAndFriendsRecommended(),
+                    _challengesSection(),
+                    _transformationPhotos(),
+                    _assessmentVideos(),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width,
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
   }
 
   List<Widget> _stories(AuthSuccess authState) {
