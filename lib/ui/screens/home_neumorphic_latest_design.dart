@@ -38,6 +38,7 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -56,6 +57,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
@@ -105,11 +107,25 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   @override
   Widget build(BuildContext context) {
-    if (!videoSeen) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccess) {
+          currentUserLatestVersion = state.user;
+        }
+        return getHomeContent(context);
+      },
+    );
+  }
+
+  StatefulWidget getHomeContent(BuildContext context) {
+    if (currentUserLatestVersion.firstLoginAt == null && _courseEnrollmentList.isEmpty) {
       return WelcomeVideoFirstTimeLogin(
         videoSeen: (value) {
           setState(() {
             videoSeen = value;
+            if (currentUserLatestVersion.firstLoginAt == null) {
+              BlocProvider.of<AuthBloc>(context).storeFirstLoginDate();
+            }
           });
         },
       );

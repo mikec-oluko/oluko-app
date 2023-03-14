@@ -178,7 +178,8 @@ class _WelcomeVideoFirstTimeLoginState extends State<WelcomeVideoFirstTimeLogin>
             useBorder: true,
             title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
-              Navigator.pushNamed(
+              BlocProvider.of<AuthBloc>(context).storeFirstLoginDate();
+              Navigator.popAndPushNamed(
                 context,
                 routeLabels[RouteEnum.courses],
                 arguments: {

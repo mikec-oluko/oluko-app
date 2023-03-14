@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -337,6 +338,15 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       return false;
     }
+  }
+
+  Future<void> storeFirstLoginDate() async {
+    final UserResponse currentUser = await _authRepository.retrieveLoginData();
+    final loggedUser = AuthRepository.getLoggedUser();
+    Timestamp firstLoginDate = Timestamp.now();
+    final UserResponse userStoredFirstLogin = await _userRepository.saveUserFirstLoginDate(currentUser, firstLoginDate);
+    _authRepository.storeLoginData(userStoredFirstLogin);
+    emit(AuthSuccess(user: userStoredFirstLogin, firebaseUser: loggedUser));
   }
 
   void updateAuthSuccess(UserResponse userResponse, User firebaseUser) {

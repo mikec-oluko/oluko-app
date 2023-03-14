@@ -7,7 +7,6 @@ class GlobalService with ChangeNotifier {
   factory GlobalService() => _instance;
 
   bool _videoProcessing;
-  bool _showWelcomeVideoInHome;
   bool _comesFromCoach;
   bool _hasInternetConnection;
   bool _videoHlsIsActive;
@@ -22,12 +21,9 @@ class GlobalService with ChangeNotifier {
     _videoHlsIsActive = true;
     _showUserLocation = false;
     _showUserLocationOnRegister = true;
-    _showWelcomeVideoInHome = true;
   }
 
   bool get videoProcessing => _videoProcessing;
-
-  bool get showWelcomeVideoInHome => _showWelcomeVideoInHome;
 
   bool get showUserLocation => _showUserLocation;
 
@@ -40,11 +36,6 @@ class GlobalService with ChangeNotifier {
   bool get comesFromCoach => _comesFromCoach;
 
   set comesFromCoach(bool value) => _comesFromCoach = value;
-
-  set welcomeVideoInHome(bool value) {
-    _showWelcomeVideoInHome = value;
-    notifyListeners();
-  }
 
   bool get hasInternetConnection => _hasInternetConnection;
 

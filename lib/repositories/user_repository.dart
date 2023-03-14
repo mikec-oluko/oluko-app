@@ -236,6 +236,22 @@ class UserRepository {
     }
   }
 
+  Future<UserResponse> saveUserFirstLoginDate(UserResponse user, Timestamp firstLoginDate) async {
+    final DocumentReference<Object> userReference = getUserReference(user.id);
+    user.firstLoginAt = firstLoginDate;
+    try {
+      await userReference.update(user.toJson());
+      AuthRepository().storeLoginData(user);
+      return user;
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
   void saveToken(String userId, String token) {
     FirebaseFirestore.instance
         .collection('projects')
