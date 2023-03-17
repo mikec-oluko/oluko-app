@@ -241,7 +241,7 @@ class UserRepository {
     user.firstLoginAt = firstLoginDate;
     try {
       await userReference.update(user.toJson());
-      AuthRepository().storeLoginData(user);
+      await AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(

@@ -5,6 +5,7 @@ class UserDto {
   UserDto.fromUserResponse(UserResponse userReponse) {
     createdAt = userReponse.createdAt?.millisecondsSinceEpoch;
     updatedAt = userReponse.updatedAt?.millisecondsSinceEpoch;
+    firstLoginAt = userReponse.firstLoginAt?.millisecondsSinceEpoch;
     firstName = userReponse.firstName;
     lastName = userReponse.lastName;
     email = userReponse.email;
@@ -53,6 +54,7 @@ class UserDto {
     Timestamp createdAt,
     this.createdBy,
     Timestamp updatedAt,
+    Timestamp firstLoginAt,
     this.updatedBy,
     this.isHidden,
     this.isDeleted,
@@ -60,6 +62,7 @@ class UserDto {
     this.createdAt = createdAt?.millisecondsSinceEpoch;
     this.updatedAt = updatedAt?.millisecondsSinceEpoch;
     this.assessmentsCompletedAt = assessmentsCompletedAt?.millisecondsSinceEpoch;
+    this.firstLoginAt = firstLoginAt?.millisecondsSinceEpoch;
   }
 
   String firstName, lastName, email, username, firebaseId, avatar, avatarThumbnail, coverImage, city, state, country;
@@ -72,6 +75,7 @@ class UserDto {
   int createdAt;
   String createdBy;
   int updatedAt;
+  int firstLoginAt;
   String updatedBy;
   bool isDeleted = false;
   bool isHidden = false;
@@ -98,6 +102,7 @@ class UserDto {
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? -1 : double.tryParse((json['current_plan'] as num)?.toString()),
       assessmentsCompletedAt: json['assessments_completed_at'] as Timestamp,
+      firstLoginAt: json['first_login_at'] as Timestamp,
       id: json['id']?.toString(),
       createdAt: json['created_at'] as Timestamp,
       createdBy: json['created_by']?.toString(),
@@ -131,6 +136,7 @@ class UserDto {
       'updated_by': updatedBy,
       'created_at': createdAt,
       'created_by': createdBy,
+      'first_login_at': firstLoginAt,
       'show_recording_alert': showRecordingAlert ?? true,
       'id': id,
       'is_deleted': isDeleted,

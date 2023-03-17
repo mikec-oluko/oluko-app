@@ -111,8 +111,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       builder: (context, state) {
         if (state is AuthSuccess) {
           currentUserLatestVersion = state.user;
+          return getHomeContent(context);
+        } else {
+          return OlukoCircularProgressIndicator();
         }
-        return getHomeContent(context);
       },
     );
   }
