@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
@@ -236,9 +237,18 @@ class UserRepository {
     }
   }
 
-  Future<UserResponse> saveUserFirstLoginDate(UserResponse user, Timestamp firstLoginDate) async {
+  Future<UserResponse> saveUserFirstIteractions(UserResponse user, Timestamp iteractionDate, UserInteractionEnum userInteraction) async {
     final DocumentReference<Object> userReference = getUserReference(user.id);
-    user.firstLoginAt = firstLoginDate;
+    switch (userInteraction) {
+      case UserInteractionEnum.login:
+        user.firstLoginAt = iteractionDate;
+        break;
+      case UserInteractionEnum.firstAppInteraction:
+        user.firstAppInteractionAt = iteractionDate;
+        break;
+      default:
+    }
+
     try {
       await userReference.update(user.toJson());
       await AuthRepository().storeLoginData(user);

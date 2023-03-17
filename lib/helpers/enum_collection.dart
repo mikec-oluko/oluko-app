@@ -82,3 +82,5 @@ Map<FAQCategoriesEnum, String> fAQCategories = {
 };
 
 enum EntityTypeEnum { course, classes, segment, movement, mentoredVideo, sentVideo }
+
+enum UserInteractionEnum { login, firstAppInteraction }

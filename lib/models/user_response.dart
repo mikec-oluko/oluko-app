@@ -23,6 +23,7 @@ class UserResponse extends Base {
       this.assessmentsCompletedAt,
       this.showRecordingAlert,
       this.firstLoginAt,
+      this.firstAppInteractionAt,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -41,6 +42,7 @@ class UserResponse extends Base {
   bool showRecordingAlert;
   Timestamp assessmentsCompletedAt;
   Timestamp firstLoginAt;
+  Timestamp firstAppInteractionAt;
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     try {
@@ -64,6 +66,7 @@ class UserResponse extends Base {
         currentPlan: json['current_plan'] == null ? -1 : double.tryParse((json['current_plan'] as num)?.toString()),
         assessmentsCompletedAt: getTimestamp(json['assessments_completed_at']),
         firstLoginAt: getTimestamp(json['first_login_at']),
+        firstAppInteractionAt: getTimestamp(json['first_app_interaction_at']),
       );
       // Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
       userResponse.setBase(json);
@@ -99,7 +102,8 @@ class UserResponse extends Base {
       'privacy': privacy == null ? 0 : privacy,
       'current_plan': currentPlan,
       'assessments_completed_at': assessmentsCompletedAt,
-      'first_login_at': firstLoginAt
+      'first_login_at': firstLoginAt,
+      'first_app_interaction_at': firstAppInteractionAt
     };
     userReponseJson.addEntries(super.toJson().entries);
     return userReponseJson;

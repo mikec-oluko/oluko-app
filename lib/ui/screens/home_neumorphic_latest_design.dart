@@ -111,7 +111,14 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       builder: (context, state) {
         if (state is AuthSuccess) {
           currentUserLatestVersion = state.user;
-          return getHomeContent(context);
+          return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+            builder: (context, state) {
+              if (state is CourseEnrollmentsByUserStreamSuccess) {
+                _courseEnrollmentList = state.courseEnrollments;
+              }
+              return getHomeContent(context);
+            },
+          );
         } else {
           return OlukoCircularProgressIndicator();
         }
@@ -120,13 +127,13 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   StatefulWidget getHomeContent(BuildContext context) {
-    if (currentUserLatestVersion.firstLoginAt == null && _courseEnrollmentList.isEmpty) {
+    if (currentUserLatestVersion.firstAppInteractionAt == null && _courseEnrollmentList.isEmpty) {
       return WelcomeVideoFirstTimeLogin(
         videoSeen: (value) {
           setState(() {
             videoSeen = value;
-            if (currentUserLatestVersion.firstLoginAt == null) {
-              BlocProvider.of<AuthBloc>(context).storeFirstLoginDate();
+            if (currentUserLatestVersion.firstAppInteractionAt == null) {
+              BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
             }
           });
         },
