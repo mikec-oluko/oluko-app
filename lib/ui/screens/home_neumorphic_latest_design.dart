@@ -10,7 +10,10 @@ import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -21,6 +24,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/helpers/oluko_exception_message.dart';
 import 'package:oluko_app/helpers/profile_helper_functions.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
@@ -34,6 +38,7 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -42,13 +47,17 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
+import 'package:oluko_app/ui/newDesignComponents/upload_profile_media_menu.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_assessments_videos_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_cover_image_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_section.dart';
+import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
@@ -73,6 +82,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   UpcomingChallengesState _challengesCardsState;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
+  Success successState;
+  UserResponse currentUserLatestVersion;
+  bool videoSeen = false;
 
   @override
   void initState() {
@@ -84,56 +96,90 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<LikedCoursesBloc>(context).getStreamOfLikedCourses(userId: widget.currentUser.id);
     BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
+    BlocProvider.of<GalleryVideoBloc>(context).getFirstImageFromGalley();
 
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
+      currentUserLatestVersion = widget.currentUser;
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
-      // buildWhen: (previous, current) => previous != current,
+    return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state is CourseEnrollmentsByUserStreamSuccess) {
-          _courseEnrollmentList = state.courseEnrollments;
-          _listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
-          BlocProvider.of<UpcomingChallengesBloc>(context)
-              .getUniqueChallengeCards(userId: widget.currentUser.id, listOfChallenges: _listOfChallenges, userRequested: widget.currentUser);
-        }
-        return Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return _stories(widget.authState);
+        if (state is AuthSuccess) {
+          currentUserLatestVersion = state.user;
+          return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+            builder: (context, state) {
+              if (state is CourseEnrollmentsByUserStreamSuccess) {
+                _courseEnrollmentList = state.courseEnrollments;
+              }
+              return getHomeContent(context);
             },
-            body: Container(
-              color: OlukoNeumorphismColors.appBackgroundColor,
-              constraints: const BoxConstraints.expand(),
-              child: ListView(
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
-                clipBehavior: Clip.none,
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                children: [
-                  _userCoverAndProfileDetails(),
-                  _enrolledCoursesAndPeople(),
-                  myListOfCoursesAndFriendsRecommended(),
-                  _challengesSection(),
-                  _transformationPhotos(),
-                  _assessmentVideos(),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    width: MediaQuery.of(context).size.width,
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
+          );
+        } else {
+          return OlukoCircularProgressIndicator();
+        }
       },
     );
+  }
+
+  StatefulWidget getHomeContent(BuildContext context) {
+    if (currentUserLatestVersion.firstAppInteractionAt == null && _courseEnrollmentList.isEmpty) {
+      return WelcomeVideoFirstTimeLogin(
+        videoSeen: (value) {
+          setState(() {
+            videoSeen = value;
+            if (currentUserLatestVersion.firstAppInteractionAt == null) {
+              BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+            }
+          });
+        },
+      );
+    } else {
+      return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+        builder: (context, state) {
+          if (state is CourseEnrollmentsByUserStreamSuccess) {
+            _courseEnrollmentList = state.courseEnrollments;
+            _listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
+            BlocProvider.of<UpcomingChallengesBloc>(context)
+                .getUniqueChallengeCards(userId: widget.currentUser.id, listOfChallenges: _listOfChallenges, userRequested: widget.currentUser);
+          }
+          return Scaffold(
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return _stories(widget.authState);
+              },
+              body: Container(
+                color: OlukoNeumorphismColors.appBackgroundColor,
+                constraints: const BoxConstraints.expand(),
+                child: ListView(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  clipBehavior: Clip.none,
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  children: [
+                    _userCoverAndProfileDetails(),
+                    _enrolledCoursesAndPeople(),
+                    myListOfCoursesAndFriendsRecommended(),
+                    _challengesSection(),
+                    _transformationPhotos(),
+                    _assessmentVideos(),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
 
   List<Widget> _stories(AuthSuccess authState) {
@@ -144,18 +190,70 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   Widget _userCoverAndProfileDetails() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          UserCoverImageComponent(
-            currentAuthUser: widget.currentUser,
-            isHomeImage: true,
+    return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
+      builder: (context, state) {
+        if (state is Success) {
+          successState = state;
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              BlocConsumer<ProfileCoverImageBloc, ProfileCoverImageState>(
+                listener: (context, state) {
+                  if (state is ProfileCoverImageFailure) {
+                    AppMessages.showSnackbar(context,
+                        OlukoExceptionMessage.getExceptionMessage(exceptionType: state.exceptionType, exceptionSource: state.exceptionSource, context: context),
+                        textColor: Colors.white);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is ProfileCoverImageLoading) {
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion, isLoadingState: true);
+                  }
+                  if (state is ProfileCoverImageDeleted) {
+                    currentUserLatestVersion = state.removedCoverImageUser;
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
+                  }
+                  if (state is ProfileCoverSuccess) {
+                    currentUserLatestVersion = state.userUpdated;
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
+                  } else {
+                    return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
+                  }
+                },
+              ),
+              userInformationPanel(),
+              coverImageWidget(),
+            ],
           ),
-          userInformationPanel(),
-        ],
+        );
+      },
+    );
+  }
+
+  UserCoverImageComponent _getUserCoverImageComponent({@required UserResponse userToDisplay, bool isLoadingState = false}) {
+    return UserCoverImageComponent(
+      currentAuthUser: userToDisplay,
+      isHomeImage: true,
+      isLoadingState: isLoadingState,
+    );
+  }
+
+  Positioned coverImageWidget() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height / 5,
+      right: 10,
+      child: Visibility(
+        visible: true,
+        child: Container(
+          width: 40,
+          height: 40,
+          child: UploadProfileMediaMenu(
+              galleryState: successState, contentFrom: UploadFrom.profileCoverImage, deleteContent: widget.currentUser.coverImage != null),
+        ),
       ),
     );
   }
@@ -242,6 +340,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       if (state is ChallengesDefaultState) {
         _activeChallenges = [];
         _listOfChallenges = [];
+        _challengesCardsState = null;
       }
       return BlocBuilder<UpcomingChallengesBloc, UpcomingChallengesState>(
         builder: (context, state) {
@@ -355,14 +454,52 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                   if (state is StatisticsSuccess) {
                     userStats = state.userStats;
                   }
-                  return UserProfileInformation(
-                    userToDisplayInformation: widget.currentUser,
-                    actualRoute: ActualProfileRoute.homePage,
-                    currentUser: widget.currentUser,
-                    userStats: userStats,
+                  return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
+                    builder: (context, state) {
+                      if (state is Success) {
+                        successState = state;
+                      }
+                      return BlocConsumer<ProfileAvatarBloc, ProfileAvatarState>(
+                        listener: (context, state) {
+                          if (state is ProfileAvatarFailure) {
+                            AppMessages.showSnackbar(
+                              context,
+                              OlukoExceptionMessage.getExceptionMessage(
+                                  exceptionType: state.exceptionType, exceptionSource: state.exceptionSource, context: context),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is ProfileAvatarLoading) {
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion, isLoadingState: true);
+                          }
+                          if (state is ProfileAvatarDeleted) {
+                            currentUserLatestVersion = state.removedAvatarUser;
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+                          }
+                          if (state is ProfileAvatarSuccess) {
+                            currentUserLatestVersion = state.updatedUser;
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+                          } else {
+                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+                          }
+                        },
+                      );
+                    },
                   );
                 },
               ))),
+    );
+  }
+
+  UserProfileInformation _getUserInformationComponent({@required UserResponse userToDisplay, bool isLoadingState = false}) {
+    return UserProfileInformation(
+      userToDisplayInformation: userToDisplay,
+      actualRoute: ActualProfileRoute.homePage,
+      currentUser: userToDisplay,
+      userStats: userStats,
+      galleryState: successState,
+      isLoadingState: isLoadingState,
     );
   }
 
@@ -370,6 +507,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return BlocBuilder<CourseSubscriptionBloc, CourseSubscriptionState>(builder: (context, courseSubscriptionState) {
       if (courseSubscriptionState is CourseSubscriptionSuccess) {
         _courses = courseSubscriptionState.values;
+      }
+      if (courseSubscriptionState is CourseDisposeState) {
+        _courses = [];
       }
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -387,6 +527,9 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return Container(
       child: BlocBuilder<LikedCoursesBloc, LikedCourseState>(builder: (context, state) {
         Map<CourseCategory, List<Course>> myListOfCourses = {};
+        if (state is LikedCoursesDispose) {
+          myListOfCourses = null;
+        }
         if (state is CourseLikedListSuccess) {
           CourseCategory _myListCategory = state.myLikedCourses;
           if (_myListCategory != null) {

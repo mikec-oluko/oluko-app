@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/user_response.dart';
 
+// 'first_app_interaction_at': firstAppInteractionAt
+
 class UserDto {
   UserDto.fromUserResponse(UserResponse userReponse) {
     createdAt = userReponse.createdAt?.millisecondsSinceEpoch;
     updatedAt = userReponse.updatedAt?.millisecondsSinceEpoch;
+    firstLoginAt = userReponse.firstLoginAt?.millisecondsSinceEpoch;
+    firstAppInteractionAt = userReponse.firstAppInteractionAt?.millisecondsSinceEpoch;
     firstName = userReponse.firstName;
     lastName = userReponse.lastName;
     email = userReponse.email;
@@ -53,6 +57,8 @@ class UserDto {
     Timestamp createdAt,
     this.createdBy,
     Timestamp updatedAt,
+    Timestamp firstLoginAt,
+    Timestamp firstAppInteractionAt,
     this.updatedBy,
     this.isHidden,
     this.isDeleted,
@@ -60,6 +66,8 @@ class UserDto {
     this.createdAt = createdAt?.millisecondsSinceEpoch;
     this.updatedAt = updatedAt?.millisecondsSinceEpoch;
     this.assessmentsCompletedAt = assessmentsCompletedAt?.millisecondsSinceEpoch;
+    this.firstLoginAt = firstLoginAt?.millisecondsSinceEpoch;
+    this.firstAppInteractionAt = firstAppInteractionAt?.millisecondsSinceEpoch;
   }
 
   String firstName, lastName, email, username, firebaseId, avatar, avatarThumbnail, coverImage, city, state, country;
@@ -72,6 +80,8 @@ class UserDto {
   int createdAt;
   String createdBy;
   int updatedAt;
+  int firstLoginAt;
+  int firstAppInteractionAt;
   String updatedBy;
   bool isDeleted = false;
   bool isHidden = false;
@@ -98,6 +108,8 @@ class UserDto {
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? -1 : double.tryParse((json['current_plan'] as num)?.toString()),
       assessmentsCompletedAt: json['assessments_completed_at'] as Timestamp,
+      firstLoginAt: json['first_login_at'] as Timestamp,
+      firstAppInteractionAt: json['first_app_interaction_at'] as Timestamp,
       id: json['id']?.toString(),
       createdAt: json['created_at'] as Timestamp,
       createdBy: json['created_by']?.toString(),
@@ -131,6 +143,8 @@ class UserDto {
       'updated_by': updatedBy,
       'created_at': createdAt,
       'created_by': createdBy,
+      'first_login_at': firstLoginAt,
+      'first_app_interaction_at': firstAppInteractionAt,
       'show_recording_alert': showRecordingAlert ?? true,
       'id': id,
       'is_deleted': isDeleted,

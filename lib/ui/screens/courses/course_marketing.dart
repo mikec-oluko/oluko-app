@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -358,6 +359,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Future<void> enrollAction(BuildContext context) async {
     if (_disableAction == false) {
+      if (_userState.user.firstAppInteractionAt == null) {
+        BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+      }
       BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
       if (!widget.isCoachRecommendation) {
         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
@@ -385,7 +389,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
               title: OlukoLocalizations.get(context, 'enroll'),
               onPressed: () {
                 if (_disableAction == false) {
+                  if (_userState.user.firstAppInteractionAt == null) {
+                    BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                  }
                   BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+
                   if (!widget.isCoachRecommendation) {
                     BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                   }
@@ -398,6 +406,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
               title: OlukoLocalizations.get(context, 'enroll'),
               onPressed: () {
                 if (_disableAction == false) {
+                  if (_userState.user.firstAppInteractionAt == null) {
+                    BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                  }
                   BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                   if (!widget.isCoachRecommendation) {
                     BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);

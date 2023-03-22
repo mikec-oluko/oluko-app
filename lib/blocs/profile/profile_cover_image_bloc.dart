@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
@@ -16,9 +17,15 @@ class ProfileCoverImageLoading extends ProfileCoverImageState {}
 
 class ProfileCoverImageDefault extends ProfileCoverImageState {}
 
-class ProfileCoverImageDeleted extends ProfileCoverImageState {}
+class ProfileCoverImageDeleted extends ProfileCoverImageState {
+  UserResponse removedCoverImageUser;
+  ProfileCoverImageDeleted({this.removedCoverImageUser});
+}
 
-class ProfileCoverSuccess extends ProfileCoverImageState {}
+class ProfileCoverSuccess extends ProfileCoverImageState {
+  UserResponse userUpdated;
+  ProfileCoverSuccess({this.userUpdated});
+}
 
 class ProfileCoverDeleteRequested extends ProfileCoverImageState {}
 
@@ -63,8 +70,8 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         return;
       }
       emit(ProfileCoverImageLoading());
-      await _profileRepository.uploadProfileCoverImage(image: _image);
-      emit(ProfileCoverSuccess());
+      UserResponse userUpdatedCoverImage = await _profileRepository.uploadProfileCoverImage(image: _image);
+      emit(ProfileCoverSuccess(userUpdated: userUpdatedCoverImage));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -86,8 +93,8 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
 
   Future<void> removeProfileCoverImage() async {
     try {
-      await _profileRepository.uploadProfileCoverImage(isDeleteRequested: true);
-      emit(ProfileCoverImageDeleted());
+      UserResponse userRemovedCoverImage = await _profileRepository.uploadProfileCoverImage(isDeleteRequested: true);
+      emit(ProfileCoverImageDeleted(removedCoverImageUser: userRemovedCoverImage));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

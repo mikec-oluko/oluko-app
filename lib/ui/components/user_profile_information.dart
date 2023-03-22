@@ -5,6 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/upload_profile_media_menu.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -33,8 +35,17 @@ class UserProfileInformation extends StatefulWidget {
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
   final bool minimalRequested;
+  final Success galleryState;
+  final bool isLoadingState;
   const UserProfileInformation(
-      {this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats, this.minimalRequested = false})
+      {this.userToDisplayInformation,
+      this.actualRoute,
+      this.currentUser,
+      this.connectStatus,
+      this.userStats,
+      this.minimalRequested = false,
+      this.isLoadingState = false,
+      this.galleryState})
       : super();
 
   @override
@@ -152,8 +163,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   name: widget.userToDisplayInformation.firstName,
                   lastname: widget.userToDisplayInformation.lastName,
                   userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                  isLoadingState: widget.isLoadingState,
                 ),
-                getVisibility(widget, context, _isOwner),
+                uploadContentComponent(widget, context, _isOwner),
               ]),
               /*if (widget.userToDisplayInformation.avatar != null)
                   /*Padding(
@@ -264,7 +276,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         ).image,
                         radius: 30.0,
                       ),
-                      getVisibility(widget, context, _isOwner),
+                      uploadContentComponent(widget, context, _isOwner),
                     ]),
                   )
                 else
@@ -279,7 +291,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
                             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
                       ),
-                      getVisibility(widget, context, _isOwner),
+                      uploadContentComponent(widget, context, _isOwner),
                     ]),
                   ),
                 Padding(
@@ -292,7 +304,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   ),
                 ),
                 //HIFIVE BUTTON
-                if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
+                if (!_isOwner && widget.actualRoute == ActualProfileRoute.homePage)
                   Expanded(
                     child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                       listener: (context, hiFiveSendState) {
@@ -357,21 +369,20 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     }
   }
 
-  Visibility getVisibility(UserProfileInformation userProfileWidget, BuildContext context, bool isOwner) {
+  Visibility uploadContentComponent(UserProfileInformation userProfileWidget, BuildContext context, bool isOwner) {
     return Visibility(
-      visible: userProfileWidget.actualRoute == ActualProfileRoute.userProfile && isOwner,
+      visible: userProfileWidget.actualRoute == ActualProfileRoute.homePage && isOwner,
       child: Positioned(
         top: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
         right: -12,
         child: Container(
-          width: 40,
-          height: 40,
-          child: TextButton(
-              onPressed: () {
-                BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
-              },
-              child: Image.asset('assets/profile/uploadImage.png')),
-        ),
+            width: 40,
+            height: 40,
+            child: UploadProfileMediaMenu(
+              galleryState: widget.galleryState,
+              contentFrom: UploadFrom.profileImage,
+              deleteContent: widget.currentUser.getAvatarThumbnail() != null,
+            )),
       ),
     );
   }

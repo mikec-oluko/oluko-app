@@ -188,18 +188,17 @@ class OlukoNeumorphism {
 
   static NeumorphicStyle getNeumorphicStyleForCardClasses(bool isStarted) {
     return NeumorphicStyle(
-        border: isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
-        depth: 0,
-        intensity: 0.8,
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        border: isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: Colors.transparent),
+        depth: -10,
+        intensity: 1,
+        color: Colors.transparent,
         shape: NeumorphicShape.flat,
         lightSource: LightSource.bottomRight,
         boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(22))),
-        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-        shadowLightColorEmboss: OlukoColors.black,
+        shadowDarkColorEmboss: OlukoColors.grayColor.withOpacity(0.5),
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
         surfaceIntensity: 1,
-        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-        shadowDarkColor: Colors.black);
+        shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker);
   }
 
   static LinearGradient olukoNeumorphicGradientPrimary() {

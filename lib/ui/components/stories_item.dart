@@ -9,6 +9,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
 class StoriesItem extends StatefulWidget {
@@ -32,28 +33,29 @@ class StoriesItem extends StatefulWidget {
   bool showUserProgress;
   Color color;
   final Function onTap;
+  final bool isLoadingState;
 
-  StoriesItem({
-    this.maxRadius,
-    this.imageUrl,
-    this.userProgress,
-    this.name,
-    this.lastname,
-    this.stories,
-    this.progressValue = 0,
-    this.showName = false,
-    this.showUserProgress = false,
-    this.getStories = false,
-    this.addUnseenStoriesRing = false,
-    this.currentUserId,
-    this.userProgressStreamBloc,
-    this.itemUserId,
-    this.bloc,
-    this.from = StoriesItemFrom.home,
-    this.isSegmentSection = false,
-    this.color,
-    this.onTap,
-  }) {
+  StoriesItem(
+      {this.maxRadius,
+      this.imageUrl,
+      this.userProgress,
+      this.name,
+      this.lastname,
+      this.stories,
+      this.progressValue = 0,
+      this.showName = false,
+      this.showUserProgress = false,
+      this.getStories = false,
+      this.addUnseenStoriesRing = false,
+      this.currentUserId,
+      this.userProgressStreamBloc,
+      this.itemUserId,
+      this.bloc,
+      this.from = StoriesItemFrom.home,
+      this.isSegmentSection = false,
+      this.color,
+      this.onTap,
+      this.isLoadingState = false}) {
     if (getStories == true &&
         currentUserId != null &&
         itemUserId != null &&
@@ -211,10 +213,12 @@ class _State extends State<StoriesItem> {
                 maxWidthDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
                 maxHeightDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
                 fit: BoxFit.cover,
-                imageBuilder: (context, imageProvider) => CircleAvatar(
-                  backgroundImage: imageProvider,
-                  maxRadius: widget.maxRadius ?? 30,
-                ),
+                imageBuilder: (context, imageProvider) => widget.isLoadingState
+                    ? OlukoCircularProgressIndicator()
+                    : CircleAvatar(
+                        backgroundImage: imageProvider,
+                        maxRadius: widget.maxRadius ?? 30,
+                      ),
                 imageUrl: widget.imageUrl,
               ),
             )
@@ -222,18 +226,21 @@ class _State extends State<StoriesItem> {
               fit: BoxFit.contain,
               maxWidthDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
               maxHeightDiskCache: widget.maxRadius != null ? (_sizeBasedOnRadius * 2.5).toInt() : 100,
-              imageBuilder: (context, imageProvider) => CircleAvatar(
-                backgroundImage: imageProvider,
-                maxRadius: widget.maxRadius ?? 30,
-              ),
+              imageBuilder: (context, imageProvider) => widget.isLoadingState
+                  ? OlukoCircularProgressIndicator()
+                  : CircleAvatar(
+                      backgroundImage: imageProvider,
+                      maxRadius: widget.maxRadius ?? 30,
+                    ),
               imageUrl: widget.imageUrl,
             );
     } else {
       return OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname, circleColor: widget.color))
-          : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname);
+              child: UserUtils.avatarImageDefault(
+                  maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname, circleColor: widget.color, isLoadingState: widget.isLoadingState))
+          : UserUtils.avatarImageDefault(maxRadius: widget.maxRadius, name: widget.name, lastname: widget.lastname, isLoadingState: widget.isLoadingState);
     }
   }
 

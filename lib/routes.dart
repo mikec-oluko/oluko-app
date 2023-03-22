@@ -171,6 +171,7 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_content_deta
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/story/story_page.dart';
+import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'blocs/audio_bloc.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
@@ -269,7 +270,8 @@ enum RouteEnum {
   courseShareView,
   registerUser,
   homeLatestDesign,
-  courseHomePage
+  courseHomePage,
+  welcomeVideoFirstTimeLogin
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -334,6 +336,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.registerUser: '/register-user',
   RouteEnum.homeLatestDesign: '/home-view',
   RouteEnum.courseHomePage: '/course-home-page',
+  RouteEnum.welcomeVideoFirstTimeLogin: '/welcome-video-home-page',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -554,13 +557,16 @@ class Routes {
           BlocProvider<UserBloc>.value(value: _userBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
+          BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
             BlocProvider<MovementBloc>.value(value: _movementBloc),
             BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
             BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
-            BlocProvider<StoryBloc>.value(value: _storyBloc)
+            BlocProvider<StoryBloc>.value(value: _storyBloc),
           ]);
         }
 
@@ -1392,8 +1398,29 @@ class Routes {
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<AuthBloc>.value(value: _authBloc),
           BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
+          BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
+          BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
+          BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
+          BlocProvider<StoryBloc>.value(value: _storyBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
         ];
-        newRouteView = const HomeNeumorphicLatestDesign();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = HomeNeumorphicLatestDesign(
+          currentUser: argumentsToAdd['currentUser'] as UserResponse,
+          courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
+          authState: argumentsToAdd['authState'] as AuthSuccess,
+        );
         break;
       case RouteEnum.courseHomePage:
         providers = [
@@ -1415,6 +1442,37 @@ class Routes {
           index: argumentsToAdd['index'] as int,
           isFromHome: argumentsToAdd['isFromHome'] as bool,
         );
+        break;
+      case RouteEnum.welcomeVideoFirstTimeLogin:
+        providers = [
+          BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<AuthBloc>.value(value: _authBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
+          BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
+          BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
+          BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<StoryBloc>.value(value: _storyBloc),
+          BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
+          BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
+          BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+        ];
+        newRouteView = const WelcomeVideoFirstTimeLogin();
         break;
       default:
         newRouteView = MainPage();

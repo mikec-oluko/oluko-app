@@ -13,9 +13,11 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/screens/home_content.dart';
 import 'package:oluko_app/ui/screens/home_neumorphic_content.dart';
 import 'package:oluko_app/ui/screens/home_neumorphic_latest_design.dart';
+import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
 
 class Home extends StatefulWidget {
   Home({this.classIndex, this.index, Key key}) : super(key: key);
@@ -32,6 +34,7 @@ class _HomeState extends State<Home> {
   List<CourseEnrollment> _courseEnrollments;
   List<Course> _courses;
   AuthSuccess _authState;
+  GlobalService _globalService = GlobalService();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,11 @@ class _HomeState extends State<Home> {
             BlocProvider.of<ChallengeStreamBloc>(context).getStream(_user.id);
             return OlukoNeumorphism.isNeumorphismDesign
                 // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
-                ? HomeNeumorphicLatestDesign(
+                ?
+                // _globalService.showWelcomeVideoInHome
+                //     ? const WelcomeVideoFirstTimeLogin()
+                //     :
+                HomeNeumorphicLatestDesign(
                     currentUser: authState.user,
                     authState: authState,
                     courseEnrollments: _courseEnrollments,
