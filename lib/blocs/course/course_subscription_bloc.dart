@@ -9,6 +9,8 @@ abstract class CourseSubscriptionState {}
 
 class CourseLoading extends CourseSubscriptionState {}
 
+class CourseDisposeState extends CourseSubscriptionState {}
+
 class CourseSubscriptionSuccess extends CourseSubscriptionState {
   final List<Course> values;
   CourseSubscriptionSuccess({this.values});
@@ -30,6 +32,7 @@ class CourseSubscriptionBloc extends Cubit<CourseSubscriptionState> {
       subscription.cancel();
       subscription = null;
     }
+    emit(CourseDisposeState());
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
@@ -43,7 +46,7 @@ class CourseSubscriptionBloc extends Cubit<CourseSubscriptionState> {
           final index = courses.indexWhere((element) => element.id == c.id);
           if (index == -1) {
             courses.add(c);
-          }else{
+          } else {
             print("DUPLICATED COURSE");
           }
         });

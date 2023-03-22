@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
 import 'package:oluko_app/models/utils/oluko_bottom_navigation_bar_item.dart';
@@ -72,72 +73,80 @@ class _State extends State<OlukoBottomNavigationBar> {
     return BottomNavigationBarItem(icon: buildBottomNavigationItem(olukoBottomNavigationBarItem, blockSize), label: '');
   }
 
-  Container buildBottomNavigationItem(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem, double blockSize) {
+  Widget buildBottomNavigationItem(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem, double blockSize) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Container(
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                  ),
-                  width: blockSize,
-                  height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
-                        if (userInformation?.avatar != null)
-                          CachedNetworkImage(
-                            width: 30,
-                            height: 30,
-                            maxWidthDiskCache: 100,
-                            maxHeightDiskCache: 100,
-                            fit: BoxFit.cover,
-                            imageBuilder: (context, imageProvider) => CircleAvatar(
-                              backgroundImage: imageProvider,
-                              maxRadius: 15,
+        ? BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(
+            builder: (context, state) {
+              if (state is ProfileAvatarSuccess) {
+                userInformation.avatar = state.updatedUser.avatarThumbnail ?? state.updatedUser.avatar;
+                // return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+              }
+              return Container(
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      ),
+                      width: blockSize,
+                      height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
+                            if (userInformation?.avatar != null)
+                              CachedNetworkImage(
+                                width: 30,
+                                height: 30,
+                                maxWidthDiskCache: 100,
+                                maxHeightDiskCache: 100,
+                                fit: BoxFit.cover,
+                                imageBuilder: (context, imageProvider) => CircleAvatar(
+                                  backgroundImage: imageProvider,
+                                  maxRadius: 15,
+                                ),
+                                imageUrl: userInformation.avatar,
+                              )
+                            else
+                              CircleAvatar(
+                                backgroundColor:
+                                    userInformation != null ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName) : OlukoColors.black,
+                                radius: 15.0,
+                                child: FittedBox(
+                                  fit: BoxFit.fitWidth,
+                                  child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
+                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
+                                ),
+                              )
+                          else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
+                            ImageIcon(
+                              AssetImage(olukoBottomNavigationBarItem.selectedAssetImageUrl),
+                              color: OlukoColors.primary,
+                            )
+                          else
+                            ImageIcon(
+                              AssetImage(olukoBottomNavigationBarItem.disabledAssetImageUrl),
+                              color: Colors.grey,
                             ),
-                            imageUrl: userInformation.avatar,
-                          )
-                        else
-                          CircleAvatar(
-                            backgroundColor:
-                                userInformation != null ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName) : OlukoColors.black,
-                            radius: 15.0,
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
-                                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Text(
+                              !olukoBottomNavigationBarItem.selected ? '' : olukoBottomNavigationBarItem.title,
+                              style: OlukoFonts.olukoSmallFont(
+                                  customColor: olukoBottomNavigationBarItem.disabled
+                                      ? Colors.grey.shade800
+                                      : olukoBottomNavigationBarItem.selected
+                                          ? OlukoColors.primary
+                                          : Colors.white),
                             ),
                           )
-                      else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
-                        ImageIcon(
-                          AssetImage(olukoBottomNavigationBarItem.selectedAssetImageUrl),
-                          color: OlukoColors.primary,
-                        )
-                      else
-                        ImageIcon(
-                          AssetImage(olukoBottomNavigationBarItem.disabledAssetImageUrl),
-                          color: Colors.grey,
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Text(
-                          !olukoBottomNavigationBarItem.selected ? '' : olukoBottomNavigationBarItem.title,
-                          style: OlukoFonts.olukoSmallFont(
-                              customColor: olukoBottomNavigationBarItem.disabled
-                                  ? Colors.grey.shade800
-                                  : olukoBottomNavigationBarItem.selected
-                                      ? OlukoColors.primary
-                                      : Colors.white),
-                        ),
-                      )
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           )
         : Container(
             decoration: BoxDecoration(

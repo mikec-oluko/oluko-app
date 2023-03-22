@@ -578,7 +578,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         }
         return _transformationJourneyContent.isNotEmpty
             ? _buildCarouselSection(
-                titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
+                titleForSection: OlukoLocalizations.get(context, 'transformationPhotos'),
                 routeForSection: RouteEnum.profileTransformationJourney,
                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                     tansformationJourneyData: _transformationJourneyContent,

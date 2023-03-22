@@ -163,7 +163,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                           children: [
                             Text(
                               widget.viewAllPage
-                                  ? ProfileViewConstants.profileOptionsTransformationJourney
+                                  ? ProfileViewConstants.profileOptionsTransformationPhotos
                                   : getTitleForContent(uploadListContent: _transformationJourneyContent),
                               style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.bold),
                             ),

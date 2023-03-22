@@ -22,7 +22,7 @@ class _TransformationJourneyComponentState extends State<TransformationJourneyCo
   Widget build(BuildContext context) {
     return widget.transformationJourneyContent.isNotEmpty
         ? _buildCarouselSection(
-            titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
+            titleForSection: OlukoLocalizations.get(context, 'transformationPhotos'),
             routeForSection: RouteEnum.profileTransformationJourney,
             contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                 tansformationJourneyData: widget.transformationJourneyContent,
