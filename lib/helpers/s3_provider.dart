@@ -18,10 +18,10 @@ import 'package:oluko_app/config/s3_settings.dart';
 import '../services/connectivity_service.dart';
 
 class S3Provider {
-  String accessKeyId = GlobalConfiguration().getValue('accessKeyID');
-  String secretKeyId = GlobalConfiguration().getValue('secretAccessKey');
-  String endpoint = GlobalConfiguration().getValue('bucket');
-  String region = GlobalConfiguration().getValue('region');
+  String accessKeyId = GlobalConfiguration().getString('accessKeyID');
+  String secretKeyId = GlobalConfiguration().getString('secretAccessKey');
+  String endpoint = GlobalConfiguration().getString('bucket');
+  String region = GlobalConfiguration().getString('region');
   bool isConfigLoaded = false;
   final GlobalService _globalService = GlobalService();
 
@@ -130,16 +130,16 @@ class S3Provider {
     } else {
       GlobalConfiguration().loadFromMap(s3Settings);
       if (this.endpoint == null) {
-        this.endpoint = GlobalConfiguration().getValue('bucket');
+        this.endpoint = GlobalConfiguration().getString('bucket');
       }
       if (this.region == null) {
-        this.region = GlobalConfiguration().getValue('region');
+        this.region = GlobalConfiguration().getString('region');
       }
       if (this.accessKeyId == null) {
-        this.accessKeyId = GlobalConfiguration().getValue('accessKeyID');
+        this.accessKeyId = GlobalConfiguration().getString('accessKeyID');
       }
       if (this.secretKeyId == null) {
-        this.secretKeyId = GlobalConfiguration().getValue('secretAccessKey');
+        this.secretKeyId = GlobalConfiguration().getString('secretAccessKey');
       }
       this.isConfigLoaded = true;
     }

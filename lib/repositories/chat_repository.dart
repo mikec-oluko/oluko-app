@@ -19,7 +19,7 @@ class ChatRepository {
   Future<List<Chat>> getByUserId(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -34,7 +34,7 @@ class ChatRepository {
   Future<List<Message>> getMessages(String userId, String targetUserId) async {
     DocumentSnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -49,7 +49,7 @@ class ChatRepository {
   static Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
     QuerySnapshot<Map<String, dynamic>> chatRefs = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -88,7 +88,7 @@ class ChatRepository {
   ) {
     final Stream<QuerySnapshot<Map<String, dynamic>>> docRef = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -99,12 +99,8 @@ class ChatRepository {
   }
 
   static Future<Message> sendHiFive(String userId, String targetUserId) async {
-    final CollectionReference userChatCollection = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(userId)
-        .collection('chat');
+    final CollectionReference userChatCollection =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userId).collection('chat');
 
     //Check if chat document exists. If not, create the base properties inside.
     final DocumentSnapshot<Object> userChat = await userChatCollection.doc(targetUserId).get();
@@ -123,7 +119,7 @@ class ChatRepository {
     //Get message to return
     final DocumentSnapshot createdMessage = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -140,7 +136,7 @@ class ChatRepository {
 
     QuerySnapshot messages = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -162,7 +158,7 @@ class ChatRepository {
   static void removeAllHiFives(String userId, String targetUserId) async {
     final QuerySnapshot messages = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
@@ -181,7 +177,7 @@ class ChatRepository {
   static Future<void> removeNotification(String userId, String targetUserId) async {
     final QuerySnapshot<Map<String, dynamic>> notifications = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('notifications')

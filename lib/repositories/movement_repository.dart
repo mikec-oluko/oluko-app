@@ -29,7 +29,7 @@ class MovementRepository {
     });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('movements')
         .where("id", whereIn: segmentMovementsIds)
         .get();
@@ -37,18 +37,15 @@ class MovementRepository {
   }
 
   static Future<List<Movement>> getAll() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('movements')
-        .get();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('movements').get();
     return mapQueryToMovement(querySnapshot);
   }
 
   static Future<List<Movement>> get(String id) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('movements')
         .where('id', isEqualTo: id)
         .get();
@@ -58,7 +55,7 @@ class MovementRepository {
   static Future<List<Movement>> getVariants(String id) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('movements')
         .doc(id)
         .collection('movementVariants')
@@ -70,12 +67,8 @@ class MovementRepository {
   }
 
   static Future<MovementRelation> getRelations(String id) async {
-    DocumentSnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('movementRelations')
-        .doc(id)
-        .get();
+    DocumentSnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('movementRelations').doc(id).get();
 
     MovementRelation movementRelation = MovementRelation.fromJson(querySnapshot.data() as Map<String, dynamic>);
     return movementRelation;
@@ -89,11 +82,8 @@ class MovementRepository {
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMovementsSubscription() {
-    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('movements')
-        .snapshots();
+    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('movements').snapshots();
     return movementsStream;
   }
 

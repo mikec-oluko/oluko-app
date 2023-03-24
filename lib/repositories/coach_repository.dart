@@ -29,7 +29,7 @@ class CoachRepository {
   Future<CoachAssignment> getCoachAssignmentByUserId(String userId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .where('id', isEqualTo: userId)
         .get();
@@ -40,13 +40,14 @@ class CoachRepository {
     final coachAssignmentResponse = CoachAssignment.fromJson(response);
     return coachAssignmentResponse;
   }
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getCoachAssignmentByUserIdStream(String userId)  {
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getCoachAssignmentByUserIdStream(String userId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> coachAssignemntStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
-        .where('id', isEqualTo: userId).
-        snapshots();
+        .where('id', isEqualTo: userId)
+        .snapshots();
     return coachAssignemntStream;
   }
 
@@ -55,7 +56,7 @@ class CoachRepository {
       coachAssignment.welcomeVideoSeen = true;
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('coachAssignments')
           .doc(coachAssignment.userId)
           .set(coachAssignment.toJson());
@@ -74,7 +75,7 @@ class CoachRepository {
     coachAssignment.introductionCompleted = true;
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(coachAssignment.id);
     reference.set(coachAssignment.toJson());
@@ -89,7 +90,7 @@ class CoachRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('coachAssignments')
           .doc(coachAssignment.userId)
           .set(coachAssignment.toJson());
@@ -107,7 +108,7 @@ class CoachRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('segmentSubmissions')
           .where('user_id', isEqualTo: userId)
           .get();
@@ -132,13 +133,12 @@ class CoachRepository {
       segmentSubmittedToUpdate.favorite = !segmentSubmittedToUpdate.favorite;
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('segmentSubmissions')
           .doc(segmentSubmittedToUpdate.id)
           .set(segmentSubmittedToUpdate.toJson());
 
-      currentSentVideosContent
-          .forEach((sentVideo) => sentVideo.id == segmentSubmittedToUpdate.id ? sentVideo = segmentSubmittedToUpdate : null);
+      currentSentVideosContent.forEach((sentVideo) => sentVideo.id == segmentSubmittedToUpdate.id ? sentVideo = segmentSubmittedToUpdate : null);
 
       return currentSentVideosContent;
     } on Exception catch (e, stackTrace) {
@@ -159,7 +159,7 @@ class CoachRepository {
       } else {
         await FirebaseFirestore.instance
             .collection('projects')
-            .doc(GlobalConfiguration().getValue('projectId'))
+            .doc(GlobalConfiguration().getString('projectId'))
             .collection('coachStatistics')
             .doc(coachAnnotation.createdBy)
             .collection('annotations')
@@ -178,7 +178,7 @@ class CoachRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getAnnotationSubscription(String userId, String coachId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> annotationStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachStatistics')
         .doc(coachId)
         .collection('annotations')
@@ -190,7 +190,7 @@ class CoachRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getRecommendationSubscription(String userId, String coachId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> recommendationStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('recommendations')
         .where('destination_user_id', isEqualTo: userId)
         .where('origin_user_id', isEqualTo: coachId)
@@ -202,7 +202,7 @@ class CoachRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getTimelineItemsSubscription(String userId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> timelineItemsStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('interactionTimelineItems')
@@ -213,7 +213,7 @@ class CoachRepository {
   Future<void> updateMentoredVideoNotificationStatus(String coachId, String annotationId, bool notificationValue) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachStatistics')
         .doc(coachId)
         .collection('annotations')
@@ -225,7 +225,7 @@ class CoachRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users')
           .doc(userId)
           .collection('interactionTimelineItems')
@@ -255,8 +255,7 @@ class CoachRepository {
           Course courseForItem = Course.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.contentName = courseForItem.name;
           timelineItem.courseForNavigation = courseForItem;
-          timelineItem.contentThumbnail =
-              courseForItem.images.length >= 2 ? courseForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
+          timelineItem.contentThumbnail = courseForItem.images.length >= 2 ? courseForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
 
           break;
         case TimelineInteractionType.classes:
@@ -270,8 +269,7 @@ class CoachRepository {
           Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);
           timelineItem.movementForNavigation = movementForItem;
           timelineItem.contentName = movementForItem.name;
-          timelineItem.contentThumbnail =
-              movementForItem.images.length >= 2 ? movementForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
+          timelineItem.contentThumbnail = movementForItem.images.length >= 2 ? movementForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
           break;
         case TimelineInteractionType.mentoredVideo:
           Annotation uploadedAnnotation = Annotation.fromJson(ds.data() as Map<String, dynamic>);
@@ -301,7 +299,7 @@ class CoachRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('recommendations')
           .where('destination_user_id', isEqualTo: userId)
           .where('origin_user_id', isEqualTo: coachId)
@@ -322,11 +320,8 @@ class CoachRepository {
   }
 
   Future<void> updateRecommendationNotificationStatus(String recommendationId, bool notificationValue) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('recommendations')
-        .doc(recommendationId);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('recommendations').doc(recommendationId);
     reference.update({'notification_viewed': notificationValue});
   }
 
@@ -361,8 +356,7 @@ class CoachRepository {
               contentTitle: movementRecommended.name,
               contentSubtitle: '',
               contentDescription: movementRecommended.description,
-              contentImage:
-                  movementRecommended.images != null ? movementRecommended.images.elementAt(1) as String : movementRecommended.image,
+              contentImage: movementRecommended.images != null ? movementRecommended.images.elementAt(1) as String : movementRecommended.image,
               contentType: recommendation.entityType,
               createdAt: recommendation.createdAt,
               movementContent: movementRecommended);

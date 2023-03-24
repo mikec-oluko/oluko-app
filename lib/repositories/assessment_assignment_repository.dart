@@ -11,14 +11,13 @@ class AssessmentAssignmentRepository {
   }
 
   static AssessmentAssignment create(String userId, Assessment assessment) {
-    DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
+    DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getString('projectId'));
 
     CollectionReference assessmentAssignmentReference = projectReference.collection("assessmentAssignments");
 
     DocumentReference assessmentReference = projectReference.collection("assessment").doc(assessment.id);
 
-    AssessmentAssignment assessmentAssignment =
-        AssessmentAssignment(createdBy: userId, assessmentId: assessment.id, assessmentReference: assessmentReference);
+    AssessmentAssignment assessmentAssignment = AssessmentAssignment(createdBy: userId, assessmentId: assessment.id, assessmentReference: assessmentReference);
 
     final DocumentReference docRef = assessmentAssignmentReference.doc();
     assessmentAssignment.id = docRef.id;
@@ -29,7 +28,7 @@ class AssessmentAssignmentRepository {
   static Future<AssessmentAssignment> getByUserId(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('assessmentAssignments')
         .where('created_by', isEqualTo: userId)
         .get();
@@ -43,11 +42,8 @@ class AssessmentAssignmentRepository {
 
   static Future<Timestamp> setAsCompleted(String id) async {
     var completedAt = Timestamp.now();
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('assessmentAssignments')
-        .doc(id);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('assessmentAssignments').doc(id);
     reference.update({
       'completed_at': completedAt,
     });
@@ -57,7 +53,7 @@ class AssessmentAssignmentRepository {
   static Future<void> setAsSeen(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('assessmentAssignments')
         .where('created_by', isEqualTo: userId)
         .get();
@@ -66,7 +62,7 @@ class AssessmentAssignmentRepository {
 
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('assessmentAssignments')
         .doc(assessmentAssignment.id);
 
@@ -76,11 +72,8 @@ class AssessmentAssignmentRepository {
   }
 
   static Future<bool> setAsIncompleted(String id) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('assessmentAssignments')
-        .doc(id);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString("projectId")).collection('assessmentAssignments').doc(id);
     reference.update({
       'completed_at': null,
     });
