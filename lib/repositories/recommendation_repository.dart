@@ -14,11 +14,8 @@ class RecommendationRepository {
   }
 
   Future<List<Recommendation>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('recommendations')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('recommendations').get();
     List<Recommendation> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
@@ -30,7 +27,7 @@ class RecommendationRepository {
   Future<List<Recommendation>> getByDestinationUser(userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('recommendations')
         .where('destination_user_id', isEqualTo: userId)
         .get();
@@ -45,7 +42,7 @@ class RecommendationRepository {
   void removeRecomendedCourse(String userId, String courseId) {
     FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('recommendations')
         .where('destination_user_id', isEqualTo: userId)
         .where('entity_id', isEqualTo: courseId)

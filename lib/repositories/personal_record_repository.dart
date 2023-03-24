@@ -14,7 +14,7 @@ class PersonalRecordRepository {
   }
 
   static PersonalRecord create(int totalScore, PersonalRecordParam parameter, CourseEnrollment courseEnrollment, Segment segment, bool doneFromProfile) {
-    DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
+    DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getString('projectId'));
 
     CollectionReference personalRecordReference = projectReference.collection("personalRecords");
 
@@ -43,7 +43,7 @@ class PersonalRecordRepository {
   static Future<List<PersonalRecord>> getByUserAndChallengeId(String userId, String challengeId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('personalRecords')
         .where('user_id', isEqualTo: userId)
         .where('challenge_id', isEqualTo: challengeId)

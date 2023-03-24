@@ -108,7 +108,7 @@ class VideoBloc extends Cubit<VideoState> {
       } catch (e, stackTrace) {
         thumbnailFilePath = null;
       }
-      if (GlobalConfiguration().getValue('uploadOnIsolate') == 'true') {
+      if (GlobalConfiguration().getString('uploadOnIsolate') == 'true') {
         // A Stream that handles communication between isolates
         final p = ReceivePort();
 

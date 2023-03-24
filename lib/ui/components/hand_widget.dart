@@ -27,7 +27,7 @@ class _HandWidgetState extends State<HandWidget> {
         if (notificationState is NotificationSuccess && notificationState.notifications.isNotEmpty) {
           return GestureDetector(
             onTap: () async {
-              if(widget.onTap != null) {
+              if (widget.onTap != null) {
                 await widget.onTap();
               }
               await BlocProvider.of<NotificationBloc>(context).clearAll(widget.authState.user.id);
@@ -37,7 +37,7 @@ class _HandWidgetState extends State<HandWidget> {
               padding: const EdgeInsets.only(right: 20.0, top: 5),
               child: notificationState.unseenNotifications > 0
                   ? Badge(
-                      position: const BadgePosition(top: 0, start: 10),
+                      // position: const BadgePosition(top: 0, start: 10),
                       badgeContent: Text(notificationState.unseenNotifications.toString()),
                       child: getHandIcon(),
                     )

@@ -6,8 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class CoachMediaRepository {
   FirebaseFirestore firestoreInstance;
 
-  static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
 
   CoachMediaRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -19,7 +18,7 @@ class CoachMediaRepository {
     try {
       final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users')
           .doc(coachId)
           .collection('myMedia')
@@ -43,11 +42,11 @@ class CoachMediaRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getCoachUploadedMediaStream(String coachId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> coachMediaStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(coachId)
         .collection('myMedia')
-        .where('is_deleted',isNotEqualTo: true)
+        .where('is_deleted', isNotEqualTo: true)
         .snapshots();
     return coachMediaStream;
   }

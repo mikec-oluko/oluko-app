@@ -7,8 +7,7 @@ import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
 class CoachAudioMessagesRepository {
   FirebaseFirestore firestoreInstance;
 
-  static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
 
   CoachAudioMessagesRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -19,7 +18,7 @@ class CoachAudioMessagesRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getMessagesForCoachStream(String userId, String coachUserId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> coachMessagesStream = firestoreInstance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('audioSubmissions')
         .where('user_id', isEqualTo: userId)
         .where('coach_id', isEqualTo: coachUserId)
@@ -33,18 +32,12 @@ class CoachAudioMessagesRepository {
     DocumentReference userReference = getUserReference(userId);
     DocumentReference coachReference = getUserReference(coachId);
 
-    CollectionReference reference =
-        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('audioSubmissions');
+    CollectionReference reference = firestoreInstance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('audioSubmissions');
 
     final DocumentReference docRef = reference.doc();
 
     CoachAudioMessage audioMessageToSave = CoachAudioMessage(
-        id: docRef.id,
-        userId: userId,
-        userReference: userReference,
-        coachId: coachId,
-        coachReference: coachReference,
-        audioMessage: audioMessage);
+        id: docRef.id, userId: userId, userReference: userReference, coachId: coachId, coachReference: coachReference, audioMessage: audioMessage);
     await docRef.set(audioMessageToSave.toJson());
     return audioMessageToSave;
   }
@@ -58,25 +51,19 @@ class CoachAudioMessagesRepository {
 
   DocumentReference<Object> getUserReference(String userRequestedId) {
     final DocumentReference userReference =
-        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userRequestedId);
+        firestoreInstance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userRequestedId);
     return userReference;
   }
 
   DocumentReference<Object> getMessageReference(CoachAudioMessage audioMessage) {
-    final DocumentReference audioMessageReference = firestoreInstance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('audioSubmissions')
-        .doc(audioMessage.id);
+    final DocumentReference audioMessageReference =
+        firestoreInstance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('audioSubmissions').doc(audioMessage.id);
     return audioMessageReference;
   }
 
   Future<CoachAudioMessage> getAudioMessage(String audioMessageId) async {
-    DocumentReference docRef = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('audioSubmissions')
-        .doc(audioMessageId);
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('audioSubmissions').doc(audioMessageId);
     DocumentSnapshot updatedAudioMessage = await docRef.get();
     return CoachAudioMessage.fromJson(updatedAudioMessage.data() as Map<String, dynamic>);
   }

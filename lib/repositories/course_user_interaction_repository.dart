@@ -18,7 +18,7 @@ class CourseUserInteractionRepository {
   }
 
   static final CollectionReference _courseCollectionInstance =
-      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses');
+      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courses');
 
   Future<Like> courseIsLiked({@required String courseId, @required String userId, bool isCheck = false}) async {
     final _likedCourseQuery = _courseCollectionInstance.doc(courseId).collection('likes').where('user_id', isEqualTo: userId);
@@ -97,8 +97,7 @@ class CourseUserInteractionRepository {
 
           if (friendCourseRecommendation == null) {
             final DocumentReference _destinationUserReference = _getUserReference(friendUserId);
-            final CollectionReference _courseRecommendationReference =
-                _courseCollectionInstance.doc(courseToShareId).collection('recommendations');
+            final CollectionReference _courseRecommendationReference = _courseCollectionInstance.doc(courseToShareId).collection('recommendations');
             final DocumentReference _docRef = _courseRecommendationReference.doc();
 
             final Recommendation newFriendRecommendedCourse = Recommendation(
@@ -126,8 +125,7 @@ class CourseUserInteractionRepository {
     }
   }
 
-  Future<Recommendation> _checkIfRecommendationExists(
-      {@required String originUserId, @required String userId, @required String courseId}) async {
+  Future<Recommendation> _checkIfRecommendationExists({@required String originUserId, @required String userId, @required String courseId}) async {
     try {
       final Query<Map<String, dynamic>> docRef = _courseCollectionInstance
           .doc(courseId)
@@ -153,7 +151,7 @@ class CourseUserInteractionRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getLikedCoursesSubscription({@required String userId}) {
     Stream<QuerySnapshot<Map<String, dynamic>>> _courseLikedStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('likes')
@@ -165,7 +163,7 @@ class CourseUserInteractionRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getRecommendedCoursesByFriends({@required String userId}) {
     Stream<QuerySnapshot<Map<String, dynamic>>> _friendRecommendationsStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('recommendations')
@@ -175,13 +173,13 @@ class CourseUserInteractionRepository {
 
   DocumentReference<Object> _getUserReference(String userRequestedId) {
     final DocumentReference userReference =
-        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userRequestedId);
+        firestoreInstance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userRequestedId);
     return userReference;
   }
 
   DocumentReference<Object> _getCourseReference(String courseId) {
     final DocumentReference courseReference =
-        firestoreInstance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').doc(courseId);
+        firestoreInstance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courses').doc(courseId);
     return courseReference;
   }
 }

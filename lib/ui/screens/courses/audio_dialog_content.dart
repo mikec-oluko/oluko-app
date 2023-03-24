@@ -36,8 +36,7 @@ class _State extends State<AudioDialogContent> {
   }
 
   Widget audioSlider() {
-    return Container(
-        width: 200, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: CourseProgressBar(value: _completedPercentage)));
+    return Container(width: 200, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: CourseProgressBar(value: _completedPercentage)));
   }
 
   @override
@@ -69,8 +68,7 @@ class _State extends State<AudioDialogContent> {
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
                   child: Text(OlukoLocalizations.get(context, 'sentMessage'),
-                      textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))),
+                      textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor))),
               SizedBox(height: 35),
               audioSlider(),
               SizedBox(height: 30),
@@ -128,7 +126,7 @@ class _State extends State<AudioDialogContent> {
       if (playedOnce) {
         await widget.audioPlayer.resume();
       } else {
-        await widget.audioPlayer.play(url, isLocal: false);
+        // await widget.audioPlayer.play(url, isLocal: false);
         setState(() {
           playedOnce = true;
         });
@@ -139,7 +137,7 @@ class _State extends State<AudioDialogContent> {
         _isPlaying = true;
       });
 
-      widget.audioPlayer.onPlayerCompletion.listen((_) {
+      widget.audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           _completedPercentage = 0.0;
@@ -152,7 +150,7 @@ class _State extends State<AudioDialogContent> {
         });
       });
 
-      widget.audioPlayer.onAudioPositionChanged.listen((duration) {
+      widget.audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();

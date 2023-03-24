@@ -151,7 +151,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
               return [
                 // if (showLogo) getLogo() else const SliverToBoxAdapter(),
                 getLogo(),
-                if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+                if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
               ];
             },
             body: !_horizontalScrollingAvailable
@@ -159,7 +159,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 : CarouselSlider.builder(
                     carouselController: carouselController,
                     itemCount: widget.courseEnrollments.length + 1,
-                    itemBuilder: (context, index) {
+                    itemBuilder: (context, index, int) {
                       _populateGrowListOfCourses(index);
                       if (_growListOfCourses.length - 1 >= index) {
                         if (_growListOfCourses[index] != null) {
@@ -539,7 +539,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget notEnrolled() {
-    if (GlobalConfiguration().getValue('showStories') == 'true') {
+    if (GlobalConfiguration().getString('showStories') == 'true') {
       return BlocBuilder<StoryBloc, StoryState>(
         builder: (context, hasStories) {
           final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;

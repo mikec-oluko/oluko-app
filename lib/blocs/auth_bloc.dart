@@ -452,7 +452,7 @@ class AuthBloc extends Cubit<AuthState> {
       email: firebaseUser.email,
       firstName: splitDisplayName[0],
       lastName: splitDisplayName[1],
-      projectId: GlobalConfiguration().getValue('projectId'),
+      projectId: GlobalConfiguration().getString('projectId'),
     );
     final UserResponse response = await UserRepository().createSSO(signUpRequest);
     return response;

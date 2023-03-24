@@ -27,7 +27,7 @@ class CourseEnrollmentRepository {
 
   static Future<CourseEnrollment> get(Course course, String userId) async {
     final CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseEnrollments');
 
     final Query<Object> userEnrollments = reference.where('created_by', isEqualTo: userId);
     final QuerySnapshot qs = await userEnrollments.where('course.id', isEqualTo: course.id).get();
@@ -50,7 +50,7 @@ class CourseEnrollmentRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getCourseEnrollmentStream(String userId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> courseEnrollmentStream = firestoreInstance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .where('created_by', isEqualTo: userId)
         .snapshots(includeMetadataChanges: true);
@@ -59,7 +59,7 @@ class CourseEnrollmentRepository {
 
   static Future<CourseEnrollment> getById(String id) async {
     final CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseEnrollments');
 
     final QuerySnapshot qs = await reference.where('id', isEqualTo: id).get();
 
@@ -73,7 +73,7 @@ class CourseEnrollmentRepository {
     try {
       final QuerySnapshot qs = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('courseEnrollments')
           .where('course.id', isEqualTo: courseId)
           .where('created_by', isNotEqualTo: userId)
@@ -95,7 +95,7 @@ class CourseEnrollmentRepository {
   static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     final List<EnrollmentClass> classes = courseEnrollment.classes;
@@ -124,7 +124,7 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
@@ -190,7 +190,7 @@ class CourseEnrollmentRepository {
     try {
       final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('courseEnrollments')
           .where('created_by', isEqualTo: userId)
           .orderBy('created_at', descending: true)
@@ -225,7 +225,7 @@ class CourseEnrollmentRepository {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserChallengesByUserIdSubscription(String userId) {
     final Stream<QuerySnapshot<Map<String, dynamic>>> challengesStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('challenges')
         .where('user.id', isEqualTo: userId)
         .where('is_active', isEqualTo: true)
@@ -261,7 +261,7 @@ class CourseEnrollmentRepository {
   Future getChallengesFromCourseEnrollment(CourseEnrollment courseEnrollment, List<Challenge> challenges) async {
     final QuerySnapshot query = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('challenges')
         .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
@@ -286,7 +286,7 @@ class CourseEnrollmentRepository {
   ) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
 
@@ -313,7 +313,7 @@ class CourseEnrollmentRepository {
   ) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     courseEnrollment.classes[classIndex].selfieThumbnailUrl = thumbnailUrl;
@@ -330,7 +330,7 @@ class CourseEnrollmentRepository {
     try {
       final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('courseEnrollments')
           .doc(courseEnrollment.id);
 
@@ -350,7 +350,7 @@ class CourseEnrollmentRepository {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseEnrollmentsSubscription(String userId) {
     final Stream<QuerySnapshot<Map<String, dynamic>>> courseEnrollmentsStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .where('created_by', isEqualTo: userId)
         .where('is_unenrolled', isEqualTo: false)
@@ -363,7 +363,7 @@ class CourseEnrollmentRepository {
       CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, int sectionIndex, int totalRounds, int currentRound, int stopwatch) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
 
@@ -381,7 +381,7 @@ class CourseEnrollmentRepository {
 
   static Future<List<CourseEnrollment>> getByActiveCourse(String courseId, String userId) async {
     final CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseEnrollments');
 
     final QuerySnapshot qs = await reference.where('course.id', isEqualTo: courseId).where('is_unenrolled', isNotEqualTo: true).get();
 

@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                     context,
                     ForgotPasswordDto(
                       email: _requestData.email,
-                      projectId: GlobalConfiguration().getValue('projectId'),
+                      projectId: GlobalConfiguration().getString('projectId'),
                     ),
                   );
                 },
@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                             email: _requestData.email,
                             password: _requestData.password,
                             userName: _requestData.userName,
-                            projectId: GlobalConfiguration().getValue('projectId')));
+                            projectId: GlobalConfiguration().getString('projectId')));
                   },
                   child: Stack(children: [
                     Align(

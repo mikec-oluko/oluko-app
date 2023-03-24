@@ -10,11 +10,10 @@ import 'package:oluko_app/models/segment_submission.dart';
 class StoryRepository {
   StoryRepository();
 
-  static Future<Story> createStoryWithVideo(
-      SegmentSubmission segmentSubmission, String segmentTitle, String result, String description) async {
+  static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission, String segmentTitle, String result, String description) async {
     final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(segmentSubmission.userId)
         .collection('stories')
@@ -32,11 +31,10 @@ class StoryRepository {
     return story;
   }
 
-  static Future<Story> createStoryForChallenge(
-      Segment segment, String userId, String segmentTitle, String result, String description) async {
+  static Future<Story> createStoryForChallenge(Segment segment, String userId, String segmentTitle, String result, String description) async {
     final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('stories')
@@ -54,17 +52,14 @@ class StoryRepository {
   }
 
   static Future<void> setStoryAsSeen(String userId, String userStoryId, String storyId) async {
-    final docRef = FirebaseDatabase.instance
-        .ref()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId/stories/$storyId'}');
+    final docRef =
+        FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/users/$userId/userStories/$userStoryId/stories/$storyId'}');
     docRef.update({'seen': true});
   }
 
   Future<bool> checkForUnseenStories(String userId, String userStoryId) async {
-    final DataSnapshot snapshot = await FirebaseDatabase.instance
-        .ref()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId'}')
-        .get();
+    final DataSnapshot snapshot =
+        await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/users/$userId/userStories/$userStoryId'}').get();
     if (snapshot.value == null) {
       return false;
     }
@@ -83,7 +78,7 @@ class StoryRepository {
 
   Future<dynamic> getAll(String userId) async {
     final DataSnapshot snapshot =
-        await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}').get();
+        await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/users/$userId/userStories'}').get();
     final List<UserStories> returnList = [];
     if (snapshot.value == null) {
       return returnList;
@@ -116,7 +111,7 @@ class StoryRepository {
 
   Future<bool> hasStories(String userId) async {
     final DataSnapshot snapshot =
-        await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}').get();
+        await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/users/$userId/userStories'}').get();
     if (snapshot.value == null) {
       return false;
     }
@@ -124,16 +119,13 @@ class StoryRepository {
   }
 
   Stream<DatabaseEvent> getSubscription(String userId) {
-    return FirebaseDatabase.instance
-        .ref()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}')
-        .onChildChanged;
+    return FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/users/$userId/userStories'}').onChildChanged;
   }
 
   static Future<List<Story>> getByUserId(String userId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('stories')
@@ -148,10 +140,8 @@ class StoryRepository {
   }
 
   Future<List<Story>> getStoriesFromUser(String userId, String userStoryId) async {
-    final DataSnapshot snapshot = await FirebaseDatabase.instance
-        .ref()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId'}')
-        .get();
+    final DataSnapshot snapshot =
+        await FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/users/$userId/userStories/$userStoryId'}').get();
     if (snapshot.value == null) {
       return [];
     }

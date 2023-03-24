@@ -17,7 +17,7 @@ class CoachRequestRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getCoachRequestSubscription(String userId, String coachId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> coachRequestStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests')
@@ -29,7 +29,7 @@ class CoachRequestRepository {
   Future<List<CoachRequest>> get(String userId) async {
     final docRef = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests');
@@ -42,11 +42,10 @@ class CoachRequestRepository {
     return response;
   }
 
-  Future<CoachRequest> getBySegmentAndCoachId(
-      String userId, String segmentId, String courseEnrollmentId, String coachId, String classId) async {
+  Future<CoachRequest> getBySegmentAndCoachId(String userId, String segmentId, String courseEnrollmentId, String coachId, String classId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests')
@@ -66,7 +65,7 @@ class CoachRequestRepository {
   Future<void> resolve(CoachRequest coachRequest, String userId, RequestStatusEnum requestStatus) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests')
@@ -77,7 +76,7 @@ class CoachRequestRepository {
   Future<void> updateNotificationStatus(String coachRequestId, String userId, bool notificationValue) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests')
@@ -88,7 +87,7 @@ class CoachRequestRepository {
   Future<List<CoachRequest>> getByClassAndCoach(String userId, String classId, String courseEnrollmentId, String coachId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests')
@@ -106,11 +105,9 @@ class CoachRequestRepository {
     }).toList();
   }
 
-  Future<void> updateSegmentSubmission(String userId, CoachRequest coachRequest,
-      String segmentSubmissionId, DocumentReference segmentSubmissionRef) async {
-    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
-      DocumentReference coachRequestDocRef =
-        projectReference.collection('coachAssignments').doc(userId).collection('coachRequests').doc(coachRequest.id);
+  Future<void> updateSegmentSubmission(String userId, CoachRequest coachRequest, String segmentSubmissionId, DocumentReference segmentSubmissionRef) async {
+    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString("projectId"));
+    DocumentReference coachRequestDocRef = projectReference.collection('coachAssignments').doc(userId).collection('coachRequests').doc(coachRequest.id);
     await coachRequestDocRef.update({'segment_submission_id': segmentSubmissionId, 'segment_submission_reference': segmentSubmissionRef});
   }
 }

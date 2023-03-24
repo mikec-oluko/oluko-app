@@ -23,7 +23,7 @@ class SegmentSubmissionRepository {
 
   static Future<SegmentSubmission> create(
       User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, String coachId, String classId, CoachRequest coachRequest) async {
-    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
+    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString("projectId"));
 
     DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
 
@@ -61,7 +61,7 @@ class SegmentSubmissionRepository {
   static Future<void> updateVideo(SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
     reference.update({
@@ -76,7 +76,7 @@ class SegmentSubmissionRepository {
     try {
       DocumentReference reference = FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getString("projectId"))
           .collection('segmentSubmissions')
           .doc(segmentSubmission.id);
       segmentSubmission.videoState.state = SubmissionStateEnum.uploaded;
@@ -99,7 +99,7 @@ class SegmentSubmissionRepository {
   static Future<void> setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
     reference.update({
@@ -110,7 +110,7 @@ class SegmentSubmissionRepository {
   static Future<void> updateStateToEncoded(SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
     reference.update({
@@ -124,7 +124,7 @@ class SegmentSubmissionRepository {
   static Future<void> updateStateToError(SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
     reference.update({'video_state.error': segmentSubmission.videoState.error});

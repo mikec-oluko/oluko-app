@@ -30,7 +30,7 @@ class ClassRepository {
 
   static Future<Class> create(Class newClass, DocumentReference courseReference) async {
     final CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('classes');
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('classes');
     final DocumentReference docRef = reference.doc();
     newClass.id = docRef.id;
     docRef.set(newClass.toJson());
@@ -54,17 +54,14 @@ class ClassRepository {
 
   static Future<Class> get(String id) async {
     final DocumentReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('classes').doc(id);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('classes').doc(id);
     final DocumentSnapshot ds = await reference.get();
     return Class.fromJson(ds.data() as Map<String, dynamic>);
   }
 
   static Future<void> addSelfie(String classId, String image) async {
-    final DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('classes')
-        .doc(classId);
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('classes').doc(classId);
     final DocumentSnapshot ds = await reference.get();
     final Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
     final List<String> images = classObj.userSelfies ?? [];
@@ -73,11 +70,8 @@ class ClassRepository {
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getClassesSubscription() {
-    final Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('classes')
-        .snapshots();
+    final Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('classes').snapshots();
     return movementsStream;
   }
 }

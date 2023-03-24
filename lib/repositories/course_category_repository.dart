@@ -14,11 +14,8 @@ class CourseCategoryRepository {
   }
 
   Future<List<CourseCategory>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courseCategories')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseCategories').get();
     List<CourseCategory> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
@@ -27,12 +24,12 @@ class CourseCategoryRepository {
     return response;
   }
 
-    Stream<QuerySnapshot<Map<String, dynamic>>> getCategoriesSubscription() {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCategoriesSubscription() {
     Stream<QuerySnapshot<Map<String, dynamic>>> categoriesStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseCategories')
-        .where('is_deleted',isNotEqualTo: true)
+        .where('is_deleted', isNotEqualTo: true)
         .snapshots();
     return categoriesStream;
   }

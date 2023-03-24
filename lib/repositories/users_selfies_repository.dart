@@ -12,11 +12,8 @@ class UsersSelfiesRepository {
   UsersSelfiesRepository.test({this.firestoreInstance});
 
   static Future<UsersSelfies> get() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('usersSelfies')
-        .get();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('usersSelfies').get();
     List<UsersSelfies> usersSelfies = mapQueryToUsersSelfies(querySnapshot);
     return usersSelfies != null ? usersSelfies[0] : null;
   }
@@ -25,7 +22,7 @@ class UsersSelfiesRepository {
     UsersSelfies usersSelfies = await get();
     final DocumentReference docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('usersSelfies')
         .doc(usersSelfies.id);
     if (usersSelfies.selfies.length < 70) {

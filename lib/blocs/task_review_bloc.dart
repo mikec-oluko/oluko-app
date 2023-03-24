@@ -31,14 +31,14 @@ class TaskReviewBloc extends Cubit<TaskReviewState> {
   void createTaskReview(CollectionReference reference, TaskSubmission taskSubmission, String assessmentAssignmentId) {
     final DocumentReference taskSubmissionReference = FirebaseFirestore.instance
         .collection("projects")
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection("assessmentAssignments")
         .doc('assessmentAssignmentId')
         .collection('taskSubmissions')
         .doc(taskSubmission.id);
     try {
-      TaskReview newTaskReview = TaskReview(
-          videoInfo: VideoInfo(drawing: [], markers: [], events: [], video: Video()), taskSubmissionReference: taskSubmissionReference);
+      TaskReview newTaskReview =
+          TaskReview(videoInfo: VideoInfo(drawing: [], markers: [], events: [], video: Video()), taskSubmissionReference: taskSubmissionReference);
       newTaskReview = TaskReviewRepository.createTaskReview(newTaskReview, reference);
       emit(CreateSuccess(taskReviewId: newTaskReview.id));
     } catch (e, stackTrace) {

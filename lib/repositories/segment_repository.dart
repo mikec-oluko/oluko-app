@@ -23,7 +23,7 @@ class SegmentRepository {
     for (EnrollmentSegment segment in classObj.segments) {
       QuerySnapshot qs = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('segments')
           .where('id', isEqualTo: segment.id)
           .limit(1)
@@ -46,30 +46,27 @@ class SegmentRepository {
 
   static Future<Segment> get(String id) async {
     DocumentReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('segments').doc(id);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('segments').doc(id);
     DocumentSnapshot ds = await reference.get();
     return Segment.fromJson(ds.data() as Map<String, dynamic>);
   }
 
-    static Future<List<Segment>> getAll() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('segments')
-        .get();
+  static Future<List<Segment>> getAll() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('segments').get();
     return mapQueryToSegment(querySnapshot);
   }
 
   static Future<void> addLike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
     await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('segments')
         .doc(segmentId)
         .update({'likes': FieldValue.increment(1)});
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     final List<EnrollmentClass> classes = courseEnrollment.classes;
@@ -82,13 +79,13 @@ class SegmentRepository {
   static Future<void> addDisLike(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId) async {
     await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getString("projectId"))
         .collection('segments')
         .doc(segmentId)
         .update({'dislikes': FieldValue.increment(1)});
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     final List<EnrollmentClass> classes = courseEnrollment.classes;
@@ -98,16 +95,12 @@ class SegmentRepository {
     });
   }
 
-  static Future<void> updateLikesDislikes(
-      CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
-   final DocumentReference segmentReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('segments')
-        .doc(segmentId);
+  static Future<void> updateLikesDislikes(CourseEnrollment courseEnrollment, int classIndex, int segmentIndex, String segmentId, bool likes) async {
+    final DocumentReference segmentReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('segments').doc(segmentId);
     final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     if (likes) {

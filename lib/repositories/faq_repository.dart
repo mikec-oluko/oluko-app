@@ -15,7 +15,7 @@ class FAQRepository {
 
   static Future<List<FAQItem>> getAll() async {
     QuerySnapshot docRef =
-        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('faq').orderBy('index').get();
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('faq').orderBy('index').get();
     List<FAQItem> response = [];
     docRef.docs.forEach((doc) {
       response.add(FAQItem.fromJson(doc.data() as Map<String, dynamic>));

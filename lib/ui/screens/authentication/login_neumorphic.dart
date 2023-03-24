@@ -214,7 +214,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
                       context,
                       ForgotPasswordDto(
                         email: _requestData.email,
-                        projectId: GlobalConfiguration().getValue('projectId'),
+                        projectId: GlobalConfiguration().getString('projectId'),
                       ),
                     );
                   },
@@ -242,7 +242,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
                 email: _requestData.email,
                 password: _requestData.password,
                 userName: _requestData.userName,
-                projectId: GlobalConfiguration().getValue('projectId'),
+                projectId: GlobalConfiguration().getString('projectId'),
               ),
             );
           },

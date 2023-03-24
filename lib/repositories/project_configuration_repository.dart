@@ -9,7 +9,7 @@ class ProjectConfigurationRepository {
   }
 
   static Future<Map> getCourseConfiguration() async {
-    final docRef = await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).get();
+    final docRef = await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).get();
     if (docRef == null && docRef.data() == null) {
       return null;
     }

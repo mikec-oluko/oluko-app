@@ -38,14 +38,15 @@ class SoundPlayer {
 
   Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState, bool isForWatch = false}) async {
     if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
-      final AudioCache player = AudioCache(duckAudio: true);
+      // duckAudio: true
+      final AudioCache player = AudioCache();
       String assetToPlay = asset;
       if (soundEnum != null) {
         final Map courseConfig = ProjectConfigurationBloc().getSoundsConfiguration();
         assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
       }
       if (assetToPlay != null && assetToPlay != 'null') {
-        await player.play(assetToPlay, mode: PlayerMode.LOW_LATENCY);
+        // await player.play(assetToPlay, mode: PlayerMode.lowLatency);
       }
     }
   }

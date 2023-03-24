@@ -85,8 +85,7 @@ class _RecordedViewState extends State<RecordedView> {
           ],
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
-          Positioned(
-              bottom: 0, left: 60, child: Text(widget.secondsRecorded, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)))
+          Positioned(bottom: 0, left: 60, child: Text(widget.secondsRecorded, style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)))
         else
           SizedBox(),
         if (OlukoNeumorphism.isNeumorphismDesign)
@@ -140,7 +139,7 @@ class _RecordedViewState extends State<RecordedView> {
       if (playedOnce) {
         await audioPlayer.resume();
       } else {
-        await audioPlayer.play(filePath, isLocal: true);
+        // await audioPlayer.play(filePath, isLocal: true);
         setState(() {
           playedOnce = true;
         });
@@ -151,7 +150,7 @@ class _RecordedViewState extends State<RecordedView> {
         _isPlaying = true;
       });
 
-      audioPlayer.onPlayerCompletion.listen((_) {
+      audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           _completedPercentage = 0.0;
@@ -164,7 +163,7 @@ class _RecordedViewState extends State<RecordedView> {
         });
       });
 
-      audioPlayer.onAudioPositionChanged.listen((duration) {
+      audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
@@ -177,6 +176,4 @@ class _RecordedViewState extends State<RecordedView> {
       });
     }
   }
-
-  
 }

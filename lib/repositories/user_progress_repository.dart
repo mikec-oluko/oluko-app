@@ -45,14 +45,10 @@ class UserProgressRepository {
 
   static DatabaseReference getUserProgressRef(FriendModel f, String userId) {
     String friendId = f.id;
-    return FirebaseDatabase.instance
-        .ref()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/activeNowUsers/$friendId/usersProgress/$userId'}');
+    return FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/activeNowUsers/$friendId/usersProgress/$userId'}');
   }
 
   static DatabaseReference getReference(String userId) {
-    return FirebaseDatabase.instance
-        .ref()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/activeNowUsers/$userId/usersProgress'}');
+    return FirebaseDatabase.instance.ref().child('${GlobalConfiguration().getString('projectId')}${'/activeNowUsers/$userId/usersProgress'}');
   }
 }

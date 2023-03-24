@@ -12,7 +12,7 @@ class IntroductionMediaRepository {
   static Future<String> getVideoURL(IntroductionMediaTypeEnum type, {bool useStreamUrl = false}) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('introductionMedia')
         .where('title', isEqualTo: introductionMediaType[type])
         .get();

@@ -23,7 +23,7 @@ class _State extends State<StoriesHeader> {
 
   @override
   Widget build(BuildContext context) {
-    if (GlobalConfiguration().getValue('showStories') == 'true') {
+    if (GlobalConfiguration().getString('showStories') == 'true') {
       //BlocProvider.of<StoryListBloc>(context).getStream(widget.userId);
       BlocProvider.of<StoryListBloc>(context).get(widget.userId);
       return BlocBuilder<StoryListBloc, StoryListState>(

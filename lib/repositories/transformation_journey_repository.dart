@@ -15,7 +15,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
 
-  static DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
 
   TransformationJourneyRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -27,7 +27,7 @@ class TransformationJourneyRepository {
     try {
       final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users')
           .doc(userId)
           .collection('transformationJourneyUploads')

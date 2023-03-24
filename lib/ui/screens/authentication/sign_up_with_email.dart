@@ -34,7 +34,7 @@ class SignUpWithMailContentPage extends StatefulWidget {
 
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData = SignUpRequest(projectId: GlobalConfiguration().getValue('projectId'));
+  SignUpRequest _requestData = SignUpRequest(projectId: GlobalConfiguration().getString('projectId'));
   PasswordStrength passwordStrength;
   bool _peekPassword = false;
 

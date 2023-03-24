@@ -63,9 +63,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
           boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
           border: NeumorphicBorder(
               width: 3,
-              color: widget.isPreviewContent
-                  ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth
-                  : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+              color: widget.isPreviewContent ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
         ),
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -101,8 +99,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
                         GestureDetector(
-                            onTap: () => widget.onDelete(),
-                            child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                            onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
                       ],
                     ),
                   ),
@@ -121,8 +118,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                               ? TimeConverter.durationToString(widget.durationFromRecord)
                               : '',
                       style: OlukoFonts.olukoSmallFont(
-                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
-                          customFontWeight: FontWeight.w500),
+                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white, customFontWeight: FontWeight.w500),
                     ),
                     const SizedBox(),
                     Row(
@@ -131,8 +127,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           widget.isPreviewContent
                               ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context)
                               : widget.audioMessageItem != null
-                                  ? TimeConverter.getDateAndTimeOnStringFormat(
-                                      dateToFormat: widget.audioMessageItem.createdAt, context: context)
+                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem.createdAt, context: context)
                                   : '',
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
@@ -218,10 +213,10 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
 
   Future<void> _onPlay({String filePath}) async {
     if (!widget.onStartPlaying()) {
-      if (playedOnce && audioPlayer.state == PlayerState.PAUSED) {
+      if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        await audioPlayer.play(filePath, isLocal: true);
+        // await audioPlayer.play(filePath, isLocal: true);
         setState(() {
           playedOnce = true;
         });
@@ -232,7 +227,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         widget.onAudioPlaying(_isPlaying);
       });
 
-      audioPlayer.onPlayerCompletion.listen((_) {
+      audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           widget.onAudioPlaying(_isPlaying);
@@ -246,14 +241,14 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         });
       });
 
-      audioPlayer.onAudioPositionChanged.listen((duration) {
+      audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.inMicroseconds.toDouble();
         });
       });
     } else {
-      if (audioPlayer.state == PlayerState.PLAYING) {
+      if (audioPlayer.state == PlayerState.playing) {
         await audioPlayer.pause();
         setState(() {
           _isPlaying = false;

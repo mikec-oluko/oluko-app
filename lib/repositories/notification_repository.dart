@@ -16,7 +16,7 @@ class NotificationRepository {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getNotificationSubscription(String userId) {
     Stream<QuerySnapshot<Map<String, dynamic>>> notificationsStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('notifications')
@@ -28,14 +28,14 @@ class NotificationRepository {
   static Future<void> clearAll(String userId) async {
     final notifications = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('notifications')
         .where('is_deleted', isNotEqualTo: true)
         .get();
     for (final notification in notifications.docs) {
-      if(notification.data()['seen_at'] == null) {
+      if (notification.data()['seen_at'] == null) {
         await notification.reference.update({'seen_at': Timestamp.now()});
       }
     }

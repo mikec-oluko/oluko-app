@@ -12,11 +12,8 @@ class UserStatisticsRepository {
   UserStatisticsRepository.test({this.firestoreInstance});
 
   static Future<UserStatistics> getUserStatics(String userId) async {
-    final DocumentReference docRef = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('userStatistics')
-        .doc(userId);
+    final DocumentReference docRef =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('userStatistics').doc(userId);
     DocumentSnapshot ds = await docRef.get();
     var doc = ds.data() as Map<String, dynamic>;
     if (doc != null) {

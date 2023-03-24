@@ -19,7 +19,7 @@ class FriendRepository {
     try {
       final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
@@ -44,7 +44,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
@@ -68,7 +68,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users-friend-suggestion')
           .where('id', isEqualTo: userId)
           .get();
@@ -91,19 +91,11 @@ class FriendRepository {
   }
 
   static DocumentReference<Map<String, dynamic>> getFriendUserDocReferenceById(String userId) {
-    return FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('friends')
-        .doc(userId);
+    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('friends').doc(userId);
   }
 
   static DocumentReference<Map<String, dynamic>> getUserDocReferenceById(String userId) {
-    return FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(userId);
+    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userId);
   }
 
   static Future<void> addFriendToFriendList(Friend friend, FriendModel friendModel, String friendId) async {
@@ -156,7 +148,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -182,7 +174,7 @@ class FriendRepository {
     try {
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -201,7 +193,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users-suggestion')
           .where('id', isEqualTo: userId)
           .get();
@@ -222,7 +214,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users-friend-hifive')
           .where('id', isEqualTo: userId)
           .get();
@@ -245,7 +237,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -288,7 +280,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -316,7 +308,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -353,7 +345,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -362,7 +354,7 @@ class FriendRepository {
 
       DocumentSnapshot<Map<String, dynamic>> targetFriendData = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friendToRemoveId)
           .get();
@@ -373,7 +365,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('friends')
           .doc(friendToRemoveId)
           .set(targetFriend.toJson());

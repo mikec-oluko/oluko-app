@@ -6,8 +6,7 @@ import 'package:oluko_app/models/coach_media_message.dart';
 
 class CoachVideoMessageRepository {
   FirebaseFirestore firestoreInstance;
-  static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
 
   CoachVideoMessageRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -17,7 +16,7 @@ class CoachVideoMessageRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream({@required String userId, @required String coachId}) {
     Stream<QuerySnapshot<Map<String, dynamic>>> coachVideoMessage = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('mediaMessages')
@@ -29,7 +28,7 @@ class CoachVideoMessageRepository {
   Future<void> markVideoMessageAsSeeen({String userId, CoachMediaMessage messageVideoContent}) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('mediaMessages')
@@ -40,7 +39,7 @@ class CoachVideoMessageRepository {
   Future<void> markVideoMessageAsFavorite({String userId, CoachMediaMessage messageVideoContent}) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coachAssignments')
         .doc(userId)
         .collection('mediaMessages')

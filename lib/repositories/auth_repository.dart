@@ -20,7 +20,7 @@ import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-  final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/auth';
+  final String url = GlobalConfiguration().getString('firebaseFunctions').toString() + '/auth';
   GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {

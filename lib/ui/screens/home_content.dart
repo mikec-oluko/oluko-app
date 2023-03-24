@@ -38,7 +38,7 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  final bool showStories = GlobalConfiguration().getValue('showStories') == 'true';
+  final bool showStories = GlobalConfiguration().getString('showStories') == 'true';
   @override
   Widget build(BuildContext context) {
     return form();

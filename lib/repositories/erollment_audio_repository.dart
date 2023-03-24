@@ -14,7 +14,7 @@ class EnrollmentAudioRepository {
   static Future<EnrollmentAudio> get(String courseEnrollmentId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('enrollmentAudios')
         .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
         .get();
@@ -29,7 +29,7 @@ class EnrollmentAudioRepository {
   static Future<void> markAudioAsDeleted(EnrollmentAudio enrollmentAudio, List<Audio> audios, String classId) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('enrollmentAudios')
         .doc(enrollmentAudio.id);
     for (ClassAudio classAudio in enrollmentAudio.classAudios) {
