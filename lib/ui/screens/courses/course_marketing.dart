@@ -507,17 +507,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
               BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
                 builder: (context, state) {
                   if (state is CourseLikedSuccess) {
-                    if (!_courseLiked) {
-                      _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
-                    }
+                    _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
                   }
                   return GestureDetector(
                     onTap: () {
-                      if (!_courseLiked) {
-                        setState(() {
-                          _courseLiked = true;
-                        });
-                      }
                       BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
                     },
                     child: topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
