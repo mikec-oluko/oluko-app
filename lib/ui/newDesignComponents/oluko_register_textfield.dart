@@ -398,6 +398,8 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
           if (countries == null || countries.isEmpty) {
             setState(() {
               countries = state.countries;
+              _selectedCountry = countries[0];
+              widget.onInputUpdated(_selectedCountry.name);
             });
           }
         }
@@ -460,6 +462,11 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                   });
                   widget.onInputUpdated(item);
                 },
+                onSaved: (String value) {
+                  setState(() {
+                    widget.onInputUpdated(_selectedCountry.name);
+                  });
+                },
                 validator: (String value) {
                   if ((value == '-' || value == '') || value == null) {
                     return OlukoLocalizations.get(context, 'required');
@@ -478,7 +485,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
     );
   }
 
-  bool get _isCountrySelected => _selectedCountry?.name != "" && _selectedCountry?.name != null;
+  bool get _isCountrySelected => _selectedCountry?.name != '' && _selectedCountry?.name != null;
 
   Widget statesDropdown() {
     return BlocListener<CountryBloc, CountryState>(
