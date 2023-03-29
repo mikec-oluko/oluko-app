@@ -69,6 +69,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   bool _isVideoPlaying = false;
   bool _courseLiked = false;
   bool isCourseEnrolled = false;
+  bool _isSavingLikedCourse = false;
   double _pixelsToReload;
   List<Class> _classes = [];
   List<Class> _growingClassList = [];
@@ -508,10 +509,16 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 builder: (context, state) {
                   if (state is CourseLikedSuccess) {
                     _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
+                    _isSavingLikedCourse = false;
                   }
                   return GestureDetector(
                     onTap: () {
-                      BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+                      if (!_isSavingLikedCourse) {
+                        BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+                      }
+                      setState(() {
+                        _isSavingLikedCourse = true;
+                      });
                     },
                     child: topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
                   );
