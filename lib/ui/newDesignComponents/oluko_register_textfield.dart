@@ -429,7 +429,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
                 style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                 dropdownColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : Colors.transparent,
                 isExpanded: true,
-                value: _selectedCountry?.name ?? countries[0].name,
+                value: _isCountrySelected ? _selectedCountry.name : countries[0].name,
                 items: countries.map<DropdownMenuItem<String>>((Country country) {
                   return DropdownMenuItem<String>(
                     value: country.name,
@@ -477,6 +477,8 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
             ),
     );
   }
+
+  bool get _isCountrySelected => _selectedCountry?.name != "" && _selectedCountry?.name != null;
 
   Widget statesDropdown() {
     return BlocListener<CountryBloc, CountryState>(
