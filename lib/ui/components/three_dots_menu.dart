@@ -45,12 +45,10 @@ class _ThreeDotsMenuState extends State<ThreeDotsMenu> {
       icon: Container(
         width: 40,
         height: 40,
-        child: OlukoBlurredButton(
-          childContent: Icon(
-            Icons.more_vert_sharp,
-            color: Colors.white,
-            size: 36,
-          ),
+        child: Icon(
+          Icons.more_vert_sharp,
+          color: Colors.white,
+          size: 36,
         ),
       ),
       iconSize: 36,
