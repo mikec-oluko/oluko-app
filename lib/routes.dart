@@ -705,6 +705,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         providers = [
           BlocProvider<PlanBloc>.value(value: _planBloc),
+          BlocProvider<UserBloc>.value(value: _userBloc),
         ];
         newRouteView = ProfileSubscriptionPage(
             fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? true : argumentsToAdd['fromRegister'] as bool);
