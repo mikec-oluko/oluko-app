@@ -226,7 +226,18 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                 },
               ),
               userInformationPanel(),
-              coverImageWidget(),
+              BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(
+                buildWhen: (previous, current) => current != previous,
+                builder: (context, state) {
+                  if (state is ProfileCoverImageDeleted) {
+                    currentUserLatestVersion = state.removedCoverImageUser;
+                  }
+                  if (state is ProfileCoverSuccess) {
+                    currentUserLatestVersion = state.userUpdated;
+                  }
+                  return coverImageWidget(currentUser: currentUserLatestVersion);
+                },
+              ),
             ],
           ),
         );
@@ -242,7 +253,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     );
   }
 
-  Positioned coverImageWidget() {
+  Positioned coverImageWidget({UserResponse currentUser}) {
     return Positioned(
       top: MediaQuery.of(context).size.height / 5,
       right: 10,
@@ -251,8 +262,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         child: Container(
           width: 40,
           height: 40,
-          child: UploadProfileMediaMenu(
-              galleryState: successState, contentFrom: UploadFrom.profileCoverImage, deleteContent: widget.currentUser.coverImage != null),
+          child: UploadProfileMediaMenu(galleryState: successState, contentFrom: UploadFrom.profileCoverImage, deleteContent: currentUser.coverImage != null),
         ),
       ),
     );

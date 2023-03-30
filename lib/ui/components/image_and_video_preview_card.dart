@@ -82,14 +82,16 @@ class _State extends State<ImageAndVideoPreviewCard> {
   Widget imagePreview(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (widget.originalContent is TransformationJourneyUpload && widget.showTitle) {
-          Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
-              arguments: {'TransformationJourneyUpload': transformationJourneyContent});
-        }
+        if (!widget.isEditing) {
+          if (widget.originalContent is TransformationJourneyUpload && widget.showTitle) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
+                arguments: {'TransformationJourneyUpload': transformationJourneyContent});
+          }
 
-        if (widget.isCoachMediaContent) {
-          Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
-              arguments: {'coachMedia': widget.originalContent as CoachMedia});
+          if (widget.isCoachMediaContent) {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
+                arguments: {'coachMedia': widget.originalContent as CoachMedia});
+          }
         }
       },
       child: Align(
