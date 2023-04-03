@@ -12,7 +12,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class MyListOfCourses extends StatefulWidget {
   final Map<CourseCategory, List<Course>> myListOfCourses;
-  const MyListOfCourses({this.myListOfCourses}) : super();
+  final Function(String courseId) beforeNavigation;
+  const MyListOfCourses({this.myListOfCourses, this.beforeNavigation}) : super();
 
   @override
   State<MyListOfCourses> createState() => _MyListOfCoursesState();
@@ -45,6 +46,7 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
           padding: const EdgeInsets.only(right: 8.0),
           child: GestureDetector(
             onTap: () async {
+              if (widget.beforeNavigation != null) widget.beforeNavigation(courseElement.id);
               Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                   arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
             },
