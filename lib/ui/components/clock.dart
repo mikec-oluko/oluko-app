@@ -16,6 +16,7 @@ import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/ui/newDesignComponents/rep_timer_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
@@ -207,7 +208,9 @@ class _State extends State<Clock> {
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
       return BlocBuilder<KeyboardBloc, KeyboardState>(
         builder: (context, state) {
-          return TimerUtils.repsTimer(() => widget.goToNextStep(), context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+          return TimerUtils.repsTimer(() {
+            widget.goToNextStep();
+          }, context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
               widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
         },
       );
