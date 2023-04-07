@@ -67,6 +67,7 @@ import 'package:wakelock/wakelock.dart';
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
   final CourseEnrollment courseEnrollment;
+  final CoachRequest coachRequest;
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
@@ -87,7 +88,8 @@ class SegmentClocks extends StatefulWidget {
       this.segments,
       this.fromChallenge,
       this.showPanel,
-      this.onShowAgainPressed})
+      this.onShowAgainPressed,
+      this.coachRequest})
       : super(key: key);
 
   @override
