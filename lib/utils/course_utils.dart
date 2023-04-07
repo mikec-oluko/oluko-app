@@ -78,10 +78,10 @@ class CourseUtils {
         return true;
       }
       //Check if this course match with the current tag filters.
-      bool tagMatch = false;
+      bool tagMatch = true;
       selectedTagIds.forEach((tagId) {
-        if (courseTagIds.contains(tagId) && !tagMatch) {
-          tagMatch = true;
+        if (!courseTagIds.contains(tagId)) {
+          tagMatch = false;
         }
       });
       return tagMatch;
