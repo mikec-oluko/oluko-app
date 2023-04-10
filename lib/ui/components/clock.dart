@@ -67,6 +67,7 @@ class _State extends State<Clock> {
   final _headsetPlugin = HeadsetEvent();
   HeadsetState _headsetState;
   final SoundPlayer _soundPlayer = SoundPlayer();
+  bool skipRest = true;
 
   @override
   void initState() {
@@ -125,6 +126,7 @@ class _State extends State<Clock> {
                 if (timerTaskState is SetTimerTaskIndex) {
                   setState(() {
                     widget.timerTaskIndex = timerTaskState.timerTaskIndex;
+                    skipRest = true;
                   });
                 }
               },
@@ -184,6 +186,30 @@ class _State extends State<Clock> {
           keyboardVisibilty
               ? Positioned(bottom: 0, child: _tasksSection(keyboardVisibilty))
               : Positioned(top: ScreenUtils.height(context) * 0.48, child: _tasksSection(keyboardVisibilty)),
+        if (widget.workState == WorkState.resting && skipRest)
+          Positioned(
+            bottom: 100,
+            child: Container(
+              width: ScreenUtils.width(context),
+              height: 60,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    widget.timeLeft = const Duration(seconds: 5);
+                    skipRest = !skipRest;
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.skip_next, color: OlukoColors.white),
+                    Text('Skip rest - next movement',
+                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
+                  ],
+                ),
+              ),
+            ),
+          )
       ],
     );
   }
