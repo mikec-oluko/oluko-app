@@ -1107,7 +1107,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     final isPausedInactive = state == AppLifecycleState.paused;
     if (isPausedInactive) {
       if (workState != WorkState.paused) {
-        changeSegmentState();
         if (cameraController != null) {
           cameraController.pauseVideoRecording();
         }
