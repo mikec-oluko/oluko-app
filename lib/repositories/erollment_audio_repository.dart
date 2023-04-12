@@ -16,7 +16,7 @@ class EnrollmentAudioRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('enrollmentAudios')
-        .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
+        .where('enrollment_course.id', isEqualTo: courseEnrollmentId)
         .get();
     if (docRef.docs == null || docRef.docs.isEmpty) {
       return null;
@@ -26,18 +26,14 @@ class EnrollmentAudioRepository {
     return enrollmentAudio;
   }
 
-  static Future<void> markAudioAsDeleted(EnrollmentAudio enrollmentAudio, List<Audio> audios, String classId) async {
+  static Future<void> markAudioAsDeleted(EnrollmentAudio enrollmentAudio, List<Audio> audios) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('enrollmentAudios')
         .doc(enrollmentAudio.id);
-    for (ClassAudio classAudio in enrollmentAudio.classAudios) {
-      if (classAudio.classId == classId) {
-        classAudio.audios = audios;
-        break;
-      }
-    }
-    await reference.update({'class_audios': List<dynamic>.from(enrollmentAudio.classAudios.map((audio) => audio.toJson()))});
+
+        enrollmentAudio.audios = audios;
+    await reference.update({'audios': List<dynamic>.from(enrollmentAudio.audios.map((audio) => audio.toJson()))});
   }
 }

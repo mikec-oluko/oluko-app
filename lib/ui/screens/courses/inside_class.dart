@@ -127,8 +127,7 @@ class _InsideClassesState extends State<InsideClass> {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
               _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
               _class = classState.classObj;
-              List<Audio> classAudios =
-                  AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
+              List<Audio> classAudios = enrollmentAudioState.enrollmentAudio.audios;
               _audios = AudioService.getNotDeletedAudios(classAudios);
               _audioQty = _audios == null ? 0 : _audios.length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
@@ -630,7 +629,7 @@ class _InsideClassesState extends State<InsideClass> {
     List<Audio> audiosUpdated = _audios.toList();
     _audios.removeAt(audioIndex);
     BlocProvider.of<CourseEnrollmentAudioBloc>(context)
-        .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, widget.courseEnrollment.classes[widget.classIndex].id, _audios);
+        .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, _audios);
   }
 
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {
