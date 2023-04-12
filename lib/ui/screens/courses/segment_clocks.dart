@@ -44,6 +44,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
 import 'package:oluko_app/ui/components/clocks_lower_section.dart';
+import 'package:oluko_app/ui/components/coach_request_content.dart';
 import 'package:oluko_app/ui/components/pause_dialog_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_round_alert.dart';
@@ -52,6 +53,7 @@ import 'package:oluko_app/ui/screens/courses/initial_timer_panel.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
@@ -60,6 +62,7 @@ import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 //import 'package:native_device_orientation/native_device_orientation.dart';
@@ -752,6 +755,68 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return timerEntries[timerTaskIndex + 2].round == 1;
   }
 
+  navigateToSegmentWithoutRecording() {
+    TimerUtils.startCountdown(
+        WorkoutType.segment, context, getArguments(), widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0);
+    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
+      'workoutType': WorkoutType.segment,
+      'coach': widget.coach,
+      'segments': widget.segments,
+      'fromChallenge': widget.fromChallenge,
+      'coachRequest': _coachRequest
+    };
+  }
+
+  askForRecordSegment() {
+    if (_globalService.videoProcessing) {
+      DialogUtils.getDialog(
+          context,
+          [
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                ))
+          ],
+          showExitButton: true);
+    } else {
+      BottomDialogUtils.showBottomDialog(
+        context: context,
+        content: CoachRequestContent(
+          name: widget.coach?.firstName ?? '',
+          image: widget.coach?.avatar,
+          onNotRecordingAction: () => Navigator.pop(context),
+          onRecordingAction: navigateToSegmentWithRecording,
+        ),
+      );
+    }
+  }
+
+  navigateToSegmentWithRecording() {
+    Navigator.pushNamed(
+      context,
+      routeLabels[RouteEnum.segmentCameraPreview],
+      arguments: {
+        'segmentIndex': widget.segmentIndex,
+        'classIndex': widget.classIndex,
+        'coach': widget.coach,
+        'courseEnrollment': widget.courseEnrollment,
+        'courseIndex': widget.courseIndex,
+        'segments': widget.segments,
+      },
+    );
+  }
+
   void _goToNextStep() {
     BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
 
@@ -760,7 +825,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
     alertTimerPlaying = false;
 
-    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
+    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
       if ((isLastOne() || nextIsFirstRound()) ||
           ((nextIsLastOne() && nextIsRestTime()) || (thereAreTwoMorePos() && nextIsRestTime() && twoPosLaterIsFirstRound()))) {
         _saveSegmentRound();
@@ -781,6 +846,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
 
     realTaskIndex++;
+    if (widget.coachRequest != null && isLastOne()) {
+      askForRecordSegment();
+    }
     if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
       setAlert();
       if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
@@ -1062,6 +1130,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   _startMovement() {
     //Reset countdown variables
     timerTaskIndex = 0;
+    if (isSegmentWithRecording()) {
+      _setupCameras();
+      timerTaskIndex = widget.segments[widget.segmentIndex].rounds;
+    }
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
     _areDiferentMovsWithRepCouter = SegmentClocksUtils.diferentMovsWithRepCouter(timerEntries);
     if (timerEntries.isEmpty) {

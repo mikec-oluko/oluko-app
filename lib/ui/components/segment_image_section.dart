@@ -240,20 +240,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   onPressed: () {
                     BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
 
-                    if (_coachRequest != null) {
-                      //TODO: CHECK CHALLENGE
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: CoachRequestContent(
-                          name: widget.coach?.firstName ?? '',
-                          image: widget.coach?.avatar,
-                          onNotRecordingAction: navigateToSegmentWithoutRecording,
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
-                    } else {
-                      navigateToSegmentWithoutRecording();
-                    }
+                    navigateToSegmentWithoutRecording();
                   },
                 ),
               )
@@ -356,7 +343,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       'coach': widget.coach,
       'segments': widget.segments,
       'fromChallenge': widget.fromChallenge,
-      'coachRequest':_coachRequest
+      'coachRequest': _coachRequest
     };
   }
 
