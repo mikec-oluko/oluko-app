@@ -17,6 +17,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -96,6 +97,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     PushNotificationService.listenPushNotifications(context);
+    UserResponse authUser;
     if (widget.tab != null) {
       this.tabController.index = widget.tab;
       tabController.animateTo(widget.tab);
@@ -150,24 +152,25 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 _showPopUp(context, nextRouteForUser, state);
               }
             }),
-        BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
-          listener: (context, state) async {
-            if (state is UnSeenAssignmentSuccess) {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
-            }
-          },
-        )
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
+          authUser = authState.user;
           BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
+          BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
+            listener: (context, state) async {
+              if (state is UnSeenAssignmentSuccess && authUser.currentPlan > 1) {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
+              }
+            },
+          );
         }
         return BlocBuilder<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           builder: (context, state) {
-            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess) {
+            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess && authUser.currentPlan > 1) {
               return Scaffold(
                 body: Container(
                   decoration: const BoxDecoration(
