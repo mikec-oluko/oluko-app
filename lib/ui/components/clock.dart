@@ -186,7 +186,7 @@ class _State extends State<Clock> {
           keyboardVisibilty
               ? Positioned(bottom: 0, child: _tasksSection(keyboardVisibilty))
               : Positioned(top: ScreenUtils.height(context) * 0.48, child: _tasksSection(keyboardVisibilty)),
-        if (widget.workState == WorkState.resting && skipRest)
+        if ((widget.workState == WorkState.resting && skipRest) && canUseSkipRest())
           Positioned(
             bottom: 100,
             child: Container(
@@ -213,6 +213,8 @@ class _State extends State<Clock> {
       ],
     );
   }
+
+  bool canUseSkipRest() => widget.timeLeft > const Duration(seconds: 5);
 
   Widget countdownSection() {
     if (isWorkStateFinished()) {

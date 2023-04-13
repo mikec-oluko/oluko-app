@@ -18,6 +18,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -33,6 +34,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
+import 'package:oluko_app/ui/newDesignComponents/segment_summary_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/self_recording_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -141,88 +143,164 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           addRepaintBoundaries: false,
           padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null,
           children: [
-            Stack(
-              children: [
-                SizedBox(
-                  height: ScreenUtils.height(context) / 1.3,
-                  child: imageSection(),
-                ),
-                if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
-                  child: segmentContent(),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 130,
-            ),
+            _segmentImageSection(),
           ],
         ),
-        Positioned(
-            bottom: 100,
-            child: Align(
-                child: SizedBox(
-                    width: ScreenUtils.width(context),
-                    child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
-                      if (state is ChallengeHistoricalResult) {
-                        isFinishedBefore = state.wasCompletedBefore;
-                        _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
-                      }
-                      return startWorkoutsButton(isFinishedBefore);
-                    })))),
+        _classTitleComponent(),
+        _segmentCardComponent(),
+        _segmentStepsDotsComponent(),
+        _segmentStartButton(),
         //TODO: Navigation buttons
         topButtons(),
       ],
     );
   }
 
+  Positioned _segmentCardComponent() {
+    return Positioned(
+      top: ScreenUtils.height(context) / 4.5,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: segmentContent(),
+      ),
+    );
+  }
+
+  Positioned _segmentStartButton() {
+    return Positioned(
+        bottom: 100,
+        child: Align(
+            child: SizedBox(
+                width: ScreenUtils.width(context),
+                child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
+                  if (state is ChallengeHistoricalResult) {
+                    isFinishedBefore = state.wasCompletedBefore;
+                    _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
+                  }
+                  return startWorkoutsButton(isFinishedBefore);
+                }))));
+  }
+
+  Positioned _segmentStepsDotsComponent() => Positioned(
+      bottom: 200,
+      left: 50,
+      right: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
+        ],
+      ));
+
+  Stack _segmentImageSection() {
+    return Stack(
+      children: [
+        SizedBox(
+          height: ScreenUtils.height(context) / 1.45,
+          child: imageSection(),
+        ),
+        if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
+      ],
+    );
+  }
+
+  Positioned _classTitleComponent() {
+    return Positioned(
+      top: ScreenUtils.height(context) / 7,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          widget.courseEnrollment.classes[widget.classIndex].name,
+          style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+          overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+        ),
+      ),
+    );
+  }
+
   Widget segmentContent() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Padding(
-            padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.54),
-            child: segmentInformation(),
-          )
+        ? segmentInformation()
         : Padding(padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.25, right: 15, left: 15), child: segmentInformation());
   }
 
-  Column segmentInformation() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
-          child: Text(
-            widget.segment.isChallenge ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name) : widget.segment.name,
-            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
-          child: Text(
-            widget.segment.description,
-            style: OlukoFonts.olukoBigFont(
-              customFontWeight: OlukoNeumorphism.isNeumorphismDesign ? FontWeight.w300 : FontWeight.w400,
-              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
+  EnrollmentSegment getCourseEnrollmentSegment() {
+    final EnrollmentSegment currentEnrollmentSegment =
+        widget.courseEnrollment.classes[widget.classIndex].segments.where((enrollmentSegment) => enrollmentSegment.id == widget.segment.id).first;
+    return widget
+        .courseEnrollment.classes[widget.classIndex].segments[widget.courseEnrollment.classes[widget.classIndex].segments.indexOf(currentEnrollmentSegment)];
+  }
+
+  Widget segmentInformation() {
+    return Container(
+      width: ScreenUtils.width(context) - 40,
+      decoration: BoxDecoration(
+        color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${OlukoLocalizations.get(context, 'segment')} ${widget.currentSegmentStep.toString()} / ${widget.totalSegmentStep.toString()}",
+              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.lightOrange),
             ),
-            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-          ),
-        ),
-        SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
-        Padding(
-          padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: SegmentUtils.getSegmentSummary(
-              widget.segment,
-              context,
-              OlukoColors.white,
+            const SizedBox(height: 10),
+            _segmentCardTitle(),
+            const SizedBox(height: 10),
+            _segmentCardDescription(),
+            Padding(
+              padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
+              child: SegmentSummaryComponent(
+                courseEnrollment: widget.courseEnrollment,
+                segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
+                segment: widget.segment,
+              ),
+              // child: Column(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   // children: SegmentUtils.getSegmentSummary(
+              //   //   widget.segment,
+              //   //   context,
+              //   //   OlukoColors.coral,
+              //   // ),
+              //   children: SegmentUtils.getSegmentSummary(
+              //     widget.segment,
+              //     context,
+              //     OlukoColors.coral,
+              //   ),
+              // ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+
+  SizedBox _segmentCardTitle() {
+    return SizedBox(
+      child: Text(
+        widget.segment.description,
+        style: OlukoFonts.olukoSuperBigFont(
+          customFontWeight: FontWeight.bold,
+          customColor: OlukoColors.white,
+        ),
+        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+      ),
+    );
+  }
+
+  SizedBox _segmentCardDescription() {
+    return SizedBox(
+      width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
+      child: Text(
+        widget.segment.name,
+        style: OlukoFonts.olukoMediumFont(
+          customColor: OlukoColors.grayColor,
+        ),
+        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+      ),
     );
   }
 
@@ -526,7 +604,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             videoWidget()
           else
             SizedBox(
-              height: MediaQuery.of(context).size.height / 1,
+              height: MediaQuery.of(context).size.height / 1.5,
               child: imageAspectRatio(),
             )
         else

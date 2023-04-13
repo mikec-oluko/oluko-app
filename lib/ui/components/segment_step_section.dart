@@ -28,10 +28,10 @@ class _State extends State<SegmentStepSection> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
-                )
+                // Text(
+                //   '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
+                //   style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
+                // )
               ],
             ),
             Row(
@@ -62,7 +62,7 @@ class _State extends State<SegmentStepSection> {
       if (selected) {
         return const Icon(
           Icons.radio_button_checked,
-          color: OlukoColors.primary,
+          color: OlukoColors.white,
           size: 15,
         );
       } else {
@@ -70,7 +70,7 @@ class _State extends State<SegmentStepSection> {
           padding: EdgeInsets.only(top: 1),
           child: Icon(
             Icons.circle,
-            color: OlukoColors.primary,
+            color: OlukoColors.white,
             size: 10,
           ),
         );

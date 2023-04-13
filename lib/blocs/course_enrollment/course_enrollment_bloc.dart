@@ -109,9 +109,11 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
+  void markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
+      {bool useWeigth = false, int sectionIndex, int movementIndex, double weightUsed}) async {
     try {
-      await CourseEnrollmentRepository.markSegmentAsCompleted(courseEnrollment, segmentIndex, classIndex);
+      await CourseEnrollmentRepository.markSegmentAsCompleted(courseEnrollment, segmentIndex, classIndex,
+          useWeigth: useWeigth, sectionIndex: sectionIndex, movementIndex: movementIndex, weightUsed: weightUsed);
       //emit(MarkSegmentSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
