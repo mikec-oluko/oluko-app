@@ -107,7 +107,7 @@ class _InsideClassesState extends State<InsideClass> {
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
     BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
-    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
+    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
   }
 
@@ -127,7 +127,7 @@ class _InsideClassesState extends State<InsideClass> {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
               _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
               _class = classState.classObj;
-              List<Audio> classAudios = enrollmentAudioState.enrollmentAudio.audios;
+              List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [] ;
               _audios = AudioService.getNotDeletedAudios(classAudios);
               _audioQty = _audios == null ? 0 : _audios.length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);

@@ -11,12 +11,13 @@ class EnrollmentAudioRepository {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static Future<EnrollmentAudio> get(String courseEnrollmentId) async {
+  static Future<EnrollmentAudio> get(String courseEnrollmentId, String classId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('enrollmentAudios')
-        .where('enrollment_course.id', isEqualTo: courseEnrollmentId)
+        .where('course_class.id', isEqualTo: classId)
+        .where('course_enrollment.id', isEqualTo: courseEnrollmentId)
         .get();
     if (docRef.docs == null || docRef.docs.isEmpty) {
       return null;
