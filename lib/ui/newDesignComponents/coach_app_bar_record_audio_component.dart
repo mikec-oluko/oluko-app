@@ -60,14 +60,9 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
     return BlocBuilder<CoachAudioPanelBloc, CoachAudioPanelState>(
       builder: (context, state) {
         if (state is CoachAudioPanelDefault) {
+          recordAudioContent = _sendAudioToCoachComponent(context);
           _audiosRecorded.clear();
-          _recordingAudio = _recorder.isRecording;
-          recordAudioContent = Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Row(
-              children: [_audioRecordedElement, _audioRecordMessageButtonComponentSentAction()],
-            ),
-          );
+          recordAudioContent = Padding(padding: const EdgeInsets.only(top: 20), child: recordAudioContent);
         }
         if (state is CoachAudioPanelDeleted) {
           _audioRecorded = !_audioRecorded;
@@ -272,8 +267,8 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
               .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
           BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
           setState(() {
-            _audioRecorded = !_audioRecorded;
-            _recordingAudio = !_recordingAudio;
+            // _audioRecorded = !_audioRecorded;
+            // _recordingAudio = !_recordingAudio;
           });
           // !_recorder.isInitialized ? _recorder.init() : null;
           // await _recorder.toggleRecording();

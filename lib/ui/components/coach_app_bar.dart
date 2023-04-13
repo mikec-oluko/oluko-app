@@ -32,7 +32,6 @@ class _CoachAppBarState extends State<CoachAppBar> {
   String defaultCoachPic = '';
   num numberOfReviewPendingItems = 0;
   bool showCoachProfle = true;
-  // final SoundRecorder _recorder = SoundRecorder();
 
   @override
   void initState() {
@@ -89,11 +88,12 @@ class _CoachAppBarState extends State<CoachAppBar> {
                       child: Row(
                         // mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          CoachAppBarRecordAudioComponent(
-                            coachId: widget.coachUser.id,
-                            userId: widget.currentUser.id,
-                            // audioRecorder: _recorder,
-                          ), // goToCoachProfile(context),
+                          if (widget.coachUser != null)
+                            CoachAppBarRecordAudioComponent(
+                              coachId: widget.coachUser.id,
+                              userId: widget.currentUser.id,
+                              // audioRecorder: _recorder,
+                            ), // goToCoachProfile(context),
                           const SizedBox(width: 10),
                           if (widget.coachUser != null && widget.coachUser.avatar != null)
                             OlukoNeumorphism.isNeumorphismDesign
@@ -110,7 +110,13 @@ class _CoachAppBarState extends State<CoachAppBar> {
                                 : coachAvatarImage()
                           else
                             OlukoNeumorphism.isNeumorphismDesign
-                                ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar())
+                                ? GestureDetector(
+                                    onTap: () {
+                                      widget.onNavigation();
+                                      Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
+                                          arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
+                                    },
+                                    child: Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar()))
                                 : coachDefaultAvatar(),
                         ],
                       ),
