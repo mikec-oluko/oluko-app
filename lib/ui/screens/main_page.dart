@@ -97,7 +97,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     PushNotificationService.listenPushNotifications(context);
-    UserResponse authUser;
     if (widget.tab != null) {
       this.tabController.index = widget.tab;
       tabController.animateTo(widget.tab);
@@ -152,25 +151,24 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 _showPopUp(context, nextRouteForUser, state);
               }
             }),
+        BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
+          listener: (context, state) async {
+            if (state is UnSeenAssignmentSuccess && state.user.currentPlan > 0) {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
+            }
+          },
+        )
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
-          authUser = authState.user;
           BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
-          BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
-            listener: (context, state) async {
-              if (state is UnSeenAssignmentSuccess && authUser.currentPlan > 1) {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
-              }
-            },
-          );
         }
         return BlocBuilder<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           builder: (context, state) {
-            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess && authUser.currentPlan > 1) {
+            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess && state.user.currentPlan > 0) {
               return Scaffold(
                 body: Container(
                   decoration: const BoxDecoration(
