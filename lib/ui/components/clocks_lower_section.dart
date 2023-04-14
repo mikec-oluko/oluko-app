@@ -11,6 +11,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/ui/newDesignComponents/segment_summary_component.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
@@ -41,6 +42,7 @@ class ClocksLowerSection extends StatefulWidget {
   final String segmentId;
   final bool areDiferentMovsWithRepCouter;
   final bool storyShared;
+  final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementAndWeightsForWorkout;
 
   ClocksLowerSection(
       {this.workState,
@@ -62,7 +64,8 @@ class ClocksLowerSection extends StatefulWidget {
       this.courseEnrollment,
       this.classIndex,
       this.segmentId,
-      this.storyShared});
+      this.storyShared,
+      this.movementAndWeightsForWorkout});
 
   @override
   _State createState() => _State();
@@ -134,6 +137,8 @@ class _State extends State<ClocksLowerSection> {
             decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
             child: SegmentSummaryComponent(
               courseEnrollment: widget.courseEnrollment,
+              segmentIndex: widget.segmentIndex,
+              classIndex: widget.classIndex,
               segment: widget.segments
                   .where(
                     (segment) => segment.id == widget.segmentId,
@@ -141,15 +146,10 @@ class _State extends State<ClocksLowerSection> {
                   .first,
               segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
               addWeightEnable: true,
-            )
-            // child: ListView(
-            //   addAutomaticKeepAlives: false,
-            //   addRepaintBoundaries: false,
-            //   padding: EdgeInsets.zero,
-            //   children:
-            //       SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
-            // )
-            )
+              movementWeigths: (movementsAndWeights) {
+                widget.movementAndWeightsForWorkout(movementsAndWeights);
+              },
+            ))
         : Column(
             children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
           );
@@ -220,4 +220,12 @@ class _State extends State<ClocksLowerSection> {
   bool isWorkStateFinished() {
     return widget.workState == WorkState.finished;
   }
+
+  // child: ListView(
+  //   addAutomaticKeepAlives: false,
+  //   addRepaintBoundaries: false,
+  //   padding: EdgeInsets.zero,
+  //   children:
+  //       SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
+  // )
 }

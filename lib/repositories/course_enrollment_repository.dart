@@ -14,6 +14,7 @@ import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -125,6 +126,25 @@ class CourseEnrollmentRepository {
       'completed_at': FieldValue.serverTimestamp(),
       'is_unenrolled': courseEnrollment.isUnenrolled is bool ? courseEnrollment.isUnenrolled : false,
       'updated_at': FieldValue.serverTimestamp()
+    });
+  }
+
+  static Future<void> addWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> movementsAndWeights}) async {
+    final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollmentId);
+
+    CourseEnrollment courseEnrollmentLatestVersion = await getById(courseEnrollmentId);
+
+    movementsAndWeights.forEach((workoutElement) {
+      courseEnrollmentLatestVersion.classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex]
+          .movements[workoutElement.movementIndex].weight = workoutElement.weight;
+    });
+
+    courseEnrollmentReference.update({
+      'classes': List<dynamic>.from(courseEnrollmentLatestVersion.classes.map((c) => c.toJson())),
     });
   }
 
