@@ -385,35 +385,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             const SizedBox(),
           const Expanded(child: SizedBox()),
           if (!_isVideoPlaying)
-            GestureDetector(
-              onTap: () {
-                BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
-                if (_coachRequest != null) {
-                  showCoachDialog();
-                } else {
-                  if (widget.segment.isChallenge) {
-                    if (_canStartSegment) {
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: SelfRecordingContent(
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
-                    }
-                  } else {
-                    if (_canStartSegment) {
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: SelfRecordingContent(
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
-                    }
-                  }
-                }
-              },
-              child: getCameraIcon(),
-            )
+            const SizedBox()
           else
             GestureDetector(
               onTap: () => changeVideoState(),
