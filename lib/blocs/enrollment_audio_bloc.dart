@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/enrollment_audio.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/repositories/erollment_audio_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -20,9 +21,16 @@ class Failure extends EnrollmentAudioState {
 class EnrollmentAudioBloc extends Cubit<EnrollmentAudioState> {
   EnrollmentAudioBloc() : super(Loading());
 
-  void get(String courseEnrollmentId) async {
+  void get(String courseEnrollmentId, String classId) async {
     try {
-      EnrollmentAudio enrollmentAudio = await EnrollmentAudioRepository.get(courseEnrollmentId);
+      EnrollmentAudio enrollmentAudio = await EnrollmentAudioRepository.get(courseEnrollmentId, classId);
+      List<Audio> audios = [];
+      enrollmentAudio.audios.forEach( (audio) {
+        if(audio.seen && !audio.deleted){
+          audios.add(audio);
+        }
+      });
+      enrollmentAudio.audios = audios;
       emit(GetEnrollmentAudioSuccess(enrollmentAudio: enrollmentAudio));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

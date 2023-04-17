@@ -10,18 +10,7 @@ class AudioService {
     List<Audio> notDeletedAudios = audios.where((element) => element.deleted != true).toList();
     return notDeletedAudios;
   }
-
-    static List<Audio> getClassAudios(EnrollmentAudio enrollmentAudio, String classId) {
-    if(enrollmentAudio == null || enrollmentAudio.classAudios == null){
-      return null;
-    }
-    for (ClassAudio classAudio in enrollmentAudio.classAudios) {
-      if(classAudio.classId == classId){
-        return classAudio.audios;
-      }
-    }
-    return null;
-  }
+  
 static int getUnseenAudios(List<Audio> audios)  { 
       int unseenAudios = 0;
       if (audios != null) {
