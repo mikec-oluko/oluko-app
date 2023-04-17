@@ -34,8 +34,8 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
           builder: (context, state) {
             if (state is GetUserTaskSubmissionSuccess) {
               _assessmentVideoContent = state.taskSubmissions;
-              if(_profileInfo.id!=widget.userRequested.id){
-                _assessmentVideoContent=_assessmentVideoContent.where((assessment) => assessment.isPublic).toList();
+              if (_profileInfo.id != widget.userRequested.id) {
+                _assessmentVideoContent = _assessmentVideoContent.where((assessment) => assessment.isPublic).toList();
               }
               _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
                   assessmentVideoData: _assessmentVideoContent,
@@ -63,19 +63,17 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
             : Container(
                 constraints: BoxConstraints.expand(),
                 color: OlukoNeumorphismColors.appBackgroundColor,
-                child: SafeArea(
-                  child: Stack(children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
-                      child: _contentGallery.length != 0
-                          ? GridView.count(
-                              crossAxisCount: 3,
-                              children: _contentGallery,
-                            )
-                          : OlukoErrorMessage(),
-                    ),
-                  ]),
-                ),
+                child: Stack(children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
+                    child: _contentGallery.length != 0
+                        ? GridView.count(
+                            crossAxisCount: 3,
+                            children: _contentGallery,
+                          )
+                        : OlukoErrorMessage(),
+                  ),
+                ]),
               ));
   }
 }
