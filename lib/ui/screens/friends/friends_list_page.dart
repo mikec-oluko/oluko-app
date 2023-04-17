@@ -203,7 +203,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(20),
-              child: Text( , style: OlukoFonts.olukoBigFont()),
+              child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
             ),
             if (listLength > 0) Expanded(child: content) else content,
           ],
