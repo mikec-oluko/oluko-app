@@ -33,7 +33,7 @@ class Audio {
         'deleted': deleted ?? false,
         'user_name': userName,
         'user_avatar_thumbnail': userAvatarThumbnail,
-        'state': state,
+        'state': state.index,
         'user_id': userId,
         'id': id,
         'user_reference': userReference,

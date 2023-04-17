@@ -26,12 +26,28 @@ class EnrollmentAudioBloc extends Cubit<EnrollmentAudioState> {
       EnrollmentAudio enrollmentAudio = await EnrollmentAudioRepository.get(courseEnrollmentId, classId);
       List<Audio> audios = [];
       enrollmentAudio.audios.forEach( (audio) {
-        if(audio.seen && !audio.deleted){
+        if(!audio.deleted){
           audios.add(audio);
         }
       });
       enrollmentAudio.audios = audios;
       emit(GetEnrollmentAudioSuccess(enrollmentAudio: enrollmentAudio));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void markAudioAsSeen(EnrollmentAudio enrollmentAudio, List<Audio> audios) async{
+    try {
+      audios.forEach((element) {element.seen = true;});
+      List<Audio> audiosUpdated = audios.toList();
+      await EnrollmentAudioRepository.saveAudios(enrollmentAudio, audiosUpdated);
+      //emit(ClassAudioDeleteSuccess(audios: audios));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

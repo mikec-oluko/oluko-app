@@ -129,7 +129,7 @@ class _InsideClassesState extends State<InsideClass> {
               _class = classState.classObj;
               List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [] ;
               _audios = AudioService.getNotDeletedAudios(classAudios);
-              _audioQty = _audios == null ? 0 : _audios.length;
+              _audioQty = _audios == null ? 0 : _audios.where((element) => element.seen == false).length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
               return WillPopScope(
                   onWillPop: () {
@@ -607,7 +607,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-
+            BlocProvider.of<EnrollmentAudioBloc>(context).markAudioAsSeen(_enrollmentAudio, _audios);
             _contentForPanel = ModalAudio(
                 panelController: _buttonController,
                 users: _coaches,
@@ -679,7 +679,7 @@ class _InsideClassesState extends State<InsideClass> {
         children: [
           OlukoBlurredButton(
             childContent: GestureDetector(
-              onTap: () => _audioQty > 0 ? _audioAction() : null,
+              onTap: () => _audios.isNotEmpty ? _audioAction() : null,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
