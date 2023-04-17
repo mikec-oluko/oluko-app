@@ -108,7 +108,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
 
   Widget topButtons() {
     return Padding(
-        padding: const EdgeInsets.only(top: 25, left: 15, right: 15),
+        padding: const EdgeInsets.only(top: 50, left: 15, right: 15),
         child: Row(
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
@@ -300,7 +300,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               Visibility(
                 visible: widget.showCrossButton,
                 child: Positioned(
-                  top: 22,
+                  top: 50,
                   right: 10,
                   child: GestureDetector(
                     onTap: () => widget.onPlay(),

@@ -180,30 +180,28 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 ),
               );
             } else {
-              return SafeArea(
-                child: Scaffold(
-                  backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                  body: Padding(
-                    padding: _isBottomTabActive && this.tabController.index != 3
-                        ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
-                        : const EdgeInsets.only(bottom: 0),
-                    child: TabBarView(
-                      //physics this is setup to stop swiping from tab to tab
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: this.tabController,
-                      children: tabs,
-                    ),
+              return Scaffold(
+                backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+                body: Padding(
+                  padding: _isBottomTabActive && this.tabController.index != 3
+                      ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
+                      : const EdgeInsets.only(bottom: 0),
+                  child: TabBarView(
+                    //physics this is setup to stop swiping from tab to tab
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: this.tabController,
+                    children: tabs,
                   ),
-                  extendBody: true,
-                  bottomNavigationBar: _isBottomTabActive
-                      ? OlukoBottomNavigationBar(
-                          selectedIndex: this.tabController.index,
-                          onPressed: (index) => this.setState(() {
-                            this.tabController.animateTo(index as int);
-                          }),
-                        )
-                      : const SizedBox(),
                 ),
+                extendBody: true,
+                bottomNavigationBar: _isBottomTabActive
+                    ? OlukoBottomNavigationBar(
+                        selectedIndex: this.tabController.index,
+                        onPressed: (index) => this.setState(() {
+                          this.tabController.animateTo(index as int);
+                        }),
+                      )
+                    : const SizedBox(),
               );
             }
           },

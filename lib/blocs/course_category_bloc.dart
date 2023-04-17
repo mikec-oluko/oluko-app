@@ -65,6 +65,7 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
           final Map<String, dynamic> content = doc.data();
           courseCategories.add(CourseCategory.fromJson(content));
         });
+        courseCategories.sort((a, b) => a.index.compareTo(b.index));
         emit(CourseCategorySubscriptionSuccess(values: courseCategories));
       } catch (exception, stackTrace) {
         await Sentry.captureException(
