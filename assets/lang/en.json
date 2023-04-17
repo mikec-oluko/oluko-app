@@ -265,7 +265,7 @@
     "fitnessWorld": "fitness world!",
     "enrollInACourse": "Enroll in a Course",
     "noCoachMessage": "Learn more about our coaching options in the FAQs!",
-    "roundInfo": "Last round is recorded. We will prepare your video and send it to your coach!",
+    "roundInfo": "First round is recorded. We will prepare your video and send it to your coach!",
     "stopProcessConfirmation": "The video is still being processed, if this view is abandoned the process will be terminated. Do you want to leave?",
     "noVideoUploaded": "You haven't uploaded a video yet",
     "goBackConfirmationWithRecording": "Do you want to go back? Your recordings will be lost.",

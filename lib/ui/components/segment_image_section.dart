@@ -240,7 +240,20 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   onPressed: () {
                     BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
 
-                    navigateToSegmentWithoutRecording();
+                    if (_coachRequest != null) {
+                      //TODO: CHECK CHALLENGE
+                      BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content: CoachRequestContent(
+                          name: widget.coach?.firstName ?? '',
+                          image: widget.coach?.avatar,
+                          onNotRecordingAction: navigateToSegmentWithoutRecording,
+                          onRecordingAction: navigateToSegmentWithRecording,
+                        ),
+                      );
+                    } else {
+                      navigateToSegmentWithoutRecording();
+                    }
                   },
                 ),
               )
@@ -385,7 +398,35 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             const SizedBox(),
           const Expanded(child: SizedBox()),
           if (!_isVideoPlaying)
-            const SizedBox()
+            GestureDetector(
+              onTap: () {
+                BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
+                if (_coachRequest != null) {
+                  showCoachDialog();
+                } else {
+                  if (widget.segment.isChallenge) {
+                    if (_canStartSegment) {
+                      BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content: SelfRecordingContent(
+                          onRecordingAction: navigateToSegmentWithRecording,
+                        ),
+                      );
+                    }
+                  } else {
+                    if (_canStartSegment) {
+                      BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content: SelfRecordingContent(
+                          onRecordingAction: navigateToSegmentWithRecording,
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              child: getCameraIcon(),
+            )
           else
             GestureDetector(
               onTap: () => changeVideoState(),

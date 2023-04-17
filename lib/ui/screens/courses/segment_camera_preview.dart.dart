@@ -129,7 +129,7 @@ class _State extends State<SegmentCameraPreview> {
     return GestureDetector(
         onTap: () {
           TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(), widget.segments[widget.segmentIndex].initialTimer,
-              widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds);
+              widget.segments[widget.segmentIndex].rounds, 0);
         },
         child: recordIcon());
   }
