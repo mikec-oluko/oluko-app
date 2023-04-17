@@ -127,7 +127,7 @@ class _InsideClassesState extends State<InsideClass> {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
               _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
               _class = classState.classObj;
-              List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [] ;
+              List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [];
               _audios = AudioService.getNotDeletedAudios(classAudios);
               _audioQty = _audios == null ? 0 : _audios.where((element) => element.seen == false).length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
@@ -628,8 +628,7 @@ class _InsideClassesState extends State<InsideClass> {
     _audios[audioIndex].deleted = true;
     List<Audio> audiosUpdated = _audios.toList();
     _audios.removeAt(audioIndex);
-    BlocProvider.of<CourseEnrollmentAudioBloc>(context)
-        .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, _audios);
+    BlocProvider.of<CourseEnrollmentAudioBloc>(context).markAudioAsDeleted(_enrollmentAudio, audiosUpdated, _audios);
   }
 
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {
@@ -695,27 +694,38 @@ class _InsideClassesState extends State<InsideClass> {
               ),
             ),
           ),
-          if (_audioQty > 0)
-            Align(
-              alignment: Alignment.topRight,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                    'assets/courses/audio_neumorphic_notification.png',
-                    height: 18,
-                    width: 18,
+          BlocBuilder<InsideClassContentBloc, InsideClassContentState>(
+            buildWhen: (context, state) {
+              return state is InsideClassContentAudioOpen || state is InsideClassContentLoading;
+            },
+            builder: (context, state) {
+              if (state is InsideClassContentAudioOpen) {
+                _audioQty = 0;
+              }
+              if (_audioQty > 0) {
+                return Align(
+                  alignment: Alignment.topRight,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/courses/audio_neumorphic_notification.png',
+                        height: 18,
+                        width: 18,
+                      ),
+                      Text(
+                        _audioQty.toString(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
+                      ),
+                    ],
                   ),
-                  Text(
-                    _audioQty.toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
-                  ),
-                ],
-              ),
-            )
-          else
-            const SizedBox()
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
         ],
       ),
     );
