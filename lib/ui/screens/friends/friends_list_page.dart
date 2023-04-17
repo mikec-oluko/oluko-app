@@ -148,10 +148,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
           width: ScreenUtils.width(context),
           child: Column(
             children: [
-              //chats
               _listSection(
                   titleForSection: OlukoLocalizations.get(context, 'chats'),
-                  content: _courseEnrollmentsList.isNotEmpty ? Expanded(child: _chatSliderWidget) : _chatSliderWidget,
+                  content: _courseEnrollmentsList.isNotEmpty ? _chatSliderWidget : _chatSliderWidget,
                   listLength: _courseEnrollmentsList.length),
               _listSection(
                   titleForSection: OlukoLocalizations.get(context, 'myFriends'),
@@ -181,19 +180,36 @@ class _FriendsListPageState extends State<FriendsListPage> {
   }
 
   Widget _listSection({@required String titleForSection, @required Widget content, @required int listLength}) {
-    return Flexible(
-        flex: listLength >= 5 ? 5 : 2,
+    if (content != _chatSliderWidget) {
+      return Flexible(
+          flex: listLength >= 5 ? 5 : 2,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
+              ),
+              content,
+            ],
+          ));
+    } else {
+      return SizedBox(
+        height: 175,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(20),
-              child: Text(titleForSection, style: OlukoFonts.olukoBigFont()),
+              child: Text( , style: OlukoFonts.olukoBigFont()),
             ),
-            content,
+            if (listLength > 0) Expanded(child: content) else content,
           ],
-        ));
+        ),
+      );
+    }
   }
 
   Padding getLoaderWidget() {
