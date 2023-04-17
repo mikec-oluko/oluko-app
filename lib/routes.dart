@@ -640,7 +640,8 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc)
         ];
         newRouteView = FriendsPage();
         break;

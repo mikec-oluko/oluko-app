@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/chat_slider.dart';
 import 'package:oluko_app/ui/components/users_list_component.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -32,6 +34,8 @@ import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
+import '../../../models/course_enrollment.dart';
+
 class FriendsListPage extends StatefulWidget {
   final UserResponse currentUser;
   final String userImage;
@@ -43,6 +47,8 @@ class FriendsListPage extends StatefulWidget {
 class _FriendsListPageState extends State<FriendsListPage> {
   List<UserResponse> _friendUsersList = [];
   List<UserResponse> _appUsersList = [];
+  List<CourseEnrollment> _courseEnrollmentsList = [];
+  Widget _chatSliderWidget = const SizedBox.shrink();
   Widget _friendUsersWidget = const SizedBox.shrink();
   Widget _appUsersWidget = const SizedBox.shrink();
   GetFriendsSuccess _friendState;
@@ -60,6 +66,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   void initState() {
     BlocProvider.of<UserProgressListBloc>(context).get(widget.currentUser.id);
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
+    BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(widget.currentUser.id);
     super.initState();
   }
 
@@ -79,39 +86,50 @@ class _FriendsListPageState extends State<FriendsListPage> {
           builder: (context, userListState) {
             return BlocBuilder<FriendBloc, FriendState>(
               builder: (context, friendState) {
-                if (friendState is GetFriendsSuccess) {
-                  _friendState = friendState;
-                  _friendUsersList = friendState.friendUsers;
-                  _friends = friendState.friendData != null ? friendState.friendData.friends : [];
-                  _friendUsersWidget = UserListComponent(
-                    usersProgess: _usersProgress,
-                    authUser: widget.currentUser,
-                    users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
-                    onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                    onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
-                  );
-                }
-                if (userListState is UserListSuccess) {
-                  _appUsersList = userListState.users;
-                  _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
-                  _appUsersWidget = UserListComponent(
-                    usersProgess: _usersProgress,
-                    authUser: widget.currentUser,
-                    users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
-                    onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                    onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
-                  );
-                }
-                if (friendState is FriendLoading || userListState is UserListLoading) {
-                  _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
-                  _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
-                }
-                if (friendState is FriendFailure || userListState is UserListFailure) {
-                  _friendUsersWidget =
-                      friendState is FriendFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends') : _friendUsersWidget;
-                  _appUsersWidget = userListState is UserListFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users') : _appUsersWidget;
-                }
-                return _scrollView();
+                return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+                  builder: (context, enrollmentState) {
+                    if (enrollmentState is CourseEnrollmentsByUserSuccess) {
+                      _courseEnrollmentsList = enrollmentState.courseEnrollments;
+                      _chatSliderWidget = ChatSlider(
+                        courses: _courseEnrollmentsList,
+                      );
+                    }
+                    if (friendState is GetFriendsSuccess) {
+                      _friendState = friendState;
+                      _friendUsersList = friendState.friendUsers;
+                      _friends = friendState.friendData != null ? friendState.friendData.friends : [];
+                      _friendUsersWidget = UserListComponent(
+                        usersProgess: _usersProgress,
+                        authUser: widget.currentUser,
+                        users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
+                        onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                        onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+                      );
+                    }
+                    if (userListState is UserListSuccess) {
+                      _appUsersList = userListState.users;
+                      _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
+                      _appUsersWidget = UserListComponent(
+                        usersProgess: _usersProgress,
+                        authUser: widget.currentUser,
+                        users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
+                        onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+                        onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+                      );
+                    }
+                    if (friendState is FriendLoading || userListState is UserListLoading) {
+                      _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
+                      _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
+                    }
+                    if (friendState is FriendFailure || userListState is UserListFailure) {
+                      _friendUsersWidget =
+                          friendState is FriendFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends') : _friendUsersWidget;
+                      _appUsersWidget =
+                          userListState is UserListFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users') : _appUsersWidget;
+                    }
+                    return _scrollView();
+                  },
+                );
               },
             );
           },
@@ -130,6 +148,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
           width: ScreenUtils.width(context),
           child: Column(
             children: [
+              //chats
+              _listSection(
+                  titleForSection: OlukoLocalizations.get(context, 'chats'),
+                  content: _courseEnrollmentsList.isNotEmpty ? Expanded(child: _chatSliderWidget) : _chatSliderWidget,
+                  listLength: _courseEnrollmentsList.length),
               _listSection(
                   titleForSection: OlukoLocalizations.get(context, 'myFriends'),
                   content: _friends.isNotEmpty ? Expanded(child: _friendUsersWidget) : _friendUsersWidget,
