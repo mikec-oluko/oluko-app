@@ -196,7 +196,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           ));
     } else {
       return SizedBox(
-        height: 175,
+        height: 200,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
