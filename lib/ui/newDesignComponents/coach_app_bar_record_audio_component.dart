@@ -266,21 +266,6 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
           BlocProvider.of<CoachAudioMessageBloc>(context)
               .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
           BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
-          setState(() {
-            // _audioRecorded = !_audioRecorded;
-            // _recordingAudio = !_recordingAudio;
-          });
-          // !_recorder.isInitialized ? _recorder.init() : null;
-          // await _recorder.toggleRecording();
-
-          // setState(() {
-          //   _recordingAudio = !_recordingAudio;
-          //   startTimer();
-          // });
-
-          // if (_recorder.isStopped) {
-          //   _onRecordCompleted();
-          // }
         },
         child: Stack(alignment: Alignment.center, children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
