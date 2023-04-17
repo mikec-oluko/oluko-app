@@ -15,6 +15,7 @@ class CoachAudioSentComponent extends StatefulWidget {
   final Function(bool isPlaying) onAudioPlaying;
   final bool Function() onStartPlaying;
   final CoachAudioMessage audioMessageItem;
+  final bool isForList;
   const CoachAudioSentComponent(
       {Key key,
       this.record,
@@ -23,6 +24,7 @@ class CoachAudioSentComponent extends StatefulWidget {
       this.audioMessageItem,
       this.durationFromRecord,
       this.onAudioPlaying,
+      this.isForList = false,
       this.onStartPlaying})
       : super(key: key);
 
@@ -66,7 +68,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
               color: widget.isPreviewContent ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
         ),
         child: Container(
-          width: MediaQuery.of(context).size.width / 1.6,
+          width: widget.isForList ? ScreenUtils.width(context) : ScreenUtils.width(context) / 1.6,
           height: 80,
           decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.appBackgroundColor),
           child: Padding(
