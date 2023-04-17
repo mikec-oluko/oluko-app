@@ -17,6 +17,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -152,7 +153,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             }),
         BlocListener<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           listener: (context, state) async {
-            if (state is UnSeenAssignmentSuccess) {
+            if (state is UnSeenAssignmentSuccess && state.user.currentPlan > 0) {
               Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
             }
           },
@@ -167,7 +168,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         }
         return BlocBuilder<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           builder: (context, state) {
-            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess) {
+            if (state is AssessmentVisibilityLoading || state is UnSeenAssignmentSuccess && state.user.currentPlan > 0) {
               return Scaffold(
                 body: Container(
                   decoration: const BoxDecoration(

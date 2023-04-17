@@ -44,6 +44,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
 import 'package:oluko_app/ui/components/clocks_lower_section.dart';
+import 'package:oluko_app/ui/components/coach_request_content.dart';
 import 'package:oluko_app/ui/components/pause_dialog_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_round_alert.dart';
@@ -52,6 +53,7 @@ import 'package:oluko_app/ui/screens/courses/initial_timer_panel.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
@@ -60,6 +62,7 @@ import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wakelock/wakelock.dart';
 //import 'package:native_device_orientation/native_device_orientation.dart';
@@ -67,6 +70,7 @@ import 'package:wakelock/wakelock.dart';
 class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
   final CourseEnrollment courseEnrollment;
+  final CoachRequest coachRequest;
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
@@ -87,7 +91,8 @@ class SegmentClocks extends StatefulWidget {
       this.segments,
       this.fromChallenge,
       this.showPanel,
-      this.onShowAgainPressed})
+      this.onShowAgainPressed,
+      this.coachRequest})
       : super(key: key);
 
   @override
@@ -779,6 +784,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
 
     realTaskIndex++;
+
     if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
       setAlert();
       if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
@@ -1105,7 +1111,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     final isPausedInactive = state == AppLifecycleState.paused;
     if (isPausedInactive) {
       if (workState != WorkState.paused) {
-        changeSegmentState();
         if (cameraController != null) {
           cameraController.pauseVideoRecording();
         }
