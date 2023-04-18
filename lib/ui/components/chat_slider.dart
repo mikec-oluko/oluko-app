@@ -7,7 +7,9 @@ import 'package:badges/badges.dart';
 
 class ChatSlider extends StatefulWidget {
   final List<CourseEnrollment> courses;
-  const ChatSlider({this.courses});
+  final List<int> msgQuantity;
+
+  const ChatSlider({this.courses, this.msgQuantity});
 
   @override
   _ChatSliderState createState() => _ChatSliderState();
@@ -40,39 +42,44 @@ class _ChatSliderState extends State<ChatSlider> {
 
 Widget courseCard(String image, String name, BuildContext context) {
   return Container(
-    margin: const EdgeInsets.only(left: 16),
+    margin: const EdgeInsets.only(left: 16, top: 5),
     child: Stack(
       children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: generateImageCourse(image, context),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              constraints: const BoxConstraints(
-                maxWidth: 80,
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: generateImageCourse(image, context),
               ),
-              child: Text(
-                name,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                constraints: const BoxConstraints(
+                  maxWidth: 80,
+                ),
+                child: Text(
+                  name,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Positioned(
-          top: -10,
-          left: 0,
-          child: Badge(
-            badgeContent: const Text('10'),
-            badgeColor: Colors.red,
+            ],
           ),
         ),
+        Positioned(
+            top: 2,
+            left: 40,
+            child: Visibility(
+              visible: true,
+              child: Badge(
+                badgeContent: const Text('2'),
+                badgeColor: Colors.red,
+              ),
+            )),
       ],
     ),
   );
@@ -93,11 +100,4 @@ Widget generateImageCourse(String imageUrl, BuildContext context) {
   }
   return Image.asset("assets/courses/course_sample_7.png");
   //TODO: fill space with default image or message
-}
-
-Widget notifyUnreadMsg() {
-  return Badge(
-    badgeContent: const Text('10'),
-    badgeColor: Colors.red,
-  );
 }
