@@ -34,6 +34,7 @@ import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/course_panel_bloc.dart';
@@ -272,7 +273,8 @@ enum RouteEnum {
   registerUser,
   homeLatestDesign,
   courseHomePage,
-  welcomeVideoFirstTimeLogin
+  welcomeVideoFirstTimeLogin,
+  courseChat
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -338,6 +340,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLatestDesign: '/home-view',
   RouteEnum.courseHomePage: '/course-home-page',
   RouteEnum.welcomeVideoFirstTimeLogin: '/welcome-video-home-page',
+  RouteEnum.courseChat: '/course-chat'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -462,6 +465,7 @@ class Routes {
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
+  final CourseEnrollmentChatBloc _courseEnrollmentChatBloc = CourseEnrollmentChatBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -1479,6 +1483,13 @@ class Routes {
         ];
         newRouteView = const WelcomeVideoFirstTimeLogin();
         break;
+
+      case RouteEnum.courseChat:
+        providers = [
+          BlocProvider<CourseEnrollmentChatBloc>.value(value: _courseEnrollmentChatBloc),
+        ];
+        break;
+
       default:
         newRouteView = MainPage();
         break;
