@@ -23,7 +23,7 @@ class CourseEnrollmentAudioBloc extends Cubit<CourseEnrollmentAudioState> {
 
   void markAudioAsDeleted(EnrollmentAudio enrollmentAudio, List<Audio> audiosUpdated, List<Audio> audios) async {
     try {
-      await EnrollmentAudioRepository.markAudioAsDeleted(enrollmentAudio, audiosUpdated);
+      await EnrollmentAudioRepository.saveAudios(enrollmentAudio, audiosUpdated);
       emit(ClassAudioDeleteSuccess(audios: audios));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

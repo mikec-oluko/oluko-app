@@ -1420,6 +1420,7 @@ class Routes {
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeNeumorphicLatestDesign(
