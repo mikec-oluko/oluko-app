@@ -44,10 +44,10 @@ class EnrollmentAudio extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> enrollmentAudio = {
-      'course': course,
-      'class_course': classCourse,
+      'course': course.toJson(),
+      'class_course': classCourse.toJson(),
       'audios': audios == null ? null : List<Audio>.from(audios.map((classAudio) => classAudio.toJson())),
-      'enrollment_course': enrollmentCourse,
+      'enrollment_course': enrollmentCourse.toJson(),
     };
     enrollmentAudio.addEntries(super.toJson().entries);
     return enrollmentAudio;
