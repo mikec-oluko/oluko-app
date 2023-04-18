@@ -455,7 +455,7 @@ class TimerUtils {
     );
   }
 
-  static startCountdown(WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound ) {
+  static startCountdown(WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer) {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
   }
