@@ -42,11 +42,11 @@ class _ChatSliderState extends State<ChatSlider> {
 
 Widget courseCard(String image, String name, BuildContext context) {
   return Container(
-    margin: const EdgeInsets.only(left: 16, top: 5),
+    margin: const EdgeInsets.only(left: 16, top: 0),
     child: Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 20),
+          padding: EdgeInsets.only(top: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -71,12 +71,17 @@ Widget courseCard(String image, String name, BuildContext context) {
           ),
         ),
         Positioned(
-            top: 2,
-            left: 40,
+            top: -3,
+            left: 50,
             child: Visibility(
               visible: true,
               child: Badge(
-                badgeContent: const Text('2'),
+                badgeContent: const Text(
+                  '2',
+                  style : TextStyle(
+                    color: Colors.white,
+                  )
+                ),
                 badgeColor: Colors.red,
               ),
             )),

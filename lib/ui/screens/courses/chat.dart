@@ -55,13 +55,13 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Container(
-            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            decoration: BoxDecoration(
-               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15.0),
-                  topRight: Radius.circular(15.0)
-               )
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+            decoration: const BoxDecoration(
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15.0),
+                topRight: Radius.circular(15.0),
+              ),
             ),
             child: Row(
               children: [
@@ -72,8 +72,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.black,
-                      hintText: 'Escribir mensaje...',
-                      hintStyle: TextStyle(color: Colors.white54), // Cambiar el color del hint también
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide.none,
@@ -82,10 +80,25 @@ class _ChatScreenState extends State<ChatScreen> {
                     onSubmitted: _handleSubmitted,
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () => _handleSubmitted(_textController.text),
+                SizedBox(
+                  height: 55,
+                  width: 55,
+                  child: OlukoNeumorphicCircleButton(
+                      customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+                      onPressed: () => {
+                            //   if (widget.title == OlukoLocalizations.get(context, 'filters'))
+                            //     {filterBackButtonAction()}
+                            //   else
+                            //     {
+                            //       if (widget.onPressed != null) {widget.onPressed()} else {Navigator.pop(context)}
+                            //     }
+                            // },
+                          }),
                 ),
+                // IconButton(
+                //   icon: Icon(Icons.send),
+                //   onPressed: () => _handleSubmitted(_textController.text),
+                // ),
               ],
             ),
           ),
