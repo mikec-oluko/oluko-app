@@ -272,8 +272,11 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(right: OlukoNeumorphism.isNeumorphismDesign ? 12 : 8.0),
       child: GestureDetector(
-        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-            arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false}),
+        onTap: () {
+          BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: course.id, userId: _currentAuthUser.id);
+          Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+              arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
+        },
         child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context), width: ScreenUtils.width(context) / (padding + _cardsToShow())),
       ),
     );
@@ -403,15 +406,10 @@ class _State extends State<Courses> {
             ? Container(
                 child: MyListOfCourses(
                   myListOfCourses: myListOfCourses,
+                  beforeNavigation: (String courseId) =>
+                      BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: courseId, userId: _currentAuthUser.id),
                 ),
               )
-            // ? CarouselSection(
-            //     optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-            //     onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
-            //         arguments: {'courses': myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
-            //     title: OlukoLocalizations.get(context, 'myList'),
-            //     height: carouselSectionHeight,
-            //     children: myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(myListOfCourses) : [])
             : const SizedBox.shrink();
       },
     ));
@@ -455,8 +453,14 @@ class _State extends State<Courses> {
           return Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                  arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false}),
+              onTap: () {
+                BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: course.id, userId: _currentAuthUser.id);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
+                  'course': course,
+                  'fromCoach': false,
+                  'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false
+                });
+              },
               child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context),
                   width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendationsAvatarUrls: userRecommendationAvatars),
             ),
@@ -492,13 +496,16 @@ class _State extends State<Courses> {
           return Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(right: 12, bottom: 8, top: 8) : const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledCourse], arguments: {
-                'course': course,
-                'fromCoach': false,
-                'isCoachRecommendation': false,
-                'courseEnrollment': courseEnrollment,
-                'courseIndex': courseIndex
-              }),
+              onTap: () {
+                BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: course.id, userId: _currentAuthUser.id);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledCourse], arguments: {
+                  'course': course,
+                  'fromCoach': false,
+                  'isCoachRecommendation': false,
+                  'courseEnrollment': courseEnrollment,
+                  'courseIndex': courseIndex
+                });
+              },
               child: _getCourseCard(
                 CourseUtils.generateImageCourse(course.image, context),
                 progress: courseEnrollment.completion,

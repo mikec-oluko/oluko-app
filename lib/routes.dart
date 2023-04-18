@@ -105,6 +105,7 @@ import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_media.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -917,6 +918,7 @@ class Routes {
           fromChallenge: argumentsToAdd['fromChallenge'] as bool,
           showPanel: argumentsToAdd['showPanel'] as bool,
           onShowAgainPressed: argumentsToAdd['onShowAgainPressed'] as Function(),
+          coachRequest:argumentsToAdd['coachRequest'] as CoachRequest,
         );
         break;
       case RouteEnum.segmentCameraPreview:
@@ -1416,6 +1418,7 @@ class Routes {
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeNeumorphicLatestDesign(

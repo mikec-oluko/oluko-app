@@ -16,6 +16,7 @@ import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/ui/newDesignComponents/rep_timer_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
@@ -66,6 +67,7 @@ class _State extends State<Clock> {
   final _headsetPlugin = HeadsetEvent();
   HeadsetState _headsetState;
   final SoundPlayer _soundPlayer = SoundPlayer();
+  bool skipRest = true;
 
   @override
   void initState() {
@@ -124,6 +126,7 @@ class _State extends State<Clock> {
                 if (timerTaskState is SetTimerTaskIndex) {
                   setState(() {
                     widget.timerTaskIndex = timerTaskState.timerTaskIndex;
+                    skipRest = true;
                   });
                 }
               },
@@ -183,9 +186,35 @@ class _State extends State<Clock> {
           keyboardVisibilty
               ? Positioned(bottom: 0, child: _tasksSection(keyboardVisibilty))
               : Positioned(top: ScreenUtils.height(context) * 0.48, child: _tasksSection(keyboardVisibilty)),
+        if ((widget.workState == WorkState.resting && skipRest) && canUseSkipRest())
+          Positioned(
+            bottom: 100,
+            child: Container(
+              width: ScreenUtils.width(context),
+              height: 60,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    widget.timeLeft = const Duration(seconds: 5);
+                    skipRest = !skipRest;
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.skip_next, color: OlukoColors.white),
+                    Text('Skip rest - next movement',
+                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
+                  ],
+                ),
+              ),
+            ),
+          )
       ],
     );
   }
+
+  bool canUseSkipRest() => widget.timeLeft > const Duration(seconds: 5);
 
   Widget countdownSection() {
     if (isWorkStateFinished()) {
@@ -207,7 +236,9 @@ class _State extends State<Clock> {
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
       return BlocBuilder<KeyboardBloc, KeyboardState>(
         builder: (context, state) {
-          return TimerUtils.repsTimer(() => widget.goToNextStep(), context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+          return TimerUtils.repsTimer(() {
+            widget.goToNextStep();
+          }, context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
               widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
         },
       );
@@ -468,10 +499,12 @@ class _State extends State<Clock> {
 
   Widget roundTimerWithPulse(bool keyboardVisibilty) {
     return Stack(alignment: Alignment.center, children: [
-      Transform.scale(
-          scale: 1.3,
-          child: const AvatarGlow(
-              showTwoGlows: false, glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor, endRadius: 150, child: SizedBox.shrink())),
+      Stack(alignment: Alignment.center, children: [
+        Transform.scale(
+            scale: 1.6, child: AvatarGlow(showTwoGlows: true, glowColor: Color.fromARGB(255, 3, 254, 149), endRadius: 150, child: SizedBox.shrink())),
+        Transform.scale(
+            scale: 1.8, child: AvatarGlow(showTwoGlows: true, glowColor: Color.fromARGB(255, 3, 254, 149), endRadius: 150, child: SizedBox.shrink()))
+      ]),
       getRoundsTimer(keyboardVisibilty)
     ]);
   }
