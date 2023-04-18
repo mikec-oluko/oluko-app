@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/ui/screens/courses/chat.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
 
@@ -20,7 +21,15 @@ class _ChatSliderState extends State<ChatSlider> {
       children: widget.courses
           .map(
             (element) => GestureDetector(
-              onTap: () => null,
+              onTap: () {
+                // Navegar a la pantalla del Chat y pasarle el título del curso
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Chat(title: element.course.name),
+                  ),
+                );
+              },
               child: courseCard(element.course.image, element.course.name, context),
             ),
           )
