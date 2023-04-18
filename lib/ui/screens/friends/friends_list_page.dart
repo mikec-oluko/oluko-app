@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
@@ -93,6 +94,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _chatSliderWidget = ChatSlider(
                         courses: _courseEnrollmentsList,
                       );
+                    }
+                    if (enrollmentState is EnrollmentLoading) {
+                      _chatSliderWidget = enrollmentState is EnrollmentLoading ? getLoaderWidget() : _chatSliderWidget;
                     }
                     if (friendState is GetFriendsSuccess) {
                       _friendState = friendState;
@@ -196,7 +200,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           ));
     } else {
       return SizedBox(
-        height: 200,
+        height: 190,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

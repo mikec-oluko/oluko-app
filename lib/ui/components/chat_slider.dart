@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/screens/courses/chat.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
 
@@ -18,35 +20,51 @@ class ChatSlider extends StatefulWidget {
 class _ChatSliderState extends State<ChatSlider> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: widget.courses
-          .map(
-            (element) => GestureDetector(
-              onTap: () {
-                // Navegar a la pantalla del Chat y pasarle el título del curso
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Chat(title: element.course.name),
-                  ),
-                );
-              },
-              child: courseCard(element.course.image, element.course.name, context),
-            ),
-          )
-          .toList(),
-    );
+    return widget.courses.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courses, context);
   }
+}
+
+Padding _noCoursesMessage(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+        OlukoLocalizations.get(context, 'noCourses'),
+        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
+      )
+    ]),
+  );
+}
+
+Widget _courseList(List<CourseEnrollment> courses, BuildContext context) {
+  return ListView(
+    scrollDirection: Axis.horizontal,
+    children: courses
+        .map(
+          (element) => GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Chat(title: element.course.name),
+                ),
+              );
+            },
+            child: courseCard(element.course.image, element.course.name, context),
+          ),
+        )
+        .toList(),
+  );
 }
 
 Widget courseCard(String image, String name, BuildContext context) {
   return Container(
-    margin: const EdgeInsets.only(left: 16, top: 0),
+    margin: const EdgeInsets.only(left: 16),
+    width: 80,
     child: Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -61,6 +79,7 @@ Widget courseCard(String image, String name, BuildContext context) {
                 ),
                 child: Text(
                   name,
+                  textWidthBasis: TextWidthBasis.parent,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
@@ -76,12 +95,10 @@ Widget courseCard(String image, String name, BuildContext context) {
             child: Visibility(
               visible: true,
               child: Badge(
-                badgeContent: const Text(
-                  '2',
-                  style : TextStyle(
-                    color: Colors.white,
-                  )
-                ),
+                badgeContent: const Text('2',
+                    style: TextStyle(
+                      color: Colors.white,
+                    )),
                 badgeColor: Colors.red,
               ),
             )),
@@ -103,6 +120,6 @@ Widget generateImageCourse(String imageUrl, BuildContext context) {
       fit: BoxFit.fill,
     );
   }
-  return Image.asset("assets/courses/course_sample_7.png");
+  return Image.asset('assets/courses/course_sample_7.png');
   //TODO: fill space with default image or message
 }

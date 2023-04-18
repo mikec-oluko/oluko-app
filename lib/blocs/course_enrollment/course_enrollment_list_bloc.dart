@@ -8,7 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseEnrollmentListState {}
 
-class Loading extends CourseEnrollmentListState {}
+class EnrollmentLoading extends CourseEnrollmentListState {}
 
 class Failure extends CourseEnrollmentListState {
   final dynamic exception;
@@ -26,7 +26,7 @@ class GetCourseEnrollmentUpdate extends CourseEnrollmentListState {
 }
 
 class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
-  CourseEnrollmentListBloc() : super(Loading());
+  CourseEnrollmentListBloc() : super(EnrollmentLoading());
 
   void getCourseEnrollmentsByUser(String userId) async {
     try {
