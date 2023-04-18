@@ -45,7 +45,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
-      _soundPlayer?.dispose();
+      if (_soundPlayer != null) _soundPlayer?.dispose();
       emitCoachRecommendationDispose();
     }
   }
