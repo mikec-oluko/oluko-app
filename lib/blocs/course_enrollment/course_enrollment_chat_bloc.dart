@@ -38,24 +38,16 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   CourseEnrollmentChatBloc() : super(CourseEnrollmentLoading());
 
   void createMessage(String userId, String courseId, String userMessage) async {    
-    emit(CourseEnrollmentLoading());
     final repository = UserRepository();
     final DocumentReference<Object> userReference = repository.getUserReference(userId);
     final UserResponse user = await repository.getById(userId);
     final Course course = await CourseRepository.get(courseId);
     
     final userObj = {
-      'reference': userReference,
       'id': userId,
-      'name': user.getFullName(),
       'image':  user.avatar,
-    };
-
-    final courseObj = {
-      'reference': userReference,
-      'id': courseId,
-      'name': course.name,
-      'image':  user.avatar,
+      'name': '${user.firstName} ${user.lastName}',
+      'reference': userReference
     };
 
     final messageJSON = {

@@ -44,7 +44,7 @@ Widget _courseList(List<CourseEnrollment> courses, BuildContext context) {
         .map(
           (element) => GestureDetector(
             onTap: () {
-              Navigator.popAndPushNamed(context, routeLabels[RouteEnum.courseChat], arguments: {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.courseChat], arguments: {
                 'courseEnrollment': element,
               });
             },

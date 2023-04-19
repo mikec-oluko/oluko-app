@@ -44,7 +44,7 @@ class CourseChatRepository {
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
-        //.orderBy('timestamp', descending: false)
+        .orderBy('created_at', descending: false)
         .snapshots();
     // I have to add startAfter and endBefore and limit
     return docRef;
