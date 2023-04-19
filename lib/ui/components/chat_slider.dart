@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/screens/courses/chat.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -43,12 +44,9 @@ Widget _courseList(List<CourseEnrollment> courses, BuildContext context) {
         .map(
           (element) => GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Chat(title: element.course.name),
-                ),
-              );
+              Navigator.popAndPushNamed(context, routeLabels[RouteEnum.courseChat], arguments: {
+                'courseEnrollment': element,
+              });
             },
             child: courseCard(element.course.image, element.course.name, context),
           ),

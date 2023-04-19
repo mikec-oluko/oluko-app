@@ -141,6 +141,7 @@ import 'package:oluko_app/ui/screens/coach/coach_recommended_content_list.dart';
 import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
 import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
 import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
+import 'package:oluko_app/ui/screens/courses/chat.dart';
 import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/course_share_view.dart';
@@ -1488,6 +1489,8 @@ class Routes {
         providers = [
           BlocProvider<CourseEnrollmentChatBloc>.value(value: _courseEnrollmentChatBloc),
         ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment);
         break;
 
       default:

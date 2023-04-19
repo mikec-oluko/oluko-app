@@ -1,40 +1,32 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class Chat extends StatelessWidget {
-  final String title;
-  final String courseId;
-  final String userId;
+  final CourseEnrollment courseEnrollment;
 
   const Chat({
-    @required this.title,
-    @required this.courseId,
-    @required this.userId,
+    @required this.courseEnrollment,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChatScreen(title: title, courseId: courseId, userId: userId,);
+    return ChatScreen(courseEnrollment: courseEnrollment);
   }
 }
 
 class ChatScreen extends StatefulWidget {
-  final String title;
-  final String courseId;
-  final String userId;
+  final CourseEnrollment courseEnrollment;
 
   const ChatScreen({
-    @required this.title,
-    @required this.courseId,
-    @required this.userId,
+    @required this.courseEnrollment,
     Key key,
   }) : super(key: key);
 
@@ -45,21 +37,27 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   String message;
   final TextEditingController _textController = TextEditingController();
-  final List<String> _messages = [];
 
-    @override
+  @override
   void initState() {
     super.initState();
-    //BlocProvider.of<CourseEnrollmentChatBloc>(context).create();
+    context.read<CourseEnrollmentChatBloc>().listenToMessages(widget.courseEnrollment.course.id);
   }
 
   void _handleSubmitted(String text) {
     _textController.clear();
-    print(ModalRoute.of(context).settings.name);
-    BlocProvider.of<CourseEnrollmentChatBloc>(context).createMessage(widget.userId, widget.courseId, text);
-    // setState(() {
-    //   _messages.add(text);
-    // });
+    if (text != '' && text != null) {
+      BlocProvider.of<CourseEnrollmentChatBloc>(context).createMessage(widget.courseEnrollment.userId, widget.courseEnrollment.course.id, text);
+    }
+  }
+
+  Widget _buildMessagesList(List<Message> messages) {
+    return ListView.builder(
+      itemCount: messages.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(title: Text(messages[index].message));
+      },
+    );
   }
 
   @override
@@ -67,18 +65,22 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: OlukoAppBar(
         showBackButton: true,
-        title: widget.title,
+        title: widget.courseEnrollment.course.name,
         showTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-              child: Container(
+    body: Column(
+      children: [
+        Expanded(
+          child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(title: Text(_messages[index]));
+            child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+              builder: (context, state) {
+                if (state is MessagesUpdated) {
+                  final messages = state.messages;
+                  return _buildMessagesList(messages);
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
               },
             ),
           )),
@@ -112,8 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   height: 55,
                   width: 55,
                   child: OlukoNeumorphicCircleButton(
-                      customIcon: const Icon(Icons.send, color: OlukoColors.grayColor), 
-                      onPressed: () => _handleSubmitted(_textController.text)),
+                      customIcon: const Icon(Icons.send, color: OlukoColors.grayColor), onPressed: () => _handleSubmitted(_textController.text)),
                 ),
               ],
             ),

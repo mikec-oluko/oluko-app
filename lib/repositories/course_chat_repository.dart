@@ -28,15 +28,14 @@ class CourseChatRepository {
     return courseChat;
   }
 
-  // static Future<Message> createMessage(String userId, String courseId, String message) async {
-
-  //   final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
-  //   final CollectionReference reference = projectReference.collection('coursesChat').doc(courseChatId).collection('messages');
-  //   DocumentReference docRef = reference.doc();
-  //   message.id = docRef.id;
-  //   await docRef.set(message.toJson());
-  //   return message;
-  // }
+  static Future<Message> createMessage(Message message, String courseChatId) async {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final CollectionReference reference = projectReference.collection('coursesChat').doc(courseChatId).collection('messages');
+    DocumentReference docRef = reference.doc();
+    message.id = docRef.id;
+    await docRef.set(message.toJson());
+    return message;
+  }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessagesByCourseChatId(String courseChatId) {
     final Stream<QuerySnapshot<Map<String, dynamic>>> docRef = FirebaseFirestore.instance
@@ -45,6 +44,7 @@ class CourseChatRepository {
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
+        //.orderBy('timestamp', descending: false)
         .snapshots();
     // I have to add startAfter and endBefore and limit
     return docRef;
