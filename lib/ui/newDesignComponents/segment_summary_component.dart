@@ -7,6 +7,7 @@ import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentSummaryComponent extends StatefulWidget {
@@ -16,6 +17,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final Segment segment;
   final bool addWeightEnable;
   final EnrollmentSegment segmentFromCourseEnrollment;
+  final List<WeightRecord> weightRecords;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
 
   const SegmentSummaryComponent(
@@ -25,6 +27,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.segmentFromCourseEnrollment,
       this.segment,
       this.addWeightEnable = false,
+      this.weightRecords,
       this.movementWeigths})
       : super();
 
@@ -91,7 +94,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
       trailing: Container(
-        width: 70,
+        width: 90,
         height: 40,
         decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Row(
@@ -101,7 +104,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               scale: 3,
             ),
             Text(
-              '30',
+              widget.weightRecords.isNotEmpty ? getWeight(movement) : '0',
               style: OlukoFonts.olukoMediumFont(),
             ),
             const SizedBox(
@@ -116,6 +119,18 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       ),
       title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
     );
+  }
+
+  String getWeight(MovementSubmodel movement) {
+    String result = '0';
+    if (widget.weightRecords.isNotEmpty) {
+      widget.weightRecords.forEach((weightRecord) {
+        if (weightRecord.movementId == movement.id) {
+          result = weightRecord.weight.toString();
+        }
+      });
+    }
+    return result;
   }
 
   Padding _movementTileWithInput(MovementSubmodel movement) {
@@ -151,11 +166,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         height: 40,
         child: TextFormField(
           keyboardType: TextInputType.number,
-          onTap: () {
-            setState(() {
-              keyboardVisibilty = !keyboardVisibilty;
-            });
-          },
+          onTap: () {},
           onFieldSubmitted: (value) {
             if (value == '') {
               movementsWeights[movementId] = null;
@@ -163,8 +174,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               movementsWeights[movementId] = double.parse(value);
             }
             currentMovementAndWeight.weight = movementsWeights[movementId];
-            print(currentMovementAndWeight);
-            print(listOfWeigthsToUpdate);
             widget.movementWeigths(listOfWeigthsToUpdate);
           },
           onEditingComplete: () {},
@@ -184,7 +193,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
             hintMaxLines: 1,
             border: InputBorder.none,
-            suffixText: 'Kg',
+            suffixText: 'Lbs',
           ),
         ));
   }

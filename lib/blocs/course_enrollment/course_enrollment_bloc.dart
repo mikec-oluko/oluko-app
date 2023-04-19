@@ -126,20 +126,6 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void saveWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> workoutMovementsAndWeights}) async {
-    try {
-      await CourseEnrollmentRepository.addWeightToWorkout(courseEnrollmentId: courseEnrollmentId, movementsAndWeights: workoutMovementsAndWeights);
-      //emit(MarkSegmentSuccess());
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: exception));
-      rethrow;
-    }
-  }
-
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
     return subscription ??= CourseEnrollmentRepository.getUserCourseEnrollmentsSubscription(userId).listen((snapshot) async {
       List<CourseEnrollment> actualEnrolledCourses = [];

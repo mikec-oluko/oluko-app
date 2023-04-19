@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
+import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -21,6 +22,7 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/audio_service.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -31,6 +33,7 @@ import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -43,6 +46,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class SegmentImageSection extends StatefulWidget {
@@ -99,6 +103,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   List<Audio> _challengeAudios;
   int _audioQty;
   bool isFinishedBefore = false;
+  List<WeightRecord> weightRecords = [];
 
   @override
   void initState() {
@@ -136,6 +141,79 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Widget imageWithButtons() {
+    return widget.segment.isChallenge ? challengeSegment() : _defaultSegmentView();
+  }
+
+  Widget challengeSegment() {
+    return Stack(
+      children: [
+        imageSection(),
+        Column(
+          children: [
+            topButtons(),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _classTitleComponent(),
+              ],
+            ),
+            Container(
+              height: ScreenUtils.height(context) / 1.3,
+              width: ScreenUtils.width(context),
+              child: ListView(
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: AlwaysScrollableScrollPhysics(),
+                children: [
+                  if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(isForChallenge: true),
+                  _challengeVideoComponent(),
+                  _segmentCardComponent(),
+                  Container(
+                    height: 200,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        _segmentStepsDotsComponent(),
+        _segmentStartButton(),
+      ],
+    );
+  }
+
+  Widget showVideoPlayer(String videoUrl) {
+    return OlukoCustomVideoPlayer(
+        videoUrl: videoUrl,
+        useConstraints: true,
+        roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
+        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+        autoPlay: false,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+              _controller = chewieController;
+            }));
+  }
+
+  Widget _challengeVideoComponent() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        height: 200,
+        width: 150,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: showVideoPlayer(widget.segment.video),
+      ),
+    );
+  }
+
+  Stack _defaultSegmentView() {
     return Stack(
       children: [
         ListView(
@@ -158,7 +236,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   Positioned _segmentCardComponent() {
     return Positioned(
-      top: ScreenUtils.height(context) / 4.5,
+      top: widget.segment.isChallenge && !_isVideoPlaying ? ScreenUtils.height(context) / 3 : ScreenUtils.height(context) / 4.5,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: segmentContent(),
@@ -182,7 +260,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Positioned _segmentStepsDotsComponent() => Positioned(
-      bottom: 200,
+      bottom: 150,
       left: 50,
       right: 50,
       child: Row(
@@ -199,6 +277,20 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           height: ScreenUtils.height(context) / 1.45,
           child: imageSection(),
         ),
+      ],
+    );
+  }
+
+  Widget _segmentImageSectionChallenge() {
+    return Stack(
+      children: [
+        SizedBox(
+          height: ScreenUtils.height(context) / 1.2,
+          child: imageSection(),
+        ),
+        _classTitleComponent(),
+        _segmentCardComponent(),
+        topButtons(),
         if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
       ],
     );
@@ -253,24 +345,19 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             _segmentCardDescription(),
             Padding(
               padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
-              child: SegmentSummaryComponent(
-                courseEnrollment: widget.courseEnrollment,
-                segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
-                segment: widget.segment,
+              child: BlocBuilder<WorkoutWeightBloc, MovementWorkoutState>(
+                builder: (context, state) {
+                  if (state is WeightRecordsSuccess) {
+                    weightRecords = state.records;
+                  }
+                  return SegmentSummaryComponent(
+                    courseEnrollment: widget.courseEnrollment,
+                    segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
+                    segment: widget.segment,
+                    weightRecords: weightRecords ?? [],
+                  );
+                },
               ),
-              // child: Column(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   // children: SegmentUtils.getSegmentSummary(
-              //   //   widget.segment,
-              //   //   context,
-              //   //   OlukoColors.coral,
-              //   // ),
-              //   children: SegmentUtils.getSegmentSummary(
-              //     widget.segment,
-              //     context,
-              //     OlukoColors.coral,
-              //   ),
-              // ),
             ),
           ],
         ),
@@ -600,13 +687,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       alignment: Alignment.center,
       children: [
         if (OlukoNeumorphism.isNeumorphismDesign)
-          if (widget.segment.video != null)
-            videoWidget()
-          else
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 1.5,
-              child: imageAspectRatio(),
-            )
+          // if (widget.segment.video != null)
+          //   videoWidget()
+          // else
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 1.5,
+            child: imageAspectRatio(),
+          )
         else
           imageAspectRatio(),
         if (widget.segment.video == null)
@@ -667,10 +754,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Widget challengeButtons() {
+  Widget challengeButtons({bool isForChallenge = false}) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
-            padding: EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.42),
+            padding: isForChallenge ? EdgeInsets.fromLTRB(20, 20, 20, 20) : EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.20),
             child: challengeButtonsContent(),
           )
         : Padding(
@@ -679,38 +766,48 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           );
   }
 
-  Column challengeButtonsContent() {
+  Container challengeButtonsContent() {
     const verticalDividerComponent = verticalDivider.VerticalDivider(
       width: 30,
       height: OlukoNeumorphism.isNeumorphismDesign ? 80 : 60,
     );
-    return Column(
-      children: [
-        Row(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
           children: [
-            getAudioButton(),
-            verticalDividerComponent,
-            BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(
-              builder: (context, doneChallengeUsersState) {
-                if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
-                  final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
-                  final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
-                  final int qty = favorites + normalUsers;
-                  return PeopleAndIncludedInButtons(
-                    widget: widget,
-                    qty: qty,
-                    state: doneChallengeUsersState,
-                  );
-                } else {
-                  return PeopleAndIncludedInButtons(widget: widget);
-                }
-              },
-            ),
-            if (OlukoNeumorphism.isNeumorphismDesign) verticalDividerComponent,
-            GestureDetector(onTap: () => widget.clockAction(widget.segments[widget.currentSegmentStep - 1].id), child: clockSection()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                getAudioButton(),
+                verticalDividerComponent,
+                BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(
+                  builder: (context, doneChallengeUsersState) {
+                    if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
+                      final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
+                      final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
+                      final int qty = favorites + normalUsers;
+                      return PeopleAndIncludedInButtons(
+                        widget: widget,
+                        qty: qty,
+                        state: doneChallengeUsersState,
+                      );
+                    } else {
+                      return PeopleAndIncludedInButtons(widget: widget);
+                    }
+                  },
+                ),
+                if (OlukoNeumorphism.isNeumorphismDesign) verticalDividerComponent,
+                GestureDetector(onTap: () => widget.clockAction(widget.segments[widget.currentSegmentStep - 1].id), child: clockSection()),
+              ],
+            )
           ],
-        )
-      ],
+        ),
+      ),
     );
   }
 
