@@ -14,6 +14,7 @@ class Course extends Base {
   String posterImage;
   List<dynamic> images;
   DocumentReference statisticsReference;
+  bool hasChat;
 
   Course(
       {this.name,
@@ -27,6 +28,7 @@ class Course extends Base {
       this.video,
       this.videoHls,
       this.description,
+      this.hasChat,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -54,6 +56,7 @@ class Course extends Base {
       image: json['image']?.toString(),
       images: json['images'] as List<dynamic>,
       posterImage: json['poster_image']?.toString(),
+      hasChat: json['hasChat'] == null ? false : json['hasChat'] as bool,
     );
     course.setBase(json);
     return course;
@@ -70,7 +73,8 @@ class Course extends Base {
       'tags': tags == null ? null : tags,
       'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
       'image': image,
-      'images': images
+      'images': images,
+      'hasChat': hasChat
     };
     courseJson.addEntries(super.toJson().entries);
     return courseJson;

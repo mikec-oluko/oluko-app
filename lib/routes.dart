@@ -18,6 +18,7 @@ import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -467,6 +468,7 @@ class Routes {
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
   final CourseEnrollmentChatBloc _courseEnrollmentChatBloc = CourseEnrollmentChatBloc();
+  final ChatSliderBloc _chatSliderList = ChatSliderBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -566,6 +568,7 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
+          BlocProvider<ChatSliderBloc>.value(value: _chatSliderList)
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -647,7 +650,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc)
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
         ];
         newRouteView = FriendsPage();
         break;
@@ -923,7 +926,7 @@ class Routes {
           fromChallenge: argumentsToAdd['fromChallenge'] as bool,
           showPanel: argumentsToAdd['showPanel'] as bool,
           onShowAgainPressed: argumentsToAdd['onShowAgainPressed'] as Function(),
-          coachRequest:argumentsToAdd['coachRequest'] as CoachRequest,
+          coachRequest: argumentsToAdd['coachRequest'] as CoachRequest,
         );
         break;
       case RouteEnum.segmentCameraPreview:
