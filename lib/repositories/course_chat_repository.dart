@@ -50,4 +50,8 @@ class CourseChatRepository {
     return docRef;
   }
 
+  // static Future<Message> saveLastMessageUserSaw(){
+
+  // }
+
 }

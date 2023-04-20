@@ -37,27 +37,31 @@ class Failure extends CourseEnrollmentChatState {
 class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   CourseEnrollmentChatBloc() : super(CourseEnrollmentLoading());
 
-  void createMessage(String userId, String courseId, String userMessage) async {    
-    final repository = UserRepository();
-    final DocumentReference<Object> userReference = repository.getUserReference(userId);
-    final UserResponse user = await repository.getById(userId);
-    final Course course = await CourseRepository.get(courseId);
-    
-    final userObj = {
-      'id': userId,
-      'image':  user.avatar,
-      'name': '${user.firstName} ${user.lastName}',
-      'reference': userReference
-    };
+  void createMessage(String userId, String courseId, String userMessage) async {   
+    try {
+        final repository = UserRepository();
+      final DocumentReference<Object> userReference = repository.getUserReference(userId);
+      final UserResponse user = await repository.getById(userId);
+      final Course course = await CourseRepository.get(courseId);
+      
+      final userObj = {
+        'id': userId,
+        'image':  user.avatar,
+        'name': '${user.firstName} ${user.lastName}',
+        'reference': userReference
+      };
 
-    final messageJSON = {
-      'message': userMessage,
-      'seenAt': '',
-      'user': userObj
-    };
+      final messageJSON = {
+        'message': userMessage,
+        'seenAt': '',
+        'user': userObj
+      };
 
-    Message message = Message.fromJson(messageJSON);
-    await CourseChatRepository.createMessage(message, course.id);
+      Message message = Message.fromJson(messageJSON);
+      await CourseChatRepository.createMessage(message, course.id);
+    } catch (e) {
+      emit(Failure());
+    }
   }
 
   void listenToMessages(String courseChatId) {

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -30,14 +31,16 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
     final List<CourseEnrollment> courseList = courseEnrollments.where((element) => element.isUnenrolled != true).toList();
     final List<Course> coursesWithChat = [];
 
-    for (final element in courseList) {
-      final courseData = (await element.course.reference.get()).data() as Map<String, dynamic>;
-      Course courseElement = Course.fromJson(courseData);
+    final List<Future<DocumentSnapshot<Object>>> promises = courseList.map((element) => element.course.reference.get()).toList() as List<Future<DocumentSnapshot<Object>>>;
+    final List<DocumentSnapshot<Object>> courses = await Future.wait(promises);
+    Course courseElement;
+    courses.map((course)=> {
+      courseElement = Course.fromJson(course.data() as Map<String, dynamic>),
       if (courseElement?.hasChat != false) {
-        coursesWithChat.add(courseElement);
+        coursesWithChat.add(courseElement)
       }
-    }
-
+    }).toList();
+    
     emit(ChatSliderByUserSuccess(coursesWithChat));
   }
 }

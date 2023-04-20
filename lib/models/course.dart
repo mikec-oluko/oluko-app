@@ -56,7 +56,7 @@ class Course extends Base {
       image: json['image']?.toString(),
       images: json['images'] as List<dynamic>,
       posterImage: json['poster_image']?.toString(),
-      hasChat: json['hasChat'] == null ? false : json['hasChat'] as bool,
+      hasChat: json['has_chat'] == null ? false : json['has_chat'] as bool,
     );
     course.setBase(json);
     return course;
@@ -74,7 +74,7 @@ class Course extends Base {
       'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
       'image': image,
       'images': images,
-      'hasChat': hasChat
+      'has_chat': hasChat
     };
     courseJson.addEntries(super.toJson().entries);
     return courseJson;
