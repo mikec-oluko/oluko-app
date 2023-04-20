@@ -58,6 +58,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       };
 
       Message message = Message.fromJson(messageJSON);
+      message.createdAt = Timestamp.now();
       await CourseChatRepository.createMessage(message, course.id);
     } catch (e) {
       emit(Failure());
@@ -69,5 +70,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
         final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
         emit(MessagesUpdated(messages));
     });
+  }
+
+  void saveLastMessageUserSaw(){
+    
   }
 }

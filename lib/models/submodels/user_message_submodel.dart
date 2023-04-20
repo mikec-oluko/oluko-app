@@ -5,28 +5,20 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 class UserMessageSubmodel {
   UserMessageSubmodel(
     { this.user,
-      this.reference,
-      this.id,
-      this.name,});
+      this.message,});
 
   ObjectSubmodel user;
-  DocumentReference reference;
-  String id;
-  String name;
+  ObjectSubmodel message;
 
     factory UserMessageSubmodel.fromJson(Map<String, dynamic> json) {
     return UserMessageSubmodel(
         user: json['user'] != null ? ObjectSubmodel.fromJson(json['user'] as Map<String, dynamic>) : null,
-        reference: json['reference'] as DocumentReference,
-        id: json['id']?.toString(),
-        name: json['name']?.toString(),
+        message: json['message'] != null ? ObjectSubmodel.fromJson(json['message'] as Map<String, dynamic>) : null,
         );
   }
 
   Map<String, dynamic> toJson() => {
-        'reference': reference,
-        'id': id,
-        'name': name,
+        'message': message.toJson(),
         'user': user.toJson()
       };
 }

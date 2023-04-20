@@ -4,6 +4,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_chat.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/user_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
@@ -46,12 +47,36 @@ class CourseChatRepository {
         .collection('messages')
         .orderBy('created_at', descending: false)
         .snapshots();
-    // I have to add startAfter and endBefore and limit
     return docRef;
   }
 
-  // static Future<Message> saveLastMessageUserSaw(){
+  static Future<void> updateUsersLastSeenMessage(String courseChatId, UserMessageSubmodel newLastSeenMessage) async {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final chatRef = projectReference.collection('coursesChat').doc(courseChatId);
+    await chatRef.update({
+      'users_last_seen_message': FieldValue.arrayUnion([newLastSeenMessage])
+    });
+  }
 
-  // }
+  static Future<void> saveLastMessageUserSaw(String courseChatId, String userId, String lastSeenMessageId) async {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final chatRef = projectReference.collection('coursesChat').doc(courseChatId);
+    final DocumentSnapshot chatObj = await chatRef.get();
+    final chat = chatObj.data() as dynamic;
+    final usersLastSeenMessage = chat['users_last_seen_message'] as List<dynamic> ?? [];
 
+    int index = usersLastSeenMessage.indexWhere((item) => item['user_id'] == userId);
+
+    if (index != -1) {
+      
+    } else {
+      usersLastSeenMessage.add({
+       
+      });
+    }
+
+    await chatRef.update({
+      'users_last_seen_message': usersLastSeenMessage
+    }); 
+  }
 }
