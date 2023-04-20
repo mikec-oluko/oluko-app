@@ -14,7 +14,7 @@ class Failure extends ChatSliderState {
 }
 
 class ChatSliderByUserSuccess extends ChatSliderState {
-  final List<Course> courses;
+  final List<CourseEnrollment> courses;
   ChatSliderByUserSuccess(this.courses);
 }
 
@@ -29,15 +29,15 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
   Future getCoursesWithChatByUserId(String userId) async {
     final List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
     final List<CourseEnrollment> courseList = courseEnrollments.where((element) => element.isUnenrolled != true).toList();
-    final List<Course> coursesWithChat = [];
+    final List<CourseEnrollment> coursesWithChat = [];
 
-    final List<Future<DocumentSnapshot<Object>>> promises = courseList.map((element) => element.course.reference.get()).toList() as List<Future<DocumentSnapshot<Object>>>;
+    final List<Future<DocumentSnapshot<Object>>> promises = courseList.map((element) => element.course.reference.get()).toList();
     final List<DocumentSnapshot<Object>> courses = await Future.wait(promises);
     Course courseElement;
     courses.map((course)=> {
       courseElement = Course.fromJson(course.data() as Map<String, dynamic>),
       if (courseElement?.hasChat != false) {
-        coursesWithChat.add(courseElement)
+        coursesWithChat.add(courseEnrollments.firstWhere((element) => courseElement.id == element.course.id))
       }
     }).toList();
     

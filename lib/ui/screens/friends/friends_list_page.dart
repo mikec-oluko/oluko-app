@@ -46,7 +46,7 @@ class FriendsListPage extends StatefulWidget {
 class _FriendsListPageState extends State<FriendsListPage> {
   List<UserResponse> _friendUsersList = [];
   List<UserResponse> _appUsersList = [];
-  List<Course> _chatSliderList = [];
+  List<CourseEnrollment> _chatSliderList = [];
   Widget _chatSliderWidget = const SizedBox.shrink();
   Widget _friendUsersWidget = const SizedBox.shrink();
   Widget _appUsersWidget = const SizedBox.shrink();

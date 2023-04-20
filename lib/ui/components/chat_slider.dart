@@ -10,7 +10,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
 
 class ChatSlider extends StatefulWidget {
-  final List<Course> courses;
+  final List<CourseEnrollment> courses;
   final List<int> msgQuantity;
 
   const ChatSlider({this.courses, this.msgQuantity});
@@ -38,7 +38,7 @@ Padding _noCoursesMessage(BuildContext context) {
   );
 }
 
-Widget _courseList(List<Course> courses, BuildContext context) {
+Widget _courseList(List<CourseEnrollment> courses, BuildContext context) {
   return ListView(
     scrollDirection: Axis.horizontal,
     children: courses
@@ -49,7 +49,7 @@ Widget _courseList(List<Course> courses, BuildContext context) {
                 'courseEnrollment': element,
               });
             },
-            child: courseCard(element.image, element.name, context),
+            child: courseCard(element.course.image, element.course.name, context),
           ),
         )
         .toList(),
