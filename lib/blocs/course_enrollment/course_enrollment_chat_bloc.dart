@@ -39,7 +39,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   void createMessage(String userId, String courseId, String userMessage) async {   
     try {
-        final repository = UserRepository();
+      final repository = UserRepository();
       final DocumentReference<Object> userReference = repository.getUserReference(userId);
       final UserResponse user = await repository.getById(userId);
       final Course course = await CourseRepository.get(courseId);
@@ -58,7 +58,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       };
 
       Message message = Message.fromJson(messageJSON);
+      message.createdAt = Timestamp.now();
       await CourseChatRepository.createMessage(message, course.id);
+
     } catch (e) {
       emit(Failure());
     }
@@ -69,5 +71,28 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
         final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
         emit(MessagesUpdated(messages));
     });
+  }
+
+  void saveLastMessageUserSaw(String courseChatId, Message message) async{
+    try {
+      // final messageJSON ={
+      //   'id': ,
+      //   'image':  ,
+      //   'name': ',
+      //   'reference': 
+      // };
+
+      // final userMessageJSON = {
+      //   'message': message.message,
+      //   'user': message.user
+      // };
+
+      // final UserMessageSubmodel userMessage = 
+
+      // await CourseChatRepository.updateUsersLastSeenMessage(courseChatId);
+
+    } catch (e) {
+      emit(Failure());
+    }
   }
 }
