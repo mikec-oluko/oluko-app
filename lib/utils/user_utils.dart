@@ -105,8 +105,7 @@ class UserUtils {
         (user.username?.toLowerCase()?.contains(query.toLowerCase()) ?? false);
   }
 
-  static Widget searchResults(BuildContext context, SearchResults<UserResponse> search, double cardsAspectRatio, int searchResultsToShowPortrait,
-      int searchResultsToShowLandscape, UserResponse authUser) {
+  static Widget searchResults(BuildContext context, SearchResults<UserResponse> search, UserResponse authUser) {
     Map<String, UserProgress> _usersProgress = {};
     ScrollController _viewScrollController = ScrollController();
     return search.searchResults.isEmpty

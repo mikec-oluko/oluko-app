@@ -44,9 +44,9 @@ class _State extends State<SearchResultsGrid> {
                     //TODO: not generic, depends on T being course only
                     onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                         arguments: {'course': e as Course, 'fromCoach': false, 'isCoachRecommendation': false}),
-                    child: e.avatar != null
+                    child: e.image != null
                         ? _getCourseCard(CachedNetworkImage(
-                            imageUrl: e.avatar as String,
+                            imageUrl: e.image as String,
                             height: (ScreenUtils.height(context) * 0.20),
                             maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
                             maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
