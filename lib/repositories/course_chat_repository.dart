@@ -69,28 +69,42 @@ class CourseChatRepository {
   }
 
   static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId) async {
-    final messageReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('coursesChat')
-        .doc(courseChatId)
-        .collection('messages')
-        .doc(messageId);
+    if (messageId != null) {
+      final messageReference = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coursesChat')
+          .doc(courseChatId)
+          .collection('messages')
+          .doc(messageId);
 
-    final messageReferenceSnapshot = await messageReference.get();
+      final messageReferenceSnapshot = await messageReference.get();
 
-    final query = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('coursesChat')
-        .doc(courseChatId)
-        .collection('messages')
-        .orderBy('created_at', descending: true)
-        .startAfterDocument(messageReferenceSnapshot);
+      final query = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coursesChat')
+          .doc(courseChatId)
+          .collection('messages')
+          .orderBy('created_at', descending: true)
+          .startAfterDocument(messageReferenceSnapshot);
 
-    final snapshot = await query.get();
-    final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data())).toList();
-    return messages;
+      final snapshot = await query.get();
+      final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data())).toList();
+      return messages;
+    } else {
+      final query = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coursesChat')
+          .doc(courseChatId)
+          .collection('messages')
+          .orderBy('created_at', descending: true);
+
+      final snapshot = await query.get();
+      final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data())).toList();
+      return messages;
+    }
   }
 
   static Future<void> updateUsersLastSeenMessage(String courseChatId, UserMessageSubmodel newLastSeenMessage) async {

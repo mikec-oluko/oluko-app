@@ -48,7 +48,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   List<UserResponse> _friendUsersList = [];
   List<UserResponse> _appUsersList = [];
   List<CourseEnrollment> _chatSliderList = [];
-  int _chatSliderMessagesQuatity = 0;
+  List<int> _chatSliderMsgQuantityList = [];
   Widget _chatSliderWidget = const SizedBox.shrink();
   Widget _friendUsersWidget = const SizedBox.shrink();
   Widget _appUsersWidget = const SizedBox.shrink();
@@ -69,6 +69,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(widget.currentUser.id);
     BlocProvider.of<ChatSliderBloc>(context).getCoursesWithChatByUserId(widget.currentUser.id);
+
     super.initState();
   }
 
@@ -90,14 +91,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
               builder: (context, friendState) {
                 return BlocBuilder<ChatSliderBloc, ChatSliderState>(
                   builder: (context, chatSliderState) {
-                    if (chatSliderState is GetQuantityOfMessagesAfterLast) {
-                      _chatSliderMessagesQuatity = chatSliderState.messageQuantity;
-                    }
                     if (chatSliderState is ChatSliderByUserSuccess) {
                       _chatSliderList = chatSliderState.courses;
                       _chatSliderWidget = ChatSlider(
-                        courses: _chatSliderList,
-                        messageQuantity: _chatSliderMessagesQuatity,
+                        courseList: _chatSliderList,
+                        currentUserId: widget.currentUser.id,
                       );
                     }
                     if (chatSliderState is ChatSliderLoading) {

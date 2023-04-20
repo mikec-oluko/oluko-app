@@ -23,8 +23,8 @@ class ChatSliderByUserSuccess extends ChatSliderState {
 }
 
 class GetQuantityOfMessagesAfterLast extends ChatSliderState {
-  final int messageQuantity;
-  GetQuantityOfMessagesAfterLast(this.messageQuantity);
+  final List<int> messageQuantityList;
+  GetQuantityOfMessagesAfterLast(this.messageQuantityList);
 }
 
 class GetChatSliderUpdate extends ChatSliderState {
@@ -51,22 +51,31 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
         .toList();
 
     emit(ChatSliderByUserSuccess(coursesWithChat));
+
+    return coursesWithChat;
   }
 
-  void getMessagesAfterLast(String userId, String courseId) async {
-    final CourseChat chat = await CourseChatRepository.getCourseChatById(courseId);
+  void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {
+    List<int> msgQuantityList;
 
-    List<UserMessageSubmodel> lastMessageList = chat.lastMessageSeenUsers;
-    UserMessageSubmodel lastMessage;
+    for (final course in courses) {
+      final CourseChat chat = await CourseChatRepository.getCourseChatById(course.course.id);
 
-    for (int i = 0; i < lastMessageList.length; i++) {
-      if (lastMessageList[i].user.id == userId) {
-        lastMessage = lastMessageList[i];
-        break;
+      final List<UserMessageSubmodel> lastMessageList = chat.lastMessageSeenUsers;
+      UserMessageSubmodel lastMessage;
+
+      for (int i = 0; i < lastMessageList.length; i++) {
+        if (lastMessageList[i].user.id == userId) {
+          lastMessage = lastMessageList[i];
+          break;
+        }
       }
-    }
-    final List<Message> messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(courseId, lastMessage.id);
 
-    emit(GetQuantityOfMessagesAfterLast(messagesAfterLastView.length));
+      final List<Message> messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
+
+      msgQuantityList.add(messagesAfterLastView.length);
+    }
+
+    emit(GetQuantityOfMessagesAfterLast(msgQuantityList));
   }
 }
