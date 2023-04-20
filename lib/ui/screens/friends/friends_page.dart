@@ -5,11 +5,16 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
 import 'package:oluko_app/ui/screens/friends/friends_requests_page.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsPage extends StatefulWidget {
   @override
@@ -22,10 +27,14 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
   final int _numOfTabs = 2;
   final String _title = "Friends";
   AuthSuccess _authStateData;
-
+  final searchFriendsKey = GlobalKey<SearchState>();
+  TextEditingController searchBarController;
+  SearchResults<UserResponse> searchResults = SearchResults(query: '', suggestedItems: []);
+  List<UserResponse> _users = [];
   @override
   void initState() {
     _tabController = TabController(length: _numOfTabs, vsync: this);
+    BlocProvider.of<UserListBloc>(context).get();
     super.initState();
   }
 
@@ -43,64 +52,74 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: OlukoAppBar(
-        showBackButton: false,
-        title: _title,
-        showTitle: true,
-      ),
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, authState) {
-          if (authState is AuthSuccess && _authStateData == null) {
-            _authStateData = authState;
-            //TODO: CHECK IF NEED IT INSIDE TABS
-            BlocProvider.of<UserListBloc>(context).get();
-            BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
-          }
-          return Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-            child: WillPopScope(
-              onWillPop: () => AppNavigator.onWillPop(context),
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: OlukoNeumorphism.isNeumorphismDesign
-                            ? const EdgeInsets.symmetric(horizontal: 5, vertical: 20)
-                            : const EdgeInsets.symmetric(horizontal: 5),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: OlukoNeumorphism.isNeumorphismDesign ? neumoprhicTabs() : defaultTabs(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          color: OlukoNeumorphism.isNeumorphismDesign
-                              ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                              : OlukoColors.black,
-                          child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: TabBarView(
-                                controller: _tabController,
-                                children: [
-                                  FriendsListPage(
-                                    currentUser: _authStateData.user,
-                                  ),
-                                  FriendsRequestPage(
-                                    authUser: _authStateData,
-                                  )
-                                ],
-                              )),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        },
+    return BlocBuilder<UserListBloc, UserListState>(
+      builder: (context, state) {
+        if (state is UserListSuccess) {
+          _users = state.users;
+        }
+        return Scaffold(
+          // appBar: OlukoAppBar(
+          //   showBackButton: false,
+          //   title: _title,
+          //   showTitle: true,
+          // ),
+          appBar: _appBar(),
+          body: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, authState) {
+              if (authState is AuthSuccess && _authStateData == null) {
+                _authStateData = authState;
+                //TODO: CHECK IF NEED IT INSIDE TABS
+                BlocProvider.of<UserListBloc>(context).get();
+                BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
+              }
+              return _courseWidget(context);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _body() {
+    return Container(
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+      child: WillPopScope(
+        onWillPop: () => AppNavigator.onWillPop(context),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: OlukoNeumorphism.isNeumorphismDesign
+                      ? const EdgeInsets.symmetric(horizontal: 5, vertical: 20)
+                      : const EdgeInsets.symmetric(horizontal: 5),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: OlukoNeumorphism.isNeumorphismDesign ? neumoprhicTabs() : defaultTabs(),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            FriendsListPage(
+                              currentUser: _authStateData.user,
+                            ),
+                            FriendsRequestPage(
+                              authUser: _authStateData,
+                            )
+                          ],
+                        )),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -115,11 +134,11 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
           border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           lightSource: LightSource.topLeft,
-          shadowDarkColorEmboss:OlukoColors.black,
+          shadowDarkColorEmboss: OlukoColors.black,
           shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           surfaceIntensity: 1,
           shadowLightColor: Colors.white,
-          shadowDarkColor:OlukoColors.black),
+          shadowDarkColor: OlukoColors.black),
       child: friendsTabs(),
     );
   }
@@ -157,5 +176,38 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
         ),
       ],
     );
+  }
+
+  PreferredSizeWidget _appBar() {
+    return OlukoAppBar<UserResponse>(
+      showBottomTab: () => {},
+      showTitle: true,
+      searchKey: searchFriendsKey,
+      showBackButton: false,
+      title: OlukoLocalizations.get(context, 'friends'),
+      actions: [],
+      onSearchSubmit: (SearchResults<UserResponse> results) => setState(() {
+        searchResults = results;
+      }),
+      onSearchResults: (SearchResults results) => setState(() {
+        searchResults = SearchResults<UserResponse>(query: results.query, searchResults: List<UserResponse>.from(results.searchResults));
+      }),
+      searchMethod: UserUtils.searchMethod,
+      suggestionMethod: UserUtils.suggestionMethod,
+      searchResultItems: _users,
+      showSearchBar: true,
+      whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
+    );
+  }
+
+  Widget _courseWidget(BuildContext context) {
+    return OrientationBuilder(builder: (context, orientation) {
+      return Container(
+        color: OlukoNeumorphismColors.appBackgroundColor,
+        height: ScreenUtils.height(context),
+        width: ScreenUtils.width(context),
+        child: searchResults.query.isEmpty ? _body() : UserUtils.searchResults(context, searchResults, 4, 1, 1, _authStateData.user),
+      );
+    });
   }
 }

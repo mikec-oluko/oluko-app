@@ -16,7 +16,12 @@ class SearchResultsGrid<T> extends StatefulWidget {
   final double childAspectRatio;
   final int crossAxisCount;
 
-  SearchResultsGrid({this.textInput, this.itemList, this.childAspectRatio, this.crossAxisCount});
+  SearchResultsGrid({
+    this.textInput,
+    this.itemList,
+    this.childAspectRatio,
+    this.crossAxisCount,
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -39,9 +44,9 @@ class _State extends State<SearchResultsGrid> {
                     //TODO: not generic, depends on T being course only
                     onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                         arguments: {'course': e as Course, 'fromCoach': false, 'isCoachRecommendation': false}),
-                    child: e.image != null
+                    child: e.avatar != null
                         ? _getCourseCard(CachedNetworkImage(
-                            imageUrl: e.image as String,
+                            imageUrl: e.avatar as String,
                             height: (ScreenUtils.height(context) * 0.20),
                             maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
                             maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
