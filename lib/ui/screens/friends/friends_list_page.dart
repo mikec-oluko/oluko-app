@@ -19,6 +19,7 @@ import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -47,6 +48,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   List<UserResponse> _friendUsersList = [];
   List<UserResponse> _appUsersList = [];
   List<CourseEnrollment> _chatSliderList = [];
+  int _chatSliderMessagesQuatity = 0;
   Widget _chatSliderWidget = const SizedBox.shrink();
   Widget _friendUsersWidget = const SizedBox.shrink();
   Widget _appUsersWidget = const SizedBox.shrink();
@@ -87,15 +89,19 @@ class _FriendsListPageState extends State<FriendsListPage> {
             return BlocBuilder<FriendBloc, FriendState>(
               builder: (context, friendState) {
                 return BlocBuilder<ChatSliderBloc, ChatSliderState>(
-                  builder: (context, ChatSliderState) {
-                    if (ChatSliderState is ChatSliderByUserSuccess) {
-                      _chatSliderList = ChatSliderState.courses;
+                  builder: (context, chatSliderState) {
+                    if (chatSliderState is GetQuantityOfMessagesAfterLast) {
+                      _chatSliderMessagesQuatity = chatSliderState.messageQuantity;
+                    }
+                    if (chatSliderState is ChatSliderByUserSuccess) {
+                      _chatSliderList = chatSliderState.courses;
                       _chatSliderWidget = ChatSlider(
                         courses: _chatSliderList,
+                        messageQuantity: _chatSliderMessagesQuatity,
                       );
                     }
-                    if (ChatSliderState is ChatSliderLoading) {
-                      _chatSliderWidget = ChatSliderState is ChatSliderLoading ? getLoaderWidget() : _chatSliderWidget;
+                    if (chatSliderState is ChatSliderLoading) {
+                      _chatSliderWidget = getLoaderWidget();
                     }
                     if (friendState is GetFriendsSuccess) {
                       _friendState = friendState;

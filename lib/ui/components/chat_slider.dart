@@ -1,19 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/screens/courses/chat.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
 
 class ChatSlider extends StatefulWidget {
   final List<CourseEnrollment> courses;
-  final List<int> msgQuantity;
+  final int messageQuantity;
 
-  const ChatSlider({this.courses, this.msgQuantity});
+  const ChatSlider({this.courses, this.messageQuantity});
 
   @override
   _ChatSliderState createState() => _ChatSliderState();
@@ -22,41 +21,48 @@ class ChatSlider extends StatefulWidget {
 class _ChatSliderState extends State<ChatSlider> {
   @override
   Widget build(BuildContext context) {
-    return widget.courses.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courses, context);
+    return widget.courses.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courses, widget.messageQuantity, context);
   }
 }
 
 Padding _noCoursesMessage(BuildContext context) {
   return Padding(
     padding: const EdgeInsets.all(16.0),
-    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text(
-        OlukoLocalizations.get(context, 'noCourses'),
-        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
-      )
-    ]),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          OlukoLocalizations.get(context, 'noCourses'),
+          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor),
+        )
+      ],
+    ),
   );
 }
 
-Widget _courseList(List<CourseEnrollment> courses, BuildContext context) {
+Widget _courseList(List<CourseEnrollment> courses, int msgQuantity, BuildContext context) {
   return ListView(
     scrollDirection: Axis.horizontal,
     children: courses
         .map(
           (element) => GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.courseChat], arguments: {
-                'courseEnrollment': element,
-              });
+              Navigator.pushNamed(
+                context,
+                routeLabels[RouteEnum.courseChat],
+                arguments: {
+                  'courseEnrollment': element,
+                },
+              );
             },
-            child: courseCard(element.course.image, element.course.name, context),
+            child: courseCard(element.course.image, element.course.name, msgQuantity, context),
           ),
         )
         .toList(),
   );
 }
 
-Widget courseCard(String image, String name, BuildContext context) {
+Widget courseCard(String image, String name, int msgQuantity, BuildContext context) {
   return Container(
     margin: const EdgeInsets.only(left: 16),
     width: 80,
@@ -89,18 +95,21 @@ Widget courseCard(String image, String name, BuildContext context) {
           ),
         ),
         Positioned(
-            top: -3,
-            left: 50,
-            child: Visibility(
-              visible: true,
-              child: Badge(
-                badgeContent: const Text('2',
-                    style: TextStyle(
-                      color: Colors.white,
-                    )),
-                badgeColor: Colors.red,
+          top: -3,
+          left: 50,
+          child: Visibility(
+            visible: msgQuantity > 0,
+            child: Badge(
+              badgeContent: Text(
+                msgQuantity.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
-            )),
+              badgeColor: Colors.red,
+            ),
+          ),
+        ),
       ],
     ),
   );

@@ -42,6 +42,49 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
     return query.snapshots();
   }
 
+  // static Future<Message> saveLastMessageUserSaw(){
+  static Future<CourseChat> getCourseChatById(String courseChatId) async {
+    final DocumentSnapshot<Map<String, dynamic>> docSnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .get();
+
+    if (docSnapshot.exists) {
+      final CourseChat courseChat = CourseChat.fromJson(docSnapshot.data());
+      courseChat.id = docSnapshot.id;
+      return courseChat;
+    } else {
+      return null;
+    }
+  }
+
+  static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId) async {
+    final messageReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .collection('messages')
+        .doc(messageId);
+
+    final messageReferenceSnapshot = await messageReference.get();
+
+    final query = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .collection('messages')
+        .orderBy('created_at', descending: true)
+        .startAfterDocument(messageReferenceSnapshot);
+
+    final snapshot = await query.get();
+    final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data())).toList();
+    return messages;
+  }
+
   static Future<void> updateUsersLastSeenMessage(String courseChatId, UserMessageSubmodel newLastSeenMessage) async {
     final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final chatRef = projectReference.collection('coursesChat').doc(courseChatId);
@@ -54,7 +97,6 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
     if (index != -1) {
       usersLastSeenMessage[index]['message_reference'] = newLastSeenMessage.messageReference;
       usersLastSeenMessage[index]['message_id'] = newLastSeenMessage.messageId;
-
     } else {
       usersLastSeenMessage.add({
         'user': newLastSeenMessage.user.toJson(),
@@ -62,10 +104,8 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
         'message_id': newLastSeenMessage.messageId
       });
     }
-    
-    await chatRef.update({
-      'users_last_seen_message': usersLastSeenMessage
-    }); 
+
+    await chatRef.update({'users_last_seen_message': usersLastSeenMessage});
   }
 
   static DocumentReference<Object> getMessageReference(String courseChatId, String messageId){
