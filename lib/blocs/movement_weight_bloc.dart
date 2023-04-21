@@ -39,7 +39,8 @@ class WorkoutWeightBloc extends Cubit<MovementWorkoutState> {
 
   void saveWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> workoutMovementsAndWeights}) async {
     try {
-      await CourseEnrollmentRepository.addWeightToWorkout(courseEnrollmentId: courseEnrollmentId, movementsAndWeights: workoutMovementsAndWeights);
+      List<WorkoutWeight> onlyAddedWeights = _removeWeightWithoutValue(workoutMovementsAndWeights);
+      await CourseEnrollmentRepository.addWeightToWorkout(courseEnrollmentId: courseEnrollmentId, movementsAndWeights: onlyAddedWeights);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -49,6 +50,9 @@ class WorkoutWeightBloc extends Cubit<MovementWorkoutState> {
       rethrow;
     }
   }
+
+  List<WorkoutWeight> _removeWeightWithoutValue(List<WorkoutWeight> workoutMovementsAndWeights) =>
+      workoutMovementsAndWeights.where((record) => record.weight != null).toList();
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getUserWeightsForWorkout(String userId) async {
     try {

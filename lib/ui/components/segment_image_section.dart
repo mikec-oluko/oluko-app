@@ -239,8 +239,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 shrinkWrap: true,
                 physics: AlwaysScrollableScrollPhysics(),
                 children: [
-                  // if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(isForChallenge: true),
-                  // _challengeVideoComponent(),
+                  SizedBox(
+                    height: 20,
+                  ),
                   _segmentCardComponent(),
                   Container(
                     height: 200,

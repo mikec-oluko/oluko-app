@@ -188,6 +188,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             }
             currentMovementAndWeight.weight = movementsWeights[movementId];
             widget.movementWeigths(listOfWeigthsToUpdate);
+            FocusManager.instance.primaryFocus?.unfocus();
           },
           onEditingComplete: () {},
           textAlign: TextAlign.center,
