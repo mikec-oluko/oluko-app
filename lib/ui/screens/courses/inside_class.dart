@@ -107,7 +107,7 @@ class _InsideClassesState extends State<InsideClass> {
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
     BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
-    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
+    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
   }
 
@@ -127,10 +127,9 @@ class _InsideClassesState extends State<InsideClass> {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
               _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
               _class = classState.classObj;
-              List<Audio> classAudios =
-                  AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
+              List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [];
               _audios = AudioService.getNotDeletedAudios(classAudios);
-              _audioQty = _audios == null ? 0 : _audios.length;
+              _audioQty = _audios == null ? 0 : _audios.where((element) => element.seen == false).length;
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
               return WillPopScope(
                   onWillPop: () {
@@ -608,7 +607,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-
+            BlocProvider.of<EnrollmentAudioBloc>(context).markAudioAsSeen(_enrollmentAudio, _audios);
             _contentForPanel = ModalAudio(
                 panelController: _buttonController,
                 users: _coaches,
@@ -629,8 +628,7 @@ class _InsideClassesState extends State<InsideClass> {
     _audios[audioIndex].deleted = true;
     List<Audio> audiosUpdated = _audios.toList();
     _audios.removeAt(audioIndex);
-    BlocProvider.of<CourseEnrollmentAudioBloc>(context)
-        .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, widget.courseEnrollment.classes[widget.classIndex].id, _audios);
+    BlocProvider.of<CourseEnrollmentAudioBloc>(context).markAudioAsDeleted(_enrollmentAudio, audiosUpdated, _audios);
   }
 
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {
@@ -680,7 +678,7 @@ class _InsideClassesState extends State<InsideClass> {
         children: [
           OlukoBlurredButton(
             childContent: GestureDetector(
-              onTap: () => _audioQty > 0 ? _audioAction() : null,
+              onTap: () => _audios.isNotEmpty ? _audioAction() : null,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -696,27 +694,38 @@ class _InsideClassesState extends State<InsideClass> {
               ),
             ),
           ),
-          if (_audioQty > 0)
-            Align(
-              alignment: Alignment.topRight,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                    'assets/courses/audio_neumorphic_notification.png',
-                    height: 18,
-                    width: 18,
+          BlocBuilder<InsideClassContentBloc, InsideClassContentState>(
+            buildWhen: (context, state) {
+              return state is InsideClassContentAudioOpen || state is InsideClassContentLoading;
+            },
+            builder: (context, state) {
+              if (state is InsideClassContentAudioOpen) {
+                _audioQty = 0;
+              }
+              if (_audioQty > 0) {
+                return Align(
+                  alignment: Alignment.topRight,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/courses/audio_neumorphic_notification.png',
+                        height: 18,
+                        width: 18,
+                      ),
+                      Text(
+                        _audioQty.toString(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
+                      ),
+                    ],
                   ),
-                  Text(
-                    _audioQty.toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
-                  ),
-                ],
-              ),
-            )
-          else
-            const SizedBox()
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
         ],
       ),
     );

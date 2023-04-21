@@ -542,7 +542,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       'workoutType': WorkoutType.segment,
       'coach': widget.coach,
       'segments': widget.segments,
-      'fromChallenge': widget.fromChallenge
+      'fromChallenge': widget.fromChallenge,
+      'coachRequest': _coachRequest
     };
   }
 

@@ -15,6 +15,7 @@ import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -32,6 +33,9 @@ Future<void> main() async {
   await Firebase.initializeApp();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
+  if(alreadyLoggedUserResponse != null){
+    UserRepository().updateLastTimeOpeningApp(alreadyLoggedUserResponse);
+  }
   final bool firstTime = await UserUtils.isFirstTime();
   final String route = await RouteService.getInitialRoute(alreadyLoggedUser, firstTime, alreadyLoggedUserResponse);
   final MyApp myApp = MyApp(

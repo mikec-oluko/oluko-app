@@ -252,6 +252,7 @@ class UserRepository {
     try {
       await userReference.update(user.toJson());
       await AuthRepository().storeLoginData(user);
+      updateLastTimeOpeningApp(user);
       return user;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(
@@ -260,6 +261,11 @@ class UserRepository {
       );
       rethrow;
     }
+  }
+
+  Future<void> updateLastTimeOpeningApp(UserResponse user) async{
+    final DocumentReference<Object> userReference = getUserReference(user.id);
+    await userReference.update({'last_app_opening_at': Timestamp.now()});
   }
 
   void saveToken(String userId, String token) {
