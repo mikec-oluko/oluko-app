@@ -391,7 +391,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   SizedBox _segmentCardTitle() {
     return SizedBox(
       child: Text(
-        widget.segment.description,
+        widget.segment.name,
         style: OlukoFonts.olukoSuperBigFont(
           customFontWeight: FontWeight.bold,
           customColor: OlukoColors.white,
@@ -405,7 +405,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return SizedBox(
       width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
       child: Text(
-        widget.segment.name,
+        widget.segment.description,
         style: OlukoFonts.olukoMediumFont(
           customColor: OlukoColors.grayColor,
         ),
