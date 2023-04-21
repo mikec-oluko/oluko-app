@@ -50,16 +50,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _chatBloc = context.read<CourseEnrollmentChatBloc>();
-    _chatBloc.listenToMessages(widget.courseEnrollment.course.id);
+    BlocProvider.of<CourseEnrollmentChatBloc>(context).dispose();
+    BlocProvider.of<CourseEnrollmentChatBloc>(context).listenToMessages(widget.courseEnrollment.course.id);
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
   @override
   void dispose() {
-    _chatBloc.cancelMessagesSubscription();
-    _textController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -180,7 +177,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _handleNewMessagesScroll();
                       return _buildMessagesList(messages, widget.courseEnrollment.userId);
                     } else {
-                      return const Center(child: CircularProgressIndicator());
+                      return const SizedBox();
                     }
                   },
                 ),
