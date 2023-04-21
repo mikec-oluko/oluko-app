@@ -434,7 +434,9 @@
     "zipCodeErrorMessage": ", No cumple con el formato requerido. Solo caracteres numéricos, 5 dígitos de longitud.",
     "deleteImage": "Eliminar imagen",
     "completedChallenges": "Desafios Completados",
-    "transformationPhotos": "Fotos de Transformación"
+    "transformationPhotos": "Fotos de Transformación",
+    "showLess" : "Muestra menos",
+    "showMore" : "Mostrar más"
 
 
 

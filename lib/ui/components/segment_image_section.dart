@@ -47,6 +47,7 @@ import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
+import 'package:readmore/readmore.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class SegmentImageSection extends StatefulWidget {
@@ -404,12 +405,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   SizedBox _segmentCardDescription() {
     return SizedBox(
       width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
-      child: Text(
+      child: ReadMoreText(
         widget.segment.description,
+        trimLines: 2,
+        colorClickableText: OlukoColors.primary,
+        trimMode: TrimMode.Line,
+        trimCollapsedText: OlukoLocalizations.get(context, 'showMore'),
+        trimExpandedText: OlukoLocalizations.get(context, 'showLess'),
+        moreStyle: TextStyle(fontSize: 14, color: OlukoColors.primary, fontWeight: FontWeight.bold),
         style: OlukoFonts.olukoMediumFont(
           customColor: OlukoColors.grayColor,
         ),
-        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
       ),
     );
   }
