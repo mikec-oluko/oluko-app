@@ -154,5 +154,4 @@ Widget generateImageCourse(String imageUrl, BuildContext context) {
     );
   }
   return Image.asset('assets/courses/course_sample_7.png');
-  //TODO: fill space with default image or message
 }

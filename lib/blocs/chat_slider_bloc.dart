@@ -57,66 +57,27 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
 
   void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {
     try {
-      List<int> msgQuantityList = [];
-
+      final List<int> msgQuantityList = [];
       for (final course in courses) {
         final chat = await CourseChatRepository.getCourseChatById(course.course.id);
-
         final lastMessageList = chat.lastMessageSeenUsers;
         if (lastMessageList == null) {
           msgQuantityList.add(0);
         } else {
           UserMessageSubmodel lastMessage;
-
           for (final item in lastMessageList) {
             if (item.user.id == userId) {
               lastMessage = item;
               break;
             }
           }
-
           final messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
-
           msgQuantityList.add(messagesAfterLastView.length);
         }
       }
-
       emit(GetQuantityOfMessagesAfterLast(msgQuantityList));
     } catch (e) {
       emit(Failure(e));
     }
   }
 }
-
-  // void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {
-  //   try {
-  //     List<int> msgQuantityList ;
-
-  //     for (final course in courses) {
-  //       final chat = await CourseChatRepository.getCourseChatById(course.course.id);
-
-  //       final lastMessageList = chat.lastMessageSeenUsers;
-  //       if (lastMessageList == null) {
-  //         msgQuantityList.add(0);
-  //       } else {
-  //         UserMessageSubmodel lastMessage;
-  //         for (int i = 0; i < lastMessageList?.length; i++) {
-  //           if (lastMessageList[i].user?.id == userId) {
-  //             lastMessage = lastMessageList[i];
-  //             break;
-  //           }
-  //         }
-
-  //         final messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
-
-  //         msgQuantityList.add(messagesAfterLastView.length);
-  //       }
-  //     }
-
-  //     emit(GetQuantityOfMessagesAfterLast(msgQuantityList));
-  //   } catch (e) {
-  //     emit(Failure(e));
-  //   }
-  // }
-
-
