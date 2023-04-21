@@ -95,7 +95,7 @@ Widget courseCard(String image, String name, int msgQuantity, BuildContext conte
     child: Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 15),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -121,8 +121,8 @@ Widget courseCard(String image, String name, int msgQuantity, BuildContext conte
           ),
         ),
         Positioned(
-          top: -3,
-          left: 50,
+          top: 3,
+          left: 45,
           child: Visibility(
             visible: msgQuantity > 0,
             child: Badge(
