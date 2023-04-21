@@ -42,7 +42,6 @@ class CourseChatRepository {
     return query.snapshots();
   }
 
-  // static Future<Message> saveLastMessageUserSaw(){
   static Future<CourseChat> getCourseChatById(String courseChatId) async {
     try {
       final docSnapshot = await FirebaseFirestore.instance
@@ -67,30 +66,33 @@ class CourseChatRepository {
     }
   }
 
-  static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId) async {
+  static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId, {int limit = 0}) async {
     if (messageId != null) {
       final messageReference = FirebaseFirestore.instance
-          .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
-          .collection('coursesChat')
-          .doc(courseChatId)
-          .collection('messages')
-          .doc(messageId);
+              .collection('projects')
+              .doc(GlobalConfiguration().getValue('projectId'))
+              .collection('coursesChat')
+              .doc(courseChatId)
+              .collection('messages')
+              .doc(messageId);
 
-      final messageReferenceSnapshot = await messageReference.get();
+          final messageReferenceSnapshot = await messageReference.get();
 
-      final query = FirebaseFirestore.instance
-          .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
-          .collection('coursesChat')
-          .doc(courseChatId)
-          .collection('messages')
-          .where('created_at', isGreaterThan: messageReferenceSnapshot.data()['created_at']);
-      // .orderBy('created_at', descending: true)
-      // .startAfterDocument(messageReferenceSnapshot);
+          Query query = FirebaseFirestore.instance
+              .collection('projects')
+              .doc(GlobalConfiguration().getValue('projectId'))
+              .collection('coursesChat')
+              .doc(courseChatId)
+              .collection('messages')
+              .orderBy('created_at', descending: true)
+              .startAfterDocument(messageReferenceSnapshot);
+              
+          if(limit != 0){
+            query = query.limit(limit);
+          }
 
       final snapshot = await query.get();
-      final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data())).toList();
+      final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
       return messages;
     } else {
       final query = FirebaseFirestore.instance
@@ -137,4 +139,5 @@ class CourseChatRepository {
         .doc(messageId);
     return messageReference;
   }
+
 }
