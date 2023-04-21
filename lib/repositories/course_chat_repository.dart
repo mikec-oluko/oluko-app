@@ -77,7 +77,6 @@ class CourseChatRepository {
               .doc(messageId);
 
           final messageReferenceSnapshot = await messageReference.get();
-          final beforeMessage = await getOldestMessage(courseChatId);
 
           Query query = FirebaseFirestore.instance
               .collection('projects')
@@ -139,25 +138,6 @@ class CourseChatRepository {
         .collection('messages')
         .doc(messageId);
     return messageReference;
-  }
-
-  static Future<DocumentSnapshot> getOldestMessage(String courseChatId) async {
-    final query = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('coursesChat')
-        .doc(courseChatId)
-        .collection('messages')
-        .orderBy('created_at', descending: false)
-        .limit(1);
-
-    final querySnapshot = await query.get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first;
-    } else {
-      return null;
-    }
   }
 
 }
