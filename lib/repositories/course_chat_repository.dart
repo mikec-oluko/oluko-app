@@ -52,18 +52,25 @@ class CourseChatRepository {
 
   // static Future<Message> saveLastMessageUserSaw(){
   static Future<CourseChat> getCourseChatById(String courseChatId) async {
-    final DocumentSnapshot<Map<String, dynamic>> docSnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('coursesChat')
-        .doc(courseChatId)
-        .get();
+    try {
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coursesChat')
+          .doc(courseChatId)
+          .get();
 
-    if (docSnapshot.exists) {
-      final CourseChat courseChat = CourseChat.fromJson(docSnapshot.data());
-      courseChat.id = docSnapshot.id;
-      return courseChat;
-    } else {
+      if (docSnapshot.exists) {
+        final chatData = docSnapshot.data();
+        if (chatData != null) {
+          return CourseChat.fromJson(chatData);
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
       return null;
     }
   }

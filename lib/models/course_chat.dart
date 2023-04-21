@@ -15,14 +15,7 @@ class CourseChat extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   ObjectSubmodel course;
   List<UserMessageSubmodel> lastMessageSeenUsers;
@@ -30,8 +23,9 @@ class CourseChat extends Base {
   factory CourseChat.fromJson(Map<String, dynamic> json) {
     CourseChat chatJson = CourseChat(
       course: json['course'] != null ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>) : null,
-      lastMessageSeenUsers: json['last_message_seen_users'] != null
-          ? List<UserMessageSubmodel>.from((json['last_message_seen_users'] as Iterable).map((item) => UserMessageSubmodel.fromJson(item as Map<String, dynamic>)))
+      lastMessageSeenUsers: json['users_last_seen_message'] != null
+          ? List<UserMessageSubmodel>.from(
+              (json['users_last_seen_message'] as Iterable).map((item) => UserMessageSubmodel.fromJson(item as Map<String, dynamic>)))
           : null,
     );
     chatJson.setBase(json);
@@ -40,8 +34,8 @@ class CourseChat extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> chatJson = {
-      'course':  course.toJson(),
-      'last_message_seen_users': lastMessageSeenUsers == null ? null : List<UserMessageSubmodel>.from(lastMessageSeenUsers.map((message) => message.toJson())),
+      'course': course.toJson(),
+      'users_last_seen_message': lastMessageSeenUsers == null ? null : List<UserMessageSubmodel>.from(lastMessageSeenUsers.map((message) => message.toJson())),
     };
     chatJson.addEntries(super.toJson().entries);
     return chatJson;

@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/audio_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
@@ -34,8 +36,12 @@ class _ChatSliderState extends State<ChatSlider> {
     return BlocBuilder<ChatSliderBloc, ChatSliderState>(builder: (context, chatSliderState) {
       if (chatSliderState is GetQuantityOfMessagesAfterLast) {
         messageQuantityList = chatSliderState.messageQuantityList;
+        return widget.courseList.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courseList, messageQuantityList, context);
       }
-      return widget.courseList.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courseList, messageQuantityList, context);
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: OlukoCircularProgressIndicator(),
+      );
     });
   }
 }
