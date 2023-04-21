@@ -18,6 +18,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final bool addWeightEnable;
   final EnrollmentSegment segmentFromCourseEnrollment;
   final List<WeightRecord> weightRecords;
+  final bool isResults;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
 
   const SegmentSummaryComponent(
@@ -27,6 +28,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.segmentFromCourseEnrollment,
       this.segment,
       this.addWeightEnable = false,
+      this.isResults = false,
       this.weightRecords,
       this.movementWeigths})
       : super();
@@ -52,9 +54,18 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: _segmentSectionAndMovementDetails(),
-    );
+    return widget.isResults
+        ? Scrollbar(
+            isAlwaysShown: true,
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: _segmentSectionAndMovementDetails().length,
+              itemBuilder: (c, i) => _segmentSectionAndMovementDetails()[i],
+            ),
+          )
+        : Column(
+            children: _segmentSectionAndMovementDetails(),
+          );
   }
 
   List<Widget> _segmentSectionAndMovementDetails() {
@@ -93,36 +104,38 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
-      trailing: Container(
-        width: 90,
-        height: 40,
-        decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/courses/weight_icon.png',
-              scale: 3,
+      trailing: getWeight(movement) == null
+          ? SizedBox.shrink()
+          : Container(
+              width: 90,
+              height: 40,
+              decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/courses/weight_icon.png',
+                    scale: 3,
+                  ),
+                  Text(
+                    widget.weightRecords.isNotEmpty ? getWeight(movement) : '0',
+                    style: OlukoFonts.olukoMediumFont(),
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Text(
+                    'LBs',
+                    style: OlukoFonts.olukoMediumFont(),
+                  )
+                ],
+              ),
             ),
-            Text(
-              widget.weightRecords.isNotEmpty ? getWeight(movement) : '0',
-              style: OlukoFonts.olukoMediumFont(),
-            ),
-            const SizedBox(
-              width: 2,
-            ),
-            Text(
-              'LBs',
-              style: OlukoFonts.olukoMediumFont(),
-            )
-          ],
-        ),
-      ),
       title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
     );
   }
 
   String getWeight(MovementSubmodel movement) {
-    String result = '0';
+    String result;
     if (widget.weightRecords.isNotEmpty) {
       widget.weightRecords.forEach((weightRecord) {
         if (weightRecord.movementId == movement.id) {

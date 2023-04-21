@@ -139,6 +139,7 @@ class _State extends State<ClocksLowerSection> {
               courseEnrollment: widget.courseEnrollment,
               segmentIndex: widget.segmentIndex,
               classIndex: widget.classIndex,
+              isResults: true,
               segment: widget.segments
                   .where(
                     (segment) => segment.id == widget.segmentId,

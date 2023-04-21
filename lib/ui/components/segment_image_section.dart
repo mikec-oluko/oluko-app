@@ -216,20 +216,42 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Stack _defaultSegmentView() {
     return Stack(
       children: [
-        ListView(
-          addAutomaticKeepAlives: false,
-          addRepaintBoundaries: false,
-          padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null,
+        imageSection(),
+        Column(
           children: [
-            _segmentImageSection(),
+            topButtons(),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _classTitleComponent(),
+              ],
+            ),
+            Container(
+              height: ScreenUtils.height(context) / 1.3,
+              width: ScreenUtils.width(context),
+              child: ListView(
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: AlwaysScrollableScrollPhysics(),
+                children: [
+                  // if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(isForChallenge: true),
+                  // _challengeVideoComponent(),
+                  _segmentCardComponent(),
+                  Container(
+                    height: 200,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        _classTitleComponent(),
-        _segmentCardComponent(),
         _segmentStepsDotsComponent(),
         _segmentStartButton(),
-        //TODO: Navigation buttons
-        topButtons(),
       ],
     );
   }
@@ -777,7 +799,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
             Row(
