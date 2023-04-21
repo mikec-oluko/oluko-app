@@ -43,33 +43,41 @@ class MessageBubble extends StatelessWidget {
   }
 
   Widget _buildUserAvatar() {
+    final double avatarRadius = 16;
     return userImage == null
         ? UserUtils.avatarImageDefault(
-            maxRadius: 16,
+            maxRadius: avatarRadius,
             name: firstName,
             lastname: lastName,
           )
         : CircleAvatar(
             backgroundImage: NetworkImage(userImage),
+            radius: avatarRadius,
           );
   }
 
   Widget _buildMessageContainer() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Color.fromARGB(255, 87, 87, 87),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12.0),
-          bottomLeft: Radius.circular(12.0),
-          bottomRight: Radius.circular(12.0),
-        ),
+        borderRadius: isCurrentUser
+        ? const BorderRadius.only(
+            topLeft: Radius.circular(12.0),
+            bottomLeft: Radius.circular(12.0),
+            bottomRight: Radius.circular(12.0),
+          )
+        : const BorderRadius.only(
+            topRight: Radius.circular(12.0),
+            bottomLeft: Radius.circular(12.0),
+            bottomRight: Radius.circular(12.0),
+          ),
       ),
       child: Column(
         crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
-            isCurrentUser ? 'You' : '$firstName$lastName',
+            isCurrentUser ? 'You' : '$firstName $lastName',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,

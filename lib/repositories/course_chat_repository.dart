@@ -20,15 +20,6 @@ class CourseChatRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<CourseChat> create(CourseChat courseChat) async {
-    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
-    final CollectionReference reference = projectReference.collection('coursesChat');
-    DocumentReference docRef = reference.doc();
-    courseChat.id = docRef.id;
-    await docRef.set(courseChat.toJson());
-    return courseChat;
-  }
-
   static Future<Message> createMessage(Message message, String courseChatId) async {
     final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final CollectionReference reference = projectReference.collection('coursesChat').doc(courseChatId).collection('messages');
@@ -38,16 +29,17 @@ class CourseChatRepository {
     return message;
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessagesByCourseChatId(String courseChatId) {
-    final Stream<QuerySnapshot<Map<String, dynamic>>> docRef = FirebaseFirestore.instance
+static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatId(String courseChatId, {int limit = 10}) {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
-        .orderBy('created_at', descending: false)
-        .snapshots();
-    return docRef;
+        .orderBy('created_at', descending: true);
+        
+    query = query.limit(limit);
+    return query.snapshots();
   }
 
   // static Future<Message> saveLastMessageUserSaw(){
@@ -121,15 +113,32 @@ class CourseChatRepository {
     final chat = chatObj.data() as dynamic;
     final usersLastSeenMessage = chat['users_last_seen_message'] as List<dynamic> ?? [];
 
-    int index = usersLastSeenMessage.indexWhere((item) => item['user.id'] == newLastSeenMessage.user.id);
+    final int index = usersLastSeenMessage.indexWhere((item) => item['user']['id'] == newLastSeenMessage.user.id);
 
     if (index != -1) {
       usersLastSeenMessage[index]['message_reference'] = newLastSeenMessage.messageReference;
       usersLastSeenMessage[index]['message_id'] = newLastSeenMessage.messageId;
     } else {
-      usersLastSeenMessage.add({newLastSeenMessage});
+      usersLastSeenMessage.add({
+        'user': newLastSeenMessage.user.toJson(),
+        'message_reference': newLastSeenMessage.messageReference,
+        'message_id': newLastSeenMessage.messageId
+      });
     }
 
     await chatRef.update({'users_last_seen_message': usersLastSeenMessage});
+  }
+
+  static DocumentReference<Object> getMessageReference(String courseChatId, String messageId){
+    final DocumentReference messageReference =
+        FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration()
+        .getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .collection('messages')
+        .doc(messageId);
+    return messageReference;
   }
 }
