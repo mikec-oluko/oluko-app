@@ -1,27 +1,48 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/blocs/audio_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
 
 class ChatSlider extends StatefulWidget {
-  final List<CourseEnrollment> courses;
-  final int messageQuantity;
+  final List<CourseEnrollment> courseList;
+  final String currentUserId;
 
-  const ChatSlider({this.courses, this.messageQuantity});
+  const ChatSlider({this.courseList, this.currentUserId});
 
   @override
   _ChatSliderState createState() => _ChatSliderState();
 }
 
 class _ChatSliderState extends State<ChatSlider> {
+  List<int> messageQuantityList = [];
+
+  @override
+  void initState() {
+    BlocProvider.of<ChatSliderBloc>(context).getMessagesAfterLast(widget.currentUserId, widget.courseList);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.courses.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courses, widget.messageQuantity, context);
+    return BlocBuilder<ChatSliderBloc, ChatSliderState>(builder: (context, chatSliderState) {
+      if (chatSliderState is GetQuantityOfMessagesAfterLast) {
+        messageQuantityList = chatSliderState.messageQuantityList;
+        return widget.courseList.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courseList, messageQuantityList, context);
+      }
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: OlukoCircularProgressIndicator(),
+      );
+    });
   }
 }
 
@@ -40,24 +61,29 @@ Padding _noCoursesMessage(BuildContext context) {
   );
 }
 
-Widget _courseList(List<CourseEnrollment> courses, int msgQuantity, BuildContext context) {
+Widget _courseList(List<CourseEnrollment> courses, List<int> msgQuantity, BuildContext context) {
   return ListView(
     scrollDirection: Axis.horizontal,
     children: courses
+        .asMap()
         .map(
-          (element) => GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                routeLabels[RouteEnum.courseChat],
-                arguments: {
-                  'courseEnrollment': element,
-                },
-              );
-            },
-            child: courseCard(element.course.image, element.course.name, msgQuantity, context),
+          (index, element) => MapEntry(
+            index,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.courseChat],
+                  arguments: {
+                    'courseEnrollment': element,
+                  },
+                );
+              },
+              child: courseCard(element.course.image, element.course.name, msgQuantity[index], context),
+            ),
           ),
         )
+        .values
         .toList(),
   );
 }
@@ -102,11 +128,10 @@ Widget courseCard(String image, String name, int msgQuantity, BuildContext conte
             child: Badge(
               badgeContent: Text(
                 msgQuantity.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                 ),
               ),
-              badgeColor: Colors.red,
             ),
           ),
         ),

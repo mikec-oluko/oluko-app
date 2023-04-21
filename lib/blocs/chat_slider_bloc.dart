@@ -14,7 +14,7 @@ class ChatSliderLoading extends ChatSliderState {}
 
 class Failure extends ChatSliderState {
   final dynamic exception;
-  Failure({this.exception});
+  Failure(this.exception);
 }
 
 class ChatSliderByUserSuccess extends ChatSliderState {
@@ -23,8 +23,8 @@ class ChatSliderByUserSuccess extends ChatSliderState {
 }
 
 class GetQuantityOfMessagesAfterLast extends ChatSliderState {
-  final int messageQuantity;
-  GetQuantityOfMessagesAfterLast(this.messageQuantity);
+  final List<int> messageQuantityList;
+  GetQuantityOfMessagesAfterLast(this.messageQuantityList);
 }
 
 class GetChatSliderUpdate extends ChatSliderState {
@@ -51,22 +51,72 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
         .toList();
 
     emit(ChatSliderByUserSuccess(coursesWithChat));
+
+    return coursesWithChat;
   }
 
-  void getMessagesAfterLast(String userId, String courseId) async {
-    final CourseChat chat = await CourseChatRepository.getCourseChatById(courseId);
+  void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {
+    try {
+      List<int> msgQuantityList = [];
 
-    List<UserMessageSubmodel> lastMessageList = chat.lastMessageSeenUsers;
-    UserMessageSubmodel lastMessage;
+      for (final course in courses) {
+        final chat = await CourseChatRepository.getCourseChatById(course.course.id);
 
-    for (int i = 0; i < lastMessageList.length; i++) {
-      if (lastMessageList[i].user.id == userId) {
-        lastMessage = lastMessageList[i];
-        break;
+        final lastMessageList = chat.lastMessageSeenUsers;
+        if (lastMessageList == null) {
+          msgQuantityList.add(0);
+        } else {
+          UserMessageSubmodel lastMessage;
+
+          for (final item in lastMessageList) {
+            if (item.user.id == userId) {
+              lastMessage = item;
+              break;
+            }
+          }
+
+          final messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
+
+          msgQuantityList.add(messagesAfterLastView.length);
+        }
       }
-    }
-    final List<Message> messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(courseId, lastMessage.messageId);
 
-    emit(GetQuantityOfMessagesAfterLast(messagesAfterLastView.length));
+      emit(GetQuantityOfMessagesAfterLast(msgQuantityList));
+    } catch (e) {
+      emit(Failure(e));
+    }
   }
 }
+
+  // void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {
+  //   try {
+  //     List<int> msgQuantityList ;
+
+  //     for (final course in courses) {
+  //       final chat = await CourseChatRepository.getCourseChatById(course.course.id);
+
+  //       final lastMessageList = chat.lastMessageSeenUsers;
+  //       if (lastMessageList == null) {
+  //         msgQuantityList.add(0);
+  //       } else {
+  //         UserMessageSubmodel lastMessage;
+  //         for (int i = 0; i < lastMessageList?.length; i++) {
+  //           if (lastMessageList[i].user?.id == userId) {
+  //             lastMessage = lastMessageList[i];
+  //             break;
+  //           }
+  //         }
+
+  //         final messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
+
+  //         msgQuantityList.add(messagesAfterLastView.length);
+  //       }
+  //     }
+
+  //     emit(GetQuantityOfMessagesAfterLast(msgQuantityList));
+  //   } catch (e) {
+  //     emit(Failure(e));
+  //   }
+  // }
+
+
