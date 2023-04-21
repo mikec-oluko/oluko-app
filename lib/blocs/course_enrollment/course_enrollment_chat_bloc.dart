@@ -37,6 +37,10 @@ class MessagesUpdated extends CourseEnrollmentChatState {
   MessagesUpdated(this.messages, {this.lastDocument});
 }
 
+class MessagesDispose extends CourseEnrollmentChatState {
+  MessagesDispose();
+}
+
 class MessagesScroll extends CourseEnrollmentChatState {
   final List<Message> messages;
   MessagesScroll(this.messages);
@@ -50,6 +54,15 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   CourseEnrollmentChatBloc() : super(CourseEnrollmentLoading());
 
   StreamSubscription _messagesSubscription;
+
+  @override
+  void dispose() {
+    if (_messagesSubscription != null) {
+      _messagesSubscription.cancel();
+      _messagesSubscription = null;
+      emitChatDispose();
+    }
+  }
 
   Future<void> createMessage(String userId, String courseId, String userMessage) async {
     try {
@@ -81,16 +94,11 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   }
 
   void listenToMessages(String courseChatId) {
-    _messagesSubscription?.cancel();
-    CourseChatRepository.listenToMessagesByCourseChatId(courseChatId).listen((snapshot) {
+    _messagesSubscription = CourseChatRepository.listenToMessagesByCourseChatId(courseChatId).listen((snapshot) {
       final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList().reversed.toList();
       saveLastMessageUserSaw(courseChatId, messages[messages.length - 1]);
       emit(MessagesUpdated(messages));
     });
-  }
-
-  void cancelMessagesSubscription() {
-    _messagesSubscription?.cancel();
   }
 
   Future<void> saveLastMessageUserSaw(String courseChatId, Message message) async {
@@ -132,5 +140,18 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
        emit(Failure());
     }
     
+  }
+
+  void emitChatDispose() async {
+    try {
+      emit(MessagesDispose());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
   }
 }
