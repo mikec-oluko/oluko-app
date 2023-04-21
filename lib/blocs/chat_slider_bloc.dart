@@ -67,12 +67,14 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
           msgQuantityList.add(0);
         } else {
           UserMessageSubmodel lastMessage;
-          for (int i = 0; i < lastMessageList?.length; i++) {
-            if (lastMessageList[i].user?.id == userId) {
-              lastMessage = lastMessageList[i];
+
+          for (final item in lastMessageList) {
+            if (item.user.id == userId) {
+              lastMessage = item;
               break;
             }
           }
+
           final messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
 
           msgQuantityList.add(messagesAfterLastView.length);
