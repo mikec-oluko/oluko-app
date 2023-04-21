@@ -24,7 +24,6 @@ class Chat extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChatScreen(courseEnrollment: courseEnrollment);
   }
-  
 }
 
 class ChatScreen extends StatefulWidget {
@@ -40,10 +39,13 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  List<Message> messages = [];
   String message;
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   CourseEnrollmentChatBloc _chatBloc;
+  bool _isLoadingMoreMessages = false;
+  double currentScrollPosition = 0;
 
   @override
   void initState() {
@@ -53,21 +55,17 @@ class _ChatScreenState extends State<ChatScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
-@override
-void dispose() {
-  _chatBloc.cancelMessagesSubscription();
-  _textController.dispose();
-  _scrollController.dispose();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    _chatBloc.cancelMessagesSubscription();
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-      );
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
 
@@ -100,37 +98,61 @@ void dispose() {
   }
 
   Widget _buildMessagesList(List<Message> messages, String currentUserId) {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: messages.length,
-      itemBuilder: (BuildContext context, int index) {
-        final message = messages[index];
-        final isCurrentUser = message.user.id == currentUserId;
-        String firstName;
-        String lastName;
-        if (message.user.name != null) {
-          final List<String> splitName = message.user.name.split(' ');
-          if (splitName.isNotEmpty) {
-            firstName = splitName[0];
-            if (splitName.length >= 2) {
-              lastName = splitName[1];
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo is ScrollEndNotification && _scrollController.offset <= _scrollController.position.minScrollExtent) {
+          if (!_isLoadingMoreMessages) {
+            _isLoadingMoreMessages = true;
+            currentScrollPosition = _scrollController.position.maxScrollExtent;
+            BlocProvider.of<CourseEnrollmentChatBloc>(context).getMessagesAfterMessage(messages[0], widget.courseEnrollment.course.id);
+          }
+          return true;
+        }
+        return false;
+      },
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: messages.length,
+        itemBuilder: (BuildContext context, int index) {
+          final message = messages[index];
+          final isCurrentUser = message.user.id == currentUserId;
+          String firstName;
+          String lastName;
+          if (message.user.name != null) {
+            final List<String> splitName = message.user.name.split(' ');
+            if (splitName.isNotEmpty) {
+              firstName = splitName[0];
+              if (splitName.length >= 2) {
+                lastName = splitName[1];
+              }
             }
           }
-        }
-        return Column(
-          children: [
-            _showTodayLabel(index, messages),
-            MessageBubble(
-              firstName: firstName,
-              lastName: lastName ?? firstName,
-              userImage: message.user.image,
-              messageText: message.message,
-              isCurrentUser: isCurrentUser,
-            ),
-          ],
-        );
-      },
+          return Column(
+            children: [
+              _showTodayLabel(index, messages),
+              MessageBubble(
+                firstName: firstName,
+                lastName: lastName ?? firstName,
+                userImage: message.user.image,
+                messageText: message.message,
+                isCurrentUser: isCurrentUser,
+              ),
+            ],
+          );
+        },
+      ),
     );
+  }
+
+  void _handleNewMessagesScroll() {
+    if (_scrollController.hasClients) {
+      final previousMaxScrollExtent = _scrollController.position.maxScrollExtent;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final newMaxScrollExtent = _scrollController.position.maxScrollExtent;
+        final scrollDifference = newMaxScrollExtent - previousMaxScrollExtent;
+        _scrollController.jumpTo(_scrollController.offset + scrollDifference);
+      });
+    }
   }
 
   @override
@@ -147,11 +169,18 @@ void dispose() {
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
-                      final messages = state.messages;
+                      messages = state.messages;
                       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
                       return _buildMessagesList(messages, widget.courseEnrollment.userId);
+                    } else if (state is MessagesScroll) {
+                      _isLoadingMoreMessages = false;
+                      final previousMessages = state.messages;
+                      final newMessages = [...previousMessages, ...messages];
+                      messages = newMessages;
+                      _handleNewMessagesScroll();
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId);
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                   },
                 ),
@@ -170,7 +199,7 @@ void dispose() {
                     Expanded(
                       child: TextField(
                         controller: _textController,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.black,

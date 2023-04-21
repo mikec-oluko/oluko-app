@@ -65,7 +65,7 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
         break;
       }
     }
-    final List<Message> messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(courseId, lastMessage.id);
+    final List<Message> messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(courseId, lastMessage.messageId);
 
     emit(GetQuantityOfMessagesAfterLast(messagesAfterLastView.length));
   }

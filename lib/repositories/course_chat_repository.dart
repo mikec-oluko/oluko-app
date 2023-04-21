@@ -42,7 +42,6 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
     return query.snapshots();
   }
 
-  // static Future<Message> saveLastMessageUserSaw(){
   static Future<CourseChat> getCourseChatById(String courseChatId) async {
     final DocumentSnapshot<Map<String, dynamic>> docSnapshot = await FirebaseFirestore.instance
         .collection('projects')
@@ -60,7 +59,7 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
     }
   }
 
-  static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId) async {
+  static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId, {int limit = 0}) async {
     final messageReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -70,8 +69,9 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
         .doc(messageId);
 
     final messageReferenceSnapshot = await messageReference.get();
+    final beforeMessage = await getOldestMessage(courseChatId);
 
-    final query = FirebaseFirestore.instance
+    Query query = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('coursesChat')
@@ -79,9 +79,13 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
         .collection('messages')
         .orderBy('created_at', descending: true)
         .startAfterDocument(messageReferenceSnapshot);
+        
+    if(limit != 0){
+       query = query.limit(limit);
+    }
 
     final snapshot = await query.get();
-    final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data())).toList();
+    final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
     return messages;
   }
 
@@ -120,4 +124,24 @@ static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatI
         .doc(messageId);
     return messageReference;
   }
+
+  static Future<DocumentSnapshot> getOldestMessage(String courseChatId) async {
+    final query = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .collection('messages')
+        .orderBy('created_at', descending: false)
+        .limit(1);
+
+    final querySnapshot = await query.get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first;
+    } else {
+      return null;
+    }
+  }
+
 }
