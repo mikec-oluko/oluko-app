@@ -1491,6 +1491,13 @@ class Routes {
       case RouteEnum.courseChat:
         providers = [
           BlocProvider<CourseEnrollmentChatBloc>.value(value: _courseEnrollmentChatBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment);
