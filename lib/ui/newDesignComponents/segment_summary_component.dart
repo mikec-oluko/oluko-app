@@ -145,7 +145,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           if (widget.useImperialSystem) {
             result = weightRecord.weight.toString();
           } else {
-            result = (weightRecord.weight * 0.453).toString().padLeft(2, "0");
+            result = (weightRecord.weight * 0.453).toStringAsFixed(2);
           }
         }
       });

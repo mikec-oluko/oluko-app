@@ -321,7 +321,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       _useImperial = useImperial;
     });
     BlocProvider.of<ProfileBloc>(context).updateSettingsForWeights(userToUpdate: _authUser, useImperialSystem: _useImperial);
-    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    // BlocProvider.of<AuthBloc>(context).checkCurrentUser();
   }
 
   String returnOption(String option) => option.split(".")[1];
