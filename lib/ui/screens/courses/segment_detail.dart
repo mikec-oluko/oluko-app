@@ -316,6 +316,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 classIndex: widget.classIndex,
                 coachRequests: _coachRequests,
                 coach: _coach,
+                currentUser: _user,
                 fromChallenge: widget.fromChallenge,
               );
             } else {

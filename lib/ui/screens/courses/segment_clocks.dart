@@ -170,6 +170,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   final SoundPlayer _soundPlayer = SoundPlayer();
   bool storyShared = false;
   List<WorkoutWeight> movementsAndWeightsToSave = [];
+  UserResponse currentUser;
 
   @override
   void initState() {
@@ -221,6 +222,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         builder: (context, authState) {
           if (authState is AuthSuccess) {
             _user = authState.firebaseUser;
+            currentUser = authState.user;
+
             BlocProvider.of<FriendBloc>(context).getFriendsDataByUserId(_user.uid);
             return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
               builder: (context, coachRequestStreamState) {
@@ -382,6 +385,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         classIndex: widget.classIndex,
         courseEnrollment: widget.courseEnrollment,
         segmentId: widget.segments[widget.segmentIndex].id,
+        currentUser: currentUser,
         storyShared: timerTaskState is SetShareDone ? timerTaskState.shareDone : false,
         movementAndWeightsForWorkout: (movementsAndWeights) {
           setState(() {

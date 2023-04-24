@@ -287,6 +287,7 @@
     "deny": "Deny",
     "enterWeight": "Enter weight: ",
     "lbs": "lbs",
+    "kgs": "kgs",
     "cancelSession": "Recording ended",
     "cancelMessage": "Your video was not submitted. To re-record, press Restart. To continue without recording, press Resume.",
     "restart": "Restart",
@@ -437,7 +438,10 @@
     "completedChallenges": "Completed Challenges",
     "transformationPhotos": "Transformation Photos",
     "showLess" : "Show less",
-    "showMore" : "Show more"
+    "showMore" : "Show more",
+    "useKilograms": "Kilograms (KGs)",
+    "usePounds": "Pounds (LBs)",
+    "addWeight": "Add weight"
     
 
 

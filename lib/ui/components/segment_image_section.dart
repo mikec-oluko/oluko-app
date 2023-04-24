@@ -66,6 +66,7 @@ class SegmentImageSection extends StatefulWidget {
   final List<Segment> segments;
   final List<CoachRequest> coachRequests;
   final UserResponse coach;
+  final UserResponse currentUser;
   final Challenge challenge;
   final bool fromChallenge;
 
@@ -86,6 +87,7 @@ class SegmentImageSection extends StatefulWidget {
     this.classIndex,
     this.coachRequests,
     this.coach,
+    this.currentUser,
     this.fromChallenge,
     Key key,
   }) : super(key: key);
@@ -382,6 +384,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     courseEnrollment: widget.courseEnrollment,
                     segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
                     segment: widget.segment,
+                    useImperialSystem: widget.currentUser.useImperialSystem,
                     weightRecords: weightRecords ?? [],
                   );
                 },

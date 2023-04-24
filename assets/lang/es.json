@@ -287,6 +287,7 @@
     "deny": "Deny",
     "enterWeight": "Ingrese peso: ",
     "lbs": "lbs",
+    "kgs": "kgs",
     "cancelSession": "Cancelar esta sesión?",
     "cancelMessage": "Tu video no fue enviado. Para volver a grabar, presione Reiniciar. Para continuar sin grabar, presione Reanudar.",
     "restart": "Reiniciar",
@@ -436,7 +437,11 @@
     "completedChallenges": "Desafios Completados",
     "transformationPhotos": "Fotos de Transformación",
     "showLess" : "Muestra menos",
-    "showMore" : "Mostrar más"
+    "showMore" : "Mostrar más",
+    "useKilograms": "Kilogramos (KGs)",
+    "usePounds": "Libras (LBs)",
+    "addWeight": "Añadir peso"
+
 
 
 

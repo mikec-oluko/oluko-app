@@ -8,6 +8,7 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentSummaryComponent extends StatefulWidget {
@@ -19,6 +20,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final EnrollmentSegment segmentFromCourseEnrollment;
   final List<WeightRecord> weightRecords;
   final bool isResults;
+  final bool useImperialSystem;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
 
   const SegmentSummaryComponent(
@@ -29,6 +31,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.segment,
       this.addWeightEnable = false,
       this.isResults = false,
+      this.useImperialSystem = true,
       this.weightRecords,
       this.movementWeigths})
       : super();
@@ -124,7 +127,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                     width: 2,
                   ),
                   Text(
-                    'LBs',
+                    widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
                     style: OlukoFonts.olukoMediumFont(),
                   )
                 ],
@@ -139,7 +142,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     if (widget.weightRecords.isNotEmpty) {
       widget.weightRecords.forEach((weightRecord) {
         if (weightRecord.movementId == movement.id) {
-          result = weightRecord.weight.toString();
+          if (widget.useImperialSystem) {
+            result = weightRecord.weight.toString();
+          } else {
+            result = (weightRecord.weight * 0.453).toString().padLeft(2, "0");
+          }
         }
       });
     }
@@ -203,11 +210,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             contentPadding: EdgeInsets.symmetric(horizontal: 5),
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
-            hintText: 'Add weight', //OlukoLocalizations.get(context, "enterScore"),
+            hintText: OlukoLocalizations.get(context, 'addWeight'),
             hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
             hintMaxLines: 1,
             border: InputBorder.none,
-            suffixText: 'Lbs',
+            suffixText: widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
           ),
         ));
   }

@@ -11,6 +11,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/ui/newDesignComponents/segment_summary_component.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
@@ -42,6 +43,7 @@ class ClocksLowerSection extends StatefulWidget {
   final String segmentId;
   final bool areDiferentMovsWithRepCouter;
   final bool storyShared;
+  final UserResponse currentUser;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementAndWeightsForWorkout;
 
   ClocksLowerSection(
@@ -65,6 +67,7 @@ class ClocksLowerSection extends StatefulWidget {
       this.classIndex,
       this.segmentId,
       this.storyShared,
+      this.currentUser,
       this.movementAndWeightsForWorkout});
 
   @override
@@ -140,6 +143,7 @@ class _State extends State<ClocksLowerSection> {
               segmentIndex: widget.segmentIndex,
               classIndex: widget.classIndex,
               isResults: true,
+              useImperialSystem: widget.currentUser.useImperialSystem,
               segment: widget.segments
                   .where(
                     (segment) => segment.id == widget.segmentId,
