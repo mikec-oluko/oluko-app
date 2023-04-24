@@ -109,7 +109,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> getMessagesAfterMessage(Message message, String courseChatId) async {
     try {
-      List<Message> messages = await CourseChatRepository.getMessagesAfterMessageId(courseChatId, message.id, limit: 10);
+      List<Message> messages = await CourseChatRepository.getMessagesAfterMessageIdScroll(courseChatId, message.id);
       final List<UserResponse> participants = await getUsers(messages);
       emit(MessagesScroll(messages, participants));
     }catch(exception, stackTrace){

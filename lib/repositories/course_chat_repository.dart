@@ -66,6 +66,31 @@ class CourseChatRepository {
     }
   }
 
+    static Future<List<Message>> getMessagesAfterMessageIdScroll(String courseChatId, String messageId) async {
+      final messageReference = FirebaseFirestore.instance
+              .collection('projects')
+              .doc(GlobalConfiguration().getValue('projectId'))
+              .collection('coursesChat')
+              .doc(courseChatId)
+              .collection('messages')
+              .doc(messageId);
+
+          final messageReferenceSnapshot = await messageReference.get();
+
+          Query query = FirebaseFirestore.instance
+              .collection('projects')
+              .doc(GlobalConfiguration().getValue('projectId'))
+              .collection('coursesChat')
+              .doc(courseChatId)
+              .collection('messages')
+              .orderBy('created_at', descending: true)
+              .startAfterDocument(messageReferenceSnapshot)..limit(10);
+              
+      final snapshot = await query.get();
+      final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
+      return messages;
+  }
+
   static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId, {int limit = 0}) async {
     if (messageId != null) {
       final messageReference = FirebaseFirestore.instance
@@ -134,4 +159,5 @@ class CourseChatRepository {
         .doc(messageId);
     return messageReference;
   }
+
 }
