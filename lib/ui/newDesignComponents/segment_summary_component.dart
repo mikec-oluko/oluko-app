@@ -8,6 +8,7 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentSummaryComponent extends StatefulWidget {
@@ -42,7 +43,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
-  // TextEditingController controller = TextEditingController.fromValue(TextEditingValue(text: '', selection: TextSelection.collapsed(offset: 0)));
 
   @override
   void initState() {
@@ -124,7 +124,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                     width: 2,
                   ),
                   Text(
-                    'LBs',
+                    OlukoLocalizations.get(context, 'lbs'),
                     style: OlukoFonts.olukoMediumFont(),
                   )
                 ],
@@ -203,11 +203,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             contentPadding: EdgeInsets.symmetric(horizontal: 5),
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
-            hintText: 'Add weight', //OlukoLocalizations.get(context, "enterScore"),
+            hintText: OlukoLocalizations.get(context, 'addWeight'),
             hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
             hintMaxLines: 1,
             border: InputBorder.none,
-            suffixText: 'Lbs',
+            suffixText: OlukoLocalizations.get(context, 'lbs'),
           ),
         ));
   }
