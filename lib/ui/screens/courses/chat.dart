@@ -53,6 +53,9 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).dispose();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).listenToMessages(widget.courseEnrollment.course.id);
+    _textController.addListener(() {
+        BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
+    });
   }
 
   @override
@@ -140,17 +143,18 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buttonSend(bool isText) {
-    return isText
-        ? OlukoNeumorphicCircleButton(
+    return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+      builder: (context, state) {
+        return (state is Changebutton && !state.showButton) ?  OlukoNeumorphicCircleButton(
             customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
             onPressed: () => _handleSubmitted(_textController.text),
           )
-        : OlukoNeumorphicCircleButton(
-            customIcon: const Icon(Icons.mic, color: OlukoColors.grayColor),
-            onPressed: () {
-              // record function here
-            },
-          );
+          : OlukoNeumorphicCircleButton(
+            customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+            onPressed: () => _handleSubmitted(_textController.text),
+        );
+      },
+    );
   }
 
   @override
@@ -177,6 +181,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       final newParticipants = [...participants, ...previousParticipants];
                       participants = newParticipants;
                       messages = newMessages;
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
+                    } else if (messages.isNotEmpty) {
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
                     } else {
                       return const SizedBox();
@@ -210,11 +216,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         onSubmitted: _handleSubmitted,
                       ),
                     ),
-                    SizedBox(
-                      height: 55,
-                      width: 55,
-                      child: _buttonSend(_textController.text.isNotEmpty)
-                    ),
+                    SizedBox(height: 55, width: 55, child: _buttonSend(_textController.text.isNotEmpty)),
                   ],
                 ),
               ),

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/message.dart';
@@ -42,6 +43,11 @@ class MessagesScroll extends CourseEnrollmentChatState {
   final List<Message> messages;
   final List<UserResponse> participants;
   MessagesScroll(this.messages, this.participants);
+}
+
+class Changebutton extends CourseEnrollmentChatState {
+  final bool showButton;
+  Changebutton(this.showButton);
 }
 
 class Failure extends CourseEnrollmentChatState {
@@ -148,5 +154,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       }
     }
     return participants;
+  }
+
+  void changeButton(bool showButton){
+    emit(Changebutton(showButton));
   }
 }
