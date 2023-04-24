@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).dispose();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).listenToMessages(widget.courseEnrollment.course.id);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    //WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
   @override
@@ -60,11 +60,11 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
-  }
+  // void _scrollToBottom() {
+  //   if (_scrollController.hasClients) {
+  //     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  //   }
+  // }
 
   void _handleSubmitted(String text) {
     _textController.clear();
@@ -97,11 +97,11 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessagesList(List<Message> messages, String currentUserId) {
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
-        if (scrollInfo is ScrollEndNotification && _scrollController.offset <= _scrollController.position.minScrollExtent) {
+        if (scrollInfo is ScrollEndNotification && _scrollController.offset == _scrollController.position.maxScrollExtent) {
           if (!_isLoadingMoreMessages) {
             _isLoadingMoreMessages = true;
             currentScrollPosition = _scrollController.position.maxScrollExtent;
-            BlocProvider.of<CourseEnrollmentChatBloc>(context).getMessagesAfterMessage(messages[0], widget.courseEnrollment.course.id);
+            BlocProvider.of<CourseEnrollmentChatBloc>(context).getMessagesAfterMessage(messages[messages.length - 1], widget.courseEnrollment.course.id);
           }
           return true;
         }
@@ -109,6 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
       },
       child: ListView.builder(
         controller: _scrollController,
+        reverse: true,
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
           final message = messages[index];
@@ -141,16 +142,16 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _handleNewMessagesScroll() {
-    if (_scrollController.hasClients) {
-      final previousMaxScrollExtent = _scrollController.position.maxScrollExtent;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final newMaxScrollExtent = _scrollController.position.maxScrollExtent;
-        final scrollDifference = newMaxScrollExtent - previousMaxScrollExtent;
-        _scrollController.jumpTo(_scrollController.offset + scrollDifference);
-      });
-    }
-  }
+  // void _handleNewMessagesScroll() {
+  //   if (_scrollController.hasClients) {
+  //     final previousMaxScrollExtent = _scrollController.position.maxScrollExtent;
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       final newMaxScrollExtent = _scrollController.position.maxScrollExtent;
+  //       final scrollDifference = newMaxScrollExtent - previousMaxScrollExtent;
+  //       _scrollController.jumpTo(_scrollController.offset + scrollDifference);
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -167,14 +168,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
                       messages = state.messages;
-                      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+                      //WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
                       return _buildMessagesList(messages, widget.courseEnrollment.userId);
                     } else if (state is MessagesScroll) {
                       _isLoadingMoreMessages = false;
                       final previousMessages = state.messages;
-                      final newMessages = [...previousMessages, ...messages];
+                      final newMessages = [...messages, ...previousMessages];
                       messages = newMessages;
-                      _handleNewMessagesScroll();
+                      //_handleNewMessagesScroll();
                       return _buildMessagesList(messages, widget.courseEnrollment.userId);
                     } else {
                       return const SizedBox();
@@ -211,7 +212,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     SizedBox(
                       height: 55,
                       width: 55,
-                      child: _textController.value.text.isNotEmpty
+                      child: true
                           ? OlukoNeumorphicCircleButton(
                               customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
                               onPressed: () => _handleSubmitted(_textController.text),

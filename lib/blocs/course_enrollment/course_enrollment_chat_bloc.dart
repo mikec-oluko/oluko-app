@@ -95,7 +95,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   void listenToMessages(String courseChatId) {
     _messagesSubscription = CourseChatRepository.listenToMessagesByCourseChatId(courseChatId).listen((snapshot) {
-      final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList().reversed.toList();
+      final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();//.reversed.toList();
       saveLastMessageUserSaw(courseChatId, messages[messages.length - 1]);
       emit(MessagesUpdated(messages));
     });
@@ -130,7 +130,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   Future<void> getMessagesAfterMessage(Message message, String courseChatId) async {
     try{
       List<Message> messages = await CourseChatRepository.getMessagesAfterMessageId(courseChatId, message.id, limit: 10);
-      emit(MessagesScroll(messages.reversed.toList()));
+      emit(MessagesScroll(messages));
     }catch(exception, stackTrace){
       await Sentry.captureException(
         exception,
