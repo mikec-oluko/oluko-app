@@ -139,6 +139,20 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Widget _buttonSend(bool isText) {
+    return isText
+        ? OlukoNeumorphicCircleButton(
+            customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+            onPressed: () => _handleSubmitted(_textController.text),
+          )
+        : OlukoNeumorphicCircleButton(
+            customIcon: const Icon(Icons.mic, color: OlukoColors.grayColor),
+            onPressed: () {
+              // record function here
+            },
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,17 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     SizedBox(
                       height: 55,
                       width: 55,
-                      child: true
-                          ? OlukoNeumorphicCircleButton(
-                              customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-                              onPressed: () => _handleSubmitted(_textController.text),
-                            )
-                          : OlukoNeumorphicCircleButton(
-                              customIcon: const Icon(Icons.mic, color: OlukoColors.grayColor),
-                              onPressed: () {
-                                // record function here
-                              },
-                            ),
+                      child: _buttonSend(_textController.text.isNotEmpty)
                     ),
                   ],
                 ),

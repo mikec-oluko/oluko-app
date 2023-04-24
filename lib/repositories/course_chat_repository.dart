@@ -84,7 +84,7 @@ class CourseChatRepository {
               .doc(courseChatId)
               .collection('messages')
               .orderBy('created_at', descending: true)
-              .startAfterDocument(messageReferenceSnapshot)..limit(10);
+              .startAfterDocument(messageReferenceSnapshot).limit(10);
               
       final snapshot = await query.get();
       final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
