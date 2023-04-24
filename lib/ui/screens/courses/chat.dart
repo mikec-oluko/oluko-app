@@ -40,6 +40,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   List<Message> messages = [];
+  List<UserResponse> participants = [];
   String message;
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -128,7 +129,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 userImage: message.user.image,
                 messageText: message.message,
                 isCurrentUser: isCurrentUser,
-                user: participants[userIndex],
+                user: userIndex == -1 ? null : participants[userIndex],
                 authUserId: currentUserId,
               ),
             ],
@@ -158,8 +159,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       _isLoadingMoreMessages = false;
                       final previousMessages = state.messages;
                       final newMessages = [...messages, ...previousMessages];
+                      final previousParticipants = state.participants;
+                      final newParticipants = [...participants, ...previousParticipants];
+                      participants = newParticipants;
                       messages = newMessages;
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
                     } else {
                       return const SizedBox();
                     }
