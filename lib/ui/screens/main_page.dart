@@ -61,7 +61,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     return [
       getHomeTab(),
       CoachMainPage(),
-      FriendsPage(),
+      FriendsPage(
+        showBottomTab: () => setState(() {
+          _isBottomTabActive = !_isBottomTabActive;
+        }),
+      ),
       Courses(
         showBottomTab: () => setState(() {
           _isBottomTabActive = !_isBottomTabActive;
@@ -183,7 +187,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               return Scaffold(
                 backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
                 body: Padding(
-                  padding: _isBottomTabActive && this.tabController.index != 3
+                  padding: _isBottomTabActive && _isNotCourseOrFriendsTab(tabController.index)
                       ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
                       : const EdgeInsets.only(bottom: 0),
                   child: TabBarView(
@@ -223,6 +227,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   bool _userIsUnsubscribe(UserChangedPlan state) => state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null;
+
+  bool _isNotCourseOrFriendsTab(int index) {
+    return index != 2 && index != 3;
+  }
 
   Future<String> _userPlanChangedActions(BuildContext context, UserChangedPlan state) async {
     final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();

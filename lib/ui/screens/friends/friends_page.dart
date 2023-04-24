@@ -17,6 +17,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsPage extends StatefulWidget {
+  Function showBottomTab;
+  FriendsPage({this.showBottomTab, Key key}) : super(key: key);
   @override
   _FriendsPageState createState() => _FriendsPageState();
 }
@@ -52,26 +54,26 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserListBloc, UserListState>(
-      listener: (context, state) {
+    return BlocBuilder<UserListBloc, UserListState>(
+      builder: (context, state) {
         if (state is UserListSuccess) {
           _users = state.users;
         }
+        return Scaffold(
+          appBar: _appBar(),
+          body: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, authState) {
+              if (authState is AuthSuccess && _authStateData == null) {
+                _authStateData = authState;
+                //TODO: CHECK IF NEED IT INSIDE TABS
+                BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
+                _users.removeWhere((element) => element.id == _authStateData.user.id);
+              }
+              return _usersWidget(context);
+            },
+          ),
+        );
       },
-      child: Scaffold(
-        appBar: _appBar(),
-        body: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, authState) {
-            if (authState is AuthSuccess && _authStateData == null) {
-              _authStateData = authState;
-              //TODO: CHECK IF NEED IT INSIDE TABS
-              BlocProvider.of<UserListBloc>(context).get();
-              BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
-            }
-            return _usersWidget(context);
-          },
-        ),
-      ),
     );
   }
 
@@ -175,7 +177,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   PreferredSizeWidget _appBar() {
     return OlukoAppBar<UserResponse>(
-      showBottomTab: () => {},
+      showBottomTab: widget.showBottomTab,
       showTitle: true,
       searchKey: searchFriendsKey,
       showBackButton: false,
@@ -201,7 +203,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
         color: OlukoNeumorphismColors.appBackgroundColor,
         height: ScreenUtils.height(context),
         width: ScreenUtils.width(context),
-        child: searchResults.query.isEmpty ? _body() : UserUtils.searchResults(context, searchResults,_authStateData.user),
+        child: searchResults.query.isEmpty ? _body() : UserUtils.searchResults(context, searchResults, _authStateData.user),
       );
     });
   }
