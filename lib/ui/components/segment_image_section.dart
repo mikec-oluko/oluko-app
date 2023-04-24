@@ -326,13 +326,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Text(
-          widget.courseEnrollment.classes[widget.classIndex].name,
-          style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+          _classTitle(),
+          style: _classTitle().length > 25
+              ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+              : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
           overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
         ),
       ),
     );
   }
+
+  String _classTitle() => widget.courseEnrollment.classes[widget.classIndex].name;
 
   Widget segmentContent() {
     return OlukoNeumorphism.isNeumorphismDesign
@@ -406,7 +410,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return SizedBox(
       width: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.width - 40 : null,
       child: ReadMoreText(
-        widget.segment.description,
+        '${widget.segment.description}  ',
         trimLines: 2,
         colorClickableText: OlukoColors.primary,
         trimMode: TrimMode.Line,
