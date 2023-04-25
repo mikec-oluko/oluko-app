@@ -104,7 +104,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             ],
           ),
         )
-        // createNotificationSwitch(context),
       ],
     );
   }
