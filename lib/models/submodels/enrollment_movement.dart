@@ -7,7 +7,6 @@ class EnrollmentMovement {
   List<int> counters;
   bool weightRequired;
   double weight;
-  // weight_required
 
   EnrollmentMovement({this.id, this.reference, this.name, this.counters, this.weightRequired, this.weight});
 

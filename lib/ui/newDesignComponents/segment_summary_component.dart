@@ -45,7 +45,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
-  // TextEditingController controller = TextEditingController.fromValue(TextEditingValue(text: '', selection: TextSelection.collapsed(offset: 0)));
 
   @override
   void initState() {

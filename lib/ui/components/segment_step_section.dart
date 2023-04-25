@@ -27,12 +27,7 @@ class _State extends State<SegmentStepSection> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // Text(
-                //   '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
-                //   style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400),
-                // )
-              ],
+              children: [],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,

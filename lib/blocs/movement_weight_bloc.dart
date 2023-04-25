@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
-import 'package:oluko_app/repositories/workout_movement_weight_repository.dart';
+import 'package:oluko_app/repositories/movement_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class MovementWorkoutState {}
@@ -56,7 +56,7 @@ class WorkoutWeightBloc extends Cubit<MovementWorkoutState> {
 
   Future<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>> getUserWeightsForWorkout(String userId) async {
     try {
-      return subscription ??= WorkoutMovementWeightRepository.getUserWeightRecordsStream(userId).listen((snapshot) async {
+      return subscription ??= MovementRepository.getUserWeightRecordsStream(userId).listen((snapshot) async {
         List<WeightRecord> weightRecords = [];
         if (snapshot.docs.isNotEmpty) {
           snapshot.docs.forEach((doc) {

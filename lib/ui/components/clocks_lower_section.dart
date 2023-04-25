@@ -225,12 +225,4 @@ class _State extends State<ClocksLowerSection> {
   bool isWorkStateFinished() {
     return widget.workState == WorkState.finished;
   }
-
-  // child: ListView(
-  //   addAutomaticKeepAlives: false,
-  //   addRepaintBoundaries: false,
-  //   padding: EdgeInsets.zero,
-  //   children:
-  //       SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
-  // )
 }

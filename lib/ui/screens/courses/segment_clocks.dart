@@ -643,7 +643,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     saveWorkoutMovementAndWeigths();
 
-    // TODO: CALL THE UPDATE WEIGHT
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
       Navigator.popAndPushNamed(

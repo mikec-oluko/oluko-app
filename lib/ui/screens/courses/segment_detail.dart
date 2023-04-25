@@ -75,7 +75,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     _coachRequests = [];
     segmentIndexToUse = widget.segmentIndex;
     currentSegmentStep = widget.segmentIndex + 1;
-    // TODO: SEGMENT FROM COURSE ENROLLMENT WITH ENROLLMENT SEGMENT
     totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
     setSegments();
     super.initState();
@@ -392,7 +391,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   void setSegments() {
     if (widget.classSegments != null) {
-      // TODO: SEGMENT WITH MOVEMENT REFERENCE FROM ACTUAL SEGMENT
       _segments = widget.classSegments;
       setTotalSegments();
     } else {

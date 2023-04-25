@@ -37,11 +37,8 @@ class MovementRepository {
   }
 
   static Future<List<Movement>> getAll() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('movements')
-        .get();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('movements').get();
     return mapQueryToMovement(querySnapshot);
   }
 
@@ -70,12 +67,8 @@ class MovementRepository {
   }
 
   static Future<MovementRelation> getRelations(String id) async {
-    DocumentSnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('movementRelations')
-        .doc(id)
-        .get();
+    DocumentSnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('movementRelations').doc(id).get();
 
     MovementRelation movementRelation = MovementRelation.fromJson(querySnapshot.data() as Map<String, dynamic>);
     return movementRelation;
@@ -89,15 +82,23 @@ class MovementRepository {
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMovementsSubscription() {
-    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('movements')
-        .snapshots();
+    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('movements').snapshots();
     return movementsStream;
   }
 
   static Movement getByClass(Class classObj) {
     return null;
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserWeightRecordsStream(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> userWeightRecorsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('records')
+        .snapshots();
+    return userWeightRecorsStream;
   }
 }
