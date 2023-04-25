@@ -16,8 +16,8 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/bottom_tab_enum.dart';
 import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -229,7 +229,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   bool _userIsUnsubscribe(UserChangedPlan state) => state.userDataUpdated.currentPlan < 0 || state.userDataUpdated.currentPlan == null;
 
   bool _isNotCourseOrFriendsTab(int index) {
-    return index != 2 && index != 3;
+    return index != BottomTabEnum.courses.index && index != BottomTabEnum.community.index;
   }
 
   Future<String> _userPlanChangedActions(BuildContext context, UserChangedPlan state) async {

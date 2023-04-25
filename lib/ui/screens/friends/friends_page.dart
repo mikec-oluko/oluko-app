@@ -3,7 +3,6 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
-import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -14,7 +13,7 @@ import 'package:oluko_app/ui/screens/friends/friends_requests_page.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/user_utils.dart';
+import 'package:oluko_app/utils/search_utils.dart';
 
 class FriendsPage extends StatefulWidget {
   Function showBottomTab;
@@ -189,8 +188,8 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
       onSearchResults: (SearchResults results) => setState(() {
         searchResults = SearchResults<UserResponse>(query: results.query, searchResults: List<UserResponse>.from(results.searchResults));
       }),
-      searchMethod: UserUtils.searchMethod,
-      suggestionMethod: UserUtils.suggestionMethod,
+      searchMethod: SearchUtils.searchUserMethod,
+      suggestionMethod: SearchUtils.suggestionMethodForUsers,
       searchResultItems: _users,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
@@ -203,7 +202,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
         color: OlukoNeumorphismColors.appBackgroundColor,
         height: ScreenUtils.height(context),
         width: ScreenUtils.width(context),
-        child: searchResults.query.isEmpty ? _body() : UserUtils.searchResults(context, searchResults, _authStateData.user),
+        child: searchResults.query.isEmpty ? _body() : SearchUtils.searchUserResults(context, searchResults, _authStateData.user),
       );
     });
   }
