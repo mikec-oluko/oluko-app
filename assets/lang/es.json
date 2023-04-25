@@ -265,7 +265,7 @@
     "fitnessWorld": "mundo fitness!",
     "enrollInACourse": "Inscribirse a un Curso",
     "noCoachMessage": "¡Aprenda más sobre nuestras opciones de entrenamiento en las preguntas frecuentes!",
-    "roundInfo": "Se graba la primera ronda. ¡Prepararemos tu video y se lo enviaremos a tu entrenador!",
+    "roundInfo": "Se graba la ultima ronda. ¡Prepararemos tu video y se lo enviaremos a tu entrenador!",
     "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?",
     "noVideoUploaded": "Aún no subiste un video",
     "goBackConfirmationWithRecording": "Esta seguro de que quiere volver? Sus grabaciones se perderán.",
@@ -440,9 +440,8 @@
     "showMore" : "Mostrar más",
     "useKilograms": "Kilogramos (KGs)",
     "usePounds": "Libras (LBs)",
-    "addWeight": "Añadir peso"
-
-
+    "addWeight": "Añadir peso",
+    "community":"Comunidad"
 
 
 

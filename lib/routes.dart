@@ -922,7 +922,8 @@ class Routes {
           fromChallenge: argumentsToAdd['fromChallenge'] as bool,
           showPanel: argumentsToAdd['showPanel'] as bool,
           onShowAgainPressed: argumentsToAdd['onShowAgainPressed'] as Function(),
-          coachRequest:argumentsToAdd['coachRequest'] as CoachRequest,
+          coachRequest: argumentsToAdd['coachRequest'] as CoachRequest,
+          currentTaskIndex: argumentsToAdd['currentTaskIndex'] as int,
         );
         break;
       case RouteEnum.segmentCameraPreview:
@@ -934,12 +935,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentCameraPreview(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            coach: argumentsToAdd['coach'] as UserResponse,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            segments: argumentsToAdd['segments'] as List<Segment>);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          coach: argumentsToAdd['coach'] as UserResponse,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          segments: argumentsToAdd['segments'] as List<Segment>,
+          currentTaskIndex: argumentsToAdd['currentTaskIndex'] as int,
+        );
         break;
       case RouteEnum.courseMarketing:
         providers = [

@@ -49,9 +49,13 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
       }
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+        _image = await imagePicker.pickImage(
+          source: ImageSource.gallery,
+        );
       } else if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.pickImage(source: ImageSource.camera, imageQuality: 50);
+        _image = await imagePicker.pickImage(
+          source: ImageSource.camera,
+        );
       }
       if (_image == null && _image is! XFile) {
         emit(TransformationJourneyContentFailure(

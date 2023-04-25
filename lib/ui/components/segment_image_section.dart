@@ -440,21 +440,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
                   onPressed: () {
                     BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
-
-                    if (_coachRequest != null) {
-                      //TODO: CHECK CHALLENGE
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: CoachRequestContent(
-                          name: widget.coach?.firstName ?? '',
-                          image: widget.coach?.avatar,
-                          onNotRecordingAction: navigateToSegmentWithoutRecording,
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
-                    } else {
-                      navigateToSegmentWithoutRecording();
-                    }
+                    navigateToSegmentWithoutRecording();
                   },
                 ),
               )
@@ -543,7 +529,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer, widget.segment.rounds, 0);
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
     BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
   }
 
@@ -599,35 +585,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             const SizedBox(),
           const Expanded(child: SizedBox()),
           if (!_isVideoPlaying)
-            GestureDetector(
-              onTap: () {
-                BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
-                if (_coachRequest != null) {
-                  showCoachDialog();
-                } else {
-                  if (widget.segment.isChallenge) {
-                    if (_canStartSegment) {
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: SelfRecordingContent(
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
-                    }
-                  } else {
-                    if (_canStartSegment) {
-                      BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content: SelfRecordingContent(
-                          onRecordingAction: navigateToSegmentWithRecording,
-                        ),
-                      );
-                    }
-                  }
-                }
-              },
-              child: getCameraIcon(),
-            )
+            const SizedBox()
           else
             GestureDetector(
               onTap: () => changeVideoState(),
