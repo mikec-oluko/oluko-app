@@ -195,7 +195,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         videoUrl: videoUrl,
         useConstraints: true,
         roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
-        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+        showControls: false,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
