@@ -32,13 +32,42 @@ class UserItemBubbles extends StatefulWidget {
 
 class _UserItemBubblesState extends State<UserItemBubbles> {
   Map<String, UserProgress> _usersProgress = {};
+  List<UserResponse> _growingUserList = [];
+  final _listController = ScrollController();
+  final int _batchMaxRange = 10;
 
   @override
   void initState() {
     _usersProgress = widget.usersProgess;
     widget.userProgressListBloc.get(widget.currentUserId);
+
+    _growingUserList =
+        widget.content.isNotEmpty ? [...widget.content.getRange(0, widget.content.length > _batchMaxRange ? _batchMaxRange : widget.content.length)] : [];
+    _listController.addListener(() {
+      if (_listController.position.atEdge) {
+        if (_listController.position.pixels > 0) {
+          if (_growingUserList.length != widget.content.length) {
+            _getMoreUsers();
+            setState(() {});
+          }
+        }
+      }
+    });
     super.initState();
   }
+
+  @override
+  void dispose() {
+    _listController.dispose();
+    super.dispose();
+  }
+
+  void _getMoreUsers() => _growingUserList = widget.content.isNotEmpty
+      ? [
+          ...widget.content
+              .getRange(0, widget.content.length > _growingUserList.length + _batchMaxRange ? _growingUserList.length + _batchMaxRange : widget.content.length)
+        ]
+      : [];
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +87,13 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
       },
       blendMode: BlendMode.dstIn,
-      child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: buildBubbles()),
+      child: SingleChildScrollView(scrollDirection: Axis.horizontal, controller: _listController, child: buildBubbles()),
     );
   }
 
   List<Widget> buildUserItems() {
-    List<Widget> users = widget.content
-        .map((user) => _imageItem(context, user?.avatar, user?.username, itemUser: user, currentUserId: widget.currentUserId))
-        .toList();
+    List<Widget> users =
+        _growingUserList.map((user) => _imageItem(context, user?.avatar, user?.username, itemUser: user, currentUserId: widget.currentUserId)).toList();
 
     if (users != null && users.isNotEmpty) {
       users.add(
@@ -78,10 +106,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
   }
 
   Widget buildBubbles() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: buildUserItems(),
-    );
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: buildUserItems());
   }
 
   Widget buildBubbleGrid() {
