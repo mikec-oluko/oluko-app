@@ -43,7 +43,7 @@ class MessageBubble extends StatelessWidget {
         mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isCurrentUser) ...[
-            GestureDetector(onTap: () => friendModal(context), child: _buildUserAvatar()),
+            GestureDetector(onTap: () => user.privacy < 2 ? friendModal(context) : null, child: _buildUserAvatar()),
             const SizedBox(width: 8.0),
           ],
           Flexible(
