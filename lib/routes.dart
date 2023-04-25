@@ -18,6 +18,7 @@ import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -34,6 +35,7 @@ import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/course_panel_bloc.dart';
@@ -141,6 +143,7 @@ import 'package:oluko_app/ui/screens/coach/coach_recommended_content_list.dart';
 import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
 import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
 import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
+import 'package:oluko_app/ui/screens/courses/chat.dart';
 import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/course_share_view.dart';
@@ -273,7 +276,8 @@ enum RouteEnum {
   registerUser,
   homeLatestDesign,
   courseHomePage,
-  welcomeVideoFirstTimeLogin
+  welcomeVideoFirstTimeLogin,
+  courseChat
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -339,6 +343,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLatestDesign: '/home-view',
   RouteEnum.courseHomePage: '/course-home-page',
   RouteEnum.welcomeVideoFirstTimeLogin: '/welcome-video-home-page',
+  RouteEnum.courseChat: '/course-chat'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -463,6 +468,8 @@ class Routes {
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
+  final CourseEnrollmentChatBloc _courseEnrollmentChatBloc = CourseEnrollmentChatBloc();
+  final ChatSliderBloc _chatSliderList = ChatSliderBloc();
   final WorkoutWeightBloc _workoutWeightBloc = WorkoutWeightBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -563,6 +570,7 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
+          BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
@@ -644,7 +652,8 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
         ];
         newRouteView = FriendsPage();
         break;
@@ -1493,6 +1502,22 @@ class Routes {
         ];
         newRouteView = const WelcomeVideoFirstTimeLogin();
         break;
+
+      case RouteEnum.courseChat:
+        providers = [
+          BlocProvider<CourseEnrollmentChatBloc>.value(value: _courseEnrollmentChatBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment);
+        break;
+
       default:
         newRouteView = MainPage();
         break;

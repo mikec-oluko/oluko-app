@@ -437,6 +437,8 @@
     "deleteImage": "Delete image",
     "completedChallenges": "Completed Challenges",
     "transformationPhotos": "Transformation Photos",
+    "chats":"Chats",
+    "noChats":"You don't have chats",
     "showLess" : "Show less",
     "showMore" : "Show more",
     "useKilograms": "Kilograms (KGs)",
