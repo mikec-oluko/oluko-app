@@ -9,7 +9,10 @@ import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/ui/newDesignComponents/segment_summary_component.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
@@ -39,6 +42,7 @@ class ClocksLowerSection extends StatefulWidget {
   final String segmentId;
   final bool areDiferentMovsWithRepCouter;
   final bool storyShared;
+  final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementAndWeightsForWorkout;
 
   ClocksLowerSection(
       {this.workState,
@@ -60,7 +64,8 @@ class ClocksLowerSection extends StatefulWidget {
       this.courseEnrollment,
       this.classIndex,
       this.segmentId,
-      this.storyShared});
+      this.storyShared,
+      this.movementAndWeightsForWorkout});
 
   @override
   _State createState() => _State();
@@ -69,6 +74,7 @@ class ClocksLowerSection extends StatefulWidget {
 class _State extends State<ClocksLowerSection> {
   bool shareDone = false;
   SegmentSubmission _updatedSegmentSubmission;
+  bool keyboardVisibilty = false;
 
   @override
   Widget build(BuildContext context) {
@@ -116,21 +122,35 @@ class _State extends State<ClocksLowerSection> {
     );
   }
 
+  EnrollmentSegment getCourseEnrollmentSegment() {
+    final EnrollmentSegment currentEnrollmentSegment =
+        widget.courseEnrollment.classes[widget.classIndex].segments.where((enrollmentSegment) => enrollmentSegment.id == widget.segmentId).first;
+    return widget
+        .courseEnrollment.classes[widget.classIndex].segments[widget.courseEnrollment.classes[widget.classIndex].segments.indexOf(currentEnrollmentSegment)];
+  }
+
   Widget getWorkouts() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Padding(
-            padding: const EdgeInsets.all(10),
-            child: SizedBox(
-                height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
-                width: ScreenUtils.width(context),
-                child: ListView(
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
-                  padding: EdgeInsets.zero,
-                  children:
-                      SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
-                )),
-          )
+        ? Container(
+            height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
+            width: ScreenUtils.width(context),
+            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
+            child: SegmentSummaryComponent(
+              courseEnrollment: widget.courseEnrollment,
+              segmentIndex: widget.segmentIndex,
+              classIndex: widget.classIndex,
+              isResults: true,
+              segment: widget.segments
+                  .where(
+                    (segment) => segment.id == widget.segmentId,
+                  )
+                  .first,
+              segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
+              addWeightEnable: true,
+              movementWeigths: (movementsAndWeights) {
+                widget.movementAndWeightsForWorkout(movementsAndWeights);
+              },
+            ))
         : Column(
             children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
           );
