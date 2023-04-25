@@ -18,6 +18,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -40,6 +41,7 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/rounds_alerts.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
@@ -169,6 +171,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   List<FriendModel> _friends = [];
   final SoundPlayer _soundPlayer = SoundPlayer();
   bool storyShared = false;
+  List<WorkoutWeight> movementsAndWeightsToSave = [];
 
   @override
   void initState() {
@@ -382,6 +385,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         courseEnrollment: widget.courseEnrollment,
         segmentId: widget.segments[widget.segmentIndex].id,
         storyShared: timerTaskState is SetShareDone ? timerTaskState.shareDone : false,
+        movementAndWeightsForWorkout: (movementsAndWeights) {
+          setState(() {
+            movementsAndWeightsToSave = movementsAndWeights;
+          });
+        },
       ),
     );
   }
@@ -631,6 +639,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   Future<void> nextSegmentAction() async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+    saveWorkoutMovementAndWeigths();
+
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
       Navigator.popAndPushNamed(
@@ -659,6 +669,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void goToClassAction() {
+    saveWorkoutMovementAndWeigths();
     _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
     Navigator.pushReplacementNamed(
       context,
@@ -1298,5 +1309,12 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             : isSegmentWithoutRecording()
                 ? 0
                 : screenProportion * 0.4;
+  }
+
+  void saveWorkoutMovementAndWeigths() {
+    if (movementsAndWeightsToSave.isNotEmpty) {
+      BlocProvider.of<WorkoutWeightBloc>(context)
+          .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);
+    }
   }
 }

@@ -187,29 +187,30 @@ class _State extends State<Clock> {
               ? Positioned(bottom: 0, child: _tasksSection(keyboardVisibilty))
               : Positioned(top: ScreenUtils.height(context) * 0.48, child: _tasksSection(keyboardVisibilty)),
         if ((widget.workState == WorkState.resting && skipRest) && canUseSkipRest())
-          Positioned(
-            bottom: 100,
-            child: Container(
-              width: ScreenUtils.width(context),
-              height: 60,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    widget.timeLeft = const Duration(seconds: 5);
-                    skipRest = !skipRest;
-                  });
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.skip_next, color: OlukoColors.white),
-                    Text('Skip rest - next movement',
-                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
-                  ],
+          if (!keyboardVisibilty)
+            Positioned(
+              bottom: 100,
+              child: Container(
+                width: ScreenUtils.width(context),
+                height: 60,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      widget.timeLeft = const Duration(seconds: 5);
+                      skipRest = !skipRest;
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.skip_next, color: OlukoColors.white),
+                      Text('Skip rest - next movement',
+                          textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
+            )
       ],
     );
   }
