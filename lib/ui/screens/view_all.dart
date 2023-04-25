@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/search_utils.dart';
 
 class ViewAll extends StatefulWidget {
   List<Course> courses;
@@ -32,6 +31,6 @@ class _ViewAllState extends State<ViewAll> {
           showBackButton: true,
         ),
         backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-        body: CourseUtils.searchResults(context, SearchResults(searchResults: widget.courses), 0.69333, 3, 5));
+        body: SearchUtils.searchCourseResults(context, SearchResults(searchResults: widget.courses), 0.69333, 3, 5));
   }
 }
