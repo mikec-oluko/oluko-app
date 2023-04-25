@@ -435,7 +435,16 @@
     "zipCodeErrorMessage": ", Does not meet the required format. Numeric characters only, 5 digits long.",
     "deleteImage": "Delete image",
     "completedChallenges": "Completed Challenges",
-    "transformationPhotos": "Transformation Photos"
-
+    "transformationPhotos": "Transformation Photos",
+    "privacy": "Privacy",
+    "pushNotifications": "Push notifications",
+    "globalNotifications": "Global notifications",
+    "coachResponse": "Coach response",
+    "workoutReminder": "Workout reminder",
+    "appOpeningReminder": "App opening reminder",
+    "globalNotificationsSubtitle": "Global notifications will be sent IDK",
+    "coachResponseSubtitle": "Coach response notifications will be sent when coach sends you a video or audio response",
+    "workoutReminderSubtitle": "Workout reminder based on your scheduled workout",
+    "appOpeningReminderSubtitle": "Remembers to open the app every 3, 7, and 14 days"
     
 }

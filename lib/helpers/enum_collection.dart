@@ -2,6 +2,16 @@
 enum SettingsPrivacyOptions { public, restricted, anonymous }
 enum SettingsPrivacyOptionsSubtitle { publicSubtitle, restrictedSubtitle, anonymousSubtitle }
 
+enum SettingsNotificationsOptions { workoutReminder, appOpeningReminder, coachResponse, globalNotifications }
+enum SettingsNotificationsSubtitle { workoutReminderSubtitle, appOpeningReminderSubtitle, coachResponseSubtitle, globalNotificationsSubtitle }
+
+Map<SettingsNotificationsOptions, String> notificationsSubtitles = {
+  SettingsNotificationsOptions.workoutReminder: 'workoutReminderSubtitle',
+  SettingsNotificationsOptions.appOpeningReminder: 'appOpeningReminderSubtitle',
+  SettingsNotificationsOptions.coachResponse: 'coachResponseSubtitle',
+  SettingsNotificationsOptions.globalNotifications: 'globalNotificationsSubtitle'
+};
+
 Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.public: 'publicSubtitle',
   SettingsPrivacyOptions.restricted: 'restrictedSubtitle',

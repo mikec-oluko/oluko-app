@@ -434,11 +434,17 @@
     "zipCodeErrorMessage": ", No cumple con el formato requerido. Solo caracteres numéricos, 5 dígitos de longitud.",
     "deleteImage": "Eliminar imagen",
     "completedChallenges": "Desafios Completados",
-    "transformationPhotos": "Fotos de Transformación"
-
-
-
-
+    "transformationPhotos": "Fotos de Transformación",
+    "privacy": "Privacidad",
+    "pushNotifications": "Notificaciones push",
+    "globalNotifications": "Notificaciones globales",
+    "coachResponse": "Respuesta del Coach",
+    "workoutReminder": "Recordatorio de ejercicio",
+    "appOpeningReminder": "Recordatorio de apertura de la aplicación",
+    "globalNotificationsSubtitle": "Notificaciones globales seran enviadas... nose... lorem ipsum",
+    "coachResponseSubtitle": "Las respuestas de video o audio enviadas por el coach seran notificadas",
+    "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
+    "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días"
 
 
 
