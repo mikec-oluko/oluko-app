@@ -109,7 +109,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       trailing: getWeight(movement) == null
           ? SizedBox.shrink()
           : Container(
-              width: 90,
+              width: 100,
               height: 40,
               decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Row(
