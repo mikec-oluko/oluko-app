@@ -143,15 +143,17 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       widget.weightRecords.forEach((weightRecord) {
         if (weightRecord.movementId == movement.id) {
           if (widget.useImperialSystem) {
-            result = weightRecord.weight.toString();
+            result = weightRecord.weight.toStringAsFixed(2);
           } else {
-            result = (weightRecord.weight * 0.453).toStringAsFixed(2);
+            result = (weightRecord.weight * _toKilogramsUnit).ceil().toStringAsFixed(2);
           }
         }
       });
     }
     return result;
   }
+
+  double get _toKilogramsUnit => 0.453;
 
   Padding _movementTileWithInput(MovementSubmodel movement) {
     return Padding(
@@ -191,7 +193,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             if (value == '') {
               movementsWeights[movementId] = null;
             } else {
-              movementsWeights[movementId] = double.parse(value);
+              if (widget.useImperialSystem) {
+                movementsWeights[movementId] = double.parse(value);
+              } else {
+                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
+              }
             }
             currentMovementAndWeight.weight = movementsWeights[movementId];
             widget.movementWeigths(listOfWeigthsToUpdate);
@@ -218,6 +224,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           ),
         ));
   }
+
+  double get _passToKilogramsUnit => 2.20462;
 
   WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeigthsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
 
