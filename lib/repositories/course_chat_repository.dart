@@ -47,52 +47,45 @@ class CourseChatRepository {
   }
 
   static Future<CourseChat> getCourseChatById(String courseChatId) async {
-    try {
-      final docSnapshot = await FirebaseFirestore.instance
-          .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
-          .collection('coursesChat')
-          .doc(courseChatId)
-          .get();
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .get();
 
-      if (docSnapshot.exists) {
-        final chatData = docSnapshot.data();
-        if (chatData != null) {
-          return CourseChat.fromJson(chatData);
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    } catch (e) {
+    if (docSnapshot.exists && docSnapshot.data() != null) {
+      final chatData = docSnapshot.data();
+      return CourseChat.fromJson(chatData);
+    } else {
       return null;
     }
   }
 
-    Future<List<Message>> getMessagesAfterMessageIdScroll(String courseChatId, String messageId) async {
-      final messageReference = FirebaseFirestore.instance
-              .collection('projects')
-              .doc(GlobalConfiguration().getValue('projectId'))
-              .collection('coursesChat')
-              .doc(courseChatId)
-              .collection('messages')
-              .doc(messageId);
+  Future<List<Message>> getMessagesAfterMessageIdScroll(String courseChatId, String messageId) async {
+    final messageReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .collection('messages')
+        .doc(messageId);
 
-          final messageReferenceSnapshot = await messageReference.get();
+    final messageReferenceSnapshot = await messageReference.get();
 
-          Query query = FirebaseFirestore.instance
-              .collection('projects')
-              .doc(GlobalConfiguration().getValue('projectId'))
-              .collection('coursesChat')
-              .doc(courseChatId)
-              .collection('messages')
-              .orderBy('created_at', descending: true)
-              .startAfterDocument(messageReferenceSnapshot).limit(10);
-              
-      final snapshot = await query.get();
-      final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
-      return messages;
+    Query query = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coursesChat')
+        .doc(courseChatId)
+        .collection('messages')
+        .orderBy('created_at', descending: true)
+        .startAfterDocument(messageReferenceSnapshot)
+        .limit(10);
+
+    final snapshot = await query.get();
+    final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
+    return messages;
   }
 
   static Future<List<Message>> getMessagesAfterMessageId(String courseChatId, String messageId, {int limit = 0}) async {
@@ -171,7 +164,7 @@ class CourseChatRepository {
     return messageReference;
   }
 
-    static Future getCoursesWithChatByUserId(String userId) async {
+  static Future getCoursesWithChatByUserId(String userId) async {
     final List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
     final List<CourseEnrollment> courseList = courseEnrollments.where((element) => element.isUnenrolled != true).toList();
     final List<CourseEnrollment> coursesWithChat = [];
@@ -186,7 +179,6 @@ class CourseChatRepository {
             })
         .toList();
 
-      return coursesWithChat;
-    }
-
+    return coursesWithChat;
+  }
 }

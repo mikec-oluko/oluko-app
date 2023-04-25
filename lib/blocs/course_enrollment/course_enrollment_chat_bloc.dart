@@ -70,7 +70,6 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
     if (_messagesSubscription != null) {
       _messagesSubscription.cancel();
       _messagesSubscription = null;
-      emitChatDispose();
     }
   }
 
@@ -92,12 +91,17 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   }
 
   void listenToMessages(String courseChatId) {
-    _messagesSubscription = CourseChatRepository().listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
-      final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
+    try{
+      _messagesSubscription = CourseChatRepository().listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
+      final List<Message> messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
       saveLastMessageUserSaw(courseChatId, messages[0]);
       final List<UserResponse> participants = await getUsers(messages);
       emit(MessagesUpdated(messages, participants));
     });
+    }catch(e){
+      emit(Failure());
+    }
+    
   }
 
   Future<void> saveLastMessageUserSaw(String courseChatId, Message message) async {
@@ -119,19 +123,6 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
         stackTrace: stackTrace,
       );
       emit(Failure());
-    }
-  }
-
-  void emitChatDispose() async {
-    try {
-      emit(MessagesDispose());
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: exception));
-      rethrow;
     }
   }
 
