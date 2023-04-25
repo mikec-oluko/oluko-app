@@ -1,5 +1,6 @@
 //Options to update on settings
 enum SettingsPrivacyOptions { public, restricted, anonymous }
+enum WeightMeasures { kilograms, pounds }
 enum SettingsPrivacyOptionsSubtitle { publicSubtitle, restrictedSubtitle, anonymousSubtitle }
 
 Map<SettingsPrivacyOptions, String> privacySubtitles = {

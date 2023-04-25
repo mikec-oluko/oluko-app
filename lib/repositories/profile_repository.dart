@@ -34,6 +34,11 @@ class ProfileRepository {
     return userUpdated;
   }
 
+  Future<UserResponse> updateUserPreferencesforWeight(UserResponse user, bool useImperialSystem) async {
+    UserResponse userUpdated = await _userRepository.updateUserSettingsForWeightMeasure(user, useImperialSystem);
+    return userUpdated;
+  }
+
   Future<UserResponse> updateProfileView() async {
     UserResponse user = await _authRepository.retrieveLoginData();
 
