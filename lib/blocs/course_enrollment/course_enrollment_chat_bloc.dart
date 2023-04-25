@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,13 +7,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/message.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/user_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/course_chat_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:oluko_app/utils/video_process.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 abstract class CourseEnrollmentChatState {}
 
@@ -76,11 +82,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       final UserResponse user = await repository.getById(userId);
       final Course course = await CourseRepository.get(courseId);
 
-      final userObj = {'id': userId, 'image': user.avatar, 'name': '${user.firstName} ${user.lastName}', 'reference': userReference};
-
-      final messageJSON = {'message': userMessage, 'seenAt': '', 'user': userObj};
-
-      Message message = Message.fromJson(messageJSON);
+      ObjectSubmodel userObj = ObjectSubmodel(id: userId, image: user.avatar, name: '${user.firstName} ${user.lastName}', reference: userReference);
+      Message message = Message(message: userMessage, user: userObj);
+      
       message.createdAt = Timestamp.now();
       await CourseChatRepository.createMessage(message, course.id);
     } catch (e) {
@@ -90,8 +94,8 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   void listenToMessages(String courseChatId) {
     _messagesSubscription = CourseChatRepository.listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
-      final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();//.reversed.toList();
-      saveLastMessageUserSaw(courseChatId, messages[messages.length - 1]);
+      final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
+      saveLastMessageUserSaw(courseChatId, messages[0]);
       final List<UserResponse> participants = await getUsers(messages);
       emit(MessagesUpdated(messages, participants));
     });
@@ -99,15 +103,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> saveLastMessageUserSaw(String courseChatId, Message message) async {
     try {
-      final repository = UserRepository();
-      final DocumentReference<Object> messageReference = CourseChatRepository.getMessageReference(courseChatId, message.id);
-      final User user = AuthRepository.getLoggedUser();
-      final DocumentReference<Object> userReference = repository.getUserReference(user.uid);
-
-      final userJSON = {'id': user.uid, 'image': null, 'name': user.displayName, 'reference': userReference};
-      final userMessageJSON = {'message_reference': messageReference, 'message_id': message.id, 'user': userJSON};
-      final UserMessageSubmodel userMessage = UserMessageSubmodel.fromJson(userMessageJSON);
-      await CourseChatRepository.updateUsersLastSeenMessage(courseChatId, userMessage);
+      await CourseChatRepository.updateUsersLastSeenMessage(courseChatId, message);
     } catch (e) {
       emit(Failure());
     }
@@ -123,7 +119,6 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
         exception,
         stackTrace: stackTrace,
       );
-      print(exception);
       emit(Failure());
     }
   }

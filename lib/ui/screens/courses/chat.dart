@@ -152,7 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
           : OlukoNeumorphicCircleButton(
             customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
             onPressed: () => _handleSubmitted(_textController.text),
-        );
+          );
       },
     );
   }

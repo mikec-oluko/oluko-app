@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_chat.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/user_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 
@@ -129,7 +133,14 @@ class CourseChatRepository {
     }
   }
 
-  static Future<void> updateUsersLastSeenMessage(String courseChatId, UserMessageSubmodel newLastSeenMessage) async {
+  static Future<void> updateUsersLastSeenMessage(String courseChatId, Message message) async {
+    final repository = UserRepository();
+    final DocumentReference<Object> messageReference = CourseChatRepository.getMessageReference(courseChatId, message.id);
+    final User userLogged = AuthRepository.getLoggedUser();
+    final DocumentReference<Object> userReference = repository.getUserReference(userLogged.uid);
+    ObjectSubmodel userSubmodel = ObjectSubmodel(id: userLogged.uid, name: userLogged.displayName, reference: userReference);
+    UserMessageSubmodel newLastSeenMessage = UserMessageSubmodel(messageReference: messageReference, messageId: message.id, user: userSubmodel);
+
     final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final chatRef = projectReference.collection('coursesChat').doc(courseChatId);
     final DocumentSnapshot chatObj = await chatRef.get();
@@ -159,5 +170,23 @@ class CourseChatRepository {
         .doc(messageId);
     return messageReference;
   }
+
+    static Future getCoursesWithChatByUserId(String userId) async {
+    final List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+    final List<CourseEnrollment> courseList = courseEnrollments.where((element) => element.isUnenrolled != true).toList();
+    final List<CourseEnrollment> coursesWithChat = [];
+
+    final List<Future<DocumentSnapshot<Object>>> promises = courseList.map((element) => element.course.reference.get()).toList();
+    final List<DocumentSnapshot<Object>> courses = await Future.wait(promises);
+    Course courseElement;
+    courses
+        .map((course) => {
+              courseElement = Course.fromJson(course.data() as Map<String, dynamic>),
+              if (courseElement?.hasChat != false) {coursesWithChat.add(courseEnrollments.firstWhere((element) => courseElement.id == element.course.id))}
+            })
+        .toList();
+
+      return coursesWithChat;
+    }
 
 }
