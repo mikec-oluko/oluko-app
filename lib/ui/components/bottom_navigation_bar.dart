@@ -196,18 +196,18 @@ class _State extends State<OlukoBottomNavigationBar> {
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
           route: '/segment-progress'),*/
       OlukoBottomNavigationBarItem(
-        title: OlukoLocalizations.get(context, 'friends'),
-        disabledAssetImageUrl:
-            OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/friends_neumorphic.png' : 'assets/bottom_navigation_bar/friends.png',
-        selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
-        route: RouteEnum.friends,
-      ),
-      OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'courses'),
           disabledAssetImageUrl:
               OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/course_neumorphic.png' : 'assets/bottom_navigation_bar/course.png',
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_courses.png',
           route: RouteEnum.courses),
+      OlukoBottomNavigationBarItem(
+        title: OlukoLocalizations.get(context, 'community'),
+        disabledAssetImageUrl:
+            OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/friends_neumorphic.png' : 'assets/bottom_navigation_bar/friends.png',
+        selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
+        route: RouteEnum.friends,
+      ),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'profile'), selectedAssetImageUrl: 'assets/bottom_navigation_bar/profile.png', route: RouteEnum.profile),
     ];

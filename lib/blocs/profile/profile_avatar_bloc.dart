@@ -55,9 +55,9 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       final ImagePicker imagePicker = ImagePicker();
 
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.pickImage(source: ImageSource.gallery, maxWidth: 360, maxHeight: 360, imageQuality: 25);
+        _image = await imagePicker.pickImage(source: ImageSource.gallery, maxWidth: 360, maxHeight: 360);
       } else if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.pickImage(source: ImageSource.camera, maxWidth: 360, maxHeight: 360, imageQuality: 25);
+        _image = await imagePicker.pickImage(source: ImageSource.camera, maxWidth: 360, maxHeight: 360);
       }
 
       if (_image == null && _image is! XFile) {
