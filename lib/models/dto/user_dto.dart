@@ -25,6 +25,7 @@ class UserDto {
     state = userReponse.state;
     country = userReponse.country;
     currentPlan = userReponse.currentPlan;
+    useImperialSystem = userReponse.useImperialSystem;
     id = userReponse.id;
     createdBy = userReponse.createdBy;
     updatedBy = userReponse.updatedBy;
@@ -51,6 +52,7 @@ class UserDto {
     this.state,
     this.country,
     this.currentPlan,
+    this.useImperialSystem,
     this.showRecordingAlert,
     Timestamp assessmentsCompletedAt,
     this.id,
@@ -84,6 +86,7 @@ class UserDto {
   int firstAppInteractionAt;
   String updatedBy;
   bool isDeleted = false;
+  bool useImperialSystem = true;
   bool isHidden = false;
   int assessmentsCompletedAt;
   bool showRecordingAlert;
@@ -104,6 +107,7 @@ class UserDto {
       hubspotCompanyId: json['hubspot_company_id'] as num,
       hubspotContactId: json['hubspot_contact_id'] as num,
       showRecordingAlert: json['show_recording_alert'] == null ? true : json['show_recording_alert'] as bool,
+      useImperialSystem: json['imperial_system'] == null ? true : json['imperial_system'] as bool,
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? -1 : double.tryParse((json['current_plan'] as num)?.toString()),
@@ -145,6 +149,7 @@ class UserDto {
       'created_by': createdBy,
       'first_login_at': firstLoginAt,
       'first_app_interaction_at': firstAppInteractionAt,
+      'imperial_system': useImperialSystem,
       'show_recording_alert': showRecordingAlert ?? true,
       'id': id,
       'is_deleted': isDeleted,

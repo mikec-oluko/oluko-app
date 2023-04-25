@@ -20,6 +20,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final EnrollmentSegment segmentFromCourseEnrollment;
   final List<WeightRecord> weightRecords;
   final bool isResults;
+  final bool useImperialSystem;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
 
   const SegmentSummaryComponent(
@@ -30,6 +31,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.segment,
       this.addWeightEnable = false,
       this.isResults = false,
+      this.useImperialSystem = true,
       this.weightRecords,
       this.movementWeigths})
       : super();
@@ -107,7 +109,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       trailing: getWeight(movement) == null
           ? SizedBox.shrink()
           : Container(
-              width: 90,
+              width: 100,
               height: 40,
               decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Row(
@@ -124,7 +126,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                     width: 2,
                   ),
                   Text(
-                    OlukoLocalizations.get(context, 'lbs'),
+                    widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
                     style: OlukoFonts.olukoMediumFont(),
                   )
                 ],
@@ -139,12 +141,18 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     if (widget.weightRecords.isNotEmpty) {
       widget.weightRecords.forEach((weightRecord) {
         if (weightRecord.movementId == movement.id) {
-          result = weightRecord.weight.toString();
+          if (widget.useImperialSystem) {
+            result = weightRecord.weight.toStringAsFixed(2);
+          } else {
+            result = (weightRecord.weight * _toKilogramsUnit).ceil().toStringAsFixed(2);
+          }
         }
       });
     }
     return result;
   }
+
+  double get _toKilogramsUnit => 0.453;
 
   Padding _movementTileWithInput(MovementSubmodel movement) {
     return Padding(
@@ -184,7 +192,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             if (value == '') {
               movementsWeights[movementId] = null;
             } else {
-              movementsWeights[movementId] = double.parse(value);
+              if (widget.useImperialSystem) {
+                movementsWeights[movementId] = double.parse(value);
+              } else {
+                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
+              }
             }
             currentMovementAndWeight.weight = movementsWeights[movementId];
             widget.movementWeigths(listOfWeigthsToUpdate);
@@ -207,10 +219,12 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
             hintMaxLines: 1,
             border: InputBorder.none,
-            suffixText: OlukoLocalizations.get(context, 'lbs'),
+            suffixText: widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
           ),
         ));
   }
+
+  double get _passToKilogramsUnit => 2.20462;
 
   WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeigthsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
 

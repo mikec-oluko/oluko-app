@@ -84,7 +84,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       Message message = Message(message: userMessage, user: userObj);
       
       message.createdAt = Timestamp.now();
-      await CourseChatRepository.createMessage(message, course.id);
+      await CourseChatRepository().createMessage(message, course.id);
     } catch (e) {
       emit(Failure());
     }

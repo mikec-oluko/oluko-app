@@ -36,13 +36,12 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
   ChatSliderBloc() : super(ChatSliderLoading());
 
   Future getCoursesWithChatByUserId(String userId) async {
-    try{
-    final List<CourseEnrollment> coursesWithChat = await CourseChatRepository.getCoursesWithChatByUserId(userId) as List<CourseEnrollment>;
-    emit(ChatSliderByUserSuccess(coursesWithChat));
-    } catch (e){
+    try {
+      final List<CourseEnrollment> coursesWithChat = await CourseChatRepository.getCoursesWithChatByUserId(userId) as List<CourseEnrollment>;
+      emit(ChatSliderByUserSuccess(coursesWithChat));
+    } catch (e) {
       emit(Failure(e));
     }
-
   }
 
   void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {

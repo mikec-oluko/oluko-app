@@ -24,7 +24,7 @@ class CourseChatRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<Message> createMessage(Message message, String courseChatId) async {
+  Future<Message> createMessage(Message message, String courseChatId) async {
     final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final CollectionReference reference = projectReference.collection('coursesChat').doc(courseChatId).collection('messages');
     DocumentReference docRef = reference.doc();
@@ -127,7 +127,7 @@ class CourseChatRepository {
   }
 
   Future<void> updateUsersLastSeenMessage(String courseChatId, Message message) async {
-    final repository = UserRepository();
+    final UserRepository repository = UserRepository();
     final DocumentReference<Object> messageReference = CourseChatRepository.getMessageReference(courseChatId, message.id);
     final User userLogged = AuthRepository.getLoggedUser();
     final DocumentReference<Object> userReference = repository.getUserReference(userLogged.uid);
