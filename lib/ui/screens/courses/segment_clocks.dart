@@ -81,21 +81,23 @@ class SegmentClocks extends StatefulWidget {
   final UserResponse coach;
   final bool showPanel;
   final Function() onShowAgainPressed;
+  final int currentTaskIndex;
 
-  const SegmentClocks(
-      {Key key,
-      this.courseIndex,
-      this.workoutType,
-      this.classIndex,
-      this.coach,
-      this.segmentIndex,
-      this.courseEnrollment,
-      this.segments,
-      this.fromChallenge,
-      this.showPanel,
-      this.onShowAgainPressed,
-      this.coachRequest})
-      : super(key: key);
+  const SegmentClocks({
+    Key key,
+    this.courseIndex,
+    this.workoutType,
+    this.classIndex,
+    this.coach,
+    this.segmentIndex,
+    this.courseEnrollment,
+    this.segments,
+    this.fromChallenge,
+    this.showPanel,
+    this.onShowAgainPressed,
+    this.currentTaskIndex,
+    this.coachRequest,
+  }) : super(key: key);
 
   @override
   _SegmentClocksState createState() => _SegmentClocksState();
@@ -766,6 +768,69 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return timerEntries[timerTaskIndex + 2].round == 1;
   }
 
+  navigateToSegmentWithoutRecording() {
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segments[widget.segmentIndex].initialTimer);
+    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
+      'workoutType': WorkoutType.segment,
+      'coach': widget.coach,
+      'segments': widget.segments,
+      'fromChallenge': widget.fromChallenge,
+      'coachRequest': _coachRequest,
+      'currentTaskIndex': realTaskIndex
+    };
+  }
+
+  askForRecordSegment() {
+    if (_globalService.videoProcessing) {
+      DialogUtils.getDialog(
+          context,
+          [
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                ))
+          ],
+          showExitButton: true);
+    } else {
+      BottomDialogUtils.showBottomDialog(
+        context: context,
+        content: CoachRequestContent(
+          name: widget.coach?.firstName ?? '',
+          image: widget.coach?.avatar,
+          onNotRecordingAction: () => Navigator.pop(context),
+          onRecordingAction: navigateToSegmentWithRecording,
+        ),
+      );
+    }
+  }
+
+  navigateToSegmentWithRecording() {
+    Navigator.pushNamed(
+      context,
+      routeLabels[RouteEnum.segmentCameraPreview],
+      arguments: {
+        'segmentIndex': widget.segmentIndex,
+        'classIndex': widget.classIndex,
+        'coach': widget.coach,
+        'courseEnrollment': widget.courseEnrollment,
+        'courseIndex': widget.courseIndex,
+        'segments': widget.segments,
+        'currentTaskIndex': realTaskIndex
+      },
+    );
+  }
+
   void _goToNextStep() {
     BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
 
@@ -774,7 +839,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
     alertTimerPlaying = false;
 
-    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
+    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
       if ((isLastOne() || nextIsFirstRound()) ||
           ((nextIsLastOne() && nextIsRestTime()) || (thereAreTwoMorePos() && nextIsRestTime() && twoPosLaterIsFirstRound()))) {
         _saveSegmentRound();
@@ -803,7 +868,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
       }
     }
-    _playTask();
+    if (widget.coachRequest != null && isLastOne()) {
+      askForRecordSegment();
+    } else {
+      _playTask();
+    }
     BlocProvider.of<TimerTaskBloc>(context).setTimerTaskIndex(timerTaskIndex);
 
     if (timerEntries[timerTaskIndex].stopwatch) {
@@ -1087,7 +1156,13 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       _startStopwatch();
       Wakelock.enable();
     }
-    _playTask();
+    if (isSegmentWithRecording()) {
+      _setupCameras();
+      timerTaskIndex = widget.currentTaskIndex;
+      workState = getCurrentTaskWorkState();
+    } else {
+      _playTask();
+    }
   }
 
   void setPaused() {

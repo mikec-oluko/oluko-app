@@ -17,12 +17,14 @@ import 'package:oluko_app/utils/timer_utils.dart';
 class SegmentCameraPreview extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
+  final int currentTaskIndex;
   final int segmentIndex;
   final List<Segment> segments;
   final int courseIndex;
   final UserResponse coach;
 
-  SegmentCameraPreview({Key key, this.coach, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  SegmentCameraPreview({Key key, this.coach, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments, this.currentTaskIndex})
+      : super(key: key);
 
   @override
   _State createState() => _State();
@@ -128,8 +130,7 @@ class _State extends State<SegmentCameraPreview> {
   Widget startButton() {
     return GestureDetector(
         onTap: () {
-          TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(), widget.segments[widget.segmentIndex].initialTimer,
-              widget.segments[widget.segmentIndex].rounds, 0);
+          TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(), widget.segments[widget.segmentIndex].initialTimer);
         },
         child: recordIcon());
   }
@@ -146,7 +147,8 @@ class _State extends State<SegmentCameraPreview> {
       'showPanel': _user.showRecordingAlert,
       'onShowAgainPressed': () {
         BlocProvider.of<RecordingAlertBloc>(context).updateRecordingAlert(_user);
-      }
+      },
+      'currentTaskIndex': widget.currentTaskIndex,
     };
   }
 
