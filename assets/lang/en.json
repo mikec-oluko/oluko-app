@@ -436,6 +436,9 @@
     "deleteImage": "Delete image",
     "completedChallenges": "Completed Challenges",
     "transformationPhotos": "Transformation Photos",
+    "showLess" : "Show less",
+    "showMore" : "Show more",
+    "addWeight": "Add weight",
     "community":"Community"
 
     
