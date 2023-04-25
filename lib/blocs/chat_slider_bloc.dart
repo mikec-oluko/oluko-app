@@ -36,15 +36,20 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
   ChatSliderBloc() : super(ChatSliderLoading());
 
   Future getCoursesWithChatByUserId(String userId) async {
+    try{
     final List<CourseEnrollment> coursesWithChat = await CourseChatRepository.getCoursesWithChatByUserId(userId) as List<CourseEnrollment>;
     emit(ChatSliderByUserSuccess(coursesWithChat));
+    } catch (e){
+      emit(Failure(e));
+    }
+
   }
 
   void getMessagesAfterLast(String userId, List<CourseEnrollment> courses) async {
     try {
       final List<int> msgQuantityList = [];
       for (final course in courses) {
-        final chat = await CourseChatRepository.getCourseChatById(course.course.id);
+        final CourseChat chat = await CourseChatRepository.getCourseChatById(course.course.id);
         final lastMessageList = chat.lastMessageSeenUsers;
         if (lastMessageList == null) {
           msgQuantityList.add(0);
@@ -56,7 +61,7 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
               break;
             }
           }
-          final messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
+          final List<Message> messagesAfterLastView = await CourseChatRepository.getMessagesAfterMessageId(course.course.id, lastMessage?.messageId);
           msgQuantityList.add(messagesAfterLastView.length);
         }
       }

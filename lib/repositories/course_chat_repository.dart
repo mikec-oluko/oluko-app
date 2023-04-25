@@ -33,7 +33,7 @@ class CourseChatRepository {
     return message;
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatId(String courseChatId, {int limit = 10}) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatId(String courseChatId, {int limit = 10}) {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -70,7 +70,7 @@ class CourseChatRepository {
     }
   }
 
-    static Future<List<Message>> getMessagesAfterMessageIdScroll(String courseChatId, String messageId) async {
+    Future<List<Message>> getMessagesAfterMessageIdScroll(String courseChatId, String messageId) async {
       final messageReference = FirebaseFirestore.instance
               .collection('projects')
               .doc(GlobalConfiguration().getValue('projectId'))
@@ -133,7 +133,7 @@ class CourseChatRepository {
     }
   }
 
-  static Future<void> updateUsersLastSeenMessage(String courseChatId, Message message) async {
+  Future<void> updateUsersLastSeenMessage(String courseChatId, Message message) async {
     final repository = UserRepository();
     final DocumentReference<Object> messageReference = CourseChatRepository.getMessageReference(courseChatId, message.id);
     final User userLogged = AuthRepository.getLoggedUser();

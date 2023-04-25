@@ -28,7 +28,6 @@ class ChatMessageAdded extends CourseEnrollmentChatState {
   final String userId;
   final String courseId;
   final String userMessage;
-
   ChatMessageAdded(this.userId, this.courseId, this.userMessage);
 }
 
@@ -77,9 +76,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> createMessage(String userId, String courseId, String userMessage) async {
     try {
-      final repository = UserRepository();
-      final DocumentReference<Object> userReference = repository.getUserReference(userId);
-      final UserResponse user = await repository.getById(userId);
+
+      final DocumentReference<Object> userReference = UserRepository().getUserReference(userId);
+      final UserResponse user = await UserRepository().getById(userId);
       final Course course = await CourseRepository.get(courseId);
 
       ObjectSubmodel userObj = ObjectSubmodel(id: userId, image: user.avatar, name: '${user.firstName} ${user.lastName}', reference: userReference);
@@ -93,7 +92,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
   }
 
   void listenToMessages(String courseChatId) {
-    _messagesSubscription = CourseChatRepository.listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
+    _messagesSubscription = CourseChatRepository().listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
       final messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
       saveLastMessageUserSaw(courseChatId, messages[0]);
       final List<UserResponse> participants = await getUsers(messages);
@@ -103,7 +102,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> saveLastMessageUserSaw(String courseChatId, Message message) async {
     try {
-      await CourseChatRepository.updateUsersLastSeenMessage(courseChatId, message);
+      await CourseChatRepository().updateUsersLastSeenMessage(courseChatId, message);
     } catch (e) {
       emit(Failure());
     }
@@ -111,7 +110,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> getMessagesAfterMessage(Message message, String courseChatId) async {
     try {
-      List<Message> messages = await CourseChatRepository.getMessagesAfterMessageIdScroll(courseChatId, message.id);
+      List<Message> messages = await CourseChatRepository().getMessagesAfterMessageIdScroll(courseChatId, message.id);
       final List<UserResponse> participants = await getUsers(messages);
       emit(MessagesScroll(messages, participants));
     }catch(exception, stackTrace){
