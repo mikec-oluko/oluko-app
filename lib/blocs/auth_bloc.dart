@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -35,6 +36,7 @@ import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/notification_settings_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -52,6 +54,7 @@ import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 // import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/models/notification_settings.dart' as oluko_notification_settings;
 
 abstract class AuthState {}
 
@@ -81,6 +84,7 @@ class AuthBloc extends Cubit<AuthState> {
 
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
+  final _notificationSettingsRepository = NotificationSettingsRepository();
   final GlobalService _globalService = GlobalService();
 
   Color snackBarBackground = const Color.fromRGBO(248, 248, 248, 1);
@@ -151,6 +155,13 @@ class AuthBloc extends Cubit<AuthState> {
         if (firebaseUser != null) {
           AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
           if (user.firstLoginAt == null) {
+            final notificationSettings = oluko_notification_settings.NotificationSettings(globalNotifications: true,
+                                                                            appOpeningReminderNotifications: true,
+                                                                            workoutReminderNotifications: true,
+                                                                            coachResponseNotifications: true,);
+            notificationSettings.userId = user.id;
+            notificationSettings.segmentClocksSounds = true;
+            NotificationSettingsRepository.updateNotificationSetting(notificationSettings);
             await storeFirstsUserInteraction(userIteraction: UserInteractionEnum.login);
           }
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
