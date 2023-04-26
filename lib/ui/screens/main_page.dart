@@ -61,12 +61,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     return [
       getHomeTab(),
       CoachMainPage(),
-      FriendsPage(
+      Courses(
         showBottomTab: () => setState(() {
           _isBottomTabActive = !_isBottomTabActive;
         }),
       ),
-      Courses(
+      FriendsPage(
         showBottomTab: () => setState(() {
           _isBottomTabActive = !_isBottomTabActive;
         }),

@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
-import 'package:oluko_app/blocs/audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
-import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
@@ -38,7 +36,6 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/newDesignComponents/segment_summary_component.dart';
-import 'package:oluko_app/ui/newDesignComponents/self_recording_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -66,6 +63,7 @@ class SegmentImageSection extends StatefulWidget {
   final List<Segment> segments;
   final List<CoachRequest> coachRequests;
   final UserResponse coach;
+  final UserResponse currentUser;
   final Challenge challenge;
   final bool fromChallenge;
 
@@ -86,6 +84,7 @@ class SegmentImageSection extends StatefulWidget {
     this.classIndex,
     this.coachRequests,
     this.coach,
+    this.currentUser,
     this.fromChallenge,
     Key key,
   }) : super(key: key);
@@ -152,16 +151,11 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         Column(
           children: [
             topButtons(),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                _classTitleComponent(),
-              ],
-            ),
-            Container(
+            _classTitleComponent(),
+            SizedBox(
               height: ScreenUtils.height(context) / 1.3,
               width: ScreenUtils.width(context),
               child: ListView(
@@ -169,7 +163,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 addRepaintBoundaries: false,
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(isForChallenge: true),
                   _challengeVideoComponent(),
@@ -193,7 +187,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         videoUrl: videoUrl,
         useConstraints: true,
         roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
-        isOlukoControls: !UserUtils.userDeviceIsIOS(),
+        showControls: true,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
@@ -221,16 +215,11 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         Column(
           children: [
             topButtons(),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                _classTitleComponent(),
-              ],
-            ),
-            Container(
+            _classTitleComponent(),
+            SizedBox(
               height: ScreenUtils.height(context) / 1.3,
               width: ScreenUtils.width(context),
               child: ListView(
@@ -258,13 +247,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Positioned _segmentCardComponent() {
-    return Positioned(
-      top: widget.segment.isChallenge && !_isVideoPlaying ? ScreenUtils.height(context) / 3 : ScreenUtils.height(context) / 4.5,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: segmentContent(),
-      ),
+  Padding _segmentCardComponent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: segmentContent(),
     );
   }
 
@@ -320,18 +306,15 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Positioned _classTitleComponent() {
-    return Positioned(
-      top: ScreenUtils.height(context) / 7,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Text(
-          _classTitle(),
-          style: _classTitle().length > 25
-              ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-              : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-          overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-        ),
+  Padding _classTitleComponent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        _classTitle(),
+        style: _classTitle().length > 25
+            ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+            : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
       ),
     );
   }
@@ -382,6 +365,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     courseEnrollment: widget.courseEnrollment,
                     segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
                     segment: widget.segment,
+                    useImperialSystem: widget.currentUser.useImperialSystem,
                     weightRecords: weightRecords ?? [],
                   );
                 },
@@ -821,7 +805,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   Widget clockSection() {
-    return Container(
+    return SizedBox(
       width: 60,
       child: Column(
         children: [
