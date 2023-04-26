@@ -84,7 +84,6 @@ class AuthBloc extends Cubit<AuthState> {
 
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
-  final _notificationSettingsRepository = NotificationSettingsRepository();
   final GlobalService _globalService = GlobalService();
 
   Color snackBarBackground = const Color.fromRGBO(248, 248, 248, 1);
@@ -155,13 +154,7 @@ class AuthBloc extends Cubit<AuthState> {
         if (firebaseUser != null) {
           AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
           if (user.firstLoginAt == null) {
-            final notificationSettings = oluko_notification_settings.NotificationSettings(globalNotifications: true,
-                                                                            appOpeningReminderNotifications: true,
-                                                                            workoutReminderNotifications: true,
-                                                                            coachResponseNotifications: true,);
-            notificationSettings.userId = user.id;
-            notificationSettings.segmentClocksSounds = true;
-            NotificationSettingsRepository.updateNotificationSetting(notificationSettings);
+            setNotificationSettings(user.id);
             await storeFirstsUserInteraction(userIteraction: UserInteractionEnum.login);
           }
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -232,6 +225,9 @@ class AuthBloc extends Cubit<AuthState> {
           context,
           '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}',
         );
+        if (userResponse.firstLoginAt == null) {
+            setNotificationSettings(userResponse.id);
+        }
         navigateToNextScreen(context, firebaseUser.uid);
       }
       // ignore: avoid_catching_errors
@@ -286,6 +282,10 @@ class AuthBloc extends Cubit<AuthState> {
         return;
       }
 
+      if (user.firstLoginAt == null) {
+        setNotificationSettings(user.id);
+      }
+
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
       navigateToNextScreen(context, firebaseUser.uid);
     }
@@ -314,7 +314,8 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      UserResponse userResponse = await UserRepository().get(result?.email);
+      
+      final UserResponse userResponse = await UserRepository().get(result?.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
@@ -332,6 +333,9 @@ class AuthBloc extends Cubit<AuthState> {
         AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
         return;
+      }
+      if (userResponse.firstLoginAt == null) {
+        setNotificationSettings(userResponse.id);
       }
       if (result != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
@@ -367,6 +371,16 @@ class AuthBloc extends Cubit<AuthState> {
     final UserResponse userStoredFirstLogin = await _userRepository.saveUserFirstIteractions(currentUser, userInteractionDate, userIteraction);
     _authRepository.storeLoginData(userStoredFirstLogin);
     emit(AuthSuccess(user: userStoredFirstLogin, firebaseUser: loggedUser));
+  }
+
+  Future<void> setNotificationSettings(String userId) async {
+    final notificationSettings = oluko_notification_settings.NotificationSettings(globalNotifications: true,
+                                                                            appOpeningReminderNotifications: true,
+                                                                            workoutReminderNotifications: true,
+                                                                            coachResponseNotifications: true,);
+    notificationSettings.userId = userId;
+    notificationSettings.segmentClocksSounds = true;
+    NotificationSettingsRepository.updateNotificationSetting(notificationSettings);
   }
 
   void updateAuthSuccess(UserResponse userResponse, User firebaseUser) {

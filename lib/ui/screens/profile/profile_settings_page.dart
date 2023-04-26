@@ -177,6 +177,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
               setState(() {
                 _globalNotificationsValue = state.notificationSettings.globalNotifications;
+                _appOpeningReminderValue = state.notificationSettings.appOpeningReminderNotifications;
+                _coachResponseNotificationsValue = state.notificationSettings.coachResponseNotifications;
+                _workoutNotificationsValue = state.notificationSettings.workoutReminderNotifications;
               });
             }
           },
