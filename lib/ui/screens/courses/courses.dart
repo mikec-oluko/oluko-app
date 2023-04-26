@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
@@ -10,7 +9,6 @@ import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
-import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -19,7 +17,6 @@ import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/favorite.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -34,11 +31,10 @@ import 'package:oluko_app/ui/newDesignComponents/cancel_bottom_panel.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
-import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/search_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../../routes.dart';
 
@@ -165,7 +161,7 @@ class _State extends State<Courses> {
           height: ScreenUtils.height(context),
           width: ScreenUtils.width(context),
           child: showFilterSelector
-              ? CourseUtils.filterSelector(tagState,
+              ? SearchUtils.filterSelector(tagState,
                   onSubmit: (List<Base> selectedItems) => setState(() {
                         selectedTags = selectedItems as List<Tag>;
                         showFilterSelector = false;
@@ -179,8 +175,8 @@ class _State extends State<Courses> {
               : searchResults.query.isEmpty && selectedTags.isEmpty
                   ? _mainPage(context)
                   : showSearchSuggestions
-                      ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
-                      : CourseUtils.searchResults(context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+                      ? SearchUtils.searchSuggestions(searchResults, searchKey, context)
+                      : SearchUtils.searchCourseResults(context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
         );
       });
     }
@@ -214,8 +210,8 @@ class _State extends State<Courses> {
         showSearchSuggestions = true;
         searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.searchResults));
       }),
-      suggestionMethod: CourseUtils.suggestionMethod,
-      searchMethod: CourseUtils.searchMethod,
+      suggestionMethod: SearchUtils.suggestionMethodForCourses,
+      searchMethod: SearchUtils.searchCoursesMethod,
       searchResultItems: _courses,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,

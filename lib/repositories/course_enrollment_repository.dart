@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -13,6 +14,7 @@ import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -92,7 +94,8 @@ class CourseEnrollmentRepository {
     return [];
   }
 
-  static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
+  static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
+      {bool useWeigth = false, int sectionIndex, int movementIndex, double weightUsed}) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -100,6 +103,9 @@ class CourseEnrollmentRepository {
         .doc(courseEnrollment.id);
     final List<EnrollmentClass> classes = courseEnrollment.classes;
     classes[classIndex].segments[segmentIndex].completedAt = Timestamp.now();
+    if (useWeigth) {
+      classes[classIndex].segments[segmentIndex].sections[sectionIndex].movements[movementIndex].weight = weightUsed;
+    }
 
     final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1;
     if (isClassCompleted) {
@@ -120,6 +126,25 @@ class CourseEnrollmentRepository {
       'completed_at': FieldValue.serverTimestamp(),
       'is_unenrolled': courseEnrollment.isUnenrolled is bool ? courseEnrollment.isUnenrolled : false,
       'updated_at': FieldValue.serverTimestamp()
+    });
+  }
+
+  static Future<void> addWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> movementsAndWeights}) async {
+    final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollmentId);
+
+    CourseEnrollment courseEnrollmentLatestVersion = await getById(courseEnrollmentId);
+
+    movementsAndWeights.forEach((workoutElement) {
+      courseEnrollmentLatestVersion.classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex]
+          .movements[workoutElement.movementIndex].weight = workoutElement.weight;
+    });
+
+    courseEnrollmentReference.update({
+      'classes': List<dynamic>.from(courseEnrollmentLatestVersion.classes.map((c) => c.toJson())),
     });
   }
 
@@ -160,27 +185,33 @@ class CourseEnrollmentRepository {
           reference: segment.reference,
           isChallenge: segment.isChallenge,
           image: segment.image,
-          sections: getEnrollmentSections(segment),
+          sections: await getEnrollmentSections(segment),
         ),
       );
     }
     return enrollmentClass;
   }
 
-  static List<EnrollmentSection> getEnrollmentSections(SegmentSubmodel segment) {
+  static Future<List<EnrollmentSection>> getEnrollmentSections(SegmentSubmodel segment) async {
     final List<EnrollmentSection> sections = [];
     if (segment.sections != null) {
       for (final section in segment.sections) {
-        sections.add(EnrollmentSection(movements: getEnrollmentMovements(section)));
+        sections.add(EnrollmentSection(movements: await getEnrollmentMovements(section)));
       }
     }
     return sections;
   }
 
-  static List<EnrollmentMovement> getEnrollmentMovements(SectionSubmodel section) {
+  static Future<List<EnrollmentMovement>> getEnrollmentMovements(SectionSubmodel section) async {
     final List<EnrollmentMovement> movements = [];
+    bool weightRequired = false;
     for (final movement in section.movements) {
-      movements.add(EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name));
+      if (movement.reference != null) {
+        final DocumentSnapshot qs = await movement.reference.get();
+        final Movement movementRef = Movement.fromJson(qs.data() as Map<String, dynamic>);
+        weightRequired = movementRef.weightRequired;
+      }
+      movements.add(EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name, weight: null, weightRequired: weightRequired));
     }
     return movements;
   }

@@ -20,10 +20,10 @@ import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
-import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/search_utils.dart';
 import '../../routes.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       height: ScreenUtils.height(context),
                                       width: ScreenUtils.width(context),
                                       child: showFilterSelector
-                                          ? CourseUtils.filterSelector(
+                                          ? SearchUtils.filterSelector(
                                               tagState,
                                               onSubmit: (List<Base> selectedItems) => this.setState(() {
                                                 selectedTags = selectedItems as List<Tag>;

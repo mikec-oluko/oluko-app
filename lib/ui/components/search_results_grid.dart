@@ -16,7 +16,12 @@ class SearchResultsGrid<T> extends StatefulWidget {
   final double childAspectRatio;
   final int crossAxisCount;
 
-  SearchResultsGrid({this.textInput, this.itemList, this.childAspectRatio, this.crossAxisCount});
+  SearchResultsGrid({
+    this.textInput,
+    this.itemList,
+    this.childAspectRatio,
+    this.crossAxisCount,
+  });
 
   @override
   State<StatefulWidget> createState() => _State();
