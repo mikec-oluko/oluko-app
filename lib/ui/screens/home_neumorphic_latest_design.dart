@@ -146,24 +146,29 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
               body: Container(
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 constraints: const BoxConstraints.expand(),
-                child: ListView(
+                child: ListView.builder(
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   clipBehavior: Clip.none,
                   padding: EdgeInsets.zero,
+                  itemCount: 1,
                   shrinkWrap: true,
-                  children: [
-                    _userCoverAndProfileDetails(),
-                    _enrolledCoursesAndPeople(),
-                    myListOfCoursesAndFriendsRecommended(),
-                    _challengesSection(),
-                    _transformationPhotos(),
-                    _assessmentVideos(),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      width: MediaQuery.of(context).size.width,
-                    )
-                  ],
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        _userCoverAndProfileDetails(),
+                        _enrolledCoursesAndPeople(),
+                        myListOfCoursesAndFriendsRecommended(),
+                        _challengesSection(),
+                        _transformationPhotos(),
+                        _assessmentVideos(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.width,
+                        )
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
