@@ -92,11 +92,14 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   void listenToMessages(String courseChatId) {
     try{
+      emit(CourseEnrollmentLoading());
       _messagesSubscription = CourseChatRepository().listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
       final List<Message> messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
-      saveLastMessageUserSaw(courseChatId, messages[0]);
-      final List<UserResponse> participants = await getUsers(messages);
-      emit(MessagesUpdated(messages, participants));
+      if(messages.isNotEmpty){
+        saveLastMessageUserSaw(courseChatId, messages[0]);
+        final List<UserResponse> participants = await getUsers(messages);
+        emit(MessagesUpdated(messages, participants));
+      }
     });
     }catch(e){
       emit(Failure());
