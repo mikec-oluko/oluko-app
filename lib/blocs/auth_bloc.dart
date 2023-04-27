@@ -143,6 +143,9 @@ class AuthBloc extends Cubit<AuthState> {
       UserRepository().updateLastTimeOpeningApp(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
         if (Platform.isIOS || Platform.isMacOS) {
+          if (user.firstLoginAt == null) {
+            setNotificationSettings(user.id);
+          }
           AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
           AppNavigator().goToSubscriptionsFromRegister(context);
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -212,8 +215,12 @@ class AuthBloc extends Cubit<AuthState> {
 
       UserRepository().updateLastTimeOpeningApp(userResponse);
       AuthRepository().storeLoginData(userResponse);
+
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        if (userResponse.firstLoginAt == null) {
+            setNotificationSettings(userResponse.id);
+        }
         if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
           AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
           AppNavigator().goToSubscriptionsFromRegister(context);
@@ -225,9 +232,6 @@ class AuthBloc extends Cubit<AuthState> {
           context,
           '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}',
         );
-        if (userResponse.firstLoginAt == null) {
-            setNotificationSettings(userResponse.id);
-        }
         navigateToNextScreen(context, firebaseUser.uid);
       }
       // ignore: avoid_catching_errors
@@ -275,15 +279,14 @@ class AuthBloc extends Cubit<AuthState> {
 
       UserRepository().updateLastTimeOpeningApp(user);
       AuthRepository().storeLoginData(user);
+      if (user.firstLoginAt == null) {
+        setNotificationSettings(user.id);
+      }
       if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         return;
-      }
-
-      if (user.firstLoginAt == null) {
-        setNotificationSettings(user.id);
       }
 
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -328,14 +331,14 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(userResponse);
       UserRepository().updateLastTimeOpeningApp(userResponse);
 
+      if (userResponse.firstLoginAt == null) {
+        setNotificationSettings(userResponse.id);
+      }
       if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
         return;
-      }
-      if (userResponse.firstLoginAt == null) {
-        setNotificationSettings(userResponse.id);
       }
       if (result != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: result));
