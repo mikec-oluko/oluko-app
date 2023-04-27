@@ -149,7 +149,6 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    final stopwatch = Stopwatch()..start();
     final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
@@ -161,7 +160,6 @@ class CourseEnrollmentRepository {
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
-    print('COURSES executed in ${stopwatch.elapsed}');
     return courseEnrollment;
   }
 
@@ -193,7 +191,7 @@ class CourseEnrollmentRepository {
         ),
       );
     });
-    Future.wait(promises);
+    await Future.wait(promises);
     return enrollmentClass;
   }
 
