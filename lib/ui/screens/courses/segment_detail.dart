@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
@@ -37,14 +38,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail(
-      {this.classSegments,
-      this.courseIndex,
-      this.courseEnrollment,
-      this.segmentIndex,
-      this.classIndex,
-      this.fromChallenge = false,
-      Key key})
+  SegmentDetail({this.classSegments, this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, this.fromChallenge = false, Key key})
       : super(key: key);
 
   final CourseEnrollment courseEnrollment;
@@ -85,15 +79,16 @@ class _SegmentDetailState extends State<SegmentDetail> {
     setSegments();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.user;
+        BlocProvider.of<WorkoutWeightBloc>(context).getUserWeightsForWorkout(_user.id);
         BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_user.id);
         widget.fromChallenge ? BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id) : null;
-        BlocProvider.of<ChallengeSegmentBloc>(context)
-            .getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<ChallengeSegmentBloc>(context).getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
         return _segmentDetailView();
       } else {
         return OlukoCircularProgressIndicator();
@@ -297,37 +292,37 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget getSegmentImageSection(int i) {
     return BlocBuilder<CoachUserBloc, CoachUserState>(
-      buildWhen: (CoachUserState previous, CoachUserState current) => previous is CoachUserLoading,
-      builder: (context, coachUserState) {
-      return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(
-        builder: (context, coachRequestStreamState) {
-        if (coachUserState is CoachUserSuccess &&
-            (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
-          coachLogic(coachUserState, coachRequestStreamState);
-          Challenge challenge = getSegmentChallenge(_segments[i].id);
-          return SegmentImageSection(
-            onPressed: () => onPressedAction(),
-            segment: _segments[i],
-            challenge: challenge,
-            currentSegmentStep: i + 1,
-            totalSegmentStep: totalSegmentStep,
-            userId: _user.id,
-            audioAction: _audioAction,
-            peopleAction: _peopleAction,
-            clockAction: _clockAction,
-            courseEnrollment: widget.courseEnrollment,
-            courseIndex: widget.courseIndex,
-            segments: _segments,
-            classIndex: widget.classIndex,
-            coachRequests: _coachRequests,
-            coach: _coach,
-            fromChallenge: widget.fromChallenge,
-          );
-        } else {
-          return OlukoCircularProgressIndicator();
-        }
-      });
-    });
+        buildWhen: (CoachUserState previous, CoachUserState current) => previous is CoachUserLoading,
+        builder: (context, coachUserState) {
+          return BlocBuilder<CoachRequestStreamBloc, CoachRequestStreamState>(builder: (context, coachRequestStreamState) {
+            if (coachUserState is CoachUserSuccess &&
+                (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
+              coachLogic(coachUserState, coachRequestStreamState);
+              Challenge challenge = getSegmentChallenge(_segments[i].id);
+              return SegmentImageSection(
+                onPressed: () => onPressedAction(),
+                segment: _segments[i],
+                challenge: challenge,
+                currentSegmentStep: i + 1,
+                totalSegmentStep: totalSegmentStep,
+                userId: _user.id,
+                audioAction: _audioAction,
+                peopleAction: _peopleAction,
+                clockAction: _clockAction,
+                courseEnrollment: widget.courseEnrollment,
+                courseIndex: widget.courseIndex,
+                segments: _segments,
+                classIndex: widget.classIndex,
+                coachRequests: _coachRequests,
+                coach: _coach,
+                currentUser: _user,
+                fromChallenge: widget.fromChallenge,
+              );
+            } else {
+              return OlukoCircularProgressIndicator();
+            }
+          });
+        });
   }
 
   void coachLogic(CoachUserSuccess coachUserState, CoachRequestStreamState coachRequestStreamState) {

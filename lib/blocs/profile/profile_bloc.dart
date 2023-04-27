@@ -82,6 +82,19 @@ class ProfileBloc extends Cubit<ProfileState> {
     }
   }
 
+  void updateSettingsForWeights({UserResponse userToUpdate, bool useImperialSystem = true}) {
+    try {
+      _profileRepository.updateUserPreferencesforWeight(userToUpdate, useImperialSystem);
+    } catch (exception, stackTrace) {
+      Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(ProfileFailure(exception: exception));
+      rethrow;
+    }
+  }
+
   Future<void> requestNoUploadState() async {
     UserResponse user = await _profileRepository.updateProfileView();
     emit(ProfileUploadDefault(userUpdated: user));

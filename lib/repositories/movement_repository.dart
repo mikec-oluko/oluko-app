@@ -90,4 +90,15 @@ class MovementRepository {
   static Movement getByClass(Class classObj) {
     return null;
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserWeightRecordsStream(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> userWeightRecorsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getString('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('records')
+        .snapshots();
+    return userWeightRecorsStream;
+  }
 }

@@ -13,6 +13,7 @@ class UserResponse extends Base {
       this.hubspotContactId,
       this.privacy,
       this.notification,
+      this.useImperialSystem,
       this.avatar,
       this.avatarThumbnail,
       this.coverImage,
@@ -24,6 +25,7 @@ class UserResponse extends Base {
       this.showRecordingAlert,
       this.firstLoginAt,
       this.firstAppInteractionAt,
+      this.lastAppOpeningAt,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,9 +42,11 @@ class UserResponse extends Base {
   int privacy;
   bool notification;
   bool showRecordingAlert;
+  bool useImperialSystem;
   Timestamp assessmentsCompletedAt;
   Timestamp firstLoginAt;
   Timestamp firstAppInteractionAt;
+  Timestamp lastAppOpeningAt;
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     try {
@@ -61,12 +65,14 @@ class UserResponse extends Base {
         hubspotCompanyId: json['hubspot_company_id'] is num ? json['hubspot_company_id'] as num : null,
         hubspotContactId: json['hubspot_contact_id'] is num ? json['hubspot_contact_id'] as num : null,
         notification: json['notification'] == null ? true : json['notification'] as bool,
+        useImperialSystem: json['imperial_system'] == null ? true : json['imperial_system'] as bool,
         showRecordingAlert: json['show_recording_alert'] == null ? true : json['show_recording_alert'] as bool,
         privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
         currentPlan: json['current_plan'] == null ? -1 : double.tryParse((json['current_plan'] as num)?.toString()),
         assessmentsCompletedAt: getTimestamp(json['assessments_completed_at']),
         firstLoginAt: getTimestamp(json['first_login_at']),
         firstAppInteractionAt: getTimestamp(json['first_app_interaction_at']),
+        lastAppOpeningAt: getTimestamp(json['last_app_opening_at']),
       );
       // Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
       userResponse.setBase(json);
@@ -100,10 +106,12 @@ class UserResponse extends Base {
       'notification': notification == null ? true : notification,
       'show_recording_alert': showRecordingAlert == null ? true : showRecordingAlert,
       'privacy': privacy == null ? 0 : privacy,
+      'imperial_system': useImperialSystem == null ? true : useImperialSystem as bool,
       'current_plan': currentPlan,
       'assessments_completed_at': assessmentsCompletedAt,
       'first_login_at': firstLoginAt,
-      'first_app_interaction_at': firstAppInteractionAt
+      'first_app_interaction_at': firstAppInteractionAt,
+      'last_app_opening_at': lastAppOpeningAt
     };
     userReponseJson.addEntries(super.toJson().entries);
     return userReponseJson;

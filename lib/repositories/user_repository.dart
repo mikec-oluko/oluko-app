@@ -204,6 +204,23 @@ class UserRepository {
     }
   }
 
+  Future<UserResponse> updateUserSettingsForWeightMeasure(UserResponse user, bool useImperialSystem) async {
+    final DocumentReference<Object> userReference = getUserReference(user.id);
+
+    user.useImperialSystem = useImperialSystem;
+    try {
+      await userReference.update(user.toJson());
+      AuthRepository().storeLoginData(user);
+      return user;
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
   Future<UserResponse> updateRecordingAlert(UserResponse user) async {
     final DocumentReference<Object> userReference = getUserReference(user.id);
     user.showRecordingAlert = !user.showRecordingAlert;
@@ -252,6 +269,7 @@ class UserRepository {
     try {
       await userReference.update(user.toJson());
       await AuthRepository().storeLoginData(user);
+      updateLastTimeOpeningApp(user);
       return user;
     } on Exception catch (e, stackTrace) {
       await Sentry.captureException(
@@ -260,6 +278,11 @@ class UserRepository {
       );
       rethrow;
     }
+  }
+
+  Future<void> updateLastTimeOpeningApp(UserResponse user) async {
+    final DocumentReference<Object> userReference = getUserReference(user.id);
+    await userReference.update({'last_app_opening_at': Timestamp.now()});
   }
 
   void saveToken(String userId, String token) {

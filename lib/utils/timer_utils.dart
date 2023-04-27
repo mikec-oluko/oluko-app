@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progressbar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
+import 'package:oluko_app/ui/newDesignComponents/armrap_timer_component.dart';
+import 'package:oluko_app/ui/newDesignComponents/rep_timer_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
@@ -265,81 +268,84 @@ class TimerUtils {
   }
 
   static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide, String duration]) {
-    final withOpacity = OlukoNeumorphismColors.finalGradientColorDark.withOpacity(0.0);
-    return Container(
-        child: SizedBox(
-            height: _watchHeight,
-            width: _watchWidth,
-            child: GestureDetector(
-                onTap: onTap,
-                child: Stack(alignment: Alignment.center, children: [
-                  SizedBox(
-                    width: getProgressCircleSize(context),
-                    height: getProgressCircleSize(context),
-                    child: AspectRatio(
-                        aspectRatio: 1,
-                        child: CircularProgressIndicator(
-                            strokeWidth: _progressIndicatorStroke, value: 0, color: OlukoColors.skyblue, backgroundColor: backgroundColor)),
-                  ),
-                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text(OlukoLocalizations.get(context, 'tapHere'),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Gilroy',
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.primary)),
-                    SizedBox(height: 5),
-                    Text(OlukoLocalizations.get(context, 'whenDone'),
-                        textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoBigFont(
-                            customFontWeight: FontWeight.w400, customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
-                    SizedBox(height: 5),
-                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
-                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox(),
-                    duration == null ? const SizedBox.shrink() : durationField(duration, OlukoColors.lightOrange),
-                  ])
-                ]))));
+    return RepTimerComponent(
+      onTap: onTap,
+      bothSide: bothSide,
+      duration: duration,
+    );
+  }
+
+  static Text whenDoneText(BuildContext context) {
+    return Text(OlukoLocalizations.get(context, 'whenDone'),
+        textAlign: TextAlign.center,
+        style: OlukoFonts.olukoBigFont(
+            customFontWeight: FontWeight.w400, customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary));
   }
 
   static Widget AMRAPTimer(double progressValue, String duration, BuildContext context, Function() onTap, int roundsValue) {
-    return GestureDetector(
-        onTap: onTap,
-        child: SizedBox(
-            width: getProgressCircleSize(context),
-            height: getProgressCircleSize(context),
-            child: Stack(alignment: Alignment.center, children: [
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      strokeWidth: _progressIndicatorStroke, value: progressValue, color: getGreenOrCoral, backgroundColor: backgroundColor)),
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
-                const SizedBox(height: 12),
-                Text(OlukoLocalizations.get(context, 'tapHere'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.primary)),
-                SizedBox(height: 3),
-                Text(OlukoLocalizations.get(context, 'forNextRound'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary)),
-                OlukoNeumorphism.isNeumorphismDesign
-                    ? SizedBox(
-                        height: 10,
-                      )
-                    : const SizedBox.shrink(),
-                OlukoNeumorphism.isNeumorphismDesign && roundsValue != null ? getRoundLabel(roundsValue) : const SizedBox.shrink(),
-                !OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : durationField(duration, OlukoColors.primary),
-              ])
-            ])));
+    return ArmrapTimerComponent(
+      onTap: onTap,
+      progressValue: progressValue,
+      duration: duration,
+      roundsValue: roundsValue,
+    );
+  }
+
+  static Stack _AmrapTimerContent(double progressValue, String duration, BuildContext context, int roundsValue, bool animate) {
+    bool needAnimation = animate;
+    return Stack(alignment: Alignment.center, children: [
+      if (needAnimation)
+        AnimatedContainer(
+          color: Colors.red,
+          duration: const Duration(seconds: 2),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.red,
+          ),
+          onEnd: () {
+            needAnimation = false;
+          },
+        ),
+      AspectRatio(
+          aspectRatio: 1,
+          child:
+              CircularProgressIndicator(strokeWidth: _progressIndicatorStroke, value: progressValue, color: getGreenOrCoral, backgroundColor: backgroundColor)),
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        if (OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else durationField(duration, OlukoColors.primary),
+        const SizedBox(height: 12),
+        tapHereText(context),
+        const SizedBox(height: 3),
+        forNextRoundText(context),
+        if (OlukoNeumorphism.isNeumorphismDesign)
+          const SizedBox(
+            height: 10,
+          )
+        else
+          const SizedBox.shrink(),
+        if (OlukoNeumorphism.isNeumorphismDesign && roundsValue != null) getRoundLabel(roundsValue) else const SizedBox.shrink(),
+        if (!OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else durationField(duration, OlukoColors.primary),
+      ])
+    ]);
+  }
+
+  static Text forNextRoundText(BuildContext context) {
+    return Text(OlukoLocalizations.get(context, 'forNextRound'),
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+            fontFamily: 'Gilroy',
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary));
+  }
+
+  static Text tapHereText(BuildContext context) {
+    return Text(OlukoLocalizations.get(context, 'tapHere'),
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+            fontFamily: 'Gilroy',
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.primary));
   }
 
   static Widget finalTimer(InitialTimerType type, int totalTime, int countDown, BuildContext context, [int round]) {
@@ -454,7 +460,7 @@ class TimerUtils {
     );
   }
 
-  static startCountdown(WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound) {
+  static startCountdown(WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer) {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments);
   }

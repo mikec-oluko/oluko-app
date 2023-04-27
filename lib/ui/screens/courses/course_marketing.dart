@@ -69,6 +69,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   bool _isVideoPlaying = false;
   bool _courseLiked = false;
   bool isCourseEnrolled = false;
+  bool _isSavingLikedCourse = false;
   double _pixelsToReload;
   List<Class> _classes = [];
   List<Class> _growingClassList = [];
@@ -109,7 +110,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           _userState = authState;
           BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
         }
-        BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
+        // BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         return form();
       } else {
         return const SizedBox.shrink();
@@ -218,109 +219,107 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget neumorphicMarketingView(CourseEnrollmentState courseEnrollmentState) {
-    return SafeArea(
-      child: Container(
-        color: OlukoNeumorphismColors.finalGradientColorDark,
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverStack(positionedAlignment: Alignment.bottomRight, children: [
-              SliverPersistentHeader(
-                  pinned: true,
-                  delegate: SliverAppBarDelegate(ScreenUtils.height(context) * 0.14, ScreenUtils.height(context) * 0.14,
-                      child: Container(
-                        alignment: Alignment.bottomCenter,
-                        color: OlukoNeumorphismColors.finalGradientColorDark,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: OlukoNeumorphicDivider(
-                            isFadeOut: true,
-                          ),
-                        ),
-                      ))),
-              SliverToBoxAdapter(
-                child: OlukoVideoPreview(
-                  image: widget.course.posterImage ?? widget.course.image,
-                  video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
-                  onBackPressed: () => Navigator.pop(context),
-                  onPlay: () => widget.isVideoPlaying(),
-                  videoVisibilty: _isVideoPlaying,
-                  bottomWidgets: [
-                    Container(
-                      alignment: Alignment.centerLeft,
+    return Container(
+      color: OlukoNeumorphismColors.finalGradientColorDark,
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverStack(positionedAlignment: Alignment.bottomRight, children: [
+            SliverPersistentHeader(
+                pinned: true,
+                delegate: SliverAppBarDelegate(ScreenUtils.height(context) * 0.14, ScreenUtils.height(context) * 0.14,
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      color: OlukoNeumorphismColors.finalGradientColorDark,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                          widget.course.name,
-                          style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: OlukoNeumorphicDivider(
+                          isFadeOut: true,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                    ))),
+            SliverToBoxAdapter(
+              child: OlukoVideoPreview(
+                image: widget.course.posterImage ?? widget.course.image,
+                video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
+                onBackPressed: () => Navigator.pop(context),
+                onPlay: () => widget.isVideoPlaying(),
+                videoVisibilty: _isVideoPlaying,
+                bottomWidgets: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        CourseUtils.toCourseDuration(
-                            int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                        widget.course.name,
+                        style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SliverPersistentHeader(
-                  pinned: true,
-                  delegate: SliverAppBarDelegate(
-                    ScreenUtils.height(context) * 0.11,
-                    ScreenUtils.height(context) * 0.11,
-                    child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
-                  )),
-            ]),
-            SliverVisibility(
-              visible: !isCourseEnrolled,
-              sliver: SliverPersistentHeader(
-                  pinned: true,
-                  delegate: SliverAppBarDelegate(
-                    ScreenUtils.height(context) * 0.12,
-                    ScreenUtils.height(context) * 0.12,
-                    child: Container(color: OlukoNeumorphismColors.finalGradientColorDark, child: showEnrollButton(context)),
-                  )),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Padding(
-                  padding: const EdgeInsets.only(right: 15, left: 15),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView(
-                      addAutomaticKeepAlives: false,
-                      addRepaintBoundaries: false,
-                      shrinkWrap: true,
-                      primary: false,
-                      children: [
-                        buildStatistics(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0, right: 10),
-                          child: Text(
-                            widget.course.description ?? '',
-                            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0, bottom: 15),
-                          child: OlukoNeumorphicDivider(),
-                        ),
-                        buildClassExpansionPanels()
-                      ],
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 150,
-                )
-              ]),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Text(
+                      CourseUtils.toCourseDuration(
+                          int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+            SliverPersistentHeader(
+                pinned: true,
+                delegate: SliverAppBarDelegate(
+                  ScreenUtils.height(context) * 0.11,
+                  ScreenUtils.height(context) * 0.11,
+                  child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
+                )),
+          ]),
+          SliverVisibility(
+            visible: !isCourseEnrolled,
+            sliver: SliverPersistentHeader(
+                pinned: true,
+                delegate: SliverAppBarDelegate(
+                  ScreenUtils.height(context) * 0.12,
+                  ScreenUtils.height(context) * 0.12,
+                  child: Container(color: OlukoNeumorphismColors.finalGradientColorDark, child: showEnrollButton(context)),
+                )),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              Padding(
+                padding: const EdgeInsets.only(right: 15, left: 15),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView(
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    shrinkWrap: true,
+                    primary: false,
+                    children: [
+                      buildStatistics(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, right: 10),
+                        child: Text(
+                          widget.course.description ?? '',
+                          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0, bottom: 15),
+                        child: OlukoNeumorphicDivider(),
+                      ),
+                      buildClassExpansionPanels()
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 150,
+              )
+            ]),
+          ),
+        ],
       ),
     );
   }
@@ -507,18 +506,20 @@ class _CourseMarketingState extends State<CourseMarketing> {
               BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
                 builder: (context, state) {
                   if (state is CourseLikedSuccess) {
-                    if (!_courseLiked) {
-                      _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
-                    }
+                    _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
+                    _isSavingLikedCourse = false;
                   }
                   return GestureDetector(
                     onTap: () {
-                      if (!_courseLiked) {
+                      if (!_isSavingLikedCourse) {
                         setState(() {
-                          _courseLiked = true;
+                          _courseLiked = !_courseLiked;
                         });
+                        BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
                       }
-                      BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+                      setState(() {
+                        _isSavingLikedCourse = true;
+                      });
                     },
                     child: topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
                   );

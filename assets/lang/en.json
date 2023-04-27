@@ -265,7 +265,7 @@
     "fitnessWorld": "fitness world!",
     "enrollInACourse": "Enroll in a Course",
     "noCoachMessage": "Learn more about our coaching options in the FAQs!",
-    "roundInfo": "First round is recorded. We will prepare your video and send it to your coach!",
+    "roundInfo": "Last round is recorded. We will prepare your video and send it to your coach!",
     "stopProcessConfirmation": "The video is still being processed, if this view is abandoned the process will be terminated. Do you want to leave?",
     "noVideoUploaded": "You haven't uploaded a video yet",
     "goBackConfirmationWithRecording": "Do you want to go back? Your recordings will be lost.",
@@ -287,6 +287,7 @@
     "deny": "Deny",
     "enterWeight": "Enter weight: ",
     "lbs": "lbs",
+    "kgs": "kgs",
     "cancelSession": "Recording ended",
     "cancelMessage": "Your video was not submitted. To re-record, press Restart. To continue without recording, press Resume.",
     "restart": "Restart",
@@ -435,7 +436,15 @@
     "zipCodeErrorMessage": ", Does not meet the required format. Numeric characters only, 5 digits long.",
     "deleteImage": "Delete image",
     "completedChallenges": "Completed Challenges",
-    "transformationPhotos": "Transformation Photos"
+    "transformationPhotos": "Transformation Photos",
+    "chats":"Chats",
+    "noChats":"You don't have chats",
+    "showLess" : "Show less",
+    "showMore" : "Show more",
+    "useKilograms": "Kilograms (KGs)",
+    "usePounds": "Pounds (LBs)",
+    "addWeight": "Add weight",
+    "community":"Community"
 
     
 }

@@ -1,16 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/class_audio.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 
 class EnrollmentAudio extends Base {
-  DocumentReference courseEnrollmentReference;
-  String courseEnorllmentId;
-  List<ClassAudio> classAudios;
-
+  ObjectSubmodel course;
+  ObjectSubmodel classCourse;
+  ObjectSubmodel enrollmentCourse;
+  List<Audio> audios;
+  
   EnrollmentAudio(
-      {this.courseEnrollmentReference,
-      this.courseEnorllmentId,
-      this.classAudios,
+      {this.course,
+      this.classCourse,
+      this.audios,
+      this.enrollmentCourse,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -29,12 +33,10 @@ class EnrollmentAudio extends Base {
 
   factory EnrollmentAudio.fromJson(Map<String, dynamic> json) {
     EnrollmentAudio enrollmentAudio = EnrollmentAudio(
-      courseEnorllmentId: json['course_enrollment_id']?.toString(),
-      courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
-      classAudios: json['class_audios'] == null
-          ? null
-          : List<ClassAudio>.from(
-              (json['class_audios'] as Iterable).map((classAudio) => ClassAudio.fromJson(classAudio as Map<String, dynamic>))),
+      course: json['course'] != null ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>) : null,
+      classCourse: json['class_course'] != null ? ObjectSubmodel.fromJson(json['class_course'] as Map<String, dynamic>) : null,
+      enrollmentCourse: json['enrollment_course'] != null ? ObjectSubmodel.fromJson(json['enrollment_course'] as Map<String, dynamic>) : null,
+      audios: List<Audio>.from((json['audios'] as Iterable).map((audio) => Audio.fromJson(audio as Map<String, dynamic>))),
     );
     enrollmentAudio.setBase(json);
     return enrollmentAudio;
@@ -42,9 +44,10 @@ class EnrollmentAudio extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> enrollmentAudio = {
-      'course_enorllment_id': courseEnorllmentId,
-      'course_enrollment_reference': courseEnrollmentReference,
-      'class_audios': classAudios == null ? null : List<ClassAudio>.from(classAudios.map((classAudio) => classAudio.toJson()))
+      'course': course.toJson(),
+      'class_course': classCourse.toJson(),
+      'audios': audios == null ? null : List<Audio>.from(audios.map((classAudio) => classAudio.toJson())),
+      'enrollment_course': enrollmentCourse.toJson(),
     };
     enrollmentAudio.addEntries(super.toJson().entries);
     return enrollmentAudio;

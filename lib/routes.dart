@@ -18,6 +18,7 @@ import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -34,6 +35,7 @@ import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/course_panel_bloc.dart';
@@ -50,6 +52,7 @@ import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
+import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
@@ -105,6 +108,7 @@ import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_media.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -139,6 +143,7 @@ import 'package:oluko_app/ui/screens/coach/coach_recommended_content_list.dart';
 import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
 import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
 import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
+import 'package:oluko_app/ui/screens/courses/chat.dart';
 import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/course_share_view.dart';
@@ -271,7 +276,8 @@ enum RouteEnum {
   registerUser,
   homeLatestDesign,
   courseHomePage,
-  welcomeVideoFirstTimeLogin
+  welcomeVideoFirstTimeLogin,
+  courseChat
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -337,6 +343,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLatestDesign: '/home-view',
   RouteEnum.courseHomePage: '/course-home-page',
   RouteEnum.welcomeVideoFirstTimeLogin: '/welcome-video-home-page',
+  RouteEnum.courseChat: '/course-chat'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -461,6 +468,9 @@ class Routes {
   final CountryBloc _countryBloc = CountryBloc();
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
+  final CourseEnrollmentChatBloc _courseEnrollmentChatBloc = CourseEnrollmentChatBloc();
+  final ChatSliderBloc _chatSliderList = ChatSliderBloc();
+  final WorkoutWeightBloc _workoutWeightBloc = WorkoutWeightBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -560,6 +570,8 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
+          BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -640,7 +652,8 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
         ];
         newRouteView = FriendsPage();
         break;
@@ -705,6 +718,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         providers = [
           BlocProvider<PlanBloc>.value(value: _planBloc),
+          BlocProvider<UserBloc>.value(value: _userBloc),
         ];
         newRouteView = ProfileSubscriptionPage(
             fromRegister: argumentsToAdd == null || argumentsToAdd['fromRegister'] == null ? true : argumentsToAdd['fromRegister'] as bool);
@@ -860,6 +874,7 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -901,7 +916,8 @@ class Routes {
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<FeedbackBloc>.value(value: _feedbackBloc),
           BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
-          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc)
+          BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
@@ -915,6 +931,8 @@ class Routes {
           fromChallenge: argumentsToAdd['fromChallenge'] as bool,
           showPanel: argumentsToAdd['showPanel'] as bool,
           onShowAgainPressed: argumentsToAdd['onShowAgainPressed'] as Function(),
+          coachRequest: argumentsToAdd['coachRequest'] as CoachRequest,
+          currentTaskIndex: argumentsToAdd['currentTaskIndex'] as int,
         );
         break;
       case RouteEnum.segmentCameraPreview:
@@ -926,12 +944,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentCameraPreview(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            coach: argumentsToAdd['coach'] as UserResponse,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            segments: argumentsToAdd['segments'] as List<Segment>);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          coach: argumentsToAdd['coach'] as UserResponse,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          segments: argumentsToAdd['segments'] as List<Segment>,
+          currentTaskIndex: argumentsToAdd['currentTaskIndex'] as int,
+        );
         break;
       case RouteEnum.courseMarketing:
         providers = [
@@ -956,6 +976,7 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -977,6 +998,7 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -992,6 +1014,7 @@ class Routes {
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, Course> argumentsToAdd = arguments as Map<String, Course>;
         newRouteView = EnrolledClass(course: argumentsToAdd['course']);
@@ -1021,6 +1044,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1050,7 +1074,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
-          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc)
+          BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
@@ -1081,6 +1106,7 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = TaskDetails(
@@ -1414,6 +1440,8 @@ class Routes {
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
+          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeNeumorphicLatestDesign(
@@ -1474,6 +1502,22 @@ class Routes {
         ];
         newRouteView = const WelcomeVideoFirstTimeLogin();
         break;
+
+      case RouteEnum.courseChat:
+        providers = [
+          BlocProvider<CourseEnrollmentChatBloc>.value(value: _courseEnrollmentChatBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment);
+        break;
+
       default:
         newRouteView = MainPage();
         break;

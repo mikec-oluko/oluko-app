@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 
 class ThreeDotsMenu extends StatefulWidget {
   final CourseEnrollment actualCourse;
@@ -41,10 +42,14 @@ class _ThreeDotsMenuState extends State<ThreeDotsMenu> {
         ];
       },
       color: OlukoColors.black,
-      icon: const Icon(
-        Icons.more_vert,
-        color: Colors.white,
-        size: 36,
+      icon: Container(
+        width: 40,
+        height: 40,
+        child: Icon(
+          Icons.more_vert_sharp,
+          color: Colors.white,
+          size: 36,
+        ),
       ),
       iconSize: 36,
       padding: EdgeInsets.zero,

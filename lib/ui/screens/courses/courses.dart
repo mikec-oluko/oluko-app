@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
@@ -10,7 +9,6 @@ import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
-import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/remain_selected_tags_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -19,7 +17,6 @@ import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/favorite.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -34,11 +31,10 @@ import 'package:oluko_app/ui/newDesignComponents/cancel_bottom_panel.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
-import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/search_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../../routes.dart';
 
@@ -165,7 +161,7 @@ class _State extends State<Courses> {
           height: ScreenUtils.height(context),
           width: ScreenUtils.width(context),
           child: showFilterSelector
-              ? CourseUtils.filterSelector(tagState,
+              ? SearchUtils.filterSelector(tagState,
                   onSubmit: (List<Base> selectedItems) => setState(() {
                         selectedTags = selectedItems as List<Tag>;
                         showFilterSelector = false;
@@ -179,8 +175,8 @@ class _State extends State<Courses> {
               : searchResults.query.isEmpty && selectedTags.isEmpty
                   ? _mainPage(context)
                   : showSearchSuggestions
-                      ? CourseUtils.searchSuggestions(searchResults, searchKey, context)
-                      : CourseUtils.searchResults(context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+                      ? SearchUtils.searchSuggestions(searchResults, searchKey, context)
+                      : SearchUtils.searchCourseResults(context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
         );
       });
     }
@@ -214,8 +210,8 @@ class _State extends State<Courses> {
         showSearchSuggestions = true;
         searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.searchResults));
       }),
-      suggestionMethod: CourseUtils.suggestionMethod,
-      searchMethod: CourseUtils.searchMethod,
+      suggestionMethod: SearchUtils.suggestionMethodForCourses,
+      searchMethod: SearchUtils.searchCoursesMethod,
       searchResultItems: _courses,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
@@ -272,8 +268,11 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(right: OlukoNeumorphism.isNeumorphismDesign ? 12 : 8.0),
       child: GestureDetector(
-        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-            arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false}),
+        onTap: () {
+          BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: course.id, userId: _currentAuthUser.id);
+          Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+              arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
+        },
         child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context), width: ScreenUtils.width(context) / (padding + _cardsToShow())),
       ),
     );
@@ -403,15 +402,10 @@ class _State extends State<Courses> {
             ? Container(
                 child: MyListOfCourses(
                   myListOfCourses: myListOfCourses,
+                  beforeNavigation: (String courseId) =>
+                      BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: courseId, userId: _currentAuthUser.id),
                 ),
               )
-            // ? CarouselSection(
-            //     optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-            //     onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
-            //         arguments: {'courses': myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
-            //     title: OlukoLocalizations.get(context, 'myList'),
-            //     height: carouselSectionHeight,
-            //     children: myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(myListOfCourses) : [])
             : const SizedBox.shrink();
       },
     ));
@@ -455,8 +449,14 @@ class _State extends State<Courses> {
           return Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                  arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false}),
+              onTap: () {
+                BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: course.id, userId: _currentAuthUser.id);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
+                  'course': course,
+                  'fromCoach': false,
+                  'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false
+                });
+              },
               child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context),
                   width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendationsAvatarUrls: userRecommendationAvatars),
             ),
@@ -492,13 +492,16 @@ class _State extends State<Courses> {
           return Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(right: 12, bottom: 8, top: 8) : const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledCourse], arguments: {
-                'course': course,
-                'fromCoach': false,
-                'isCoachRecommendation': false,
-                'courseEnrollment': courseEnrollment,
-                'courseIndex': courseIndex
-              }),
+              onTap: () {
+                BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: course.id, userId: _currentAuthUser.id);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledCourse], arguments: {
+                  'course': course,
+                  'fromCoach': false,
+                  'isCoachRecommendation': false,
+                  'courseEnrollment': courseEnrollment,
+                  'courseIndex': courseIndex
+                });
+              },
               child: _getCourseCard(
                 CourseUtils.generateImageCourse(course.image, context),
                 progress: courseEnrollment.completion,
