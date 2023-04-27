@@ -4,16 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/challenge_audio_section.dart';
+import 'package:oluko_app/ui/components/chat_audio.dart';
 import 'package:oluko_app/ui/components/message_bubble.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_recorder.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatelessWidget {
   final CourseEnrollment courseEnrollment;
@@ -58,14 +63,20 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isLoadingMoreMessages = false;
   double currentScrollPosition = 0;
 
+  PanelController panelController = PanelController();
+  SoundRecorder recorder;
+
   @override
   void initState() {
     super.initState();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).dispose();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).listenToMessages(widget.courseEnrollment.course.id);
+    recorder = SoundRecorder();
+    recorder.init();
     _textController.addListener(() {
         BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
     });
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, false);
   }
 
   @override
@@ -159,10 +170,13 @@ class _ChatScreenState extends State<ChatScreen> {
             customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
             onPressed: () => _handleSubmitted(_textController.text),
           )
-          : OlukoNeumorphicCircleButton(
-            customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-            onPressed: () => _handleSubmitted(_textController.text),
-          );
+          : ChatAudio(
+            //user: UserResponse(),
+            id: widget.courseEnrollment.course.id,
+            recorder: recorder,
+            userFirstName: UserResponse().firstName,
+            panelController: panelController,
+      );
       },
     );
   }
