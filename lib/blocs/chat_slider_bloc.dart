@@ -24,16 +24,6 @@ class ChatSliderByUserSuccess extends ChatSliderState {
   ChatSliderByUserSuccess(this.courses);
 }
 
-// class GetQuantityOfMessagesAfterLast extends ChatSliderState {
-//   final Map<String, int> coursesNotificationQuantity;
-//   GetQuantityOfMessagesAfterLast(this.coursesNotificationQuantity);
-// }
-
-// class GetChatSliderUpdate extends ChatSliderState {
-//   final List<Course> courses;
-//   GetChatSliderUpdate({this.courses});
-// }
-
 class MessagesNotificationUpdated extends ChatSliderState {
   final String courseId;
   final int quantity;
@@ -63,25 +53,6 @@ class ChatSliderBloc extends Cubit<ChatSliderState> {
       emit(Failure(e));
     }
   }
-
-  // void getMessagesAfterLast(String userId, List<CourseEnrollment> courseEnrollments) async {
-  //   try {
-
-  //     Map<String, int> coursesNotificationQuantity = {};
-
-  //     for (final enrollment in courseEnrollments) {
-  //       final courseChatRepository = CourseChatRepository();
-  //       final CourseChat chat = await courseChatRepository.getCourseChatById(enrollment.course.id);
-  //       UserMessageSubmodel lastMessage = chat.lastMessageSeenUsers.firstWhere((chat) => chat.user.id == userId, orElse: () => null);
-  //       final List<Message> messagesAfterLastView =
-  //           await courseChatRepository.getMessagesBeforeMessageId(enrollment.course.id, lastMessage?.messageId, limit: 99);
-  //       coursesNotificationQuantity[enrollment.course.id] = messagesAfterLastView.length;
-  //     }
-  //     emit(GetQuantityOfMessagesAfterLast(coursesNotificationQuantity));
-  //   } catch (e) {
-  //     emit(Failure(e));
-  //   }
-  // }
 
 Future<void> listenToMessages(List<CourseEnrollment> courseChatIds, String userId) async {
   try {

@@ -24,24 +24,12 @@ abstract class CourseEnrollmentChatState {}
 
 class CourseEnrollmentLoading extends CourseEnrollmentChatState {}
 
-class ChatMessageAdded extends CourseEnrollmentChatState {
-  final String userId;
-  final String courseId;
-  final String userMessage;
-  ChatMessageAdded(this.userId, this.courseId, this.userMessage);
-}
-
-class CourseEnrollmentChatSuccess extends CourseEnrollmentChatState {}
 
 class MessagesUpdated extends CourseEnrollmentChatState {
   final List<Message> messages;
   final List<UserResponse> participants;
   final DocumentSnapshot lastDocument;
   MessagesUpdated(this.messages, this.participants, {this.lastDocument});
-}
-
-class MessagesDispose extends CourseEnrollmentChatState {
-  MessagesDispose();
 }
 
 class MessagesScroll extends CourseEnrollmentChatState {

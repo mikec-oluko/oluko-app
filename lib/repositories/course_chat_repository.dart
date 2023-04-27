@@ -50,23 +50,6 @@ class CourseChatRepository {
     return query.snapshots();
   }
 
-  // Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatIdFriendsView(String courseChatId, {int limit = 10, DocumentSnapshot<Object> message}) {
-  //   Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-  //       .collection('projects')
-  //       .doc(GlobalConfiguration().getValue('projectId'))
-  //       .collection('coursesChat')
-  //       .doc(courseChatId)
-  //       .collection('messages')
-  //       .orderBy('created_at', descending: true);
-
-  //   query = query.limit(limit);
-    
-  //    if(message != null){
-  //     query = query.where('created_at', isGreaterThan: message['created_at']);
-  //   }
-  //   return query.snapshots();
-  // }
-
   Future<CourseChat> getCourseChatById(String courseChatId) async {
     final docSnapshot = await FirebaseFirestore.instance
         .collection('projects')
@@ -118,28 +101,6 @@ class CourseChatRepository {
     final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
     return messages;
   }
-
-  //  Future<List<Message>> getMessagesBeforeMessageId(String courseChatId, String messageId, {int limit = 10}) async {
-  //   final messageReferenceSnapshot = await getMessageByMessageIdAndChatId(courseChatId, messageId);
-
-  //   Query query = FirebaseFirestore.instance
-  //       .collection('projects')
-  //       .doc(GlobalConfiguration().getValue('projectId'))
-  //       .collection('coursesChat')
-  //       .doc(courseChatId)
-  //       .collection('messages');
-
-  //   if(messageReferenceSnapshot != null){
-  //     query = query.where('created_at', isGreaterThan: messageReferenceSnapshot['created_at']);
-  //   }
-  //   query.limit(limit);
-
-  //   final snapshot = await query.get();
-  //   final List<Message> messages = snapshot.docs.map((e) => Message.fromJson(e.data() as Map<String, dynamic>)).toList();
-  //   return messages;
-  // }
-
-
 
   Future<void> updateUsersLastSeenMessage(String courseChatId, Message message) async {
     final UserRepository repository = UserRepository();
