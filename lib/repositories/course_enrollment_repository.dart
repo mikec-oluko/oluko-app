@@ -164,20 +164,22 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
-    for (final ObjectSubmodel classObj in course.classes) {
+    final promises = course.classes.map((classObj) async {
       EnrollmentClass enrollmentClass =
           EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
 
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
-    }
+    });
+    await Future.wait(promises);
     return courseEnrollment;
   }
 
   static Future<EnrollmentClass> setEnrollmentSegments(EnrollmentClass enrollmentClass) async {
     final DocumentSnapshot qs = await enrollmentClass.reference.get();
     final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
-    for (final segment in classObj.segments) {
+    final promises = classObj.segments.map((segment) async {
+      final sections = await getEnrollmentSections(segment);
       enrollmentClass.segments.add(
         EnrollmentSegment(
           id: segment.id,
@@ -185,19 +187,22 @@ class CourseEnrollmentRepository {
           reference: segment.reference,
           isChallenge: segment.isChallenge,
           image: segment.image,
-          sections: await getEnrollmentSections(segment),
+          sections: sections,
         ),
       );
-    }
+    });
+    await Future.wait(promises);
     return enrollmentClass;
   }
 
   static Future<List<EnrollmentSection>> getEnrollmentSections(SegmentSubmodel segment) async {
     final List<EnrollmentSection> sections = [];
     if (segment.sections != null) {
-      for (final section in segment.sections) {
-        sections.add(EnrollmentSection(movements: await getEnrollmentMovements(section)));
-      }
+      final promises = segment.sections.map((section) async {
+        final movements = await getEnrollmentMovements(section);
+        sections.add(EnrollmentSection(movements: movements));
+      });
+      await Future.wait(promises);
     }
     return sections;
   }
@@ -205,14 +210,15 @@ class CourseEnrollmentRepository {
   static Future<List<EnrollmentMovement>> getEnrollmentMovements(SectionSubmodel section) async {
     final List<EnrollmentMovement> movements = [];
     bool weightRequired = false;
-    for (final movement in section.movements) {
+    final promises = section.movements.map((movement) async {
       if (movement.reference != null) {
         final DocumentSnapshot qs = await movement.reference.get();
         final Movement movementRef = Movement.fromJson(qs.data() as Map<String, dynamic>);
         weightRequired = movementRef.weightRequired;
       }
       movements.add(EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name, weight: null, weightRequired: weightRequired));
-    }
+    });
+    await Future.wait(promises);
     return movements;
   }
 
