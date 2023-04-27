@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
@@ -169,6 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         appBar:
             OlukoAppBar(showBackButton: true, title: widget.courseEnrollment.course.name, showTitle: true, courseImage: widget.courseEnrollment.course.image, onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.userId), Navigator.pop(context)}),
         body: SafeArea(
@@ -176,7 +178,6 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Expanded(
                   child: Container(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
@@ -199,34 +200,46 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               )),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15.0),
-                decoration: const BoxDecoration(
-                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15.0),
-                    topRight: Radius.circular(15.0),
+              SizedBox(
+                height: 100,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                  decoration: const BoxDecoration(
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _textController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.black,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide.none,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: Container(
+                            width: 310,
+                              child: TextField(
+                                controller: _textController,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(vertical:11.0, horizontal: 15.0), 
+                                ),
+                                textAlignVertical: TextAlignVertical.center, 
+                                onSubmitted: _handleSubmitted,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                              ),
                           ),
                         ),
-                        onSubmitted: _handleSubmitted,
                       ),
-                    ),
-                    SizedBox(height: 55, width: 55, child: _buttonSend(_textController.text.isNotEmpty)),
-                  ],
+                      SizedBox(height: 45, width: 45, child: _buttonSend(_textController.text.isNotEmpty)),
+                    ],
+                  ),
                 ),
               ),
             ],
