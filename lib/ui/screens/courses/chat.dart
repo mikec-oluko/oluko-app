@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -15,22 +16,30 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class Chat extends StatelessWidget {
   final CourseEnrollment courseEnrollment;
+  final String userId;
+  final List<CourseEnrollment> enrollments;
 
   const Chat({
     @required this.courseEnrollment,
+    this.userId,
+    this.enrollments,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChatScreen(courseEnrollment: courseEnrollment);
+    return ChatScreen(courseEnrollment: courseEnrollment, enrollments: enrollments, userId: userId);
   }
 }
 
 class ChatScreen extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
+  final String userId;
+  final List<CourseEnrollment> enrollments;
   const ChatScreen({
     @required this.courseEnrollment,
+      this.userId,
+    this.enrollments,
     Key key,
   }) : super(key: key);
 
@@ -161,7 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar:
-            OlukoAppBar(showBackButton: true, title: widget.courseEnrollment.course.name, showTitle: true, courseImage: widget.courseEnrollment.course.image),
+            OlukoAppBar(showBackButton: true, title: widget.courseEnrollment.course.name, showTitle: true, courseImage: widget.courseEnrollment.course.image, onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.userId), Navigator.pop(context)}),
         body: SafeArea(
           child: Column(
             children: [
