@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -22,29 +23,29 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatelessWidget {
   final CourseEnrollment courseEnrollment;
-  final String userId;
+  final UserResponse currentUser;
   final List<CourseEnrollment> enrollments;
 
   const Chat({
     @required this.courseEnrollment,
-    this.userId,
+    this.currentUser,
     this.enrollments,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChatScreen(courseEnrollment: courseEnrollment, enrollments: enrollments, userId: userId);
+    return ChatScreen(courseEnrollment: courseEnrollment, enrollments: enrollments, currentUser: currentUser);
   }
 }
 
 class ChatScreen extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
-  final String userId;
+  final UserResponse currentUser;
   final List<CourseEnrollment> enrollments;
   const ChatScreen({
     @required this.courseEnrollment,
-      this.userId,
+    this.currentUser,
     this.enrollments,
     Key key,
   }) : super(key: key);
@@ -66,6 +67,12 @@ class _ChatScreenState extends State<ChatScreen> {
   PanelController panelController = PanelController();
   SoundRecorder recorder;
 
+  final ValueNotifier<bool> _takenSurvey = ValueNotifier(false);
+
+  void changeValueNotifier() {
+    _takenSurvey.value = !_takenSurvey.value;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,9 +81,10 @@ class _ChatScreenState extends State<ChatScreen> {
     recorder = SoundRecorder();
     recorder.init();
     _textController.addListener(() {
-        BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
+      BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
     });
-    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, false);
+    BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+    //BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, false);
   }
 
   @override
@@ -166,17 +174,17 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buttonSend(bool isText) {
     return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
       builder: (context, state) {
-        return (state is Changebutton && !state.showButton) ?  OlukoNeumorphicCircleButton(
-            customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-            onPressed: () => _handleSubmitted(_textController.text),
-          )
-          : ChatAudio(
-            //user: UserResponse(),
-            id: widget.courseEnrollment.course.id,
-            recorder: recorder,
-            userFirstName: UserResponse().firstName,
-            panelController: panelController,
-      );
+        return (state is Changebutton && !state.showButton)
+            ? OlukoNeumorphicCircleButton(
+                customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+                onPressed: () => _handleSubmitted(_textController.text),
+              )
+            : Expanded(
+                child: ChatAudio(
+                  userId: widget.currentUser.id,
+                  valueNotifier: changeValueNotifier,
+                ),
+              );
       },
     );
   }
@@ -185,13 +193,16 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        appBar:
-            OlukoAppBar(showBackButton: true, title: widget.courseEnrollment.course.name, showTitle: true, courseImage: widget.courseEnrollment.course.image, onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.userId), Navigator.pop(context)}),
+        appBar: OlukoAppBar(
+            showBackButton: true,
+            title: widget.courseEnrollment.course.name,
+            showTitle: true,
+            courseImage: widget.courseEnrollment.course.image,
+            onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.currentUser.id), Navigator.pop(context)}),
         body: SafeArea(
           child: Column(
             children: [
-              Expanded(
-                  child: Container(
+              Expanded(child: Container(
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
@@ -215,9 +226,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               )),
               SizedBox(
-                height: 100,
+                height: 150,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                   decoration: const BoxDecoration(
                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                     borderRadius: BorderRadius.only(
@@ -227,31 +238,45 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: Center(
-                          child: Container(
-                            width: 310,
-                              child: TextField(
-                                controller: _textController,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: BorderSide.none,
+                      ValueListenableBuilder(
+                          valueListenable: _takenSurvey,
+                          builder: (context, takenSurvey, child) {
+                            if (_takenSurvey.value) {
+                              return const SizedBox();
+                            } else {
+                              return Expanded(
+                                 flex: 5,
+                                child: Center(
+                                  child: SizedBox(
+                                    child: SizedBox(
+                                      width: 300,
+                                      child: TextField(
+                                        controller: _textController,
+                                        style: const TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 15.0),
+                                        ),
+                                        textAlignVertical: TextAlignVertical.center,
+                                        onSubmitted: _handleSubmitted,
+                                        maxLines: null,
+                                        keyboardType: TextInputType.multiline,
+                                      ),
+                                    ),
                                   ),
-                                  contentPadding: EdgeInsets.symmetric(vertical:11.0, horizontal: 15.0), 
                                 ),
-                                textAlignVertical: TextAlignVertical.center, 
-                                onSubmitted: _handleSubmitted,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                              ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 45, width: 45, child: _buttonSend(_textController.text.isNotEmpty)),
+                              );
+                            }
+                          }),
+                            Expanded(
+                              flex: 2, 
+                              child: _buttonSend(_textController.text.isNotEmpty),
+                            ),
                     ],
                   ),
                 ),

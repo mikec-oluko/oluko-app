@@ -95,7 +95,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _chatSliderList = chatSliderState.courses;
                       _chatSliderWidget = ChatSlider(
                         enrollments: _chatSliderList,
-                        currentUserId: widget.currentUser.id,
+                        currentUser: widget.currentUser,
                       );
                     }
                     if (chatSliderState is ChatSliderLoading) {
