@@ -80,11 +80,8 @@ class CourseRepository {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getCoursesSubscription() {
-    Stream<QuerySnapshot<Map<String, dynamic>>> coursesStream = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courses')
-        .snapshots();
+    Stream<QuerySnapshot<Map<String, dynamic>>> coursesStream =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').snapshots();
     return coursesStream;
   }
 
@@ -102,11 +99,18 @@ class CourseRepository {
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription() {
-    Stream<QuerySnapshot<Map<String, dynamic>>> statisticsStream = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courseStatistics')
-        .snapshots();
+    Stream<QuerySnapshot<Map<String, dynamic>>> statisticsStream =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseStatistics').snapshots();
     return statisticsStream;
+  }
+
+  static Future<void> addSelfie(String courseId, String image) async {
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').doc(courseId);
+    final DocumentSnapshot ds = await reference.get();
+    final Course courseObj = Course.fromJson(ds.data() as Map<String, dynamic>);
+    final List<String> images = courseObj.userSelfies ?? [];
+    images.add(image);
+    await reference.update({'user_selfies': images});
   }
 }

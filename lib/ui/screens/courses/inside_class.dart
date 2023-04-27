@@ -553,7 +553,7 @@ class _InsideClassesState extends State<InsideClass> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 3),
       child: OlukoVideoPreview(
-        randomImages: _class.userSelfies,
+        randomImages: widget.actualCourse?.userSelfies ?? [],
         video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _class.videoHls, videoUrl: _class.video),
         // video: _class.video,
         showBackButton: true,
