@@ -11,7 +11,7 @@ import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TaskSubmissionRepository {
-  static DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
+  static DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getString('projectId'));
 
   FirebaseFirestore firestoreInstance;
 
@@ -149,7 +149,7 @@ class TaskSubmissionRepository {
   static Future<QuerySnapshot<Object>> getAssessmentAssignmentsForUserId(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('assessmentAssignments')
         .where('created_by', isEqualTo: userId)
         .get();
@@ -175,7 +175,7 @@ class TaskSubmissionRepository {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getTaskSubmissionOfTaskSubscription(AssessmentAssignment assessmentAssignment, Task task) {
     Stream<QuerySnapshot<Map<String, dynamic>>> taskSubmissionStream = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('assessmentAssignments')
         .where('task.id', isEqualTo: task.id)
         .snapshots();

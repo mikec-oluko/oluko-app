@@ -28,7 +28,7 @@ class UserRepository {
     if (email != null) {
       final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
+          .doc(GlobalConfiguration().getString('projectId'))
           .collection('users')
           .where('email', isEqualTo: email.toLowerCase())
           .get();
@@ -48,7 +48,7 @@ class UserRepository {
     }
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .where('id', isEqualTo: id)
         .get();
@@ -66,7 +66,7 @@ class UserRepository {
     }
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .where('id', isEqualTo: id)
         .get();
@@ -92,7 +92,7 @@ class UserRepository {
 
   Future<List<UserResponse>> getAll() async {
     final QuerySnapshot docRef =
-        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').get();
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').get();
     if (docRef.docs == null || docRef.docs.isEmpty) {
       return null;
     }
@@ -103,7 +103,7 @@ class UserRepository {
 
   Future<UserResponse> createSSO(SignUpRequest signUpRequest) async {
     final CollectionReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users');
 
     final UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
@@ -124,7 +124,7 @@ class UserRepository {
   Future<UserResponse> getByUsername(String username) async {
     final QuerySnapshot<Map<String, dynamic>> docsRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .where('username_lowercase', isEqualTo: username.toLowerCase())
         .get();
@@ -183,7 +183,7 @@ class UserRepository {
 
   DocumentReference<Object> getUserReference(String userId) {
     final DocumentReference userReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userId);
     return userReference;
   }
 
@@ -288,7 +288,7 @@ class UserRepository {
   void saveToken(String userId, String token) {
     FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .set({'user_token': token}, SetOptions(merge: true));
@@ -298,7 +298,7 @@ class UserRepository {
     final apiToken = await AuthRepository().getApiToken();
     if (apiToken != null) {
       final Client http = Client();
-      final String url = '${GlobalConfiguration().getValue('firebaseFunctions')}/user';
+      final String url = '${GlobalConfiguration().getString('firebaseFunctions')}/user';
       final body = user.toJson();
       final headers = {
         'Authorization': 'Bearer $apiToken',
@@ -314,7 +314,7 @@ class UserRepository {
     final apiToken = await AuthRepository().getApiToken();
     if (apiToken != null) {
       final Client http = Client();
-      final String url = '${GlobalConfiguration().getValue('firebaseFunctions')}/user';
+      final String url = '${GlobalConfiguration().getString('firebaseFunctions')}/user';
       final headers = {
         'Authorization': 'Bearer $apiToken',
       };
@@ -326,6 +326,6 @@ class UserRepository {
   }
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> getUserPlanStream({@required String userId}) {
-    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).snapshots();
+    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userId).snapshots();
   }
 }

@@ -94,7 +94,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     if (chatSliderState is ChatSliderByUserSuccess) {
                       _chatSliderList = chatSliderState.courses;
                       _chatSliderWidget = ChatSlider(
-                        courseList: _chatSliderList,
+                        enrollments: _chatSliderList,
                         currentUserId: widget.currentUser.id,
                       );
                     }
@@ -162,7 +162,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   listLength: _chatSliderList.length,
                 ),
               _listSection(
-                titleForSection: OlukoLocalizations.get(context, 'myFriends'),
+                titleForSection: OlukoLocalizations.get(context, 'favorites'),
                 content: _friends.isNotEmpty ? Expanded(child: _friendUsersWidget) : _friendUsersWidget,
                 listLength: _friends.length,
               ),
@@ -195,7 +195,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget _listSection({@required String titleForSection, @required Widget content, @required int listLength}) {
     if (content != _chatSliderWidget) {
       return Flexible(
-          flex: listLength >= 5 ? 5 : 2,
+          flex: listLength >= 5 ? 5 : 3,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

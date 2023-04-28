@@ -13,30 +13,35 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
 
 class ChatSlider extends StatefulWidget {
-  final List<CourseEnrollment> courseList;
+  final List<CourseEnrollment> enrollments;
   final String currentUserId;
 
-  const ChatSlider({this.courseList, this.currentUserId});
+  const ChatSlider({this.enrollments, this.currentUserId});
 
   @override
   _ChatSliderState createState() => _ChatSliderState();
 }
 
 class _ChatSliderState extends State<ChatSlider> {
-  List<int> messageQuantityList = [];
+  Map<String, int> coursesNotificationQuantity = {};
 
   @override
   void initState() {
-    BlocProvider.of<ChatSliderBloc>(context).getMessagesAfterLast(widget.currentUserId, widget.courseList);
+    BlocProvider.of<ChatSliderBloc>(context).dispose();
+    BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.currentUserId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatSliderBloc, ChatSliderState>(builder: (context, chatSliderState) {
-      if (chatSliderState is GetQuantityOfMessagesAfterLast) {
-        messageQuantityList = chatSliderState.messageQuantityList;
-        return widget.courseList.isEmpty ? _noCoursesMessage(context) : _courseList(widget.courseList, messageQuantityList, context);
+      if (chatSliderState is MessagesNotificationUpdated) {
+        coursesNotificationQuantity[chatSliderState.courseId] = chatSliderState.quantity;
+        return widget.enrollments.isEmpty
+            ? _noCoursesMessage(context)
+            : _courseList(widget.enrollments, coursesNotificationQuantity, context, widget.currentUserId, widget.enrollments);
+      } else if (widget.enrollments.isNotEmpty) {
+        return _courseList(widget.enrollments, coursesNotificationQuantity, context, widget.currentUserId, widget.enrollments);
       }
       return Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,25 +66,25 @@ Padding _noCoursesMessage(BuildContext context) {
   );
 }
 
-Widget _courseList(List<CourseEnrollment> courses, List<int> msgQuantity, BuildContext context) {
+Widget _courseList(
+    List<CourseEnrollment> courses, Map<String, int> coursesNotificationQuantity, BuildContext context, String userId, List<CourseEnrollment> enrollments) {
   return ListView(
     scrollDirection: Axis.horizontal,
     children: courses
         .asMap()
         .map(
-          (index, element) => MapEntry(
+          (index, enroll) => MapEntry(
             index,
             GestureDetector(
               onTap: () {
+                BlocProvider.of<ChatSliderBloc>(context).dispose();
                 Navigator.pushNamed(
                   context,
                   routeLabels[RouteEnum.courseChat],
-                  arguments: {
-                    'courseEnrollment': element,
-                  },
+                  arguments: {'courseEnrollment': enroll, 'userId': userId, 'enrollments': enrollments},
                 );
               },
-              child: courseCard(element.course.image, element.course.name, msgQuantity[index], context),
+              child: courseCard(enroll.course.image, enroll.course.name, coursesNotificationQuantity[enroll.course.id], context),
             ),
           ),
         )
@@ -124,7 +129,7 @@ Widget courseCard(String image, String name, int msgQuantity, BuildContext conte
           top: 3,
           left: 45,
           child: Visibility(
-            visible: msgQuantity > 0,
+            visible: msgQuantity != null ? msgQuantity > 0 : false,
             child: Badge(
               badgeContent: Text(
                 msgQuantity.toString(),
