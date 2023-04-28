@@ -16,8 +16,7 @@ class TaskRepository {
   }
 
   static Future<List<Task>> getAll() async {
-    QuerySnapshot docRef =
-        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('tasks').get();
+    QuerySnapshot docRef = await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('tasks').get();
     return mapQueryToTask(docRef);
   }
 
