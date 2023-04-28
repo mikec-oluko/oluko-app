@@ -180,7 +180,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   List<Widget> _stories(AuthSuccess authState) {
     return [
       if (showLogo) getLogo(authState) else const SliverToBoxAdapter(),
-      if (GlobalConfiguration().getValue('showStories') == 'true') getStoriesBar(context),
+      if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
     ];
   }
 

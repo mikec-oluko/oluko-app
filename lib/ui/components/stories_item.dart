@@ -62,7 +62,7 @@ class StoriesItem extends StatefulWidget {
         currentUserId.isNotEmpty &&
         itemUserId.isNotEmpty &&
         bloc != null &&
-        GlobalConfiguration().getValue('showStories') == 'true') {
+        GlobalConfiguration().getString('showStories') == 'true') {
       getStoriesFromUser();
     }
     checkForUnseenStories();
@@ -133,7 +133,7 @@ class _State extends State<StoriesItem> {
                       widget.currentUserId != null &&
                       widget.itemUserId != null &&
                       widget.name != null &&
-                      GlobalConfiguration().getValue('showStories') == 'true')
+                      GlobalConfiguration().getString('showStories') == 'true')
                     GestureDetector(
                       child: getCircularAvatar(),
                       onTap: () {

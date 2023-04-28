@@ -5,7 +5,6 @@ import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/purchase.dart';
 import 'package:oluko_app/models/user_response.dart';
 
-
 class PurchaseRepository {
   FirebaseFirestore firestoreInstance;
 
@@ -18,7 +17,7 @@ class PurchaseRepository {
   static Future<Purchase> getLastPurchase(String userId) async {
     final QuerySnapshot<Map<String, dynamic>> purchaseDoc = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
         .doc(userId)
         .collection('purchases')
@@ -38,7 +37,7 @@ class PurchaseRepository {
   }
 
   static Future<UserResponse> create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
-    final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final DocumentReference userReference = proyectReference.collection('users').doc(userId);
     final QuerySnapshot<Map<String, dynamic>> planDocRef =
         await proyectReference.collection('plans').where('apple_id', isEqualTo: purchaseDetails.productID).get();
@@ -59,7 +58,7 @@ class PurchaseRepository {
 
   static restore(String userId, String productId) async {
     final DocumentReference userReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userId);
     QuerySnapshot<Map<String, dynamic>> purchasesSnapshot = await userReference.collection('purchases').where('appPlanId', isEqualTo: productId).get();
     purchasesSnapshot.docs.forEach((purchase) {
       purchase.reference.update({'status': 'inactive', 'is_deleted': true});

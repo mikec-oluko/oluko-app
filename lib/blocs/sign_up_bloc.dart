@@ -52,7 +52,7 @@ class SignupBloc extends Cubit<UserState> {
       UserResponse _userCreated = await UserRepository().get(response.email);
       AppLoader.stopLoading();
       BlocProvider.of<AuthBloc>(context).login(context,
-          LoginRequest(email: request.email, password: request.password, userName: request.username, projectId: GlobalConfiguration().getValue('projectId')));
+          LoginRequest(email: request.email, password: request.password, userName: request.username, projectId: GlobalConfiguration().getString('projectId')));
       emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(OlukoLocalizations.get(context, 'checkYourEmail')),

@@ -25,7 +25,7 @@ class CourseChatRepository {
   }
 
   Future<Message> createMessage(Message message, String courseChatId) async {
-    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final CollectionReference reference = projectReference.collection('coursesChat').doc(courseChatId).collection('messages');
     DocumentReference docRef = reference.doc();
     message.id = docRef.id;
@@ -36,7 +36,7 @@ class CourseChatRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> listenToMessagesByCourseChatId(String courseChatId, {int limit = 10, DocumentSnapshot<Object> message}) {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
@@ -53,7 +53,7 @@ class CourseChatRepository {
   Future<CourseChat> getCourseChatById(String courseChatId) async {
     final docSnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coursesChat')
         .doc(courseChatId)
         .get();
@@ -72,7 +72,7 @@ class CourseChatRepository {
     }
     final docSnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
@@ -87,7 +87,7 @@ class CourseChatRepository {
 
     Query query = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
@@ -110,7 +110,7 @@ class CourseChatRepository {
     ObjectSubmodel userSubmodel = ObjectSubmodel(id: userLogged.uid, name: userLogged.displayName, reference: userReference);
     UserMessageSubmodel newLastSeenMessage = UserMessageSubmodel(messageReference: messageReference, messageId: message.id, user: userSubmodel);
 
-    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final chatRef = projectReference.collection('coursesChat').doc(courseChatId);
     final DocumentSnapshot chatObj = await chatRef.get();
     final chat = chatObj.data() as dynamic;
@@ -132,7 +132,7 @@ class CourseChatRepository {
   static DocumentReference<Object> getChatMessageReference(String courseChatId, String messageId) {
     final DocumentReference messageReference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('coursesChat')
         .doc(courseChatId)
         .collection('messages')
