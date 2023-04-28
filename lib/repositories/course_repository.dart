@@ -103,4 +103,14 @@ class CourseRepository {
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseStatistics').snapshots();
     return statisticsStream;
   }
+
+  static Future<void> addSelfie(String courseId, String image) async {
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courses').doc(courseId);
+    final DocumentSnapshot ds = await reference.get();
+    final Course courseObj = Course.fromJson(ds.data() as Map<String, dynamic>);
+    final List<String> images = courseObj.userSelfies ?? [];
+    images.add(image);
+    await reference.update({'user_selfies': images});
+  }
 }

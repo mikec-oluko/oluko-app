@@ -10,6 +10,7 @@ class Course extends Base {
   String description;
   List<ObjectSubmodel> classes;
   List<ObjectSubmodel> tags;
+  List<String> userSelfies;
   String image;
   String posterImage;
   List<dynamic> images;
@@ -29,6 +30,7 @@ class Course extends Base {
       this.videoHls,
       this.description,
       this.hasChat,
+      this.userSelfies,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -57,6 +59,11 @@ class Course extends Base {
       images: json['images'] as List<dynamic>,
       posterImage: json['poster_image']?.toString(),
       hasChat: json['has_chat'] == null ? false : json['has_chat'] as bool,
+      userSelfies: json['user_selfies'] == null || json['user_selfies'].runtimeType == String
+          ? null
+          : json['user_selfies'] is String
+              ? [json['user_selfies'] as String]
+              : List<String>.from((json['user_selfies'] as Iterable).map((userSelfie) => userSelfie as String)),
     );
     course.setBase(json);
     return course;
