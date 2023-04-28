@@ -18,20 +18,22 @@ class PlayAudio extends StatefulWidget {
   final bool isForList;
   final bool showBin;
   final bool showDate;
+  final Function valueNotifier;
 
-  const PlayAudio(
-      {Key key,
-      this.record,
-      this.isPreviewContent = false,
-      this.onDelete,
-      this.audioMessageItem,
-      this.durationFromRecord,
-      this.onAudioPlaying,
-      this.isForList = false,
-      this.onStartPlaying, 
-      this.showBin = false, 
-      this.showDate = false})
-      : super(key: key);
+  const PlayAudio({
+    Key key,
+    this.record,
+    this.isPreviewContent = false,
+    this.onDelete,
+    this.audioMessageItem,
+    this.durationFromRecord,
+    this.onAudioPlaying,
+    this.isForList = false,
+    this.onStartPlaying,
+    this.showBin = false,
+    this.showDate = false,
+    this.valueNotifier,
+  }) : super(key: key);
 
   @override
   State<PlayAudio> createState() => _PlayAudioState();

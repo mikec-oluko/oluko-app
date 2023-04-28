@@ -18,11 +18,11 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
-class ChatAudio  extends StatefulWidget {
+class ChatAudio extends StatefulWidget {
   final String userId;
   final Function valueNotifier;
 
-  const ChatAudio ({this.userId, this.valueNotifier}) : super();
+  const ChatAudio({this.userId, this.valueNotifier}) : super();
 
   @override
   State<ChatAudio> createState() => _ChatAudioState();
@@ -130,6 +130,7 @@ class _ChatAudioState extends State<ChatAudio> {
                           setState(() {
                             _audioRecordedElement = null;
                           });
+                          widget.valueNotifier();
                           BlocProvider.of<CoachAudioPanelBloc>(context).emitDeleteState();
                         } else {
                           BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
@@ -144,32 +145,29 @@ class _ChatAudioState extends State<ChatAudio> {
   }
 
   Container _sendAudioToCoachComponent(BuildContext context) {
+    return Container(height: 100, child: recordAudioInsideContent(context));
+  }
+
+  Container recordAudioInsideContent(BuildContext context) {
     return Container(
-      height: 100,
-      child: recordAudioInsideContent(context)
+      child: Align(
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 0),
+            _recordAudioTextComponent(context),
+            const SizedBox(width: 0),
+            _audioRecordMessageButtonComponent(),
+          ],
+        ),
+      ),
     );
   }
 
- Container recordAudioInsideContent(BuildContext context) {
-  return Container(
-    child: Align(
-      alignment: Alignment.center,
-      child: Row(
-         mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(width: 0),
-          _recordAudioTextComponent(context),
-          const SizedBox(width: 0),
-          _audioRecordMessageButtonComponent(),
-        ],
-      ),
-    ),
-  );
-}
-
   Container _recordAudioTextComponent(BuildContext context) {
-    if(!_recordingAudio){
+    if (!_recordingAudio) {
       return Container();
     }
     return Container(
@@ -189,9 +187,7 @@ class _ChatAudioState extends State<ChatAudio> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    _recordingAudio
-                        ? '${OlukoLocalizations.get(context, 'recordingCapitalText')} ${TimeConverter.durationToString(duration)}'
-                        : '',
+                    _recordingAudio ? '${OlukoLocalizations.get(context, 'recordingCapitalText')} ${TimeConverter.durationToString(duration)}' : '',
                     style: OlukoFonts.olukoMediumFont(
                         customColor: OlukoNeumorphism.isNeumorphismDesign
                             ? _recordingAudio
@@ -236,9 +232,8 @@ class _ChatAudioState extends State<ChatAudio> {
   Widget microphoneIconButtonContent({Icon iconForContent}) {
     return GestureDetector(
         onTap: () async {
-          if(!_recordingAudio){
-          widget.valueNotifier();
-
+          if (!_recordingAudio) {
+            widget.valueNotifier();
           }
           !_recorder.isInitialized ? _recorder.init() : null;
           await _recorder.toggleRecording();
@@ -276,19 +271,19 @@ class _ChatAudioState extends State<ChatAudio> {
         //   BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
         // },
         child: Stack(alignment: Alignment.center, children: [
-          if (OlukoNeumorphism.isNeumorphismDesign)
-            Image.asset(
-              'assets/neumorphic/audio_circle.png',
-              scale: 4,
-            )
-          else
-            const SizedBox.shrink(),
-          Image.asset(
-            'assets/courses/green_circle.png',
-            scale: 6,
-          ),
-          const Icon(Icons.send, color: Colors.white)
-        ]));
+      if (OlukoNeumorphism.isNeumorphismDesign)
+        Image.asset(
+          'assets/neumorphic/audio_circle.png',
+          scale: 4,
+        )
+      else
+        const SizedBox.shrink(),
+      Image.asset(
+        'assets/courses/green_circle.png',
+        scale: 6,
+      ),
+      const Icon(Icons.send, color: Colors.white)
+    ]));
   }
 
   void startTimer() {
@@ -325,6 +320,7 @@ class _ChatAudioState extends State<ChatAudio> {
 
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
     return PlayAudio(
+      valueNotifier: widget.valueNotifier,
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
