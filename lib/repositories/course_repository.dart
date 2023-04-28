@@ -18,7 +18,7 @@ class CourseRepository {
   }
 
   static final CollectionReference _courseCollectionInstance =
-      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses');
+      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courses');
 
   Future<List<Course>> getAll() async {
     QuerySnapshot docRef = await _courseCollectionInstance.get();
@@ -81,7 +81,7 @@ class CourseRepository {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getCoursesSubscription() {
     Stream<QuerySnapshot<Map<String, dynamic>>> coursesStream =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').snapshots();
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courses').snapshots();
     return coursesStream;
   }
 
@@ -100,13 +100,13 @@ class CourseRepository {
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription() {
     Stream<QuerySnapshot<Map<String, dynamic>>> statisticsStream =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseStatistics').snapshots();
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseStatistics').snapshots();
     return statisticsStream;
   }
 
   static Future<void> addSelfie(String courseId, String image) async {
     final DocumentReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses').doc(courseId);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courses').doc(courseId);
     final DocumentSnapshot ds = await reference.get();
     final Course courseObj = Course.fromJson(ds.data() as Map<String, dynamic>);
     final List<String> images = courseObj.userSelfies ?? [];

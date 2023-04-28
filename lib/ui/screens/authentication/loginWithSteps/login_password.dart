@@ -150,7 +150,7 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
                           email: request.email,
                           password: request.password,
                           userName: request.userName,
-                          projectId: GlobalConfiguration().getValue('projectId'),
+                          projectId: GlobalConfiguration().getString('projectId'),
                         ),
                       );
                     },

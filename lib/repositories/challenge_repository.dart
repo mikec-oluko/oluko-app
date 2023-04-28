@@ -17,7 +17,7 @@ class ChallengeRepository {
   static Future<List<Challenge>> getBySegmentId(String segmentId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('challenges')
         .where('segment_id', isEqualTo: segmentId)
         .get();
@@ -33,7 +33,7 @@ class ChallengeRepository {
   static Future<List<Challenge>> getUserChallengesBySegmentId(String segmentId, String userId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('challenges')
         .where('segment_id', isEqualTo: segmentId)
         .where('user.id', isEqualTo: userId)
@@ -49,7 +49,7 @@ class ChallengeRepository {
 
   static Future<void> saveAudio(String id, Audio audio) async {
     DocumentReference reference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('challenges').doc(id);
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('challenges').doc(id);
     DocumentSnapshot ds = await reference.get();
     Challenge challenge = Challenge.fromJson(ds.data() as Map<String, dynamic>);
     List<Audio> audios;
@@ -68,7 +68,7 @@ class ChallengeRepository {
   static Future<List<Challenge>> getByClass(String courseEnrollmentId, String classId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('challenges')
         .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
         .where('class_id', isEqualTo: classId)
@@ -83,19 +83,14 @@ class ChallengeRepository {
   }
 
   static Future<void> markAudioAsDeleted(Challenge challenge, List<Audio> audios) async {
-    final DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('challenges')
-        .doc(challenge.id);
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('challenges').doc(challenge.id);
     await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
   }
+
   static Future<void> markAudiosAsSeen(String challengeId, List<Audio> audios) async {
-    final DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('challenges')
-        .doc(challengeId);
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('challenges').doc(challengeId);
     await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
   }
 
@@ -105,7 +100,7 @@ class ChallengeRepository {
     List<Challenge> challengeList = [];
     final QuerySnapshot query = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('challenges')
         .where('user.id', isEqualTo: userRequestedId)
         .where('completed_at', isEqualTo: null)

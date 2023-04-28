@@ -24,24 +24,12 @@ abstract class CourseEnrollmentChatState {}
 
 class CourseEnrollmentLoading extends CourseEnrollmentChatState {}
 
-class ChatMessageAdded extends CourseEnrollmentChatState {
-  final String userId;
-  final String courseId;
-  final String userMessage;
-  ChatMessageAdded(this.userId, this.courseId, this.userMessage);
-}
-
-class CourseEnrollmentChatSuccess extends CourseEnrollmentChatState {}
 
 class MessagesUpdated extends CourseEnrollmentChatState {
   final List<Message> messages;
   final List<UserResponse> participants;
   final DocumentSnapshot lastDocument;
   MessagesUpdated(this.messages, this.participants, {this.lastDocument});
-}
-
-class MessagesDispose extends CourseEnrollmentChatState {
-  MessagesDispose();
 }
 
 class MessagesScroll extends CourseEnrollmentChatState {
@@ -104,7 +92,6 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
     }catch(e){
       emit(Failure());
     }
-    
   }
 
   Future<void> saveLastMessageUserSaw(String courseChatId, Message message) async {
@@ -117,7 +104,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> getMessagesAfterMessage(Message message, String courseChatId) async {
     try {
-      List<Message> messages = await CourseChatRepository().getMessagesAfterMessageIdScroll(courseChatId, message.id);
+      List<Message> messages = await CourseChatRepository().getMessagesAfterMessageId(courseChatId, message.id);
       final List<UserResponse> participants = await getUsers(messages);
       emit(MessagesScroll(messages, participants));
     }catch(exception, stackTrace){

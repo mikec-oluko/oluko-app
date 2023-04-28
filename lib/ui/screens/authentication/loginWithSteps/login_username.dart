@@ -148,7 +148,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                   _formKey.currentState.save();
                   BlocProvider.of<AuthBloc>(context).sendPasswordResetEmail(
                     context,
-                    ForgotPasswordDto(email: data, projectId: GlobalConfiguration().getValue('projectId')),
+                    ForgotPasswordDto(email: data, projectId: GlobalConfiguration().getString('projectId')),
                   );
                 },
               ),

@@ -215,10 +215,10 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
 
   Future<void> _onPlay({String filePath}) async {
     if (!widget.onStartPlaying()) {
-      if (playedOnce && audioPlayer.state == PlayerState.PAUSED) {
+      if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        await audioPlayer.play(filePath, isLocal: true);
+        // await audioPlayer.play(filePath, isLocal: true);
         setState(() {
           playedOnce = true;
         });
@@ -229,7 +229,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         widget.onAudioPlaying(_isPlaying);
       });
 
-      audioPlayer.onPlayerCompletion.listen((_) {
+      audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           widget.onAudioPlaying(_isPlaying);
@@ -243,14 +243,14 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
         });
       });
 
-      audioPlayer.onAudioPositionChanged.listen((duration) {
+      audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.inMicroseconds.toDouble();
         });
       });
     } else {
-      if (audioPlayer.state == PlayerState.PLAYING) {
+      if (audioPlayer.state == PlayerState.playing) {
         await audioPlayer.pause();
         setState(() {
           _isPlaying = false;

@@ -33,7 +33,7 @@ class _RegisterState extends State<RegisterPage> {
   @override
   void initState() {
     BlocProvider.of<CountryBloc>(context).getAllCountries();
-    _newUserFromRegister.projectId = GlobalConfiguration().getValue('projectId');
+    _newUserFromRegister.projectId = GlobalConfiguration().getString('projectId');
     _newUserFromRegister.country = '';
     _newUserFromRegister.state = '';
     _newUserFromRegister.city = '';

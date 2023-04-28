@@ -21,7 +21,7 @@ class ShareCard extends StatefulWidget {
 
 class _State extends State<ShareCard> {
   List<Movement> segmentMovements;
-  bool _storyEnabled = GlobalConfiguration().getValue('showStories') == 'true';
+  bool _storyEnabled = GlobalConfiguration().getString('showStories') == 'true';
   bool _whistleEnabled = false;
 
   @override
@@ -201,7 +201,7 @@ class _State extends State<ShareCard> {
               child: Row(
                 children: [
                   Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
-                  if (!_storyEnabled && GlobalConfiguration().getValue('showStories') == 'true') doubleCheck(),
+                  if (!_storyEnabled && GlobalConfiguration().getString('showStories') == 'true') doubleCheck(),
                 ],
               ),
             )
@@ -245,7 +245,7 @@ class _State extends State<ShareCard> {
           Row(
             children: [
               Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
-              if (!_storyEnabled && GlobalConfiguration().getValue('showStories') == 'true') doubleCheck() else SizedBox()
+              if (!_storyEnabled && GlobalConfiguration().getString('showStories') == 'true') doubleCheck() else SizedBox()
             ],
           ),
         ],
