@@ -29,6 +29,7 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
   CourseEnrollmentListBloc() : super(CourseEnrollmentLoading());
 
   void getCourseEnrollmentsByUser(String userId) async {
+    emit(CourseEnrollmentLoading());
     try {
       final List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
       emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments.where((element) => element.isUnenrolled != true).toList()));
