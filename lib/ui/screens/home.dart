@@ -75,6 +75,8 @@ class _HomeState extends State<Home> {
             BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments(_courseEnrollments);
             BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_user.id);
             BlocProvider.of<CourseSubscriptionBloc>(context).getStream();
+            BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(_user.id);
+            BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_user.id);
             return OlukoNeumorphism.isNeumorphismDesign
                 // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
                 ?
