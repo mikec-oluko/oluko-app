@@ -53,7 +53,7 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
   //TODO: remove hardcoded reference
   CollectionReference reference = FirebaseFirestore.instance
       .collection("projects")
-      .doc(GlobalConfiguration().getValue('projectId'))
+      .doc(GlobalConfiguration().getString('projectId'))
       .collection("assessmentAssignments")
       .doc('8dWwPNggqruMQr0OSV9f')
       .collection('taskReviews');

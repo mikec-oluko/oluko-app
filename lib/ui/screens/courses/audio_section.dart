@@ -33,8 +33,7 @@ class _State extends State<AudioSection> {
   bool playedOnce = false;
 
   Widget audioSlider() {
-    return Container(
-        width: 150, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: CourseProgressBar(value: _completedPercentage)));
+    return Container(width: 150, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: CourseProgressBar(value: _completedPercentage)));
   }
 
   @override
@@ -105,7 +104,7 @@ class _State extends State<AudioSection> {
       if (playedOnce) {
         await widget.audioPlayer.resume();
       } else {
-        await widget.audioPlayer.play(url, isLocal: false);
+        // await widget.audioPlayer.play(url, isLocal: false);
         setState(() {
           playedOnce = true;
         });
@@ -116,7 +115,7 @@ class _State extends State<AudioSection> {
         _isPlaying = true;
       });
 
-      widget.audioPlayer.onPlayerCompletion.listen((_) {
+      widget.audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           _completedPercentage = 0.0;
@@ -129,7 +128,7 @@ class _State extends State<AudioSection> {
         });
       });
 
-      widget.audioPlayer.onAudioPositionChanged.listen((duration) {
+      widget.audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();

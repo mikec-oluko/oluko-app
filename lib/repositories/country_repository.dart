@@ -16,7 +16,7 @@ class CountryRepository {
 
   Future<List<Assessment>> getAll() async {
     QuerySnapshot docRef =
-        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('assessments').get();
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('assessments').get();
     List<Assessment> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;

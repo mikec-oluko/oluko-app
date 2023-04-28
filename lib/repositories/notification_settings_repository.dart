@@ -16,7 +16,7 @@ class NotificationSettingsRepository {
   static Future<NotificationSettings> getAll(String userId) async {
     final notificationSettings = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('notificationSettings')
         .doc(userId)
         .get();
@@ -32,7 +32,7 @@ class NotificationSettingsRepository {
   static Future<NotificationSettings> updateNotificationSetting(NotificationSettings notiSetting) async {
     final notificationSetting = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
+        .doc(GlobalConfiguration().getString('projectId'))
         .collection('notificationSettings')
         .doc(notiSetting.userId)
         .get();
