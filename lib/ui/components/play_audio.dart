@@ -18,7 +18,7 @@ class PlayAudio extends StatefulWidget {
   final bool isForList;
   final bool showBin;
   final bool showDate;
-  
+
   const PlayAudio(
       {Key key,
       this.record,
@@ -28,8 +28,8 @@ class PlayAudio extends StatefulWidget {
       this.durationFromRecord,
       this.onAudioPlaying,
       this.isForList = false,
-      this.onStartPlaying,
-      this.showBin = false,
+      this.onStartPlaying, 
+      this.showBin = false, 
       this.showDate = false})
       : super(key: key);
 
@@ -220,10 +220,10 @@ class _PlayAudioState extends State<PlayAudio> {
 
   Future<void> _onPlay({String filePath}) async {
     if (!widget.onStartPlaying()) {
-      if (playedOnce && audioPlayer.state == PlayerState.PAUSED) {
+      if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        await audioPlayer.play(filePath, isLocal: true);
+        // await audioPlayer.play(filePath, isLocal: true);
         setState(() {
           playedOnce = true;
         });
@@ -234,7 +234,7 @@ class _PlayAudioState extends State<PlayAudio> {
         widget.onAudioPlaying(_isPlaying);
       });
 
-      audioPlayer.onPlayerCompletion.listen((_) {
+      audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           widget.onAudioPlaying(_isPlaying);
@@ -248,14 +248,14 @@ class _PlayAudioState extends State<PlayAudio> {
         });
       });
 
-      audioPlayer.onAudioPositionChanged.listen((duration) {
+      audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.inMicroseconds.toDouble();
         });
       });
     } else {
-      if (audioPlayer.state == PlayerState.PLAYING) {
+      if (audioPlayer.state == PlayerState.playing) {
         await audioPlayer.pause();
         setState(() {
           _isPlaying = false;
