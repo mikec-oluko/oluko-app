@@ -327,8 +327,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompletedClass.id).first;
     final classIndex = _courses[_courses.indexOf(courseSelected)].classes.indexOf(classToGo);
 
-    callProvidersForInsideClassView(context, classIndex);
-
     Navigator.pushNamed(
       context,
       routeLabels[RouteEnum.insideClass],

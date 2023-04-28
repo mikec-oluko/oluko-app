@@ -104,6 +104,10 @@ class _InsideClassesState extends State<InsideClass> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
+    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
+    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
     BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
