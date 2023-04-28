@@ -39,7 +39,7 @@ class ChatScreen extends StatefulWidget {
   final List<CourseEnrollment> enrollments;
   const ChatScreen({
     @required this.courseEnrollment,
-      this.userId,
+    this.userId,
     this.enrollments,
     Key key,
   }) : super(key: key);
@@ -64,7 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
     BlocProvider.of<CourseEnrollmentChatBloc>(context).dispose();
     BlocProvider.of<CourseEnrollmentChatBloc>(context).listenToMessages(widget.courseEnrollment.course.id);
     _textController.addListener(() {
-        BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
+      BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
     });
   }
 
@@ -155,14 +155,15 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buttonSend(bool isText) {
     return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
       builder: (context, state) {
-        return (state is Changebutton && !state.showButton) ?  OlukoNeumorphicCircleButton(
-            customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-            onPressed: () => _handleSubmitted(_textController.text),
-          )
-          : OlukoNeumorphicCircleButton(
-            customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-            onPressed: () => _handleSubmitted(_textController.text),
-          );
+        return (state is Changebutton && !state.showButton)
+            ? OlukoNeumorphicCircleButton(
+                customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+                onPressed: () => _handleSubmitted(_textController.text),
+              )
+            : OlukoNeumorphicCircleButton(
+                customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+                onPressed: () => _handleSubmitted(_textController.text),
+              );
       },
     );
   }
@@ -171,79 +172,80 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        appBar:
-            OlukoAppBar(showBackButton: true, title: widget.courseEnrollment.course.name, showTitle: true, courseImage: widget.courseEnrollment.course.image, onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.userId), Navigator.pop(context)}),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                  child: Container(
-                child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
-                  builder: (context, state) {
-                    if (state is MessagesUpdated) {
-                      messages = state.messages;
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
-                    } else if (state is MessagesScroll) {
-                      _isLoadingMoreMessages = false;
-                      final previousMessages = state.messages;
-                      final newMessages = [...messages, ...previousMessages];
-                      final previousParticipants = state.participants;
-                      final newParticipants = [...participants, ...previousParticipants];
-                      participants = newParticipants;
-                      messages = newMessages;
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
-                    } else if (messages.isNotEmpty) {
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                ),
-              )),
-              SizedBox(
-                height: 100,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-                  decoration: const BoxDecoration(
-                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15.0),
-                      topRight: Radius.circular(15.0),
-                    ),
+        appBar: OlukoAppBar(
+            showBackButton: true,
+            title: widget.courseEnrollment.course.name,
+            showTitle: true,
+            courseImage: widget.courseEnrollment.course.image,
+            onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.userId), Navigator.pop(context)}),
+        body: Column(
+          children: [
+            Expanded(child: Container(
+              child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+                builder: (context, state) {
+                  if (state is MessagesUpdated) {
+                    messages = state.messages;
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
+                  } else if (state is MessagesScroll) {
+                    _isLoadingMoreMessages = false;
+                    final previousMessages = state.messages;
+                    final newMessages = [...messages, ...previousMessages];
+                    final previousParticipants = state.participants;
+                    final newParticipants = [...participants, ...previousParticipants];
+                    participants = newParticipants;
+                    messages = newMessages;
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
+                  } else if (messages.isNotEmpty) {
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            )),
+            SizedBox(
+              height: 100,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                decoration: const BoxDecoration(
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15.0),
+                    topRight: Radius.circular(15.0),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Container(
-                            width: 310,
-                              child: TextField(
-                                controller: _textController,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(vertical:11.0, horizontal: 15.0), 
-                                ),
-                                textAlignVertical: TextAlignVertical.center, 
-                                onSubmitted: _handleSubmitted,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          width: 310,
+                          child: TextField(
+                            controller: _textController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
                               ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 15.0),
+                            ),
+                            textAlignVertical: TextAlignVertical.center,
+                            onSubmitted: _handleSubmitted,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
                           ),
                         ),
                       ),
-                      SizedBox(height: 45, width: 45, child: _buttonSend(_textController.text.isNotEmpty)),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 45, width: 45, child: _buttonSend(_textController.text.isNotEmpty)),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }
