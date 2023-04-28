@@ -161,21 +161,13 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       Navigator.popAndPushNamed(
         context,
         routeLabels[RouteEnum.insideClass],
-        arguments: {
-          'courseEnrollment': enrollment,
-          'classIndex': classIndex,
-          'courseIndex': courseIndex,
-        },
+        arguments: {'courseEnrollment': enrollment, 'classIndex': classIndex, 'courseIndex': courseIndex, 'actualCourse': widget.course},
       );
     } else {
       Navigator.pushNamed(
         context,
         routeLabels[RouteEnum.insideClass],
-        arguments: {
-          'courseEnrollment': enrollment,
-          'classIndex': classIndex,
-          'courseIndex': courseIndex,
-        },
+        arguments: {'courseEnrollment': enrollment, 'classIndex': classIndex, 'courseIndex': courseIndex, 'actualCourse': widget.course},
       );
     }
   }
