@@ -10,6 +10,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/play_audio.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -149,44 +150,61 @@ class _ChatAudioState extends State<ChatAudio> {
     );
   }
 
-  Container recordAudioInsideContent(BuildContext context) {
-    return Container(
-      height: 80,
-        child: Row(
-          children: [const SizedBox(width: 10), _recordAudioTextComponent(context), const SizedBox(width: 10), _audioRecordMessageButtonComponent()],
+ Container recordAudioInsideContent(BuildContext context) {
+  return Container(
+    child: Align(
+      alignment: Alignment.center,
+      child: Row(
+         mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(width: 0),
+          _recordAudioTextComponent(context),
+          const SizedBox(width: 0),
+          _audioRecordMessageButtonComponent(),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Container _recordAudioTextComponent(BuildContext context) {
     if(!_recordingAudio){
       return Container();
     }
     return Container(
-      width: ScreenUtils.width(context) / 1.6,
-      height: 40,
-      decoration: BoxDecoration(
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              _recordingAudio
-                  ? '${OlukoLocalizations.get(context, 'recordingCapitalText')} ${TimeConverter.durationToString(duration)}'
-                  : '',
-              style: OlukoFonts.olukoMediumFont(
-                  customColor: OlukoNeumorphism.isNeumorphismDesign
-                      ? _recordingAudio
-                          ? OlukoColors.primary
-                          : OlukoColors.grayColor
-                      : OlukoColors.white,
-                  customFontWeight: FontWeight.w500),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: ScreenUtils.width(context) / 1.6,
+          height: 40,
+          decoration: BoxDecoration(
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+            borderRadius: const BorderRadius.all(Radius.circular(25)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    _recordingAudio
+                        ? '${OlukoLocalizations.get(context, 'recordingCapitalText')} ${TimeConverter.durationToString(duration)}'
+                        : '',
+                    style: OlukoFonts.olukoMediumFont(
+                        customColor: OlukoNeumorphism.isNeumorphismDesign
+                            ? _recordingAudio
+                                ? OlukoColors.primary
+                                : OlukoColors.grayColor
+                            : OlukoColors.white,
+                        customFontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -199,8 +217,8 @@ class _ChatAudioState extends State<ChatAudio> {
       child: OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
-              child: microphoneIconButtonContent(iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic, size: 23, color: OlukoColors.white)))
-          : microphoneIconButtonContent(iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic, size: 23, color: OlukoColors.black)),
+              child: microphoneIconButtonContent(iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic, size: 25, color: OlukoColors.white)))
+          : microphoneIconButtonContent(iconForContent: Icon(_recordingAudio ? Icons.stop : Icons.mic, size: 25, color: OlukoColors.black)),
     );
   }
 
@@ -306,7 +324,7 @@ class _ChatAudioState extends State<ChatAudio> {
   }
 
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
-    return CoachAudioSentComponent(
+    return PlayAudio(
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,

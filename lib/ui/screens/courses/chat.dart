@@ -171,23 +171,37 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buttonSend(bool isText) {
-    return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
-      builder: (context, state) {
-        return (state is Changebutton && !state.showButton)
-            ? OlukoNeumorphicCircleButton(
-                customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-                onPressed: () => _handleSubmitted(_textController.text),
-              )
-            : Expanded(
-                child: ChatAudio(
-                  userId: widget.currentUser.id,
-                  valueNotifier: changeValueNotifier,
-                ),
-              );
-      },
-    );
-  }
+Widget _buttonSend(bool isText) {
+  return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+    builder: (context, state) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          double halfWidth = constraints.maxWidth;
+
+          Widget buttonWidget = Container(
+            width: halfWidth,
+            child: OlukoNeumorphicCircleButton(
+              customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+              onPressed: () => _handleSubmitted(_textController.text),
+            ),
+          );
+          
+          Widget chatAudioWidget = Container(
+            width: halfWidth,
+            child: ChatAudio(
+              userId: widget.currentUser.id,
+              valueNotifier: changeValueNotifier,
+            ),
+          );
+
+          return (state is Changebutton && !state.showButton)
+              ? buttonWidget
+              : chatAudioWidget;
+        },
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -237,15 +251,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ValueListenableBuilder(
                           valueListenable: _takenSurvey,
                           builder: (context, takenSurvey, child) {
                             if (_takenSurvey.value) {
-                              return const SizedBox();
+                              return const SizedBox(width: 0,);
                             } else {
-                              return Expanded(
-                                 flex: 5,
+                              return Flexible(
+                                flex: 6,
                                 child: Center(
                                   child: SizedBox(
                                     child: SizedBox(
@@ -273,10 +288,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               );
                             }
                           }),
-                            Expanded(
-                              flex: 2, 
-                              child: _buttonSend(_textController.text.isNotEmpty),
-                            ),
+                      Flexible(
+                        flex: 1,
+                        child: _buttonSend(_textController.text.isNotEmpty),
+                      ),
                     ],
                   ),
                 ),
