@@ -109,10 +109,6 @@ class _InsideClassesState extends State<InsideClass> {
     BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
     BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
-    BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
-    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
-    BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
-    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
   }
 
   @override
@@ -126,15 +122,10 @@ class _InsideClassesState extends State<InsideClass> {
       if (authState is AuthSuccess) {
         currentUser = authState.user;
         currentAuthState = authState;
-        return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
-          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-            if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
-              _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
-              _class = classState.classObj;
-              List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [];
-              _audios = AudioService.getNotDeletedAudios(classAudios);
-              _audioQty = _audios == null ? 0 : _audios.where((element) => element.seen == false).length;
-              BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
+        return BlocBuilder<ClassBloc, ClassState>(
+          builder: (context, state) {
+            if (state is GetByIdSuccess) {
+              _class = state.classObj;
               return WillPopScope(
                   onWillPop: () {
                     return _onBackButtonPress(context);
@@ -143,10 +134,10 @@ class _InsideClassesState extends State<InsideClass> {
             } else {
               return const FullScreenLoadingComponent();
             }
-          });
-        });
+          },
+        );
       } else {
-        return const SizedBox();
+        return const FullScreenLoadingComponent();
       }
     });
   }
@@ -171,35 +162,27 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget form() {
     return Form(
-      key: _formKey,
-      child: Scaffold(body: BlocBuilder<CoachAudioBloc, CoachAudioState>(
-        builder: (context, coachState) {
-          if (coachState is CoachesByAudiosSuccess) {
-            _coaches = coachState.coaches;
-            return Stack(
-              children: [
-                SlidingUpPanel(
-                  controller: panelController,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  minHeight: 5,
-                  collapsed: Container(
-                    color: OlukoColors.black,
-                  ),
-                  panel: panelDetail(),
-                  body: Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : OlukoColors.black,
-                    child: classInfoSection(coachState.coaches),
-                  ),
+        key: _formKey,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              SlidingUpPanel(
+                controller: panelController,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                minHeight: 5,
+                collapsed: Container(
+                  color: OlukoColors.black,
                 ),
-                slidingUpPanelComponent(context)
-              ],
-            );
-          } else {
-            return const SizedBox();
-          }
-        },
-      )),
-    );
+                panel: panelDetail(),
+                body: Container(
+                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : OlukoColors.black,
+                  child: classInfoSection(),
+                ),
+              ),
+              slidingUpPanelComponent(context)
+            ],
+          ),
+        ));
   }
 
   void closeVideo() {
@@ -382,20 +365,25 @@ class _InsideClassesState extends State<InsideClass> {
     }
   }
 
-  Widget classInfoSection(List<UserResponse> coaches) {
-    return ListView(
+  Widget classInfoSection() {
+    return ListView.builder(
+      itemCount: 1,
       addAutomaticKeepAlives: false,
       addRepaintBoundaries: false,
-      children: [
-        if (OlukoNeumorphism.isNeumorphismDesign) getNeumorphicVideoPreview() else getVideoPreview(),
-        Padding(
-          padding: const EdgeInsets.only(right: 15, left: 15, top: 25),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: OlukoNeumorphism.isNeumorphismDesign ? neumorphicBody() : body(),
-          ),
-        ),
-      ],
+      itemBuilder: (BuildContext context, int index) {
+        return Column(
+          children: [
+            if (OlukoNeumorphism.isNeumorphismDesign) getNeumorphicVideoPreview() else getVideoPreview(),
+            Padding(
+              padding: const EdgeInsets.only(right: 15, left: 15, top: 25),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: OlukoNeumorphism.isNeumorphismDesign ? neumorphicBody() : body(),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -675,63 +663,79 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget _getAudioWidget() {
-    return SizedBox(
-      height: 52,
-      width: 52,
-      child: Stack(
-        children: [
-          OlukoBlurredButton(
-            childContent: GestureDetector(
-              onTap: () => _audios.isNotEmpty ? _audioAction() : null,
+    return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(
+      builder: (context, enrollmentAudioState) {
+        return BlocBuilder<ClassBloc, ClassState>(
+          builder: (context, classState) {
+            if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
+              _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
+              _class = classState.classObj;
+              List<Audio> classAudios = enrollmentAudioState?.enrollmentAudio?.audios ?? [];
+              _audios = AudioService.getNotDeletedAudios(classAudios);
+              _audioQty = _audios == null ? 0 : _audios.where((element) => element.seen == false).length;
+              BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
+            }
+            return SizedBox(
+              height: 52,
+              width: 52,
               child: Stack(
-                alignment: Alignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 2),
-                    child: Image.asset(
-                      'assets/courses/audioNeumorphism.png',
-                      height: 25,
-                      width: 25,
+                  OlukoBlurredButton(
+                    childContent: GestureDetector(
+                      onTap: () => _audios.isNotEmpty ? _audioAction() : null,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 2),
+                            child: Image.asset(
+                              'assets/courses/audioNeumorphism.png',
+                              height: 25,
+                              width: 25,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  ),
+                  BlocBuilder<InsideClassContentBloc, InsideClassContentState>(
+                    buildWhen: (context, state) {
+                      return state is InsideClassContentAudioOpen || state is InsideClassContentLoading;
+                    },
+                    builder: (context, state) {
+                      if (state is InsideClassContentAudioOpen) {
+                        _audioQty = 0;
+                      }
+                      if (_audioQty > 0) {
+                        return Align(
+                          alignment: Alignment.topRight,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/courses/audio_neumorphic_notification.png',
+                                height: 18,
+                                width: 18,
+                              ),
+                              Text(
+                                _audioQty.toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
                   ),
                 ],
               ),
-            ),
-          ),
-          BlocBuilder<InsideClassContentBloc, InsideClassContentState>(
-            buildWhen: (context, state) {
-              return state is InsideClassContentAudioOpen || state is InsideClassContentLoading;
-            },
-            builder: (context, state) {
-              if (state is InsideClassContentAudioOpen) {
-                _audioQty = 0;
-              }
-              if (_audioQty > 0) {
-                return Align(
-                  alignment: Alignment.topRight,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/courses/audio_neumorphic_notification.png',
-                        height: 18,
-                        width: 18,
-                      ),
-                      Text(
-                        _audioQty.toString(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
