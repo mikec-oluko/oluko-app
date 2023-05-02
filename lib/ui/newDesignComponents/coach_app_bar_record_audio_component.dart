@@ -167,7 +167,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
       width: ScreenUtils.width(context) / 1.6,
       height: 80,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
+        padding: EdgeInsets.fromLTRB(5, ScreenUtils.height(context) * 0.01, 0, 0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [const SizedBox(width: 10), _recordAudioTextComponent(context), const SizedBox(width: 10), _audioRecordMessageButtonComponent()],

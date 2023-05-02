@@ -92,13 +92,12 @@ class _CoachAppBarState extends State<CoachAppBar> {
                             CoachAppBarRecordAudioComponent(
                               coachId: widget.coachUser.id,
                               userId: widget.currentUser.id,
-                              // audioRecorder: _recorder,
-                            ), // goToCoachProfile(context),
-                          const SizedBox(width: 10),
+                            ),
+                          const SizedBox(width: 5),
                           if (widget.coachUser != null && widget.coachUser.avatar != null)
                             OlukoNeumorphism.isNeumorphismDesign
                                 ? Padding(
-                                    padding: const EdgeInsets.only(top: 20),
+                                    padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.02),
                                     child: GestureDetector(
                                         onTap: () {
                                           widget.onNavigation();
