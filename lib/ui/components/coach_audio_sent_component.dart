@@ -218,7 +218,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        await audioPlayer.play(UrlSource(filePath));
+        if (widget.isPreviewContent) {
+          await audioPlayer.play(DeviceFileSource(filePath));
+        } else {
+          await audioPlayer.play(UrlSource(filePath));
+        }
         setState(() {
           playedOnce = true;
         });
