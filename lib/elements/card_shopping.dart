@@ -38,13 +38,14 @@ class CardShopping extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(3.0)),
                   )),
-              FlatButton(
-                textColor: OlukoColors.white,
-                color: OlukoColors.initial,
+              TextButton(
+                //TODO: Fix for UPDATE
+                //textColor: OlukoColors.white,
+                //color: OlukoColors.initial,
                 onPressed: () {},
-                shape: RoundedRectangleBorder(
+                /*shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4.0),
-                ),
+                ),*/
                 child: Padding(
                   padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
                   child: Dropdown(),
@@ -88,26 +89,28 @@ class CardShopping extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        FlatButton(
-                          textColor: OlukoColors.white,
-                          color: OlukoColors.initial,
+                        TextButton(
+                          //TODO: Fix for UPDATE
+                          //textColor: OlukoColors.white,
+                          //color: OlukoColors.initial,
                           onPressed: () {
                             deleteOnPress();
                           },
-                          shape: RoundedRectangleBorder(
+                          /*shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4.0),
-                          ),
+                          ),*/
                           child: Padding(
                               padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
                               child: Text("DELETE", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11.0))),
                         ),
-                        FlatButton(
-                          textColor: OlukoColors.white,
-                          color: OlukoColors.initial,
+                        TextButton(
+                          //TODO: Fix for UPDATE
+                          //textColor: OlukoColors.white,
+                          //color: OlukoColors.initial,
                           onPressed: () {},
-                          shape: RoundedRectangleBorder(
+                          /*shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4.0),
-                          ),
+                          ),*/
                           child: Padding(
                               padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
                               child: Text("SAVE FOR LATER", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 11.0))),

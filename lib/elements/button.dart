@@ -48,10 +48,11 @@ class StretchableButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             side: bs,
           ),
-          child: RaisedButton(
+          child: ElevatedButton(
             onPressed: onPressed,
-            color: buttonColor,
-            splashColor: splashColor,
+            //TODO: Fix for UPDATE
+            //color: buttonColor,
+            //splashColor: splashColor,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: contents,
