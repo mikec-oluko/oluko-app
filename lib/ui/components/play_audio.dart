@@ -18,6 +18,7 @@ class PlayAudio extends StatefulWidget {
   final bool isForList;
   final bool showBin;
   final bool showDate;
+  final Function valueNotifier;
 
   const PlayAudio(
       {Key key,
@@ -30,7 +31,8 @@ class PlayAudio extends StatefulWidget {
       this.isForList = false,
       this.onStartPlaying,
       this.showBin = true,
-      this.showDate = true})
+      this.showDate = true,
+      this.valueNotifier,})
       : super(key: key);
 
   @override
