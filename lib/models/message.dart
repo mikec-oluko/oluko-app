@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'base.dart';
 
@@ -7,6 +8,7 @@ class Message extends Base {
       {this.message,
       this.seenAt,
       this.user,
+      this.audioMessage,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -27,12 +29,14 @@ class Message extends Base {
   String message;
   String seenAt;
   ObjectSubmodel user;
+  AudioMessageSubmodel audioMessage;
 
   factory Message.fromJson(Map<String, dynamic> json) {
     Message chatJson = Message(
         message: json['message'] != null ? json['message'] as String : null,
         seenAt: json['seen_at'] != null ? json['seen_at'] as String : null,
-        user: json['user'] != null ? ObjectSubmodel.fromJson(json['user'] as Map<String, dynamic>) : null);
+        user: json['user'] != null ? ObjectSubmodel.fromJson(json['user'] as Map<String, dynamic>) : null,
+        audioMessage: json['audio_message'] != null ? AudioMessageSubmodel.fromJson(json['audio_message'] as Map<String, dynamic>) : null);
     chatJson.setBase(json);
     return chatJson;
   }
@@ -42,6 +46,7 @@ class Message extends Base {
       'last_connected': seenAt,
       'message': message,
       'user': user.toJson(),
+      'audio_message': audioMessage.toJson()
     };
     chatJson.addEntries(super.toJson().entries);
     return chatJson;

@@ -7,6 +7,7 @@ import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
+
 class CoachAudioSentComponent extends StatefulWidget {
   final String record;
   final Duration durationFromRecord;
@@ -218,7 +219,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        // await audioPlayer.play(filePath, isLocal: true);
+         await audioPlayer.play(UrlSource(filePath));
         setState(() {
           playedOnce = true;
         });

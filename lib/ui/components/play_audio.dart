@@ -28,9 +28,9 @@ class PlayAudio extends StatefulWidget {
       this.durationFromRecord,
       this.onAudioPlaying,
       this.isForList = false,
-      this.onStartPlaying, 
-      this.showBin = false, 
-      this.showDate = false})
+      this.onStartPlaying,
+      this.showBin = true,
+      this.showDate = true})
       : super(key: key);
 
   @override
@@ -104,9 +104,11 @@ class _PlayAudioState extends State<PlayAudio> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Container(width: ScreenUtils.width(context) / 3, child: CourseProgressBar(value: _completedPercentage)),
                         ),
-                        const VerticalDivider(color: OlukoColors.grayColor),
-                        GestureDetector(
-                            onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                        if (widget.showBin) ...[
+                          const VerticalDivider(color: OlukoColors.grayColor),
+                          GestureDetector(
+                              onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                        ]
                       ],
                     ),
                   ),
@@ -134,7 +136,7 @@ class _PlayAudioState extends State<PlayAudio> {
                           widget.isPreviewContent
                               ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context)
                               : widget.audioMessageItem != null
-                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem.createdAt, context: context)
+                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem?.createdAt, context: context)
                                   : '',
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
@@ -145,7 +147,7 @@ class _PlayAudioState extends State<PlayAudio> {
                           Image.asset(
                             'assets/courses/coach_tick.png',
                             scale: 5,
-                            color: widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
+                            color: widget.audioMessageItem?.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
                           )
                         else
                           const SizedBox.shrink(),
@@ -223,7 +225,7 @@ class _PlayAudioState extends State<PlayAudio> {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        // await audioPlayer.play(filePath, isLocal: true);
+        await audioPlayer.play(UrlSource(filePath));
         setState(() {
           playedOnce = true;
         });

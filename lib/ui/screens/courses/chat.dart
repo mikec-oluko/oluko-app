@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -163,6 +165,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 isCurrentUser: isCurrentUser,
                 user: userIndex == -1 ? null : participants[userIndex],
                 authUserId: currentUserId,
+                audioMessage: message?.audioMessage,
               ),
             ],
           );
@@ -188,9 +191,10 @@ Widget _buttonSend(bool isText) {
           
           Widget chatAudioWidget = Container(
             width: halfWidth,
-            child: ChatAudio(
+            child: GenericAudioRecorder(
               userId: widget.currentUser.id,
-              valueNotifier: changeValueNotifier,
+              onRecord: changeValueNotifier,
+              onSave: onSaveAudio,
             ),
           );
 
@@ -299,5 +303,10 @@ Widget _buttonSend(bool isText) {
             ],
           ),
         ));
+  }
+
+  void onSaveAudio(File audio, String userId, Duration audioDuration) {
+    BlocProvider.of<CourseEnrollmentChatBloc>(context)
+        .saveChatAudioMessage(audioRecorded: audio, userId: userId, courseId: widget.courseEnrollment.course.id, audioDuration: audioDuration);
   }
 }

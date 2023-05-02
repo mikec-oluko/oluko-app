@@ -18,17 +18,27 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
-class ChatAudio  extends StatefulWidget {
+class GenericAudioRecorder extends StatefulWidget {
   final String userId;
-  final Function valueNotifier;
+  final Function() onRecord;
+  final Function(File audio, String userId, Duration  audioDuration) onSave;
+  final bool showTextOnMicPress;
+  final bool showTextInit;
+  final Widget timer;
 
-  const ChatAudio ({this.userId, this.valueNotifier}) : super();
+  const GenericAudioRecorder  ({
+    this.userId, 
+    this.onRecord, 
+    this.onSave,
+    this.showTextOnMicPress  = false, 
+    this.showTextInit = false,
+    this.timer}) : super();
 
   @override
-  State<ChatAudio> createState() => _ChatAudioState();
+  State<GenericAudioRecorder> createState() => _GenericAudioRecorderState();
 }
 
-class _ChatAudioState extends State<ChatAudio> {
+class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
   final SoundRecorder _recorder = SoundRecorder();
   bool _recordingAudio = false;
   Timer _timer;
@@ -237,8 +247,7 @@ class _ChatAudioState extends State<ChatAudio> {
     return GestureDetector(
         onTap: () async {
           if(!_recordingAudio){
-          widget.valueNotifier();
-
+            widget.onRecord();
           }
           !_recorder.isInitialized ? _recorder.init() : null;
           await _recorder.toggleRecording();
@@ -270,6 +279,9 @@ class _ChatAudioState extends State<ChatAudio> {
 
   Widget sendAudioIconButtonContent() {
     return GestureDetector(
+      onTap: () async {
+        widget.onSave(File(_recorder.audioUrl), widget.userId,  _durationToSave);
+      },
         // onTap: () async {
         //   BlocProvider.of<CoachAudioMessageBloc>(context)
         //       .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
