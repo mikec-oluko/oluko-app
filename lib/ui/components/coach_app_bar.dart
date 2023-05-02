@@ -97,7 +97,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
                           if (widget.coachUser != null && widget.coachUser.avatar != null)
                             OlukoNeumorphism.isNeumorphismDesign
                                 ? Padding(
-                                    padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.02),
+                                    padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.01),
                                     child: GestureDetector(
                                         onTap: () {
                                           widget.onNavigation();
@@ -179,22 +179,19 @@ class _CoachAppBarState extends State<CoachAppBar> {
     ]);
   }
 
-  Padding coachAvatarImage() {
+  Widget coachAvatarImage() {
     final double _imageRadius = 24;
-    return Padding(
-      padding: const EdgeInsets.only(right: 5),
-      child: CachedNetworkImage(
-        height: _imageRadius * 2,
-        width: _imageRadius * 2,
-        maxWidthDiskCache: (_imageRadius * 2).toInt(),
-        maxHeightDiskCache: (_imageRadius * 2).toInt(),
-        fit: BoxFit.cover,
-        imageBuilder: (context, imageProvider) => CircleAvatar(
-          backgroundImage: imageProvider,
-          maxRadius: _imageRadius ?? 30,
-        ),
-        imageUrl: widget.coachUser.avatar,
+    return CachedNetworkImage(
+      height: _imageRadius * 2,
+      width: _imageRadius * 2,
+      maxWidthDiskCache: (_imageRadius * 2).toInt(),
+      maxHeightDiskCache: (_imageRadius * 2).toInt(),
+      fit: BoxFit.cover,
+      imageBuilder: (context, imageProvider) => CircleAvatar(
+        backgroundImage: imageProvider,
+        maxRadius: _imageRadius ?? 30,
       ),
+      imageUrl: widget.coachUser.avatar,
     );
   }
 
