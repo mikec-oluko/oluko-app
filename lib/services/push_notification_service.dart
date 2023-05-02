@@ -25,8 +25,7 @@ class PushNotificationService {
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final RemoteNotification notification = message.notification;
-      if (notification != null && !bottomDialogDisplayed) {
+      if (message.data != null && !bottomDialogDisplayed) {
         bottomDialogDisplayed = true;
         BottomDialogUtils.showBottomDialog(
           content: Container(
@@ -46,14 +45,14 @@ class PushNotificationService {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      notification.title,
+                      message.data['title']?.toString(),
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
                     ),
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      notification.body,
+                      message.data['body']?.toString(),
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.grey),
                     ),
                   ),
@@ -109,7 +108,7 @@ class PushNotificationService {
   }
 
   static void notifyNewPushNotification(RemoteMessage message, BuildContext contextPush) {
-    if (message != null && message.notification != null) {
+    if (message != null && message.data != null) {
       BlocProvider.of<PushNotificationBloc>(contextPush).notifyNewPushNotification();
     }
   }

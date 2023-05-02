@@ -96,28 +96,20 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         Column(
           children: PrivacyOptions.privacyOptionsList.map((option) => _buildOptionTiles(context, option)).toList(),
         ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          child: Column(
-            children: [
-              ListTile(
-                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
-              ),
-              const OlukoNeumorphicDivider(),
-              Column(
-                children: [
-                  Column(children: [
-                    weightOption(title: OlukoLocalizations.get(context, 'useKilograms'), isSelected: !_useImperial),
-                    const OlukoNeumorphicDivider()
-                  ]),
-                  Column(
-                      children: [weightOption(title: OlukoLocalizations.get(context, 'usePounds'), isSelected: _useImperial), const OlukoNeumorphicDivider()])
-                ],
-              ),
-            ],
-          ),
-        )
+        Column(
+          children: [
+            _addSectionTitle(titleForSection: ProfileViewConstants.weightMeasurement),
+            Column(
+              children: [
+                Column(children: [
+                  weightOption(title: OlukoLocalizations.get(context, 'useKilograms'), isSelected: !_useImperial), const OlukoNeumorphicDivider(),
+                ]),
+                Column(
+                    children: [weightOption(title: OlukoLocalizations.get(context, 'usePounds'), isSelected: _useImperial), const OlukoNeumorphicDivider(),],)
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -303,7 +295,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   Widget weightOption({String title, bool isSelected}) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       child: Row(
         children: [
           Column(
@@ -311,7 +303,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             children: [
               Text(
                 title,
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoBigFont(),
               ),
             ],
           ),
