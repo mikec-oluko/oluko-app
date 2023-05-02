@@ -164,10 +164,10 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
         color: OlukoNeumorphismColors.appBackgroundColor,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
-      width: ScreenUtils.width(context) / 1.5,
+      width: ScreenUtils.width(context) / 1.6,
       height: 80,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.only(left: 5),
         child: Row(
           children: [const SizedBox(width: 10), _recordAudioTextComponent(context), const SizedBox(width: 10), _audioRecordMessageButtonComponent()],
         ),

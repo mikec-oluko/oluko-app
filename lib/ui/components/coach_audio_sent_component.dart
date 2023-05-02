@@ -96,7 +96,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: Container(width: ScreenUtils.width(context) / 3, child: CourseProgressBar(value: _completedPercentage)),
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
@@ -106,9 +106,6 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     ),
                   ),
                 ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
