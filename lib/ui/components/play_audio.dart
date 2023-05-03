@@ -20,20 +20,20 @@ class PlayAudio extends StatefulWidget {
   final bool showDate;
   final Function valueNotifier;
 
-  const PlayAudio(
-      {Key key,
-      this.record,
-      this.isPreviewContent = false,
-      this.onDelete,
-      this.audioMessageItem,
-      this.durationFromRecord,
-      this.onAudioPlaying,
-      this.isForList = false,
-      this.onStartPlaying,
-      this.showBin = true,
-      this.showDate = true,
-      this.valueNotifier,})
-      : super(key: key);
+  const PlayAudio({
+    Key key,
+    this.record,
+    this.isPreviewContent = false,
+    this.onDelete,
+    this.audioMessageItem,
+    this.durationFromRecord,
+    this.onAudioPlaying,
+    this.isForList = false,
+    this.onStartPlaying,
+    this.showBin = true,
+    this.showDate = true,
+    this.valueNotifier,
+  }) : super(key: key);
 
   @override
   State<PlayAudio> createState() => _PlayAudioState();
@@ -66,7 +66,7 @@ class _PlayAudioState extends State<PlayAudio> {
 
   Padding neumorphicCoachAudioComponent(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.only(left: 45, right: 10, bottom: 10, top: 10),
       child: Neumorphic(
         style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
           boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
