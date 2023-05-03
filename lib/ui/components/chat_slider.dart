@@ -11,6 +11,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 
 class ChatSlider extends StatefulWidget {
   final List<CourseEnrollment> enrollments;
@@ -130,7 +131,7 @@ Widget courseCard(String image, String name, int msgQuantity, BuildContext conte
           left: 45,
           child: Visibility(
             visible: msgQuantity != null ? msgQuantity > 0 : false,
-            child: Badge(
+            child: badges.Badge(
               badgeContent: Text(
                 msgQuantity.toString(),
                 style: const TextStyle(

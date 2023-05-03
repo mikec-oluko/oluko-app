@@ -207,7 +207,7 @@ class DrawState extends State<Draw> {
               ),
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: const Text('Save'),
                 onPressed: () {
                   setState(() => selectedColor = pickerColor);
