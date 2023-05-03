@@ -164,31 +164,43 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
-    for (final ObjectSubmodel classObj in course.classes) {
-      EnrollmentClass enrollmentClass =
-          EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
+    final enrollmentClasses = List.generate(
+      course.classes.length,
+      (i) => EnrollmentClass(
+        id: course.classes[i].id,
+        name: course.classes[i].name,
+        image: course.classes[i].image,
+        reference: course.classes[i].reference,
+        segments: [],
+      ),
+    );
 
-      enrollmentClass = await setEnrollmentSegments(enrollmentClass);
-      courseEnrollment.classes.add(enrollmentClass);
-    }
+    await Future.wait(enrollmentClasses.map((enrollmentClass) async {
+      await setEnrollmentSegments(enrollmentClass);
+    }));
+
+    courseEnrollment.classes.addAll(enrollmentClasses);
     return courseEnrollment;
   }
 
   static Future<EnrollmentClass> setEnrollmentSegments(EnrollmentClass enrollmentClass) async {
     final DocumentSnapshot qs = await enrollmentClass.reference.get();
     final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
-    for (final segment in classObj.segments) {
-      enrollmentClass.segments.add(
-        EnrollmentSegment(
-          id: segment.id,
-          name: segment.name,
-          reference: segment.reference,
-          isChallenge: segment.isChallenge,
-          image: segment.image,
-          sections: await getEnrollmentSections(segment),
-        ),
+
+    final enrollmentSegments = await Future.wait(List.generate(classObj.segments.length, (index) async {
+      final segment = classObj.segments[index];
+      final sections = await getEnrollmentSections(segment);
+      return EnrollmentSegment(
+        id: segment.id,
+        name: segment.name,
+        reference: segment.reference,
+        isChallenge: segment.isChallenge,
+        image: segment.image,
+        sections: sections,
       );
-    }
+    }));
+
+    enrollmentClass.segments.addAll(enrollmentSegments);
     return enrollmentClass;
   }
 
@@ -196,7 +208,8 @@ class CourseEnrollmentRepository {
     final List<EnrollmentSection> sections = [];
     if (segment.sections != null) {
       for (final section in segment.sections) {
-        sections.add(EnrollmentSection(movements: await getEnrollmentMovements(section)));
+        final movements = await getEnrollmentMovements(section);
+        sections.add(EnrollmentSection(movements: movements));
       }
     }
     return sections;
@@ -205,14 +218,15 @@ class CourseEnrollmentRepository {
   static Future<List<EnrollmentMovement>> getEnrollmentMovements(SectionSubmodel section) async {
     final List<EnrollmentMovement> movements = [];
     bool weightRequired = false;
-    for (final movement in section.movements) {
+    final promises = section.movements.map((movement) async {
       if (movement.reference != null) {
         final DocumentSnapshot qs = await movement.reference.get();
         final Movement movementRef = Movement.fromJson(qs.data() as Map<String, dynamic>);
         weightRequired = movementRef.weightRequired;
       }
       movements.add(EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name, weight: null, weightRequired: weightRequired));
-    }
+    });
+    await Future.wait(promises);
     return movements;
   }
 
