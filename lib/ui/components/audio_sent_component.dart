@@ -8,7 +8,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 
-class CoachAudioSentComponent extends StatefulWidget {
+class AudioSentComponent extends StatefulWidget {
   final String record;
   final Duration durationFromRecord;
   final bool isPreviewContent;
@@ -17,7 +17,11 @@ class CoachAudioSentComponent extends StatefulWidget {
   final bool Function() onStartPlaying;
   final CoachAudioMessage audioMessageItem;
   final bool isForList;
-  const CoachAudioSentComponent(
+  final bool showBin;
+  final bool showDate;
+  final Function valueNotifier;
+
+  const AudioSentComponent(
       {Key key,
       this.record,
       this.isPreviewContent = false,
@@ -26,14 +30,17 @@ class CoachAudioSentComponent extends StatefulWidget {
       this.durationFromRecord,
       this.onAudioPlaying,
       this.isForList = false,
-      this.onStartPlaying})
+      this.onStartPlaying,
+      this.showBin = true,
+      this.showDate = true,
+      this.valueNotifier,})
       : super(key: key);
 
   @override
-  State<CoachAudioSentComponent> createState() => _CoachAudioSentComponentState();
+  State<AudioSentComponent> createState() => _AudioSentComponentState();
 }
 
-class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
+class _AudioSentComponentState extends State<AudioSentComponent> {
   Duration _totalDuration;
   int _currentDuration;
   double _completedPercentage = 0.0;
@@ -100,9 +107,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: Container(width: ScreenUtils.width(context) / 3, child: CourseProgressBar(value: _completedPercentage)),
                         ),
-                        const VerticalDivider(color: OlukoColors.grayColor),
-                        GestureDetector(
-                            onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                        if (widget.showBin) ...[
+                          const VerticalDivider(color: OlukoColors.grayColor),
+                          GestureDetector(
+                              onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                        ]
                       ],
                     ),
                   ),
@@ -127,7 +136,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           widget.isPreviewContent
                               ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context)
                               : widget.audioMessageItem != null
-                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem.createdAt, context: context)
+                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem?.createdAt, context: context)
                                   : '',
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
@@ -138,7 +147,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           Image.asset(
                             'assets/courses/coach_tick.png',
                             scale: 5,
-                            color: widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
+                            color: widget.audioMessageItem?.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
                           )
                         else
                           const SizedBox.shrink(),

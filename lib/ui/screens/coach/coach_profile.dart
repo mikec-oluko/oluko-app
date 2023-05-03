@@ -13,7 +13,8 @@ import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
 import 'package:oluko_app/ui/components/coach_cover_image.dart';
 import 'package:oluko_app/ui/components/coach_information_component.dart';
 import 'package:oluko_app/ui/components/coach_media_carousel_gallery.dart';
@@ -338,7 +339,7 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
-    return CoachAudioSentComponent(
+    return AudioSentComponent(
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
