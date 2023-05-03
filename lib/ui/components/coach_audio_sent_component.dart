@@ -96,7 +96,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: Container(width: ScreenUtils.width(context) / 3, child: CourseProgressBar(value: _completedPercentage)),
                         ),
                         const VerticalDivider(color: OlukoColors.grayColor),
@@ -106,9 +106,6 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                     ),
                   ),
                 ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -218,7 +215,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        // await audioPlayer.play(filePath, isLocal: true);
+        if (widget.isPreviewContent) {
+          await audioPlayer.play(DeviceFileSource(filePath));
+        } else {
+          await audioPlayer.play(UrlSource(filePath));
+        }
         setState(() {
           playedOnce = true;
         });

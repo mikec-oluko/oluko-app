@@ -810,7 +810,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         content: CoachRequestContent(
           name: widget.coach?.firstName ?? '',
           image: widget.coach?.avatar,
-          onNotRecordingAction: () => Navigator.pop(context),
+          onNotRecordingAction: () {
+            Navigator.pop(context);
+            _playTask();
+          },
           onRecordingAction: navigateToSegmentWithRecording,
         ),
       );

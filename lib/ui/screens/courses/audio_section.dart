@@ -104,7 +104,7 @@ class _State extends State<AudioSection> {
       if (playedOnce) {
         await widget.audioPlayer.resume();
       } else {
-        // await widget.audioPlayer.play(url, isLocal: false);
+        await widget.audioPlayer.play(UrlSource(url));
         setState(() {
           playedOnce = true;
         });
