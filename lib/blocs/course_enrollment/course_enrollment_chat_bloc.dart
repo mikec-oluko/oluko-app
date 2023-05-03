@@ -87,6 +87,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       if(messages.isNotEmpty){
         saveLastMessageUserSaw(courseChatId, messages[0]);
         final List<UserResponse> participants = await getUsers(messages);
+        messages.forEach((message) => {
+          message.user.image = participants.firstWhere((participant) => participant.id == message.user.id).avatar
+        });
         emit(MessagesUpdated(messages, participants));
       }
     });
@@ -107,6 +110,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
     try {
       List<Message> messages = await CourseChatRepository().getMessagesAfterMessageId(courseChatId, message.id);
       final List<UserResponse> participants = await getUsers(messages);
+      messages.forEach((message) => {
+          message.user.image = participants.firstWhere((participant) => participant.id == message.user.id).avatar
+      });
       emit(MessagesScroll(messages, participants));
     }catch(exception, stackTrace){
       await Sentry.captureException(

@@ -86,7 +86,6 @@ class _ChatScreenState extends State<ChatScreen> {
       BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
     });
     BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-    //BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, false);
   }
 
   @override

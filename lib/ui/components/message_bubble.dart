@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/play_audio.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
@@ -133,10 +134,8 @@ class _MessageBubbleState extends State<MessageBubble> {
               style: const TextStyle(color: Colors.white),
             )
           else
-            PlayAudio(
+            AudioSentComponent(
               record: widget.audioMessage.url,
-              //audioMessageItem: null,
-              //isPreviewContent: isPreview,
               onAudioPlaying: (bool playing) => _onPlayAudio(playing),
               onStartPlaying: () => _canStartPlaying(),
               durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
