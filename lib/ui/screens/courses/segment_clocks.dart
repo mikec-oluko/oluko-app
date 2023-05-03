@@ -475,33 +475,31 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   Widget bodyWithPlayPausePanel() {
     bool keyboardVisibilty = false;
-    return workState != WorkState.finished
-        ? BlocBuilder<KeyboardBloc, KeyboardState>(
-            builder: (context, state) {
-              keyboardVisibilty = state.setVisible;
-              textController = state.textEditingController;
-              return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
-                  ? SlidingUpPanel(
-                      controller: panelController,
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      minHeight: 90.0,
-                      maxHeight: 185.0,
-                      collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
-                      panel: MovementVideosSection(
-                          action: getPlayPauseAction(),
-                          segment: widget.segments[widget.segmentIndex],
-                          onPressedMovement: (BuildContext context, MovementSubmodel movement) {
-                            if (workState != WorkState.paused) {
-                              changeSegmentState();
-                            }
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
-                          }),
-                      body: _body(keyboardVisibilty),
-                    )
-                  : _body(keyboardVisibilty);
-            },
-          )
-        : _body(keyboardVisibilty);
+    return BlocBuilder<KeyboardBloc, KeyboardState>(
+      builder: (context, state) {
+        keyboardVisibilty = state.setVisible;
+        textController = state.textEditingController;
+        return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
+            ? SlidingUpPanel(
+                controller: panelController,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                minHeight: 90.0,
+                maxHeight: 185.0,
+                collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
+                panel: MovementVideosSection(
+                    action: getPlayPauseAction(),
+                    segment: widget.segments[widget.segmentIndex],
+                    onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+                      if (workState != WorkState.paused) {
+                        changeSegmentState();
+                      }
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
+                    }),
+                body: _body(keyboardVisibilty),
+              )
+            : _body(keyboardVisibilty);
+      },
+    );
   }
 
   Widget getPlayPauseAction() {
@@ -812,7 +810,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         content: CoachRequestContent(
           name: widget.coach?.firstName ?? '',
           image: widget.coach?.avatar,
-          onNotRecordingAction: () => Navigator.pop(context),
+          onNotRecordingAction: () {
+            Navigator.pop(context);
+            _playTask();
+          },
           onRecordingAction: navigateToSegmentWithRecording,
         ),
       );

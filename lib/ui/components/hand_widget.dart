@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:badges/badges.dart' as badges;
 
 class HandWidget extends StatefulWidget {
   const HandWidget({
@@ -36,7 +37,7 @@ class _HandWidgetState extends State<HandWidget> {
             child: Padding(
               padding: const EdgeInsets.only(right: 20.0, top: 5),
               child: notificationState.unseenNotifications > 0
-                  ? Badge(
+                  ? badges.Badge(
                       // position: const BadgePosition(top: 0, start: 10),
                       badgeContent: Text(notificationState.unseenNotifications.toString()),
                       child: getHandIcon(),

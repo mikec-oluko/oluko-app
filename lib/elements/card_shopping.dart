@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 
 class CardShopping extends StatelessWidget {
-  CardShopping(
-      {this.body = "Placeholder Title",
-      this.stock = true,
-      this.price = "332",
-      this.img = "https://via.placeholder.com/200",
-      this.deleteOnPress});
+  CardShopping({this.body = "Placeholder Title", this.stock = true, this.price = "332", this.img = "https://via.placeholder.com/200", this.deleteOnPress});
 
   final String body;
   final bool stock;
@@ -38,13 +33,20 @@ class CardShopping extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(3.0)),
                   )),
-              FlatButton(
-                textColor: OlukoColors.white,
-                color: OlukoColors.initial,
-                onPressed: () {},
-                shape: RoundedRectangleBorder(
+              TextButton(
+                style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    backgroundColor: OlukoColors.initial,
+                    textStyle: const TextStyle(color: OlukoColors.white)),
+                //TODO: Remove after checking replacement
+                //textColor: OlukoColors.white,
+                //color: OlukoColors.initial,
+                /*shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4.0),
-                ),
+                ),*/
+                onPressed: () {},
                 child: Padding(
                   padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
                   child: Dropdown(),
@@ -71,15 +73,11 @@ class CardShopping extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 1.0),
                             child: Text(stock == true ? 'In Stock' : 'Not In Stock',
-                                style: TextStyle(
-                                    color: stock == true ? OlukoColors.success : OlukoColors.error,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300)),
+                                style: TextStyle(color: stock == true ? OlukoColors.success : OlukoColors.error, fontSize: 12, fontWeight: FontWeight.w300)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
-                            child:
-                                Text("\$$price", style: TextStyle(color: OlukoColors.primary, fontSize: 11, fontWeight: FontWeight.w500)),
+                            child: Text("\$$price", style: TextStyle(color: OlukoColors.primary, fontSize: 11, fontWeight: FontWeight.w500)),
                           ),
                         ],
                       ),
@@ -88,26 +86,40 @@ class CardShopping extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        FlatButton(
-                          textColor: OlukoColors.white,
-                          color: OlukoColors.initial,
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              backgroundColor: OlukoColors.initial,
+                              textStyle: const TextStyle(color: OlukoColors.white)),
+                          //TODO: Remove after checking replacement
+                          //textColor: OlukoColors.white,
+                          //color: OlukoColors.initial,
+                          /*shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),*/
                           onPressed: () {
                             deleteOnPress();
                           },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
                           child: Padding(
                               padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
                               child: Text("DELETE", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11.0))),
                         ),
-                        FlatButton(
-                          textColor: OlukoColors.white,
-                          color: OlukoColors.initial,
-                          onPressed: () {},
-                          shape: RoundedRectangleBorder(
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              backgroundColor: OlukoColors.initial,
+                              textStyle: const TextStyle(color: OlukoColors.white)),
+                          //TODO: Remove after checking replacement
+                          //textColor: OlukoColors.white,
+                          //color: OlukoColors.initial,
+                          /*shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4.0),
-                          ),
+                          ),*/
+                          onPressed: () {},
                           child: Padding(
                               padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
                               child: Text("SAVE FOR LATER", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 11.0))),

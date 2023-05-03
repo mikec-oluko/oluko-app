@@ -92,13 +92,12 @@ class _CoachAppBarState extends State<CoachAppBar> {
                             CoachAppBarRecordAudioComponent(
                               coachId: widget.coachUser.id,
                               userId: widget.currentUser.id,
-                              // audioRecorder: _recorder,
-                            ), // goToCoachProfile(context),
-                          const SizedBox(width: 10),
+                            ),
+                          const SizedBox(width: 5),
                           if (widget.coachUser != null && widget.coachUser.avatar != null)
                             OlukoNeumorphism.isNeumorphismDesign
                                 ? Padding(
-                                    padding: const EdgeInsets.only(top: 20),
+                                    padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.01),
                                     child: GestureDetector(
                                         onTap: () {
                                           widget.onNavigation();
@@ -180,22 +179,19 @@ class _CoachAppBarState extends State<CoachAppBar> {
     ]);
   }
 
-  Padding coachAvatarImage() {
+  Widget coachAvatarImage() {
     final double _imageRadius = 24;
-    return Padding(
-      padding: const EdgeInsets.only(right: 5),
-      child: CachedNetworkImage(
-        height: _imageRadius * 2,
-        width: _imageRadius * 2,
-        maxWidthDiskCache: (_imageRadius * 2).toInt(),
-        maxHeightDiskCache: (_imageRadius * 2).toInt(),
-        fit: BoxFit.cover,
-        imageBuilder: (context, imageProvider) => CircleAvatar(
-          backgroundImage: imageProvider,
-          maxRadius: _imageRadius ?? 30,
-        ),
-        imageUrl: widget.coachUser.avatar,
+    return CachedNetworkImage(
+      height: _imageRadius * 2,
+      width: _imageRadius * 2,
+      maxWidthDiskCache: (_imageRadius * 2).toInt(),
+      maxHeightDiskCache: (_imageRadius * 2).toInt(),
+      fit: BoxFit.cover,
+      imageBuilder: (context, imageProvider) => CircleAvatar(
+        backgroundImage: imageProvider,
+        maxRadius: _imageRadius ?? 30,
       ),
+      imageUrl: widget.coachUser.avatar,
     );
   }
 
