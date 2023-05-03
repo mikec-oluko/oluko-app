@@ -102,7 +102,7 @@ class _MessageBubbleState extends State<MessageBubble> {
 
   Widget _buildMessageContainer() {
     return Container(
-      padding: widget.audioMessage != null ? EdgeInsets.only(left: 0.0, top: 10, right: 16) : EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+      padding: widget.audioMessage != null ? EdgeInsets.only(left: 16.0, top: 10, right: 16) : EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 87, 87, 87),
         borderRadius: widget.isCurrentUser
