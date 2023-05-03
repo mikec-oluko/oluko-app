@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/audio_message.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
@@ -146,7 +145,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       final UserResponse user = await UserRepository().getById(userId);
 
       ObjectSubmodel userObj = ObjectSubmodel(id: userId, image: user.avatar, name: '${user.firstName} ${user.lastName}', reference: userReference);
-      AudioMessage message = AudioMessage(user: userObj, audioMessage: audioContent);
+      Message message = Message(message: '', user: userObj, audioMessage: audioContent);
 
       message.createdAt = Timestamp.now();
       await CourseChatRepository().createMessage(message, courseId);
