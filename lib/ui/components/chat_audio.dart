@@ -26,7 +26,7 @@ class GenericAudioRecorder extends StatefulWidget {
   final bool showTextInit;
   final Widget timer;
 
-  const GenericAudioRecorder  ({
+  const GenericAudioRecorder ({
     this.userId, 
     this.onRecord, 
     this.onSave,
@@ -143,7 +143,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
                           widget.onRecord();
                           BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
                         } else {
-                          BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
+                          //BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
                           BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                         }
                       }))

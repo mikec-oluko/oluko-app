@@ -45,8 +45,8 @@ class Message extends Base {
     Map<String, dynamic> chatJson = {
       'last_connected': seenAt,
       'message': message,
-      'user': user.toJson(),
-      'audio_message': audioMessage.toJson()
+      'user': user != null ? user.toJson() : null,
+      'audio_message': audioMessage != null ? audioMessage.toJson() : null
     };
     chatJson.addEntries(super.toJson().entries);
     return chatJson;
