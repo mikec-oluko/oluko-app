@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.d
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
+import 'package:oluko_app/blocs/friends_weight_records_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -100,6 +101,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<bool> _completedBefore = [];
   UserResponse currentUser;
   AuthSuccess currentAuthState;
+  List<UserResponse> favoriteUsers = [];
 
   @override
   void initState() {
@@ -455,6 +457,9 @@ class _InsideClassesState extends State<InsideClass> {
             BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
               builder: (context, subscribedCourseUsersState) {
                 if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+                  favoriteUsers = subscribedCourseUsersState.favoriteUsers;
+
+                  // FriendsWeightRecordsBloc
                   final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
@@ -773,6 +778,8 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   void navigateToSegmentDetail(int segmentIndex) {
+    BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeightRecords(friendsList: favoriteUsers);
+
     if (_classSegments != null) {
       Navigator.pushNamed(
         context,

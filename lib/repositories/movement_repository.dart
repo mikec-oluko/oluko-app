@@ -7,6 +7,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 
 class MovementRepository {
@@ -101,4 +102,37 @@ class MovementRepository {
         .snapshots();
     return userWeightRecorsStream;
   }
+
+
+ static Future<Map<String, List<WeightRecord>>>getUsersRecords(List<String> usersIds) async {
+     Map<String, List<WeightRecord>> userRecordsMap = {};
+    if(usersIds.isNotEmpty){
+      usersIds.forEach((userId) async {
+      List<WeightRecord> userRecords =  await getWeightRecordsByUserId(userId);
+      userRecordsMap[userId] = userRecords;
+      });
+    return userRecordsMap;
+    }else{
+      return {};
+    }
+  }
+
+  static  Future<List<WeightRecord>> getWeightRecordsByUserId(String userId) async {
+    List<WeightRecord> records = [];
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getString('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('records').get();
+
+        if(querySnapshot.docs.isNotEmpty){
+          querySnapshot.docs.forEach((weightRecord) {
+            Map<String, dynamic> newWeightRecord = weightRecord.data() as Map<String, dynamic>;
+            records.add(WeightRecord.fromJson(newWeightRecord));
+          });
+        }
+        return records;
+  }
+
 }
