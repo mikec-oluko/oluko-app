@@ -47,7 +47,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
   @override
   void initState() {
-    BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
     BlocProvider.of<CoachMediaBloc>(context).dispose();
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachUser.id);
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
@@ -346,7 +346,7 @@ class _CoachProfileState extends State<CoachProfile> {
       onAudioPlaying: (bool playing) => _onPlayAudio(playing),
       onStartPlaying: () => _canStartPlaying(),
       durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
-      onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
+      onDelete: () => BlocProvider.of<GenericAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );
   }

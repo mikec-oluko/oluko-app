@@ -68,18 +68,18 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
   @override
   Widget build(BuildContext context) {
     Widget recordAudioContent = _sendAudioToCoachComponent(context);
-    return BlocBuilder<CoachAudioPanelBloc, CoachAudioPanelState>(
+    return BlocBuilder<GenericAudioPanelBloc, GenericAudioPanelState>(
       builder: (context, state) {
-        if (state is CoachAudioPanelDefault) {
+        if (state is GenericAudioPanelDefault) {
           recordAudioContent = _sendAudioToCoachComponent(context);
           _audiosRecorded.clear();
         }
-        if (state is CoachAudioPanelDeleted) {
+        if (state is GenericAudioPanelDeleted) {
           _audioRecorded = !_audioRecorded;
           _audiosRecorded.clear();
           recordAudioContent = _sendAudioToCoachComponent(context);
         }
-        if (state is CoachAudioPanelRecorded) {
+        if (state is GenericAudioPanelRecorded) {
           _audioRecordedElement = state.audioRecoded;
           recordAudioContent = Padding(
             padding: const EdgeInsets.only(bottom: 0),
@@ -88,7 +88,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
             ),
           );
         }
-        if (state is CoachAudioPanelConfirmDelete) {
+        if (state is GenericAudioPanelConfirmDelete) {
           recordAudioContent = _confirmDeleteComponent(context, state);
         }
 
@@ -97,7 +97,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
     );
   }
 
-  Container _confirmDeleteComponent(BuildContext context, CoachAudioPanelConfirmDelete state) {
+  Container _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
     return Container(
       width: ScreenUtils.width(context) / 1.2,
       height: 80,
@@ -118,12 +118,12 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
                 onPressed: () {
                   if (state.isAudioPreview) {
                     setState(() {
-                      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
+                      BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
                         audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
                       );
                     });
                   } else {
-                    BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+                    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                   }
                 },
                 child: Text(OlukoLocalizations.get(context, 'deny')),
@@ -141,10 +141,10 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
                             _audioRecordedElement = null;
                           });
                           widget.onRecord();
-                          BlocProvider.of<CoachAudioPanelBloc>(context).emitDeleteState();
+                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
                         } else {
                           BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
-                          BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                         }
                       }))
             ],
@@ -317,7 +317,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
       _audioRecorded = true;
       _recordingAudio = false;
       _audiosRecorded.add(_recorder.audioUrl);
-      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
+      BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
         audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
       );
     });
@@ -340,7 +340,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
       onAudioPlaying: (bool playing) => _onPlayAudio(playing),
       onStartPlaying: () => _canStartPlaying(),
       durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
-      onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
+      onDelete: () => BlocProvider.of<GenericAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );
   }
