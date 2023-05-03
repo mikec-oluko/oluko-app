@@ -123,7 +123,7 @@ class _MessageBubbleState extends State<MessageBubble> {
         crossAxisAlignment: widget.isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
-            widget.isCurrentUser ? 'You' : '$widget.firstName $widget.lastName',
+            widget.isCurrentUser ? 'You' : '${widget.firstName} ${widget.lastName}',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,

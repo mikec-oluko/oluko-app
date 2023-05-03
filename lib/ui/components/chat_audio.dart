@@ -22,17 +22,11 @@ class GenericAudioRecorder extends StatefulWidget {
   final String userId;
   final Function() onRecord;
   final Function(File audio, String userId, Duration  audioDuration) onSave;
-  final bool showTextOnMicPress;
-  final bool showTextInit;
-  final Widget timer;
 
   const GenericAudioRecorder ({
     this.userId, 
     this.onRecord, 
-    this.onSave,
-    this.showTextOnMicPress  = false, 
-    this.showTextInit = false,
-    this.timer,}) : super();
+    this.onSave,}) : super();
 
   @override
   State<GenericAudioRecorder> createState() => _GenericAudioRecorderState();
@@ -67,17 +61,17 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    Widget recordAudioContent = _sendAudioToCoachComponent(context);
+    Widget recordAudioContent = _sendAudioComponent(context);
     return BlocBuilder<GenericAudioPanelBloc, GenericAudioPanelState>(
       builder: (context, state) {
         if (state is GenericAudioPanelDefault) {
-          recordAudioContent = _sendAudioToCoachComponent(context);
+          recordAudioContent = _sendAudioComponent(context);
           _audiosRecorded.clear();
         }
         if (state is GenericAudioPanelDeleted) {
           _audioRecorded = !_audioRecorded;
           _audiosRecorded.clear();
-          recordAudioContent = _sendAudioToCoachComponent(context);
+          recordAudioContent = _sendAudioComponent(context);
         }
         if (state is GenericAudioPanelRecorded) {
           _audioRecordedElement = state.audioRecoded;
@@ -143,7 +137,6 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
                           widget.onRecord();
                           BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
                         } else {
-                          //BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
                           BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                         }
                       }))
@@ -154,7 +147,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
     );
   }
 
-  Container _sendAudioToCoachComponent(BuildContext context) {
+  Container _sendAudioComponent(BuildContext context) {
     return Container(height: 100, child: recordAudioInsideContent(context));
   }
 
@@ -278,11 +271,6 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
       onTap: () async {
         widget.onSave(File(_recorder.audioUrl), widget.userId,  _durationToSave);
       },
-        // onTap: () async {
-        //   BlocProvider.of<CoachAudioMessageBloc>(context)
-        //       .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
-        //   BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
-        // },
         child: Stack(alignment: Alignment.center, children: [
       if (OlukoNeumorphism.isNeumorphismDesign)
         Image.asset(
