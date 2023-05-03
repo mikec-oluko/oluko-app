@@ -235,7 +235,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
   Widget microphoneIconButtonContent({Icon iconForContent}) {
     return GestureDetector(
         onTap: () async {
-          if(!_recordingAudio){
+          if (!_recordingAudio) {
             widget.onRecord();
           }
           !_recorder.isInitialized ? _recorder.init() : null;
@@ -270,21 +270,23 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
     return GestureDetector(
       onTap: () async {
         widget.onSave(File(_recorder.audioUrl), widget.userId,  _durationToSave);
+        widget.onRecord();
+        BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
       },
         child: Stack(alignment: Alignment.center, children: [
-      if (OlukoNeumorphism.isNeumorphismDesign)
-        Image.asset(
-          'assets/neumorphic/audio_circle.png',
-          scale: 4,
-        )
-      else
-        const SizedBox.shrink(),
-      Image.asset(
-        'assets/courses/green_circle.png',
-        scale: 6,
-      ),
-      const Icon(Icons.send, color: Colors.white)
-    ]));
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            Image.asset(
+              'assets/neumorphic/audio_circle.png',
+              scale: 4,
+            )
+          else
+            const SizedBox.shrink(),
+          Image.asset(
+            'assets/courses/green_circle.png',
+            scale: 6,
+          ),
+          const Icon(Icons.send, color: Colors.white)
+        ]));
   }
 
   void startTimer() {

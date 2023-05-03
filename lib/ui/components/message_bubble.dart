@@ -42,10 +42,8 @@ class MessageBubble extends StatefulWidget {
   _MessageBubbleState createState() => _MessageBubbleState();
 }
 
-
 class _MessageBubbleState extends State<MessageBubble> {
   bool isAudioPlaying = false;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +102,7 @@ class _MessageBubbleState extends State<MessageBubble> {
 
   Widget _buildMessageContainer() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+      padding: widget.audioMessage != null ? EdgeInsets.only(left: 0.0, top: 10, right: 16) : EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 87, 87, 87),
         borderRadius: widget.isCurrentUser
@@ -135,7 +133,7 @@ class _MessageBubbleState extends State<MessageBubble> {
               style: const TextStyle(color: Colors.white),
             )
           else
-             PlayAudio(
+            PlayAudio(
               record: widget.audioMessage.url,
               //audioMessageItem: null,
               //isPreviewContent: isPreview,
@@ -144,7 +142,7 @@ class _MessageBubbleState extends State<MessageBubble> {
               durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
               showBin: false,
               //onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
-                 // .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
+              // .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
             )
         ],
       ),
