@@ -413,7 +413,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
-  void _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+  void _peopleAction(List<UserResponse> users, List<UserSubmodel> favorites) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
