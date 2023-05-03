@@ -31,6 +31,7 @@ class CourseChatRepository {
     DocumentReference docRef = reference.doc();
     message.id = docRef.id;
     await docRef.set(message.toJson());
+    await CourseChatRepository().updateUsersLastSeenMessage(courseChatId, message);
     return message;
   }
 
