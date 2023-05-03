@@ -153,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
               }
             }
           }
-          return Column(
+          return Wrap(
             children: [
               _showTodayLabel(index, messages),
               MessageBubble(

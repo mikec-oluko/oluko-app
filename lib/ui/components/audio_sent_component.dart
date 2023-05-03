@@ -221,6 +221,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
   }
 
   Future<void> _onPlay({String filePath}) async {
+
     if (!widget.onStartPlaying()) {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
@@ -268,6 +269,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
           widget.onAudioPlaying(_isPlaying);
         });
       }
-    }
+    
+  }
   }
 }

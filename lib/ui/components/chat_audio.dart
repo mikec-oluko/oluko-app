@@ -8,8 +8,8 @@ import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/play_audio.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -270,7 +270,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
       onTap: () async {
         widget.onSave(File(_recorder.audioUrl), widget.userId,  _durationToSave);
         widget.onRecord();
-        BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
+        BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
       },
         child: Stack(alignment: Alignment.center, children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
@@ -321,7 +321,7 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
   }
 
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
-    return PlayAudio(
+    return AudioSentComponent(
       valueNotifier: widget.onRecord,
       record: audioPath,
       audioMessageItem: audioMessageItem,
