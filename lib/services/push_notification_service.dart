@@ -7,6 +7,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import '../helpers/enum_collection.dart';
 
 class PushNotificationService {
   static FirebaseMessaging messagin = FirebaseMessaging.instance;
@@ -88,7 +89,8 @@ class PushNotificationService {
                               Navigator.pop(contextPush);
                               notifyNewPushNotification(message, contextPush);
                             },
-                            title: OlukoLocalizations.get(contextPush, 'goToCoach'),
+                            title: OlukoLocalizations.get(contextPush, message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder] ?
+                                                                        'goToCourses' : 'goToCoach',),
                           ),
                         ),
                       ],
