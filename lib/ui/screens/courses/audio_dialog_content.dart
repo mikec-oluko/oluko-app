@@ -63,8 +63,14 @@ class _State extends State<AudioDialogContent> {
                 Image.asset('assets/courses/photo_ellipse.png', scale: 4)
               ]),
               SizedBox(height: 15),
-              Text(coach == null ? widget.audio.userName : coach.getFullName(),
-                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
+              Text(
+                  coach == null
+                      ? widget.audio.userName != null
+                          ? widget.audio.userName
+                          : OlukoLocalizations.get(context, 'coach')
+                      : coach.getFullName(),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -127,7 +133,7 @@ class _State extends State<AudioDialogContent> {
       if (playedOnce) {
         await widget.audioPlayer.resume();
       } else {
-        // await widget.audioPlayer.play(url, isLocal: false);
+        await widget.audioPlayer.play(UrlSource(url));
         setState(() {
           playedOnce = true;
         });

@@ -6,15 +6,18 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
+import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -77,7 +80,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   UserStatistics userStats;
   Map<String, UserProgress> _usersProgress = {};
   int courseIndex = 0;
-  List<Course> _courses;
+  List<Course> _courses = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
   List<ChallengeNavigation> _listOfChallenges = [];
   UpcomingChallengesState _challengesCardsState;
@@ -89,8 +92,8 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   @override
   void initState() {
-    BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
-    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
+    // BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
+    // BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
 
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
@@ -143,24 +146,29 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
               body: Container(
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 constraints: const BoxConstraints.expand(),
-                child: ListView(
+                child: ListView.builder(
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   clipBehavior: Clip.none,
                   padding: EdgeInsets.zero,
+                  itemCount: 1,
                   shrinkWrap: true,
-                  children: [
-                    _userCoverAndProfileDetails(),
-                    _enrolledCoursesAndPeople(),
-                    myListOfCoursesAndFriendsRecommended(),
-                    _challengesSection(),
-                    _transformationPhotos(),
-                    _assessmentVideos(),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      width: MediaQuery.of(context).size.width,
-                    )
-                  ],
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        _userCoverAndProfileDetails(),
+                        _enrolledCoursesAndPeople(),
+                        myListOfCoursesAndFriendsRecommended(),
+                        _challengesSection(),
+                        _transformationPhotos(),
+                        _assessmentVideos(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.width,
+                        )
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -317,16 +325,25 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     Course courseSelected = _courses.where((course) => course.id == _courseEnrollmentList[courseIndex].course.id).first;
     EnrollmentClass firstIncompletedClass = getClassToGo(_courseEnrollmentList[courseIndex].classes);
     ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompletedClass.id).first;
+    final classIndex = _courses[_courses.indexOf(courseSelected)].classes.indexOf(classToGo);
+
     Navigator.pushNamed(
       context,
       routeLabels[RouteEnum.insideClass],
       arguments: {
         'courseEnrollment': _courseEnrollmentList[courseIndex],
-        'classIndex': _courses[_courses.indexOf(courseSelected)].classes.indexOf(classToGo),
+        'classIndex': classIndex,
         'courseIndex': _courses.indexOf(courseSelected),
         'actualCourse': courseSelected
       },
     );
+  }
+
+  void callProvidersForInsideClassView(BuildContext context, int classIndex) {
+    BlocProvider.of<ClassBloc>(context).get(_courseEnrollmentList[courseIndex].classes[classIndex].id);
+    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(_courseEnrollmentList[courseIndex].classes[classIndex]);
+    BlocProvider.of<EnrollmentAudioBloc>(context).get(_courseEnrollmentList[courseIndex].id, _courseEnrollmentList[courseIndex].classes[classIndex].id);
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].userId);
   }
 
   Widget _friendsRecommended() {

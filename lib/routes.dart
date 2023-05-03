@@ -572,6 +572,8 @@ class Routes {
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1437,6 +1439,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),

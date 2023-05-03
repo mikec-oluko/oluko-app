@@ -517,8 +517,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           if (state is GetChallengeStreamSuccess) {
             _activeChallenges = state.challenges;
             listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
-          }
-          if (state is ChallengesForUserRequested) {
+          } else if (state is ChallengesForUserRequested) {
             _activeChallenges = state.challenges;
             listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
           }

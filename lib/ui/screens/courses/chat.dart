@@ -174,38 +174,36 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-Widget _buttonSend(bool isText) {
-  return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
-    builder: (context, state) {
-      return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          double halfWidth = constraints.maxWidth;
+  Widget _buttonSend(bool isText) {
+    return BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+      builder: (context, state) {
+        return LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            double halfWidth = constraints.maxWidth;
 
-          Widget buttonWidget = Container(
-            width: halfWidth,
-            child: OlukoNeumorphicCircleButton(
-              customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
-              onPressed: () => _handleSubmitted(_textController.text),
-            ),
-          );
-          
-          Widget chatAudioWidget = Container(
-            width: halfWidth,
-            child: GenericAudioRecorder(
-              userId: widget.currentUser.id,
-              onRecord: changeValueNotifier,
-              onSave: onSaveAudio,
-            ),
-          );
+            Widget buttonWidget = Container(
+              width: halfWidth,
+              child: OlukoNeumorphicCircleButton(
+                customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
+                onPressed: () => _handleSubmitted(_textController.text),
+              ),
+            );
 
-          return (state is Changebutton && !state.showButton)
-              ? buttonWidget
-              : chatAudioWidget;
-        },
-      );
-    },
-  );
-}
+            Widget chatAudioWidget = Container(
+              width: halfWidth,
+              child: GenericAudioRecorder(
+                userId: widget.currentUser.id,
+                onRecord: changeValueNotifier,
+                onSave: onSaveAudio,
+              ),
+            );
+
+            return (state is Changebutton && !state.showButton) ? buttonWidget : chatAudioWidget;
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +259,9 @@ Widget _buttonSend(bool isText) {
                           valueListenable: _takenSurvey,
                           builder: (context, takenSurvey, child) {
                             if (_takenSurvey.value) {
-                              return const SizedBox(width: 0,);
+                              return const SizedBox(
+                                width: 0,
+                              );
                             } else {
                               return Flexible(
                                 flex: 6,

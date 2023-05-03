@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -186,7 +187,21 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         width: 120,
         height: 40,
         child: TextFormField(
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          onChanged: (value) {
+            if (value == '') {
+              movementsWeights[movementId] = null;
+            } else {
+              if (widget.useImperialSystem) {
+                movementsWeights[movementId] = double.parse(value);
+              } else {
+                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
+              }
+            }
+            currentMovementAndWeight.weight = movementsWeights[movementId];
+            widget.movementWeigths(listOfWeigthsToUpdate);
+          },
           onTap: () {},
           onFieldSubmitted: (value) {
             if (value == '') {
