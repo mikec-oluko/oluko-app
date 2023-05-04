@@ -121,7 +121,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
                   children: [
                     const SizedBox(),
                     Text(
-                      _totalDuration != null
+                      _totalDuration != null && _isPlaying
                           ? TimeConverter.durationToString(_totalDuration)
                           : widget.durationFromRecord != null
                               ? TimeConverter.durationToString(widget.durationFromRecord)

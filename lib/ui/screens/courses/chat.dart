@@ -221,7 +221,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
-                      messages = state.messages;
+                      final newMessages = state.messages;
+                      newMessages.forEach((element) {
+                       if(messages.where((message) => message.id == element.id).isEmpty){
+                          messages = [element, ...messages];
+                       }
+                      });
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
                     } else if (state is MessagesScroll) {
                       _isLoadingMoreMessages = false;
