@@ -108,29 +108,32 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
       trailing: getWeight(movement) == null
-          ? SizedBox.shrink()
+          ? const SizedBox.shrink()
           : Container(
               width: 100,
               height: 40,
-              decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/courses/weight_icon.png',
-                    scale: 3,
-                  ),
-                  Text(
-                    widget.weightRecords.isNotEmpty ? getWeight(movement) : '0',
-                    style: OlukoFonts.olukoMediumFont(),
-                  ),
-                  const SizedBox(
-                    width: 2,
-                  ),
-                  Text(
-                    widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-                    style: OlukoFonts.olukoMediumFont(),
-                  )
-                ],
+              decoration: const BoxDecoration(color: OlukoColors.divider, borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/courses/weight_icon.png',
+                      scale: 3,
+                    ),
+                    Text(
+                      widget.weightRecords.isNotEmpty ? double.parse(getWeight(movement)).round().toString() : '0',
+                      style: OlukoFonts.olukoMediumFont(),
+                    ),
+                    const SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
+                      style: OlukoFonts.olukoMediumFont(),
+                    )
+                  ],
+                ),
               ),
             ),
       title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),

@@ -96,20 +96,29 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         Column(
           children: PrivacyOptions.privacyOptionsList.map((option) => _buildOptionTiles(context, option)).toList(),
         ),
-        Column(
-          children: [
-            _addSectionTitle(titleForSection: ProfileViewConstants.weightMeasurement),
-            Column(
-              children: [
-                Column(children: [
-                  weightOption(title: OlukoLocalizations.get(context, 'useKilograms'), isSelected: !_useImperial), const OlukoNeumorphicDivider(),
-                ]),
-                Column(
-                    children: [weightOption(title: OlukoLocalizations.get(context, 'usePounds'), isSelected: _useImperial), const OlukoNeumorphicDivider(),],)
-              ],
-            ),
-          ],
-        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+          child: Column(
+            children: [
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+              ),
+              const OlukoNeumorphicDivider(),
+              Column(
+                children: [
+                  Column(children: [
+                    weightOption(title: OlukoLocalizations.get(context, 'useKilograms'), isSelected: !_useImperial),
+                    const OlukoNeumorphicDivider()
+                  ]),
+                  Column(
+                      children: [weightOption(title: OlukoLocalizations.get(context, 'usePounds'), isSelected: _useImperial), const OlukoNeumorphicDivider()])
+                ],
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
