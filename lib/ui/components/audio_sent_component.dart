@@ -7,7 +7,6 @@ import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
-
 class AudioSentComponent extends StatefulWidget {
   final String record;
   final Duration durationFromRecord;
@@ -21,20 +20,20 @@ class AudioSentComponent extends StatefulWidget {
   final bool showDate;
   final Function valueNotifier;
 
-  const AudioSentComponent(
-      {Key key,
-      this.record,
-      this.isPreviewContent = false,
-      this.onDelete,
-      this.audioMessageItem,
-      this.durationFromRecord,
-      this.onAudioPlaying,
-      this.isForList = false,
-      this.onStartPlaying,
-      this.showBin = true,
-      this.showDate = true,
-      this.valueNotifier,})
-      : super(key: key);
+  const AudioSentComponent({
+    Key key,
+    this.record,
+    this.isPreviewContent = false,
+    this.onDelete,
+    this.audioMessageItem,
+    this.durationFromRecord,
+    this.onAudioPlaying,
+    this.isForList = false,
+    this.onStartPlaying,
+    this.showBin = true,
+    this.showDate = true,
+    this.valueNotifier,
+  }) : super(key: key);
 
   @override
   State<AudioSentComponent> createState() => _AudioSentComponentState();
@@ -55,6 +54,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
   }
 
   //Pause the audio playing on background, when widget is removed from Widget tree.
+  @override
   void deactivate() {
     audioPlayer.pause();
     super.deactivate();
@@ -221,7 +221,6 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
   }
 
   Future<void> _onPlay({String filePath}) async {
-
     if (!widget.onStartPlaying()) {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
@@ -254,7 +253,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
           _totalDuration = duration;
         });
       });
-
+      _totalDuration ??= await audioPlayer.getDuration();
       audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
@@ -269,7 +268,6 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
           widget.onAudioPlaying(_isPlaying);
         });
       }
-    
-  }
+    }
   }
 }
