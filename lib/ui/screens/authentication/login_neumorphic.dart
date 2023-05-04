@@ -9,6 +9,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -17,8 +18,6 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-
-import '../../../routes.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
   LoginNeumorphicPage({this.dontShowWelcomeTest, this.userDeleted = false, Key key}) : super(key: key);
@@ -265,7 +264,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             ),
           ),
         ),
-      /*const SizedBox(
+      const SizedBox(
         height: 15,
       ),
       SizedBox(
@@ -294,7 +293,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       SizedBox(
         width: ScreenUtils.width(context),
         child: getExternalLoginButtons(),
-      ),*/
+      ),
     ];
   }
 
@@ -413,7 +412,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
                 ),
                 backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
               ),
-              onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithApple(context),
+              onPressed: () => BlocProvider.of<AuthBloc>(context).continueWithApple(context),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

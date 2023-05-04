@@ -280,7 +280,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> loginWithApple(BuildContext context) async {
+  Future<void> continueWithApple(BuildContext context) async {
     if (!_globalService.hasInternetConnection) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
       return;
