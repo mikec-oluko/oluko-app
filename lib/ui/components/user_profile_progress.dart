@@ -57,6 +57,8 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
                 children: [
                   profileNeumorphicAccomplishments(
                       achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: ['mvt', 'points'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
                 ],
               ),
             ),
@@ -132,23 +134,49 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
       '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
     );
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            achievementValue,
-            style: OlukoFonts.olukoSuperBigFont(customColor: color, customFontWeight: FontWeight.w500),
-          ),
-          const SizedBox(
-            width: 5,
-          ),
-          Expanded(
-            child: textElem,
-          ),
-        ],
+    bool isClicked = false;
+    return GestureDetector(
+        onTap: ()=> isClicked = true,
+        child: Expanded(
+      child: Stack(alignment: AlignmentDirectional.center, children: [
+        isClicked ? _blackBackground() : SizedBox(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              achievementValue,
+              style: _style(isClicked),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Expanded(
+              child: textElem,
+            ),
+            isClicked ? Icon(Icons.keyboard_arrow_right_rounded, color: OlukoColors.grayColor, size: 26) : SizedBox()
+          ],
+        )
+      ]),
+    ));
+  }
+
+  Widget _blackBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(6.0)),
+        color: OlukoColors.blackColorSemiTransparent,
       ),
+      width: 200,
+      height: 50,
     );
+  }
+
+  TextStyle _style(bool clicked) {
+    if (clicked) {
+      return OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700);
+    } else {
+      return OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500);
+    }
   }
 }

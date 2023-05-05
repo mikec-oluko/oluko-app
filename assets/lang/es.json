@@ -443,11 +443,7 @@
     "useKilograms": "Kilogramos (KGs)",
     "usePounds": "Libras (LBs)",
     "addWeight": "Añadir peso",
-    "community":"Comunidad"
-
-
-
-
-
-
+    "community":"Comunidad",
+    "mvt": "MVT",
+    "points": "Points"
 }
