@@ -139,8 +139,6 @@ class _MessageBubbleState extends State<MessageBubble> {
               onStartPlaying: () => _canStartPlaying(),
               durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
               showBin: false,
-              //onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
-              // .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
             )
         ],
       ),

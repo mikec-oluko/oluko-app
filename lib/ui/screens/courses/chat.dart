@@ -59,17 +59,14 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   List<Message> messages = [];
   List<UserResponse> participants = [];
-  String message;
-  final TextEditingController _textController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  CourseEnrollmentChatBloc _chatBloc;
   bool _isLoadingMoreMessages = false;
   double currentScrollPosition = 0;
-
   PanelController panelController = PanelController();
   SoundRecorder recorder;
 
   final ValueNotifier<bool> _takenSurvey = ValueNotifier(false);
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   void changeValueNotifier() {
     _takenSurvey.value = !_takenSurvey.value;
@@ -98,6 +95,50 @@ class _ChatScreenState extends State<ChatScreen> {
     if (text != '' && text != null) {
       BlocProvider.of<CourseEnrollmentChatBloc>(context).createMessage(widget.courseEnrollment.userId, widget.courseEnrollment.course.id, text);
     }
+  }
+
+  List<String> _getNameAndLastName(String fullName) {
+    final List<String> nameAndLastName = [];
+    if (fullName != null) {
+      final List<String> splitName = fullName.split(' ');
+      if (splitName.isNotEmpty) {
+        nameAndLastName.add(splitName[0]);
+        if (splitName.length >= 2) {
+          nameAndLastName.add(splitName[1]);
+        }
+      }
+    }
+    return nameAndLastName;
+  }
+
+  void _addNewMessagesToMessagesArray(List<Message> listenedMessages) {
+    if (messages.isEmpty) {
+      messages = listenedMessages;
+    } else {
+      final messagesGot = listenedMessages;
+      bool messageShown;
+      messagesGot.forEach((element) => {
+            messageShown = messages.where((message) => message.id == element.id).isEmpty,
+            if (messageShown)
+              {
+                messages = [element, ...messages]
+              }
+          });
+    }
+  }
+
+  void _addNewMessagesAndParticipantsToArraysIfScroll(List<Message> scrollMessages, List<UserResponse> scrollParticipants) {
+    final previousMessages = scrollMessages;
+    final newMessages = [...messages, ...previousMessages];
+    final previousParticipants = scrollParticipants;
+    final newParticipants = [...participants, ...previousParticipants];
+    participants = newParticipants;
+    messages = newMessages;
+  }
+
+  void onSaveAudio(File audio, String userId, Duration audioDuration) {
+    BlocProvider.of<CourseEnrollmentChatBloc>(context)
+        .saveChatAudioMessage(audioRecorded: audio, userId: userId, courseId: widget.courseEnrollment.course.id, audioDuration: audioDuration);
   }
 
   Widget _showTodayLabel(int index, List<Message> messages) {
@@ -134,41 +175,42 @@ class _ChatScreenState extends State<ChatScreen> {
         }
         return false;
       },
-      child: ListView.builder(
+      child: ListView.custom(
         controller: _scrollController,
         reverse: true,
-        itemCount: messages.length,
-        itemBuilder: (BuildContext context, int index) {
-          final message = messages[index];
-          final userIndex = participants.indexWhere((element) => messages[index].user.id == element.id);
-          final isCurrentUser = message.user.id == currentUserId;
-          String firstName;
-          String lastName;
-          if (message.user.name != null) {
-            final List<String> splitName = message.user.name.split(' ');
-            if (splitName.isNotEmpty) {
-              firstName = splitName[0];
-              if (splitName.length >= 2) {
-                lastName = splitName[1];
-              }
-            }
-          }
-          return Wrap(
-            children: [
-              _showTodayLabel(index, messages),
-              MessageBubble(
-                firstName: firstName,
-                lastName: lastName ?? firstName,
-                userImage: message.user.image,
-                messageText: message.message,
-                isCurrentUser: isCurrentUser,
-                user: userIndex == -1 ? null : participants[userIndex],
-                authUserId: currentUserId,
-                audioMessage: message?.audioMessage,
-              ),
-            ],
-          );
-        },
+        childrenDelegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            final message = messages[index];
+            final userIndex = participants.indexWhere((element) => messages[index].user.id == element.id);
+            final isCurrentUser = message.user.id == currentUserId;
+            final List<String> nameAndLastName = _getNameAndLastName(message.user.name);
+            final String firstName = nameAndLastName[0];
+            final String lastName = nameAndLastName[nameAndLastName.length - 1];
+            return Column(
+              key: ValueKey(message.id),
+              children: [
+                _showTodayLabel(index, messages),
+                MessageBubble(
+                  key: ValueKey(message.id),
+                  firstName: firstName,
+                  lastName: lastName ?? firstName,
+                  userImage: message.user.image,
+                  messageText: message.message,
+                  isCurrentUser: isCurrentUser,
+                  user: userIndex == -1 ? null : participants[userIndex],
+                  authUserId: currentUserId,
+                  audioMessage: message?.audioMessage,
+                ),
+              ],
+            );
+          },
+          childCount: messages.length,
+          findChildIndexCallback: (Key key) {
+            final ValueKey valueKey = key as ValueKey;
+            final index = messages.indexWhere((message) => message.id == valueKey.value);
+            return index == -1 ? null : index;
+          },
+        ),
       ),
     );
   }
@@ -178,9 +220,9 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (context, state) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            double halfWidth = constraints.maxWidth;
+            final double halfWidth = constraints.maxWidth;
 
-            Widget buttonWidget = Container(
+            final Widget buttonWidget = SizedBox(
               width: halfWidth,
               child: OlukoNeumorphicCircleButton(
                 customIcon: const Icon(Icons.send, color: OlukoColors.grayColor),
@@ -188,7 +230,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             );
 
-            Widget chatAudioWidget = Container(
+            final Widget chatAudioWidget = SizedBox(
               width: halfWidth,
               child: GenericAudioRecorder(
                 userId: widget.currentUser.id,
@@ -202,6 +244,46 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       },
     );
+  }
+
+  Widget _chatInput() {
+    return ValueListenableBuilder(
+        valueListenable: _takenSurvey,
+        builder: (context, takenSurvey, child) {
+          if (_takenSurvey.value) {
+            return const SizedBox(
+              width: 0,
+            );
+          } else {
+            return Flexible(
+              flex: 6,
+              child: Center(
+                child: SizedBox(
+                  child: SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: _textController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 15.0),
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                      onSubmitted: _handleSubmitted,
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+        });
   }
 
   @override
@@ -221,21 +303,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
-                      final newMessages = state.messages;
-                      newMessages.forEach((element) {
-                       if(messages.where((message) => message.id == element.id).isEmpty){
-                          messages = [element, ...messages];
-                       }
-                      });
+                      _addNewMessagesToMessagesArray(state.messages);
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
                     } else if (state is MessagesScroll) {
                       _isLoadingMoreMessages = false;
-                      final previousMessages = state.messages;
-                      final newMessages = [...messages, ...previousMessages];
-                      final previousParticipants = state.participants;
-                      final newParticipants = [...participants, ...previousParticipants];
-                      participants = newParticipants;
-                      messages = newMessages;
+                      _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
                     } else if (messages.isNotEmpty) {
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
@@ -259,43 +331,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ValueListenableBuilder(
-                          valueListenable: _takenSurvey,
-                          builder: (context, takenSurvey, child) {
-                            if (_takenSurvey.value) {
-                              return const SizedBox(
-                                width: 0,
-                              );
-                            } else {
-                              return Flexible(
-                                flex: 6,
-                                child: Center(
-                                  child: SizedBox(
-                                    child: SizedBox(
-                                      width: 300,
-                                      child: TextField(
-                                        controller: _textController,
-                                        style: const TextStyle(color: Colors.white),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          contentPadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 15.0),
-                                        ),
-                                        textAlignVertical: TextAlignVertical.center,
-                                        onSubmitted: _handleSubmitted,
-                                        maxLines: null,
-                                        keyboardType: TextInputType.multiline,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-                          }),
+                      _chatInput(),
                       Flexible(
                         flex: 1,
                         child: _buttonSend(_textController.text.isNotEmpty),
@@ -307,10 +343,5 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ),
         ));
-  }
-
-  void onSaveAudio(File audio, String userId, Duration audioDuration) {
-    BlocProvider.of<CourseEnrollmentChatBloc>(context)
-        .saveChatAudioMessage(audioRecorded: audio, userId: userId, courseId: widget.courseEnrollment.course.id, audioDuration: audioDuration);
   }
 }
