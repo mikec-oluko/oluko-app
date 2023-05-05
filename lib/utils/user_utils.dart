@@ -63,6 +63,20 @@ class UserUtils {
     return true;
   }
 
+  static List<String> getNameAndLastNameByFullName(String fullName) {
+  final List<String> nameAndLastName = [];
+    if (fullName != null) {
+      final List<String> splitName = fullName.split(' ');
+      if (splitName.isNotEmpty) {
+        nameAndLastName.add(splitName[0]);
+        if (splitName.length >= 2) {
+          nameAndLastName.add(splitName[1]);
+        }
+      }
+    }
+  return nameAndLastName;
+}
+
   static bool userDeviceIsIOS() => Platform.isIOS;
   static bool userDeviceIsAndrioid() => Platform.isAndroid;
 

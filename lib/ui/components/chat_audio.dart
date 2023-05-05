@@ -90,6 +90,53 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
     );
   }
 
+  Widget _showTextToAllowOrDeny(BuildContext context, GenericAudioPanelConfirmDelete state){
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+      child: Wrap(children: [
+        Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))
+      ]),
+    );
+  }
+
+  Widget _showAllowButton(BuildContext context, GenericAudioPanelConfirmDelete state){
+    return Container(
+        width: 80,
+        height: 40,
+        child: OlukoNeumorphicPrimaryButton(
+            thinPadding: true,
+            isExpanded: false,
+            title: OlukoLocalizations.get(context, 'allow'),
+            onPressed: () {
+              if (state.isAudioPreview) {
+                setState(() {
+                  _audioRecordedElement = null;
+                });
+                widget.onRecord();
+                BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
+              } else {
+                BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+              }
+            }));
+  }
+
+  Widget _showDenyButton(BuildContext context, GenericAudioPanelConfirmDelete state){
+    return TextButton(
+      onPressed: () {
+        if (state.isAudioPreview) {
+          setState(() {
+            BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
+              audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
+            );
+          });
+        } else {
+          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+        }
+      },
+      child: Text(OlukoLocalizations.get(context, 'deny')),
+    );
+  }
+
   Container _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
     return Container(
       width: ScreenUtils.width(context) / 1.2,
@@ -98,47 +145,12 @@ class _GenericAudioRecorderState extends State<GenericAudioRecorder> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-            child: Wrap(children: [
-              Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))
-            ]),
-          ),
+          _showTextToAllowOrDeny(context, state),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              TextButton(
-                onPressed: () {
-                  if (state.isAudioPreview) {
-                    setState(() {
-                      BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
-                        audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
-                      );
-                    });
-                  } else {
-                    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-                  }
-                },
-                child: Text(OlukoLocalizations.get(context, 'deny')),
-              ),
-              Container(
-                  width: 80,
-                  height: 40,
-                  child: OlukoNeumorphicPrimaryButton(
-                      thinPadding: true,
-                      isExpanded: false,
-                      title: OlukoLocalizations.get(context, 'allow'),
-                      onPressed: () {
-                        if (state.isAudioPreview) {
-                          setState(() {
-                            _audioRecordedElement = null;
-                          });
-                          widget.onRecord();
-                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
-                        } else {
-                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-                        }
-                      }))
+              _showDenyButton(context, state),
+              _showAllowButton(context, state)
             ],
           )
         ],

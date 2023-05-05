@@ -22,6 +22,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:oluko_app/utils/user_utils.dart';
+import 'package:oluko_app/utils/chat_utils.dart';
+
 
 class Chat extends StatelessWidget {
   final CourseEnrollment courseEnrollment;
@@ -97,36 +100,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  List<String> _getNameAndLastName(String fullName) {
-    final List<String> nameAndLastName = [];
-    if (fullName != null) {
-      final List<String> splitName = fullName.split(' ');
-      if (splitName.isNotEmpty) {
-        nameAndLastName.add(splitName[0]);
-        if (splitName.length >= 2) {
-          nameAndLastName.add(splitName[1]);
-        }
-      }
-    }
-    return nameAndLastName;
-  }
-
-  void _addNewMessagesToMessagesArray(List<Message> listenedMessages) {
-    if (messages.isEmpty) {
-      messages = listenedMessages;
-    } else {
-      final messagesGot = listenedMessages;
-      bool messageShown;
-      messagesGot.forEach((element) => {
-            messageShown = messages.where((message) => message.id == element.id).isEmpty,
-            if (messageShown)
-              {
-                messages = [element, ...messages]
-              }
-          });
-    }
-  }
-
   void _addNewMessagesAndParticipantsToArraysIfScroll(List<Message> scrollMessages, List<UserResponse> scrollParticipants) {
     final previousMessages = scrollMessages;
     final newMessages = [...messages, ...previousMessages];
@@ -183,7 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
             final message = messages[index];
             final userIndex = participants.indexWhere((element) => messages[index].user.id == element.id);
             final isCurrentUser = message.user.id == currentUserId;
-            final List<String> nameAndLastName = _getNameAndLastName(message.user.name);
+            final List<String> nameAndLastName = UserUtils.getNameAndLastNameByFullName(message.user.name);
             final String firstName = nameAndLastName[0];
             final String lastName = nameAndLastName[nameAndLastName.length - 1];
             return Column(
@@ -303,7 +276,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is MessagesUpdated) {
-                      _addNewMessagesToMessagesArray(state.messages);
+                      messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
                     } else if (state is MessagesScroll) {
                       _isLoadingMoreMessages = false;
