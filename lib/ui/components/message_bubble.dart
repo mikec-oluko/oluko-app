@@ -9,12 +9,14 @@ import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
 import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
-class MessageBubble extends StatelessWidget {
+class MessageBubble extends StatefulWidget {
   final String firstName;
   final String lastName;
   final String userImage;
@@ -22,6 +24,7 @@ class MessageBubble extends StatelessWidget {
   final String messageText;
   final bool isCurrentUser;
   final UserResponse user;
+  final AudioMessageSubmodel audioMessage;
 
   const MessageBubble({
     @required this.firstName,
@@ -31,8 +34,16 @@ class MessageBubble extends StatelessWidget {
     @required this.messageText,
     @required this.isCurrentUser,
     @required this.user,
+    this.audioMessage,
     Key key,
   }) : super(key: key);
+
+  @override
+  _MessageBubbleState createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends State<MessageBubble> {
+  bool isAudioPlaying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,16 +51,16 @@ class MessageBubble extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: widget.isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isCurrentUser) ...[
-            GestureDetector(onTap: () => user.privacy < 2 ? friendModal(context) : null, child: _buildUserAvatar()),
+          if (!widget.isCurrentUser) ...[
+            GestureDetector(onTap: () => widget.user.privacy < 2 ? friendModal(context) : null, child: _buildUserAvatar()),
             const SizedBox(width: 8.0),
           ],
           Flexible(
             child: _buildMessageContainer(),
           ),
-          if (isCurrentUser) ...[
+          if (widget.isCurrentUser) ...[
             const SizedBox(width: 8.0),
             _buildUserAvatar(),
           ],
@@ -61,8 +72,8 @@ class MessageBubble extends StatelessWidget {
   friendModal(BuildContext context) {
     BottomDialogUtils.showBottomDialog(
       content: FriendModalContent(
-          user,
-          authUserId,
+          widget.user,
+          widget.authUserId,
           null,
           BlocProvider.of<FriendBloc>(context),
           BlocProvider.of<FriendRequestBloc>(context),
@@ -77,24 +88,24 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildUserAvatar() {
     final double avatarRadius = 16;
-    return userImage == null
+    return widget.userImage == null
         ? UserUtils.avatarImageDefault(
             maxRadius: avatarRadius,
-            name: firstName,
-            lastname: lastName,
+            name: widget.firstName,
+            lastname: widget.lastName,
           )
         : CircleAvatar(
-            backgroundImage: NetworkImage(userImage),
+            backgroundImage: NetworkImage(widget.userImage),
             radius: avatarRadius,
           );
   }
 
   Widget _buildMessageContainer() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+      padding: widget.audioMessage != null ? EdgeInsets.only(left: 16.0, top: 10, right: 16) : EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 87, 87, 87),
-        borderRadius: isCurrentUser
+        borderRadius: widget.isCurrentUser
             ? const BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 bottomLeft: Radius.circular(12.0),
@@ -107,21 +118,40 @@ class MessageBubble extends StatelessWidget {
               ),
       ),
       child: Column(
-        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: widget.isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
-            isCurrentUser ? 'You' : '$firstName $lastName',
+            widget.isCurrentUser ? 'You' : '${widget.firstName} ${widget.lastName}',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          Text(
-            messageText,
-            style: const TextStyle(color: Colors.white),
-          ),
+          if (widget.audioMessage == null)
+            Text(
+              widget.messageText,
+              style: const TextStyle(color: Colors.white),
+            )
+          else
+            AudioSentComponent(
+              record: widget.audioMessage.url,
+              onAudioPlaying: (bool playing) => _onPlayAudio(playing),
+              onStartPlaying: () => _canStartPlaying(),
+              durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
+              showBin: false,
+            )
         ],
       ),
     );
   }
+
+  void _onPlayAudio(bool isPlaying) {
+    if (isPlaying != null) {
+      setState(() {
+        isAudioPlaying = isPlaying;
+      });
+    }
+  }
+
+  bool _canStartPlaying() => isAudioPlaying;
 }
