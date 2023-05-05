@@ -16,6 +16,8 @@ class Course extends Base {
   List<dynamic> images;
   DocumentReference statisticsReference;
   bool hasChat;
+  List<DateTime> scheduledDates;
+  List<String> weekDays;
 
   Course(
       {this.name,
@@ -31,6 +33,7 @@ class Course extends Base {
       this.description,
       this.hasChat,
       this.userSelfies,
+      this.weekDays,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -64,6 +67,7 @@ class Course extends Base {
           : json['user_selfies'] is String
               ? [json['user_selfies'] as String]
               : List<String>.from((json['user_selfies'] as Iterable).map((userSelfie) => userSelfie as String)),
+      weekDays: json['week_days'] as List<String>
     );
     course.setBase(json);
     return course;

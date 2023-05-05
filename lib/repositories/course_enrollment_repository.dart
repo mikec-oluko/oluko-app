@@ -156,7 +156,7 @@ class CourseEnrollmentRepository {
     final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
     final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
     CourseEnrollment courseEnrollment =
-        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
+        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: [], weekDays: course.weekDays);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
@@ -172,6 +172,7 @@ class CourseEnrollmentRepository {
         image: course.classes[i].image,
         reference: course.classes[i].reference,
         segments: [],
+        scheduledDate: course.scheduledDates != null && course.scheduledDates.isNotEmpty ? Timestamp.fromDate(course.scheduledDates[i]) : null,
       ),
     );
 

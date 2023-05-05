@@ -8,6 +8,19 @@ Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.restricted: 'restrictedSubtitle',
   SettingsPrivacyOptions.anonymous: 'anonymousSubtitle',
 };
+
+enum WeekDays { MO, TU, WE, TH, FR, SA, SU }
+
+Map<WeekDays, String> weekDays = {
+  WeekDays.MO: 'MO',
+  WeekDays.TU: 'TU',
+  WeekDays.WE: 'WE',
+  WeekDays.TH: 'TH',
+  WeekDays.FR: 'FR',
+  WeekDays.SA: 'SA',
+  WeekDays.SU: 'SU',
+};
+
 enum EmailTemplateEnum { contactUs }
 Map<EmailTemplateEnum, String> emailTemplates = {
   EmailTemplateEnum.contactUs: 'ContactUs',

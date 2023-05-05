@@ -25,6 +25,7 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_service.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
+import 'package:oluko_app/ui/components/schedule_modal_content.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
@@ -38,8 +39,6 @@ import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
-import 'package:oluko_app/utils/sound_utils.dart';
-import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class CourseMarketing extends StatefulWidget {
@@ -337,7 +336,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 thinPadding: true,
                 title: OlukoLocalizations.get(context, 'enroll'),
                 onPressed: () {
-                  enrollAction(context);
+                  showScheduleDialog(context);
                 },
               )
             else
@@ -345,7 +344,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 title: OlukoLocalizations.get(context, 'enroll'),
                 isDisabled: _disableAction,
                 onPressed: () {
-                  enrollAction(context);
+                  showScheduleDialog(context);
                 },
               ),
           ],
@@ -354,6 +353,28 @@ class _CourseMarketingState extends State<CourseMarketing> {
     } else {
       return const SizedBox();
     }
+  }
+
+  void showScheduleDialog(BuildContext context){
+    BottomDialogUtils.showBottomDialog(
+          content: ScheduleModalContent(
+            course: widget.course,
+            user: _user,
+            totalClasses: _allCourseClasses.length,
+            firstAppInteractionAt: _userState.user.firstAppInteractionAt,
+            isCoachRecommendation: widget.isCoachRecommendation,
+            disableAction: _disableAction,
+            blocAuth: BlocProvider.of<AuthBloc>(context),
+            blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
+            blocRecommendation: BlocProvider.of<RecommendationBloc>(context),
+            onEnrollAction: (){
+              setState(() {
+                _disableAction = true;
+              });
+            },
+          ),
+          context: context,
+        );
   }
 
   Future<void> enrollAction(BuildContext context) async {

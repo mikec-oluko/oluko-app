@@ -443,7 +443,15 @@
     "useKilograms": "Kilogramos (KGs)",
     "usePounds": "Libras (LBs)",
     "addWeight": "Añadir peso",
-    "community":"Comunidad"
+    "community":"Comunidad",
+    "setYourSchedule":"Configura tu agenda",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
 
 
 

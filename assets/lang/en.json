@@ -444,7 +444,15 @@
     "useKilograms": "Kilograms (KGs)",
     "usePounds": "Pounds (LBs)",
     "addWeight": "Add weight",
-    "community":"Community"
+    "community":"Community",
+    "setYourSchedule":"Set your schedule",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
 
     
 }
