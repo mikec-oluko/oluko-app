@@ -159,7 +159,6 @@ class AuthRepository {
     final rawNonce = generateNonce();
     final nonce = sha256ofString(rawNonce);
     try {
-      // Request credential for the currently signed in Apple account.
       final AuthorizationCredentialAppleID appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -168,33 +167,36 @@ class AuthRepository {
         nonce: nonce,
       );
 
-      ExternalAuthDto externalAuthDto = ExternalAuthDto(
-        avatar: '',
-        email: appleCredential.email,
-        firstName: appleCredential.givenName,
-        lastName: appleCredential.familyName,
-        projectId: GlobalConfiguration().getString('projectId'),
-        tokenId: appleCredential.identityToken,
-      );
-      
-      await http.post(Uri.parse('$url/externalAuth'), body: externalAuthDto.toJson(), headers: {'content-type': 'application/json'});
-
-      // Create an `OAuthCredential` from the credential returned by Apple.
       final oauthCredential = OAuthProvider('apple.com').credential(
         idToken: appleCredential.identityToken,
         rawNonce: rawNonce,
       );
 
-      // Sign in the user with Firebase. If the nonce we generated earlier does
-      // not match the nonce in `appleCredential.identityToken`, sign in will fail.
       final authResult = await firebaseAuthInstance.signInWithCredential(oauthCredential);
 
-      final displayName = '${appleCredential.givenName} ${appleCredential.familyName}';
-      final firebaseUser = authResult.user;
+      final externalAuth = {};
+      final String token = await firebaseAuthInstance.currentUser.getIdToken();
+      externalAuth['tokenId'] = token;
+      externalAuth['projectId'] = GlobalConfiguration().getString('projectId');
+      if (appleCredential.email != null || authResult.user.email != null) {
+        externalAuth['email'] = appleCredential.email ?? authResult.user.email;
+      }
+      if (appleCredential.givenName != null || authResult.user.displayName != null) {
+        externalAuth['firstName'] = appleCredential.givenName ?? authResult.user.displayName;
+      }
+      if (appleCredential.familyName != null) {
+        externalAuth['lastName'] = appleCredential.familyName;
+      }
 
-      await firebaseUser.updateDisplayName(displayName);
+      final response = await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(externalAuth), headers: {'content-type': 'application/json'});
 
-      return firebaseUser;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('apiToken', token);
+
+        return authResult.user;
+      }
+      return null;
     } catch (exception) {
       print(e.toString());
       return null;

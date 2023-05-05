@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
     return [
       getWelcomeText(),
       SizedBox(
-        height: ScreenUtils.height(context) * 0.07,
+        height: ScreenUtils.height(context) * 0.04,
       ),
       TextFormField(
         style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
@@ -349,7 +349,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
     } else {
       return Column(
         children: [
-          SizedBox(height: ScreenUtils.height(context) * 0.25),
+          SizedBox(height: ScreenUtils.height(context) * 0.22),
           Text(
             OlukoLocalizations.get(context, 'welcomeBack'),
             textAlign: TextAlign.center,
