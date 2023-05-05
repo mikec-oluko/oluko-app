@@ -106,7 +106,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _friendUsersList = friendState.friendUsers;
                       _friends = friendState.friendData != null ? friendState.friendData.friends : [];
                       _friendUsersWidget = UserListComponent(
-                        usersProgess: _usersProgress,
+                        usersProgress: _usersProgress,
                         authUser: widget.currentUser,
                         users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
                         onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
@@ -117,7 +117,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _appUsersList = userListState.users;
                       _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
                       _appUsersWidget = UserListComponent(
-                        usersProgess: _usersProgress,
+                        usersProgress: _usersProgress,
                         authUser: widget.currentUser,
                         users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
                         onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
