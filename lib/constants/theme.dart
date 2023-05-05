@@ -342,7 +342,7 @@ class OlukoColors {
 
   static Color userColor(String firstName, String lastName) {
     var list = [grayColorSemiTransparent, skyblue, coral, inputError, purple, orange];
-    if (firstName == null) {
+    if (firstName == null || firstName.isEmpty || lastName == null || lastName.isEmpty) {
       var rndm = Random();
       var position = rndm.nextInt(list.length);
       return list[position];
