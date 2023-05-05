@@ -60,7 +60,7 @@ class SearchUtils {
                 if (search.searchResults.isNotEmpty)
                   Expanded(
                     child: UserListComponent(
-                      usersProgess: _usersProgress,
+                      usersProgress: _usersProgress,
                       authUser: authUser,
                       users: search.searchResults,
                       onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser, authUser, context),
@@ -68,7 +68,7 @@ class SearchUtils {
                   )
                 else
                   UserListComponent(
-                    usersProgess: _usersProgress,
+                    usersProgress: _usersProgress,
                     authUser: authUser,
                     users: search.searchResults,
                     onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser, authUser, context),

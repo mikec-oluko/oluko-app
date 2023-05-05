@@ -76,7 +76,7 @@ class CourseUtils {
   }
 
   static Course getCourseById(String courseId, List<Course> courses) {
-    return courses.where((course) => course.id == courseId).first;
+    return courses?.where((course) => course.id == courseId)?.first;
   }
 
   static Widget generateImageCourse(String imageUrl, BuildContext context) {
