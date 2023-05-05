@@ -463,6 +463,7 @@ class _InsideClassesState extends State<InsideClass> {
                   final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
+                  BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(friends: favoriteUsers);
                   return GestureDetector(
                     onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                     child: Text(
@@ -778,8 +779,6 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   void navigateToSegmentDetail(int segmentIndex) {
-    BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeightRecords(friendsList: favoriteUsers);
-
     if (_classSegments != null) {
       Navigator.pushNamed(
         context,
@@ -790,7 +789,8 @@ class _InsideClassesState extends State<InsideClass> {
           'classIndex': widget.classIndex,
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
-          'fromChallenge': false
+          'fromChallenge': false,
+          'favoriteUsers': favoriteUsers
         },
       );
     }

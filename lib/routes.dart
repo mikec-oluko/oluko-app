@@ -889,6 +889,7 @@ class Routes {
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             courseIndex: argumentsToAdd['courseIndex'] as int,
+            favoriteUsers: argumentsToAdd['favoriteUsers'] as List<UserResponse>,
             fromChallenge: argumentsToAdd['fromChallenge'] as bool);
         break;
       case RouteEnum.movementIntro:

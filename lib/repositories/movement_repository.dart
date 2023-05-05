@@ -103,36 +103,23 @@ class MovementRepository {
     return userWeightRecorsStream;
   }
 
-
- static Future<Map<String, List<WeightRecord>>>getUsersRecords(List<String> usersIds) async {
-     Map<String, List<WeightRecord>> userRecordsMap = {};
-    if(usersIds.isNotEmpty){
-      usersIds.forEach((userId) async {
-      List<WeightRecord> userRecords =  await getWeightRecordsByUserId(userId);
-      userRecordsMap[userId] = userRecords;
-      });
-    return userRecordsMap;
-    }else{
-      return {};
-    }
-  }
-
-  static  Future<List<WeightRecord>> getWeightRecordsByUserId(String userId) async {
-    List<WeightRecord> records = [];
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  Future<List<WeightRecord>> getFriendsRecords(String friendUserId) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
         .collection('users')
-        .doc(userId)
-        .collection('records').get();
+        .doc(friendUserId)
+        .collection('records')
+        .get();
 
-        if(querySnapshot.docs.isNotEmpty){
-          querySnapshot.docs.forEach((weightRecord) {
-            Map<String, dynamic> newWeightRecord = weightRecord.data() as Map<String, dynamic>;
-            records.add(WeightRecord.fromJson(newWeightRecord));
-          });
-        }
-        return records;
+    List<WeightRecord> friendWeightRecords = mapQueryToMovementRecord(querySnapshot);
+    return friendWeightRecords;
   }
 
+  static List<WeightRecord> mapQueryToMovementRecord(QuerySnapshot qs) {
+    return qs.docs.map((DocumentSnapshot ds) {
+      Map<String, dynamic> movementData = ds.data() as Map<String, dynamic>;
+      return WeightRecord.fromJson(movementData);
+    }).toList();
+  }
 }
