@@ -72,7 +72,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
         if (state is GenericAudioPanelRecorded) {
           _audioRecordedElement = state.audioRecoded;
           recordAudioContent = Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20, right: 10),
             child: Row(
               children: [_audioRecordedElement, _audioRecordMessageButtonComponentSentAction()],
             ),

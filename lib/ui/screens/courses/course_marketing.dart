@@ -32,6 +32,7 @@ import 'package:oluko_app/ui/components/pinned_header.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/course_utils.dart';
@@ -488,18 +489,21 @@ class _CourseMarketingState extends State<CourseMarketing> {
         padding: EdgeInsets.only(top: 15),
         child: Row(
           children: [
-            Padding(
+            Container(
               padding: const EdgeInsets.only(left: 15.0),
-              child: GestureDetector(
-                  onTap: onBackPressed,
-                  child: topButtonsBackground(
-                    Image.asset(
-                      'assets/courses/left_back_arrow.png',
-                      scale: 3.5,
-                    ),
-                  )),
+              height: 65,
+              width: 65,
+              child: OlukoNeumorphicSecondaryButton(
+                title: '',
+                useBorder: true,
+                isExpanded: false,
+                thinPadding: true,
+                onlyIcon: true,
+                icon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
+                onPressed: onBackPressed,
+              ),
             ),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             if (_isVideoPlaying)
               const SizedBox()
             else
@@ -544,16 +548,19 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget topButtonsBackground(Widget child) {
-    return Neumorphic(
-      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-      child: Container(
-          decoration: const BoxDecoration(
-            color: OlukoNeumorphismColors.finalGradientColorDark,
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-          ),
-          height: 55,
-          width: 55,
-          child: child),
+    return Container(
+      padding: const EdgeInsets.only(left: 15.0),
+      height: 55,
+      width: 65,
+      child: OlukoNeumorphicSecondaryButton(
+        title: '',
+        useBorder: true,
+        isExpanded: false,
+        thinPadding: true,
+        onlyIcon: true,
+        icon: child,
+        onPressed: () {},
+      ),
     );
   }
 
