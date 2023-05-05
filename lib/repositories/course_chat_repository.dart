@@ -5,6 +5,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_chat.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
+import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/user_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -30,6 +31,7 @@ class CourseChatRepository {
     DocumentReference docRef = reference.doc();
     message.id = docRef.id;
     await docRef.set(message.toJson());
+    await CourseChatRepository().updateUsersLastSeenMessage(courseChatId, message);
     return message;
   }
 

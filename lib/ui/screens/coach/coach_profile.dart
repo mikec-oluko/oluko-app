@@ -13,7 +13,8 @@ import 'package:oluko_app/models/coach_media.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
 import 'package:oluko_app/ui/components/coach_cover_image.dart';
 import 'package:oluko_app/ui/components/coach_information_component.dart';
 import 'package:oluko_app/ui/components/coach_media_carousel_gallery.dart';
@@ -47,7 +48,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
   @override
   void initState() {
-    BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
     BlocProvider.of<CoachMediaBloc>(context).dispose();
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachUser.id);
     BlocProvider.of<CoachMediaBloc>(context).getStream(widget.coachUser.id);
@@ -338,7 +339,7 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
-    return CoachAudioSentComponent(
+    return AudioSentComponent(
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
@@ -346,7 +347,7 @@ class _CoachProfileState extends State<CoachProfile> {
       onAudioPlaying: (bool playing) => _onPlayAudio(playing),
       onStartPlaying: () => _canStartPlaying(),
       durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
-      onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
+      onDelete: () => BlocProvider.of<GenericAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );
   }
