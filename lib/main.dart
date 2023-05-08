@@ -62,7 +62,7 @@ Future<void> main() async {
 
 Future<void> initializeBackgroundNotifications() async {
     await AwesomeNotifications().initialize(
-      null,
+      'resource://drawable/icon',
       [
         NotificationChannel(channelKey: 'basic_channel',
                             channelName: 'Oluko push notifications',
