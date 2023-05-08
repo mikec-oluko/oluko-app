@@ -513,20 +513,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
                     _isSavingLikedCourse = false;
                   }
-                  return GestureDetector(
-                    onTap: () {
-                      if (!_isSavingLikedCourse) {
-                        setState(() {
-                          _courseLiked = !_courseLiked;
-                        });
-                        BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
-                      }
-                      setState(() {
-                        _isSavingLikedCourse = true;
-                      });
-                    },
-                    child: topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5)),
-                  );
+                  return topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5),
+                      onPressed: changeLikeState);
                 },
               ),
             if (_isVideoPlaying)
@@ -547,7 +535,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         ));
   }
 
-  Widget topButtonsBackground(Widget child) {
+  Widget topButtonsBackground(Widget child, {Function onPressed}) {
     return Container(
       padding: const EdgeInsets.only(left: 15.0),
       height: 55,
@@ -559,7 +547,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         thinPadding: true,
         onlyIcon: true,
         icon: child,
-        onPressed: () {},
+        onPressed: onPressed != null ? () => onPressed() : null,
       ),
     );
   }
@@ -573,6 +561,18 @@ class _CourseMarketingState extends State<CourseMarketing> {
             _isVideoPlaying = !_isVideoPlaying;
           }
         });
+  }
+
+  void changeLikeState() {
+    if (!_isSavingLikedCourse) {
+      setState(() {
+        _courseLiked = !_courseLiked;
+      });
+      BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+    }
+    setState(() {
+      _isSavingLikedCourse = true;
+    });
   }
 
   void _scrollCotrollerInit() {
