@@ -486,53 +486,54 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
     return Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 15.0),
-              height: 65,
-              width: 65,
-              child: OlukoNeumorphicSecondaryButton(
-                title: '',
-                useBorder: true,
-                isExpanded: false,
-                thinPadding: true,
-                onlyIcon: true,
-                icon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
-                onPressed: onBackPressed,
-              ),
+      padding: EdgeInsets.only(top: 15),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(left: 15.0),
+            height: 65,
+            width: 65,
+            child: OlukoNeumorphicSecondaryButton(
+              title: '',
+              useBorder: true,
+              isExpanded: false,
+              thinPadding: true,
+              onlyIcon: true,
+              icon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
+              onPressed: onBackPressed,
             ),
-            const Expanded(child: SizedBox()),
-            if (_isVideoPlaying)
-              const SizedBox()
-            else
-              BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
-                builder: (context, state) {
-                  if (state is CourseLikedSuccess) {
-                    _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
-                    _isSavingLikedCourse = false;
-                  }
-                  return topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5),
-                      onPressed: changeLikeState);
-                },
+          ),
+          const Expanded(child: SizedBox()),
+          if (_isVideoPlaying)
+            const SizedBox()
+          else
+            BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
+              builder: (context, state) {
+                if (state is CourseLikedSuccess) {
+                  _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
+                  _isSavingLikedCourse = false;
+                }
+                return topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5),
+                    onPressed: changeLikeState);
+              },
+            ),
+          if (_isVideoPlaying)
+            const SizedBox()
+          else
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 15),
+              child: GestureDetector(
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView],
+                    arguments: {'currentUser': _userState.user, 'courseToShare': widget.course}),
+                child: topButtonsBackground(Image.asset(
+                  'assets/courses/grey_share_outlined.png',
+                  scale: 3.5,
+                )),
               ),
-            if (_isVideoPlaying)
-              const SizedBox()
-            else
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 15),
-                child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView],
-                      arguments: {'currentUser': _userState.user, 'courseToShare': widget.course}),
-                  child: topButtonsBackground(Image.asset(
-                    'assets/courses/grey_share_outlined.png',
-                    scale: 3.5,
-                  )),
-                ),
-              )
-          ],
-        ));
+            )
+        ],
+      ),
+    );
   }
 
   Widget topButtonsBackground(Widget child, {Function onPressed}) {
