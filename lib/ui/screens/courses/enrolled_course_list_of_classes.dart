@@ -82,6 +82,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
         widget.courseEnrollment.classes.forEach((EnrollmentClass enrollmentClass) {
           _classItemList.forEach((ClassItem classItem) {
             if (classItem.classObj.id == enrollmentClass.id) {
+              classItem.scheduledDate = enrollmentClass.scheduledDate;
               _classListToReturn.add(classItem);
             }
           });
@@ -153,6 +154,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       index: classIndex,
       total: _classItemList.length,
       classObj: item.classObj,
+      scheduledDate: item.scheduledDate?.toDate(),
     );
   }
 

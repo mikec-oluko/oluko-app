@@ -62,7 +62,7 @@ class CourseEnrollment extends Base {
               ? List<EnrollmentClass>.from((json['classes'] as Iterable).map((c) => EnrollmentClass.fromJson(c as Map<String, dynamic>)))
               : null,
           isUnenrolled: json['is_unenrolled'] == null ? false : json['is_unenrolled'] as bool,
-          weekDays: List<String>.from(json['week_days'] as Iterable) ?? <String>[],
+          weekDays: json['week_days'] != null ? List<String>.from(json['week_days'] as Iterable) : [],
         );
       courseEnrollment.setBase(json);
       return courseEnrollment;
