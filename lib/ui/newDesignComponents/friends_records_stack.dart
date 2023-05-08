@@ -74,10 +74,10 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
   }
 
   List<Widget> getUsersProfilePictures() {
-    return widget.friendsUsers
+    return onlyUsersWithRecord()
         .map((friend) => _checkFriendHasRecord(friend)
             ? Positioned(
-                left: double.parse((widget.friendsUsers.indexOf(friend) * 20).toString()),
+                left: double.parse((onlyUsersWithRecord().indexOf(friend) * 20).toString()),
                 child: friend.avatar != null
                     ? CircleAvatar(
                         minRadius: userRadius,
@@ -87,6 +87,10 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
               )
             : const SizedBox.shrink())
         .toList();
+  }
+
+  List<UserResponse> onlyUsersWithRecord() {
+    return widget.friendsUsers.where((element) => _checkFriendHasRecord(element)).toList();
   }
 
   bool _checkFriendHasRecord(UserResponse friend) {
