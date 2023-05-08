@@ -23,6 +23,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final List<WeightRecord> weightRecords;
   final bool isResults;
   final bool useImperialSystem;
+  final Function(bool) workoutHasWeights;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
 
   const SegmentSummaryComponent(
@@ -35,6 +36,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.isResults = false,
       this.useImperialSystem = true,
       this.weightRecords,
+      this.workoutHasWeights,
       this.movementWeigths})
       : super();
 
@@ -53,6 +55,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         ? Scrollbar(
             isAlwaysShown: true,
             child: ListView.builder(
+              shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _segmentSectionAndMovementDetails().length,
               itemBuilder: (c, i) => _segmentSectionAndMovementDetails()[i],
@@ -67,6 +70,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     List<Widget> contentToReturn = [];
     if (widget.enrollmentMovements.isNotEmpty) {
       populateMovements(contentToReturn);
+    }
+    if (listOfWeigthsToUpdate.isNotEmpty) {
+      widget.workoutHasWeights(true);
     }
     return contentToReturn;
   }
@@ -100,10 +106,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           ? const SizedBox.shrink()
           : Container(
               height: 40,
-              decoration: const BoxDecoration(color: OlukoColors.divider, borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Padding(
-                padding: const EdgeInsets.only(left: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
                       'assets/courses/weight_icon.png',

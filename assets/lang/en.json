@@ -444,7 +444,8 @@
     "useKilograms": "Kilograms (KGs)",
     "usePounds": "Pounds (LBs)",
     "addWeight": "Add weight",
-    "community":"Community"
+    "community":"Community",
+    "weightsQuestion" : "What weights did you use?"
 
     
 }

@@ -35,6 +35,7 @@ import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivide
 import 'package:oluko_app/ui/newDesignComponents/friends_records_stack.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -345,6 +346,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
+              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
