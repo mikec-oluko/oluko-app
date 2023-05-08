@@ -102,7 +102,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               height: 40,
               decoration: const BoxDecoration(color: OlukoColors.divider, borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Padding(
-                padding: const EdgeInsets.only(left: 15),
+                padding: const EdgeInsets.only(left: 5),
                 child: Row(
                   children: [
                     Image.asset(

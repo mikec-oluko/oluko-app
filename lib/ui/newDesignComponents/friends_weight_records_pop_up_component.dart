@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsWeightRecordsPopUpComponent extends StatefulWidget {
   final Text segmentStep;
@@ -88,44 +91,54 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
 
   List<Widget> test(MovementSubmodel currentMovement) {
     List<Widget> contentToReturn = [];
+    Widget newFriendRecord = SizedBox.shrink();
 
     widget.friendsRecords.forEach((friendUser, friendRecords) {
       if (checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).isNotEmpty) {
-        Widget newFriendRecord = Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: Column(
-            children: [
-              CircleAvatar(
-                minRadius: 25,
-                backgroundImage: CachedNetworkImageProvider(friendUser.avatarThumbnail ?? friendUser.avatar),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text(
-                    getWeight(currentMovement, checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).first.weight),
-                    // checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).first.weight.toStringAsFixed(2),
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(
-                    width: 2,
-                  ),
-                  Text(
-                    widget.useImperial ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w800),
+        if (canShowUserRecords(friendUser)) {
+          newFriendRecord = Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Column(
+              children: [
+                if (friendUser.avatar != null)
+                  CircleAvatar(
+                    minRadius: 25,
+                    backgroundImage: CachedNetworkImageProvider(friendUser.avatarThumbnail ?? friendUser.avatar),
                   )
-                ],
-              )
-            ],
-          ),
-        );
-        contentToReturn.add(newFriendRecord);
+                else
+                  UserUtils.avatarImageDefault(maxRadius: 25, name: friendUser.firstName, lastname: friendUser.lastName),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      getWeight(currentMovement, checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).first.weight),
+                      // checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).first.weight.toStringAsFixed(2),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      widget.useImperial ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w800),
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
+        }
+        if (canShowUserRecords(friendUser)) {
+          contentToReturn.add(newFriendRecord);
+        }
       }
     });
     return contentToReturn;
   }
+
+  bool canShowUserRecords(UserResponse friendUser) => PrivacyOptions.userRequestedPrivacyOption(friendUser) != SettingsPrivacyOptions.anonymous;
 
   Iterable<WeightRecord> checkMovementRecordInsideFriendRecords(List<WeightRecord> friendRecords, MovementSubmodel currentMovement) =>
       friendRecords.where((weightRecord) => weightRecord.movementId == currentMovement.id);

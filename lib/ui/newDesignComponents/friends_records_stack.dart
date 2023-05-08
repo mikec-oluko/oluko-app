@@ -7,6 +7,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_weight_records_pop_up_component.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsRecordsStack extends StatefulWidget {
   final List<UserResponse> friendsUsers;
@@ -77,10 +78,12 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
         .map((friend) => _checkFriendHasRecord(friend)
             ? Positioned(
                 left: double.parse((widget.friendsUsers.indexOf(friend) * 20).toString()),
-                child: CircleAvatar(
-                  minRadius: userRadius,
-                  backgroundImage: CachedNetworkImageProvider(friend.avatarThumbnail ?? friend.avatar),
-                ),
+                child: friend.avatar != null
+                    ? CircleAvatar(
+                        minRadius: userRadius,
+                        backgroundImage: CachedNetworkImageProvider(friend.avatarThumbnail ?? friend.avatar),
+                      )
+                    : UserUtils.avatarImageDefault(maxRadius: userRadius, name: friend.firstName, lastname: friend.lastName),
               )
             : const SizedBox.shrink())
         .toList();

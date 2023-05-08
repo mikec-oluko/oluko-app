@@ -33,7 +33,7 @@ class PrivacyOptions {
     return PrivacyOptions.privacyOptionsList[currentUser.privacy].option;
   }
 
-  SettingsPrivacyOptions userRequestedPrivacyOption(UserResponse userToDisplayInformation) {
+  static SettingsPrivacyOptions userRequestedPrivacyOption(UserResponse userToDisplayInformation) {
     return PrivacyOptions.privacyOptionsList[userToDisplayInformation.privacy].option;
   }
 
@@ -46,16 +46,14 @@ class PrivacyOptions {
     switch (_currentUserPrivacyOption) {
       case SettingsPrivacyOptions.public:
         if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
-            ((_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted ||
-                    _userRequestedPrivacyOption == SettingsPrivacyOptions.anonymous) &&
+            ((_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted || _userRequestedPrivacyOption == SettingsPrivacyOptions.anonymous) &&
                 connectStatus == UserConnectStatus.connected)) {
           return true;
         }
         return false;
       case SettingsPrivacyOptions.restricted:
         if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
-            ((_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted ||
-                    _userRequestedPrivacyOption == SettingsPrivacyOptions.anonymous) &&
+            ((_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted || _userRequestedPrivacyOption == SettingsPrivacyOptions.anonymous) &&
                 connectStatus == UserConnectStatus.connected)) {
           return true;
         }
