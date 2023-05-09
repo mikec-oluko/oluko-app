@@ -51,10 +51,8 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
 
   @override
   void dispose() {
-    if(!widget.keepPlayingInBackground){
-      audioPlayer.dispose();
-      super.dispose();
-    }
+    audioPlayer.dispose();
+    super.dispose();
   }
 
   //Pause the audio playing on background, when widget is removed from Widget tree.
@@ -62,8 +60,8 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
   void deactivate() {
     if(!widget.keepPlayingInBackground){
       audioPlayer.pause();
-      super.deactivate();
     }
+    super.deactivate();
   }
 
   @override
