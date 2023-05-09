@@ -436,7 +436,7 @@ class Routes {
   final NotificationSettingsBloc _notificationSettingsBloc = NotificationSettingsBloc();
   final FeedbackBloc _feedbackBloc = FeedbackBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
-  final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
+  final GenericAudioPanelBloc _coachAudioPanelBloc = GenericAudioPanelBloc();
   final CoachAudioMessageBloc _coachAudioMessageBloc = CoachAudioMessageBloc();
   final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
@@ -551,7 +551,7 @@ class Routes {
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
-          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
@@ -1329,7 +1329,7 @@ class Routes {
       case RouteEnum.coachProfile:
         providers = [
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
-          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
@@ -1518,10 +1518,13 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
+          BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
+
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment
-        ,userId: argumentsToAdd['userId'] as String
+        ,currentUser: argumentsToAdd['currentUser'] as UserResponse
         ,enrollments: argumentsToAdd['enrollments'] as List<CourseEnrollment>);
         break;
 

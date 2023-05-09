@@ -88,6 +88,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           child: Column(
             children: [
               ListTile(
+                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
               ),
               const OlukoNeumorphicDivider(),

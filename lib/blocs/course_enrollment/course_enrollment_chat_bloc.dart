@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
+import 'package:oluko_app/models/submodels/audio_message_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/user_message_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -86,6 +87,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
       if(messages.isNotEmpty){
         saveLastMessageUserSaw(courseChatId, messages[0]);
         final List<UserResponse> participants = await getUsers(messages);
+        messages.forEach((message) => {
+          message.user.image = participants.firstWhere((participant) => participant.id == message.user.id).avatar
+        });
         emit(MessagesUpdated(messages, participants));
       }
     });
@@ -106,6 +110,9 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
     try {
       List<Message> messages = await CourseChatRepository().getMessagesAfterMessageId(courseChatId, message.id);
       final List<UserResponse> participants = await getUsers(messages);
+      messages.forEach((message) => {
+          message.user.image = participants.firstWhere((participant) => participant.id == message.user.id).avatar
+      });
       emit(MessagesScroll(messages, participants));
     }catch(exception, stackTrace){
       await Sentry.captureException(
@@ -133,5 +140,70 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   void changeButton(bool showButton){
     emit(Changebutton(showButton));
+  }
+
+
+
+    void saveChatAudioMessage({@required File audioRecorded, @required String userId, @required String courseId, Duration audioDuration}) async {
+    try {
+      final AudioMessageSubmodel audioContent = await _processAudio(audioRecorded, audioDuration);
+      final DocumentReference<Object> userReference = UserRepository().getUserReference(userId);
+      final UserResponse user = await UserRepository().getById(userId);
+
+      ObjectSubmodel userObj = ObjectSubmodel(id: userId, image: user.avatar, name: '${user.firstName} ${user.lastName}', reference: userReference);
+      Message message = Message(message: '', user: userObj, audioMessage: audioContent);
+
+      message.createdAt = Timestamp.now();
+      await CourseChatRepository().createMessage(message, courseId);
+
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure());
+      rethrow;
+    }
+  }
+
+  Future<AudioMessageSubmodel> _processAudio(File audioRecorded, Duration audioDuration) async {
+    const _uuid = Uuid();
+    final String _audioId = _uuid.v1();
+    try {
+      final Directory extDir = await getApplicationDocumentsDirectory();
+      final outDirPath = '${extDir.path}/AudioMessages/$_audioId';
+      final audiosDir = Directory(outDirPath);
+      audiosDir.createSync(recursive: true);
+      final _audioPath = audioRecorded.path;
+
+      AudioMessageSubmodel _audioMessageSubmodel = await _uploadAudio(_audioId, _audioPath, audioDuration);
+      return _audioMessageSubmodel;
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  Future<AudioMessageSubmodel> _uploadAudio(String audioId, String audioPath, Duration audioDuration) async {
+    String _audioUrl;
+    AudioMessageSubmodel _audioMessageSubmodel;
+    try {
+      if (audioPath != null) {
+        _audioUrl = await VideoProcess.uploadFile(audioPath, audioId);
+        _audioMessageSubmodel = AudioMessageSubmodel(url: _audioUrl, duration: audioDuration.inMilliseconds);
+      }
+      return _audioMessageSubmodel;
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
   }
 }
