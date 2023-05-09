@@ -58,7 +58,8 @@ Future<void> listenToMessages(String userId, {List<CourseEnrollment> enrollments
       .listen(
         (snapshot) async {
           final List<Message> messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
-          emit(MessagesNotificationUpdated(courseId: courseChatId, quantity: messages.length));
+          final bool areMyMessages = messages.every((element) => element.user.id == userId);
+          emit(MessagesNotificationUpdated(courseId: courseChatId, quantity: areMyMessages ? 0 : messages.length));
         },
       );
       _messagesSubscription ??= [];
