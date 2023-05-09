@@ -1,112 +1,122 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/personal_record.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/points_card_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/segment_utils.dart';
-import 'package:oluko_app/utils/time_converter.dart';
 
-class ModalPersonalRecord extends StatefulWidget {
-  String segmentId;
+import '../../models/points_card.dart';
+
+class ModalCards extends StatefulWidget {
   String userId;
-  ModalPersonalRecord({this.segmentId, this.userId});
+  ModalCards({this.userId});
 
   @override
-  _ModalPersonalRecordState createState() => _ModalPersonalRecordState();
+  _ModalCardsState createState() => _ModalCardsState();
 }
 
-class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
+class _ModalCardsState extends State<ModalCards> {
   @override
   Widget build(BuildContext context) {
-    //BlocProvider.of<PersonalRecordBloc>(context).get(widget.segmentId, widget.userId);
+    BlocProvider.of<PointsCardBloc>(context).get(widget.userId);
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 100,
-      padding: EdgeInsets.zero,
-      child: BlocBuilder<PersonalRecordBloc, PersonalRecordState>(builder: (context, personalRecordState) {
-        return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 100,
+        padding: EdgeInsets.zero,
+        child: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/courses/gray_background.png'),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-          child: Column(
-            children: [
-              Row(
+          child: Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: Column(
                 children: [
+                  Image.asset('assets/courses/horizontal_vector.png', scale: 4, color: OlukoColors.grayColor),
                   Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 35),
-                    child: Text(OlukoLocalizations.get(context, 'personalRecord'),
-                        style: const TextStyle(color: OlukoColors.grayColor, fontSize: 15, fontWeight: FontWeight.w600)),
-                  ),
+                      padding: const EdgeInsets.only(left: 20, right: 20, top: 25),
+                      child: Row(
+                        children: [
+                          Text(OlukoLocalizations.get(context, 'cards'),
+                              style: const TextStyle(color: OlukoColors.white, fontSize: OlukoFonts.olukoBigFontSize, fontWeight: FontWeight.w600)),
+                          const Expanded(child: SizedBox()),
+                          _pointsWidget()
+                        ],
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Image.asset(
+                        'assets/home/gray_horizontal_line.png',
+                        color: Colors.white,
+                        scale: 5,
+                      )),
+                  BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardState) {
+                    if (pointsCardState is PointsCardSuccess) {
+                      return Container(height: 450, width: MediaQuery.of(context).size.width - 50, child: _cardsGrid(pointsCardState.pointsCards));
+                    } else {
+                      return const SizedBox();
+                    }
+                  })
                 ],
-              ),
-              if (personalRecordState is PersonalRecordSuccess) personalRecordGrid(personalRecordState.personalRecords) else const SizedBox()
-            ],
-          ),
-        );
-      }),
+              )),
+        ));
+  }
+
+  Widget _pointsWidget() {
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(6.0)),
+        color: OlukoColors.blackColorSemiTransparent,
+      ),
+      child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Text('256', style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700))),
     );
   }
 
-  Widget personalRecordGrid(List<PersonalRecord> personalRecords) {
-    if (personalRecords.isNotEmpty) {
-      return Container(
-          height: ScreenUtils.height(context) / 1.8,
-          width: ScreenUtils.width(context),
-          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: getPRWidgets(personalRecords)));
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 20, top: 10),
-        child: TitleBody(OlukoLocalizations.get(context, 'noPersonalRecords')),
-      );
-    }
+  Widget _cardsGrid(List<PointsCard> cardsList) {
+    return GridView.count(mainAxisSpacing: 20, crossAxisCount: 2, crossAxisSpacing: 12, children: _buildCardList(cardsList));
   }
 
-  List<Widget> getPRWidgets(List<PersonalRecord> personalRecords) {
-    List<Widget> PRWidgets = personalRecords
-        .map((record) => Column(
-              children: [
-                const Divider(height: 4, thickness: 0, color: OlukoColors.muted),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(record.value.toString() + " " + SegmentUtils.getParamLabel(record.parameter),
-                            style: const TextStyle(color: OlukoColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
-                        Text(TimeConverter.returnDateOnStringFormat(dateToFormat: record.createdAt, context: context),
-                            style: const TextStyle(color: OlukoColors.grayColor, fontSize: 12, fontWeight: FontWeight.w400))
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: ClipRRect(borderRadius: BorderRadius.circular(4), child: getPRImage(record)),
-                  ),
-                ])
-              ],
+  List<Widget> _cardsList(List<PointsCard> cards) {
+    List<Widget> widgetsList = [];
+    cards.forEach((element) {
+      widgetsList.add(PointsCardComponent(
+        pointsCard: element,
+      ));
+    });
+    return widgetsList;
+  }
+
+  List<Widget> _buildCardList(List<PointsCard> cards) {
+    List<Widget> widgetsList = cards
+        .map((card) => PointsCardComponent(
+              pointsCard: card,
             ))
         .toList();
-    return PRWidgets;
+
+    return widgetsList;
   }
 
-  Widget getPRImage(PersonalRecord record) {
-    if (record.doneFromProfile != null && record.doneFromProfile) {
-      return record.segmentImage != null
-          ? Image(image: CachedNetworkImageProvider(record.segmentImage), fit: BoxFit.cover, width: 65, height: 90)
-          : SizedBox.shrink();
+  /*Widget cardsGrid(List<PointsCard> cards) {
+    if (cards.isNotEmpty) {
+      return GridView.count(
+        padding: const EdgeInsets.only(top: 10),
+        childAspectRatio: 0.7,
+        crossAxisCount: 4,
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        children: cards
+            .map(
+              (cardElement) => {PointsCardComponent(pointsCard: cardElement)},
+            )
+            .toList(),
+      );
     } else {
-      return record.courseImage != null
-          ? Image(image: CachedNetworkImageProvider(record.courseImage), fit: BoxFit.cover, width: 65, height: 90)
-          : SizedBox.shrink();
+      return SizedBox();
     }
-  }
+  }*/
 }

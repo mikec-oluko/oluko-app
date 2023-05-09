@@ -59,10 +59,7 @@ import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_sec
 import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/user_utils.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
@@ -90,7 +87,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   Success successState;
   UserResponse currentUserLatestVersion;
   bool videoSeen = false;
-  final PanelController _cardsPanelController = PanelController();
 
   @override
   void initState() {
@@ -140,7 +136,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           if (state is CourseEnrollmentsByUserStreamSuccess) {
             _courseEnrollmentList = state.courseEnrollments;
           }
-          return Scaffold(body: Stack(children: [_nestedScrollView(), _slidingUpPanel()]));
+          return Scaffold(body: _nestedScrollView());
         },
       );
     }
@@ -179,40 +175,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           },
         ),
       ),
-    );
-  }
-
-  Widget _slidingUpPanel() {
-    return SlidingUpPanel(
-      backdropEnabled: true,
-      isDraggable: true,
-      header: const SizedBox(),
-      padding: EdgeInsets.zero,
-      color: OlukoColors.black,
-      minHeight: 100,
-      maxHeight: 450,
-      collapsed: const SizedBox(),
-      controller: _cardsPanelController,
-      panel: Container(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/courses/gray_background.png'),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 35),
-                    child: Text(OlukoLocalizations.get(context, 'personalRecord'),
-                        style: const TextStyle(color: OlukoColors.grayColor, fontSize: OlukoFonts.olukoBigFontSize, fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              )
-            ],
-          )),
     );
   }
 

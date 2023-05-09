@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+
+import '../../models/user_response.dart';
 
 class UserProfileProgress extends StatefulWidget {
   final String challengesCompleted;
   final String coursesCompleted;
   final String classesCompleted;
   final bool isMinimalRequested;
+    final UserResponse currentUser;
 
-  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false}) : super();
+  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false, this.currentUser}) : super();
 
   @override
   _UserProfileProgressState createState() => _UserProfileProgressState();
@@ -58,7 +64,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
                   profileNeumorphicAccomplishments(
                       achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
                   profileNeumorphicAccomplishments(
-                      achievementTitleKey: ['mvt', 'points'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
+                      achievementTitleKey: ['mvt', 'points'], achievementValue: widget.coursesCompleted, color: OlukoColors.white, isClickable: true),
                 ],
               ),
             ),
@@ -129,15 +135,24 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     );
   }
 
-  Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color}) {
-    final textElem = Text(
+  Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color, bool isClickable = false}) {
+    final Text textElem = Text(
       '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
     );
-    bool isClicked = false;
     return GestureDetector(
-        onTap: ()=> isClicked = true,
-        child: Expanded(
+        onTap: () => isClickable ? _pointsCardAction() : {},
+        child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+          if (state is PointsCardPanelOpen) {
+            return _statisticsComponent(achievementValue, textElem, isClicked: isClickable);
+          } else {
+            return _statisticsComponent(achievementValue, textElem);
+          }
+        }));
+  }
+
+  Widget _statisticsComponent(String achievementValue, Text textElem, {bool isClicked = false}) {
+    return Expanded(
       child: Stack(alignment: AlignmentDirectional.center, children: [
         isClicked ? _blackBackground() : SizedBox(),
         Row(
@@ -158,7 +173,12 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           ],
         )
       ]),
-    ));
+    );
+  }
+
+  _pointsCardAction() {
+    BlocProvider.of<PointsCardPanelBloc>(context).openPointsCardPanel();
+    BlocProvider.of<PointsCardBloc>(context).get(widget.currentUser.id);
   }
 
   Widget _blackBackground() {

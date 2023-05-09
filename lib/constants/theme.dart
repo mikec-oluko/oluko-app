@@ -326,6 +326,10 @@ class OlukoColors {
 
   static const Color lightOrange = Color.fromRGBO(254, 159, 31, 1);
 
+  static const Color lightSkyblue = Color.fromRGBO(171, 247, 233, 1);
+
+    static const Color strongYellow = Color.fromRGBO(254, 192, 0, 1);
+
   static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
 
   static const Color statisticsChartColor = Color.fromRGBO(254, 159, 31, 1);

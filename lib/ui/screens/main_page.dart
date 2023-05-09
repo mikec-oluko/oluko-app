@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
+import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
@@ -24,6 +25,7 @@ import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/services/route_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/components/modal_cards.dart';
 import 'package:oluko_app/ui/newDesignComponents/change_plan_popup_content.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -33,6 +35,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'coach/coach_main_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -56,6 +59,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   TabController tabController;
   final AuthBloc _authBloc = AuthBloc();
   User loggedUser;
+  final PanelController _cardsPanelController = PanelController();
 
   List<Widget> getTabs() {
     return [
@@ -186,31 +190,62 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             } else {
               return Scaffold(
                 backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                body: Padding(
-                  padding: _isBottomTabActive && _isNotCourseOrFriendsTab(tabController.index)
-                      ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
-                      : const EdgeInsets.only(bottom: 0),
-                  child: TabBarView(
-                    //physics this is setup to stop swiping from tab to tab
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: this.tabController,
-                    children: tabs,
-                  ),
-                ),
+                body: Stack(children: [_scaffoldBody(), _slidingUpPanel()]),
                 extendBody: true,
                 bottomNavigationBar: _isBottomTabActive
-                    ? OlukoBottomNavigationBar(
-                        selectedIndex: this.tabController.index,
-                        onPressed: (index) => this.setState(() {
-                          this.tabController.animateTo(index as int);
-                        }),
-                      )
+                    ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+                        if (state is PointsCardPanelOpen) {
+                          return SizedBox();
+                        } else {
+                          return OlukoBottomNavigationBar(
+                            selectedIndex: this.tabController.index,
+                            onPressed: (index) => this.setState(() {
+                              this.tabController.animateTo(index as int);
+                            }),
+                          );
+                        }
+                      })
                     : const SizedBox(),
               );
             }
           },
         );
       }),
+    );
+  }
+
+  Widget _slidingUpPanel() {
+    return SlidingUpPanel(
+        onPanelClosed: () {
+          BlocProvider.of<PointsCardPanelBloc>(context).emitDefaultState();
+        },
+        backdropEnabled: true,
+        isDraggable: true,
+        header: const SizedBox(),
+        padding: EdgeInsets.zero,
+        color: OlukoColors.black,
+        minHeight: 0,
+        maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height/3,
+        collapsed: const SizedBox(),
+        controller: _cardsPanelController,
+        panel: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+          if (state is PointsCardPanelOpen) {
+            _cardsPanelController.open();
+          }
+          return ModalCards();
+        }));
+  }
+
+  Widget _scaffoldBody() {
+    return Padding(
+      padding: _isBottomTabActive && _isNotCourseOrFriendsTab(tabController.index)
+          ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
+          : const EdgeInsets.only(bottom: 0),
+      child: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: this.tabController,
+        children: tabs,
+      ),
     );
   }
 

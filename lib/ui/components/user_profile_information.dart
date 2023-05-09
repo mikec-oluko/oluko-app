@@ -358,6 +358,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         challengesCompleted: _archivementsDefaultValue,
         coursesCompleted: _archivementsDefaultValue,
         classesCompleted: _archivementsDefaultValue,
+        currentUser: widget.currentUser,
       );
     } else {
       return UserProfileProgress(
@@ -365,6 +366,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         coursesCompleted: widget.userStats.completedCourses.toString(),
         classesCompleted: widget.userStats.completedClasses.toString(),
         isMinimalRequested: widget.minimalRequested,
+        currentUser: widget.currentUser,
       );
     }
   }
