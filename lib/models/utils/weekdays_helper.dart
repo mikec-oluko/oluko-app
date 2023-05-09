@@ -34,6 +34,12 @@ class WeekDaysHelper {
     ];
   }
 
+  static void setSelectedWeekdays(List<String> weekDays){
+    for (final weekDay in selectedWeekdays) {
+      weekDay['selected'] = weekDays.any((selectedWeekday) => selectedWeekday == weekDay['day']);
+    }
+  }
+
   static List<DateTime> getRecurringDates(Frequency frequency, int count){
     final List<Map<String, Object>> selectedDays = selectedWeekdays
                                               .where((item) => item['selected'] as bool == true)

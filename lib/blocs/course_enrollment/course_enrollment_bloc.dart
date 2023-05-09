@@ -2,11 +2,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
-import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -69,6 +67,23 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   void create(User user, Course course) async {
     try {
       CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.create(user, course);
+      emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  Future<void> scheduleCourse(CourseEnrollment enrolledCourse, List<DateTime> scheduledDates) async {
+    try {
+      for (int i = 0; i < enrolledCourse.classes.length; i++) {
+        enrolledCourse.classes[i].scheduledDate = scheduledDates.isNotEmpty && scheduledDates[i] != null ? Timestamp.fromDate(scheduledDates[i]) : null;
+      }
+      final CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.scheduleCourse(enrolledCourse);
       emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

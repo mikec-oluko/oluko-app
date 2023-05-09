@@ -163,6 +163,14 @@ class CourseEnrollmentRepository {
     return courseEnrollment;
   }
 
+  static Future<CourseEnrollment> scheduleCourse(CourseEnrollment enrolledCourse) async {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
+    final CollectionReference reference = projectReference.collection('courseEnrollments');
+    final DocumentReference docRef = reference.doc(enrolledCourse.id);
+    docRef.set(enrolledCourse.toJson(), SetOptions(merge: true));
+    return enrolledCourse;
+  }
+
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
     final enrollmentClasses = List.generate(
       course.classes.length,
