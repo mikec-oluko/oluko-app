@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
@@ -98,7 +99,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         currentUser: widget.currentUser,
                       );
                     }
-                    if (chatSliderState is ChatSliderLoading) {
+                    if (chatSliderState is ChatSliderMessagesLoading) {
                       _chatSliderWidget = getLoaderWidget();
                     }
                     if (friendState is GetFriendsSuccess) {
