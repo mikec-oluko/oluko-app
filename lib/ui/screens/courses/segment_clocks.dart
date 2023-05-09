@@ -17,7 +17,6 @@ import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
-import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -475,31 +474,25 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   Widget bodyWithPlayPausePanel() {
     bool keyboardVisibilty = false;
-    return BlocBuilder<KeyboardBloc, KeyboardState>(
-      builder: (context, state) {
-        keyboardVisibilty = state.setVisible;
-        textController = state.textEditingController;
-        return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
-            ? SlidingUpPanel(
-                controller: panelController,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                minHeight: 90.0,
-                maxHeight: 185.0,
-                collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
-                panel: MovementVideosSection(
-                    action: getPlayPauseAction(),
-                    segment: widget.segments[widget.segmentIndex],
-                    onPressedMovement: (BuildContext context, MovementSubmodel movement) {
-                      if (workState != WorkState.paused) {
-                        changeSegmentState();
-                      }
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
-                    }),
-                body: _body(keyboardVisibilty),
-              )
-            : _body(keyboardVisibilty);
-      },
-    );
+    return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
+        ? SlidingUpPanel(
+            controller: panelController,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            minHeight: 90.0,
+            maxHeight: 185.0,
+            collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
+            panel: MovementVideosSection(
+                action: getPlayPauseAction(),
+                segment: widget.segments[widget.segmentIndex],
+                onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+                  if (workState != WorkState.paused) {
+                    changeSegmentState();
+                  }
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
+                }),
+            body: _body(keyboardVisibilty),
+          )
+        : _body(keyboardVisibilty);
   }
 
   Widget getPlayPauseAction() {
@@ -837,8 +830,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _goToNextStep() {
-    BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
-
     if (alertTimer != null) {
       alertTimer.cancel();
     }

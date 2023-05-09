@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
-import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
@@ -16,7 +15,9 @@ import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/newDesignComponents/rep_timer_component.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
@@ -68,6 +69,7 @@ class _State extends State<Clock> {
   HeadsetState _headsetState;
   final SoundPlayer _soundPlayer = SoundPlayer();
   bool skipRest = true;
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -235,14 +237,10 @@ class _State extends State<Clock> {
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
-      return BlocBuilder<KeyboardBloc, KeyboardState>(
-        builder: (context, state) {
-          return TimerUtils.repsTimer(() {
-            widget.goToNextStep();
-          }, context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
-              widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
-        },
-      );
+      return TimerUtils.repsTimer(() {
+        widget.goToNextStep();
+      }, context, widget.timerEntries[widget.timerTaskIndex].movement.isBothSide,
+          widget.timerEntries[widget.timerTaskIndex].stopwatch ? TimeConverter.durationToString(stopwatch) : null);
     }
 
     if (isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -346,49 +344,47 @@ class _State extends State<Clock> {
               Text(counterTxt[0], style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300)),
               const SizedBox(width: 10),
               SizedBox(
-                width: isCounterByReps ? 40 : 70,
-                child: BlocBuilder<KeyboardBloc, KeyboardState>(
-                  builder: (context, state) {
-                    return Scrollbar(
-                      controller: state.textScrollController,
-                      child: () {
-                        final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                        TextSelection textSelection = state.textEditingController.selection;
-                        textSelection = state.textEditingController.selection.copyWith(
-                          baseOffset: state.textEditingController.text.length,
-                          extentOffset: state.textEditingController.text.length,
-                        );
-                        widget.textController = state.textEditingController;
-                        widget.textController.selection = textSelection;
-
-                        return TextField(
-                          scrollController: state.textScrollController,
-                          controller: widget.textController,
-                          onTap: () {
-                            !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
-                          },
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: OlukoColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          focusNode: state.focus,
-                          readOnly: true,
-                          showCursor: true,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                        );
-                      }(),
-                    );
-                  },
-                ),
-              ),
+                  width: isCounterByReps ? 40 : 70,
+                  child: Scrollbar(
+                      child: TextField(
+                    controller: widget.textController,
+                    onTap: () => open(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    focusNode: focusNode,
+                    readOnly: true,
+                    showCursor: true,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ))),
               const SizedBox(width: 25),
               Text(counterTxt[1], style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300)),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void open() {
+    BottomDialogUtils.showBottomDialog(
+      barrierColor: false,
+      context: context,
+      content: Container(
+        height: ScreenUtils.height(context) * 0.4,
+        child: CustomKeyboard(
+          boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
+          controller: widget.textController,
+          focus: focusNode,
+          onSubmit: () {
+            Navigator.pop(context);
+            focusNode.unfocus();
+          },
+        ),
       ),
     );
   }
@@ -404,52 +400,31 @@ class _State extends State<Clock> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: ScreenUtils.width(context) / 3.7,
-                child: BlocBuilder<KeyboardBloc, KeyboardState>(
-                  builder: (context, state) {
-                    return Scrollbar(
-                      controller: state.textScrollController,
-                      child: () {
-                        final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                        TextSelection textSelection = state.textEditingController.selection;
-                        textSelection = state.textEditingController.selection.copyWith(
-                          baseOffset: state.textEditingController.text.length,
-                          extentOffset: state.textEditingController.text.length,
-                        );
-                        widget.textController = state.textEditingController;
-                        widget.textController.selection = textSelection;
-
-                        return TextField(
-                          textAlign: TextAlign.center,
-                          scrollController: state.textScrollController,
-                          controller: widget.textController,
-                          onTap: () {
-                            !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
-                          },
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: OlukoColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          focusNode: state.focus,
-                          readOnly: true,
-                          showCursor: true,
-                          decoration: InputDecoration(
-                            isDense: false,
-                            contentPadding: EdgeInsets.zero,
-                            focusColor: Colors.transparent,
-                            fillColor: Colors.transparent,
-                            hintText: OlukoLocalizations.get(context, "enterScore"),
-                            hintStyle: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColorSemiTransparent),
-                            hintMaxLines: 1,
-                            border: InputBorder.none,
-                          ),
-                        );
-                      }(),
-                    );
-                  },
-                ),
-              ),
+                  width: ScreenUtils.width(context) / 3.7,
+                  child: Scrollbar(
+                      child: TextField(
+                    textAlign: TextAlign.center,
+                    controller: widget.textController,
+                    onTap: () => open(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    focusNode: focusNode,
+                    readOnly: true,
+                    showCursor: true,
+                    decoration: InputDecoration(
+                      isDense: false,
+                      contentPadding: EdgeInsets.zero,
+                      focusColor: Colors.transparent,
+                      fillColor: Colors.transparent,
+                      hintText: OlukoLocalizations.get(context, "enterScore"),
+                      hintStyle: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColorSemiTransparent),
+                      hintMaxLines: 1,
+                      border: InputBorder.none,
+                    ),
+                  ))),
               Text(
                 OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
                     ? OlukoLocalizations.get(context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex - 1].counter))

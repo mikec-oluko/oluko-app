@@ -9,8 +9,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class BottomDialogUtils {
-  static showBottomDialog({BuildContext context, Widget content}) {
+  static showBottomDialog({BuildContext context, Widget content, bool barrierColor = true}) {
     showModalBottomSheet(
+        barrierColor: barrierColor ? null : Colors.transparent,
         context: context,
         builder: (BuildContext _) {
           return content;

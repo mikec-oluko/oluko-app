@@ -201,6 +201,16 @@ class OlukoNeumorphism {
         shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker);
   }
 
+  static BoxDecoration boxDecorationForKeyboard() {
+    return const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+      ),
+    );
+  }
+
   static LinearGradient olukoNeumorphicGradientPrimary() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],

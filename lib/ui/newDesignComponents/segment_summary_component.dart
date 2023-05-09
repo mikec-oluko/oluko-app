@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -9,7 +10,10 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/ui/components/custom_keyboard.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentSummaryComponent extends StatefulWidget {
@@ -46,6 +50,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
+  TextEditingController textEditingController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -80,6 +86,28 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       populateMovements(contentToReturn);
     }
     return contentToReturn;
+  }
+
+  void open(String movementId, WorkoutWeight currentMovementAndWeight) {
+    focusNode.requestFocus();
+    BottomDialogUtils.showBottomDialog(
+      barrierColor: false,
+      context: context,
+      content: Container(
+        height: ScreenUtils.height(context) * 0.4,
+        child: CustomKeyboard(
+          boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
+          controller: textEditingController,
+          focus: focusNode,
+          onChanged: () => onSubmit(movementId, currentMovementAndWeight),
+          onSubmit: () {
+            onSubmit(movementId, currentMovementAndWeight);
+            Navigator.pop(context);
+            focusNode.unfocus();
+          },
+        ),
+      ),
+    );
   }
 
   void populateMovements(List<Widget> contentToReturn) {
@@ -183,6 +211,20 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     }
   }
 
+  void onSubmit(String movementId, WorkoutWeight currentMovementAndWeight) {
+    if (textEditingController.text == '') {
+      movementsWeights[movementId] = null;
+    } else {
+      if (widget.useImperialSystem) {
+        movementsWeights[movementId] = double.parse(textEditingController.text);
+      } else {
+        movementsWeights[movementId] = double.parse(textEditingController.text) * _passToKilogramsUnit;
+      }
+    }
+    currentMovementAndWeight.weight = movementsWeights[movementId];
+    widget.movementWeigths(listOfWeigthsToUpdate);
+  }
+
   Container _inputComponent(String movementId) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movementId);
     return Container(
@@ -190,36 +232,14 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         width: 120,
         height: 40,
         child: TextFormField(
+          showCursor: true,
+          readOnly: true,
+          focusNode: focusNode,
+          controller: textEditingController,
           keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onChanged: (value) {
-            if (value == '') {
-              movementsWeights[movementId] = null;
-            } else {
-              if (widget.useImperialSystem) {
-                movementsWeights[movementId] = double.parse(value);
-              } else {
-                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
-              }
-            }
-            currentMovementAndWeight.weight = movementsWeights[movementId];
-            widget.movementWeigths(listOfWeigthsToUpdate);
-          },
-          onTap: () {},
-          onFieldSubmitted: (value) {
-            if (value == '') {
-              movementsWeights[movementId] = null;
-            } else {
-              if (widget.useImperialSystem) {
-                movementsWeights[movementId] = double.parse(value);
-              } else {
-                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
-              }
-            }
-            currentMovementAndWeight.weight = movementsWeights[movementId];
-            widget.movementWeigths(listOfWeigthsToUpdate);
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
+          onChanged: (value) {},
+          onTap: () => open(movementId, currentMovementAndWeight),
           onEditingComplete: () {},
           textAlign: TextAlign.center,
           style: const TextStyle(
@@ -227,7 +247,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             color: OlukoColors.white,
             fontWeight: FontWeight.bold,
           ),
-          showCursor: true,
           decoration: InputDecoration(
             isDense: true,
             contentPadding: EdgeInsets.symmetric(horizontal: 5),
