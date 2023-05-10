@@ -94,7 +94,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
       else
         ShaderMask(
           shaderCallback: (rect) {
-            return LinearGradient(
+            return const LinearGradient(
               begin: Alignment.center,
               end: Alignment.bottomCenter,
               colors: [Colors.black, Colors.transparent],
@@ -130,9 +130,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                         ),
                         onPressed: widget.onBackPressed,
                       ),
-                    ) /*IconButton(
-                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context)) */
+                    )
                   : const SizedBox()
             else if (widget.showBackButton)
               IconButton(
