@@ -26,6 +26,7 @@ import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/services/route_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/modal_cards.dart';
+import 'package:oluko_app/ui/components/points_card_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/change_plan_popup_content.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -36,6 +37,7 @@ import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import '../../models/points_card.dart';
 import 'coach/coach_main_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -190,10 +192,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             } else {
               return Scaffold(
                 backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                body: Stack(children: [_scaffoldBody(), _slidingUpPanel()]),
+                body: Stack(alignment: AlignmentDirectional.center, children: [
+                  _scaffoldBody(),
+                  _slidingUpPanel(),
+                ]),
                 extendBody: true,
                 bottomNavigationBar: _isBottomTabActive
                     ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+                        //WidgetsBinding.instance.addPostFrameCallback((_) {_showPointsCardDialog(context);});                      
                         if (state is PointsCardPanelOpen) {
                           return SizedBox();
                         } else {
@@ -225,7 +231,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         padding: EdgeInsets.zero,
         color: OlukoColors.black,
         minHeight: 0,
-        maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height/3,
+        maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
         collapsed: const SizedBox(),
         controller: _cardsPanelController,
         panel: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
@@ -247,6 +253,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         children: tabs,
       ),
     );
+  }
+
+  void _showPointsCardDialog(BuildContext context) {
+    DialogUtils.getDialog(context, [
+      SizedBox(height: 280, width: 230, child: PointsCardComponent(bigCard: true, pointsCard: PointsCard(name: '100 WORKOUTS', description: "bla", value: 10)))
+    ], showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true);
   }
 
   void _showPopUp(BuildContext context, String route, UserChangedPlan state) {

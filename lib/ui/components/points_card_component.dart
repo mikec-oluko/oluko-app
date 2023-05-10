@@ -7,19 +7,24 @@ import 'package:oluko_app/constants/theme.dart';
 
 class PointsCardComponent extends StatefulWidget {
   final PointsCard pointsCard;
+  bool bigCard;
 
-  PointsCardComponent({this.pointsCard});
+  PointsCardComponent({this.pointsCard, this.bigCard = false});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
 
 class _State extends State<PointsCardComponent> {
-  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
+  final ImageProvider defaultImage = const AssetImage('assets/collage_logos/19.png');
   bool _isOpen = false;
 
   @override
   Widget build(BuildContext context) {
+    return _card();
+  }
+
+  Widget _card() {
     return _isOpen ? _openCard() : _closedCard();
   }
 
@@ -44,14 +49,17 @@ class _State extends State<PointsCardComponent> {
               Expanded(
                   child: Text(
                 widget.pointsCard.name,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
+                style: widget.bigCard
+                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
+                    : OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
                 textAlign: TextAlign.left,
               )),
-              _closeIcon()
+              _closeButton()
             ]),
             Padding(
-              padding: EdgeInsets.only(right: 25),
-              child: SingleChildScrollView(child: Html(data: widget.pointsCard.description)),
+              padding: const EdgeInsets.only(right: 25),
+              child: SingleChildScrollView(child: Html(
+                data: widget.pointsCard.description)),
             )
           ]))
     ]);
@@ -68,17 +76,21 @@ class _State extends State<PointsCardComponent> {
         ]));
   }
 
-  Widget _closeIcon() {
+  Widget _closeButton() {
     return GestureDetector(
         onTap: () => setState(() {
               _isOpen = !_isOpen;
             }),
-        child: const Icon(Icons.close, size: 25, color: OlukoColors.primary));
+        child: _closeIcon());
+  }
+
+  Widget _closeIcon() {
+    return const Icon(Icons.close, size: 25, color: OlukoColors.primary);
   }
 
   Widget _bottomSection() {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 7),
+        padding: EdgeInsets.symmetric(horizontal: widget.bigCard ? 20 : 10),
         child: Column(
           children: [
             Row(children: [
@@ -89,9 +101,12 @@ class _State extends State<PointsCardComponent> {
             SizedBox(height: 5),
             Text(
               widget.pointsCard.name,
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
+              style: !widget.bigCard
+                  ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
+                  : OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
-            )
+            ),
+            SizedBox(height: 5),
           ],
         ));
   }
@@ -99,13 +114,14 @@ class _State extends State<PointsCardComponent> {
   Widget _cardTag(Color backgroundColor, String text) {
     return Container(
         alignment: Alignment.center,
-        height: 17,
-        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: backgroundColor),
+        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(12)), color: backgroundColor),
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             child: Text(
               text,
-              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500),
+              style: widget.bigCard
+                  ? OlukoFonts.olukoMediumFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500)
+                  : OlukoFonts.olukoSmallFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             )));
   }
