@@ -68,6 +68,7 @@ Future<void> initializeBackgroundNotifications() async {
                             channelName: 'Oluko push notifications',
                             channelDescription: 'Oluko push notifications',
                             importance: NotificationImportance.High,
+                            channelShowBadge: true,
                             )
       ],
       debug: true,
@@ -81,7 +82,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         channelKey: 'basic_channel',
         title: message.data['title']?.toString(),
         body: message.data['body'].toString(),
-        largeIcon: message.data['avatar'].toString(),
+        notificationLayout: NotificationLayout.BigPicture,
+        bigPicture: message.data['avatar'].toString(),
       ),
     );
 }
