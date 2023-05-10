@@ -61,6 +61,7 @@ import 'package:oluko_app/ui/components/coach_recommended_content_preview_stack.
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/newDesignComponents/coach_carousel_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/coach_horizontal_carousel.dart';
 import 'package:oluko_app/ui/newDesignComponents/coach_upcoming_challenges.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
@@ -263,17 +264,22 @@ class _CoachPageState extends State<CoachPage> {
             color: OlukoNeumorphismColors.appBackgroundColor,
             child: Theme(
               data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent)),
-              child: ListView(
+              child: ListView.builder(
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
-                children: [
-                  _reviewsPendingSection(),
-                  _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
-                  _userStatisticsSection(carouselNotificationWidgetList),
-                  _contentForUserSection(),
-                  _challengesToDoSection(context),
-                  _defaultBottomSafeSpace()
-                ],
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      _reviewsPendingSection(),
+                      _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
+                      _userStatisticsSection(carouselNotificationWidgetList),
+                      _contentForUserSection(),
+                      _challengesToDoSection(context),
+                      _defaultBottomSafeSpace()
+                    ],
+                  );
+                },
               ),
             ),
           );
@@ -337,32 +343,6 @@ class _CoachPageState extends State<CoachPage> {
         optionLabel: OlukoLocalizations.get(context, 'seeAll'),
         title: titleForCarousel,
         children: contentForCarousel,
-      ),
-    );
-  }
-
-  Padding getVideoPreviewCard(String videoThumbnail) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
-      child: Container(
-        height: 100,
-        width: 160,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)), image: DecorationImage(image: CachedNetworkImageProvider(videoThumbnail), fit: BoxFit.fill)),
-        child: Center(
-          child: Container(
-            width: 50,
-            height: 50,
-            child: OlukoBlurredButton(
-              childContent: Image.asset(
-                'assets/self_recording/white_play_arrow.png',
-                color: Colors.white,
-                height: 50,
-                width: 50,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -432,42 +412,41 @@ class _CoachPageState extends State<CoachPage> {
 
   List<Widget> _listOfContentForUser() => [
         getUserContentNewDesign(
-            contentForCarousel: _annotationVideosList.map((annotation) => getVideoPreviewCard(annotation.video.thumbUrl)).toList(),
+            contentForCarousel: _annotationVideosList.map((annotation) => CoachCarouselContent(contentImage: annotation.video.thumbUrl)).toList(),
             titleForCarousel: OlukoLocalizations.get(context, 'mentoredVideos'),
-            heightForCarousel: 150),
+            heightForCarousel: 160),
         getUserContentNewDesign(
-            contentForCarousel: _sentVideosList.map((sentVideo) => getVideoPreviewCard(sentVideo.video.thumbUrl)).toList(),
+            contentForCarousel: _sentVideosList.map((sentVideo) => CoachCarouselContent(contentImage: sentVideo.video.thumbUrl)).toList(),
             titleForCarousel: 'Sent Videos',
-            heightForCarousel: 150),
+            heightForCarousel: 160),
         getUserContentNewDesign(
-            contentForCarousel: _coachVideoMessageList.map((coachVideoMessage) => getVideoPreviewCard(coachVideoMessage.video.thumbUrl)).toList(),
+            contentForCarousel:
+                _coachVideoMessageList.map((coachVideoMessage) => CoachCarouselContent(contentImage: coachVideoMessage.video.thumbUrl)).toList(),
             titleForCarousel: 'Video Message',
-            heightForCarousel: 150),
+            heightForCarousel: 160),
         getUserContentNewDesign(
             contentForCarousel: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList)
-                .map((recommendedVideo) => getVideoPreviewCard(recommendedVideo.video.thumbUrl))
+                .map((recommendedVideo) => CoachCarouselContent(contentImage: recommendedVideo.video.thumbUrl))
                 .toList(),
             titleForCarousel: 'Recommended Videos',
-            heightForCarousel: 150),
+            heightForCarousel: 160),
         getUserContentNewDesign(
-            // contentForCarousel: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList)
             contentForCarousel:
                 CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.movement, [], onlyContent: true)
-                    .map((recommendedMovement) => getVideoPreviewCard(recommendedMovement.contentImage))
+                    .map((recommendedMovement) => CoachCarouselContent(contentImage: recommendedMovement.contentImage))
                     .toList(),
             titleForCarousel: 'Recommended Movements',
-            heightForCarousel: 150),
+            heightForCarousel: 160),
         getUserContentNewDesign(
-            // contentForCarousel: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList)
             contentForCarousel:
                 CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.course, [], onlyContent: true)
-                    .map((recommendedMovement) => getVideoPreviewCard(recommendedMovement.contentImage))
+                    .map((recommendedMovement) => CoachCarouselContent(
+                          contentImage: recommendedMovement.contentImage,
+                          isForPosterContent: true,
+                        ))
                     .toList(),
             titleForCarousel: 'Recommended Courses',
-            heightForCarousel: 150),
-        // _recommendedCoursesSection(),
-        // _separatorBox,
-        // _recommendedMovementsSection(),
+            heightForCarousel: 240),
       ];
 
   SizedBox _carouselToDoSection(BuildContext context) => SizedBox(child: _toDoSection(context));
