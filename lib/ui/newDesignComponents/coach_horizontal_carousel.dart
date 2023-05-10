@@ -29,39 +29,28 @@ class _State extends State<CoachTabHorizontalCarousel> {
       height: widget.height,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          _headerContent(),
-          // SingleChildScrollView(
-          //   padding: EdgeInsets.zero,
-          //   scrollDirection: Axis.horizontal,
-          //   child: Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     mainAxisAlignment: MainAxisAlignment.start,
-          //     children: widget.children,
-          //   ),
-          // )
-          Flexible(
-              child: ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            itemCount: 1,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (BuildContext context, int index) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: widget.children,
-              );
-            },
-          ))
-        ],
+        children: [_headerContent(), horizontalScrollComponent()],
       ),
     );
   }
 
+  Flexible horizontalScrollComponent() {
+    return Flexible(
+        child: ListView.builder(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      itemCount: 1,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (BuildContext context, int index) {
+        return Row(
+          children: widget.children,
+        );
+      },
+    ));
+  }
+
   Row _headerContent() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         if (widget.title != null) TitleBody(widget.title) else const SizedBox.shrink(),

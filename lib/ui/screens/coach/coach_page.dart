@@ -273,9 +273,9 @@ class _CoachPageState extends State<CoachPage> {
                     children: [
                       _reviewsPendingSection(),
                       _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
-                      _userStatisticsSection(carouselNotificationWidgetList),
+                      // _userStatisticsSection(carouselNotificationWidgetList),
                       _contentForUserSection(),
-                      _challengesToDoSection(context),
+                      // _challengesToDoSection(context),
                       _defaultBottomSafeSpace()
                     ],
                   );
@@ -334,7 +334,8 @@ class _CoachPageState extends State<CoachPage> {
         ),
       );
 
-  Widget getUserContentNewDesign({@required List<Widget> contentForCarousel, @required String titleForCarousel, @required double heightForCarousel}) {
+  Widget coachTabCarouselComponent(
+      {@required List<Widget> contentForCarousel, @required String titleForCarousel, @required double heightForCarousel, Function() viewAllTapAction}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CoachTabHorizontalCarousel(
@@ -342,6 +343,7 @@ class _CoachPageState extends State<CoachPage> {
         height: heightForCarousel,
         optionLabel: OlukoLocalizations.get(context, 'seeAll'),
         title: titleForCarousel,
+        onOptionTap: viewAllTapAction,
         children: contentForCarousel,
       ),
     );
@@ -410,44 +412,67 @@ class _CoachPageState extends State<CoachPage> {
     });
   }
 
-  List<Widget> _listOfContentForUser() => [
-        getUserContentNewDesign(
-            contentForCarousel: _annotationVideosList.map((annotation) => CoachCarouselContent(contentImage: annotation.video.thumbUrl)).toList(),
-            titleForCarousel: OlukoLocalizations.get(context, 'mentoredVideos'),
-            heightForCarousel: 160),
-        getUserContentNewDesign(
-            contentForCarousel: _sentVideosList.map((sentVideo) => CoachCarouselContent(contentImage: sentVideo.video.thumbUrl)).toList(),
-            titleForCarousel: 'Sent Videos',
-            heightForCarousel: 160),
-        getUserContentNewDesign(
-            contentForCarousel:
-                _coachVideoMessageList.map((coachVideoMessage) => CoachCarouselContent(contentImage: coachVideoMessage.video.thumbUrl)).toList(),
-            titleForCarousel: 'Video Message',
-            heightForCarousel: 160),
-        getUserContentNewDesign(
-            contentForCarousel: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList)
-                .map((recommendedVideo) => CoachCarouselContent(contentImage: recommendedVideo.video.thumbUrl))
-                .toList(),
-            titleForCarousel: 'Recommended Videos',
-            heightForCarousel: 160),
-        getUserContentNewDesign(
-            contentForCarousel:
-                CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.movement, [], onlyContent: true)
-                    .map((recommendedMovement) => CoachCarouselContent(contentImage: recommendedMovement.contentImage))
-                    .toList(),
-            titleForCarousel: 'Recommended Movements',
-            heightForCarousel: 160),
-        getUserContentNewDesign(
-            contentForCarousel:
-                CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.course, [], onlyContent: true)
-                    .map((recommendedMovement) => CoachCarouselContent(
-                          contentImage: recommendedMovement.contentImage,
-                          isForPosterContent: true,
-                        ))
-                    .toList(),
-            titleForCarousel: 'Recommended Courses',
-            heightForCarousel: 240),
-      ];
+  List<Widget> _listOfContentForUser() {
+    const double heightForVideoContent = 160;
+    const double heightForCardContent = 240;
+    return [
+      coachTabCarouselComponent(
+          contentForCarousel: _annotationVideosList
+              .map((annotation) => CoachCarouselContent(
+                    contentImage: annotation.video.thumbUrl,
+                    titleForContent: annotation.segmentSubmissionId,
+                  ))
+              .toList(),
+          titleForCarousel: OlukoLocalizations.get(context, 'mentoredVideos'),
+          heightForCarousel: heightForVideoContent),
+      coachTabCarouselComponent(
+          contentForCarousel: _sentVideosList
+              .map((sentVideo) => CoachCarouselContent(
+                    contentImage: sentVideo.video.thumbUrl,
+                    titleForContent: sentVideo.segmentId,
+                  ))
+              .toList(),
+          titleForCarousel: OlukoLocalizations.get(context, 'sentVideos'),
+          heightForCarousel: heightForVideoContent),
+      coachTabCarouselComponent(
+          contentForCarousel: _coachVideoMessageList
+              .map((coachVideoMessage) => CoachCarouselContent(
+                    contentImage: coachVideoMessage.video.thumbUrl,
+                    titleForContent: coachVideoMessage.video.name,
+                  ))
+              .toList(),
+          titleForCarousel: OlukoLocalizations.get(context, 'coachMessageVideo'),
+          heightForCarousel: heightForVideoContent),
+      coachTabCarouselComponent(
+          contentForCarousel: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList)
+              .map((recommendedVideo) => CoachCarouselContent(
+                    contentImage: recommendedVideo.video.thumbUrl,
+                    titleForContent: recommendedVideo.title,
+                  ))
+              .toList(),
+          titleForCarousel: OlukoLocalizations.of(context).find('recommendedVideos'),
+          heightForCarousel: heightForVideoContent),
+      coachTabCarouselComponent(
+          contentForCarousel:
+              CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.movement, [], onlyContent: true)
+                  .map((recommendedMovement) => CoachCarouselContent(
+                        contentImage: recommendedMovement.contentImage,
+                        titleForContent: recommendedMovement.contentTitle,
+                      ))
+                  .toList(),
+          titleForCarousel: OlukoLocalizations.of(context).find('recommendedMovements'),
+          heightForCarousel: heightForVideoContent),
+      coachTabCarouselComponent(
+          contentForCarousel: CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.course, [], onlyContent: true)
+              .map((recommendedMovement) => CoachCarouselContent(
+                    contentImage: recommendedMovement.contentImage,
+                    isForPosterContent: true,
+                  ))
+              .toList(),
+          titleForCarousel: OlukoLocalizations.of(context).find('recommendedCourses'),
+          heightForCarousel: heightForCardContent),
+    ];
+  }
 
   SizedBox _carouselToDoSection(BuildContext context) => SizedBox(child: _toDoSection(context));
 
@@ -509,39 +534,6 @@ class _CoachPageState extends State<CoachPage> {
 
   SizedBox _defaultBottomSafeSpace() => const SizedBox(
         height: hideAssessmentsTab ? 220 : 200,
-      );
-
-  Widget _recommendedVideosSection({bool isForCarousel}) {
-    return ((_coachRecommendationList != null && _coachRecommendationList.isNotEmpty) &&
-            _coachRecommendationList.where((coachRecommendation) => coachRecommendation.contentType == TimelineInteractionType.recommendedVideo).isNotEmpty)
-        ? CoachContentPreviewComponent(
-            contentFor: CoachContentSection.recomendedVideos,
-            titleForSection: OlukoLocalizations.get(context, 'recommendedVideos'),
-            recommendedVideoContent: CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList),
-            onNavigation: () => !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {})
-        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recommendedVideos'));
-  }
-
-  Widget _recommendedCoursesSection({bool isForCarousel}) => CoachHelperFunctions.recommendedContentImageStack(
-        context: context,
-        coachRecommendations: _coachRecommendationList,
-        contentType: TimelineInteractionType.course,
-        onTap: (courseRecommended) {
-          BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
-              arguments: {'recommendedContent': courseRecommended, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')});
-        },
-      );
-
-  Widget _recommendedMovementsSection({bool isForCarousel}) => CoachHelperFunctions.recommendedContentImageStack(
-        context: context,
-        coachRecommendations: _coachRecommendationList,
-        contentType: TimelineInteractionType.movement,
-        onTap: (movementsRecommended) {
-          BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
-              arguments: {'recommendedContent': movementsRecommended, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')});
-        },
       );
 
   void _disposeView(CoachTimelineItemsDispose timelineItemsUpdateListener) {

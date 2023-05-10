@@ -14,8 +14,9 @@ import 'package:oluko_app/utils/image_utils.dart';
 
 class CoachCarouselContent extends StatefulWidget {
   final String contentImage;
+  final String titleForContent;
   final bool isForPosterContent;
-  const CoachCarouselContent({Key key, this.contentImage, this.isForPosterContent = false}) : super(key: key);
+  const CoachCarouselContent({Key key, this.contentImage, this.titleForContent, this.isForPosterContent = false}) : super(key: key);
 
   @override
   State<CoachCarouselContent> createState() => _CoachCarouselContentState();
@@ -50,28 +51,38 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
   }
 
   Widget contentForVideo(String image) {
-    return Neumorphic(
-      style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
-      child: Container(
-        height: 100,
-        width: 160,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)), image: DecorationImage(image: CachedNetworkImageProvider(image), fit: BoxFit.fill)),
-        child: Center(
+    return Column(
+      children: [
+        Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
           child: Container(
-            width: 50,
-            height: 50,
-            child: OlukoBlurredButton(
-              childContent: Image.asset(
-                'assets/self_recording/white_play_arrow.png',
-                color: Colors.white,
-                height: 50,
+            height: 100,
+            width: 160,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)), image: DecorationImage(image: CachedNetworkImageProvider(image), fit: BoxFit.fill)),
+            child: Center(
+              child: Container(
                 width: 50,
+                height: 50,
+                child: OlukoBlurredButton(
+                  childContent: Image.asset(
+                    'assets/self_recording/white_play_arrow.png',
+                    color: Colors.white,
+                    height: 50,
+                    width: 50,
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
+        widget.titleForContent != null
+            ? Text(
+                widget.titleForContent,
+                style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
+              )
+            : SizedBox.shrink()
+      ],
     );
   }
 }
