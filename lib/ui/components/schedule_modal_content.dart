@@ -41,6 +41,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
 
   final SoundPlayer _soundPlayer = SoundPlayer();
   List<DateTime> scheduledDates = [];
+  List<String> weekDays = [];
 
   @override
   void initState() {
@@ -48,7 +49,8 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
     WeekDaysHelper.reinitializeSelectedWeekDays();
     if (widget.courseEnrollment != null && widget.courseEnrollment.weekDays != null &&
         widget.courseEnrollment.weekDays.isNotEmpty){
-        WeekDaysHelper.setSelectedWeekdays(widget.courseEnrollment.weekDays);
+        weekDays = widget.courseEnrollment.weekDays;
+        WeekDaysHelper.setSelectedWeekdays(weekDays);
         scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, widget.totalClasses);
     }
     if (widget.course != null){
@@ -163,13 +165,13 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           SizedBox(
-                            width: 60,
+                            width: 80,
                             child: GestureDetector(
                               onTap: () {
                                 skipSchedule(context);
                               },
                               child: Text(
-                                OlukoLocalizations.get(context, 'skip'),
+                                OlukoLocalizations.get(context, widget.courseEnrollment == null ? 'skip' : 'cancel'),
                                 style: OlukoFonts.olukoBigFont(
                                   customFontWeight: FontWeight.w600,
                                   customColor: OlukoColors.grayColor,
@@ -226,15 +228,12 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
       widget.course.scheduledDates = [];
       widget.course.weekDays = [];
       enrollCourse(context);
-    }else{
-      scheduledDates = [];
-      widget.courseEnrollment.weekDays = [];
-      updateSchedule(context);
     }
     Navigator.pop(context);
   }
 
   Future<void> updateSchedule(BuildContext context) async {
+    widget.courseEnrollment.weekDays = weekDays;
     widget.blocCourseEnrollment.scheduleCourse(widget.courseEnrollment, scheduledDates);
     widget.onUpdateScheduleAction();
   }
@@ -243,7 +242,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
     setState(() {
       WeekDaysHelper.selectedWeekdays[index]['selected'] = value;
       if (widget.courseEnrollment != null){
-        widget.courseEnrollment.weekDays = WeekDaysHelper.selectedWeekdays
+        weekDays = WeekDaysHelper.selectedWeekdays
                             .where((item) => item['selected'] as bool == true)
                             .map((item) => item['day'].toString())
                             .toList();
