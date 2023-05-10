@@ -36,7 +36,6 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        // shrinkWrap: true,
         children: [
           widget.segmentStep,
           const SizedBox(
@@ -54,7 +53,6 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
     );
   }
 
-// List<WeightRecord>> friendsRecords
   Widget getWorkoutRecordsComponent({MovementSubmodel currentMovement, String currentUserRecord}) {
     return Container(
       decoration: const BoxDecoration(
@@ -122,7 +120,6 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
                   children: [
                     Text(
                       getWeight(currentMovement, checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).first.weight),
-                      // checkMovementRecordInsideFriendRecords(friendRecords, currentMovement).first.weight.toStringAsFixed(2),
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w800),
                     ),
                     const SizedBox(
@@ -159,7 +156,6 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
@@ -190,7 +186,6 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
     } else {
       result = (weight * _toKilogramsUnit).round().toString();
     }
-    // }
     return result;
   }
 
