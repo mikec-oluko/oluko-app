@@ -80,8 +80,16 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
                   const SizedBox.shrink(),
               ],
             ),
-            Row(
-              children: test(currentMovement),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 100,
+              width: ScreenUtils.width(context),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: test(currentMovement),
+              ),
             )
           ],
         ),

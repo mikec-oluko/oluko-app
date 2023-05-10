@@ -74,7 +74,9 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
   }
 
   List<Widget> getUsersProfilePictures() {
-    return onlyUsersWithRecord()
+    List<UserResponse> usersListForRecordStackLimited =
+        onlyUsersWithRecord().length > 5 ? onlyUsersWithRecord().getRange(0, 5).toList() : onlyUsersWithRecord();
+    return usersListForRecordStackLimited
         .map((friend) => _checkFriendHasRecord(friend)
             ? Positioned(
                 left: double.parse((onlyUsersWithRecord().indexOf(friend) * 20).toString()),
