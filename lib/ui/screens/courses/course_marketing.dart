@@ -486,7 +486,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
     return Padding(
-      padding: EdgeInsets.only(top: 15),
+      padding: EdgeInsets.only(top: 30),
       child: Row(
         children: [
           Container(
