@@ -76,16 +76,22 @@ Future<void> initializeBackgroundNotifications() async {
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
+  final String userAvatar = message.data['avatar'].toString();
+  final NotificationContent notificationContent = NotificationContent(
         id: 10,
         channelKey: 'basic_channel',
         title: message.data['title']?.toString(),
         body: message.data['body'].toString(),
         notificationLayout: NotificationLayout.BigPicture,
-        bigPicture: message.data['avatar'].toString(),
-      ),
-    );
+  );
+  if (Platform.isAndroid){
+    notificationContent.largeIcon = userAvatar;
+  }else{
+    notificationContent.bigPicture = userAvatar;
+  }
+  AwesomeNotifications().createNotification(
+    content: notificationContent,
+  );
 }
 
 const OLUKO = 'Oluko';
