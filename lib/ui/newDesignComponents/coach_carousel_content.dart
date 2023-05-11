@@ -16,7 +16,8 @@ class CoachCarouselContent extends StatefulWidget {
   final String contentImage;
   final String titleForContent;
   final bool isForPosterContent;
-  const CoachCarouselContent({Key key, this.contentImage, this.titleForContent, this.isForPosterContent = false}) : super(key: key);
+  final Function() onTapContent;
+  const CoachCarouselContent({Key key, this.contentImage, this.titleForContent, this.onTapContent, this.isForPosterContent = false}) : super(key: key);
 
   @override
   State<CoachCarouselContent> createState() => _CoachCarouselContentState();
@@ -31,7 +32,9 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
   Padding getVideoPreviewCard({bool isForPosterContent = false, @required String image}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
-      child: widget.isForPosterContent ? getPosterPreviewCard(image) : contentForVideo(image),
+      child: widget.isForPosterContent
+          ? GestureDetector(onTap: () => widget.onTapContent() ?? () {}, child: getPosterPreviewCard(image))
+          : GestureDetector(onTap: () => widget.onTapContent() ?? () {}, child: contentForVideo(image)),
     );
   }
 

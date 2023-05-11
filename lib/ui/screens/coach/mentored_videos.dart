@@ -41,14 +41,14 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   @override
   void initState() {
     _personalizedVideosList =
-        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation, videoMessages: widget.coachVideoMessage);
+        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation ?? [], videoMessages: widget.coachVideoMessage ?? []);
 
     setState(() {
       content.addAll(_personalizedVideosList);
       filteredContent = content;
       filteredContent = contentSortedByDate();
-      _updatedMessageVideos = widget.coachVideoMessage;
-      _updatedAnnotations = widget.coachAnnotation;
+      _updatedMessageVideos = widget.coachVideoMessage ?? [];
+      _updatedAnnotations = widget.coachAnnotation ?? [];
     });
     super.initState();
   }
