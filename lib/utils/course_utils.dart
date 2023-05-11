@@ -26,16 +26,17 @@ class CourseUtils {
   }
 
   static List<Course> filterByCategories(List<Course> courses, CourseCategory courseCategory) {
-    List<Course> tasksToShow = [];
-    courses.forEach((Course course) {
-      List<String> courseIds = courseCategory.courses.map((CourseCategoryItem courseCategoryItem) => courseCategoryItem.id).toList();
-
-      if (courseIds.indexOf(course.id) != -1) {
-        tasksToShow.add(course);
+    List<Course> coursesInCategorySorted = [];
+    courseCategory.courses.forEach((courseFromCategory) {
+      if (_courseFromCategoryCourseList(courses, courseFromCategory).isNotEmpty) {
+        coursesInCategorySorted.add(_courseFromCategoryCourseList(courses, courseFromCategory).first);
       }
     });
-    return tasksToShow;
+    return coursesInCategorySorted;
   }
+
+  static Iterable<Course> _courseFromCategoryCourseList(List<Course> courses, CourseCategoryItem courseFromCategory) =>
+      courses.where((actualCourse) => actualCourse.id == courseFromCategory.id);
 
   /*
   Returns Map with a list of Courses for each Category
@@ -58,8 +59,6 @@ class CourseUtils {
     return courses;
   }
 
- 
-
   static Widget noCourseText(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(left: 30, top: 20),
@@ -68,8 +67,6 @@ class CourseUtils {
           style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w500),
         ));
   }
-
-
 
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
     return "$weeks ${OlukoLocalizations.get(context, 'weeks')}, $classes ${OlukoLocalizations.get(context, 'classes')}";
