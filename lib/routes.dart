@@ -914,7 +914,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
