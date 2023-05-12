@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/enums/completion_criteria_enum.dart';
 import 'package:oluko_app/models/enums/content_type_enum.dart';
 import 'package:oluko_app/models/points_card.dart';
+import 'package:oluko_app/repositories/collected_card_repository.dart';
 import 'package:oluko_app/repositories/user_statistics_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/repositories/points_card_repository.dart';
@@ -62,18 +63,16 @@ class PointsCardBloc extends Cubit<PointsCardState> {
       final List<PointsCard> cards = await PointsCardRepository.get(courseEnrollment.userId);
 
       if (_userCompletedNewClassOrCourse(completionObj)) {
-        cards.forEach(
-          (card) {
-            if (_userCompletedCardLinkedContent(card, completionObj) || _userReachedCardContentCompletion(card, completionObj, userStats)) {
-              newCardsCollected.add(card);
-            }
-          },
-        );
+        for (final card in cards) {
+          if (_userCompletedCardLinkedContent(card, completionObj) || _userReachedCardContentCompletion(card, completionObj, userStats)) {
+            CollectedCardRepository.addCard(courseEnrollment.userId, card);
+            newCardsCollected.add(card);
+          }
+        }
       }
-
-      //TODO: FALTA GURADAR LAS CARTAS EN LAS CARTAS DEL USUARIO
-
-      emit(NewCardsCollected(pointsCards: newCardsCollected));
+      if (newCardsCollected.isNotEmpty) {
+        emit(NewCardsCollected(pointsCards: newCardsCollected));
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -89,6 +88,7 @@ class PointsCardBloc extends Cubit<PointsCardState> {
   }
 
   bool _userCompletedCardLinkedContent(PointsCard card, Completion completionObj) {
+    //TODO: linked contents funciona mal y asocia a culquier curso
     return _cardCriteriaIsByLinkedContent(card) &&
         (_cardClassMatchesCompletedClass(card, completionObj) || _cardCourseMatchesCompletedCourse(card, completionObj));
   }

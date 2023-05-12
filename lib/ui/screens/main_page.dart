@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -190,29 +191,36 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 ),
               );
             } else {
-              return Scaffold(
-                backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                body: Stack(alignment: AlignmentDirectional.center, children: [
-                  _scaffoldBody(),
-                  _slidingUpPanel(),
-                ]),
-                extendBody: true,
-                bottomNavigationBar: _isBottomTabActive
-                    ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
-                        //WidgetsBinding.instance.addPostFrameCallback((_) {_showPointsCardDialog(context);});                      
-                        if (state is PointsCardPanelOpen) {
-                          return SizedBox();
-                        } else {
-                          return OlukoBottomNavigationBar(
-                            selectedIndex: this.tabController.index,
-                            onPressed: (index) => this.setState(() {
-                              this.tabController.animateTo(index as int);
-                            }),
-                          );
-                        }
-                      })
-                    : const SizedBox(),
-              );
+              return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
+                if (pointsCardsState is NewCardsCollected) {
+                  for(var card in pointsCardsState.pointsCards ){
+                  WidgetsBinding.instance.addPostFrameCallback((_) {_showPointsCardDialog(context, card);});
+
+                  }
+                }
+                return Scaffold(
+                  backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+                  body: Stack(alignment: AlignmentDirectional.center, children: [
+                    _scaffoldBody(),
+                    _slidingUpPanel(),
+                  ]),
+                  extendBody: true,
+                  bottomNavigationBar: _isBottomTabActive
+                      ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+                          if (state is PointsCardPanelOpen) {
+                            return SizedBox();
+                          } else {
+                            return OlukoBottomNavigationBar(
+                              selectedIndex: this.tabController.index,
+                              onPressed: (index) => this.setState(() {
+                                this.tabController.animateTo(index as int);
+                              }),
+                            );
+                          }
+                        })
+                      : const SizedBox(),
+                );
+              });
             }
           },
         );
@@ -255,10 +263,16 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     );
   }
 
-  void _showPointsCardDialog(BuildContext context) {
-    DialogUtils.getDialog(context, [
-      SizedBox(height: 280, width: 230, child: PointsCardComponent(bigCard: true, pointsCard: PointsCard(name: '100 WORKOUTS', description: "bla", value: 10)))
-    ], showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true);
+  void _showPointsCardDialog(BuildContext context, PointsCard card) {
+    DialogUtils.getDialog(
+        context,
+        [
+          SizedBox(
+              height: 280, width: 230, child: PointsCardComponent(bigCard: true, pointsCard: card))
+        ],
+        showBackgroundColor: false,
+        showExitButton: false,
+        showExitButtonOutside: true);
   }
 
   void _showPopUp(BuildContext context, String route, UserChangedPlan state) {
