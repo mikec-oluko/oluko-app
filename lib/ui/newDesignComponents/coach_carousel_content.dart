@@ -55,6 +55,7 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
 
   Widget contentForVideo(String image) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Neumorphic(
           style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
@@ -62,29 +63,47 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
             height: 100,
             width: 160,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)), image: DecorationImage(image: CachedNetworkImageProvider(image), fit: BoxFit.fill)),
-            child: Center(
-              child: Container(
-                width: 50,
-                height: 50,
-                child: OlukoBlurredButton(
-                  childContent: Image.asset(
-                    'assets/self_recording/white_play_arrow.png',
-                    color: Colors.white,
-                    height: 50,
-                    width: 50,
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            child: Stack(
+              children: [
+                Image(
+                  image: CachedNetworkImageProvider(
+                    image,
                   ),
+                  width: 160,
+                  fit: BoxFit.cover,
+                  frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                      ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                 ),
-              ),
+                Center(
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    child: OlukoBlurredButton(
+                      childContent: Image.asset(
+                        'assets/self_recording/white_play_arrow.png',
+                        color: Colors.white,
+                        height: 50,
+                        width: 50,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ),
-        widget.titleForContent != null
-            ? Text(
-                widget.titleForContent,
-                style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
-              )
-            : SizedBox.shrink()
+        if (widget.titleForContent != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 2),
+            child: Text(
+              widget.titleForContent,
+              style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
+            ),
+          )
+        else
+          const SizedBox.shrink()
       ],
     );
   }

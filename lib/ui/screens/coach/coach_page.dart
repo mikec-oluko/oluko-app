@@ -131,7 +131,6 @@ class _CoachPageState extends State<CoachPage> {
       builder: (context, authState) {
         if (authState is AuthSuccess) {
           _currentAuthUser = authState.user;
-          _requestCurrentUserData(context);
           return BlocBuilder<CoachUserBloc, CoachUserState>(
             builder: (context, coachUserState) {
               if (coachUserState is CoachUserSuccess) {
@@ -258,12 +257,12 @@ class _CoachPageState extends State<CoachPage> {
                     children: [
                       _reviewsPendingSection(),
                       _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
-                      getMentoredVideos(context),
-                      getSendVideos(context),
-                      getMessageVideos(context),
-                      getRecommendedVideos(context),
-                      getRecommendedMovements(context),
-                      getRecommendedCourses(context),
+                      _getMentoredVideos(context),
+                      _getSendVideos(context),
+                      _getMessageVideos(context),
+                      _getRecommendedVideos(context),
+                      _getRecommendedMovements(context),
+                      _getRecommendedCourses(context),
                       _defaultBottomSafeSpace()
                     ],
                   );
@@ -278,7 +277,7 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  Widget getRecommendedCourses(BuildContext context) {
+  Widget _getRecommendedCourses(BuildContext context) {
     final List<CoachRecommendationDefault> recommededCourses =
         CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.course, [], onlyContent: true);
     return coachTabCarouselComponent(
@@ -299,7 +298,7 @@ class _CoachPageState extends State<CoachPage> {
         heightForCarousel: heightForCardContent);
   }
 
-  Widget getRecommendedMovements(BuildContext context) {
+  Widget _getRecommendedMovements(BuildContext context) {
     final List<CoachRecommendationDefault> recommendedMovements =
         CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.movement, [], onlyContent: true);
     return coachTabCarouselComponent(
@@ -319,7 +318,7 @@ class _CoachPageState extends State<CoachPage> {
         heightForCarousel: heightForVideoContent);
   }
 
-  Widget getRecommendedVideos(BuildContext context) {
+  Widget _getRecommendedVideos(BuildContext context) {
     List<RecommendationMedia> recommendedVideos = CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList);
     return coachTabCarouselComponent(
         viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
@@ -339,7 +338,7 @@ class _CoachPageState extends State<CoachPage> {
         heightForCarousel: heightForVideoContent);
   }
 
-  Widget getMessageVideos(BuildContext context) {
+  Widget _getMessageVideos(BuildContext context) {
     return coachTabCarouselComponent(
         viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'coachVideoMessages': _coachVideoMessageList}),
         contentForCarousel: _coachVideoMessageList
@@ -357,13 +356,13 @@ class _CoachPageState extends State<CoachPage> {
         heightForCarousel: heightForVideoContent);
   }
 
-  Widget getSendVideos(BuildContext context) {
+  Widget _getSendVideos(BuildContext context) {
     return coachTabCarouselComponent(
         viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos], arguments: {'sentVideosContent': _sentVideosList}),
         contentForCarousel: _sentVideosList
             .map((sentVideo) => CoachCarouselContent(
                   contentImage: sentVideo.video.thumbUrl,
-                  titleForContent: sentVideo.segmentId,
+                  titleForContent: sentVideo.segmentName ?? sentVideo.segmentId,
                   onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                     'videoUrl': sentVideo.video.url,
                     'aspectRatio': sentVideo.video.aspectRatio,
@@ -375,21 +374,23 @@ class _CoachPageState extends State<CoachPage> {
         heightForCarousel: heightForVideoContent);
   }
 
-  Widget getMentoredVideos(BuildContext context) {
+  Widget _getMentoredVideos(BuildContext context) {
     return coachTabCarouselComponent(
         viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'coachAnnotation': _annotationVideosList}),
         contentForCarousel: _annotationVideosList
             .map((annotation) => CoachCarouselContent(
                   contentImage: annotation.video.thumbUrl,
-                  titleForContent: annotation.segmentSubmissionId,
+                  titleForContent: annotation.id == _defaultIntroductionVideoId
+                      ? OlukoLocalizations.get(context, 'introductionVideo')
+                      : annotation.segmentName ?? annotation.segmentSubmissionId,
                   onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                     'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: annotation.videoHLS, videoUrl: annotation.video.url),
                     'aspectRatio': annotation.video.aspectRatio,
-                    'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+                    'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
                   }),
                 ))
             .toList(),
-        titleForCarousel: OlukoLocalizations.get(context, 'mentoredVideos'),
+        titleForCarousel: OlukoLocalizations.get(context, 'annotatedVideos'),
         heightForCarousel: heightForVideoContent);
   }
 
