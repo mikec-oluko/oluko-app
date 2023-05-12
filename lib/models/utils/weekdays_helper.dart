@@ -63,4 +63,32 @@ class WeekDaysHelper {
     final List<DateTime> datesList = rrule.getInstances(start: currentDate).toList();
     return datesList;
   }
+
+  static List<DateTime> getCurrentWeekDates(){
+    final rrule = RecurrenceRule(
+      frequency: Frequency.daily,
+      count: 7,
+    );
+    final DateTime currentDate = DateTime.now().subtract(const Duration(days: 1)).copyWith(isUtc: true);
+
+    final DateTime endOfWeek = getNextEndOfWeek();
+    final List<DateTime> datesList = rrule.getInstances(start: currentDate)
+                                            .where((currentDay) => 
+                                            currentDay.year == endOfWeek.year &&
+                                            currentDay.month == endOfWeek.month &&
+                                            currentDay.day <= endOfWeek.day).toList();
+    return datesList;
+  }
+
+  static DateTime getNextEndOfWeek(){
+    const int sunday = DateTime.sunday;
+    DateTime now = DateTime.now();
+
+    while(now.weekday != sunday)
+    {
+        now = now.add(const Duration(days: 1));
+    }
+    return now;
+  }
+
 }

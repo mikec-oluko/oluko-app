@@ -75,8 +75,10 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   }
 
   Widget _showScheduleDialog(BuildContext context){
+    //TODO - WHEN THIS IS DEFINED
+    const bool hasScheduleNotes = false;
     return Container(
-            height: 500,
+            height: hasScheduleNotes ? 485 : 430,
             decoration: const BoxDecoration(
               borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
               color:OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -94,22 +96,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  //TODO - Add line below when it's defined
-                    // Align(
-                    //   alignment: Alignment.centerLeft,
-                    //   child: Container(
-                    //     padding: const EdgeInsets.all(15),
-                    //     width: MediaQuery.of(context).size.width,
-                    //     decoration: const BoxDecoration(
-                    //       borderRadius: BorderRadius.all(Radius.circular(12)),
-                    //       color:OlukoColors.grayColorFadeTop,
-                    //     ),
-                    //     child: Text(
-                    //       OlukoLocalizations.get(context, 'setYourSchedule'),
-                    //       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: OlukoColors.white),
-                    //     ),
-                    //   ),
-                    // ),
+                  _showScheduleNotes(hasScheduleNotes),
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -121,7 +108,6 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
                             child: Theme(
                               data: ThemeData(
                                 unselectedWidgetColor: OlukoColors.grayColor,
-                                backgroundColor: OlukoColors.white,
                               ),
                               child: StatefulBuilder(
                                 builder: (BuildContext context, StateSetter setState) {
@@ -195,6 +181,28 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
                     ),
                   )
                 ],
+              ),
+            ),
+          );
+  }
+
+  Widget _showScheduleNotes(bool hasScheduleNote) {
+    //TODO - Add line below when it's defined
+    if (!hasScheduleNote){
+      return const SizedBox.shrink();
+    }
+    return Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                color:OlukoColors.grayColorFadeTop,
+              ),
+              child: Text(
+                OlukoLocalizations.get(context, 'setYourSchedule'),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: OlukoColors.white),
               ),
             ),
           );

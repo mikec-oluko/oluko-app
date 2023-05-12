@@ -27,6 +27,7 @@ class CourseClassCardsList extends StatefulWidget {
   final Function closeVideo;
   final Function onPressed;
   final bool isFromHome;
+  final bool openEditScheduleOnInit;
   const CourseClassCardsList(
       {this.course,
       this.courseEnrollment,
@@ -38,7 +39,8 @@ class CourseClassCardsList extends StatefulWidget {
       this.playPauseVideo,
       this.closeVideo,
       this.onPressed,
-      this.isFromHome = false})
+      this.isFromHome = false,
+      this.openEditScheduleOnInit = false,})
       : super();
 
   @override
@@ -55,6 +57,10 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       _classItemList = _buildClassesList();
     });
     super.initState();
+    if (widget.openEditScheduleOnInit){
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _openEditSchedule(context));
+    }
   }
 
   @override
@@ -69,20 +75,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
           padding: const EdgeInsets.only(bottom: 10),
           child: GestureDetector(
             onTap: () {
-              BottomDialogUtils.showBottomDialog(
-                content: ScheduleModalContent(
-                  isCoachRecommendation: widget.isCoachRecommendation,
-                  courseEnrollment: widget.courseEnrollment,
-                  totalClasses: _classItemList.length,
-                  blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
-                  onUpdateScheduleAction: (){
-                    setState(() {
-                      _classItemList = _updateClassScheduledDates();
-                    });
-                  },
-                ),
-                context: context,
-              );
+              _openEditSchedule(context);
             },
             child: Text(
               OlukoLocalizations.get(context, 'editSchedule'),
@@ -97,6 +90,24 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
             CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItemList.indexOf(classElement)), classElement)),
         ..._classItemList.map((ClassItem classElement) => getCompletedClasses(_classItemList.indexOf(classElement), classElement))
       ],
+    );
+  }
+
+  void _openEditSchedule(BuildContext context){
+    BottomDialogUtils.showBottomDialog(
+      content: ScheduleModalContent(
+        isCoachRecommendation: widget.isCoachRecommendation,
+        courseEnrollment: widget.courseEnrollment,
+        totalClasses: _classItemList.length,
+        blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
+        onUpdateScheduleAction: (){
+          setState(() {
+            _classItemList = _updateClassScheduledDates();
+          });
+        },
+      ),
+      isScrollControlled: true,
+      context: context,
     );
   }
 

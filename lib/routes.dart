@@ -1474,6 +1474,7 @@ class Routes {
           user: argumentsToAdd['user'] as UserResponse,
           index: argumentsToAdd['index'] as int,
           isFromHome: argumentsToAdd['isFromHome'] as bool,
+          openEditScheduleOnInit: argumentsToAdd['openEditScheduleOnInit'] as bool,
         );
         break;
       case RouteEnum.welcomeVideoFirstTimeLogin:

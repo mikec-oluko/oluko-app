@@ -373,6 +373,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               });
             },
           ),
+          isScrollControlled: true,
           context: context,
         );
   }

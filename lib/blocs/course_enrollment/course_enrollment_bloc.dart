@@ -80,7 +80,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
 
   Future<void> scheduleCourse(CourseEnrollment enrolledCourse, List<DateTime> scheduledDates) async {
     try {
-      for (int i = 0; i < enrolledCourse.classes.length; i++) {
+      for (int i = 0; i < scheduledDates.length; i++) {
         enrolledCourse.classes[i].scheduledDate = scheduledDates.isNotEmpty && scheduledDates[i] != null ? Timestamp.fromDate(scheduledDates[i]) : null;
       }
       final CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.scheduleCourse(enrolledCourse);
