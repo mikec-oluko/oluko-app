@@ -38,9 +38,6 @@ class CourseUtils {
   static Iterable<Course> _courseFromCategoryCourseList(List<Course> courses, CourseCategoryItem courseFromCategory) =>
       courses.where((actualCourse) => actualCourse.id == courseFromCategory.id);
 
-  /*
-  Returns Map with a list of Courses for each Category
-  */
   static Map<CourseCategory, List<Course>> mapCoursesByCategories(List<Course> courses, List<CourseCategory> courseCategories) {
     Map<CourseCategory, List<Course>> mappedCourses = {};
     courseCategories.forEach((courseCategory) {
