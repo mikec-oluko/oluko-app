@@ -63,6 +63,20 @@ class FriendRepository {
     }
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenFriendRequestByUserId(String userId) {
+    try {
+     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getString('projectId'))
+          .collection('friends')
+        .where('id', isEqualTo: userId);
+
+        return query.snapshots();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<List<User>> getUserFriendsSuggestionsByUserId(String userId) async {
     //TODO: Get user suggestions for UserId
     try {

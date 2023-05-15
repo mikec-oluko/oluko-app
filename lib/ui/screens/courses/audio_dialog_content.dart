@@ -47,7 +47,7 @@ class _State extends State<AudioDialogContent> {
 
   Widget audioDialogContent(BuildContext context, UserResponse coach) {
     return ClipRRect(
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(20)),
       child: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
@@ -60,7 +60,10 @@ class _State extends State<AudioDialogContent> {
               SizedBox(height: 45),
               Stack(alignment: Alignment.bottomCenter, children: [
                 StoriesItem(maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar),
-                Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Image.asset('assets/courses/photo_ellipse.png', scale: 4),
+                )
               ]),
               SizedBox(height: 15),
               Text(

@@ -19,6 +19,7 @@ import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -28,6 +29,7 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
+import 'package:oluko_app/blocs/community_tab_friend_notification_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
@@ -469,8 +471,12 @@ class Routes {
   final SignupBloc _signUpBloc = SignupBloc();
   final UserPlanSubscriptionBloc _userPlanSubscriptionBloc = UserPlanSubscriptionBloc();
   final CourseEnrollmentChatBloc _courseEnrollmentChatBloc = CourseEnrollmentChatBloc();
-  final ChatSliderBloc _chatSliderList = ChatSliderBloc();
+  final ChatSliderMessagesBloc _chatSliderMessagesBloc = ChatSliderMessagesBloc();
   final WorkoutWeightBloc _workoutWeightBloc = WorkoutWeightBloc();
+  final CommunityTabFriendNotificationBloc _communityTabFriendNotificationBloc = CommunityTabFriendNotificationBloc();
+  final ChatSliderBloc _chatSliderBloc = ChatSliderBloc();
+
+
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -570,10 +576,12 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
-          BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
+          BlocProvider<ChatSliderMessagesBloc>.value(value: _chatSliderMessagesBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
+          BlocProvider<CommunityTabFriendNotificationBloc>.value(value: _communityTabFriendNotificationBloc),
+          BlocProvider<ChatSliderBloc>.value(value: _chatSliderBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -590,6 +598,7 @@ class Routes {
           classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int,
           tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
         );
+
         break;
       case RouteEnum.introVideo:
         providers = [BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc)];
@@ -1517,9 +1526,10 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
-          BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
+          BlocProvider<ChatSliderMessagesBloc>.value(value: _chatSliderMessagesBloc),
           BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
+          BlocProvider<ChatSliderBloc>.value(value: _chatSliderBloc),
 
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

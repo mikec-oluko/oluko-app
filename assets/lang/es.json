@@ -444,6 +444,10 @@
     "usePounds": "Libras (LBs)",
     "addWeight": "Añadir peso",
     "community":"Comunidad",
+    "seeAll": "Ver todo",
+    "annotatedVideos": "Vídeos anotados"
+
+,
     "transformationPhotos": "Fotos de Transformación",
     "privacy": "Privacidad",
     "pushNotifications": "Notificaciones push",

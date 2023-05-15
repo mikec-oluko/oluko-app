@@ -204,6 +204,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         onPressed: (index) => this.setState(() {
                           this.tabController.animateTo(index as int);
                         }),
+                        loggedUser: loggedUser,
                       )
                     : const SizedBox(),
               );
