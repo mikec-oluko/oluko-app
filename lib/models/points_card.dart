@@ -48,7 +48,7 @@ class PointsCard extends Base {
       completionCriteria:json['completion_criteria'] == null ? null : CompletionCriteriaEnum.values[json['completion_criteria'] as int],
       completion: json['completion'] as int,
       contentReference: json['content_reference'] as DocumentReference,
-      contentId: json['result']?.toString(),
+      contentId: json['content_id']?.toString(),
       image:  json['image']?.toString(),
       value: json['value'] as int
     );
