@@ -359,6 +359,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
     BottomDialogUtils.showBottomDialog(
           content: ScheduleModalContent(
             course: widget.course,
+            scheduleRecommendations: widget.course.scheduleRecommendations,
             user: _user,
             totalClasses: _allCourseClasses.length,
             firstAppInteractionAt: _userState.user.firstAppInteractionAt,

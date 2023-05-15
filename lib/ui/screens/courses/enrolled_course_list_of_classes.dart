@@ -96,6 +96,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   void _openEditSchedule(BuildContext context){
     BottomDialogUtils.showBottomDialog(
       content: ScheduleModalContent(
+        scheduleRecommendations: widget.course.scheduleRecommendations,
         isCoachRecommendation: widget.isCoachRecommendation,
         courseEnrollment: widget.courseEnrollment,
         totalClasses: _classItemList.length,

@@ -18,6 +18,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 
 class ScheduleModalContent extends StatefulWidget {
   final Course course;
+  final String scheduleRecommendations;
   final CourseEnrollment courseEnrollment;
   final User user;
   final int totalClasses;
@@ -30,7 +31,7 @@ class ScheduleModalContent extends StatefulWidget {
   final VoidCallback onUpdateScheduleAction;
   final bool disableAction;
 
-  const ScheduleModalContent({this.course, this.user, this.totalClasses, this.firstAppInteractionAt, this.isCoachRecommendation,
+  const ScheduleModalContent({this.course, this.scheduleRecommendations, this.user, this.totalClasses, this.firstAppInteractionAt, this.isCoachRecommendation,
                         this.disableAction, this.blocAuth, this.blocCourseEnrollment, this.blocRecommendation, this.onEnrollAction,
                         this.courseEnrollment, this.onUpdateScheduleAction,});
   @override
@@ -47,7 +48,8 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   void initState() {
     super.initState();
     WeekDaysHelper.reinitializeSelectedWeekDays();
-    if (widget.courseEnrollment != null && widget.courseEnrollment.weekDays != null &&
+    if (widget.courseEnrollment != null &&
+        widget.courseEnrollment.weekDays != null &&
         widget.courseEnrollment.weekDays.isNotEmpty){
         weekDays = widget.courseEnrollment.weekDays;
         WeekDaysHelper.setSelectedWeekdays(weekDays);
@@ -75,10 +77,8 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   }
 
   Widget _showScheduleDialog(BuildContext context){
-    //TODO - WHEN THIS IS DEFINED
-    const bool hasScheduleNotes = false;
     return Container(
-            height: hasScheduleNotes ? 485 : 430,
+            height: widget.scheduleRecommendations?.isEmpty ?? true ? 430 : 485,
             decoration: const BoxDecoration(
               borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
               color:OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -96,7 +96,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _showScheduleNotes(hasScheduleNotes),
+                  _showScheduleNotes(),
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -186,9 +186,8 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
           );
   }
 
-  Widget _showScheduleNotes(bool hasScheduleNote) {
-    //TODO - Add line below when it's defined
-    if (!hasScheduleNote){
+  Widget _showScheduleNotes() {
+    if (widget.scheduleRecommendations?.isEmpty ?? true){
       return const SizedBox.shrink();
     }
     return Align(
@@ -201,7 +200,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
                 color:OlukoColors.grayColorFadeTop,
               ),
               child: Text(
-                OlukoLocalizations.get(context, 'setYourSchedule'),
+                widget.scheduleRecommendations,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: OlukoColors.white),
               ),
             ),
