@@ -72,7 +72,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
         if (state is GenericAudioPanelRecorded) {
           _audioRecordedElement = state.audioRecoded;
           recordAudioContent = Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20, right: 10),
             child: Row(
               children: [_audioRecordedElement, _audioRecordMessageButtonComponentSentAction()],
             ),
@@ -231,21 +231,15 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   }
 
   Widget microphoneIconButtonContent({Icon iconForContent}) {
-    return GestureDetector(
-        onTap: () async {
-          !_recorder.isInitialized ? _recorder.init() : null;
-          await _recorder.toggleRecording();
-
-          setState(() {
-            _recordingAudio = !_recordingAudio;
-            startTimer();
-          });
-
-          if (_recorder.isStopped) {
-            _onRecordCompleted();
-          }
-        },
-        child: Stack(alignment: Alignment.center, children: [
+    return OlukoNeumorphicSecondaryButton(
+      title: '',
+      useBorder: true,
+      isExpanded: false,
+      thinPadding: true,
+      onlyIcon: true,
+      icon: Stack(
+        alignment: Alignment.center,
+        children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
             Image.asset(
               'assets/neumorphic/audio_circle.png',
@@ -258,7 +252,22 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
             scale: 6,
           ),
           iconForContent
-        ]));
+        ],
+      ),
+      onPressed: () async {
+        !_recorder.isInitialized ? _recorder.init() : null;
+        await _recorder.toggleRecording();
+
+        setState(() {
+          _recordingAudio = !_recordingAudio;
+          startTimer();
+        });
+
+        if (_recorder.isStopped) {
+          _onRecordCompleted();
+        }
+      },
+    );
   }
 
   Widget sendAudioIconButtonContent() {
