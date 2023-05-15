@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/audio_bloc.dart';
-import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
@@ -29,14 +29,14 @@ class _ChatSliderState extends State<ChatSlider> {
 
   @override
   void initState() {
-    BlocProvider.of<ChatSliderBloc>(context).dispose();
-    BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.currentUser.id);
+    BlocProvider.of<ChatSliderMessagesBloc>(context).dispose();
+    BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.currentUser.id, enrollments: widget.enrollments);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChatSliderBloc, ChatSliderState>(builder: (context, chatSliderState) {
+    return BlocBuilder<ChatSliderMessagesBloc, ChatSliderMessagesState>(builder: (context, chatSliderState) {
       if (chatSliderState is MessagesNotificationUpdated) {
         coursesNotificationQuantity[chatSliderState.courseId] = chatSliderState.quantity;
         return widget.enrollments.isEmpty
@@ -79,7 +79,7 @@ Widget _courseList(
             index,
             GestureDetector(
               onTap: () {
-                BlocProvider.of<ChatSliderBloc>(context).dispose();
+                BlocProvider.of<ChatSliderMessagesBloc>(context).dispose();
                 Navigator.pushNamed(
                   context,
                   routeLabels[RouteEnum.courseChat],
