@@ -19,7 +19,7 @@ class ModalCards extends StatefulWidget {
 class _ModalCardsState extends State<ModalCards> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<PointsCardBloc>(context).get(widget.userId);
+    //BlocProvider.of<PointsCardBloc>(context).get(widget.userId);
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 100,
