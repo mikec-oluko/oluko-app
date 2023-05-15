@@ -444,7 +444,9 @@
     "useKilograms": "Kilograms (KGs)",
     "usePounds": "Pounds (LBs)",
     "addWeight": "Add weight",
-    "community":"Community"
+    "community":"Community",
+    "seeAll": "See all",
+    "annotatedVideos": "Annotated Videos"
 
     
 }

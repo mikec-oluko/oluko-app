@@ -178,7 +178,18 @@ class _SentVideosPageState extends State<SentVideosPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _getDateWidget(segmentSubmitted),
+                      Row(
+                        children: [
+                          _getDateWidget(segmentSubmitted),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              segmentSubmitted.segmentName,
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
                       IconButton(
                         icon: OlukoNeumorphism.isNeumorphismDesign
                             ? Icon(
@@ -213,7 +224,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     if (OlukoNeumorphism.isNeumorphismDesign) {
       return Text(
         DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
+        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700),
       );
     } else {
       return Column(
@@ -229,7 +240,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
           Text(
             DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
-          )
+          ),
         ],
       );
     }

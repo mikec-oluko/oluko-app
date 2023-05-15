@@ -8,6 +8,7 @@ import 'package:equatable/equatable.dart';
 class Annotation extends Base with EquatableMixin {
   String segmentSubmissionId;
   DocumentReference segmentSubmissionReference;
+  String segmentName;
   String userId;
   DocumentReference userReference;
   String coachId;
@@ -22,6 +23,7 @@ class Annotation extends Base with EquatableMixin {
   Annotation(
       {this.segmentSubmissionId,
       this.segmentSubmissionReference,
+      this.segmentName,
       this.userId,
       this.userReference,
       this.coachId,
@@ -39,14 +41,7 @@ class Annotation extends Base with EquatableMixin {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory Annotation.fromJson(Map<String, dynamic> json) {
     Annotation annotation = Annotation(
@@ -54,6 +49,7 @@ class Annotation extends Base with EquatableMixin {
         segmentSubmissionId: json['segment_submission_id'].toString(),
         userReference: json['user_reference'] as DocumentReference,
         segmentSubmissionReference: json['segment_submission_reference'] as DocumentReference,
+        segmentName: json['segment_name'].toString(),
         coachId: json['coach_id'].toString(),
         coachReference: json['coach_reference'] as DocumentReference,
         // status: AnnotationStatusEnum.values[json['status'] as int],
@@ -71,6 +67,7 @@ class Annotation extends Base with EquatableMixin {
     Map<String, dynamic> annotation = {
       'user_id': userId,
       'segment_submission_id': segmentSubmissionId,
+      'segment_name': segmentName,
       'user_reference': userReference,
       'coach_id': coachId,
       'coach_reference': coachReference,
@@ -90,6 +87,7 @@ class Annotation extends Base with EquatableMixin {
   List<Object> get props => [
         userId,
         segmentSubmissionId,
+        segmentName,
         userReference,
         coachId,
         coachReference,
