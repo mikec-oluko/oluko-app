@@ -46,6 +46,7 @@ class SegmentSubmissionRepository {
         userReference: userReference,
         segmentId: segment.id,
         segmentReference: segmentReference,
+        segmentName: segment.name,
         courseEnrollmentId: courseEnrollment.id,
         courseEnrollmentReference: courseEnrollmentReference,
         status: SegmentSubmissionStatusEnum.created,
