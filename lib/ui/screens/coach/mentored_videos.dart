@@ -41,14 +41,14 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   @override
   void initState() {
     _personalizedVideosList =
-        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation, videoMessages: widget.coachVideoMessage);
+        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation ?? [], videoMessages: widget.coachVideoMessage ?? []);
 
     setState(() {
       content.addAll(_personalizedVideosList);
       filteredContent = content;
       filteredContent = contentSortedByDate();
-      _updatedMessageVideos = widget.coachVideoMessage;
-      _updatedAnnotations = widget.coachAnnotation;
+      _updatedMessageVideos = widget.coachVideoMessage ?? [];
+      _updatedAnnotations = widget.coachAnnotation ?? [];
     });
     super.initState();
   }
@@ -97,7 +97,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               showTitle: true,
               showActions: true,
               centerTitle: true,
-              title: OlukoLocalizations.get(context, 'personalizedVideos'),
+              title: OlukoLocalizations.get(context, 'annotatedVideos'),
               actions: [
                 Row(
                   children: [
@@ -194,7 +194,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                         'videoUrl': videoUrl,
                         'aspectRatio': coachAnnotation.video.aspectRatio,
-                        'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
+                        'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
                       });
                     },
                     child: OlukoNeumorphism.isNeumorphismDesign
@@ -230,7 +230,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         if (OlukoNeumorphism.isNeumorphismDesign)
                           Text(
                             DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700),
                           )
                         else
                           Column(
@@ -245,7 +245,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                               ),
                               Text(
                                 DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w500),
                               )
                             ],
                           ),

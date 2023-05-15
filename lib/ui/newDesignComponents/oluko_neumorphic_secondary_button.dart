@@ -31,27 +31,24 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
       this.isExpanded = true,
       this.customHeight = 50,
       this.useBorder = false,
-      this.isPrimary = true, 
-      this.lighterButton=false})
+      this.isPrimary = true,
+      this.lighterButton = false})
       : super();
 
   @override
   _OlukoNeumorphicButtonState createState() => _OlukoNeumorphicButtonState();
 }
 
-class _OlukoNeumorphicButtonState
-    extends State<OlukoNeumorphicSecondaryButton> {
+class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> {
   Color buttonColor = OlukoColors.primary;
 
   @override
   Widget build(BuildContext context) {
     return widget.isExpanded
         ? Expanded(
-            child: widget.lighterButton? lighterSecondaryButton():secondaryButton(),
+            child: widget.lighterButton ? lighterSecondaryButton() : secondaryButton(),
           )
-        : Center(
-            child: Container(
-                height: widget.customHeight, child:widget.lighterButton? lighterSecondaryButton():secondaryButton()));
+        : Center(child: Container(height: widget.customHeight, child: widget.lighterButton ? lighterSecondaryButton() : secondaryButton()));
   }
 
   NeumorphicButton secondaryButton() {
@@ -59,45 +56,37 @@ class _OlukoNeumorphicButtonState
       onPressed: () {
         widget.onPressed != null ? widget.onPressed() : () {};
       },
-      padding: EdgeInsets.all(2),
+      padding: const EdgeInsets.all(2),
       style: OlukoNeumorphism.secondaryButtonStyle(
-          useBorder: widget.useBorder,
-          buttonShape: widget.buttonShape,
-          boxShape: NeumorphicBoxShape.stadium(),
-          ligthShadow: true,
-          darkShadow: true),
+          useBorder: widget.useBorder, buttonShape: widget.buttonShape, boxShape: NeumorphicBoxShape.stadium(), lightShadow: true, darkShadow: true),
       child: Neumorphic(
         style: OlukoNeumorphism.secondaryButtonStyle(
-            buttonShape: widget.buttonShape, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+            buttonShape: widget.buttonShape, boxShape: const NeumorphicBoxShape.stadium(), lightShadow: true, darkShadow: true),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),
       ),
     );
   }
+
   NeumorphicButton lighterSecondaryButton() {
     return NeumorphicButton(
       onPressed: () {
         widget.onPressed != null ? widget.onPressed() : () {};
       },
       padding: EdgeInsets.all(2),
-      style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-          .copyWith(
-              lightSource: LightSource.bottom,
-              intensity: 1,
-              boxShape: NeumorphicBoxShape.stadium(),
-              border: NeumorphicBorder(
-                  width: 3,
-                  color:
-                      OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)),
+      style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
+          lightSource: LightSource.bottom,
+          intensity: 1,
+          boxShape: NeumorphicBoxShape.stadium(),
+          border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)),
       child: Neumorphic(
         style: OlukoNeumorphism.secondaryButtonStyle(
           buttonShape: widget.buttonShape,
           boxShape: NeumorphicBoxShape.stadium(),
-          ligthShadow: true,
+          lightShadow: true,
           darkShadow: true,
-        ).copyWith(
-            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+        ).copyWith(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),
@@ -120,7 +109,7 @@ class _OlukoNeumorphicButtonState
           child: Text(
             widget.title,
             textAlign: widget.textAlign,
-            style: OlukoFonts.olukoBigFont(customColor:  widget.textColor),
+            style: OlukoFonts.olukoBigFont(customColor: widget.textColor),
           ));
     }
   }
