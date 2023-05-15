@@ -880,12 +880,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
-            classSegments: argumentsToAdd['classSegments'] as List<Segment>,
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            fromChallenge: argumentsToAdd['fromChallenge'] as bool);
+          classSegments: argumentsToAdd['classSegments'] as List<Segment>,
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+          actualCourse: argumentsToAdd['actualCourse'] as Course,
+        );
         break;
       case RouteEnum.movementIntro:
         providers = [BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
@@ -1047,6 +1049,7 @@ class Routes {
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
+          BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1080,7 +1083,10 @@ class Routes {
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = UserChallengeDetail(challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
+        newRouteView = UserChallengeDetail(
+          challenge: argumentsToAdd['challenge'] as Challenge,
+          userRequested: argumentsToAdd['userRequested'] as UserResponse,
+        );
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -1520,12 +1526,12 @@ class Routes {
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
           BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
-
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment
-        ,currentUser: argumentsToAdd['currentUser'] as UserResponse
-        ,enrollments: argumentsToAdd['enrollments'] as List<CourseEnrollment>);
+        newRouteView = Chat(
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            currentUser: argumentsToAdd['currentUser'] as UserResponse,
+            enrollments: argumentsToAdd['enrollments'] as List<CourseEnrollment>);
         break;
 
       default:

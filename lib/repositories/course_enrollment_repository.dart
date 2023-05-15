@@ -14,6 +14,7 @@ import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -92,6 +93,43 @@ class CourseEnrollmentRepository {
     }
 
     return [];
+  }
+
+  static Future<List<UserResponse>> getUsersByCourseId(String courseId, String userId) async {
+    try {
+      final QuerySnapshot qs = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getString('projectId'))
+          .collection('courseEnrollments')
+          .where('course.id', isEqualTo: courseId)
+          .where('created_by', isNotEqualTo: userId)
+          .get();
+
+      final List<UserResponse> users = [];
+
+      if (qs != null && qs.docs != null && qs.docs.isNotEmpty) {
+        final fetchUserPromises = qs.docs.map((courseData) => enrollAndFetchUser(courseData, users)).toList();
+
+        await Future.wait(fetchUserPromises);
+      }
+
+      return users;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<void> enrollAndFetchUser(QueryDocumentSnapshot courseData, List<UserResponse> users) async {
+    final data = courseData.data() as Map<String, dynamic>;
+    final enroll = CourseEnrollment.fromJson(data);
+
+    if (enroll.isUnenrolled != true && enroll.completion < 1) {
+      final userData = await enroll.userReference.get();
+
+      if (userData.exists) {
+        users.add(UserResponse.fromJson(userData.data() as Map<String, dynamic>));
+      }
+    }
   }
 
   static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,

@@ -19,6 +19,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
@@ -38,7 +39,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail({this.classSegments, this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, this.fromChallenge = false, Key key})
+  SegmentDetail(
+      {this.classSegments, this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, this.fromChallenge = false, Key key, this.actualCourse})
       : super(key: key);
 
   final CourseEnrollment courseEnrollment;
@@ -47,6 +49,7 @@ class SegmentDetail extends StatefulWidget {
   final int courseIndex;
   final bool fromChallenge;
   final List<Segment> classSegments;
+  final Course actualCourse;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -349,7 +352,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
       return;
     } else {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
-      final arguments = {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex};
+      final arguments = {
+        'courseEnrollment': widget.courseEnrollment,
+        'classIndex': widget.classIndex,
+        'courseIndex': widget.courseIndex,
+        'actualCourse': widget.actualCourse,
+      };
       if (Navigator.canPop(context)) {
         Navigator.pushReplacementNamed(
           context,
