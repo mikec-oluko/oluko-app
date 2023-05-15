@@ -55,7 +55,7 @@ class _State extends State<CarouselSection> {
         ),
       ),
       Flexible(
-        flex: 8,
+        flex: 9,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: OlukoNeumorphism.isNeumorphismDesign ? 5 : 10),
           child: Container(
@@ -73,59 +73,4 @@ class _State extends State<CarouselSection> {
       )
     ]);
   }
-  // Column _carouselContent() {
-  //   return Column(children: [
-  //     Flexible(
-  //       flex: 1,
-  //       child: Row(
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           if (widget.title != null)
-  //             // Expanded(
-  //             //   child: Row(
-  //             //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             //     children: [
-  //             TitleBody(widget.title)
-  //           //     ],
-  //           //   ),
-  //           // )
-  //           else
-  //             SizedBox(),
-  //           if (widget.subtitle != null) TitleBody(widget.title) else SizedBox(),
-  //           GestureDetector(
-  //             onTap: () => widget.onOptionTap(),
-  //             child: widget.optionLabel != null
-  //                 ? Padding(
-  //                     padding: const EdgeInsets.only(top: 3.0),
-  //                     child: Text(
-  //                       widget.optionLabel ?? '',
-  //                       overflow: TextOverflow.ellipsis,
-  //                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
-  //                     ),
-  //                   )
-  //                 : SizedBox(),
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //     Flexible(
-  //       flex: 9,
-  //       child: Padding(
-  //         padding: const EdgeInsets.symmetric(vertical: OlukoNeumorphism.isNeumorphismDesign ? 5 : 10),
-  //         child: Container(
-  //             child: Align(
-  //           alignment: Alignment.centerLeft,
-  //           child: ListView(
-  //             addAutomaticKeepAlives: false,
-  //             addRepaintBoundaries: false,
-  //             shrinkWrap: true,
-  //             scrollDirection: Axis.horizontal,
-  //             children: widget.children,
-  //           ),
-  //         )),
-  //       ),
-  //     )
-  //   ]);
-  // }
 }
