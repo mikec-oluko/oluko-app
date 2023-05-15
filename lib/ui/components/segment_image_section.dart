@@ -426,7 +426,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(
                   useBorder: true,
                   thinPadding: true,
