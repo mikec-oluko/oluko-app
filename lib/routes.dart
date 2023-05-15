@@ -1,8 +1,5 @@
 import 'dart:core';
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,7 +41,6 @@ import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/feedback_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
-import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
@@ -104,7 +100,6 @@ import 'package:oluko_app/blocs/users_selfies_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/faq_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_media.dart';
@@ -116,7 +111,6 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
-import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
@@ -436,7 +430,7 @@ class Routes {
   final NotificationSettingsBloc _notificationSettingsBloc = NotificationSettingsBloc();
   final FeedbackBloc _feedbackBloc = FeedbackBloc();
   final CoachMediaBloc _coachMediaBloc = CoachMediaBloc();
-  final CoachAudioPanelBloc _coachAudioPanelBloc = CoachAudioPanelBloc();
+  final GenericAudioPanelBloc _coachAudioPanelBloc = GenericAudioPanelBloc();
   final CoachAudioMessageBloc _coachAudioMessageBloc = CoachAudioMessageBloc();
   final ClocksTimerBloc _clocksTimerBloc = ClocksTimerBloc();
   final TimerTaskBloc _timerTaskBloc = TimerTaskBloc();
@@ -551,7 +545,7 @@ class Routes {
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
-          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<ProjectConfigurationBloc>.value(value: _projectConfigurationBloc),
           BlocProvider<PushNotificationBloc>.value(value: _pushNotificationBloc),
@@ -1329,7 +1323,7 @@ class Routes {
       case RouteEnum.coachProfile:
         providers = [
           BlocProvider<CoachMediaBloc>.value(value: _coachMediaBloc),
-          BlocProvider<CoachAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
           BlocProvider<CoachAudioMessageBloc>.value(value: _coachAudioMessageBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
@@ -1518,10 +1512,13 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderList),
+          BlocProvider<GenericAudioPanelBloc>.value(value: _coachAudioPanelBloc),
+          BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
+
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = Chat(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment
-        ,userId: argumentsToAdd['userId'] as String
+        ,currentUser: argumentsToAdd['currentUser'] as UserResponse
         ,enrollments: argumentsToAdd['enrollments'] as List<CourseEnrollment>);
         break;
 
