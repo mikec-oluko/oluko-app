@@ -139,6 +139,7 @@ class _MessageBubbleState extends State<MessageBubble> {
               onStartPlaying: () => _canStartPlaying(),
               durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
               showBin: false,
+              keepPlayingInBackground: true
             )
         ],
       ),
