@@ -82,12 +82,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         channelKey: 'basic_channel',
         title: message.data['title']?.toString(),
         body: message.data['body'].toString(),
-        notificationLayout: NotificationLayout.BigPicture,
   );
-  if (Platform.isAndroid){
-    notificationContent.largeIcon = userAvatar;
-  }else{
-    notificationContent.bigPicture = userAvatar;
+  if (userAvatar?.isNotEmpty ?? false){
+    notificationContent.notificationLayout = NotificationLayout.BigPicture;
+    if (Platform.isAndroid){
+      notificationContent.largeIcon = userAvatar;
+    }else{
+      notificationContent.bigPicture = userAvatar;
+    }
   }
   AwesomeNotifications().createNotification(
     content: notificationContent,
