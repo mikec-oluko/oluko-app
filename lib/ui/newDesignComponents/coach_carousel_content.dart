@@ -45,10 +45,12 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
       imageCover: Image(
         image: CachedNetworkImageProvider(
           image,
+          maxHeight: 100,
+          maxWidth: 120,
         ),
         fit: BoxFit.cover,
         frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
+            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded),
       ),
     );
   }
@@ -70,11 +72,13 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
                 Image(
                   image: CachedNetworkImageProvider(
                     image,
+                    maxHeight: 100,
+                    maxWidth: 120,
                   ),
                   width: 160,
                   fit: BoxFit.cover,
                   frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                      ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
+                      ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded),
                 ),
                 Center(
                   child: Container(
