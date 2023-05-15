@@ -34,7 +34,6 @@ class CommunityTabFriendNotificationBloc extends Cubit<CommunityTabFriendNotific
 
    void listenFriendRequestByUserId(String userId){
     try {
-      //final User userLogged = AuthRepository.getLoggedUser();
       _friendRequestSubscription = FriendRepository().listenFriendRequestByUserId(userId).listen((snapshot) async {
           final Friend user = Friend.fromJson(snapshot.docs.first.data());
           emit(CommunityTabFriendsNotification(hasFriendNotification: user.friendRequestReceived.isNotEmpty));
