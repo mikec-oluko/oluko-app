@@ -215,7 +215,7 @@ class SegmentUtils {
 
   static void _addTransitionForRepsToDuration(List<TimerEntry> entries) {
     for (int i = 0; i < entries.length - 1; i++) {
-      if (entries[i].parameter == ParameterEnum.reps && entries[i + 1].parameter == ParameterEnum.duration) {
+      if (entries[i].parameter == ParameterEnum.reps && (entries[i + 1].parameter == ParameterEnum.duration && !entries[i + 1].movement.isRestTime)) {
         TimerEntry transition = TimerEntry(
             movement: entries[i].movement,
             parameter: ParameterEnum.duration,
@@ -227,7 +227,6 @@ class SegmentUtils {
             labels: [getLabel(entries[i].movement)],
             isInitialTimer: true);
         entries.insert(i + 1, transition);
-        break;
       }
     }
   }
