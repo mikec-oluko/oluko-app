@@ -7,7 +7,7 @@ import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
-class CoachAudioSentComponent extends StatefulWidget {
+class AudioSentComponent extends StatefulWidget {
   final String record;
   final Duration durationFromRecord;
   final bool isPreviewContent;
@@ -15,22 +15,33 @@ class CoachAudioSentComponent extends StatefulWidget {
   final Function(bool isPlaying) onAudioPlaying;
   final bool Function() onStartPlaying;
   final CoachAudioMessage audioMessageItem;
-  const CoachAudioSentComponent(
-      {Key key,
-      this.record,
-      this.isPreviewContent = false,
-      this.onDelete,
-      this.audioMessageItem,
-      this.durationFromRecord,
-      this.onAudioPlaying,
-      this.onStartPlaying})
-      : super(key: key);
+  final bool isForList;
+  final bool showBin;
+  final bool showDate;
+  final Function valueNotifier;
+  final bool keepPlayingInBackground;
+
+  const AudioSentComponent({
+    Key key,
+    this.record,
+    this.isPreviewContent = false,
+    this.onDelete,
+    this.audioMessageItem,
+    this.durationFromRecord,
+    this.onAudioPlaying,
+    this.isForList = false,
+    this.onStartPlaying,
+    this.showBin = true,
+    this.showDate = true,
+    this.valueNotifier,
+    this.keepPlayingInBackground = false,
+  }) : super(key: key);
 
   @override
-  State<CoachAudioSentComponent> createState() => _CoachAudioSentComponentState();
+  State<AudioSentComponent> createState() => _AudioSentComponentState();
 }
 
-class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
+class _AudioSentComponentState extends State<AudioSentComponent> {
   Duration _totalDuration;
   int _currentDuration;
   double _completedPercentage = 0.0;
@@ -45,8 +56,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
   }
 
   //Pause the audio playing on background, when widget is removed from Widget tree.
+  @override
   void deactivate() {
-    audioPlayer.pause();
+    if (!widget.keepPlayingInBackground) {
+      audioPlayer.pause();
+    }
     super.deactivate();
   }
 
@@ -66,9 +80,9 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
               color: widget.isPreviewContent ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
         ),
         child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.black),
+          width: widget.isForList ? ScreenUtils.width(context) : ScreenUtils.width(context) / 1.6,
+          height: 80,
+          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.appBackgroundColor),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Column(
@@ -86,33 +100,32 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                             style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
                             child: Image.asset(
                               !_isPlaying ? 'assets/assessment/play_triangle.png' : 'assets/assessment/pause.png',
-                              width: 45,
-                              height: 45,
+                              width: 40,
+                              height: 40,
                               scale: 1,
-                              color: OlukoColors.black,
+                              color: OlukoColors.white,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Container(width: ScreenUtils.width(context) / 2.5, child: CourseProgressBar(value: _completedPercentage)),
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Container(width: ScreenUtils.width(context) / 3, child: CourseProgressBar(value: _completedPercentage)),
                         ),
-                        const VerticalDivider(color: OlukoColors.grayColor),
-                        GestureDetector(
-                            onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                        if (widget.showBin) ...[
+                          const VerticalDivider(color: OlukoColors.grayColor),
+                          GestureDetector(
+                              onTap: () => widget.onDelete(), child: Image.asset('assets/courses/coach_delete.png', scale: 5, color: OlukoColors.grayColor)),
+                        ]
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     const SizedBox(),
                     Text(
-                      _totalDuration != null
+                      _totalDuration != null && _isPlaying
                           ? TimeConverter.durationToString(_totalDuration)
                           : widget.durationFromRecord != null
                               ? TimeConverter.durationToString(widget.durationFromRecord)
@@ -127,18 +140,18 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
                           widget.isPreviewContent
                               ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: Timestamp.now(), context: context)
                               : widget.audioMessageItem != null
-                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem.createdAt, context: context)
+                                  ? TimeConverter.getDateAndTimeOnStringFormat(dateToFormat: widget.audioMessageItem?.createdAt, context: context)
                                   : '',
                           style: OlukoFonts.olukoSmallFont(
                               customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.listGrayColor : OlukoColors.white,
                               customFontWeight: FontWeight.w500),
                         ),
-                        const SizedBox(width: 10),
+                        // const SizedBox(width: 10),
                         if (!widget.isPreviewContent)
                           Image.asset(
                             'assets/courses/coach_tick.png',
                             scale: 5,
-                            color: widget.audioMessageItem.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
+                            color: widget.audioMessageItem?.seenAt != null ? OlukoColors.skyblue : OlukoColors.grayColor.withOpacity(0.5),
                           )
                         else
                           const SizedBox.shrink(),
@@ -216,7 +229,11 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
       if (playedOnce && audioPlayer.state == PlayerState.paused) {
         await audioPlayer.resume();
       } else {
-        // await audioPlayer.play(filePath, isLocal: true);
+        if (widget.isPreviewContent) {
+          await audioPlayer.play(DeviceFileSource(filePath));
+        } else {
+          await audioPlayer.play(UrlSource(filePath));
+        }
         setState(() {
           playedOnce = true;
         });
@@ -240,7 +257,7 @@ class _CoachAudioSentComponentState extends State<CoachAudioSentComponent> {
           _totalDuration = duration;
         });
       });
-
+      _totalDuration ??= await audioPlayer.getDuration();
       audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;

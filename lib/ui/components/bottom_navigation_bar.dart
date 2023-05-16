@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
+import 'package:oluko_app/blocs/community_tab_friend_notification_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_information_bottombar.dart';
@@ -16,14 +20,21 @@ class OlukoBottomNavigationBar extends StatefulWidget {
   final Function(num) onPressed;
   final List<Widget> actions;
   final int selectedIndex;
+  final User loggedUser;
 
-  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex});
+  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex, this.loggedUser});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
 
 class _State extends State<OlukoBottomNavigationBar> {
+  @override
+  void initState() {
+    BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.loggedUser.uid);
+    BlocProvider.of<CommunityTabFriendNotificationBloc>(context).listenFriendRequestByUserId(widget.loggedUser.uid);
+  }
+
   UserInformationBottomBar userInformation;
   @override
   Widget build(BuildContext context) {
@@ -68,6 +79,56 @@ class _State extends State<OlukoBottomNavigationBar> {
         items: getNavigationBarWidgets(selectedIndex: widget.selectedIndex));
   }
 
+Widget _menuIcon(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
+
+  return BlocBuilder<CommunityTabFriendNotificationBloc, CommunityTabFriendNotificationState>(
+    builder: (context, state) {
+      bool friendNotification = state is CommunityTabFriendsNotification && state.hasFriendNotification;
+      if (olukoBottomNavigationBarItem.route == RouteEnum.friends) {
+        return BlocBuilder<ChatSliderMessagesBloc, ChatSliderMessagesState>(
+          builder: (context, state) {
+            bool chatNotification = state is MessagesNotificationUpdated && state.quantity > 0;
+            bool hasNotification = friendNotification || chatNotification;
+
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ImageIcon(
+                  AssetImage(olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null
+                      ? olukoBottomNavigationBarItem.selectedAssetImageUrl
+                      : olukoBottomNavigationBarItem.disabledAssetImageUrl),
+                  color:
+                      olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null ? OlukoColors.primary : Colors.grey,
+                ),
+                if (hasNotification)
+                  Positioned(
+                    top: 0,
+                    left: 25,
+                    child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
+      } else {
+        return ImageIcon(
+          AssetImage(olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null
+              ? olukoBottomNavigationBarItem.selectedAssetImageUrl
+              : olukoBottomNavigationBarItem.disabledAssetImageUrl),
+          color: olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null ? OlukoColors.primary : Colors.grey,
+        );
+      }
+    },
+  );
+}
+
   BottomNavigationBarItem getBottomNavigationBarWidget(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
     double blockSize = MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.width(context) / 5 : ScreenUtils.width(context) / 5;
     return BottomNavigationBarItem(icon: buildBottomNavigationItem(olukoBottomNavigationBarItem, blockSize), label: '');
@@ -82,70 +143,60 @@ class _State extends State<OlukoBottomNavigationBar> {
                 // return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
               }
               return Container(
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      ),
-                      width: blockSize,
-                      height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
-                            if (userInformation?.avatar != null)
-                              CachedNetworkImage(
-                                width: 30,
-                                height: 30,
-                                maxWidthDiskCache: 100,
-                                maxHeightDiskCache: 100,
-                                fit: BoxFit.cover,
-                                imageBuilder: (context, imageProvider) => CircleAvatar(
-                                  backgroundImage: imageProvider,
-                                  maxRadius: 15,
-                                ),
-                                imageUrl: userInformation.avatar,
-                              )
-                            else
-                              CircleAvatar(
-                                backgroundColor:
-                                    userInformation != null ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName) : OlukoColors.black,
-                                radius: 15.0,
-                                child: FittedBox(
-                                  fit: BoxFit.fitWidth,
-                                  child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
-                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
-                                ),
-                              )
-                          else if (olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null)
-                            ImageIcon(
-                              AssetImage(olukoBottomNavigationBarItem.selectedAssetImageUrl),
-                              color: OlukoColors.primary,
+                  child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    ),
+                    width: blockSize,
+                    height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (olukoBottomNavigationBarItem.route == RouteEnum.profile)
+                          if (userInformation?.avatar != null)
+                            CachedNetworkImage(
+                              width: 30,
+                              height: 30,
+                              maxWidthDiskCache: 100,
+                              maxHeightDiskCache: 100,
+                              fit: BoxFit.cover,
+                              imageBuilder: (context, imageProvider) => CircleAvatar(
+                                backgroundImage: imageProvider,
+                                maxRadius: 15,
+                              ),
+                              imageUrl: userInformation.avatar,
                             )
                           else
-                            ImageIcon(
-                              AssetImage(olukoBottomNavigationBarItem.disabledAssetImageUrl),
-                              color: Colors.grey,
+                            CircleAvatar(
+                              backgroundColor:
+                                  userInformation != null ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName) : OlukoColors.black,
+                              radius: 15.0,
+                              child: FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
+                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
+                              ),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: Text(
-                              !olukoBottomNavigationBarItem.selected ? '' : olukoBottomNavigationBarItem.title,
-                              style: OlukoFonts.olukoSmallFont(
-                                  customColor: olukoBottomNavigationBarItem.disabled
-                                      ? Colors.grey.shade800
-                                      : olukoBottomNavigationBarItem.selected
-                                          ? OlukoColors.primary
-                                          : Colors.white),
-                            ),
-                          )
-                        ],
-                      ),
+                        if (olukoBottomNavigationBarItem.route != RouteEnum.profile) _menuIcon(olukoBottomNavigationBarItem),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5.0),
+                          child: Text(
+                            !olukoBottomNavigationBarItem.selected ? '' : olukoBottomNavigationBarItem.title,
+                            style: OlukoFonts.olukoSmallFont(
+                                customColor: olukoBottomNavigationBarItem.disabled
+                                    ? Colors.grey.shade800
+                                    : olukoBottomNavigationBarItem.selected
+                                        ? OlukoColors.primary
+                                        : Colors.white),
+                          ),
+                        )
+                      ],
                     ),
-                  ],
-                ),
-              );
+                  ),
+                ],
+              ));
             },
           )
         : Container(
@@ -196,18 +247,18 @@ class _State extends State<OlukoBottomNavigationBar> {
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
           route: '/segment-progress'),*/
       OlukoBottomNavigationBarItem(
-        title: OlukoLocalizations.get(context, 'friends'),
-        disabledAssetImageUrl:
-            OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/friends_neumorphic.png' : 'assets/bottom_navigation_bar/friends.png',
-        selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
-        route: RouteEnum.friends,
-      ),
-      OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'courses'),
           disabledAssetImageUrl:
               OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/course_neumorphic.png' : 'assets/bottom_navigation_bar/course.png',
           selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_courses.png',
           route: RouteEnum.courses),
+      OlukoBottomNavigationBarItem(
+        title: OlukoLocalizations.get(context, 'community'),
+        disabledAssetImageUrl:
+            OlukoNeumorphism.isNeumorphismDesign ? 'assets/bottom_navigation_bar/friends_neumorphic.png' : 'assets/bottom_navigation_bar/friends.png',
+        selectedAssetImageUrl: 'assets/bottom_navigation_bar/selected_friends.png',
+        route: RouteEnum.friends,
+      ),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.get(context, 'profile'), selectedAssetImageUrl: 'assets/bottom_navigation_bar/profile.png', route: RouteEnum.profile),
     ];

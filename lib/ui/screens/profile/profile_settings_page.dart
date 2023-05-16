@@ -24,6 +24,7 @@ class ProfileSettingsPage extends StatefulWidget {
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   UserResponse _authUser;
   bool _notificationNewValue;
+  bool _useImperial;
   int _userPrivacyValue;
   int _privacyNewValue;
 
@@ -36,6 +37,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   void setValuesFromUserProfile() {
     _privacyNewValue = widget.profileInfo.privacy;
+    _useImperial = widget.profileInfo.useImperialSystem;
     _notificationNewValue ??= NotificationSettingsBloc.notificationSettings?.globalNotifications ?? true;
     _authUser = widget.profileInfo;
   }
@@ -80,6 +82,29 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         Column(
           children: PrivacyOptions.privacyOptionsList.map((option) => _buildOptionTiles(context, option)).toList(),
         ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+          child: Column(
+            children: [
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+              ),
+              const OlukoNeumorphicDivider(),
+              Column(
+                children: [
+                  Column(children: [
+                    weightOption(title: OlukoLocalizations.get(context, 'useKilograms'), isSelected: !_useImperial),
+                    const OlukoNeumorphicDivider()
+                  ]),
+                  Column(
+                      children: [weightOption(title: OlukoLocalizations.get(context, 'usePounds'), isSelected: _useImperial), const OlukoNeumorphicDivider()])
+                ],
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -98,8 +123,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         : Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              border: Border(
-                  top: BorderSide(width: 1.0, color: OlukoColors.grayColor), bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
+              border: Border(top: BorderSide(width: 1.0, color: OlukoColors.grayColor), bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
               color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
             ),
             child: olukoSwitch(),
@@ -227,9 +251,32 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             ],
           ),
           Expanded(child: SizedBox()),
+          GestureDetector(onTap: () => _setValueForPrivacy(index: option.option.index), child: neumorphicRadioButton(option.option.index == _privacyNewValue))
+        ],
+      ),
+    );
+  }
+
+  Widget weightOption({String title, bool isSelected}) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              ),
+            ],
+          ),
+          const Expanded(child: SizedBox()),
           GestureDetector(
-              onTap: () => _setValueForPrivacy(index: option.option.index),
-              child: neumorphicRadioButton(option.option.index == _privacyNewValue))
+              onTap: () {
+                _setValueForWeightMeasure(!_useImperial);
+              },
+              child: neumorphicRadioButton(isSelected))
         ],
       ),
     );
@@ -267,6 +314,13 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       _notificationNewValue = value;
     });
     BlocProvider.of<NotificationSettingsBloc>(context).update(NotificationSettings(globalNotifications: value, userId: _authUser.id));
+  }
+
+  void _setValueForWeightMeasure(bool useImperial) {
+    setState(() {
+      _useImperial = useImperial;
+    });
+    BlocProvider.of<ProfileBloc>(context).updateSettingsForWeights(userToUpdate: _authUser, useImperialSystem: _useImperial);
   }
 
   String returnOption(String option) => option.split(".")[1];

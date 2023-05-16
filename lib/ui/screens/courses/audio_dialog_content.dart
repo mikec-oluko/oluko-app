@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
@@ -46,7 +47,7 @@ class _State extends State<AudioDialogContent> {
 
   Widget audioDialogContent(BuildContext context, UserResponse coach) {
     return ClipRRect(
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(20)),
       child: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
@@ -59,11 +60,20 @@ class _State extends State<AudioDialogContent> {
               SizedBox(height: 45),
               Stack(alignment: Alignment.bottomCenter, children: [
                 StoriesItem(maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar),
-                Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Image.asset('assets/courses/photo_ellipse.png', scale: 4),
+                )
               ]),
               SizedBox(height: 15),
-              Text(coach == null ? widget.audio.userName : coach.getFullName(),
-                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
+              Text(
+                  coach == null
+                      ? widget.audio.userName != null
+                          ? widget.audio.userName
+                          : OlukoLocalizations.get(context, 'coach')
+                      : coach.getFullName(),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -126,7 +136,7 @@ class _State extends State<AudioDialogContent> {
       if (playedOnce) {
         await widget.audioPlayer.resume();
       } else {
-        // await widget.audioPlayer.play(url, isLocal: false);
+        await widget.audioPlayer.play(UrlSource(url));
         setState(() {
           playedOnce = true;
         });

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -10,6 +11,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final Function() onPressed;
@@ -33,6 +35,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final bool reduceHeight;
   final bool centerTitle;
   final Function showBottomTab;
+  final String courseImage;
 
   OlukoAppBar(
       {this.title,
@@ -55,7 +58,8 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.showActions = false,
       this.reduceHeight = false,
       this.showBottomTab,
-      this.centerTitle = false});
+      this.centerTitle = false,
+      this.courseImage});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -134,103 +138,101 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
   PreferredSize neumorphicAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: SafeArea(
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          bottom: widget.showDivider ? PreferredSize(preferredSize: const Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)) : null,
-          flexibleSpace: widget.showLogo
-              ? widget.showBackButton
-                  ? Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child:
-                              OlukoNeumorphicCircleButton(onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
-                        ),
-                        getLogo(),
-                      ],
-                    )
-                  : getLogo()
-              : widget.showTitle
-                  ? widget.showBackButton
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            mainAxisAlignment: widget.centerTitle ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
-                            children: [
-                              getNeumorphicBackButton(),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      right: (widget.centerTitle && widget.title.length <= _titleBreakingPointLength) ||
-                                              (widget.showBackButton && !widget.showActions)
-                                          ? 40
-                                          : 0),
-                                  child: Align(
-                                    child: TitleHeader(
-                                      widget.title,
-                                      isNeumorphic: true,
-                                    ),
+      child: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        bottom: widget.showDivider ? PreferredSize(preferredSize: const Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)) : null,
+        flexibleSpace: widget.showLogo
+            ? widget.showBackButton
+                ? Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: OlukoNeumorphicCircleButton(onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
+                      ),
+                      getLogo(),
+                    ],
+                  )
+                : getLogo()
+            : widget.showTitle
+                ? widget.showBackButton
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: widget.centerTitle ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                          children: [
+                            getNeumorphicBackButton(),
+                            getCourseImage(),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    right: (widget.centerTitle && widget.title.length <= _titleBreakingPointLength) ||
+                                            (widget.showBackButton && !widget.showActions)
+                                        ? 40
+                                        : 0),
+                                child: Align(
+                                  child: TitleHeader(
+                                    widget.title,
+                                    isNeumorphic: true,
                                   ),
                                 ),
                               ),
-                              if (widget.showActions)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 10, left: 0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: widget.actions,
-                                  ),
-                                )
-                              else
-                                const SizedBox.shrink(),
-                            ],
-                          ),
-                        )
-                      : widget.showSearchBar
-                          ? getNeumorphicSearchBar()
-                          : Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: widget.showActions ? 40 : 0),
-                                      child: Align(
-                                        child: TitleHeader(
-                                          widget.title,
-                                          isNeumorphic: true,
-                                          //reduceFontSize: true,
-                                        ),
+                            ),
+                            if (widget.showActions)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10, left: 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: widget.actions,
+                                ),
+                              )
+                            else
+                              const SizedBox.shrink(),
+                          ],
+                        ),
+                      )
+                    : widget.showSearchBar
+                        ? getNeumorphicSearchBar()
+                        : Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: widget.showActions ? 40 : 0),
+                                    child: Align(
+                                      child: TitleHeader(
+                                        widget.title,
+                                        isNeumorphic: true,
+                                        //reduceFontSize: true,
                                       ),
                                     ),
                                   ),
-                                  if (widget.showActions)
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 10, left: 20),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: widget.actions,
-                                      ),
-                                    )
-                                  else
-                                    const SizedBox.shrink(),
-                                ],
-                              ),
-                            )
-                  ////TODO: NO SEARCH BAR
-                  : widget.showBackButton
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: OlukoNeumorphicCircleButton(
-                                onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-        ),
+                                ),
+                                if (widget.showActions)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10, left: 20),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: widget.actions,
+                                    ),
+                                  )
+                                else
+                                  const SizedBox.shrink(),
+                              ],
+                            ),
+                          )
+                ////TODO: NO SEARCH BAR
+                : widget.showBackButton
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child:
+                              OlukoNeumorphicCircleButton(onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
       ),
     );
   }
@@ -294,6 +296,28 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
         ),
       ),
     );
+  }
+
+  Widget getCourseImage() {
+    if (widget.courseImage != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: CachedNetworkImage(
+            imageUrl: widget.courseImage,
+            width: 70,
+            height: 90,
+            maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
+            maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
+            memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
+            memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
+            fit: BoxFit.fill,
+          ),
+        ),
+      );
+    }
+    return const SizedBox();
   }
 
   Widget getNeumorphicSearchBar() {

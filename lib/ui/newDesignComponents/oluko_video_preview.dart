@@ -11,6 +11,7 @@ import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/collage_utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -93,7 +94,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
       else
         ShaderMask(
           shaderCallback: (rect) {
-            return LinearGradient(
+            return const LinearGradient(
               begin: Alignment.center,
               end: Alignment.bottomCenter,
               colors: [Colors.black, Colors.transparent],
@@ -108,38 +109,28 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
 
   Widget topButtons() {
     return Padding(
-        padding: const EdgeInsets.only(top: 25, left: 15, right: 15),
+        padding: const EdgeInsets.only(top: 50, left: 15, right: 15),
         child: Row(
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               widget.showBackButton
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (widget.onBackPressed != null) {
-                            if (_controller != null) {
-                              _controller.pause();
-                            }
-                            widget.onBackPressed();
-                          } else {
-                            if (_controller != null) {
-                              _controller.pause();
-                            }
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Container(
-                            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
-                            width: 52,
-                            height: 52,
-                            child: Image.asset(
-                              'assets/courses/left_back_arrow.png',
-                              scale: 3.5,
-                            )),
-                      )) /*IconButton(
-                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context)) */
+                  ? Container(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      height: 55,
+                      width: 65,
+                      child: OlukoNeumorphicSecondaryButton(
+                        title: '',
+                        useBorder: true,
+                        isExpanded: false,
+                        thinPadding: true,
+                        onlyIcon: true,
+                        icon: Image.asset(
+                          'assets/courses/left_back_arrow.png',
+                          scale: 3.5,
+                        ),
+                        onPressed: widget.onBackPressed,
+                      ),
+                    )
                   : const SizedBox()
             else if (widget.showBackButton)
               IconButton(
@@ -300,7 +291,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               Visibility(
                 visible: widget.showCrossButton,
                 child: Positioned(
-                  top: 22,
+                  top: 50,
                   right: 10,
                   child: GestureDetector(
                     onTap: () => widget.onPlay(),

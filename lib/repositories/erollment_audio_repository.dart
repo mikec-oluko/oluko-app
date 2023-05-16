@@ -27,7 +27,7 @@ class EnrollmentAudioRepository {
     return enrollmentAudio;
   }
 
-  static Future<void> markAudioAsDeleted(EnrollmentAudio enrollmentAudio, List<Audio> audios) async {
+  static Future<void> saveAudios(EnrollmentAudio enrollmentAudio, List<Audio> audios) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))

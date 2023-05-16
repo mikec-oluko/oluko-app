@@ -73,7 +73,7 @@ class OlukoNeumorphism {
   }
 
   static NeumorphicStyle secondaryButtonStyle(
-      {bool useBorder = false, bool ligthShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {
+      {bool useBorder = false, bool lightShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {
     return NeumorphicStyle(
         border: useBorder ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark) : const NeumorphicBorder.none(),
         depth: 5,
@@ -85,7 +85,7 @@ class OlukoNeumorphism {
         shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 0.5,
-        shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
+        shadowLightColor: lightShadow ? Colors.white60 : Colors.transparent,
         shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
   }
 
@@ -342,7 +342,7 @@ class OlukoColors {
 
   static Color userColor(String firstName, String lastName) {
     var list = [grayColorSemiTransparent, skyblue, coral, inputError, purple, orange];
-    if (firstName == null) {
+    if (firstName == null || firstName.isEmpty || lastName == null || lastName.isEmpty) {
       var rndm = Random();
       var position = rndm.nextInt(list.length);
       return list[position];

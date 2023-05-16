@@ -2,14 +2,9 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
-import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/models/submodels/audio.dart';
-import 'package:oluko_app/models/submodels/enrollment_section.dart';
-import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
-import 'package:oluko_app/repositories/story_repository.dart';
+import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
-import 'package:oluko_app/repositories/class_repository.dart';
 import 'package:oluko_app/repositories/users_selfies_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:oluko_app/helpers/s3_provider.dart';
@@ -76,7 +71,7 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
       final miniThumbnailUrl = await _uploadFile(miniThumbnail, 'classes/' + courseEnrollment.classes[classIndex].id + '/mini');
       final CourseEnrollment courseUpdated = await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, thumbnailUrl, miniThumbnailUrl);
       UsersSelfiesRepository.update(thumbnailUrl);
-      saveSelfieInClass(courseEnrollment, classIndex);
+      saveSelfieInCourse(courseEnrollment, classIndex);
       final List<TransformationJourneyUpload> uploadedContent = await TransformationJourneyRepository().getUploadedContentByUserId(courseEnrollment.userId);
       TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, file, courseEnrollment.userId, uploadedContent.length);
       emit(SaveSelfieSuccess(courseEnrollment: courseUpdated));
@@ -89,10 +84,10 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
     }
   }
 
-  Future<void> saveSelfieInClass(CourseEnrollment courseEnrollment, int classIndex) async {
+  Future<void> saveSelfieInCourse(CourseEnrollment courseEnrollment, int classIndex) async {
     var thumbnailUrl = courseEnrollment.classes[classIndex].selfieThumbnailUrl;
     if (thumbnailUrl != null) {
-      await ClassRepository.addSelfie(courseEnrollment.classes[classIndex].id, thumbnailUrl);
+      await CourseRepository.addSelfie(courseEnrollment.course.id, thumbnailUrl);
     }
   }
 

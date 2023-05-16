@@ -42,35 +42,35 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   List<Movement> referenceMovements = [
     Movement(
         name: 'Airsquats',
-        image: 'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1'),
+        image: 'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',),
     Movement(
         name: 'Body Building',
         image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',),
     Movement(
         name: 'Triceps',
         image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a'),
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a',),
     Movement(
         name: 'Yoga',
         image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6'),
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6',),
     Movement(
         name: 'Body Building',
         image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',),
   ];
   List<Course> referenceCourses = [
     Course(
         id: '1',
         name: 'Builder Booty',
         image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_10.png?alt=media&token=e48354c6-6670-472a-9789-516287543cb4'),
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_10.png?alt=media&token=e48354c6-6670-472a-9789-516287543cb4',),
     Course(
         id: '2',
         name: 'Marathon Prep',
         image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',),
   ];
   // ---------
 
@@ -109,12 +109,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
       body: Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
-            ? BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
+            ? const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
             : BoxDecoration(
                 image: DecorationImage(
                     colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
                     fit: BoxFit.cover,
-                    image: CachedNetworkImageProvider(backgroundImageUrl))),
+                    image: CachedNetworkImageProvider(backgroundImageUrl),),),
         width: ScreenUtils.width(context),
         height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) : ScreenUtils.height(context) - toolbarHeight,
         child: OlukoNeumorphism.isNeumorphismDesign ? _viewBodyNeumorphic() : _viewBody(),
@@ -153,22 +153,22 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                             padding: const EdgeInsets.all(8.0),
                             child: MovementUtils.movementTitle(_movementSubmodel.name),
                           ),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           Column(
                             children: [
                               Container(
                                 width: ScreenUtils.width(context),
-                                decoration: BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
+                                decoration: const BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
                                 child: TabBar(
                                   isScrollable: true,
-                                  onTap: (index) => this.setState(() {
-                                    this.setState(() {
+                                  onTap: (index) => setState(() {
+                                    setState(() {
                                       tabController.index = index;
                                     });
                                   }),
                                   controller: tabController,
                                   indicatorSize: TabBarIndicatorSize.tab,
-                                  indicator: BoxDecoration(color: Colors.white),
+                                  indicator: const BoxDecoration(color: Colors.white),
                                   tabs: _getTabs(),
                                 ),
                               ),
@@ -180,12 +180,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                             } else {
                               return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
                             }
-                          })
+                          },)
                         ],
                       ),
                     )
-                  ]),
-                ]),
+                  ],),
+                ],),
               ),
             ],
           ),
@@ -193,7 +193,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       } else {
         return OlukoCircularProgressIndicator();
       }
-    });
+    },);
   }
 
   Widget _viewBodyNeumorphic() {
@@ -253,24 +253,24 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                               ],
                             ),
                           ),
-                          OlukoNeumorphicDivider(
+                          const OlukoNeumorphicDivider(
                             isFadeOut: true,
                           ),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           Column(
                             children: [
                               Container(
                                 width: ScreenUtils.width(context),
                                 child: TabBar(
                                   isScrollable: true,
-                                  onTap: (index) => this.setState(() {
-                                    this.setState(() {
+                                  onTap: (index) => setState(() {
+                                    setState(() {
                                       tabController.index = index;
                                     });
                                   }),
                                   controller: tabController,
                                   indicatorSize: TabBarIndicatorSize.label,
-                                  indicator: BoxDecoration(border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
+                                  indicator: const BoxDecoration(border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
                                   tabs: _getTabs(),
                                 ),
                               ),
@@ -282,12 +282,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                             } else {
                               return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
                             }
-                          })
+                          },)
                         ],
                       ),
                     )
-                  ]),
-                ]),
+                  ],),
+                ],),
               ),
             ],
           ),
@@ -295,7 +295,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       } else {
         return OlukoCircularProgressIndicator();
       }
-    });
+    },);
   }
 
   Widget courseRow(Course course) {
@@ -314,9 +314,9 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                         _videoControllers[tabController.index].pause();
                       }
                       Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
+                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false},);
                     },
-                    child: Container(height: 100, child: CachedNetworkImage(imageUrl: course.image)))
+                    child: Container(height: 100, child: CachedNetworkImage(imageUrl: course.image)),)
               ],
             ),
             Padding(
@@ -336,7 +336,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => this.setState(() {
+                    onTap: () => setState(() {
                       coursesBookmarked[course.id] = !coursesBookmarked[course.id];
                     }),
                     child: Padding(
@@ -344,7 +344,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       child: Row(
                         children: [
                           Icon(
-                            this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true ? Icons.bookmark : Icons.bookmark_border,
+                            coursesBookmarked[course.id] != null && coursesBookmarked[course.id] == true ? Icons.bookmark : Icons.bookmark_border,
                             size: 20,
                             color: Colors.white,
                           ),
@@ -369,7 +369,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Container(
-        decoration: BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor, borderRadius: BorderRadius.all(Radius.circular(5))),
+        decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor, borderRadius: BorderRadius.all(Radius.circular(5))),
         height: 150,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,12 +382,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                         _videoControllers[tabController.index].pause();
                       }
                       Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
+                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false},);
                     },
                     child: Container(
-                        padding: EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(4),
                         height: 150,
-                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: CachedNetworkImage(imageUrl: course.image))))
+                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: CachedNetworkImage(imageUrl: course.image)),),)
               ],
             ),
           ],
@@ -403,12 +403,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
         key: _videoKeys[index],
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
+        whenInitialized: (ChewieController chewieController) => setState(() {
               _videoControllers[index] = chewieController;
-            })));
-    if (_videoControllers[index] == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
+            }),),);
+    // if (_videoControllers[index] == null) {
+    //   widgets.add(Center(child: CircularProgressIndicator()));
+    // } 
     return widgets;
   }
 
@@ -429,15 +429,15 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               ? Container(
                   height: 180,
                   child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
                       child: Stack(
                           children: _videoPlayer(
-                              VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index))))
+                              VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index,),),),)
               : Container(
                   height: 200,
                   child: Stack(
                       children: _videoPlayer(
-                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index))),
+                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index,),),),
         ),
         Padding(
           padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(15.0) : const EdgeInsets.all(8.0),
@@ -471,7 +471,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                         },
                         content: _movementInfoSuccess.relatedMovements,
-                        width: ScreenUtils.width(context) / 1.2),
+                        width: ScreenUtils.width(context) / 1.2,),
                   ],
                 ),
               ),
@@ -491,16 +491,16 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 const SizedBox.shrink(),
               if (OlukoNeumorphism.isNeumorphismDesign)
                 !_existRelatedCourses
-                    ? SizedBox.shrink()
+                    ? const SizedBox.shrink()
                     : SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                             children: _movementInfoSuccess.relatedCourses
                                 .map((Course course) => Padding(
                                       padding: const EdgeInsets.only(right: 20.0),
-                                      child: course != null ? neumorphicCourseRow(course) : SizedBox(),
-                                    ))
-                                .toList()),
+                                      child: course != null ? neumorphicCourseRow(course) : const SizedBox(),
+                                    ),)
+                                .toList(),),
                       )
               else
                 !_existRelatedCourses
@@ -509,7 +509,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             ],
           ),
         )
-      ]),
+      ],),
     );
   }
 
@@ -561,14 +561,14 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             ],
           ),
         )
-      ]),
+      ],),
     );
   }
 
   Tab _tabItem(String name, int index, {bool disabled = false}) {
     return Tab(
       child: Container(
-        decoration: BoxDecoration(),
+        decoration: const BoxDecoration(),
         child: Text(
           OlukoNeumorphism.isNeumorphismDesign ? name : name.toUpperCase(),
           style: OlukoFonts.olukoMediumFont(
@@ -580,7 +580,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           : OlukoColors.black
                       : OlukoNeumorphism.isNeumorphismDesign
                           ? Colors.grey
-                          : Colors.white),
+                          : Colors.white,),
         ),
       ),
     );

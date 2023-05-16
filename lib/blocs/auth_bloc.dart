@@ -137,6 +137,7 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
+      UserRepository().updateLastTimeOpeningApp(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
         if (Platform.isIOS || Platform.isMacOS) {
           AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
@@ -160,10 +161,13 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
-    await PushNotificationService.initializePushNotifications(context, userId);
-    if (await UserUtils.isFirstTime()) {
-      await Permissions.askForPermissions();
-    }
+    try {
+      await PushNotificationService.initializePushNotifications(context, userId);
+      if (await UserUtils.isFirstTime()) {
+        await Permissions.askForPermissions();
+      }
+    } catch (e) {}
+
     UserUtils.checkFirstTimeAndUpdate();
     await AppNavigator().returnToHome(context);
   }
@@ -205,6 +209,7 @@ class AuthBloc extends Cubit<AuthState> {
         return;
       }
 
+      UserRepository().updateLastTimeOpeningApp(userResponse);
       AuthRepository().storeLoginData(userResponse);
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
@@ -263,6 +268,8 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
+
+      UserRepository().updateLastTimeOpeningApp(user);
       AuthRepository().storeLoginData(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
@@ -310,6 +317,7 @@ class AuthBloc extends Cubit<AuthState> {
       }
 
       AuthRepository().storeLoginData(userResponse);
+      UserRepository().updateLastTimeOpeningApp(userResponse);
 
       if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
@@ -433,7 +441,7 @@ class AuthBloc extends Cubit<AuthState> {
     emit(AuthResetPassLoading());
     try {
       await AuthRepository().sendPasswordResetEmail(forgotPasswordDto);
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+      //AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
       emit(AuthResetPassSent());
     } catch (e) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'wrongEmailFormat'));

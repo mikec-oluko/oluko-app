@@ -29,4 +29,5 @@ class ProfileViewConstants {
   static const profileChangePaymentMethodTitle = "Change Payment Method";
   static const profileUnsuscribeTitle = "Unsubscribe";
   static const profileSelectFromGalleryTitle = "Select from Gallery";
+  static const weightMeasurement = "Weight measurement";
 }
