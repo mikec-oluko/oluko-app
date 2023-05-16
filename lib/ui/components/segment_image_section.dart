@@ -302,16 +302,20 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Padding _classTitleComponent() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Text(
-        _classTitle(),
-        style: _classTitle().length > 25
-            ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-            : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-      ),
+  Widget _classTitleComponent() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Text(
+            _classTitle(),
+            style: _classTitle().length > 25
+                ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+                : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+          ),
+        ),
+      ],
     );
   }
 
