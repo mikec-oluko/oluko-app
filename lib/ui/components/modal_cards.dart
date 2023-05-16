@@ -81,16 +81,6 @@ class _ModalCardsState extends State<ModalCards> {
     return GridView.count(mainAxisSpacing: 20, crossAxisCount: 2, crossAxisSpacing: 12, children: _buildCardList(cardsList));
   }
 
-  List<Widget> _cardsList(List<PointsCard> cards) {
-    List<Widget> widgetsList = [];
-    cards.forEach((element) {
-      widgetsList.add(PointsCardComponent(
-        pointsCard: element,
-      ));
-    });
-    return widgetsList;
-  }
-
   List<Widget> _buildCardList(List<PointsCard> cards) {
     List<Widget> widgetsList = cards
         .map((card) => PointsCardComponent(
@@ -100,23 +90,4 @@ class _ModalCardsState extends State<ModalCards> {
 
     return widgetsList;
   }
-
-  /*Widget cardsGrid(List<PointsCard> cards) {
-    if (cards.isNotEmpty) {
-      return GridView.count(
-        padding: const EdgeInsets.only(top: 10),
-        childAspectRatio: 0.7,
-        crossAxisCount: 4,
-        physics: const BouncingScrollPhysics(),
-        shrinkWrap: true,
-        children: cards
-            .map(
-              (cardElement) => {PointsCardComponent(pointsCard: cardElement)},
-            )
-            .toList(),
-      );
-    } else {
-      return SizedBox();
-    }
-  }*/
 }

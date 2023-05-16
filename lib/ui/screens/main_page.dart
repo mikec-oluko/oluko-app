@@ -208,9 +208,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   bottomNavigationBar: _isBottomTabActive
                       ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
                           if (state is PointsCardPanelOpen) {
-                            return SizedBox();
+                            return const SizedBox();
                           } else {
                             return OlukoBottomNavigationBar(
+                              loggedUser: loggedUser,
                               selectedIndex: this.tabController.index,
                               onPressed: (index) => this.setState(() {
                                 this.tabController.animateTo(index as int);
