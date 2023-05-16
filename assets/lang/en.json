@@ -454,7 +454,9 @@
     "saturday": "Saturday",
     "sunday": "Sunday",
     "editSchedule": "Edit schedule",
-    "upcomingWorkouts": "Upcoming Workouts"
+    "upcomingWorkouts": "Upcoming Workouts",
+    "seeAll": "See all",
+    "annotatedVideos": "Annotated Videos"
 
     
 }
