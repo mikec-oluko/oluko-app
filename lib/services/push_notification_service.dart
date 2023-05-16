@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
+import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
@@ -111,7 +112,8 @@ class PushNotificationService {
 
   static void notifyNewPushNotification(RemoteMessage message, BuildContext contextPush) {
     if (message != null && message.data != null) {
-      BlocProvider.of<PushNotificationBloc>(contextPush).notifyNewPushNotification();
+      final int tabNumber = message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder] ? 2 : 1;
+      BlocProvider.of<PushNotificationBloc>(contextPush).notifyNewPushNotification(tabNumber);
     }
   }
 }
