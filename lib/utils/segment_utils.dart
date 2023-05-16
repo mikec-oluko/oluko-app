@@ -224,7 +224,7 @@ class SegmentUtils {
             sectionIndex: entries[i].sectionIndex,
             counter: CounterEnum.none,
             stopwatch: false,
-            labels: [getLabel(entries[i].movement)],
+            labels: [''],
             isInitialTimer: true);
         entries.insert(i + 1, transition);
       }
