@@ -728,7 +728,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.5),
+        color: Colors.white.withOpacity(0.25),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Padding(

@@ -134,7 +134,7 @@ class _State extends State<ClocksLowerSection> {
             children: [
               Container(
                   width: ScreenUtils.width(context) - 40,
-                  height: 170,
+                  height: 180,
                   child: Column(
                     children: [
                       OlukoNeumorphicDivider(
