@@ -98,6 +98,13 @@ class CourseRepository {
     return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
   }
 
+  static Future<CourseStatistics> getStatisticsById(String courseId) async {
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseStatistics').doc(courseId);
+    final DocumentSnapshot ds = await reference.get();
+    return CourseStatistics.fromJson(ds.data() as Map<String, dynamic>);
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription() {
     Stream<QuerySnapshot<Map<String, dynamic>>> statisticsStream =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseStatistics').snapshots();
