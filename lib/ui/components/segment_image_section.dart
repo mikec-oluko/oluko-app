@@ -128,7 +128,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     }
     getMovementsWithWeightRequired();
     setState(() {
-      movementsToDisplayWeight = getMovementsWithWeights();
+      movementsToDisplayWeight = MovementUtils.getMovementsWithWeights(sections: widget.segment.sections, enrollmentMovements: enrollmentMovements);
     });
     super.initState();
   }
@@ -399,20 +399,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   void getMovementsWithWeightRequired() {
     enrollmentMovements = MovementUtils.getMovementsFromEnrollmentSegment(courseEnrollmentSections: getCourseEnrollmentSegment().sections);
-  }
-
-  List<MovementSubmodel> getMovementsWithWeights() {
-    List<MovementSubmodel> movementsWithWeight = [];
-    widget.segment.sections.forEach((section) {
-      section.movements.forEach((movement) {
-        if (MovementUtils.checkIfMovementRequireWeigth(movement, enrollmentMovements)) {
-          if (movementsWithWeight.where((movementRecord) => movementRecord.id == movement.id).isEmpty) {
-            movementsWithWeight.add(movement);
-          }
-        }
-      });
-    });
-    return movementsWithWeight;
   }
 
   SizedBox _segmentCardTitle() {

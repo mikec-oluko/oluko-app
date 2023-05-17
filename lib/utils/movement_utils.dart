@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'oluko_localizations.dart';
 
 class MovementUtils {
@@ -74,4 +75,18 @@ class MovementUtils {
 
   static bool checkIfMovementRequireWeigth(MovementSubmodel movement, List<EnrollmentMovement> enrollmentMovements) =>
       enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.weightRequired;
+
+  static List<MovementSubmodel> getMovementsWithWeights({List<SectionSubmodel> sections, List<EnrollmentMovement> enrollmentMovements}) {
+    List<MovementSubmodel> movementsWithWeight = [];
+    sections.forEach((section) {
+      section.movements.forEach((movement) {
+        if (MovementUtils.checkIfMovementRequireWeigth(movement, enrollmentMovements)) {
+          if (movementsWithWeight.where((movementRecord) => movementRecord.id == movement.id).isEmpty) {
+            movementsWithWeight.add(movement);
+          }
+        }
+      });
+    });
+    return movementsWithWeight;
+  }
 }

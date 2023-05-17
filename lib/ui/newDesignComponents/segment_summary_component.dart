@@ -29,7 +29,6 @@ class SegmentSummaryComponent extends StatefulWidget {
   const SegmentSummaryComponent(
       {this.classIndex,
       this.segmentIndex,
-      // this.sectionsFromEnrollment,
       this.enrollmentMovements,
       this.sectionsFromSegment,
       this.addWeightEnable = false,
@@ -225,7 +224,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           showCursor: true,
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 5),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
             hintText: OlukoLocalizations.get(context, 'addWeight'),

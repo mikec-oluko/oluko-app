@@ -150,7 +150,6 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
 
   Widget getWeightComponent(MovementSubmodel currentMovement) {
     return Container(
-      // width: 100,
       height: 40,
       decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Padding(
