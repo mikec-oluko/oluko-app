@@ -13,7 +13,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import '../../../helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   final UserResponse profileInfo;
@@ -102,8 +102,8 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           child: Column(
             children: [
               ListTile(
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+                contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white)),
               ),
               const OlukoNeumorphicDivider(),
               Column(
@@ -356,17 +356,19 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   void _setValueForNotifications(SettingsNotificationsOptions type, bool value) {
     setState(() {
-      if (type == SettingsNotificationsOptions.globalNotifications){
-        _globalNotificationsValue = value;
-      }
-      if (type == SettingsNotificationsOptions.appOpeningReminder){
-        _appOpeningReminderValue = value;
-      }
-      if (type == SettingsNotificationsOptions.coachResponse){
-        _coachResponseNotificationsValue = value;
-      }
-      if (type == SettingsNotificationsOptions.workoutReminder){
-        _workoutNotificationsValue = value;
+      switch (type) {
+        case SettingsNotificationsOptions.globalNotifications:
+          _globalNotificationsValue = value;
+          break;
+        case SettingsNotificationsOptions.appOpeningReminder:
+          _appOpeningReminderValue = value;
+          break;
+        case SettingsNotificationsOptions.coachResponse:
+          _coachResponseNotificationsValue = value;
+          break;
+        case SettingsNotificationsOptions.workoutReminder:
+          _workoutNotificationsValue = value;
+          break;
       }
     });
     final NotificationSettings notificationToUpdate = NotificationSettings(globalNotifications: _globalNotificationsValue,

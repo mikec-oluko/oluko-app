@@ -1,14 +1,15 @@
+import 'dart:io';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
-import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import '../helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 
 class PushNotificationService {
   static FirebaseMessaging messagin = FirebaseMessaging.instance;
@@ -19,6 +20,43 @@ class PushNotificationService {
     await messagin.requestPermission();
     final String token = await messagin.getToken();
     BlocProvider.of<UserBloc>(context).saveToken(userId, token);
+  }
+
+  static Future<void> initializeBackgroundNotificationsHandler() async{
+    await AwesomeNotifications().initialize(
+          'resource://drawable/icon',
+          [
+            NotificationChannel(channelKey: 'basic_channel',
+                                channelName: 'Oluko push notifications',
+                                channelDescription: 'Oluko push notifications',
+                                importance: NotificationImportance.High,
+                                channelShowBadge: true,
+                                )
+          ],
+          debug: true,
+        );
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+
+  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    final String userAvatar = message.data['avatar'].toString();
+    final NotificationContent notificationContent = NotificationContent(
+          id: 10,
+          channelKey: 'basic_channel',
+          title: message.data['title']?.toString(),
+          body: message.data['body'].toString(),
+    );
+    if (userAvatar?.isNotEmpty ?? false){
+      notificationContent.notificationLayout = NotificationLayout.BigPicture;
+      if (Platform.isAndroid){
+        notificationContent.largeIcon = userAvatar;
+      }else{
+        notificationContent.bigPicture = userAvatar;
+      }
+    }
+    AwesomeNotifications().createNotification(
+      content: notificationContent,
+    );
   }
 
   static void listenPushNotifications(BuildContext contextPush) {
@@ -73,7 +111,6 @@ class PushNotificationService {
                             thinPadding: true,
                             textColor: Colors.grey,
                             onPressed: () {
-                              bottomDialogDisplayed = false;
                               Navigator.pop(contextPush);
                             },
                             title: OlukoLocalizations.get(contextPush, 'ignore'),
@@ -86,7 +123,6 @@ class PushNotificationService {
                             isExpanded: false,
                             thinPadding: true,
                             onPressed: () {
-                              bottomDialogDisplayed = false;
                               Navigator.pop(contextPush);
                               notifyNewPushNotification(message, contextPush);
                             },
@@ -102,6 +138,9 @@ class PushNotificationService {
             ),
           ),
           context: contextPush,
+          onDismissAction: (){
+              bottomDialogDisplayed = false;
+          },
         );
       }
     });

@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
@@ -26,16 +20,14 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/config/project_settings.dart';
-import 'services/route_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:oluko_app/services/route_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  await initializeBackgroundNotifications();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await PushNotificationService.initializeBackgroundNotificationsHandler();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
   if(alreadyLoggedUserResponse != null){
@@ -58,42 +50,6 @@ Future<void> main() async {
       appRunner: () => runApp(myApp),
     );
   }
-}
-
-Future<void> initializeBackgroundNotifications() async {
-    await AwesomeNotifications().initialize(
-      'resource://drawable/icon',
-      [
-        NotificationChannel(channelKey: 'basic_channel',
-                            channelName: 'Oluko push notifications',
-                            channelDescription: 'Oluko push notifications',
-                            importance: NotificationImportance.High,
-                            channelShowBadge: true,
-                            )
-      ],
-      debug: true,
-    );
-}
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  final String userAvatar = message.data['avatar'].toString();
-  final NotificationContent notificationContent = NotificationContent(
-        id: 10,
-        channelKey: 'basic_channel',
-        title: message.data['title']?.toString(),
-        body: message.data['body'].toString(),
-  );
-  if (userAvatar?.isNotEmpty ?? false){
-    notificationContent.notificationLayout = NotificationLayout.BigPicture;
-    if (Platform.isAndroid){
-      notificationContent.largeIcon = userAvatar;
-    }else{
-      notificationContent.bigPicture = userAvatar;
-    }
-  }
-  AwesomeNotifications().createNotification(
-    content: notificationContent,
-  );
 }
 
 const OLUKO = 'Oluko';
