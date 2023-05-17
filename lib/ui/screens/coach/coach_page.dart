@@ -201,7 +201,8 @@ class _CoachPageState extends State<CoachPage> {
   CoachAppBar _getCoachAppBar(BuildContext context) => CoachAppBar(
         coachUser: _coachUser,
         currentUser: _currentAuthUser,
-        onNavigation: () => !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
+        onNavigationAction: () =>
+            !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
       );
 
   Widget _panelAndViewCreation(BuildContext context) {
