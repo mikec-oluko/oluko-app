@@ -101,15 +101,30 @@ class _CoachAppBarState extends State<CoachAppBar> {
     );
   }
 
-  GestureDetector _coachProfilePicWithNavigation(BuildContext context) {
-    return GestureDetector(
-        onTap: () {
-          widget.onNavigationAction();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile], arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
-        },
-        child: Neumorphic(
-            style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-            child: widget.coachUser != null && widget.coachUser.avatar != null ? coachAvatarImage() : coachDefaultAvatar()));
+  Widget _coachProfilePicWithNavigation(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: SizedBox(
+        height: 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            getSpacerWidget(),
+            GestureDetector(
+                onTap: () {
+                  widget.onNavigationAction();
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
+                      arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
+                },
+                child: Neumorphic(
+                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                    child: widget.coachUser != null && widget.coachUser.avatar != null ? coachAvatarImage() : coachDefaultAvatar())),
+            getSpacerWidget()
+          ],
+        ),
+      ),
+    );
   }
 
   Expanded getSpacerWidget() => const Expanded(child: SizedBox());
