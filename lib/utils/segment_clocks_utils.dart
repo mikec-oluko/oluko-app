@@ -103,21 +103,8 @@ class SegmentClocksUtils {
     return counterText;
   }
 
-  static Widget getKeyboard(BuildContext context, bool keyboardVisibilty) {
-    return SizedBox(
-      width: ScreenUtils.width(context),
-      child: Visibility(
-        visible: keyboardVisibilty,
-        child: CustomKeyboard(
-          boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
-        ),
-      ),
-    );
-  }
-
-  static Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
+  static Widget nextTaskWidget(String nextTask) {
     return Visibility(
-      visible: !keyboardVisibilty,
       child: ShaderMask(
         shaderCallback: (rect) {
           return const LinearGradient(
@@ -247,7 +234,7 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget recordingTaskSection(bool keyboardVisibilty, BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex) {
+  static Widget recordingTaskSection(BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex) {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
@@ -290,7 +277,7 @@ class SegmentClocksUtils {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              SizedBox(width: ScreenUtils.width(context) * 0.7, child: currentTaskWidget(keyboardVisibilty, currentTask, true)),
+              SizedBox(width: ScreenUtils.width(context) * 0.7, child: currentTaskWidget(currentTask, true)),
               Positioned(
                 left: ScreenUtils.width(context) - 70,
                 child: Text(
@@ -305,9 +292,8 @@ class SegmentClocksUtils {
     }
   }
 
-  static Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
+  static Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
     return Visibility(
-      visible: !keyboardVisibilty,
       child: Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
         child: Text(

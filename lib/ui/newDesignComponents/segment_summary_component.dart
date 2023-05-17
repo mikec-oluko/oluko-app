@@ -47,7 +47,6 @@ class SegmentSummaryComponent extends StatefulWidget {
 
 class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   List<EnrollmentMovement> enrollmentMovements = [];
-  bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
   TextEditingController textEditingController = TextEditingController();
