@@ -23,7 +23,7 @@ class EnrollmentMovement {
                     (json['counters'] as Iterable).map((counter) => counter as int),
                   ),
         weightRequired: json['weight_required'] == null ? false : json['weight_required'] as bool,
-        weight: json['weight'] == null ? 0 : json['weight'] as double);
+        weight: json['weight'] == null ? 0 :  json['weight'] is int? double.parse( json['weight'].toString()) : json['weight'] as double);
   }
 
   Map<String, dynamic> toJson() =>
