@@ -49,6 +49,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   StreamSubscription<List<PurchaseDetails>> subscription;
   List<Plan> plans;
   UserResponse user;
+  bool processStarted = false;
 
   void initState(bool fromRegister) {
     final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
@@ -122,14 +123,15 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
             final UserResponse user = await PurchaseRepository.create(purchaseDetails, productDetails, userId);
             emit(PurchaseSuccess(user: user));
           } catch (e) {
-            emit(FailureState(exception: e));
+            if (processStarted) {
+              emit(FailureState(exception: e));
+            }
           }
           break;
         case PurchaseStatus.canceled:
           emit(SubscriptionContentInitialized(plans: plans, user: user));
           break;
         case PurchaseStatus.restored:
-        
           break;
         case PurchaseStatus.error:
           emit(FailureState());
@@ -150,6 +152,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   }
 
   Future<void> subscribe(Plan plan, String userId) async {
+    processStarted = true;
     ProductDetails product = products?.firstWhere(
       (product) => product.id == plan.appleId,
       orElse: () => null,
