@@ -201,6 +201,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     for (final courseEnrollment in _courseEnrollmentList) {
       if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
         workoutSchedules.addAll(courseEnrollment.classes.where((classItem) =>
+          classItem.completedAt == null &&
           thisWeekDates.any((weekDay) =>
             classItem.scheduledDate?.toDate()?.year == weekDay.year &&
             classItem.scheduledDate?.toDate()?.month == weekDay.month &&
@@ -227,11 +228,12 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         if (workoutDay != null){
           workoutDay.scheduledWorkouts.add(workoutSchedule);
         }else{
-          final workoutDay = WorkoutDay(day: workoutSchedule.day, scheduledWorkouts: []);
+          final workoutDay = WorkoutDay(day: workoutSchedule.day, scheduledDay: workoutSchedule.scheduledDate, scheduledWorkouts: []);
           workoutDay.scheduledWorkouts.add(workoutSchedule);
           workoutClasses.add(workoutDay);
         }
       }
+      workoutClasses.sort((a, b) => a.scheduledDay.compareTo(b.scheduledDay));
     }
     return workoutClasses;
   }

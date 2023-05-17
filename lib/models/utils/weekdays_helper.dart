@@ -65,19 +65,25 @@ class WeekDaysHelper {
   }
 
   static List<DateTime> getCurrentWeekDates(){
+    final DateTime endOfWeek = getNextEndOfWeek();
+    final int daysAmountDifference = daysBetween(DateTime.now(), endOfWeek);
     final rrule = RecurrenceRule(
       frequency: Frequency.daily,
-      count: 7,
+      count: daysAmountDifference,
     );
     final DateTime currentDate = DateTime.now().subtract(const Duration(days: 1)).copyWith(isUtc: true);
-
-    final DateTime endOfWeek = getNextEndOfWeek();
     final List<DateTime> datesList = rrule.getInstances(start: currentDate)
                                             .where((currentDay) => 
                                             currentDay.year == endOfWeek.year &&
                                             currentDay.month == endOfWeek.month &&
                                             currentDay.day <= endOfWeek.day).toList();
     return datesList;
+  }
+
+  static int daysBetween(DateTime from, DateTime to) {
+     final DateTime fromDate = DateTime(from.year, from.month, from.day);
+     final DateTime toDate = DateTime(to.year, to.month, to.day);
+   return (toDate.difference(fromDate).inHours / 24).round() + 1;
   }
 
   static DateTime getNextEndOfWeek(){
