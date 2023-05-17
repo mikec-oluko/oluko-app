@@ -15,6 +15,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 
 class ScheduleModalContent extends StatefulWidget {
   final Course course;
@@ -88,105 +89,29 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      OlukoLocalizations.get(context, 'setYourSchedule'),
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
-                    ),
-                  ),
+                  _scheduleTitle(),
                   const SizedBox(height: 10),
-                  _showScheduleNotes(),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: ListView.builder(
-                        itemCount: WeekDaysHelper.weekdaysList.length,
-                        itemBuilder: (context, index) {
-                          return SizedBox(
-                            height: 35,
-                            child: Theme(
-                              data: ThemeData(
-                                unselectedWidgetColor: OlukoColors.grayColor,
-                              ),
-                              child: StatefulBuilder(
-                                builder: (BuildContext context, StateSetter setState) {
-                                  return CheckboxListTile(
-                                    checkColor: OlukoColors.black,
-                                    activeColor: OlukoColors.primary,
-                                    contentPadding: EdgeInsets.zero,
-                                    title: Transform.translate(
-                                      offset: const Offset(-10, 0),
-                                      child: Text(
-                                        OlukoLocalizations.get(context, WeekDaysHelper.weekdaysList[index]['name'].toString()),
-                                        style: const TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                    controlAffinity: ListTileControlAffinity.leading,
-                                    value: WeekDaysHelper.selectedWeekdays[index]['selected'] as bool,
-                                    onChanged: (value) {
-                                      setScheduledDates(index, value);
-                                    },
-                                    side: const BorderSide(
-                                        color: OlukoColors.grayColor,
-                                    ),
-                                    checkboxShape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                  _scheduleNotes(),
+                  _weekDaysCheckboxContainer(),
                   const OlukoNeumorphicDivider(isFadeOut: true,),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 80,
-                            child: GestureDetector(
-                              onTap: () {
-                                skipSchedule(context);
-                              },
-                              child: Text(
-                                OlukoLocalizations.get(context, widget.courseEnrollment == null ? 'skip' : 'cancel'),
-                                style: OlukoFonts.olukoBigFont(
-                                  customFontWeight: FontWeight.w600,
-                                  customColor: OlukoColors.grayColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            child: OlukoNeumorphicPrimaryButton(
-                              isExpanded: false,
-                              thinPadding: true,
-                              title: OlukoLocalizations.get(context, 'save'),
-                              onPressed: () {
-                                scheduleCourse(context);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  _scheduleActions(),
                 ],
               ),
             ),
           );
   }
 
-  Widget _showScheduleNotes() {
+  Widget _scheduleTitle(){
+    return Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              OlukoLocalizations.get(context, 'setYourSchedule'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+            ),
+          );
+  }
+
+  Widget _scheduleNotes() {
     if (widget.scheduleRecommendations?.isEmpty ?? true){
       return const SizedBox.shrink();
     }
@@ -202,6 +127,98 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
               child: Text(
                 widget.scheduleRecommendations,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: OlukoColors.white),
+              ),
+            ),
+          );
+  }
+
+  Widget _weekDaysCheckboxContainer(){
+    return Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: ListView.builder(
+              itemCount: WeekDaysHelper.weekdaysList.length,
+              itemBuilder: (context, index) {
+                return _weekdaysCheckboxList(context, index);
+              },
+            ),
+          ),
+        );
+  }
+
+  Widget _weekdaysCheckboxList(BuildContext context, int index){
+    return SizedBox(
+            height: 35,
+            child: Theme(
+              data: ThemeData(
+                unselectedWidgetColor: OlukoColors.grayColor,
+              ),
+              child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return CheckboxListTile(
+                    checkColor: OlukoColors.black,
+                    activeColor: OlukoColors.primary,
+                    contentPadding: EdgeInsets.zero,
+                    title: Transform.translate(
+                      offset: const Offset(-10, 0),
+                      child: Text(
+                        OlukoLocalizations.get(context, WeekDaysHelper.weekdaysList[index]['name'].toString()),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: WeekDaysHelper.selectedWeekdays[index]['selected'] as bool,
+                    onChanged: (value) {
+                      setScheduledDates(index, value);
+                    },
+                    side: const BorderSide(
+                        color: OlukoColors.grayColor,
+                    ),
+                    checkboxShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+  }
+
+  Widget _scheduleActions(){
+    return Padding(
+            padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: GestureDetector(
+                      onTap: () {
+                        skipSchedule(context);
+                      },
+                      child: Text(
+                        OlukoLocalizations.get(context, widget.courseEnrollment == null ? 'skip' : 'cancel'),
+                        style: OlukoFonts.olukoBigFont(
+                          customFontWeight: FontWeight.w600,
+                          customColor: OlukoColors.grayColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: OlukoNeumorphicPrimaryButton(
+                      isExpanded: false,
+                      thinPadding: true,
+                      title: OlukoLocalizations.get(context, 'save'),
+                      onPressed: () {
+                        scheduleCourse(context);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -242,6 +259,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   Future<void> updateSchedule(BuildContext context) async {
     widget.courseEnrollment.weekDays = weekDays;
     widget.blocCourseEnrollment.scheduleCourse(widget.courseEnrollment, scheduledDates);
+    AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'scheduleApplied'));
     widget.onUpdateScheduleAction();
   }
 
