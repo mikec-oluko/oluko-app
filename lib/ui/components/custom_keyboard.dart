@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-//PASAR TECLADO A WIDGET Y AJUSTAR BLOC
 class CustomKeyboard extends StatefulWidget {
   TextEditingController controller;
   final BoxDecoration boxDecoration;
@@ -20,7 +19,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   Widget build(BuildContext context) {
     widget.focus.requestFocus();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: widget.boxDecoration,
       child: Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
