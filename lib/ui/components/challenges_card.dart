@@ -6,6 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -70,22 +71,32 @@ class _State extends State<ChallengesCard> {
       children: [
         if (needAudioComponent)
           Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: GestureDetector(
-                  onTap: () {
-                    if (widget.challengeNavigations.length == 1) {
-                      navigateToAudioSegment(widget.challengeNavigations[0]);
-                    } else {
-                      navigateToPanel(true);
-                    }
-                  },
-                  child: Stack(alignment: Alignment.center, children: [
-                    Image.asset(
-                      'assets/courses/green_circle.png',
-                      scale: 7,
-                    ),
-                    const Icon(Icons.mic, size: 20, color: OlukoColors.black)
-                  ])))
+            padding: const EdgeInsets.only(top: 5),
+            child: OlukoNeumorphicSecondaryButton(
+              title: '',
+              useBorder: true,
+              isExpanded: false,
+              thinPadding: true,
+              onlyIcon: true,
+              icon: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/courses/green_circle.png',
+                    scale: 7,
+                  ),
+                  const Icon(Icons.mic, size: 20, color: OlukoColors.black)
+                ],
+              ),
+              onPressed: () {
+                if (widget.challengeNavigations.length == 1) {
+                  navigateToAudioSegment(widget.challengeNavigations[0]);
+                } else {
+                  navigateToPanel(true);
+                }
+              },
+            ),
+          )
         else
           const SizedBox.shrink(),
         if (needAudioComponent)

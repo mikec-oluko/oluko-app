@@ -121,13 +121,16 @@ class CoachHelperFunctions {
   }
 
   static List<CoachRecommendationDefault> getRecommendedContentByType(
-      List<CoachRecommendationDefault> coachRecommendations, TimelineInteractionType contentTypeRequired, List<CoachRecommendationDefault> listToFill) {
+      List<CoachRecommendationDefault> coachRecommendations, TimelineInteractionType contentTypeRequired, List<CoachRecommendationDefault> listToFill,
+      {bool onlyContent = false}) {
+    List<CoachRecommendationDefault> recommendedContent = [];
+
     for (CoachRecommendationDefault recommendation in coachRecommendations) {
       if (recommendation.contentType == contentTypeRequired) {
-        listToFill.add(recommendation);
+        onlyContent ? recommendedContent.add(recommendation) : listToFill.add(recommendation);
       }
     }
-    return listToFill;
+    return onlyContent ? recommendedContent : listToFill;
   }
 
   static List<Widget> notificationsWidget(

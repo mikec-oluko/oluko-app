@@ -7,6 +7,7 @@ import 'package:oluko_app/models/submodels/video_state.dart';
 class SegmentSubmission extends Base {
   String segmentId;
   DocumentReference segmentReference;
+  String segmentName;
   String userId;
   DocumentReference userReference;
   String courseEnrollmentId;
@@ -22,6 +23,7 @@ class SegmentSubmission extends Base {
   SegmentSubmission(
       {this.segmentId,
       this.segmentReference,
+      this.segmentName,
       this.userId,
       this.userReference,
       this.coachId,
@@ -40,20 +42,14 @@ class SegmentSubmission extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory SegmentSubmission.fromJson(Map<String, dynamic> json) {
     SegmentSubmission segmentSubmission = SegmentSubmission(
         userId: json['user_id']?.toString(),
         userReference: json['user_reference'] as DocumentReference,
         segmentId: json['segment_id']?.toString(),
+        segmentName: json['segment_name']?.toString(),
         segmentReference: json['segment_reference'] as DocumentReference,
         coachId: json['coach_id']?.toString(),
         coachReference: json['coach_reference'] as DocumentReference,
@@ -63,8 +59,7 @@ class SegmentSubmission extends Base {
         seenAt: json['seen_at'] as Timestamp,
         favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
-        videoState:
-            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
+        videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
 
     segmentSubmission.setBase(json);
     return segmentSubmission;
@@ -76,6 +71,7 @@ class SegmentSubmission extends Base {
       'user_reference': userReference,
       'segment_id': segmentId,
       'segment_reference': segmentReference,
+      'segment_name': segmentName,
       'coach_id': coachId,
       'coach_reference': coachReference,
       'course_enrollment_id': courseEnrollmentId,

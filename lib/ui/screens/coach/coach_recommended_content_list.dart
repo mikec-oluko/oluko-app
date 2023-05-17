@@ -219,12 +219,11 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           if (OlukoNeumorphism.isNeumorphismDesign)
                             Text(
                               DateFormat.yMMMd().format(videoRecommended.createdAt.toDate()),
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700),
                             )
                           else
                             Column(
@@ -243,6 +242,13 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                                 )
                               ],
                             ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              videoRecommended.title,
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                            ),
+                          ),
                         ],
                       ),
                     ),

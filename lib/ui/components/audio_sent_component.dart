@@ -19,6 +19,7 @@ class AudioSentComponent extends StatefulWidget {
   final bool showBin;
   final bool showDate;
   final Function valueNotifier;
+  final bool keepPlayingInBackground;
 
   const AudioSentComponent({
     Key key,
@@ -33,6 +34,7 @@ class AudioSentComponent extends StatefulWidget {
     this.showBin = true,
     this.showDate = true,
     this.valueNotifier,
+    this.keepPlayingInBackground = false,
   }) : super(key: key);
 
   @override
@@ -56,7 +58,9 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
   //Pause the audio playing on background, when widget is removed from Widget tree.
   @override
   void deactivate() {
-    audioPlayer.pause();
+    if(!widget.keepPlayingInBackground){
+      audioPlayer.pause();
+    }
     super.deactivate();
   }
 
