@@ -458,7 +458,17 @@
     "weightsQuestion" : "What weights did you use?",
     "seeAll": "See all",
     "annotatedVideos": "Annotated Videos",
-    "scheduleApplied": "The schedule has been successfully applied"
-
+    "scheduleApplied": "The schedule has been successfully applied",
+    "privacy": "Privacy",
+    "pushNotifications": "Push notifications",
+    "globalNotifications": "New Coach",
+    "coachResponse": "Coach response",
+    "workoutReminder": "Workout reminder",
+    "appOpeningReminder": "App opening reminder",
+    "globalNotificationsSubtitle": "A new coach has been assigned to you",
+    "coachResponseSubtitle": "Your Coach has sent you a video or audio response",
+    "workoutReminderSubtitle": "Workout reminder based on your scheduled workout",
+    "appOpeningReminderSubtitle": "Remembers to open the app every 3, 7, and 14 days",
+    "goToCourses": "Go to courses"
     
 }
