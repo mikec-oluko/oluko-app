@@ -4,36 +4,38 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
+import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentSummaryComponent extends StatefulWidget {
-  final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int segmentIndex;
-  final Segment segment;
+  final List<SectionSubmodel> sectionsFromSegment;
   final bool addWeightEnable;
-  final EnrollmentSegment segmentFromCourseEnrollment;
+  final List<EnrollmentMovement> enrollmentMovements;
   final List<WeightRecord> weightRecords;
   final bool isResults;
   final bool useImperialSystem;
+  final Function(bool) workoutHasWeights;
   final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
 
   const SegmentSummaryComponent(
-      {this.courseEnrollment,
-      this.classIndex,
+      {this.classIndex,
       this.segmentIndex,
-      this.segmentFromCourseEnrollment,
-      this.segment,
+      this.enrollmentMovements,
+      this.sectionsFromSegment,
       this.addWeightEnable = false,
       this.isResults = false,
       this.useImperialSystem = true,
       this.weightRecords,
+      this.workoutHasWeights,
       this.movementWeigths})
       : super();
 
@@ -42,18 +44,9 @@ class SegmentSummaryComponent extends StatefulWidget {
 }
 
 class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
-  List<EnrollmentMovement> enrollmentMovements = [];
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
-
-  @override
-  void initState() {
-    setState(() {
-      getMovementsFromEnrollmentSegment();
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +54,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         ? Scrollbar(
             isAlwaysShown: true,
             child: ListView.builder(
+              shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _segmentSectionAndMovementDetails().length,
               itemBuilder: (c, i) => _segmentSectionAndMovementDetails()[i],
@@ -73,19 +67,19 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   List<Widget> _segmentSectionAndMovementDetails() {
     List<Widget> contentToReturn = [];
-    if (enrollmentMovements.isNotEmpty) {
+    if (widget.enrollmentMovements.isNotEmpty) {
       populateMovements(contentToReturn);
-    } else {
-      getMovementsFromEnrollmentSegment();
-      populateMovements(contentToReturn);
+    }
+    if (listOfWeigthsToUpdate.isNotEmpty) {
+      widget.workoutHasWeights(true);
     }
     return contentToReturn;
   }
 
   void populateMovements(List<Widget> contentToReturn) {
-    widget.segment.sections.forEach((section) {
+    widget.sectionsFromSegment.forEach((section) {
       section.movements.forEach((movement) {
-        if (_checkIfMovementRequireWeigth(movement)) {
+        if (MovementUtils.checkIfMovementRequireWeigth(movement, widget.enrollmentMovements)) {
           if (widget.addWeightEnable) {
             _createNewWeightRecord(section, movement);
             contentToReturn.add(_movementTileWithInput(movement));
@@ -110,12 +104,12 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       trailing: getWeight(movement) == null
           ? const SizedBox.shrink()
           : Container(
-              width: 100,
               height: 40,
-              decoration: const BoxDecoration(color: OlukoColors.divider, borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Padding(
-                padding: const EdgeInsets.only(left: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
                       'assets/courses/weight_icon.png',
@@ -230,7 +224,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           showCursor: true,
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 5),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
             hintText: OlukoLocalizations.get(context, 'addWeight'),
@@ -246,18 +240,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeigthsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
 
-  int getMovementIndex(SectionSubmodel section, MovementSubmodel movement) => widget.segment.sections[getSectionIndex(section)].movements.indexOf(movement);
+  int getMovementIndex(SectionSubmodel section, MovementSubmodel movement) => widget.sectionsFromSegment[getSectionIndex(section)].movements.indexOf(movement);
 
-  int getSectionIndex(SectionSubmodel section) => widget.segment.sections.indexOf(section);
-
-  bool _checkIfMovementRequireWeigth(MovementSubmodel movement) =>
-      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.weightRequired;
-
-  void getMovementsFromEnrollmentSegment() {
-    widget.segmentFromCourseEnrollment.sections.forEach((enrollmentSection) {
-      enrollmentSection.movements.forEach((enrollmentMovement) {
-        enrollmentMovements.add(enrollmentMovement);
-      });
-    });
-  }
+  int getSectionIndex(SectionSubmodel section) => widget.sectionsFromSegment.indexOf(section);
 }
