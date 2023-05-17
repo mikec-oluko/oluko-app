@@ -7,6 +7,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 
 class MovementRepository {
@@ -100,5 +101,25 @@ class MovementRepository {
         .collection('records')
         .snapshots();
     return userWeightRecorsStream;
+  }
+
+  Future<List<WeightRecord>> getFriendsRecords(String friendUserId) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getString('projectId'))
+        .collection('users')
+        .doc(friendUserId)
+        .collection('records')
+        .get();
+
+    List<WeightRecord> friendWeightRecords = mapQueryToMovementRecord(querySnapshot);
+    return friendWeightRecords;
+  }
+
+  static List<WeightRecord> mapQueryToMovementRecord(QuerySnapshot qs) {
+    return qs.docs.map((DocumentSnapshot ds) {
+      Map<String, dynamic> movementData = ds.data() as Map<String, dynamic>;
+      return WeightRecord.fromJson(movementData);
+    }).toList();
   }
 }

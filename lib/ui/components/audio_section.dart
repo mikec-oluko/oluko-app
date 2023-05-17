@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 class AudioSection extends StatelessWidget {
   final int audioMessageQty;
   final Function() onAudioPressed;
