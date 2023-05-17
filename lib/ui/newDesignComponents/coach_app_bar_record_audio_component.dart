@@ -62,7 +62,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
         if (state is GenericAudioPanelDefault) {
           recordAudioContent = _sendAudioToCoachComponent(context);
           _audiosRecorded.clear();
-          recordAudioContent = Padding(padding: const EdgeInsets.only(top: 20), child: recordAudioContent);
+          recordAudioContent = recordAudioContent;
         }
         if (state is GenericAudioPanelDeleted) {
           _audioRecorded = !_audioRecorded;

@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
@@ -66,6 +67,7 @@ import 'package:oluko_app/ui/newDesignComponents/coach_horizontal_carousel.dart'
 import 'package:oluko_app/ui/newDesignComponents/coach_upcoming_challenges.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_loading_full_screen.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -171,7 +173,17 @@ class _CoachPageState extends State<CoachPage> {
                                                 if (state is Success) {
                                                   _welcomeVideoUrl = state.mediaURL;
                                                 }
-                                                return _panelAndViewCreation(context);
+                                                return BlocListener<CoachAudioMessageBloc, CoachAudioMessagesState>(
+                                                  listener: (context, state) {
+                                                    if (state is CoachAudioMessagesSent) {
+                                                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageSent'));
+                                                    }
+                                                    if (state is CoachAudioMessagesFailure) {
+                                                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageFailed'));
+                                                    }
+                                                  },
+                                                  child: _panelAndViewCreation(context),
+                                                );
                                               },
                                             );
                                           },

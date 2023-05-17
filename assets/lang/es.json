@@ -446,7 +446,9 @@
     "community":"Comunidad",
     "weightsQuestion" : "Que pesos usaste?",
     "seeAll": "Ver todo",
-    "annotatedVideos": "Vídeos anotados"
+    "annotatedVideos": "Vídeos anotados",
+    "audioMessageSent": "Mensaje de audio enviado",
+    "audioMessageFailed": "El mensaje no se pudo enviar"
 
 
 

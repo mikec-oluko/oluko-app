@@ -447,7 +447,9 @@
     "community":"Community",
     "weightsQuestion" : "What weights did you use?",
     "seeAll": "See all",
-    "annotatedVideos": "Annotated Videos"
+    "annotatedVideos": "Annotated Videos",
+    "audioMessageSent": "Audio message sent",
+    "audioMessageFailed": "The message could not be sent"
 
     
 }
