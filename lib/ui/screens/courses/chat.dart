@@ -68,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
   SoundRecorder recorder;
 
   final ValueNotifier<bool> _takenSurvey = ValueNotifier(false);
+  ValueNotifier<bool> _showIndicator = ValueNotifier(true);
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -86,6 +87,9 @@ class _ChatScreenState extends State<ChatScreen> {
       BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
     });
     BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+    Future.delayed(const Duration(seconds: 3)).then((_) {
+      _showIndicator.value = false;
+    });
   }
 
   @override
@@ -285,7 +289,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
                     if (state is LoadingMessages) {
-                      return Center(child: CircularProgressIndicator());
+                      return ValueListenableBuilder<bool>(
+                        valueListenable: _showIndicator,
+                        builder: (context, value, child) {
+                          if (value) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      );
                     }
                     else if (state is MessagesUpdated) {
                       messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
@@ -295,7 +308,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
                       } else if (state is LoadingScrollMessages) {
-
                         return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, true);
                      } else if (messages.isNotEmpty) {
                       return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
