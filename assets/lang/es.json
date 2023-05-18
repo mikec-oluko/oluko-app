@@ -435,7 +435,6 @@
     "zipCodeErrorMessage": ", No cumple con el formato requerido. Solo caracteres numéricos, 5 dígitos de longitud.",
     "deleteImage": "Eliminar imagen",
     "completedChallenges": "Desafios Completados",
-    "transformationPhotos": "Fotos de Transformación",
     "chats":"Chats",
     "noChats":"No tienes chats",
     "showLess" : "Muestra menos",
@@ -448,5 +447,18 @@
     "points": "Points",
     "cards": "Tarjetas",
     "seeAll": "Ver todo",
-    "annotatedVideos": "Vídeos anotados"
+    "annotatedVideos": "Vídeos anotados",
+    "weightsQuestion" : "Que pesos usaste?",
+    "transformationPhotos": "Fotos de Transformación",
+    "privacy": "Privacidad",
+    "pushNotifications": "Notificaciones push",
+    "globalNotifications": "Nuevo Coach",
+    "coachResponse": "Respuesta del Coach",
+    "workoutReminder": "Recordatorio de ejercicio",
+    "appOpeningReminder": "Recordatorio de apertura de la aplicación",
+    "globalNotificationsSubtitle": "Has sido asignado a un Coach",
+    "coachResponseSubtitle": "El Coach te ha respondido un audio o video",
+    "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
+    "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días",
+    "goToCourses": "Ir a cursos"
 }

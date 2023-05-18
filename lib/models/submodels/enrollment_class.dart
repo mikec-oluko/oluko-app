@@ -30,7 +30,7 @@ class EnrollmentClass {
         reference: json['reference'] as DocumentReference,
         name: json['name']?.toString(),
         image: json['image']?.toString(),
-        completedAt: json['completed_at'] as Timestamp,
+        completedAt: json['completed_at'] is! Timestamp?  null : json['completed_at']  as Timestamp,
         selfieDownloadUrl: json['selfie_download_url']?.toString(),
         selfieThumbnailUrl: json['selfie_thumbnail_url']?.toString(),
         miniSelfieThumbnailUrl: json['mini_selfie_thumbnail_url']?.toString(),

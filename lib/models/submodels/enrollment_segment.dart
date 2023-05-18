@@ -26,7 +26,7 @@ class EnrollmentSegment {
               ? json['is_challenge'] as bool
               : false,
       image: json['image'] == null ? null : json['image']?.toString(),
-      completedAt: json['completed_at'] as Timestamp,
+      completedAt: json['completed_at'] is! Timestamp?  null : json['completed_at']  as Timestamp,
       sections: json['sections'] == null
           ? null
           : List<EnrollmentSection>.from(

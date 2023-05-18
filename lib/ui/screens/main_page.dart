@@ -39,8 +39,8 @@ import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import '../../models/points_card.dart';
-import 'coach/coach_main_page.dart';
+import 'package:oluko_app/models/points_card.dart';
+import 'package:oluko_app/ui/screens/coach/coach_main_page.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({this.classIndex, this.index, this.tab, Key key}) : super(key: key);
@@ -148,7 +148,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   context,
                   routeLabels[RouteEnum.root],
                   arguments: {
-                    'tab': 1,
+                    'tab': state.type,
                   },
                 );
               }

@@ -351,7 +351,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget bottomSection(bool keyboardVisibilty) {
-    return SizedBox(
+    return Container(
+        decoration: BoxDecoration(
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+        ),
         height: lowerSectionScreenProportion(keyboardVisibilty, true),
         child: OrientationBuilder(builder: (context, orientation) {
           return orientatedLowerSection();
@@ -607,7 +611,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         if (isWorkStateFinished())
           Positioned(
             bottom: 0,
-            child: SizedBox(
+            child: Container(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                 height: ScreenUtils.height(context) * 0.14,
                 width: ScreenUtils.width(context),
                 child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context, shareDoneAction,
