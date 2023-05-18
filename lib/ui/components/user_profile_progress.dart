@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/components/points_card_component.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/models/user_response.dart';
 
-import '../../models/points_card.dart';
-import '../../models/user_response.dart';
+import '../../blocs/points_card_bloc.dart';
 
 class UserProfileProgress extends StatefulWidget {
   final String challengesCompleted;
@@ -29,13 +26,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: widget.isMinimalRequested
-          ? const SizedBox.shrink()
-          : OlukoNeumorphism.isNeumorphismDesign
-              ? buildUserNeumorphicStatistics()
-              : buildUserStatistics(),
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 10), child: widget.isMinimalRequested ? const SizedBox.shrink() : buildUserNeumorphicStatistics());
   }
 
   IntrinsicHeight buildUserNeumorphicStatistics() {
@@ -60,36 +51,20 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
               children: [
                 profileNeumorphicAccomplishments(
                     achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
-                profileNeumorphicAccomplishments(
-                    achievementTitleKey: ['mvt', 'points'], achievementValue: widget.coursesCompleted, color: OlukoColors.white, isClickable: true),
+                BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
+                  if (state is PointsCardSuccess) {
+                    return profileNeumorphicAccomplishments(
+                        achievementTitleKey: ['mvt', 'points'], achievementValue: state.userPoints.toString(), color: OlukoColors.white, isClickable: true);
+                  } else {
+                    return OlukoCircularProgressIndicator();
+                  }
+                }),
               ],
             ),
           ),
         ],
       ),
     ));
-  }
-
-  Column buildUserStatistics() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              profileAccomplishments(achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.primary),
-              profileVerticalDivider(),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-              profileAccomplishments(achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.primary),
-              profileVerticalDivider(),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-              profileAccomplishments(achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
-            ],
-          ),
-        )
-      ],
-    );
   }
 
   VerticalDivider profileVerticalDivider({bool isNeumorphic = false}) {
@@ -102,54 +77,24 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     );
   }
 
-  Widget profileAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
-    const double _textContainerWidth = 88;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          children: [
-            Text(
-              achievementValue,
-              style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        Column(
-          children: [
-            SizedBox(
-              width: _textContainerWidth,
-              child: Text(OlukoLocalizations.get(context, achievementTitleKey),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w300)),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color, bool isClickable = false}) {
     final Text textElem = Text(
       '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
     );
-    return Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: GestureDetector(
-          onTap: () => isClickable ? _pointsCardAction() : {},
-          child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(
-            builder: (context, state) {
-              if (state is PointsCardPanelOpen) {
-                return _statisticsComponent(achievementValue, textElem, isClicked: isClickable);
-              } else {
-                return _statisticsComponent(achievementValue, textElem);
-              }
-            },
-          ),
-        ));
+    return GestureDetector(
+        onTap: () => isClickable ? _pointsCardAction() : {},
+        child: Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(
+              builder: (context, state) {
+                if (state is PointsCardPanelOpen) {
+                  return _statisticsComponent(achievementValue, textElem, isClicked: isClickable);
+                } else {
+                  return _statisticsComponent(achievementValue, textElem);
+                }
+              },
+            )));
   }
 
   Widget _statisticsComponent(String achievementValue, Text textElem, {bool isClicked = false}) {
@@ -186,7 +131,6 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
 
   void _pointsCardAction() {
     BlocProvider.of<PointsCardPanelBloc>(context).openPointsCardPanel();
-    BlocProvider.of<PointsCardBloc>(context).getUserCards(widget.currentUser.id);
   }
 
   TextStyle _style(bool clicked) {

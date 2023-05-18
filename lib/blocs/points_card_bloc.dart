@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/models/enums/completion_criteria_enum.dart';
@@ -9,11 +7,10 @@ import 'package:oluko_app/repositories/collected_card_repository.dart';
 import 'package:oluko_app/repositories/user_statistics_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/repositories/points_card_repository.dart';
-
-import '../models/course_enrollment.dart';
-import '../models/dto/completion_dto.dart';
-import '../models/user_statistics.dart';
-import '../repositories/course_enrollment_repository.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/dto/completion_dto.dart';
+import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 
 abstract class PointsCardState {}
 
@@ -21,7 +18,8 @@ class PointsCardLoading extends PointsCardState {}
 
 class PointsCardSuccess extends PointsCardState {
   List<CollectedCard> pointsCards;
-  PointsCardSuccess({this.pointsCards});
+  int userPoints;
+  PointsCardSuccess({this.pointsCards, this.userPoints});
 }
 
 class NewCardsCollected extends PointsCardState {
@@ -40,7 +38,11 @@ class PointsCardBloc extends Cubit<PointsCardState> {
   void getUserCards(String userId) async {
     try {
       final List<CollectedCard> collectedCards = await CollectedCardRepository.getAll(userId);
-      emit(PointsCardSuccess(pointsCards: collectedCards));
+      int userPoints = 0;
+      for (CollectedCard card in collectedCards) {
+        userPoints += card.multiplicity * card.card.value;
+      }
+      emit(PointsCardSuccess(pointsCards: collectedCards, userPoints: userPoints));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

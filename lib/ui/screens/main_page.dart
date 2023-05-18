@@ -173,6 +173,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
+          BlocProvider.of<PointsCardBloc>(context).getUserCards(authState.user.id);
           BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
