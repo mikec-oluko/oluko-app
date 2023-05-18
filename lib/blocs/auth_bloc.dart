@@ -71,6 +71,8 @@ class AuthFailure extends AuthState {
 
 class AuthLoading extends AuthState {}
 
+class AppleLoading extends AuthState {}
+
 class AuthResetPassSent extends AuthState {}
 
 class AuthResetPassLoading extends AuthState {}
@@ -302,7 +304,7 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
       return;
     }
-    emit(AuthLoading());
+    emit(AppleLoading());
     User result;
     try {
       try {

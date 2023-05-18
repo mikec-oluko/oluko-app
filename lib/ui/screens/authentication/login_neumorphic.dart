@@ -400,36 +400,45 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           const SizedBox(
             height: 5,
           ),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if(state is AppleLoading){
+                return Center(child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),),);
+              }
+              return SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
+                  ),
+                  onPressed: () => BlocProvider.of<AuthBloc>(context).continueWithApple(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/login/apple-logo.png',
+                        width: 18,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        OlukoLocalizations.get(context, 'continueWithApple'),
+                        style: const TextStyle(color: OlukoColors.white),
+                      )
+                    ],
                   ),
                 ),
-                backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
-              ),
-              onPressed: () => BlocProvider.of<AuthBloc>(context).continueWithApple(context),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/login/apple-logo.png',
-                    width: 18,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    OlukoLocalizations.get(context, 'continueWithApple'),
-                    style: const TextStyle(color: OlukoColors.white),
-                  )
-                ],
-              ),
-            ),
+              );
+            },
           )
         ],
       );
