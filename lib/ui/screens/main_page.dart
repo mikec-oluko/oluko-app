@@ -199,6 +199,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       _showPointsCardDialog(context, card);
                     });
+                    BlocProvider.of<PointsCardBloc>(context).emitDefaultState();
+                    BlocProvider.of<PointsCardBloc>(context).getUserCards(loggedUser.uid);
                   }
                 }
                 return Scaffold(

@@ -32,8 +32,14 @@ class PointsCardFailure extends PointsCardState {
   PointsCardFailure({this.exception});
 }
 
+class PointsCardDefault extends PointsCardState {}
+
 class PointsCardBloc extends Cubit<PointsCardState> {
   PointsCardBloc() : super(PointsCardLoading());
+
+  void emitDefaultState() {
+    emit(PointsCardDefault());
+  }
 
   void getUserCards(String userId) async {
     try {
@@ -91,7 +97,6 @@ class PointsCardBloc extends Cubit<PointsCardState> {
   }
 
   bool _userCompletedCardLinkedContent(PointsCard card, Completion completionObj) {
-    //TODO: linked contents funciona mal y asocia a culquier curso
     return _cardCriteriaIsByLinkedContent(card) &&
         (_cardClassMatchesCompletedClass(card, completionObj) || _cardCourseMatchesCompletedCourse(card, completionObj));
   }
