@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
+
+class WeightTileForValue extends StatefulWidget {
+  final List<WeightRecord> weightRecords;
+  final bool useImperialSystem;
+  final MovementSubmodel movement;
+  const WeightTileForValue({Key key, this.weightRecords, this.movement, this.useImperialSystem = false}) : super(key: key);
+
+  @override
+  State<WeightTileForValue> createState() => _WeightTileForValueState();
+}
+
+class _WeightTileForValueState extends State<WeightTileForValue> {
+  @override
+  Widget build(BuildContext context) {
+    return _movementTileWithWeightValue(widget.movement);
+  }
+
+  ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
+    return ListTile(
+      trailing: MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) == null
+          ? const SizedBox.shrink()
+          : Container(
+              height: 40,
+              decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/courses/weight_icon.png',
+                      scale: 3,
+                    ),
+                    Text(
+                      widget.weightRecords.isNotEmpty
+                          ? double.parse(MovementUtils.getWeight(
+                                  currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem))
+                              .round()
+                              .toString()
+                          : '0',
+                      style: OlukoFonts.olukoMediumFont(),
+                    ),
+                    const SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
+                      style: OlukoFonts.olukoMediumFont(),
+                    )
+                  ],
+                ),
+              ),
+            ),
+      title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+    );
+  }
+}

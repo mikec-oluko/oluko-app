@@ -10,6 +10,8 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/ui/newDesignComponents/weight_tile_for_value.dart';
+import 'package:oluko_app/ui/newDesignComponents/weight_tile_with_input.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
@@ -84,7 +86,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             _createNewWeightRecord(section, movement);
             contentToReturn.add(_movementTileWithInput(movement));
           } else {
-            contentToReturn.add(_movementTileWithWeightValue(movement));
+            contentToReturn.add(WeightTileForValue(
+              movement: movement,
+              weightRecords: widget.weightRecords,
+              useImperialSystem: widget.useImperialSystem,
+            ));
           }
         } else {
           contentToReturn.add(_defaultMovementTile(movement));
@@ -99,70 +105,47 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
-    return ListTile(
-      trailing: getWeight(movement) == null
-          ? const SizedBox.shrink()
-          : Container(
-              height: 40,
-              decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/courses/weight_icon.png',
-                      scale: 3,
-                    ),
-                    Text(
-                      widget.weightRecords.isNotEmpty ? double.parse(getWeight(movement)).round().toString() : '0',
-                      style: OlukoFonts.olukoMediumFont(),
-                    ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Text(
-                      widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-                      style: OlukoFonts.olukoMediumFont(),
-                    )
-                  ],
-                ),
-              ),
-            ),
-      title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+  Widget _movementTileWithInput(MovementSubmodel movement) {
+    final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id);
+    return WeightTileWithInput(
+      movement: movement,
+      useImperialSystem: widget.useImperialSystem,
+      onChangeAction: (value) {
+        _onChangeWeightInputValue(value, movement, currentMovementAndWeight);
+      },
+      onSubmitAction: (value) {
+        _onSubmitWeightValue(value, movement, currentMovementAndWeight);
+      },
     );
   }
 
-  String getWeight(MovementSubmodel movement) {
-    String result;
-    if (widget.weightRecords.isNotEmpty) {
-      widget.weightRecords.forEach((weightRecord) {
-        if (weightRecord.movementId == movement.id) {
-          if (widget.useImperialSystem) {
-            result = weightRecord.weight.toStringAsFixed(2);
-          } else {
-            result = (weightRecord.weight * _toKilogramsUnit).ceil().toStringAsFixed(2);
-          }
-        }
-      });
+  void _onChangeWeightInputValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
+    if (value == '') {
+      movementsWeights[movement.id] = null;
+    } else {
+      if (widget.useImperialSystem) {
+        movementsWeights[movement.id] = double.parse(value);
+      } else {
+        movementsWeights[movement.id] = double.parse(value) * _passToKilogramsUnit;
+      }
     }
-    return result;
+    currentMovementAndWeight.weight = movementsWeights[movement.id];
+    widget.movementWeigths(listOfWeigthsToUpdate);
   }
 
-  double get _toKilogramsUnit => 0.453;
-
-  Padding _movementTileWithInput(MovementSubmodel movement) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
-          _inputComponent(movement.id),
-        ],
-      ),
-    );
+  void _onSubmitWeightValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
+    if (value == '') {
+      movementsWeights[movement.id] = null;
+    } else {
+      if (widget.useImperialSystem) {
+        movementsWeights[movement.id] = double.parse(value);
+      } else {
+        movementsWeights[movement.id] = double.parse(value) * _passToKilogramsUnit;
+      }
+    }
+    currentMovementAndWeight.weight = movementsWeights[movement.id];
+    widget.movementWeigths(listOfWeigthsToUpdate);
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   void _createNewWeightRecord(SectionSubmodel section, MovementSubmodel movement) {
@@ -175,65 +158,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     if (!listOfWeigthsToUpdate.contains(newWeightHelper)) {
       listOfWeigthsToUpdate.add(newWeightHelper);
     }
-  }
-
-  Container _inputComponent(String movementId) {
-    final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movementId);
-    return Container(
-        decoration: const BoxDecoration(color: OlukoNeumorphismColors.appBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-        width: 120,
-        height: 40,
-        child: TextFormField(
-          keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onChanged: (value) {
-            if (value == '') {
-              movementsWeights[movementId] = null;
-            } else {
-              if (widget.useImperialSystem) {
-                movementsWeights[movementId] = double.parse(value);
-              } else {
-                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
-              }
-            }
-            currentMovementAndWeight.weight = movementsWeights[movementId];
-            widget.movementWeigths(listOfWeigthsToUpdate);
-          },
-          onTap: () {},
-          onFieldSubmitted: (value) {
-            if (value == '') {
-              movementsWeights[movementId] = null;
-            } else {
-              if (widget.useImperialSystem) {
-                movementsWeights[movementId] = double.parse(value);
-              } else {
-                movementsWeights[movementId] = double.parse(value) * _passToKilogramsUnit;
-              }
-            }
-            currentMovementAndWeight.weight = movementsWeights[movementId];
-            widget.movementWeigths(listOfWeigthsToUpdate);
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          onEditingComplete: () {},
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 20,
-            color: OlukoColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          showCursor: true,
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-            focusColor: Colors.transparent,
-            fillColor: Colors.transparent,
-            hintText: OlukoLocalizations.get(context, 'addWeight'),
-            hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
-            hintMaxLines: 1,
-            border: InputBorder.none,
-            suffixText: widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-          ),
-        ));
   }
 
   double get _passToKilogramsUnit => 2.20462;

@@ -5,6 +5,7 @@ import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'oluko_localizations.dart';
 
 class MovementUtils {
@@ -89,4 +90,22 @@ class MovementUtils {
     });
     return movementsWithWeight;
   }
+
+  static String getWeight({MovementSubmodel currentMovement, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
+    String result;
+    if (weightRecordsList.isNotEmpty) {
+      weightRecordsList.forEach((weightRecord) {
+        if (weightRecord.movementId == currentMovement.id) {
+          if (useImperialSystem) {
+            result = weightRecord.weight.toStringAsFixed(2);
+          } else {
+            result = (weightRecord.weight * _toKilogramsUnit).ceil().toStringAsFixed(2);
+          }
+        }
+      });
+    }
+    return result;
+  }
+
+  static double get _toKilogramsUnit => 0.453;
 }
