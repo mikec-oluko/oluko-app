@@ -11,8 +11,13 @@ class ScheduleUtils {
     if (courseEnrollmentList.isEmpty){
       return [];
     }
+    final List<WorkoutSchedule> workoutSchedules = getThisWeekScheduledWorkouts(context, courseEnrollmentList);
+    final List<WorkoutDay> workoutClasses = getScheduledClassesGroupedByDay(workoutSchedules);
+    return workoutClasses;
+  }
+
+  static List<WorkoutSchedule> getThisWeekScheduledWorkouts(BuildContext context, List<CourseEnrollment> courseEnrollmentList){
     final List<DateTime> thisWeekDates = WeekDaysHelper.getCurrentWeekDates();
-    final List<WorkoutDay> workoutClasses = [];
     final List<WorkoutSchedule> workoutSchedules = [];
     for (final courseEnrollment in courseEnrollmentList) {
       if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
@@ -37,11 +42,11 @@ class ScheduleUtils {
         }).toList());
       }
     }
-    groupClassesByDay(workoutClasses, workoutSchedules);
-    return workoutClasses;
+    return workoutSchedules;
   }
 
-  static void groupClassesByDay(List<WorkoutDay> workoutClasses, List<WorkoutSchedule> workoutSchedules){
+  static List<WorkoutDay> getScheduledClassesGroupedByDay(List<WorkoutSchedule> workoutSchedules){
+    final List<WorkoutDay> workoutClasses = [];
     if (workoutSchedules.isNotEmpty) {
       workoutSchedules.sort((a, b) => a.enrolledDate.compareTo(b.enrolledDate));
       for (final workoutSchedule in workoutSchedules) {
@@ -56,5 +61,6 @@ class ScheduleUtils {
       }
       workoutClasses.sort((a, b) => a.scheduledDay.compareTo(b.scheduledDay));
     }
+    return workoutClasses;
   }
 }
