@@ -43,10 +43,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
         width: MediaQuery.of(context).size.width,
         height: 200,
         child: Stack(
-          children: [
-            Align(child: _playButtonComponent(context)),
-            Align(alignment: Alignment.bottomCenter, child: _carcContentText(context))
-          ],
+          children: [Align(child: _playButtonComponent(context)), Align(alignment: Alignment.bottomCenter, child: _carcContentText(context))],
         ),
       ),
     );
@@ -62,28 +59,41 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (OlukoNeumorphism.isNeumorphismDesign)
-              Text(
-                DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
-              )
-            else
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    OlukoLocalizations.get(context, 'date'),
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+            Row(
+              children: [
+                if (OlukoNeumorphism.isNeumorphismDesign)
                   Text(
                     DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700),
                   )
-                ],
-              ),
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        OlukoLocalizations.get(context, 'date'),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: Text(
+                    widget.personalizedVideo.annotationContent != null
+                        ? widget.personalizedVideo.annotationContent.segmentName
+                        : widget.personalizedVideo.videoMessageContent.video.name,
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
             _getLikeButton(widget.personalizedVideo)
           ],
         ),
@@ -110,8 +120,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
             ? Container(
                 width: 50,
                 height: 50,
-                child: OlukoBlurredButton(
-                    childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
+                child: OlukoBlurredButton(childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
               )
             : Image.asset(
                 'assets/self_recording/play_button.png',
@@ -148,8 +157,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
               coachAnnotation: personalizedVideo.annotationContent,
             );
           } else if (personalizedVideo.videoMessageContent != null) {
-            BlocProvider.of<CoachVideoMessageBloc>(context)
-                .markVideoMessageAsFavorite(widget.currentUser.id, personalizedVideo.videoMessageContent);
+            BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageAsFavorite(widget.currentUser.id, personalizedVideo.videoMessageContent);
           }
         });
   }

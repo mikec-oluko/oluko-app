@@ -3,6 +3,23 @@ enum SettingsPrivacyOptions { public, restricted, anonymous }
 enum WeightMeasures { kilograms, pounds }
 enum SettingsPrivacyOptionsSubtitle { publicSubtitle, restrictedSubtitle, anonymousSubtitle }
 
+enum SettingsNotificationsOptions { workoutReminder, appOpeningReminder, coachResponse, globalNotifications }
+enum SettingsNotificationsSubtitle { workoutReminderSubtitle, appOpeningReminderSubtitle, coachResponseSubtitle, globalNotificationsSubtitle }
+
+Map<SettingsNotificationsOptions, String> notificationOptions = {
+  SettingsNotificationsOptions.globalNotifications: 'global_notifications',
+  SettingsNotificationsOptions.appOpeningReminder: 'app_opening_reminder',
+  SettingsNotificationsOptions.workoutReminder: 'workout_reminder',
+  SettingsNotificationsOptions.coachResponse: 'coach_response'
+};
+
+Map<SettingsNotificationsOptions, String> notificationsSubtitles = {
+  SettingsNotificationsOptions.workoutReminder: 'workoutReminderSubtitle',
+  SettingsNotificationsOptions.appOpeningReminder: 'appOpeningReminderSubtitle',
+  SettingsNotificationsOptions.coachResponse: 'coachResponseSubtitle',
+  SettingsNotificationsOptions.globalNotifications: 'globalNotificationsSubtitle'
+};
+
 Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.public: 'publicSubtitle',
   SettingsPrivacyOptions.restricted: 'restrictedSubtitle',

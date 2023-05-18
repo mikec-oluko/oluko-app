@@ -16,6 +16,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/modal_segment_movements.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_watch_app_bar.dart';
@@ -485,7 +486,17 @@ class SegmentClocksUtils {
     if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return neumporphicFinishedButtonsWithRecording(context, shareDoneAction);
     } else {
-      return neumorphicFinishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress);
+      return Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: OlukoNeumorphicDivider(
+              isFadeOut: true,
+            ),
+          ),
+          neumorphicFinishedButtonsWithoutRecording(context, goToClass, nextSegmentAction, segments, segmentIndex, deleteUserProgress),
+        ],
+      );
     }
   }
 
@@ -500,12 +511,12 @@ class SegmentClocksUtils {
         height: 100,
         decoration: const BoxDecoration(
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-          border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop)),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Center(
             child: Container(
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
               height: 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
