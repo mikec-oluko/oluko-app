@@ -1490,6 +1490,7 @@ class Routes {
           BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<AuthBloc>.value(value: _authBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = HomeNeumorphicContent(
@@ -1499,6 +1500,7 @@ class Routes {
           user: argumentsToAdd['user'] as UserResponse,
           index: argumentsToAdd['index'] as int,
           isFromHome: argumentsToAdd['isFromHome'] as bool,
+          openEditScheduleOnInit: argumentsToAdd['openEditScheduleOnInit'] as bool,
         );
         break;
       case RouteEnum.welcomeVideoFirstTimeLogin:
