@@ -108,7 +108,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
           return UserRepository().getById(id);
         }),
       );
-      userList.removeWhere((element) => element.id == userId);
+      userList.removeWhere((element) => element == null || element.id == userId);
       emit(SubscribedCourseUsersSuccess(users: userList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
