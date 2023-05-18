@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/models/enums/completion_criteria_enum.dart';
 import 'package:oluko_app/models/enums/content_type_enum.dart';
 import 'package:oluko_app/models/points_card.dart';
@@ -19,7 +20,7 @@ abstract class PointsCardState {}
 class PointsCardLoading extends PointsCardState {}
 
 class PointsCardSuccess extends PointsCardState {
-  List<PointsCard> pointsCards;
+  List<CollectedCard> pointsCards;
   PointsCardSuccess({this.pointsCards});
 }
 
@@ -36,10 +37,10 @@ class PointsCardFailure extends PointsCardState {
 class PointsCardBloc extends Cubit<PointsCardState> {
   PointsCardBloc() : super(PointsCardLoading());
 
-  void get(String userId) async {
+  void getUserCards(String userId) async {
     try {
-      final List<PointsCard> cards = await PointsCardRepository.get(userId);
-      emit(PointsCardSuccess(pointsCards: cards));
+      final List<CollectedCard> collectedCards = await CollectedCardRepository.getAll(userId);
+      emit(PointsCardSuccess(pointsCards: collectedCards));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

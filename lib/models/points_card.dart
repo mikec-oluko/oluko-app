@@ -49,7 +49,7 @@ class PointsCard extends Base {
       completion: json['completion'] as int,
       contentReference: json['content_reference'] as DocumentReference,
       contentId: json['content_id']?.toString(),
-      image:  json['image']?.toString(),
+      image: json['image']?.toString(),
       value: json['value'] as int
     );
 
@@ -66,8 +66,8 @@ class PointsCard extends Base {
       'completion': completion,
       'content_reference': contentReference,
       'content_id': contentId,
-      'completed_at': image,
-      'required_classes': value
+      'image': image,
+      'value': value
     };
     pointsCardJson.addEntries(super.toJson().entries);
     return pointsCardJson;

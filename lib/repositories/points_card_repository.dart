@@ -14,6 +14,7 @@ class PointsCardRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
         .collection('pointsCards')
+        .where('is_deleted', isEqualTo: false)
         .get();
     List<PointsCard> cardsList = mapQueryToPointsCard(docRef);
     return cardsList;

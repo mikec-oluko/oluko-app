@@ -1,15 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/models/points_card.dart';
 
 import 'package:oluko_app/constants/theme.dart';
 
 class PointsCardComponent extends StatefulWidget {
-  final PointsCard pointsCard;
+  final CollectedCard collectedCard;
   bool bigCard;
 
-  PointsCardComponent({this.pointsCard, this.bigCard = false});
+  PointsCardComponent({this.collectedCard, this.bigCard = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -33,7 +34,8 @@ class _State extends State<PointsCardComponent> {
       Container(
           decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        image: DecorationImage(fit: BoxFit.cover, image: widget.pointsCard.image != null ? CachedNetworkImageProvider(widget.pointsCard.image) : defaultImage),
+        image: DecorationImage(
+            fit: BoxFit.cover, image: widget.collectedCard.card.image != null ? CachedNetworkImageProvider(widget.collectedCard.card.image) : defaultImage),
       )),
       Padding(padding: const EdgeInsets.symmetric(vertical: 7), child: Column(children: [_infoIcon(), const Expanded(child: SizedBox()), _bottomSection()]))
     ]);
@@ -48,7 +50,7 @@ class _State extends State<PointsCardComponent> {
             Row(children: [
               Expanded(
                   child: Text(
-                widget.pointsCard.name,
+                widget.collectedCard.card.name,
                 style: widget.bigCard
                     ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
                     : OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
@@ -58,8 +60,7 @@ class _State extends State<PointsCardComponent> {
             ]),
             Padding(
               padding: const EdgeInsets.only(right: 25),
-              child: SingleChildScrollView(child: Html(
-                data: widget.pointsCard.description)),
+              child: SingleChildScrollView(child: Html(data: widget.collectedCard.card.description)),
             )
           ]))
     ]);
@@ -94,19 +95,21 @@ class _State extends State<PointsCardComponent> {
         child: Column(
           children: [
             Row(children: [
-              _cardTag(OlukoColors.skyblue, widget.pointsCard.value.toString() + 'XP points'),
-              Expanded(child: SizedBox()),
-              _cardTag(OlukoColors.strongYellow, '3 cards')
+              _cardTag(OlukoColors.skyblue, widget.collectedCard.card.value.toString() + 'XP points'),
+              const Expanded(child: SizedBox()),
+              widget.collectedCard.multiplicity != null
+                  ? _cardTag(OlukoColors.strongYellow, widget.collectedCard.multiplicity.toString() + ' cards')
+                  : const SizedBox()
             ]),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
-              widget.pointsCard.name,
+              widget.collectedCard.card.name,
               style: !widget.bigCard
                   ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
                   : OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
           ],
         ));
   }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/ui/components/points_card_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-
-import '../../models/points_card.dart';
+import 'package:oluko_app/models/points_card.dart';
 
 class ModalCards extends StatefulWidget {
   String userId;
@@ -77,14 +76,14 @@ class _ModalCardsState extends State<ModalCards> {
     );
   }
 
-  Widget _cardsGrid(List<PointsCard> cardsList) {
+  Widget _cardsGrid(List<CollectedCard> cardsList) {
     return GridView.count(mainAxisSpacing: 20, crossAxisCount: 2, crossAxisSpacing: 12, children: _buildCardList(cardsList));
   }
 
-  List<Widget> _buildCardList(List<PointsCard> cards) {
+  List<Widget> _buildCardList(List<CollectedCard> cards) {
     List<Widget> widgetsList = cards
         .map((card) => PointsCardComponent(
-              pointsCard: card,
+              collectedCard: card,
             ))
         .toList();
 

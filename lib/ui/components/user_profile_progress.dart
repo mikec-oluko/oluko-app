@@ -186,7 +186,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
 
   void _pointsCardAction() {
     BlocProvider.of<PointsCardPanelBloc>(context).openPointsCardPanel();
-    BlocProvider.of<PointsCardBloc>(context).get(widget.currentUser.id);
+    BlocProvider.of<PointsCardBloc>(context).getUserCards(widget.currentUser.id);
   }
 
   TextStyle _style(bool clicked) {

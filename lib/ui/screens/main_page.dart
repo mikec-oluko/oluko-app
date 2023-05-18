@@ -18,6 +18,7 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/models/enums/bottom_tab_enum.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
@@ -193,9 +194,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             } else {
               return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
                 if (pointsCardsState is NewCardsCollected) {
-                  for(var card in pointsCardsState.pointsCards ){
-                  WidgetsBinding.instance.addPostFrameCallback((_) {_showPointsCardDialog(context, card);});
-
+                  for (var card in pointsCardsState.pointsCards) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _showPointsCardDialog(context, card);
+                    });
                   }
                 }
                 return Scaffold(
@@ -265,15 +267,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   void _showPointsCardDialog(BuildContext context, PointsCard card) {
-    DialogUtils.getDialog(
-        context,
-        [
-          SizedBox(
-              height: 280, width: 230, child: PointsCardComponent(bigCard: true, pointsCard: card))
-        ],
-        showBackgroundColor: false,
-        showExitButton: false,
-        showExitButtonOutside: true);
+    DialogUtils.getDialog(context, [SizedBox(height: 280, width: 230, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
+        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true);
   }
 
   void _showPopUp(BuildContext context, String route, UserChangedPlan state) {
