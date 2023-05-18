@@ -39,7 +39,6 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
-import 'package:oluko_app/models/utils/weekdays_helper.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -58,10 +57,10 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:intl/intl.dart';
 import 'package:oluko_app/models/workout_day.dart';
 import 'package:oluko_app/models/workout_schedule.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
+import 'package:oluko_app/utils/schedule_utils.dart';
 
 class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
@@ -195,47 +194,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   List<WorkoutDay> getThisWeekScheduledWorkouts(BuildContext context){
-    final List<DateTime> thisWeekDates = WeekDaysHelper.getCurrentWeekDates();
-    final List<WorkoutDay> workoutClasses = [];
-    final List<WorkoutSchedule> workoutSchedules = [];
-    for (final courseEnrollment in _courseEnrollmentList) {
-      if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
-        workoutSchedules.addAll(courseEnrollment.classes.where((classItem) =>
-          classItem.completedAt == null &&
-          thisWeekDates.any((weekDay) =>
-            classItem.scheduledDate?.toDate()?.year == weekDay.year &&
-            classItem.scheduledDate?.toDate()?.month == weekDay.month &&
-            classItem.scheduledDate?.toDate()?.day == weekDay.day
-          )
-        ).map((workoutClassDay) {
-          final DateTime scheduledDate = workoutClassDay.scheduledDate.toDate();
-          final int classIndex = courseEnrollment.classes.indexOf(workoutClassDay);
-          return WorkoutSchedule(
-            courseEnrollment: courseEnrollment,
-            className: "${courseEnrollment.course.name} ${OlukoLocalizations.get(context, 'class')} ${classIndex + 1}",
-            classIndex: classIndex,
-            scheduledDate: scheduledDate,
-            enrolledDate: courseEnrollment.createdAt.toDate(),
-            day: OlukoLocalizations.get(context, DateFormat('EEEE').format(scheduledDate).toLowerCase())
-          );
-        }).toList());
-      }
-    }
-    if (workoutSchedules.isNotEmpty) {
-      workoutSchedules.sort((a, b) => a.enrolledDate.compareTo(b.enrolledDate));
-      for (final workoutSchedule in workoutSchedules) {
-        final workoutDay = workoutClasses.isNotEmpty ? workoutClasses.firstWhere((x) => x.day == workoutSchedule.day, orElse: () => null) : null;
-        if (workoutDay != null){
-          workoutDay.scheduledWorkouts.add(workoutSchedule);
-        }else{
-          final workoutDay = WorkoutDay(day: workoutSchedule.day, scheduledDay: workoutSchedule.scheduledDate, scheduledWorkouts: []);
-          workoutDay.scheduledWorkouts.add(workoutSchedule);
-          workoutClasses.add(workoutDay);
-        }
-      }
-      workoutClasses.sort((a, b) => a.scheduledDay.compareTo(b.scheduledDay));
-    }
-    return workoutClasses;
+    return ScheduleUtils.getThisWeekClasses(context, _courseEnrollmentList);
   }
 
   Widget _userCoursesSchedule(BuildContext context) {
