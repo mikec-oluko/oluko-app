@@ -392,7 +392,7 @@ packages:
       sha256: "347d56c26d63519552ef9a569f2a593dda99a81fdbdff13c584b7197cfe05059"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.2"
+    version: "5.1.1"
   drag_and_drop_gridview:
     dependency: "direct main"
     description:
@@ -440,7 +440,7 @@ packages:
       sha256: ed5337a5660c506388a9f012be0288fb38b49020ce2b45fe1f8b8323fe429f99
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.2"
+    version: "2.0.1"
   file:
     dependency: transitive
     description:
@@ -629,7 +629,7 @@ packages:
       sha256: "2ed18ea374919fbca4c85383957662674d23f6f3901dfbf603f8d54cab10d050"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.11"
+    version: "5.0.10"
   flutter_facebook_auth_platform_interface:
     dependency: transitive
     description:
@@ -714,7 +714,7 @@ packages:
       sha256: "96af49aa6b57c10a312106ad6f71deed5a754029c24789bbf620ba784f0bd0b0"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.14"
+    version: "2.0.13"
   flutter_secure_storage:
     dependency: transitive
     description:
@@ -1220,7 +1220,7 @@ packages:
       sha256: "3087813781ab814e4157b172f1a11c46be20179fcc9bea043e0fba36bc0acaa2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.15"
+    version: "2.0.14"
   path_provider_android:
     dependency: transitive
     description:
@@ -1413,6 +1413,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  rrule:
+    dependency: "direct main"
+    description:
+      name: rrule
+      sha256: e838faf8eebbcef3d5a86235304ede0f4dd6b04da54b372d180a1b77cd1fba90
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.10"
   rxdart:
     dependency: transitive
     description:
@@ -1428,7 +1436,7 @@ packages:
       sha256: "1c5498c8d1754dbf4fa51ca14d31c8c34ea0a0f897ff666ecd516dbd588dad6a"
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.2"
+    version: "7.5.1"
   sentry_flutter:
     dependency: "direct main"
     description:
@@ -1436,7 +1444,7 @@ packages:
       sha256: "67a3c20cc72681ab5c3ece993290a5780e10816ff1da1ddb59ac33136fc58a3d"
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.2"
+    version: "7.5.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1444,7 +1452,7 @@ packages:
       sha256: "16d3fb6b3692ad244a695c0183fca18cf81fd4b821664394a781de42386bf022"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.0"
   shared_preferences_android:
     dependency: transitive
     description:
@@ -1460,7 +1468,7 @@ packages:
       sha256: e014107bb79d6d3297196f4f2d0db54b5d1f85b8ea8ff63b8e8b391a02700feb
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.1"
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -1649,7 +1657,7 @@ packages:
       sha256: dfd138a0cea87d6b1c624513b4b620f06515d884d65f1fa5fb93345266c7592c
       url: "https://pub.dev"
     source: hosted
-    version: "21.2.4"
+    version: "21.2.3"
   syncfusion_flutter_gauges:
     dependency: "direct main"
     description:
@@ -1657,7 +1665,7 @@ packages:
       sha256: a8e75d7418be1694d39e4b32b2ceacdfcda24edf7e2416af15e0887548313c8e
       url: "https://pub.dev"
     source: hosted
-    version: "21.2.4"
+    version: "21.2.3"
   synchronized:
     dependency: transitive
     description:
@@ -1706,6 +1714,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  time:
+    dependency: transitive
+    description:
+      name: time
+      sha256: "267028bb7b3e87bbfd66876c6389d7101e4b14eb94fe863d3e008e497ca07844"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
   timeago:
     dependency: "direct main"
     description:
@@ -1745,7 +1761,7 @@ packages:
       sha256: facc8d6582f16042dd49f2463ff1bd6e2c9ef9f3d5da3d9b087e244a7b564b3c
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.1"
   url_launcher:
     dependency: "direct main"
     description:

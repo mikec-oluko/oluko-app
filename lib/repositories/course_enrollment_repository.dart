@@ -156,11 +156,19 @@ class CourseEnrollmentRepository {
     final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
     final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
     CourseEnrollment courseEnrollment =
-        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
+        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: [], weekDays: course.weekDays);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
     return courseEnrollment;
+  }
+
+  static Future<CourseEnrollment> scheduleCourse(CourseEnrollment enrolledCourse) async {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
+    final CollectionReference reference = projectReference.collection('courseEnrollments');
+    final DocumentReference docRef = reference.doc(enrolledCourse.id);
+    docRef.set(enrolledCourse.toJson(), SetOptions(merge: true));
+    return enrolledCourse;
   }
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
@@ -172,6 +180,7 @@ class CourseEnrollmentRepository {
         image: course.classes[i].image,
         reference: course.classes[i].reference,
         segments: [],
+        scheduledDate: course.scheduledDates != null && course.scheduledDates.isNotEmpty ? Timestamp.fromDate(course.scheduledDates[i]) : null,
       ),
     );
 

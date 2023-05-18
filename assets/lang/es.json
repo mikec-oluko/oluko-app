@@ -444,9 +444,20 @@
     "usePounds": "Libras (LBs)",
     "addWeight": "Añadir peso",
     "community":"Comunidad",
+    "setYourSchedule":"Configura tu agenda",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "editSchedule": "Editar agenda",
+    "upcomingWorkouts": "Próximos Entrenamientos",
     "weightsQuestion" : "Que pesos usaste?",
     "seeAll": "Ver todo",
-    "annotatedVideos": "Vídeos anotados"
+    "annotatedVideos": "Vídeos anotados",
+    "scheduleApplied": "Se ha configurado la agenda correctamente"
 
 ,
     "transformationPhotos": "Fotos de Transformación",
