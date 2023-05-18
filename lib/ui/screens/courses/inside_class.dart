@@ -346,11 +346,12 @@ class _InsideClassesState extends State<InsideClass> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/courses/gray_background.png'),
-                fit: BoxFit.cover,
-              ),
               borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+              ),
             ),
             child: segmentState is LoadingSegment ? OlukoCircularProgressIndicator() : const SizedBox(),
           );

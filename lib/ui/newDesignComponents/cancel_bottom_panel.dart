@@ -23,22 +23,22 @@ class _State extends State<CancelBottomPanel> {
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 32),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        child: Column(
-            crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 10 : 30),
-              getTitle(),
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
-              getText(),
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 25 : 40),
-              bottomButtons(),
-            ]));
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+          ),
+        ),
+        child: Column(crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center, children: [
+          SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 10 : 30),
+          getTitle(),
+          SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
+          getText(),
+          SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 25 : 40),
+          bottomButtons(),
+        ]));
   }
 
   Widget getTitle() {

@@ -48,11 +48,13 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/courses/gray_background.png'),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+        ),
+      ),
       width: MediaQuery.of(context).size.width,
       height: 150,
       child: BlocConsumer<UserProgressListBloc, UserProgressListState>(
