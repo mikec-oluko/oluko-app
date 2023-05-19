@@ -460,7 +460,9 @@
     "coachResponseSubtitle": "El Coach te ha respondido un audio o video",
     "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
     "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días",
-    "goToCourses": "Ir a cursos"
+    "goToCourses": "Ir a cursos",
+    "percentageOfMaxWeight": "% del Peso Máximo"
+
 
 
 }

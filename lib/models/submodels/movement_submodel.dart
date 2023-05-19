@@ -9,13 +9,24 @@ class MovementSubmodel {
   String image;
   ParameterEnum parameter;
   int value;
+  int percentOfMaxWeight;
   CounterEnum counter;
   bool weightRequired;
   bool isRestTime;
   bool isBothSide;
 
   MovementSubmodel(
-      {this.isBothSide, this.image, this.id, this.name, this.reference, this.counter, this.parameter, this.value, this.isRestTime, this.weightRequired});
+      {this.isBothSide,
+      this.image,
+      this.id,
+      this.name,
+      this.reference,
+      this.counter,
+      this.parameter,
+      this.value,
+      this.percentOfMaxWeight,
+      this.isRestTime,
+      this.weightRequired});
 
   factory MovementSubmodel.fromJson(Map<String, dynamic> json) {
     return MovementSubmodel(
@@ -30,6 +41,7 @@ class MovementSubmodel {
                   : 0
           : 0,
       image: json['image'] == null ? null : json['image']?.toString(),
+      percentOfMaxWeight: json['max_weight_percentage'] == null ? 0 : json['max_weight_percentage'] as int,
       isRestTime: json['is_rest_time'] == null ? false : json['is_rest_time'] as bool,
       isBothSide: json['is_both_side'] == null ? false : json['is_both_side'] as bool,
       counter: json['counter'] == null ? null : CounterEnum.values[json['counter'] as int],
@@ -44,6 +56,7 @@ class MovementSubmodel {
         'name': name,
         'image': image,
         'value': value,
+        'max_weight_percentage': percentOfMaxWeight,
         'counter': counter == null ? null : counter.index,
         'parameter': parameter == null ? null : parameter.index,
         'is_rest_time': isRestTime,

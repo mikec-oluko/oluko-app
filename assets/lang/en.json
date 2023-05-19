@@ -458,6 +458,7 @@
     "coachResponseSubtitle": "Your Coach has sent you a video or audio response",
     "workoutReminderSubtitle": "Workout reminder based on your scheduled workout",
     "appOpeningReminderSubtitle": "Remembers to open the app every 3, 7, and 14 days",
-    "goToCourses": "Go to courses"
+    "goToCourses": "Go to courses",
+    "percentageOfMaxWeight": "% of Max Weight"
     
 }

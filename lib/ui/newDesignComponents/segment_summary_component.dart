@@ -10,6 +10,7 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/weight_tile_for_value.dart';
 import 'package:oluko_app/ui/newDesignComponents/weight_tile_with_input.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
@@ -49,6 +50,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
+  bool showRecommendation = true;
 
   @override
   Widget build(BuildContext context) {
@@ -58,19 +60,37 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             child: ListView.builder(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
-              itemCount: _segmentSectionAndMovementDetails().length,
-              itemBuilder: (c, i) => _segmentSectionAndMovementDetails()[i],
+              itemCount: _segmentSectionAndMovementDetails(showRecommendation).length,
+              itemBuilder: (c, i) => Column(
+                children: [
+                  OlukoNeumorphicCircleButton(onPressed: () {
+                    setState(() {
+                      showRecommendation != showRecommendation;
+                    });
+                  }),
+                  _segmentSectionAndMovementDetails(showRecommendation)[i],
+                ],
+              ),
             ),
           )
         : Column(
-            children: _segmentSectionAndMovementDetails(),
+            children: [
+              OlukoNeumorphicCircleButton(onPressed: () {
+                setState(() {
+                  showRecommendation = !showRecommendation;
+                });
+              }),
+              Column(
+                children: _segmentSectionAndMovementDetails(showRecommendation),
+              ),
+            ],
           );
   }
 
-  List<Widget> _segmentSectionAndMovementDetails() {
+  List<Widget> _segmentSectionAndMovementDetails(bool showWeightRecommendation) {
     List<Widget> contentToReturn = [];
     if (widget.enrollmentMovements.isNotEmpty) {
-      populateMovements(contentToReturn);
+      populateMovements(contentToReturn, showWeightRecommendation);
     }
     if (listOfWeigthsToUpdate.isNotEmpty) {
       widget.workoutHasWeights(true);
@@ -78,7 +98,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     return contentToReturn;
   }
 
-  void populateMovements(List<Widget> contentToReturn) {
+  void populateMovements(List<Widget> contentToReturn, bool showWeightRecommendation) {
     widget.sectionsFromSegment.forEach((section) {
       section.movements.forEach((movement) {
         if (MovementUtils.checkIfMovementRequireWeigth(movement, widget.enrollmentMovements)) {
@@ -88,6 +108,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           } else {
             contentToReturn.add(WeightTileForValue(
               movement: movement,
+              showWeightRecommendation: showWeightRecommendation,
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));

@@ -97,15 +97,18 @@ class MovementUtils {
       weightRecordsList.forEach((weightRecord) {
         if (weightRecord.movementId == currentMovement.id) {
           if (useImperialSystem) {
-            result = weightRecord.weight.toStringAsFixed(2);
+            result = weightRecord.weight.toString();
           } else {
-            result = (weightRecord.weight * _toKilogramsUnit).ceil().toStringAsFixed(2);
+            result = (weightRecord.weight * _toKilogramsUnit).round().toString();
           }
         }
       });
     }
     return result;
   }
+
+  static int getMaxWeightByImperialSystemUse({double maxWeight, bool useImperialSystem}) =>
+      useImperialSystem ? maxWeight.round() : (maxWeight * _toKilogramsUnit).round();
 
   static double get _toKilogramsUnit => 0.453;
 }
