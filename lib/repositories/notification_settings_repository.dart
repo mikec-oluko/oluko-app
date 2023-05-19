@@ -22,7 +22,8 @@ class NotificationSettingsRepository {
         .get();
 
     if (notificationSettings == null || notificationSettings.data() == null) {
-      return NotificationSettings(globalNotifications: true, segmentClocksSounds: true, userId: userId);
+      return NotificationSettings(globalNotifications: true, segmentClocksSounds: true, userId: userId,
+                                  workoutReminderNotifications: true, coachResponseNotifications: true, appOpeningReminderNotifications: true);
     }
 
     return NotificationSettings.fromJson(Map<String, dynamic>.from(notificationSettings.data()));

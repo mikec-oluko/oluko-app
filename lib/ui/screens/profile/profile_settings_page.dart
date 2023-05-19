@@ -13,6 +13,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   final UserResponse profileInfo;
@@ -23,7 +24,10 @@ class ProfileSettingsPage extends StatefulWidget {
 
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   UserResponse _authUser;
-  bool _notificationNewValue;
+  bool _globalNotificationsValue;
+  bool _coachResponseNotificationsValue;
+  bool _appOpeningReminderValue;
+  bool _workoutNotificationsValue;
   bool _useImperial;
   int _userPrivacyValue;
   int _privacyNewValue;
@@ -38,7 +42,10 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   void setValuesFromUserProfile() {
     _privacyNewValue = widget.profileInfo.privacy;
     _useImperial = widget.profileInfo.useImperialSystem;
-    _notificationNewValue ??= NotificationSettingsBloc.notificationSettings?.globalNotifications ?? true;
+    _globalNotificationsValue ??= NotificationSettingsBloc.notificationSettings?.globalNotifications ?? true;
+    _coachResponseNotificationsValue ??= NotificationSettingsBloc.notificationSettings?.coachResponseNotifications ?? true;
+    _workoutNotificationsValue ??= NotificationSettingsBloc.notificationSettings?.workoutReminderNotifications ?? true;
+    _appOpeningReminderValue ??= NotificationSettingsBloc.notificationSettings?.appOpeningReminderNotifications ?? true;
     _authUser = widget.profileInfo;
   }
 
@@ -66,19 +73,26 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         showBackButton: true,
         showTitle: true,
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-        child: _settingsOptionsSection(context),
-      ),
+      body: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+            child: Column(children: [
+              _settingsOptionsSection(context),
+            ],) 
+          ),
+        ),
     );
   }
 
   Column _settingsOptionsSection(BuildContext context) {
     return Column(
       children: [
-        createNotificationSwitch(context),
+        _addSectionTitle(titleForSection: OlukoLocalizations.get(context, 'pushNotifications')),
+        Column(
+          children: NotificationSettings.notificationSettingsList.map((option) => createNotificationSwitch(context, option)).toList(),
+        ),
+        _addSectionTitle(titleForSection: OlukoLocalizations.get(context, 'privacy')),
         Column(
           children: PrivacyOptions.privacyOptionsList.map((option) => _buildOptionTiles(context, option)).toList(),
         ),
@@ -88,8 +102,8 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           child: Column(
             children: [
               ListTile(
-                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+                contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                title: Text(ProfileViewConstants.weightMeasurement, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white)),
               ),
               const OlukoNeumorphicDivider(),
               Column(
@@ -109,16 +123,36 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     );
   }
 
-  Container createNotificationSwitch(BuildContext context) {
-    return notificationSwitch(context);
+  Widget _addSectionTitle({@required String titleForSection}) {
+    return Align(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Align(alignment: Alignment.centerLeft),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(15, 35, 15, 35),
+            child: Text(
+              titleForSection,
+              style: OlukoFonts.olukoBigFont(),
+            ),
+          ),
+          OlukoNeumorphicDivider()
+        ],
+      ),
+    );
   }
 
-  Container notificationSwitch(BuildContext context) {
+  Widget createNotificationSwitch(BuildContext context, NotificationSettings option) {
+    return notificationSwitch(context, option);
+  }
+
+  Widget notificationSwitch(BuildContext context, NotificationSettings option) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
             width: MediaQuery.of(context).size.width,
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-            child: Column(children: [olukoSwitch(), OlukoNeumorphicDivider()]),
+            child: Column(children: [olukoSwitch(option), OlukoNeumorphicDivider()]),
           )
         : Container(
             width: MediaQuery.of(context).size.width,
@@ -126,20 +160,27 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
               border: Border(top: BorderSide(width: 1.0, color: OlukoColors.grayColor), bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
               color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
             ),
-            child: olukoSwitch(),
+            child: olukoSwitch(option),
           );
   }
 
-  MergeSemantics olukoSwitch() {
+  MergeSemantics olukoSwitch(NotificationSettings option) {
     return MergeSemantics(
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        title: Text(ProfileViewConstants.profileSettingsNotification, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        title: Text(OlukoLocalizations.get(context, returnOption(option.title.toString())), style: OlukoFonts.olukoBigFont()),
+        subtitle: Text(
+                  OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
+                  style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                ),
         trailing: BlocListener<NotificationSettingsBloc, NotificationSettingsState>(
           listener: (context, state) {
             if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
               setState(() {
-                _notificationNewValue = state.notificationSettings.globalNotifications;
+                _globalNotificationsValue = state.notificationSettings.globalNotifications;
+                _appOpeningReminderValue = state.notificationSettings.appOpeningReminderNotifications;
+                _coachResponseNotificationsValue = state.notificationSettings.coachResponseNotifications;
+                _workoutNotificationsValue = state.notificationSettings.workoutReminderNotifications;
               });
             }
           },
@@ -162,21 +203,22 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                     height: 30,
                     child: NeumorphicSwitch(
                       style: const NeumorphicSwitchStyle(
-                          inactiveThumbColor: OlukoColors.primary,
-                          activeThumbColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                          activeTrackColor: OlukoColors.primary,
-                          inactiveTrackColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                          thumbShape: NeumorphicShape.flat,
-                          thumbDepth: 1,
-                          disableDepth: true),
-                      value: _notificationNewValue,
-                      onChanged: (bool value) => _setValueForNotifications(value),
+                            inactiveThumbColor: OlukoColors.primary,
+                            activeThumbColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                            activeTrackColor: OlukoColors.primary,
+                            inactiveTrackColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                            thumbShape: NeumorphicShape.flat,
+                            thumbDepth: 1,
+                            disableDepth: true,
+                          ),
+                      value: NotificationSettingsBloc.notificationSettings.getNotificationValue(option.type),
+                      onChanged: (bool value) => _setValueForNotifications(option.type, value),
                     ),
                   ),
                 )
               : Switch(
-                  value: _notificationNewValue,
-                  onChanged: (bool value) => _setValueForNotifications(value),
+                  value: NotificationSettingsBloc.notificationSettings.getNotificationValue(option.type),
+                  onChanged: (bool value) => _setValueForNotifications(option.type, value),
                   trackColor: MaterialStateProperty.all(OlukoColors.grayColor),
                   activeColor: OlukoColors.primary,
                 ),
@@ -189,7 +231,10 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     Widget widgetToReturn = Container();
     if (!option.isSwitch) {
       widgetToReturn = OlukoNeumorphism.isNeumorphismDesign
-          ? Column(children: [neumorphicOptionContent(option), const OlukoNeumorphicDivider()])
+          ? Column(
+            children:[
+              neumorphicOptionContent(option), const OlukoNeumorphicDivider()
+            ])
           : Container(
               decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
@@ -211,7 +256,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           selected: _userPrivacyValue == option.option.index,
           title: Text(
             OlukoLocalizations.get(context, returnOption(option.title.toString())),
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+            style: OlukoFonts.olukoBigFont(),
           ),
           subtitle: option.showSubtitle
               ? Text(
@@ -229,7 +274,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   Widget neumorphicOptionContent(PrivacyOptions option) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(15),
       child: Row(
         children: [
           Column(
@@ -237,7 +282,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             children: [
               Text(
                 OlukoLocalizations.get(context, returnOption(option.title.toString())),
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoBigFont(),
               ),
               option.showSubtitle
                   ? Container(
@@ -259,7 +304,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   Widget weightOption({String title, bool isSelected}) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       child: Row(
         children: [
           Column(
@@ -267,7 +312,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             children: [
               Text(
                 title,
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoBigFont(),
               ),
             ],
           ),
@@ -309,11 +354,30 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     }
   }
 
-  void _setValueForNotifications(bool value) {
+  void _setValueForNotifications(SettingsNotificationsOptions type, bool value) {
     setState(() {
-      _notificationNewValue = value;
+      switch (type) {
+        case SettingsNotificationsOptions.globalNotifications:
+          _globalNotificationsValue = value;
+          break;
+        case SettingsNotificationsOptions.appOpeningReminder:
+          _appOpeningReminderValue = value;
+          break;
+        case SettingsNotificationsOptions.coachResponse:
+          _coachResponseNotificationsValue = value;
+          break;
+        case SettingsNotificationsOptions.workoutReminder:
+          _workoutNotificationsValue = value;
+          break;
+      }
     });
-    BlocProvider.of<NotificationSettingsBloc>(context).update(NotificationSettings(globalNotifications: value, userId: _authUser.id));
+    final NotificationSettings notificationToUpdate = NotificationSettings(globalNotifications: _globalNotificationsValue,
+                                                                            appOpeningReminderNotifications: _appOpeningReminderValue,
+                                                                            workoutReminderNotifications: _workoutNotificationsValue,
+                                                                            coachResponseNotifications: _coachResponseNotificationsValue,
+                                                                            userId: _authUser.id,
+                                                                          );
+    BlocProvider.of<NotificationSettingsBloc>(context).update(notificationToUpdate);
   }
 
   void _setValueForWeightMeasure(bool useImperial) {

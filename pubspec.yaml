@@ -27,6 +27,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   drag_and_drop_gridview: ^1.0.8
+  awesome_notifications: 0.6.21
+  rrule: ^0.2.10
   sliding_up_panel: ^2.0.0+1
   nil: ^1.1.1
   timeline_tile: ^2.0.0
@@ -92,6 +94,7 @@ dependencies:
   headset_connection_event: ^2.2.0
   video_player: ^2.6.0
   readmore: ^2.2.0
+  flutter_html: ^3.0.0-alpha.6
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.0"

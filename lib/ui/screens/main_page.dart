@@ -6,6 +6,8 @@ import 'package:oluko_app/blocs/assessment_visibility_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/internet_connection_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_card_bloc.dart';
@@ -16,6 +18,7 @@ import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/models/enums/bottom_tab_enum.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
@@ -24,6 +27,8 @@ import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/services/route_service.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/components/modal_cards.dart';
+import 'package:oluko_app/ui/components/points_card_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/change_plan_popup_content.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -33,7 +38,9 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'coach/coach_main_page.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:oluko_app/models/points_card.dart';
+import 'package:oluko_app/ui/screens/coach/coach_main_page.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({this.classIndex, this.index, this.tab, Key key}) : super(key: key);
@@ -56,6 +63,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   TabController tabController;
   final AuthBloc _authBloc = AuthBloc();
   User loggedUser;
+  final PanelController _cardsPanelController = PanelController();
 
   List<Widget> getTabs() {
     return [
@@ -140,7 +148,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   context,
                   routeLabels[RouteEnum.root],
                   arguments: {
-                    'tab': 1,
+                    'tab': state.type,
                   },
                 );
               }
@@ -165,6 +173,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
+          BlocProvider.of<PointsCardBloc>(context).getUserCards(authState.user.id);
           BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
           BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
@@ -184,35 +193,86 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 ),
               );
             } else {
-              return Scaffold(
-                backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                body: Padding(
-                  padding: _isBottomTabActive && _isNotCourseOrFriendsTab(tabController.index)
-                      ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
-                      : const EdgeInsets.only(bottom: 0),
-                  child: TabBarView(
-                    //physics this is setup to stop swiping from tab to tab
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: this.tabController,
-                    children: tabs,
-                  ),
-                ),
-                extendBody: true,
-                bottomNavigationBar: _isBottomTabActive
-                    ? OlukoBottomNavigationBar(
-                        selectedIndex: this.tabController.index,
-                        onPressed: (index) => this.setState(() {
-                          this.tabController.animateTo(index as int);
-                        }),
-                        loggedUser: loggedUser,
-                      )
-                    : const SizedBox(),
-              );
+              return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
+                if (pointsCardsState is NewCardsCollected) {
+                  for (var card in pointsCardsState.pointsCards) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _showPointsCardDialog(context, card);
+                      BlocProvider.of<PointsCardBloc>(context).emitDefaultState();
+                    });
+
+                    BlocProvider.of<PointsCardBloc>(context).getUserCards(loggedUser.uid);
+                  }
+                }
+                return Scaffold(
+                  backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+                  body: Stack(alignment: AlignmentDirectional.center, children: [
+                    _scaffoldBody(),
+                    _slidingUpPanel(),
+                  ]),
+                  extendBody: true,
+                  bottomNavigationBar: _isBottomTabActive
+                      ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+                          if (state is PointsCardPanelOpen) {
+                            return const SizedBox();
+                          } else {
+                            return OlukoBottomNavigationBar(
+                              loggedUser: loggedUser,
+                              selectedIndex: this.tabController.index,
+                              onPressed: (index) => this.setState(() {
+                                this.tabController.animateTo(index as int);
+                              }),
+                            );
+                          }
+                        })
+                      : const SizedBox(),
+                );
+              });
             }
           },
         );
       }),
     );
+  }
+
+  Widget _slidingUpPanel() {
+    return SlidingUpPanel(
+        onPanelClosed: () {
+          BlocProvider.of<PointsCardPanelBloc>(context).emitDefaultState();
+        },
+        backdropEnabled: true,
+        isDraggable: true,
+        header: const SizedBox(),
+        padding: EdgeInsets.zero,
+        color: OlukoColors.black,
+        minHeight: 0,
+        maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
+        collapsed: const SizedBox(),
+        controller: _cardsPanelController,
+        panel: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+          if (state is PointsCardPanelOpen) {
+            _cardsPanelController.open();
+          }
+          return ModalCards();
+        }));
+  }
+
+  Widget _scaffoldBody() {
+    return Padding(
+      padding: _isBottomTabActive && _isNotCourseOrFriendsTab(tabController.index)
+          ? EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? ScreenUtils.width(context) / 5.5 : ScreenUtils.width(context) / 6.55)
+          : const EdgeInsets.only(bottom: 0),
+      child: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: this.tabController,
+        children: tabs,
+      ),
+    );
+  }
+
+  void _showPointsCardDialog(BuildContext context, PointsCard card) {
+    DialogUtils.getDialog(context, [SizedBox(height: 280, width: 230, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
+        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true);
   }
 
   void _showPopUp(BuildContext context, String route, UserChangedPlan state) {

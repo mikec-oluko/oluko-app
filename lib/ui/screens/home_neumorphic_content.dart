@@ -41,6 +41,7 @@ class HomeNeumorphicContent extends StatefulWidget {
     this.user,
     Key key,
     this.isFromHome = false,
+    this.openEditScheduleOnInit = false,
     this.index = 0,
   }) : super(key: key);
 
@@ -50,6 +51,7 @@ class HomeNeumorphicContent extends StatefulWidget {
   final List<Course> courses;
   final AuthSuccess authState;
   final bool isFromHome;
+  final bool openEditScheduleOnInit;
 
   @override
   _HomeNeumorphicContentState createState() => _HomeNeumorphicContentState();
@@ -411,6 +413,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: CourseClassCardsList(
                   isFromHome: true,
+                  openEditScheduleOnInit: widget.openEditScheduleOnInit ?? false,
                   course: _activeCourses[index],
                   courseEnrollment: widget.courseEnrollments[index],
                   classes: classState.classes,
