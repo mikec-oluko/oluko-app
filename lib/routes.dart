@@ -59,6 +59,7 @@ import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/profile/mail_bloc.dart';
 import 'package:oluko_app/blocs/profile/my_account_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
@@ -195,6 +196,7 @@ import 'blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
+import 'blocs/points_card_panel_bloc.dart';
 import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
@@ -474,6 +476,8 @@ class Routes {
   final CourseEnrollmentChatBloc _courseEnrollmentChatBloc = CourseEnrollmentChatBloc();
   final ChatSliderMessagesBloc _chatSliderMessagesBloc = ChatSliderMessagesBloc();
   final WorkoutWeightBloc _workoutWeightBloc = WorkoutWeightBloc();
+  final PointsCardBloc _pointsCardBloc = PointsCardBloc();
+  final PointsCardPanelBloc _pointsCardPanelBloc = PointsCardPanelBloc();
   final FriendsWeightRecordsBloc _friendsWeightRecordsBloc = FriendsWeightRecordsBloc();
   final CommunityTabFriendNotificationBloc _communityTabFriendNotificationBloc = CommunityTabFriendNotificationBloc();
   final ChatSliderBloc _chatSliderBloc = ChatSliderBloc();
@@ -498,6 +502,8 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
@@ -920,7 +926,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
@@ -1437,6 +1443,7 @@ class Routes {
         break;
       case RouteEnum.homeLatestDesign:
         providers = [
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
           BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
