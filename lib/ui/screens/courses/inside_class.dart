@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.d
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
+import 'package:oluko_app/blocs/friends_weight_records_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_bloc.dart';
@@ -101,6 +102,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<bool> _completedBefore = [];
   UserResponse currentUser;
   AuthSuccess currentAuthState;
+  List<UserResponse> favoriteUsers = [];
 
   @override
   void initState() {
@@ -457,6 +459,8 @@ class _InsideClassesState extends State<InsideClass> {
               builder: (context, state) {
                 if (state is StatisticsSuccess) {
                   final int qty = state.courseStatistics.doing;
+                  BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(userId: currentUser.id);
+
                   return GestureDetector(
                     onTap: () => _peopleAction(),
                     child: Text(
@@ -804,7 +808,8 @@ class _InsideClassesState extends State<InsideClass> {
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
           'fromChallenge': false,
-          'actualCourse': widget.actualCourse
+          'actualCourse': widget.actualCourse,
+          'favoriteUsers': favoriteUsers
         },
       );
     }

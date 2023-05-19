@@ -1,7 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
@@ -40,7 +42,15 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
-      {this.classSegments, this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, this.fromChallenge = false, Key key, this.actualCourse})
+      {this.classSegments,
+      this.courseIndex,
+      this.courseEnrollment,
+      this.segmentIndex,
+      this.classIndex,
+      this.fromChallenge = false,
+      this.favoriteUsers,
+      this.actualCourse,
+      Key key})
       : super(key: key);
 
   final CourseEnrollment courseEnrollment;
@@ -50,6 +60,7 @@ class SegmentDetail extends StatefulWidget {
   final bool fromChallenge;
   final List<Segment> classSegments;
   final Course actualCourse;
+  final List<UserResponse> favoriteUsers;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -119,6 +130,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: Stack(
           children: [
+            imageSection(),
             _body(),
             slidingUpPanelComponent(),
           ],
@@ -147,7 +159,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
         _challenges = challengeSegmentState.challenges;
       }
       return Container(
-        color: OlukoNeumorphismColors.appBackgroundColor,
         child: Column(
           children: [(_segments.length - 1 >= segmentIndexToUse) ? getCarouselSlider() : const SizedBox()],
         ),
@@ -320,6 +331,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 coach: _coach,
                 currentUser: _user,
                 fromChallenge: widget.fromChallenge,
+                favoriteUsers: widget.favoriteUsers ?? [],
               );
             } else {
               return OlukoCircularProgressIndicator();
@@ -415,6 +427,54 @@ class _SegmentDetailState extends State<SegmentDetail> {
     } else if (totalSegments < totalSegmentStep - 1) {
       totalSegmentStep = totalSegments + 1;
     }
+  }
+
+  Widget imageSection() {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? ShaderMask(
+            shaderCallback: (rect) {
+              return const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [OlukoNeumorphismColors.olukoNeumorphicBackgroundDark, Colors.transparent],
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+            },
+            blendMode: BlendMode.dstIn,
+            child: imageContainer(),
+          )
+        : imageContainer();
+  }
+
+  Stack imageContainer() {
+    return Stack(
+      fit: StackFit.expand,
+      alignment: Alignment.center,
+      children: [
+        if (OlukoNeumorphism.isNeumorphismDesign) // else
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 1.5,
+            child: imageAspectRatio(),
+          )
+        else
+          imageAspectRatio(),
+      ],
+    );
+  }
+
+  AspectRatio imageAspectRatio() {
+    return AspectRatio(
+      aspectRatio: 3 / 4,
+      child: () {
+        if (widget.courseEnrollment.course.image != null) {
+          return Image(
+            image: CachedNetworkImageProvider(widget.courseEnrollment.course.image),
+            fit: BoxFit.cover,
+          );
+        } else {
+          return nil;
+        }
+      }(),
+    );
   }
 
   void _audioAction(List<Audio> audios, Challenge challenge) {
