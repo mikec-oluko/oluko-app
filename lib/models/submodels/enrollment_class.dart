@@ -11,6 +11,7 @@ class EnrollmentClass {
   String selfieDownloadUrl;
   String selfieThumbnailUrl;
   String miniSelfieThumbnailUrl;
+  Timestamp scheduledDate;
 
   EnrollmentClass({
     this.id,
@@ -22,6 +23,7 @@ class EnrollmentClass {
     this.selfieDownloadUrl,
     this.selfieThumbnailUrl,
     this.miniSelfieThumbnailUrl,
+    this.scheduledDate,
   });
 
   factory EnrollmentClass.fromJson(Map<String, dynamic> json) {
@@ -30,10 +32,11 @@ class EnrollmentClass {
         reference: json['reference'] as DocumentReference,
         name: json['name']?.toString(),
         image: json['image']?.toString(),
-        completedAt: json['completed_at'] as Timestamp,
+        completedAt: json['completed_at'] is! Timestamp?  null : json['completed_at']  as Timestamp,
         selfieDownloadUrl: json['selfie_download_url']?.toString(),
         selfieThumbnailUrl: json['selfie_thumbnail_url']?.toString(),
         miniSelfieThumbnailUrl: json['mini_selfie_thumbnail_url']?.toString(),
+        scheduledDate: json['scheduled_date'] as Timestamp,
         segments: json['segments'] == null
             ? null
             : List<EnrollmentSegment>.from(
@@ -49,6 +52,7 @@ class EnrollmentClass {
         'selfie_thumbnail_url': selfieThumbnailUrl,
         'mini_selfie_thumbnail_url': miniSelfieThumbnailUrl,
         'completed_at': completedAt,
+        'scheduled_date': scheduledDate,
         'segments': segments == null ? null : List<dynamic>.from(segments.map((segment) => segment.toJson())),
       };
 }
