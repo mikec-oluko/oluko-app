@@ -179,7 +179,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   Container _recordAudioTextComponent(BuildContext context) {
     return Container(
       width: ScreenUtils.width(context) / 1.6,
-      height: 40,
+      height: 50,
       decoration: BoxDecoration(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         borderRadius: const BorderRadius.all(Radius.circular(25)),
@@ -209,8 +209,8 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   Container _audioRecordMessageButtonComponent() {
     return Container(
       clipBehavior: Clip.none,
-      width: 40,
-      height: 40,
+      width: 50,
+      height: 50,
       child: OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
@@ -222,8 +222,8 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   Container _audioRecordMessageButtonComponentSentAction() {
     return Container(
       clipBehavior: Clip.none,
-      width: 40,
-      height: 40,
+      width: 50,
+      height: 50,
       child: OlukoNeumorphism.isNeumorphismDesign
           ? Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(), child: sendAudioIconButtonContent())
           : sendAudioIconButtonContent(),
@@ -231,42 +231,39 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   }
 
   Widget microphoneIconButtonContent({Icon iconForContent}) {
-    return OlukoNeumorphicSecondaryButton(
-      title: '',
-      useBorder: true,
-      isExpanded: false,
-      thinPadding: true,
-      onlyIcon: true,
-      icon: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (OlukoNeumorphism.isNeumorphismDesign)
-            Image.asset(
-              'assets/neumorphic/audio_circle.png',
-              scale: 4,
-            )
-          else
-            const SizedBox.shrink(),
-          Image.asset(
-            'assets/courses/green_circle.png',
-            scale: 6,
-          ),
-          iconForContent
-        ],
-      ),
-      onPressed: () async {
-        !_recorder.isInitialized ? _recorder.init() : null;
-        await _recorder.toggleRecording();
+    return Neumorphic(
+      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(useBorder: false),
+      child: GestureDetector(
+          onTap: () async {
+            !_recorder.isInitialized ? _recorder.init() : null;
+            await _recorder.toggleRecording();
 
-        setState(() {
-          _recordingAudio = !_recordingAudio;
-          startTimer();
-        });
+            setState(() {
+              _recordingAudio = !_recordingAudio;
+              startTimer();
+            });
 
-        if (_recorder.isStopped) {
-          _onRecordCompleted();
-        }
-      },
+            if (_recorder.isStopped) {
+              _onRecordCompleted();
+            }
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (OlukoNeumorphism.isNeumorphismDesign)
+                Image.asset(
+                  'assets/neumorphic/audio_circle.png',
+                  scale: 1,
+                )
+              else
+                const SizedBox.shrink(),
+              Image.asset(
+                'assets/courses/green_circle.png',
+                scale: 1,
+              ),
+              iconForContent
+            ],
+          )),
     );
   }
 
@@ -281,13 +278,13 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
           if (OlukoNeumorphism.isNeumorphismDesign)
             Image.asset(
               'assets/neumorphic/audio_circle.png',
-              scale: 4,
+              scale: 1,
             )
           else
             const SizedBox.shrink(),
           Image.asset(
             'assets/courses/green_circle.png',
-            scale: 6,
+            scale: 1,
           ),
           const Icon(Icons.send, color: Colors.white)
         ]));

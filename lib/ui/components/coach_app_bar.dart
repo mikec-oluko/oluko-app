@@ -103,7 +103,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
 
   Widget _coachProfilePicWithNavigation(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 20),
       child: SizedBox(
         height: 100,
         child: Column(
@@ -133,7 +133,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
     return Stack(children: [
       CircleAvatar(
         backgroundColor: widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
-        radius: 24.0,
+        radius: 22.0,
         child: Text(
             widget.coachUser != null
                 ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
@@ -144,7 +144,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
   }
 
   Widget coachAvatarImage() {
-    const double _imageRadius = 24;
+    const double _imageRadius = 22;
     return CachedNetworkImage(
       height: _imageRadius * 2,
       width: _imageRadius * 2,
