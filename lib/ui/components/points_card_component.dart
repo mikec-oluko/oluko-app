@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:oluko_app/models/collected_card.dart';
-import 'package:oluko_app/models/points_card.dart';
 
 import 'package:oluko_app/constants/theme.dart';
 
@@ -22,10 +21,6 @@ class _State extends State<PointsCardComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return _card();
-  }
-
-  Widget _card() {
     return _isOpen ? _openCard() : _closedCard();
   }
 
@@ -42,28 +37,32 @@ class _State extends State<PointsCardComponent> {
   }
 
   Widget _openCard() {
-    return Stack(children: [
-      Container(decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: OlukoColors.grayColor)),
-      Padding(
-          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 12),
-          child: Column(children: [
-            Row(children: [
-              Expanded(
-                  child: Text(
-                widget.collectedCard.card.name,
-                style: widget.bigCard
-                    ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
-                    : OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
-                textAlign: TextAlign.left,
-              )),
-              _closeButton()
-            ]),
-            Padding(
-              padding: const EdgeInsets.only(right: 25),
-              child: SingleChildScrollView(child: Html(data: widget.collectedCard.card.description)),
-            )
-          ]))
-    ]);
+    return DecoratedBox(
+        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.black),
+        child: Stack(children: [
+          Align(alignment: AlignmentDirectional.topEnd, child: Padding(padding: const EdgeInsets.only(top: 8, right: 6), child: _closeButton())),
+          Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10, right: 25),
+              child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_getTitle(), _getDescription()]))),
+        ]));
+  }
+
+  Widget _getTitle() {
+    return Padding(
+        padding: const EdgeInsets.only(left: 7),
+        child: Text(
+          widget.collectedCard.card.name,
+          style: widget.bigCard
+              ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
+              : OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
+          textAlign: TextAlign.left,
+        ));
+  }
+
+  Widget _getDescription() {
+    return Html(data: widget.collectedCard.card.description, style: {
+      'body': Style(color: OlukoColors.white, fontSize: FontSize(14.0)),
+    });
   }
 
   Widget _infoIcon() {
