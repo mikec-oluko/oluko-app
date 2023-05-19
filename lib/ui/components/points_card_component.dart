@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:oluko_app/models/collected_card.dart';
 
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class PointsCardComponent extends StatefulWidget {
   final CollectedCard collectedCard;
@@ -104,7 +105,8 @@ class _State extends State<PointsCardComponent> {
             Text(
               widget.collectedCard.card.name,
               style: !widget.bigCard
-                  ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
+                  ? ScreenUtils.smallScreen(context)
+                      ?OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700):OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700)
                   : OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
             ),
@@ -123,7 +125,9 @@ class _State extends State<PointsCardComponent> {
               text,
               style: widget.bigCard
                   ? OlukoFonts.olukoMediumFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500)
-                  : OlukoFonts.olukoSmallFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500),
+                  : ScreenUtils.smallScreen(context)
+                      ? OlukoFonts.olukoSuperSmallFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500)
+                      : OlukoFonts.olukoSmallFont(customColor: OlukoColors.black, customFontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             )));
   }

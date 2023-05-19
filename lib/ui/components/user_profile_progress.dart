@@ -5,8 +5,8 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/models/user_response.dart';
-
-import '../../blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class UserProfileProgress extends StatefulWidget {
   final String challengesCompleted;
@@ -32,7 +32,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   IntrinsicHeight buildUserNeumorphicStatistics() {
     return IntrinsicHeight(
         child: Padding(
-      padding: const EdgeInsets.only(top: 15),
+      padding: EdgeInsets.only(top: _topPadding()),
       child: Row(
         children: [
           Expanded(
@@ -67,6 +67,10 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     ));
   }
 
+  double _topPadding() {
+    return ScreenUtils.smallScreen(context) ? 5 : 15;
+  }
+
   VerticalDivider profileVerticalDivider({bool isNeumorphic = false}) {
     return VerticalDivider(
       color: isNeumorphic ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.white,
@@ -78,40 +82,42 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   }
 
   Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color, bool isClickable = false}) {
-    final Text textElem = Text(
-      '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
-      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
-    );
     return GestureDetector(
         onTap: () => isClickable ? _pointsCardAction() : {},
         child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? 0 : 10),
             child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(
               builder: (context, state) {
                 if (state is PointsCardPanelOpen) {
-                  return _statisticsComponent(achievementValue, textElem, isClicked: isClickable);
+                  return _statisticsComponent(achievementValue, achievementTitleKey, isClicked: isClickable);
                 } else {
-                  return _statisticsComponent(achievementValue, textElem);
+                  return _statisticsComponent(achievementValue, achievementTitleKey);
                 }
               },
             )));
   }
 
-  Widget _statisticsComponent(String achievementValue, Text textElem, {bool isClicked = false}) {
-    return /*isClicked
-        ?*/
-        Container(
-            decoration: isClicked
-                ? const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                    color: OlukoColors.blackColorSemiTransparent,
-                  )
-                : BoxDecoration(),
-            child: Padding(padding: const EdgeInsets.all(5), child: _statisticsElement(achievementValue, textElem, isClicked: isClicked)));
-    // : _statisticsElement(achievementValue, textElem);
+  Widget _textElem(List<String> achievementTitleKey, bool isClicked) {
+    return Text(
+      '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
+      style: ScreenUtils.smallScreen(context) && isClicked
+          ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
+          : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
+    );
   }
 
-  Widget _statisticsElement(String achievementValue, Text textElem, {bool isClicked = false}) {
+  Widget _statisticsComponent(String achievementValue, List<String> achievementTitleKey, {bool isClicked = false}) {
+    return Container(
+        decoration: isClicked
+            ? const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                color: OlukoColors.blackColorSemiTransparent,
+              )
+            : BoxDecoration(),
+        child: Padding(padding: const EdgeInsets.all(5), child: _statisticsElement(achievementValue, achievementTitleKey, isClicked: isClicked)));
+  }
+
+  Widget _statisticsElement(String achievementValue, List<String> achievementTitleKey, {bool isClicked = false}) {
     return Row(
       children: [
         Text(
@@ -122,9 +128,9 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           width: 8,
         ),
         Expanded(
-          child: textElem,
+          child: _textElem(achievementTitleKey, isClicked),
         ),
-        isClicked ? Icon(Icons.keyboard_arrow_right_rounded, color: OlukoColors.grayColor, size: 26) : SizedBox()
+        isClicked ? Icon(Icons.keyboard_arrow_right_rounded, color: OlukoColors.grayColor, size: ScreenUtils.smallScreen(context) ? 20 : 26) : SizedBox()
       ],
     );
   }
@@ -135,9 +141,13 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
 
   TextStyle _style(bool clicked) {
     if (clicked) {
-      return OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700);
+      return ScreenUtils.smallScreen(context)
+          ? OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700)
+          : OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700);
     } else {
-      return OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500);
+      return ScreenUtils.smallScreen(context)
+          ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)
+          : OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500);
     }
   }
 }

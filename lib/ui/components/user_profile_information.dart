@@ -231,15 +231,14 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           //],
           // ),
           if (OlukoNeumorphism.isNeumorphismDesign)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              child: OlukoNeumorphicDivider(
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: ScreenUtils.smallScreen(context) ? 0 : 5),
+              child: const OlukoNeumorphicDivider(
                 isFadeOut: true,
               ),
             )
           else
             const SizedBox.shrink(),
-          //TODO: CHECK IF NEU
           if (!widget.minimalRequested) Expanded(child: getUserProfileProgress(widget.userStats, canShowDetails))
         ],
       );
@@ -437,7 +436,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 0),
+          padding: const EdgeInsets.only(top: 5),
           child: Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
             child: Text(
