@@ -14,7 +14,7 @@ class _OlukoNeumorphicDividerState extends State<OlukoNeumorphicDivider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width - 80,
         height: 1.5,
         decoration: BoxDecoration(
           gradient: LinearGradient(

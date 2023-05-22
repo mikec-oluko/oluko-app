@@ -42,7 +42,7 @@ class ChatSliderMessagesBloc extends Cubit<ChatSliderMessagesState> {
 
 Future<void> listenToMessages(String userId, {List<CourseEnrollment> enrollments}) async {
   try {
-    if(enrollments.isEmpty){
+    if(enrollments == null || enrollments.isEmpty){
       enrollments = await CourseChatRepository.getCoursesWithChatByUserId(userId) as List<CourseEnrollment>;
     }
     final courseChatRepository = CourseChatRepository();
