@@ -98,7 +98,7 @@ class CourseEnrollmentRepository {
     return [];
   }
 
-  static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
+  static Future<Completion> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
       {bool useWeigth = false, int sectionIndex, int movementIndex, double weightUsed}) async {
     Completion completionObj = Completion();
     final DocumentReference reference = FirebaseFirestore.instance
