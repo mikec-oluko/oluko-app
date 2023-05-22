@@ -60,7 +60,7 @@ class SegmentImageSection extends StatefulWidget {
   final int totalSegmentStep;
   final String userId;
   final Function(List<Audio> audios, Challenge challenge) audioAction;
-  final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
+  final Function(List<UserResponse> users, List<UserSubmodel> favorites) peopleAction;
   final Function(String segmentId) clockAction;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
@@ -199,7 +199,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         videoUrl: videoUrl,
         useConstraints: true,
         roundedBorder: OlukoNeumorphism.isNeumorphismDesign,
-        showControls: true,
+        isOlukoControls: true,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => setState(() {
               _controller = chewieController;
@@ -826,7 +826,7 @@ class PeopleAndIncludedInButtons extends StatelessWidget {
       children: [
         if (state != null)
           GestureDetector(
-            onTap: () => widget.peopleAction(state.users, state.favoriteUsers),
+            onTap: () => widget.peopleAction(state.userResponseList, state.favoriteUsers),
             child: PeopleSection(peopleQty: qty, isChallenge: widget.segment.isChallenge),
           )
         else

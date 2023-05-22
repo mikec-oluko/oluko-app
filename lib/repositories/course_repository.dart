@@ -4,7 +4,9 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 
 class CourseRepository {
   FirebaseFirestore firestoreInstance;
@@ -96,6 +98,28 @@ class CourseRepository {
     }
 
     return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
+  }
+
+  static Future<CourseStatistics> getStatisticsById(String courseId) async {
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseStatistics').doc(courseId);
+    final DocumentSnapshot ds = await reference.get();
+    return CourseStatistics.fromJson(ds.data() as Map<String, dynamic>);
+  }
+
+  static Future<List<UserResponse>> getUsersByCourseId(String courseId, String userId) async {
+    final DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('courseStatistics').doc(courseId);
+    final DocumentSnapshot ds = await reference.get();
+    final courseStatistics = CourseStatistics.fromJson(ds.data() as Map<String, dynamic>);
+    final List<UserResponse> userList = await Future.wait(
+      courseStatistics.activeUsers.map((String id) {
+        return UserRepository().getById(id);
+      }),
+    );
+    userList.removeWhere((element) => element == null || element.id == userId);
+
+    return userList;
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription() {
