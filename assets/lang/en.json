@@ -445,6 +445,9 @@
     "usePounds": "Pounds (LBs)",
     "addWeight": "Add weight",
     "community":"Community",
+    "mvt": "MVT",
+    "points": "Points",
+    "cards": "Cards",
     "setYourSchedule":"Set your schedule",
     "monday": "Monday",
     "tuesday": "Tuesday",
@@ -470,5 +473,4 @@
     "workoutReminderSubtitle": "Workout reminder based on your scheduled workout",
     "appOpeningReminderSubtitle": "Remembers to open the app every 3, 7, and 14 days",
     "goToCourses": "Go to courses"
-    
 }

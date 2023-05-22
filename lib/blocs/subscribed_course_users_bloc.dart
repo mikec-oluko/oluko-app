@@ -95,4 +95,25 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       rethrow;
     }
   }
+
+  void getCourseStatisticsUsers(String courseId, String userId) async {
+    try {
+      emit(SubscribedCourseUsersLoading());
+      final CourseStatistics courseStatistic = await CourseRepository.getStatisticsById(courseId);
+      final List<UserResponse> userList = await Future.wait(
+        courseStatistic.activeUsers.map((String id) {
+          return UserRepository().getById(id);
+        }),
+      );
+      userList.removeWhere((element) => element == null || element.id == userId);
+      emit(SubscribedCourseUsersSuccess(users: userList));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(SubscribedCourseUsersFailure(exception: exception));
+      rethrow;
+    }
+  }
 }

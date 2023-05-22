@@ -353,7 +353,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             (_coach == null &&
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
-            (coachRequest.coachId == _coach.id &&
+            (_coach != null && coachRequest.coachId == _coach.id &&
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
         .toList();

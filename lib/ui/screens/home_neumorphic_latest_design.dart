@@ -449,7 +449,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
         });
         BlocProvider.of<SubscribedCourseUsersBloc>(context)
-            .getEnrolled(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
+            .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
       },
       onCourseTap: (index) {
         setState(() {
