@@ -8,7 +8,7 @@ import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
-import 'package:oluko_app/ui/components/coach_audio_sent_component.dart';
+import 'package:oluko_app/ui/components/audio_sent_component.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -57,28 +57,28 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   @override
   Widget build(BuildContext context) {
     Widget recordAudioContent = _sendAudioToCoachComponent(context);
-    return BlocBuilder<CoachAudioPanelBloc, CoachAudioPanelState>(
+    return BlocBuilder<GenericAudioPanelBloc, GenericAudioPanelState>(
       builder: (context, state) {
-        if (state is CoachAudioPanelDefault) {
+        if (state is GenericAudioPanelDefault) {
           recordAudioContent = _sendAudioToCoachComponent(context);
           _audiosRecorded.clear();
           recordAudioContent = Padding(padding: const EdgeInsets.only(top: 20), child: recordAudioContent);
         }
-        if (state is CoachAudioPanelDeleted) {
+        if (state is GenericAudioPanelDeleted) {
           _audioRecorded = !_audioRecorded;
           _audiosRecorded.clear();
           recordAudioContent = _sendAudioToCoachComponent(context);
         }
-        if (state is CoachAudioPanelRecorded) {
+        if (state is GenericAudioPanelRecorded) {
           _audioRecordedElement = state.audioRecoded;
           recordAudioContent = Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20, right: 10),
             child: Row(
               children: [_audioRecordedElement, _audioRecordMessageButtonComponentSentAction()],
             ),
           );
         }
-        if (state is CoachAudioPanelConfirmDelete) {
+        if (state is GenericAudioPanelConfirmDelete) {
           recordAudioContent = _confirmDeleteComponent(context, state);
         }
 
@@ -87,7 +87,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
     );
   }
 
-  Container _confirmDeleteComponent(BuildContext context, CoachAudioPanelConfirmDelete state) {
+  Container _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
     return Container(
       width: ScreenUtils.width(context) / 1.2,
       height: 80,
@@ -108,12 +108,12 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
                 onPressed: () {
                   if (state.isAudioPreview) {
                     setState(() {
-                      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
+                      BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
                         audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
                       );
                     });
                   } else {
-                    BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+                    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                   }
                 },
                 child: Text(OlukoLocalizations.get(context, 'deny')),
@@ -130,10 +130,10 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
                           setState(() {
                             _audioRecordedElement = null;
                           });
-                          BlocProvider.of<CoachAudioPanelBloc>(context).emitDeleteState();
+                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
                         } else {
                           BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
-                          BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                         }
                       }))
             ],
@@ -231,21 +231,15 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   }
 
   Widget microphoneIconButtonContent({Icon iconForContent}) {
-    return GestureDetector(
-        onTap: () async {
-          !_recorder.isInitialized ? _recorder.init() : null;
-          await _recorder.toggleRecording();
-
-          setState(() {
-            _recordingAudio = !_recordingAudio;
-            startTimer();
-          });
-
-          if (_recorder.isStopped) {
-            _onRecordCompleted();
-          }
-        },
-        child: Stack(alignment: Alignment.center, children: [
+    return OlukoNeumorphicSecondaryButton(
+      title: '',
+      useBorder: true,
+      isExpanded: false,
+      thinPadding: true,
+      onlyIcon: true,
+      icon: Stack(
+        alignment: Alignment.center,
+        children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
             Image.asset(
               'assets/neumorphic/audio_circle.png',
@@ -258,7 +252,22 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
             scale: 6,
           ),
           iconForContent
-        ]));
+        ],
+      ),
+      onPressed: () async {
+        !_recorder.isInitialized ? _recorder.init() : null;
+        await _recorder.toggleRecording();
+
+        setState(() {
+          _recordingAudio = !_recordingAudio;
+          startTimer();
+        });
+
+        if (_recorder.isStopped) {
+          _onRecordCompleted();
+        }
+      },
+    );
   }
 
   Widget sendAudioIconButtonContent() {
@@ -266,7 +275,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
         onTap: () async {
           BlocProvider.of<CoachAudioMessageBloc>(context)
               .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
-          BlocProvider.of<CoachAudioPanelBloc>(context).emitDefaultState();
+          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
         },
         child: Stack(alignment: Alignment.center, children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
@@ -302,7 +311,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
       _audioRecorded = true;
       _recordingAudio = false;
       _audiosRecorded.add(_recorder.audioUrl);
-      BlocProvider.of<CoachAudioPanelBloc>(context).emitRecordedState(
+      BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
         audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
       );
     });
@@ -317,14 +326,14 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   }
 
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
-    return CoachAudioSentComponent(
+    return AudioSentComponent(
       record: audioPath,
       audioMessageItem: audioMessageItem,
       isPreviewContent: isPreview,
       onAudioPlaying: (bool playing) => _onPlayAudio(playing),
       onStartPlaying: () => _canStartPlaying(),
       durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
-      onDelete: () => BlocProvider.of<CoachAudioPanelBloc>(context)
+      onDelete: () => BlocProvider.of<GenericAudioPanelBloc>(context)
           .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
     );
   }

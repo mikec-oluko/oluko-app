@@ -26,20 +26,18 @@ class CourseUtils {
   }
 
   static List<Course> filterByCategories(List<Course> courses, CourseCategory courseCategory) {
-    List<Course> tasksToShow = [];
-    courses.forEach((Course course) {
-      List<String> courseIds = courseCategory.courses.map((CourseCategoryItem courseCategoryItem) => courseCategoryItem.id).toList();
-
-      if (courseIds.indexOf(course.id) != -1) {
-        tasksToShow.add(course);
+    List<Course> coursesInCategorySorted = [];
+    courseCategory.courses.forEach((courseFromCategory) {
+      if (_courseFromCategoryCourseList(courses, courseFromCategory).isNotEmpty) {
+        coursesInCategorySorted.add(_courseFromCategoryCourseList(courses, courseFromCategory).first);
       }
     });
-    return tasksToShow;
+    return coursesInCategorySorted;
   }
 
-  /*
-  Returns Map with a list of Courses for each Category
-  */
+  static Iterable<Course> _courseFromCategoryCourseList(List<Course> courses, CourseCategoryItem courseFromCategory) =>
+      courses.where((actualCourse) => actualCourse.id == courseFromCategory.id);
+
   static Map<CourseCategory, List<Course>> mapCoursesByCategories(List<Course> courses, List<CourseCategory> courseCategories) {
     Map<CourseCategory, List<Course>> mappedCourses = {};
     courseCategories.forEach((courseCategory) {
@@ -58,8 +56,6 @@ class CourseUtils {
     return courses;
   }
 
- 
-
   static Widget noCourseText(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(left: 30, top: 20),
@@ -69,14 +65,12 @@ class CourseUtils {
         ));
   }
 
-
-
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
     return "$weeks ${OlukoLocalizations.get(context, 'weeks')}, $classes ${OlukoLocalizations.get(context, 'classes')}";
   }
 
   static Course getCourseById(String courseId, List<Course> courses) {
-    return courses.where((course) => course.id == courseId).first;
+    return courses?.where((course) => course.id == courseId)?.first;
   }
 
   static Widget generateImageCourse(String imageUrl, BuildContext context) {

@@ -18,9 +18,9 @@ class UserListComponent extends StatefulWidget {
   final List<UserResponse> users;
   final Function(UserResponse friendUser) onTapUser;
   final Function() onTopScroll;
-  final Map<String, UserProgress> usersProgess;
+  final Map<String, UserProgress> usersProgress;
 
-  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgess, this.onTopScroll}) : super();
+  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgress, this.onTopScroll}) : super();
 
   @override
   State<UserListComponent> createState() => _UserListComponentState();
@@ -98,7 +98,7 @@ class _UserListComponentState extends State<UserListComponent> {
                 children: [
                   StoriesItem(
                     showUserProgress: true,
-                    userProgress: widget.usersProgess[friendElement.id],
+                    userProgress: widget.usersProgress?.isNotEmpty ? widget.usersProgress[friendElement.id]: null,
                     progressValue: 0.5,
                     maxRadius: 30,
                     imageUrl: friendElement.getAvatarThumbnail(),

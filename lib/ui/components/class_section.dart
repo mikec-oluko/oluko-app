@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
@@ -14,8 +16,9 @@ class ClassSection extends StatefulWidget {
   final double classProgress;
   final Function() onPressed;
   final bool isCourseEnrolled;
+  final DateTime scheduledDate;
 
-  const ClassSection({this.classObj, this.index, this.total, this.classProgress = 0, this.onPressed, this.isCourseEnrolled = false});
+  const ClassSection({this.classObj, this.index, this.total, this.classProgress = 0, this.onPressed, this.isCourseEnrolled = false, this.scheduledDate});
 
   @override
   _State createState() => _State();
@@ -70,13 +73,27 @@ class _State extends State<ClassSection> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                              padding: const EdgeInsets.only(left: 15.0, bottom: 5, top: 15),
-                              child: Text(
-                                "${OlukoLocalizations.get(context, 'class')} ${widget.index + 1}",
-                                style: OlukoFonts.olukoSmallFont(
-                                    customFontWeight: FontWeight.bold, customColor: isStarted ? OlukoColors.yellow : OlukoColors.black),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.only(left: 15.0, bottom: 5, top: 15),
+                                  child: Text(
+                                    "${OlukoLocalizations.get(context, 'class')} ${widget.index + 1}",
+                                    style: OlukoFonts.olukoSmallFont(
+                                        customFontWeight: FontWeight.bold, customColor: isStarted ? OlukoColors.yellow : OlukoColors.black),
                               )),
+                              const Spacer(),
+                              if (widget.scheduledDate != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15.0, bottom: 5, top: 15, right: 15),
+                                  child: Text(
+                                    DateFormat('E MMM d').format(widget.scheduledDate),
+                                    style: OlukoFonts.olukoSmallFont(
+                                        customFontWeight: FontWeight.bold, customColor: isStarted ? OlukoColors.yellow : OlukoColors.black),
+                                )),
+                            ],
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10, right: 10),
                             child: Text(

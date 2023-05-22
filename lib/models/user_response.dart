@@ -122,7 +122,7 @@ class UserResponse extends Base {
   }
 
   String getFullName({bool showFullName = false}) {
-    if (firstName != null && lastName != null) {
+    if (firstName != null && lastName != null && firstName.isNotEmpty && lastName.isNotEmpty) {
       return showFullName ? '${getSingleName() ?? ''} ${lastName ?? ''}' : '${getSingleName()} ${lastName[0].toUpperCase()}.';
     }
     return username;

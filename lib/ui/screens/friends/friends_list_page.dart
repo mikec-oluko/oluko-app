@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
@@ -95,10 +96,10 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _chatSliderList = chatSliderState.courses;
                       _chatSliderWidget = ChatSlider(
                         enrollments: _chatSliderList,
-                        currentUserId: widget.currentUser.id,
+                        currentUser: widget.currentUser,
                       );
                     }
-                    if (chatSliderState is ChatSliderLoading) {
+                    if (chatSliderState is ChatSliderMessagesLoading) {
                       _chatSliderWidget = getLoaderWidget();
                     }
                     if (friendState is GetFriendsSuccess) {
@@ -106,7 +107,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _friendUsersList = friendState.friendUsers;
                       _friends = friendState.friendData != null ? friendState.friendData.friends : [];
                       _friendUsersWidget = UserListComponent(
-                        usersProgess: _usersProgress,
+                        usersProgress: _usersProgress,
                         authUser: widget.currentUser,
                         users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
                         onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
@@ -117,7 +118,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       _appUsersList = userListState.users;
                       _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
                       _appUsersWidget = UserListComponent(
-                        usersProgess: _usersProgress,
+                        usersProgress: _usersProgress,
                         authUser: widget.currentUser,
                         users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
                         onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),

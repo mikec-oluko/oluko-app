@@ -2,10 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/audio_bloc.dart';
-import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/message.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -15,9 +16,9 @@ import 'package:badges/badges.dart' as badges;
 
 class ChatSlider extends StatefulWidget {
   final List<CourseEnrollment> enrollments;
-  final String currentUserId;
+  final UserResponse currentUser;
 
-  const ChatSlider({this.enrollments, this.currentUserId});
+  const ChatSlider({this.enrollments, this.currentUser});
 
   @override
   _ChatSliderState createState() => _ChatSliderState();
@@ -28,21 +29,21 @@ class _ChatSliderState extends State<ChatSlider> {
 
   @override
   void initState() {
-    BlocProvider.of<ChatSliderBloc>(context).dispose();
-    BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.currentUserId);
+    BlocProvider.of<ChatSliderMessagesBloc>(context).dispose();
+    BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.currentUser.id, enrollments: widget.enrollments);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChatSliderBloc, ChatSliderState>(builder: (context, chatSliderState) {
+    return BlocBuilder<ChatSliderMessagesBloc, ChatSliderMessagesState>(builder: (context, chatSliderState) {
       if (chatSliderState is MessagesNotificationUpdated) {
         coursesNotificationQuantity[chatSliderState.courseId] = chatSliderState.quantity;
         return widget.enrollments.isEmpty
             ? _noCoursesMessage(context)
-            : _courseList(widget.enrollments, coursesNotificationQuantity, context, widget.currentUserId, widget.enrollments);
+            : _courseList(widget.enrollments, coursesNotificationQuantity, context, widget.currentUser, widget.enrollments);
       } else if (widget.enrollments.isNotEmpty) {
-        return _courseList(widget.enrollments, coursesNotificationQuantity, context, widget.currentUserId, widget.enrollments);
+        return _courseList(widget.enrollments, coursesNotificationQuantity, context, widget.currentUser, widget.enrollments);
       }
       return Padding(
         padding: const EdgeInsets.all(16.0),
@@ -68,7 +69,7 @@ Padding _noCoursesMessage(BuildContext context) {
 }
 
 Widget _courseList(
-    List<CourseEnrollment> courses, Map<String, int> coursesNotificationQuantity, BuildContext context, String userId, List<CourseEnrollment> enrollments) {
+    List<CourseEnrollment> courses, Map<String, int> coursesNotificationQuantity, BuildContext context, UserResponse currentUser, List<CourseEnrollment> enrollments) {
   return ListView(
     scrollDirection: Axis.horizontal,
     children: courses
@@ -78,11 +79,11 @@ Widget _courseList(
             index,
             GestureDetector(
               onTap: () {
-                BlocProvider.of<ChatSliderBloc>(context).dispose();
+                BlocProvider.of<ChatSliderMessagesBloc>(context).dispose();
                 Navigator.pushNamed(
                   context,
                   routeLabels[RouteEnum.courseChat],
-                  arguments: {'courseEnrollment': enroll, 'userId': userId, 'enrollments': enrollments},
+                  arguments: {'courseEnrollment': enroll, 'currentUser': currentUser, 'enrollments': enrollments},
                 );
               },
               child: courseCard(enroll.course.image, enroll.course.name, coursesNotificationQuantity[enroll.course.id], context),
