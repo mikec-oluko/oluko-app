@@ -22,10 +22,11 @@ class _State extends State<CollapsedMovementVideosSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
             ),
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
@@ -40,8 +41,7 @@ class _State extends State<CollapsedMovementVideosSection> {
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
-                child: Text(OlukoLocalizations.get(context, 'movementVideos'),
-                    style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold))),
+                child: Text(OlukoLocalizations.get(context, 'movementVideos'), style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold))),
             SizedBox(width: 10),
             Image.asset(
               'assets/courses/person_running.png',

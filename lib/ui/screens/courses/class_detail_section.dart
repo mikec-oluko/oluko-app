@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -72,7 +73,6 @@ class _State extends State<ClassDetailSection> {
               movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
               movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
               onPressedMovement: widget.onPressedMovement)); //TODO:check null value
-
         }
       }
       return widgets;
@@ -80,10 +80,11 @@ class _State extends State<ClassDetailSection> {
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 25),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
             ),
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [

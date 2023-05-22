@@ -23,58 +23,57 @@ class _State extends State<DeleteAudioPanel> {
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 32),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
             ),
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        child: Column(
-            crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        child: Column(crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center, children: [
+          SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 10 : 30),
+          !OlukoNeumorphism.isNeumorphismDesign
+              ? Icon(Icons.warning_amber_rounded, color: OlukoColors.coral, size: 100)
+              : Text(
+                  OlukoLocalizations.get(context, 'cancelVoiceMessage'),
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+                ),
+          SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
+          Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
+              textAlign: !OlukoNeumorphism.isNeumorphismDesign ? TextAlign.center : TextAlign.start,
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
+          SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 25 : 40),
+          Row(
             children: [
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 10 : 30),
+              Expanded(child: SizedBox()),
               !OlukoNeumorphism.isNeumorphismDesign
-                  ? Icon(Icons.warning_amber_rounded, color: OlukoColors.coral, size: 100)
-                  : Text(
-                      OlukoLocalizations.get(context, 'cancelVoiceMessage'),
-                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                    ),
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
-              Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
-                  textAlign: !OlukoNeumorphism.isNeumorphismDesign ? TextAlign.center : TextAlign.start,
-                  style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 25 : 40),
-              Row(
-                children: [
-                  Expanded(child: SizedBox()),
-                  !OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoOutlinedButton(
-                          title: OlukoLocalizations.get(context, 'no'),
-                          onPressed: () {
-                            widget.panelController.close();
-                          },
-                        )
-                      : OlukoNeumorphicTextButton(
-                          title: OlukoLocalizations.get(context, 'deny'),
-                          onPressed: () {
-                            widget.panelController.close();
-                          }),
-                  !OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoPrimaryButton(
-                          title: OlukoLocalizations.get(context, 'yes'),
-                          onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, true);
-                            widget.panelController.close();
-                          },
-                        )
-                      : OlukoNeumorphicPrimaryButton(
-                          title: OlukoLocalizations.get(context, 'allow'),
-                          onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, true);
-                            widget.panelController.close();
-                          })
-                ],
-              ),
-            ]));
+                  ? OlukoOutlinedButton(
+                      title: OlukoLocalizations.get(context, 'no'),
+                      onPressed: () {
+                        widget.panelController.close();
+                      },
+                    )
+                  : OlukoNeumorphicTextButton(
+                      title: OlukoLocalizations.get(context, 'deny'),
+                      onPressed: () {
+                        widget.panelController.close();
+                      }),
+              !OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoPrimaryButton(
+                      title: OlukoLocalizations.get(context, 'yes'),
+                      onPressed: () {
+                        BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, true);
+                        widget.panelController.close();
+                      },
+                    )
+                  : OlukoNeumorphicPrimaryButton(
+                      title: OlukoLocalizations.get(context, 'allow'),
+                      onPressed: () {
+                        BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false, true);
+                        widget.panelController.close();
+                      })
+            ],
+          ),
+        ]));
   }
 }

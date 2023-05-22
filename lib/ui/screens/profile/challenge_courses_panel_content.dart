@@ -52,8 +52,7 @@ class _State extends State<ChallengeCoursesPanelContent> {
     return Container(
         height: (ScreenUtils.height(context) / 4) * 2.36,
         width: ScreenUtils.width(context),
-        child:
-            GridView.count(childAspectRatio: 3.3 / 5, mainAxisSpacing: 15, crossAxisSpacing: 15, crossAxisCount: 3, children: courseCards));
+        child: GridView.count(childAspectRatio: 3.3 / 5, mainAxisSpacing: 15, crossAxisSpacing: 15, crossAxisCount: 3, children: courseCards));
   }
 
   Widget getCourseCard(List<ChallengeNavigation> challengeNavigations) {
@@ -119,10 +118,11 @@ class _State extends State<ChallengeCoursesPanelContent> {
   }
 
   BoxDecoration decorationImage() {
-    return BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/courses/gray_background.png'),
-          fit: BoxFit.cover,
+    return const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
         ),
         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)));
   }

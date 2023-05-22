@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -17,8 +18,7 @@ class ModalAudio extends StatefulWidget {
   final Function(int, Challenge) onAudioPressed;
   PanelController panelController;
 
-  ModalAudio(
-      {this.panelController, this.comesFromSegmentDetail, this.users, this.audios, this.onAudioPressed, this.challenge, this.audioPlayer});
+  ModalAudio({this.panelController, this.comesFromSegmentDetail, this.users, this.audios, this.onAudioPressed, this.challenge, this.audioPlayer});
 
   @override
   _ModalAudioState createState() => _ModalAudioState();
@@ -37,9 +37,10 @@ class _ModalAudioState extends State<ModalAudio> {
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
             ),
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         width: MediaQuery.of(context).size.width,
