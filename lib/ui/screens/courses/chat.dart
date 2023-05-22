@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/chat_slider_bloc.dart';
+import 'package:oluko_app/blocs/chat_slider_messages_bloc.dart';
 import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_chat_bloc.dart';
@@ -68,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
   SoundRecorder recorder;
 
   final ValueNotifier<bool> _takenSurvey = ValueNotifier(false);
+  ValueNotifier<bool> _showIndicator = ValueNotifier(true);
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -86,6 +87,9 @@ class _ChatScreenState extends State<ChatScreen> {
       BlocProvider.of<CourseEnrollmentChatBloc>(context).changeButton(_textController.text.isEmpty);
     });
     BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+    Future.delayed(const Duration(seconds: 3)).then((_) {
+      _showIndicator.value = false;
+    });
   }
 
   @override
@@ -135,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return const SizedBox();
   }
 
-  Widget _buildMessagesList(List<Message> messages, String currentUserId, List<UserResponse> participants) {
+  Widget _buildMessagesList(List<Message> messages, String currentUserId, List<UserResponse> participants, bool show) {
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo is ScrollEndNotification && _scrollController.offset == _scrollController.position.maxScrollExtent) {
@@ -149,6 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
         return false;
       },
       child: ListView.custom(
+        cacheExtent: 10000,
         controller: _scrollController,
         reverse: true,
         childrenDelegate: SliverChildBuilderDelegate(
@@ -159,7 +164,7 @@ class _ChatScreenState extends State<ChatScreen> {
             final List<String> nameAndLastName = UserUtils.getNameAndLastNameByFullName(message.user.name);
             final String firstName = nameAndLastName[0];
             final String lastName = nameAndLastName[nameAndLastName.length - 1];
-            return Column(
+            return Stack(
               key: ValueKey(message.id),
               children: [
                 _showTodayLabel(index, messages),
@@ -173,6 +178,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   user: userIndex == -1 ? null : participants[userIndex],
                   authUserId: currentUserId,
                   audioMessage: message?.audioMessage,
+                ),
+                if(show && index == messages.length - 1)
+                const Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: CircularProgressIndicator(),
+                    ),
                 ),
               ],
             );
@@ -268,22 +281,36 @@ class _ChatScreenState extends State<ChatScreen> {
             title: widget.courseEnrollment.course.name,
             showTitle: true,
             courseImage: widget.courseEnrollment.course.image,
-            onPressed: () => {BlocProvider.of<ChatSliderBloc>(context).listenToMessages(widget.enrollments, widget.currentUser.id), Navigator.pop(context)}),
+            onPressed: () => {BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.currentUser.id, enrollments: widget.enrollments), Navigator.pop(context)}),
         body: SafeArea(
           child: Column(
             children: [
               Expanded(child: Container(
                 child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
                   builder: (context, state) {
-                    if (state is MessagesUpdated) {
+                    if (state is LoadingMessages) {
+                      return ValueListenableBuilder<bool>(
+                        valueListenable: _showIndicator,
+                        builder: (context, value, child) {
+                          if (value) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      );
+                    }
+                    else if (state is MessagesUpdated) {
                       messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants);
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants, false);
                     } else if (state is MessagesScroll) {
                       _isLoadingMoreMessages = false;
                       _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
-                    } else if (messages.isNotEmpty) {
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants);
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
+                      } else if (state is LoadingScrollMessages) {
+                        return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, true);
+                     } else if (messages.isNotEmpty) {
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
                     } else {
                       return const SizedBox();
                     }

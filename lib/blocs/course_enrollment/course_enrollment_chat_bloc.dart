@@ -49,8 +49,12 @@ class Failure extends CourseEnrollmentChatState {
   Failure({this.exception});
 }
 
+class LoadingMessages extends CourseEnrollmentChatState {}
+
+class LoadingScrollMessages extends CourseEnrollmentChatState {}
+
 class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
-  CourseEnrollmentChatBloc() : super(CourseEnrollmentLoading());
+  CourseEnrollmentChatBloc() : super(LoadingMessages());
 
   StreamSubscription _messagesSubscription;
 
@@ -64,7 +68,6 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> createMessage(String userId, String courseId, String userMessage) async {
     try {
-
       final DocumentReference<Object> userReference = UserRepository().getUserReference(userId);
       final UserResponse user = await UserRepository().getById(userId);
       final Course course = await CourseRepository.get(courseId);
@@ -81,7 +84,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   void listenToMessages(String courseChatId) {
     try{
-      emit(CourseEnrollmentLoading());
+      emit(LoadingMessages());
       _messagesSubscription = CourseChatRepository().listenToMessagesByCourseChatId(courseChatId).listen((snapshot) async {
       final List<Message> messages = snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList();
       if(messages.isNotEmpty){
@@ -108,6 +111,7 @@ class CourseEnrollmentChatBloc extends Cubit<CourseEnrollmentChatState> {
 
   Future<void> getMessagesAfterMessage(Message message, String courseChatId) async {
     try {
+      emit(LoadingScrollMessages());
       List<Message> messages = await CourseChatRepository().getMessagesAfterMessageId(courseChatId, message.id);
       final List<UserResponse> participants = await getUsers(messages);
       messages.forEach((message) => {

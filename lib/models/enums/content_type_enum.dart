@@ -1,0 +1,1 @@
+enum ContentTypeEnum { course, classObj }

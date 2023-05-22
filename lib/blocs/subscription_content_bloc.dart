@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:intl/intl.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/purchase.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -49,6 +47,9 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   List<ProductDetails> products = [];
   List<PurchaseDetails> purchases = [];
   StreamSubscription<List<PurchaseDetails>> subscription;
+  List<Plan> plans;
+  UserResponse user;
+  bool processStarted = false;
 
   void initState(bool fromRegister) {
     final Stream<List<PurchaseDetails>> purchaseUpdated = inAppPurchase.purchaseStream;
@@ -88,8 +89,8 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   }
 
   Future<void> initAndEmit(String userId) async {
-    final List<Plan> plans = await PlanRepository.getAll();
-    final UserResponse user = await UserRepository().getById(userId);
+    plans = await PlanRepository.getAll();
+    user = await UserRepository().getById(userId);
     if (plans != null && plans.isNotEmpty) {
       final List<ProductDetails> appleProducts = await getProducts(plans.map((e) => e.appleId).toSet());
       products = appleProducts;
@@ -114,7 +115,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
       );
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
-          emit(PurchasePending());
+          emit(SubscriptionContentLoading());
           break;
         case PurchaseStatus.purchased:
           try {
@@ -122,8 +123,13 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
             final UserResponse user = await PurchaseRepository.create(purchaseDetails, productDetails, userId);
             emit(PurchaseSuccess(user: user));
           } catch (e) {
-            emit(FailureState(exception: e));
+            if (processStarted) {
+              emit(FailureState(exception: e));
+            }
           }
+          break;
+        case PurchaseStatus.canceled:
+          emit(SubscriptionContentInitialized(plans: plans, user: user));
           break;
         case PurchaseStatus.restored:
           break;
@@ -146,7 +152,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
   }
 
   Future<void> subscribe(Plan plan, String userId) async {
-    emit(SubscriptionContentLoading());
+    processStarted = true;
     ProductDetails product = products?.firstWhere(
       (product) => product.id == plan.appleId,
       orElse: () => null,
@@ -161,7 +167,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
     }
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product, applicationUserName: userId);
     try {
-      inAppPurchase
+      var asda = await inAppPurchase
           .buyNonConsumable(
         purchaseParam: purchaseParam,
       )
@@ -171,6 +177,7 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         inAppPurchase.completePurchase(purchaseDetails);
         emit(FailureState(exception: exception));
       });
+      print(asda);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -179,31 +186,5 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
       emit(FailureState(exception: exception));
       rethrow;
     }
-  }
-
-  ListTile buildPurchase(PurchaseDetails purchase) {
-    if (purchase.error != null) {
-      return ListTile(
-        title: Text('${purchase.error}'),
-        subtitle: Text(purchase.status.toString()),
-      );
-    }
-
-    String transactionDate;
-    if (purchase.status == PurchaseStatus.purchased) {
-      final DateTime date = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(purchase.transactionDate),
-      );
-      transactionDate = ' @ ${DateFormat('yyyy-MM-dd HH:mm:ss').format(date)}';
-    }
-
-    return ListTile(
-      title: Text('${purchase.productID} ${transactionDate ?? ''}'),
-      subtitle: Text(purchase.status.toString()),
-    );
-  }
-
-  void emitSubscriptionContentLoading() {
-    emit(SubscriptionContentLoading());
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -35,6 +36,7 @@ import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/notification_settings_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
@@ -52,6 +54,7 @@ import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 // import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/models/notification_settings.dart' as oluko_notification_settings;
 
 abstract class AuthState {}
 
@@ -67,6 +70,8 @@ class AuthFailure extends AuthState {
 }
 
 class AuthLoading extends AuthState {}
+
+class AppleLoading extends AuthState {}
 
 class AuthResetPassSent extends AuthState {}
 
@@ -140,6 +145,9 @@ class AuthBloc extends Cubit<AuthState> {
       UserRepository().updateLastTimeOpeningApp(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
         if (Platform.isIOS || Platform.isMacOS) {
+          if (user.firstLoginAt == null) {
+            setNotificationSettings(user.id);
+          }
           AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
           AppNavigator().goToSubscriptionsFromRegister(context);
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -151,6 +159,7 @@ class AuthBloc extends Cubit<AuthState> {
         if (firebaseUser != null) {
           AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
           if (user.firstLoginAt == null) {
+            setNotificationSettings(user.id);
             await storeFirstsUserInteraction(userIteraction: UserInteractionEnum.login);
           }
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
@@ -161,10 +170,13 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
-    await PushNotificationService.initializePushNotifications(context, userId);
-    if (await UserUtils.isFirstTime()) {
-      await Permissions.askForPermissions();
-    }
+    try {
+      await PushNotificationService.initializePushNotifications(context, userId);
+      if (await UserUtils.isFirstTime()) {
+        await Permissions.askForPermissions();
+      }
+    } catch (e) {}
+
     UserUtils.checkFirstTimeAndUpdate();
     await AppNavigator().returnToHome(context);
   }
@@ -208,8 +220,12 @@ class AuthBloc extends Cubit<AuthState> {
 
       UserRepository().updateLastTimeOpeningApp(userResponse);
       AuthRepository().storeLoginData(userResponse);
+
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        if (userResponse.firstLoginAt == null) {
+            setNotificationSettings(userResponse.id);
+        }
         if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
           AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
           AppNavigator().goToSubscriptionsFromRegister(context);
@@ -268,6 +284,9 @@ class AuthBloc extends Cubit<AuthState> {
 
       UserRepository().updateLastTimeOpeningApp(user);
       AuthRepository().storeLoginData(user);
+      if (user.firstLoginAt == null) {
+        setNotificationSettings(user.id);
+      }
       if (user.currentPlan < 0 || user.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
@@ -280,12 +299,12 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> loginWithApple(BuildContext context) async {
+  Future<void> continueWithApple(BuildContext context) async {
     if (!_globalService.hasInternetConnection) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
       return;
     }
-    emit(AuthLoading());
+    emit(AppleLoading());
     User result;
     try {
       try {
@@ -303,7 +322,8 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      UserResponse userResponse = await UserRepository().get(result?.email);
+      
+      final UserResponse userResponse = await UserRepository().get(result?.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
@@ -312,10 +332,13 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      
+
       AuthRepository().storeLoginData(userResponse);
       UserRepository().updateLastTimeOpeningApp(userResponse);
 
+      if (userResponse.firstLoginAt == null) {
+        setNotificationSettings(userResponse.id);
+      }
       if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
         AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
         AppNavigator().goToSubscriptionsFromRegister(context);
@@ -356,6 +379,16 @@ class AuthBloc extends Cubit<AuthState> {
     final UserResponse userStoredFirstLogin = await _userRepository.saveUserFirstIteractions(currentUser, userInteractionDate, userIteraction);
     _authRepository.storeLoginData(userStoredFirstLogin);
     emit(AuthSuccess(user: userStoredFirstLogin, firebaseUser: loggedUser));
+  }
+
+  Future<void> setNotificationSettings(String userId) async {
+    final notificationSettings = oluko_notification_settings.NotificationSettings(globalNotifications: true,
+                                                                            appOpeningReminderNotifications: true,
+                                                                            workoutReminderNotifications: true,
+                                                                            coachResponseNotifications: true,);
+    notificationSettings.userId = userId;
+    notificationSettings.segmentClocksSounds = true;
+    NotificationSettingsRepository.updateNotificationSetting(notificationSettings);
   }
 
   void updateAuthSuccess(UserResponse userResponse, User firebaseUser) {
@@ -438,7 +471,7 @@ class AuthBloc extends Cubit<AuthState> {
     emit(AuthResetPassLoading());
     try {
       await AuthRepository().sendPasswordResetEmail(forgotPasswordDto);
-      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+      //AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
       emit(AuthResetPassSent());
     } catch (e) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'wrongEmailFormat'));
