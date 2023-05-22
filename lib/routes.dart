@@ -902,8 +902,9 @@ class Routes {
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             courseIndex: argumentsToAdd['courseIndex'] as int,
-            favoriteUsers: argumentsToAdd['favoriteUsers'] as List<UserResponse>,
-            fromChallenge: argumentsToAdd['fromChallenge'] as bool);
+            fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+            actualCourse: argumentsToAdd['actualCourse'] as Course,
+            favoriteUsers: argumentsToAdd['favoriteUsers'] as List<UserResponse>);
         break;
       case RouteEnum.movementIntro:
         providers = [BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
@@ -1070,6 +1071,7 @@ class Routes {
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1104,7 +1106,10 @@ class Routes {
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = UserChallengeDetail(challenge: argumentsToAdd['challenge'] as Challenge, userRequested: argumentsToAdd['userRequested'] as UserResponse);
+        newRouteView = UserChallengeDetail(
+          challenge: argumentsToAdd['challenge'] as Challenge,
+          userRequested: argumentsToAdd['userRequested'] as UserResponse,
+        );
         break;
       case RouteEnum.assessmentVideos:
         providers = [

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
@@ -29,43 +30,39 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
   SubscribedCourseUsersBloc() : super(SubscribedCourseUsersLoading());
 
   void get(String courseId, String userId) async {
+    emit(SubscribedCourseUsersLoading());
     try {
-      //Fetch enrollments for this course. And retrieve all users that are already enrolled.
-      final List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
-      final List<CourseEnrollment> enrolledList =
-          courseEnrollmentList.where((element) => element.isUnenrolled != true).where((element) => element.completion < 1).toList();
+      List<UserResponse> usersByCourse = await CourseRepository.getUsersByCourseId(courseId, userId);
+
       final List<UserResponse> uniqueUserList = [];
       final List<UserResponse> favoriteUserList = [];
       List<UserResponse> userListToShow = [];
-      if (courseEnrollmentList != null && courseEnrollmentList.isNotEmpty) {
-        //User list for all subscribers of this course.
-        final List<UserResponse> usersSubscribedToCourse = await Future.wait(enrolledList.map((e) => UserRepository().getById(e.userReference.id)));
-        //Remove enrollments without user
-        usersSubscribedToCourse.removeWhere((element) => element == null);
-
-        for (final userSubscribed in usersSubscribedToCourse) {
+      if (usersByCourse != null && usersByCourse.isNotEmpty) {
+        for (final userSubscribed in usersByCourse) {
           if (!uniqueUserList.any((user) => user.id == userSubscribed.id)) {
             uniqueUserList.add(userSubscribed);
           }
         }
-
+        usersByCourse = [];
         final Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
         final List<FriendModel> friends = friendData?.friends;
 
         userListToShow = List.from(uniqueUserList);
+
         if (friends != null) {
-          for (final friend in friends) {
-            if (friend.isFavorite) {
-              final int index = userListToShow.indexWhere((user) => user.id == friend.id);
-              if (index != -1) {
-                favoriteUserList.add(userListToShow[index]);
-                userListToShow.removeAt(index);
+          await Future.wait(
+            friends.map((friend) async {
+              if (friend.isFavorite) {
+                final int index = userListToShow.indexWhere((user) => user.id == friend.id);
+                if (index != -1) {
+                  favoriteUserList.add(userListToShow[index]);
+                  userListToShow.removeAt(index);
+                }
               }
-            }
-          }
+            }),
+          );
         }
       }
-
       emit(SubscribedCourseUsersSuccess(users: userListToShow, favoriteUsers: favoriteUserList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
