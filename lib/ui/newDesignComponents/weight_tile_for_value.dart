@@ -27,11 +27,12 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
       trailing: MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) == null
-          ? const SizedBox.shrink()
+          ? Container(
+              color: Colors.red,
+            )
           : Container(
               height: 40,
-              decoration: BoxDecoration(
-                  color: widget.showWeightRecommendation ? OlukoColors.grayColor : OlukoColors.primary, borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: widget.showWeightRecommendation
@@ -48,6 +49,8 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     );
   }
 
+  Color _getContainerColor() => widget.showWeightRecommendation ? OlukoColors.primary : OlukoColors.primaryLight;
+
   Row _userWeigthRecord(MovementSubmodel movement) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -55,6 +58,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
         Image.asset(
           'assets/courses/weight_icon.png',
           scale: 3,
+          color: widget.showWeightRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor,
         ),
         Text(
           widget.weightRecords.isNotEmpty
@@ -63,18 +67,20 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
                   .round()
                   .toString()
               : '0',
-          style: OlukoFonts.olukoMediumFont(),
+          style: OlukoFonts.olukoMediumFont(customColor: _getTextColor()),
         ),
         const SizedBox(
           width: 2,
         ),
         Text(
           widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-          style: OlukoFonts.olukoMediumFont(),
+          style: OlukoFonts.olukoMediumFont(customColor: _getTextColor()),
         )
       ],
     );
   }
+
+  Color _getTextColor() => widget.showWeightRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor;
 
   Row _percentageOfMaxWeightForMovement({int userMaxWeigth, int percentageOfMaxWeigth}) {
     return Row(

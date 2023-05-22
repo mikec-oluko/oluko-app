@@ -473,5 +473,6 @@
     "workoutReminderSubtitle": "Workout reminder based on your scheduled workout",
     "appOpeningReminderSubtitle": "Remembers to open the app every 3, 7, and 14 days",
     "goToCourses": "Go to courses",
-    "percentageOfMaxWeight": "% of Max Weight"
+    "percentageOfMaxWeight": "% of Max Weight",
+    "recentWeight": "Recent weight"
     }

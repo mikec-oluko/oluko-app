@@ -472,5 +472,6 @@
     "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
     "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días",
     "goToCourses": "Ir a cursos",
-    "percentageOfMaxWeight": "% del Peso Máximo"
+    "percentageOfMaxWeight": "% del Peso Máximo",
+    "recentWeight": "Peso reciente"
 }

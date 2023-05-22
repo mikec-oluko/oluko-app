@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -15,6 +16,7 @@ import 'package:oluko_app/ui/newDesignComponents/weight_tile_for_value.dart';
 import 'package:oluko_app/ui/newDesignComponents/weight_tile_with_input.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentSummaryComponent extends StatefulWidget {
@@ -50,7 +52,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
-  bool showRecommendation = true;
+  bool showRecommendation = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +65,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               itemCount: _segmentSectionAndMovementDetails(showRecommendation).length,
               itemBuilder: (c, i) => Column(
                 children: [
-                  OlukoNeumorphicCircleButton(onPressed: () {
-                    setState(() {
-                      showRecommendation != showRecommendation;
-                    });
-                  }),
+                  // OlukoNeumorphicCircleButton(onPressed: () {
+                  //   setState(() {
+                  //     showRecommendation != showRecommendation;
+                  //   });
+                  // }),
                   _segmentSectionAndMovementDetails(showRecommendation)[i],
                 ],
               ),
@@ -75,11 +77,63 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           )
         : Column(
             children: [
-              OlukoNeumorphicCircleButton(onPressed: () {
-                setState(() {
-                  showRecommendation = !showRecommendation;
-                });
-              }),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Neumorphic(
+                  style: OlukoNeumorphism.getNeumorphicStyleForStadiumShapeElement(),
+                  child: Container(
+                    height: 60,
+                    width: ScreenUtils.width(context) - 40,
+                    decoration:
+                        BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showRecommendation = false;
+                            });
+                          },
+                          child: Container(
+                            height: 60,
+                            width: (ScreenUtils.width(context) - 80) / 2,
+                            decoration: BoxDecoration(
+                                color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
+                            child: Center(
+                              child: Text(OlukoLocalizations.get(context, 'recentWeight'),
+                                  style: OlukoFonts.olukoMediumFont(
+                                      customFontWeight: FontWeight.w500,
+                                      customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor)),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showRecommendation = true;
+                            });
+                          },
+                          child: Container(
+                            height: 60,
+                            color: showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
+                            width: (ScreenUtils.width(context) - 80) / 2,
+                            child: Center(
+                              child: Text(OlukoLocalizations.get(context, 'recommended'),
+                                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // OlukoNeumorphicCircleButton(onPressed: () {
+              //   setState(() {
+              //     showRecommendation = !showRecommendation;
+              //   });
+              // }),
               Column(
                 children: _segmentSectionAndMovementDetails(showRecommendation),
               ),
