@@ -99,6 +99,7 @@ dependencies:
   headset_connection_event: ^2.2.0
   video_player: ^2.6.0
   readmore: ^2.2.0
+  firebase_analytics: ^9.3.8
   sign_in_with_apple: ^4.3.0
   flutter_html: ^3.0.0-alpha.6
 
