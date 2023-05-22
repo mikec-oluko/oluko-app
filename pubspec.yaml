@@ -43,7 +43,6 @@ dependencies:
   numberpicker: ^2.1.1
   step_progress_indicator: ^1.0.2
   avatar_glow: ^2.0.2
-  the_apple_sign_in: ^1.1.1
   jwt_decoder: ^2.0.1
   sound_mode: ^2.0.2
   image_picker: ^0.8.6
@@ -100,6 +99,7 @@ dependencies:
   headset_connection_event: ^2.2.0
   video_player: ^2.6.0
   readmore: ^2.2.0
+  sign_in_with_apple: ^4.3.0
   flutter_html: ^3.0.0-alpha.6
 
 dev_dependencies:
