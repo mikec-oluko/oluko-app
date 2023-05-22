@@ -12,8 +12,6 @@ abstract class CourseEnrollmentState {}
 
 class CourseEnrollmentLoading extends CourseEnrollmentState {}
 
-class MarkSegmentSuccess extends CourseEnrollmentState {}
-
 class UncompletedClassSuccess extends CourseEnrollmentState {
   EnrollmentClass enrollmentClass;
   UncompletedClassSuccess({this.enrollmentClass});
@@ -115,22 +113,6 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     try {
       CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.getById(id);
       emit(GetEnrollmentByIdSuccess(courseEnrollment: courseEnrollment));
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: exception));
-      rethrow;
-    }
-  }
-
-  void markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
-      {bool useWeigth = false, int sectionIndex, int movementIndex, double weightUsed}) async {
-    try {
-      await CourseEnrollmentRepository.markSegmentAsCompleted(courseEnrollment, segmentIndex, classIndex,
-          useWeigth: useWeigth, sectionIndex: sectionIndex, movementIndex: movementIndex, weightUsed: weightUsed);
-      //emit(MarkSegmentSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

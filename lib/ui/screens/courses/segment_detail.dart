@@ -21,6 +21,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
@@ -48,6 +49,7 @@ class SegmentDetail extends StatefulWidget {
       this.classIndex,
       this.fromChallenge = false,
       this.favoriteUsers,
+      this.actualCourse,
       Key key})
       : super(key: key);
 
@@ -57,6 +59,7 @@ class SegmentDetail extends StatefulWidget {
   final int courseIndex;
   final bool fromChallenge;
   final List<Segment> classSegments;
+  final Course actualCourse;
   final List<UserResponse> favoriteUsers;
 
   @override
@@ -350,7 +353,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             (_coach == null &&
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
-            (coachRequest.coachId == _coach.id &&
+            (_coach != null && coachRequest.coachId == _coach.id &&
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
         .toList();
@@ -361,7 +364,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
       return;
     } else {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
-      final arguments = {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex};
+      final arguments = {
+        'courseEnrollment': widget.courseEnrollment,
+        'classIndex': widget.classIndex,
+        'courseIndex': widget.courseIndex,
+        'actualCourse': widget.actualCourse,
+      };
       if (Navigator.canPop(context)) {
         Navigator.pushReplacementNamed(
           context,
@@ -473,7 +481,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
-  void _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+  void _peopleAction(List<UserResponse> users, List<UserSubmodel> favorites) {
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
