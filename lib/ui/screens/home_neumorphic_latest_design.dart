@@ -1,6 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -27,7 +26,6 @@ import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/helpers/oluko_exception_message.dart';
 import 'package:oluko_app/helpers/profile_helper_functions.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -42,8 +40,6 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/services/global_service.dart';
-import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
@@ -61,7 +57,10 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/user_utils.dart';
+import 'package:oluko_app/models/workout_day.dart';
+import 'package:oluko_app/models/workout_schedule.dart';
+import 'package:oluko_app/blocs/course/course_home_bloc.dart';
+import 'package:oluko_app/utils/schedule_utils.dart';
 
 class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
@@ -89,6 +88,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   Success successState;
   UserResponse currentUserLatestVersion;
   bool videoSeen = false;
+  bool hasScheduledCourses = false;
 
   @override
   void initState() {
@@ -157,6 +157,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                     return Column(
                       children: [
                         _userCoverAndProfileDetails(),
+                        _userCoursesSchedule(context),
                         _enrolledCoursesAndPeople(),
                         myListOfCoursesAndFriendsRecommended(),
                         _challengesSection(),
@@ -190,6 +191,144 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       if (showLogo) getLogo(authState) else const SliverToBoxAdapter(),
       if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
     ];
+  }
+
+  List<WorkoutDay> getThisWeekScheduledWorkouts(BuildContext context){
+    return ScheduleUtils.getThisWeekClasses(context, _courseEnrollmentList);
+  }
+
+  Widget _userCoursesSchedule(BuildContext context) {
+    final List<WorkoutDay> thisWeekWorkouts = getThisWeekScheduledWorkouts(context);
+    if (thisWeekWorkouts.isEmpty){
+      hasScheduledCourses = false;
+      return const SizedBox.shrink();
+    }
+
+    hasScheduledCourses = true;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 80, 20, 5),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              OlukoLocalizations.get(context, 'upcomingWorkouts'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _getScheduledWorkouts(thisWeekWorkouts),
+                ),
+              ],
+            ),
+
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _navigateToCourseSelectedScheduledClass(BuildContext context, WorkoutSchedule workoutSchedule) async {
+    final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment.course.reference.get();
+    final Course selectedCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
+    final courseIndex = _courses.indexWhere((course) => course.id == selectedCourse.id);
+    final courseEnrollmentIndex = _courseEnrollmentList.indexWhere((courseEnrollment) => courseEnrollment.id == workoutSchedule.courseEnrollment.id);
+
+    Navigator.pushNamed(
+      context,
+      routeLabels[RouteEnum.insideClass],
+      arguments: {
+        'courseEnrollment': _courseEnrollmentList[courseEnrollmentIndex],
+        'classIndex': workoutSchedule.classIndex,
+        'courseIndex': courseIndex,
+        'actualCourse': selectedCourse
+      },
+    );
+  }
+
+  Future<void> _goToEditSchedule(BuildContext context, WorkoutSchedule workoutSchedule) async {
+    BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([workoutSchedule.courseEnrollment]);
+    final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment.course.reference.get();
+    final Course actualCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
+    Navigator.pushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
+      'courseEnrollments': [workoutSchedule.courseEnrollment],
+      'authState': widget.authState,
+      'courses': [actualCourse],
+      'user': currentUserLatestVersion,
+      'isFromHome': true,
+      'openEditScheduleOnInit': true,
+    },);
+  }
+
+  List<Widget> _getScheduledWorkouts(List<WorkoutDay> thisWeekWorkouts){
+    return thisWeekWorkouts.map((workout) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      workout.day,
+                                      style: OlukoFonts.olukoMediumFont(
+                                        customColor: OlukoColors.white,
+                                        customFontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: workout.scheduledWorkouts.map((scheduledWorkout) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                constraints: const BoxConstraints(maxWidth: 200),
+                                                child: 
+                                                GestureDetector(
+                                                  child: Text(
+                                                    scheduledWorkout.className,
+                                                    style: OlukoFonts.olukoMediumFont(
+                                                      customColor: OlukoColors.yellow,
+                                                      customFontWeight: FontWeight.w500,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  onTap: () {
+                                                    _navigateToCourseSelectedScheduledClass(context, scheduledWorkout);
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _goToEditSchedule(context, scheduledWorkout);
+                                                },
+                                                child: Text(
+                                                  OlukoLocalizations.get(context, 'editSchedule'),
+                                                  style: OlukoFonts.olukoMediumFont(
+                                                    customColor: OlukoColors.grayColor,
+                                                    customFontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                    // Add more widgets here to display other information
+                                  ],
+                                ),
+                              );
+                            }).toList();
   }
 
   Widget _userCoverAndProfileDetails() {
@@ -286,7 +425,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           _usersProgress = userProgressListState.usersProgress;
         }
         return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 100, 20, 50),
+          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 100, 20, 50),
           child: _courseAndPeopleContent(context),
         );
       },
@@ -310,7 +449,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
         });
         BlocProvider.of<SubscribedCourseUsersBloc>(context)
-            .getEnrolled(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
+            .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
       },
       onCourseTap: (index) {
         setState(() {

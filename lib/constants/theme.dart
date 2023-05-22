@@ -336,6 +336,10 @@ class OlukoColors {
 
   static const Color lightOrange = Color.fromRGBO(254, 159, 31, 1);
 
+  static const Color lightSkyblue = Color.fromRGBO(171, 247, 233, 1);
+
+    static const Color strongYellow = Color.fromRGBO(254, 192, 0, 1);
+
   static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
 
   static const Color statisticsChartColor = Color.fromRGBO(254, 159, 31, 1);
@@ -370,6 +374,7 @@ class OlukoFonts {
   static const double olukoSuperBigFontSize = 21.0;
   static const double olukoMediumFontSize = 14.0;
   static const double olukoSmallFontSize = 11.0;
+    static const double olukoSuperSmallFontSize = 8.0;
   static const double olukoBiggestFontSize = 40.0;
 
   static TextStyle olukoMediumFont({FontWeight customFontWeight, Color customColor, TextDecoration decoration}) {
@@ -417,6 +422,14 @@ class OlukoFonts {
     return TextStyle(
         fontFamily: 'Roboto',
         fontSize: olukoSmallFontSize,
+        fontWeight: customFontWeight != null ? customFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
+
+    static TextStyle olukoSuperSmallFont({FontWeight customFontWeight, Color customColor}) {
+    return TextStyle(
+        fontFamily: 'Roboto',
+        fontSize: olukoSuperSmallFontSize,
         fontWeight: customFontWeight != null ? customFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }

@@ -8,6 +8,7 @@ class Course extends Base {
   String videoHls;
   String duration;
   String description;
+  String scheduleRecommendations;
   List<ObjectSubmodel> classes;
   List<ObjectSubmodel> tags;
   List<String> userSelfies;
@@ -16,6 +17,8 @@ class Course extends Base {
   List<dynamic> images;
   DocumentReference statisticsReference;
   bool hasChat;
+  List<DateTime> scheduledDates;
+  List<String> weekDays;
 
   Course(
       {this.name,
@@ -29,8 +32,10 @@ class Course extends Base {
       this.video,
       this.videoHls,
       this.description,
+      this.scheduleRecommendations,
       this.hasChat,
       this.userSelfies,
+      this.weekDays,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -51,6 +56,7 @@ class Course extends Base {
       videoHls: json['video_hls']?.toString(),
       duration: json['duration'] == null ? '0' : json['duration'].toString(),
       description: json['description']?.toString(),
+      scheduleRecommendations: json['schedule_recommendations']?.toString(),
       classes: json['classes'] != null
           ? List<ObjectSubmodel>.from((json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
           : null,
@@ -64,6 +70,7 @@ class Course extends Base {
           : json['user_selfies'] is String
               ? [json['user_selfies'] as String]
               : List<String>.from((json['user_selfies'] as Iterable).map((userSelfie) => userSelfie as String)),
+      weekDays: json['week_days'] as List<String>
     );
     course.setBase(json);
     return course;
@@ -77,6 +84,7 @@ class Course extends Base {
       'video_hls': videoHls,
       'duration': duration,
       'description': description,
+      'schedule_recommendations': scheduleRecommendations,
       'tags': tags == null ? null : tags,
       'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
       'image': image,

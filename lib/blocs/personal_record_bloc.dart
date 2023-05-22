@@ -30,18 +30,6 @@ class PersonalRecordBloc extends Cubit<PersonalRecordState> {
 
   void get(String segmentId, String userId) async {
     try {
-      /*final List<Challenge> challengesList = await ChallengeRepository.getUserChallengesBySegmentId(segmentId, userId);
-      List<PersonalRecord> personalRecords = [];
-      if (challengesList != null && !challengesList.isEmpty) {
-        personalRecords = challengesList.map((challenge) {
-          return PersonalRecord(
-              date: challenge.completedAt != null
-                  ? TimeConverter.returnDateOnStringFormat(dateToFormat: challenge.completedAt, context: context)
-                  : '',
-              image: challenge.image,
-              title: challenge.challengeName);
-        }).toList();
-      }*/
       List<PersonalRecord> personalRecords = await PersonalRecordRepository.getByUserAndChallengeId(userId, segmentId);
       emit(PersonalRecordSuccess(personalRecords: personalRecords));
     } catch (exception, stackTrace) {

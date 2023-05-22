@@ -9,10 +9,13 @@ import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/segment_summary_component.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
@@ -77,7 +80,8 @@ class ClocksLowerSection extends StatefulWidget {
 class _State extends State<ClocksLowerSection> {
   bool shareDone = false;
   SegmentSubmission _updatedSegmentSubmission;
-
+  bool isWorkoutUsingWeigths = false;
+  List<EnrollmentMovement> enrollmentMovements = [];
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TimerTaskBloc, TimerTaskState>(builder: (context, timerTaskState) {
@@ -108,7 +112,13 @@ class _State extends State<ClocksLowerSection> {
         Column(
           crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children: [
-            getTitle(),
+            if (isWorkoutUsingWeigths)
+              Padding(
+                padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 5 : 15),
+                child: MovementUtils.movementTitle(OlukoLocalizations.get(context, 'weightsQuestion')),
+              )
+            else
+              getTitle(),
             const SizedBox(height: 5),
             if (widget.counter || (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds))
               getScores()
@@ -118,7 +128,22 @@ class _State extends State<ClocksLowerSection> {
         ),
         Positioned(
           bottom: 15,
-          child: Container(width: ScreenUtils.width(context) - 40, height: 170, child: getCard()),
+          child: Column(
+            children: [
+              Container(
+                  width: ScreenUtils.width(context) - 40,
+                  height: 180,
+                  child: Column(
+                    children: [
+                      OlukoNeumorphicDivider(
+                        isForList: false,
+                        isFadeOut: true,
+                      ),
+                      getCard(),
+                    ],
+                  )),
+            ],
+          ),
         ),
       ]),
     );
@@ -132,31 +157,43 @@ class _State extends State<ClocksLowerSection> {
   }
 
   Widget getWorkouts() {
+    getMovementsWithWeightRequired();
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
             height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
             width: ScreenUtils.width(context),
-            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
+            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
             child: SegmentSummaryComponent(
-              courseEnrollment: widget.courseEnrollment,
               segmentIndex: widget.segmentIndex,
               classIndex: widget.classIndex,
               isResults: true,
               useImperialSystem: widget.currentUser.useImperialSystem,
-              segment: widget.segments
-                  .where(
-                    (segment) => segment.id == widget.segmentId,
-                  )
-                  .first,
-              segmentFromCourseEnrollment: getCourseEnrollmentSegment(),
+              sectionsFromSegment: getSegmentSections(),
+              enrollmentMovements: enrollmentMovements,
               addWeightEnable: true,
               movementWeigths: (movementsAndWeights) {
                 widget.movementAndWeightsForWorkout(movementsAndWeights);
+              },
+              workoutHasWeights: (useWeigths) {
+                isWorkoutUsingWeigths = useWeigths;
               },
             ))
         : Column(
             children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
           );
+  }
+
+  void getMovementsWithWeightRequired() {
+    enrollmentMovements = MovementUtils.getMovementsFromEnrollmentSegment(courseEnrollmentSections: getCourseEnrollmentSegment().sections);
+  }
+
+  List<SectionSubmodel> getSegmentSections() {
+    return widget.segments
+        .where(
+          (segment) => segment.id == widget.segmentId,
+        )
+        .first
+        .sections;
   }
 
   Widget getScores() {
