@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/dto/completion_dto.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
@@ -94,8 +95,9 @@ class CourseEnrollmentRepository {
     return [];
   }
 
-  static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
+  static Future<Completion> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
       {bool useWeigth = false, int sectionIndex, int movementIndex, double weightUsed}) async {
+    Completion completionObj = Completion();
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
@@ -109,9 +111,11 @@ class CourseEnrollmentRepository {
 
     final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1;
     if (isClassCompleted) {
+      completionObj.completedClassId = classes[classIndex].id;
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
         courseEnrollment.isUnenrolled = true;
+        completionObj.completedCourseId = courseEnrollment.course.reference.id;
       } else {
         if (courseEnrollment.classes[classIndex].completedAt == null) {
           final double courseProgress = 1 / courseEnrollment.classes.length;
@@ -127,6 +131,7 @@ class CourseEnrollmentRepository {
       'is_unenrolled': courseEnrollment.isUnenrolled is bool ? courseEnrollment.isUnenrolled : false,
       'updated_at': FieldValue.serverTimestamp()
     });
+    return completionObj;
   }
 
   static Future<void> addWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> movementsAndWeights}) async {
@@ -156,11 +161,19 @@ class CourseEnrollmentRepository {
     final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
     final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
     CourseEnrollment courseEnrollment =
-        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
+        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: [], weekDays: course.weekDays);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
     return courseEnrollment;
+  }
+
+  static Future<CourseEnrollment> scheduleCourse(CourseEnrollment enrolledCourse) async {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
+    final CollectionReference reference = projectReference.collection('courseEnrollments');
+    final DocumentReference docRef = reference.doc(enrolledCourse.id);
+    docRef.set(enrolledCourse.toJson(), SetOptions(merge: true));
+    return enrolledCourse;
   }
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
@@ -172,6 +185,7 @@ class CourseEnrollmentRepository {
         image: course.classes[i].image,
         reference: course.classes[i].reference,
         segments: [],
+        scheduledDate: course.scheduledDates != null && course.scheduledDates.isNotEmpty ? Timestamp.fromDate(course.scheduledDates[i]) : null,
       ),
     );
 

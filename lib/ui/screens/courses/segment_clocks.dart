@@ -20,6 +20,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
@@ -1004,7 +1005,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     workState = WorkState.finished;
 
     print('Workout finished');
-    BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
+    BlocProvider.of<PointsCardBloc>(context).updateCourseCompletionAndCheckNewCardCollected(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
 
     if (widget.segments[widget.segmentIndex].isChallenge) {
       await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);

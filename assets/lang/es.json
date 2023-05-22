@@ -435,7 +435,6 @@
     "zipCodeErrorMessage": ", No cumple con el formato requerido. Solo caracteres numéricos, 5 dígitos de longitud.",
     "deleteImage": "Eliminar imagen",
     "completedChallenges": "Desafios Completados",
-    "transformationPhotos": "Fotos de Transformación",
     "chats":"Chats",
     "noChats":"No tienes chats",
     "showLess" : "Muestra menos",
@@ -444,17 +443,35 @@
     "usePounds": "Libras (LBs)",
     "addWeight": "Añadir peso",
     "community":"Comunidad",
+    "mvt": "MVT",
+    "points": "Points",
+    "cards": "Tarjetas",
+    "setYourSchedule":"Configura tu agenda",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "editSchedule": "Editar agenda",
+    "upcomingWorkouts": "Próximos Entrenamientos",
     "weightsQuestion" : "Que pesos usaste?",
     "seeAll": "Ver todo",
     "annotatedVideos": "Vídeos anotados",
     "audioMessageSent": "Mensaje de audio enviado",
-    "audioMessageFailed": "El mensaje no se pudo enviar"
-
-
-
-
-
-
-
-
+    "audioMessageFailed": "El mensaje no se pudo enviar",
+    "scheduleApplied": "Se ha configurado la agenda correctamente",
+    "transformationPhotos": "Fotos de Transformación",
+    "privacy": "Privacidad",
+    "pushNotifications": "Notificaciones push",
+    "globalNotifications": "Nuevo Coach",
+    "coachResponse": "Respuesta del Coach",
+    "workoutReminder": "Recordatorio de ejercicio",
+    "appOpeningReminder": "Recordatorio de apertura de la aplicación",
+    "globalNotificationsSubtitle": "Has sido asignado a un Coach",
+    "coachResponseSubtitle": "El Coach te ha respondido un audio o video",
+    "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
+    "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días",
+    "goToCourses": "Ir a cursos"
 }
