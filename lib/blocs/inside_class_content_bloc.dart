@@ -34,8 +34,8 @@ class InsideClassContentBloc extends Cubit<InsideClassContentState> {
     emit(InsideClassContentAudioOpen());
   }
 
-  void openPeoplePanel() {
-    emit(InsideClassContentPeopleOpen());
+  void openPeoplePanel(List<dynamic> users, List<dynamic> favorites) {
+    emit(InsideClassContentPeopleOpen(users: users, favorites: favorites));
   }
 
   void openClockPanel() {

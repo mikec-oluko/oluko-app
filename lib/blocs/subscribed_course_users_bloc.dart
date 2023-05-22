@@ -32,7 +32,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
   void get(String courseId, String userId) async {
     emit(SubscribedCourseUsersLoading());
     try {
-      List<UserResponse> usersByCourse = await CourseEnrollmentRepository.getUsersByCourseId(courseId, userId);
+      List<UserResponse> usersByCourse = await CourseRepository.getUsersByCourseId(courseId, userId);
 
       final List<UserResponse> uniqueUserList = [];
       final List<UserResponse> favoriteUserList = [];

@@ -109,7 +109,7 @@ class _InsideClassesState extends State<InsideClass> {
     super.initState();
     BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
-    BlocProvider.of<StatisticsBloc>(context).get(widget.actualCourse.statisticsReference);
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
     BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
     BlocProvider.of<DownloadAssetBloc>(context).getVideo();
   }
@@ -455,21 +455,22 @@ class _InsideClassesState extends State<InsideClass> {
         ),
         Row(
           children: [
-            BlocBuilder<StatisticsBloc, StatisticsState>(
-              builder: (context, state) {
-                if (state is StatisticsSuccess) {
-                  final int qty = state.courseStatistics.doing;
-                  BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(userId: currentUser.id);
-
+            BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+              builder: (context, subscribedCourseUsersState) {
+                if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+                  final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+                  final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
+                  final int qty = favorites + normalUsers;
+                  favoriteUsers = subscribedCourseUsersState.favoriteUsers;
                   return GestureDetector(
-                    onTap: () => _peopleAction(),
+                    onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                     child: Text(
                       '$qty+',
                       textAlign: TextAlign.center,
                       style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold),
                     ),
                   );
-                } else if (state is StatisticsLoading) {
+                } else if (subscribedCourseUsersState is StatisticsLoading) {
                   return Center(child: OlukoCircularProgressIndicator());
                 } else {
                   return Text(
@@ -648,9 +649,8 @@ class _InsideClassesState extends State<InsideClass> {
     BlocProvider.of<CourseEnrollmentAudioBloc>(context).markAudioAsDeleted(_enrollmentAudio, audiosUpdated, _audios);
   }
 
-  _peopleAction() {
-    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, widget.courseEnrollment.userId);
-    BlocProvider.of<InsideClassContentBloc>(context).openPeoplePanel();
+  _peopleAction(List<dynamic> users, List<dynamic> favorites) {
+    BlocProvider.of<InsideClassContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
   _audioAction() {
@@ -663,14 +663,17 @@ class _InsideClassesState extends State<InsideClass> {
         image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
       );
     }
-    return BlocBuilder<StatisticsBloc, StatisticsState>(
-      builder: (context, state) {
-        if (state is StatisticsSuccess) {
-          final int qty = state.courseStatistics.doing;
+    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+      builder: (context, subscribedCourseUsersState) {
+        if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+          final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+          final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
+          final int qty = favorites + normalUsers;
+          favoriteUsers = subscribedCourseUsersState.favoriteUsers;
           return CourseInfoSection(
             onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
             peopleQty: qty,
-            onPeoplePressed: () => _peopleAction(),
+            onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
             audioMessageQty: _audioQty,
             image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
           );
