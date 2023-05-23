@@ -437,7 +437,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return OlukoNeumorphism.isNeumorphismDesign
         ? ((widget.segment.isChallenge && _canStartSegment) || ((widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge))
             ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(
                   useBorder: true,
                   thinPadding: true,
@@ -450,7 +450,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(
                   useBorder: true,
                   thinPadding: true,

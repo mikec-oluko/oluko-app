@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/community_tab_friend_notification_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -36,6 +37,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
   void initState() {
     _tabController = TabController(length: _numOfTabs, vsync: this);
     BlocProvider.of<UserListBloc>(context).get();
+    BlocProvider.of<CommunityTabFriendNotificationBloc>(context).listenFriendRequestByUserId();
     super.initState();
   }
 
@@ -167,7 +169,16 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
             unselectedLabelColor: OlukoColors.white,
             labelColor: OlukoColors.white,
             controller: _tabController,
-            tabs: [Tab(text: OlukoLocalizations.get(context, 'friends')), Tab(text: OlukoLocalizations.get(context, 'requests'))],
+            tabs: [
+              Tab(text: OlukoLocalizations.get(context, 'friends')),
+              BlocBuilder<CommunityTabFriendNotificationBloc, CommunityTabFriendNotificationState>(
+                builder: (context, state) {
+                  return Tab(text: OlukoLocalizations.get(context, 'requests') + 
+                  (state is CommunityTabFriendsNotification && state.friendNotificationQuantity >= 1 ? 
+                  ' (${state.friendNotificationQuantity})' : ''));
+                },
+              )
+            ],
           ),
         ),
       ],
