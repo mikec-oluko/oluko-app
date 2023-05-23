@@ -27,9 +27,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
       trailing: MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) == null
-          ? Container(
-              color: Colors.red,
-            )
+          ? _getAlertCircleWithTooltip()
           : Container(
               height: 40,
               decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
@@ -46,6 +44,46 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
       subtitle: movement.percentOfMaxWeight != null
           ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight} ${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
           : const SizedBox.shrink(),
+    );
+  }
+
+  Widget _getAlertCircleWithTooltip() {
+    final buttonIcon = '!';
+    return Tooltip(
+      richMessage: WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 150),
+            child: Center(
+              child: Text(
+                  widget.showWeightRecommendation
+                      ? OlukoLocalizations.get(context, 'recommendationTooltipText')
+                      : OlukoLocalizations.get(context, 'loggedWeightTooltipText'),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+            ),
+          )),
+      textAlign: TextAlign.center,
+      preferBelow: true,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      height: 100,
+      decoration: const BoxDecoration(
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+        borderRadius: BorderRadius.all(
+          Radius.circular(25),
+        ),
+      ),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: _getContainerColor(),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(50),
+          ),
+        ),
+        child: Center(child: Text(buttonIcon, style: OlukoFonts.olukoMediumFont(customColor: _getTextColor()))),
+      ),
     );
   }
 
