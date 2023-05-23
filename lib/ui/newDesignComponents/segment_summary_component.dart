@@ -51,9 +51,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   List<EnrollmentMovement> enrollmentMovements = [];
   Map<String, double> movementsWeights = {};
   List<WorkoutWeight> listOfWeigthsToUpdate = [];
-  TextEditingController textEditingController = TextEditingController();
-  FocusNode focusNode = FocusNode();
-
+  final List<TextEditingController> _listOfControllers = [];
+  final List<FocusNode> _listOfNodes = [];
   @override
   Widget build(BuildContext context) {
     return widget.isResults
@@ -71,6 +70,17 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           );
   }
 
+  @override
+  void dispose() {
+    for (var controller in _listOfControllers) {
+      controller.dispose();
+    }
+    for (var controller in _listOfNodes) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   List<Widget> _segmentSectionAndMovementDetails() {
     List<Widget> contentToReturn = [];
     if (widget.enrollmentMovements.isNotEmpty) {
@@ -82,7 +92,12 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     return contentToReturn;
   }
 
-  void open(String movementId, WorkoutWeight currentMovementAndWeight) {
+  void open(String movementId, WorkoutWeight currentMovementAndWeight, TextEditingController textEditingController, FocusNode focusNode) {
+    _listOfNodes.forEach((element) {
+      if (element.hasFocus) {
+        element.unfocus();
+      }
+    });
     focusNode.requestFocus();
     BottomDialogUtils.showBottomDialog(
       barrierColor: false,
@@ -93,9 +108,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
           controller: textEditingController,
           focus: focusNode,
-          onChanged: () => onSubmit(movementId, currentMovementAndWeight),
+          onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
           onSubmit: () {
-            onSubmit(movementId, currentMovementAndWeight);
+            onSubmit(movementId, currentMovementAndWeight, textEditingController);
             Navigator.pop(context);
             focusNode.unfocus();
           },
@@ -105,12 +120,16 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   }
 
   void populateMovements(List<Widget> contentToReturn) {
+    int controllersIndex = 0;
     widget.sectionsFromSegment.forEach((section) {
       section.movements.forEach((movement) {
         if (MovementUtils.checkIfMovementRequireWeigth(movement, widget.enrollmentMovements)) {
           if (widget.addWeightEnable) {
             _createNewWeightRecord(section, movement);
-            contentToReturn.add(_movementTileWithInput(movement));
+            _listOfControllers.add(TextEditingController());
+            _listOfNodes.add(FocusNode());
+            contentToReturn.add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex]));
+            controllersIndex++;
           } else {
             contentToReturn.add(_movementTileWithWeightValue(movement));
           }
@@ -180,14 +199,14 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   double get _toKilogramsUnit => 0.453;
 
-  Padding _movementTileWithInput(MovementSubmodel movement) {
+  Padding _movementTileWithInput(MovementSubmodel movement, TextEditingController textEditingController, FocusNode focusNode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
-          _inputComponent(movement.id),
+          _inputComponent(movement.id, textEditingController, focusNode),
         ],
       ),
     );
@@ -205,7 +224,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     }
   }
 
-  void onSubmit(String movementId, WorkoutWeight currentMovementAndWeight) {
+  void onSubmit(String movementId, WorkoutWeight currentMovementAndWeight, TextEditingController textEditingController) {
     if (textEditingController.text == '') {
       movementsWeights[movementId] = null;
     } else {
@@ -219,8 +238,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     widget.movementWeigths(listOfWeigthsToUpdate);
   }
 
-  Container _inputComponent(String movementId) {
+  Container _inputComponent(String movementId, TextEditingController textEditingController, FocusNode focusNode) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movementId);
+
     return Container(
         decoration: const BoxDecoration(color: OlukoNeumorphismColors.appBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(10))),
         width: 120,
@@ -233,7 +253,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (value) {},
-          onTap: () => open(movementId, currentMovementAndWeight),
+          onTap: () => open(movementId, currentMovementAndWeight, textEditingController, focusNode),
           onEditingComplete: () {},
           textAlign: TextAlign.center,
           style: const TextStyle(
