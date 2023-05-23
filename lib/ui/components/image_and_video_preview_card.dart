@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -60,7 +61,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
     definePreviewTitleByTypeOfContent(context);
     return Container(
       alignment: Alignment.center,
-      // decoration: getDecorationForContainer(),
+      decoration: getDecorationForContainer(),
       width: widget.isCoach ? 150 : 120,
       height: 120,
       child: contentForPreview(context),
@@ -151,12 +152,12 @@ class _State extends State<ImageAndVideoPreviewCard> {
                                 onTap: () => Navigator.pop(context),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 20),
-                                  // child: Image.asset(
-                                  //   'assets/courses/video_cross.png',
-                                  //   color: Colors.white,
-                                  //   height: 80,
-                                  //   width: 80,
-                                  // ),
+                                  child: Image.asset(
+                                    'assets/courses/video_cross.png',
+                                    color: Colors.white,
+                                    height: 80,
+                                    width: 80,
+                                  ),
                                 ),
                               ))
                             ])
@@ -171,11 +172,10 @@ class _State extends State<ImageAndVideoPreviewCard> {
                         childContent: Icon(Icons.play_arrow),
                       ),
                     )
-                  // : Image.asset(
-                  //     'assets/assessment/play.png',
-                  //     scale: 5,
-                  //   ))),
-                  : SizedBox())),
+                  : Image.asset(
+                      'assets/assessment/play.png',
+                      scale: 5,
+                    ))),
       Align(
           alignment: Alignment.bottomCenter,
           child: widget.showTitle
