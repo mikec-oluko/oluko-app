@@ -222,8 +222,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
                           arguments: {'isFirstTime': false, 'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
                       break;
+                    case ProfileOptionsTitle.maxWeights:
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.maxWeights]);
+                      break;
                     default:
-                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option), arguments: {'fromRegister': false});
+                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));
                   }
                 }
               : () {},
