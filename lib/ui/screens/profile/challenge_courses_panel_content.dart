@@ -118,13 +118,9 @@ class _State extends State<ChallengeCoursesPanelContent> {
   }
 
   BoxDecoration decorationImage() {
-    return const BoxDecoration(
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
-      ),
+    return BoxDecoration(
+      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
     );
   }
 }

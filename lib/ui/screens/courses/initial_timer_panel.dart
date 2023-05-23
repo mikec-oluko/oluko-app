@@ -25,13 +25,9 @@ class _State extends State<InitialTimerPanel> {
     return Container(
       width: ScreenUtils.width(context),
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
-        ),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
