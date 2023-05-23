@@ -47,12 +47,10 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/courses/gray_background.png'),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
+      ),
       width: MediaQuery.of(context).size.width,
       height: 150,
       child: BlocConsumer<UserProgressListBloc, UserProgressListState>(
