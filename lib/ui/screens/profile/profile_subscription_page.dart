@@ -48,12 +48,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SubscriptionContentBloc, SubscriptionContentState>(
-      listenWhen: (context, subscriptionContentState) {
+      listenWhen: (prevState, subscriptionContentState) {
         return subscriptionContentState is PurchaseSuccess ||
             subscriptionContentState is ManageFromWebState ||
             subscriptionContentState is SubscriptionContentInitialized ||
             subscriptionContentState is PurchaseRestored ||
-            subscriptionContentState is FailureState;
+            (subscriptionContentState is FailureState && prevState is! FailureState);
       },
       listener: (context, subscriptionContentState) async {
         if (subscriptionContentState is SubscriptionContentInitialized) {

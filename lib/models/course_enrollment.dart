@@ -13,6 +13,7 @@ class CourseEnrollment extends Base {
   double completion;
   Timestamp completedAt;
   Timestamp finishedAt;
+  List<String> weekDays;
   List<EnrollmentClass> classes;
   bool isUnenrolled;
 
@@ -22,6 +23,7 @@ class CourseEnrollment extends Base {
       this.completion,
       this.completedAt,
       this.finishedAt,
+      this.weekDays,
       this.classes,
       this.userId,
       this.isUnenrolled = false,
@@ -59,7 +61,9 @@ class CourseEnrollment extends Base {
           classes: json['classes'] != null
               ? List<EnrollmentClass>.from((json['classes'] as Iterable).map((c) => EnrollmentClass.fromJson(c as Map<String, dynamic>)))
               : null,
-          isUnenrolled: json['is_unenrolled'] == null ? false : json['is_unenrolled'] as bool);
+          isUnenrolled: json['is_unenrolled'] == null ? false : json['is_unenrolled'] as bool,
+          weekDays: json['week_days'] != null ? List<String>.from(json['week_days'] as Iterable) : [],
+        );
       courseEnrollment.setBase(json);
       return courseEnrollment;
     } catch (e) {
@@ -77,7 +81,8 @@ class CourseEnrollment extends Base {
       'completed_at': completedAt,
       'finished_at': finishedAt,
       'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
-      'is_unenrolled': isUnenrolled ?? false
+      'is_unenrolled': isUnenrolled ?? false,
+      'week_days': weekDays ?? []
     };
     courseEnrollmentJson.addEntries(super.toJson().entries);
     return courseEnrollmentJson;

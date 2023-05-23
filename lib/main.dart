@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,27 +8,32 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/ui/newDesignComponents/animation.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:oluko_app/config/project_settings.dart';
-import 'services/route_service.dart';
+import 'package:oluko_app/services/route_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseAnalyticsObserver observer = 
+      FirebaseAnalyticsObserver(analytics: analytics);
+      
+  await PushNotificationService.initializeBackgroundNotificationsHandler();
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
   if(alreadyLoggedUserResponse != null){

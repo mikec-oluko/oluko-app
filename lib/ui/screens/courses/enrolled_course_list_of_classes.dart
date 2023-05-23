@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
@@ -10,7 +10,10 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/services/course_service.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/ui/components/schedule_modal_content.dart';
 
 class CourseClassCardsList extends StatefulWidget {
   final Course course;
@@ -24,6 +27,7 @@ class CourseClassCardsList extends StatefulWidget {
   final Function closeVideo;
   final Function onPressed;
   final bool isFromHome;
+  final bool openEditScheduleOnInit;
   const CourseClassCardsList(
       {this.course,
       this.courseEnrollment,
@@ -35,7 +39,8 @@ class CourseClassCardsList extends StatefulWidget {
       this.playPauseVideo,
       this.closeVideo,
       this.onPressed,
-      this.isFromHome = false})
+      this.isFromHome = false,
+      this.openEditScheduleOnInit = false,})
       : super();
 
   @override
@@ -52,6 +57,10 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       _classItemList = _buildClassesList();
     });
     super.initState();
+    if (widget.openEditScheduleOnInit){
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _openEditSchedule(context));
+    }
   }
 
   @override
@@ -62,11 +71,52 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: GestureDetector(
+            onTap: () {
+              _openEditSchedule(context);
+            },
+            child: Text(
+              OlukoLocalizations.get(context, 'editSchedule'),
+              style: OlukoFonts.olukoBigFont(
+                customFontWeight: FontWeight.w600,
+                customColor: OlukoColors.white,
+              ),
+            ),
+          ),
+        ),
         ..._classItemList.map((ClassItem classElement) => getIncompletedClasses(_classItemList.indexOf(classElement),
             CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItemList.indexOf(classElement)), classElement)),
         ..._classItemList.map((ClassItem classElement) => getCompletedClasses(_classItemList.indexOf(classElement), classElement))
       ],
     );
+  }
+
+  void _openEditSchedule(BuildContext context){
+    BottomDialogUtils.showBottomDialog(
+      content: ScheduleModalContent(
+        scheduleRecommendations: widget.course.scheduleRecommendations,
+        isCoachRecommendation: widget.isCoachRecommendation,
+        courseEnrollment: widget.courseEnrollment,
+        totalClasses: _classItemList.length,
+        blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
+        onUpdateScheduleAction: (){
+          setState(() {
+            _classItemList = _updateClassScheduledDates();
+          });
+        },
+      ),
+      isScrollControlled: true,
+      context: context,
+    );
+  }
+
+  List<ClassItem> _updateClassScheduledDates() {
+    for (var i = 0; i < _classItemList.length; i++) {
+      _classItemList[i].scheduledDate = widget.courseEnrollment.classes[i].scheduledDate;
+    }
+    return _classItemList;
   }
 
   List<ClassItem> _buildClassesList() {
@@ -82,6 +132,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
         widget.courseEnrollment.classes.forEach((EnrollmentClass enrollmentClass) {
           _classItemList.forEach((ClassItem classItem) {
             if (classItem.classObj.id == enrollmentClass.id) {
+              classItem.scheduledDate = enrollmentClass.scheduledDate;
               _classListToReturn.add(classItem);
             }
           });
@@ -119,7 +170,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
             getNavigationToClass(widget.courseEnrollment, _classItemList.indexOf(item), widget.courseIndex);
           },
           child: Neumorphic(
-              margin: const EdgeInsets.all(5),
+              margin: const EdgeInsets.only(top: 5, bottom: 5),
               style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                 classProgress > 0,
               ),
@@ -153,6 +204,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       index: classIndex,
       total: _classItemList.length,
       classObj: item.classObj,
+      scheduledDate: item.scheduledDate?.toDate(),
     );
   }
 

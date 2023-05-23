@@ -11,8 +11,10 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.d
 import 'package:oluko_app/blocs/download_assets_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/friends/common_friend_panel_bloc.dart';
+import 'package:oluko_app/blocs/friends_weight_records_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
+import 'package:oluko_app/blocs/statistics/statistics_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
@@ -100,6 +102,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<bool> _completedBefore = [];
   UserResponse currentUser;
   AuthSuccess currentAuthState;
+  List<UserResponse> favoriteUsers = [];
 
   @override
   void initState() {
@@ -458,6 +461,8 @@ class _InsideClassesState extends State<InsideClass> {
                   final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
+                  favoriteUsers = subscribedCourseUsersState.favoriteUsers;
+                  BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(friends: favoriteUsers);
                   return GestureDetector(
                     onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                     child: Text(
@@ -466,6 +471,8 @@ class _InsideClassesState extends State<InsideClass> {
                       style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold),
                     ),
                   );
+                } else if (subscribedCourseUsersState is StatisticsLoading) {
+                  return Center(child: OlukoCircularProgressIndicator());
                 } else {
                   return Text(
                     '0+',
@@ -575,43 +582,63 @@ class _InsideClassesState extends State<InsideClass> {
         isDraggable: false,
         header: const SizedBox(),
         padding: EdgeInsets.zero,
-        color: OlukoColors.black,
+        color: Colors.transparent,
         minHeight: 0.0,
         maxHeight: 450, //TODO
         collapsed: const SizedBox(),
         controller: _buttonController,
-        panel: BlocBuilder<InsideClassContentBloc, InsideClassContentState>(builder: (context, state) {
-          Widget _contentForPanel = const SizedBox();
-          if (state is InsideClassContentDefault) {
-            if (_buttonController.isPanelOpen) {
-              _buttonController.close();
-            }
-            _contentForPanel = const SizedBox();
-          }
-          if (state is InsideClassContentPeopleOpen) {
-            _buttonController.open();
-            _contentForPanel = ModalPeopleEnrolled(
-                userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
-                userId: widget.courseEnrollment.createdBy,
-                users: state.users,
-                favorites: state.favorites,
-                userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context));
-          }
-          if (state is InsideClassContentAudioOpen) {
-            _buttonController.open();
-            BlocProvider.of<EnrollmentAudioBloc>(context).markAudioAsSeen(_enrollmentAudio, _audios);
-            _contentForPanel = ModalAudio(
-                panelController: _buttonController,
-                users: _coaches,
-                audios: _audios,
-                onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
-                audioPlayer: audioPlayer);
-          }
-          if (state is InsideClassContentLoading) {
-            _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
-          }
-          return _contentForPanel;
-        }),
+        panel: BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+          builder: (context, subscribedUsersState) {
+            return BlocBuilder<InsideClassContentBloc, InsideClassContentState>(builder: (context, state) {
+              Widget _contentForPanel = const SizedBox();
+              if (state is InsideClassContentDefault) {
+                if (_buttonController.isPanelOpen) {
+                  _buttonController.close();
+                }
+                _contentForPanel = const SizedBox();
+              }
+              if (state is InsideClassContentPeopleOpen) {
+                if (subscribedUsersState is SubscribedCourseUsersSuccess) {
+                  _buttonController.open();
+                  _contentForPanel = ModalPeopleEnrolled(
+                      userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+                      userId: widget.courseEnrollment.createdBy,
+                      users: subscribedUsersState.users,
+                      favorites: subscribedUsersState.favoriteUsers,
+                      userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context));
+                } else {
+                  _buttonController.open();
+                  _contentForPanel = Container(
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/courses/gray_background.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                      width: MediaQuery.of(context).size.width,
+                      height: 150,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ));
+                }
+              }
+              if (state is InsideClassContentAudioOpen) {
+                _buttonController.open();
+                BlocProvider.of<EnrollmentAudioBloc>(context).markAudioAsSeen(_enrollmentAudio, _audios);
+                _contentForPanel = ModalAudio(
+                    panelController: _buttonController,
+                    users: _coaches,
+                    audios: _audios,
+                    onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
+                    audioPlayer: audioPlayer);
+              }
+              if (state is InsideClassContentLoading) {
+                _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
+              }
+              return _contentForPanel;
+            });
+          },
+        ),
       ),
     );
   }
@@ -643,6 +670,7 @@ class _InsideClassesState extends State<InsideClass> {
           final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
           final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
           final int qty = favorites + normalUsers;
+          favoriteUsers = subscribedCourseUsersState.favoriteUsers;
           return CourseInfoSection(
             onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
             peopleQty: qty,
@@ -783,7 +811,9 @@ class _InsideClassesState extends State<InsideClass> {
           'classIndex': widget.classIndex,
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
-          'fromChallenge': false
+          'fromChallenge': false,
+          'actualCourse': widget.actualCourse,
+          'favoriteUsers': favoriteUsers
         },
       );
     }
