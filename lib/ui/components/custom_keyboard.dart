@@ -8,7 +8,20 @@ class CustomKeyboard extends StatefulWidget {
   FocusNode focus;
   Function onSubmit;
   Function onChanged;
-  CustomKeyboard({Key key, this.boxDecoration, this.controller, this.focus, this.onSubmit, this.onChanged}) : super(key: key);
+  bool showInput;
+  String textStartInput;
+  String textEndInput;
+  CustomKeyboard(
+      {Key key,
+      this.boxDecoration,
+      this.controller,
+      this.focus,
+      this.onSubmit,
+      this.onChanged,
+      this.showInput = false,
+      this.textStartInput = '',
+      this.textEndInput = ''})
+      : super(key: key);
 
   @override
   State<CustomKeyboard> createState() => _CustomKeyboardState();
@@ -18,66 +31,117 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   @override
   Widget build(BuildContext context) {
     widget.focus.requestFocus();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: widget.boxDecoration,
-      child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          NumberPanel(
-            text: '1',
-            onPressed: () => _insertText('1'),
+    return Column(
+      children: [
+        if (widget.showInput) _input(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: widget.boxDecoration,
+          child: Column(children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              NumberPanel(
+                text: '1',
+                onPressed: () => _insertText('1'),
+              ),
+              NumberPanel(
+                text: '2',
+                onPressed: () => _insertText('2'),
+              ),
+              NumberPanel(
+                text: '3',
+                onPressed: () => _insertText('3'),
+              ),
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              NumberPanel(
+                text: '4',
+                onPressed: () => _insertText('4'),
+              ),
+              NumberPanel(
+                text: '5',
+                onPressed: () => _insertText('5'),
+              ),
+              NumberPanel(
+                text: '6',
+                onPressed: () => _insertText('6'),
+              ),
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              NumberPanel(
+                text: '7',
+                onPressed: () => _insertText('7'),
+              ),
+              NumberPanel(
+                text: '8',
+                onPressed: () => _insertText('8'),
+              ),
+              NumberPanel(
+                text: '9',
+                onPressed: () => _insertText('9'),
+              ),
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Expanded(child: DeleteButton(onBackspace: () => _backspace())),
+              NumberPanel(
+                text: '0',
+                onPressed: () => _insertText('0'),
+              ),
+              Expanded(
+                child: DoneButton(onPressed: () => widget.onSubmit()),
+              )
+            ]),
+            const SizedBox(
+              height: 15,
+            )
+          ]),
+        ),
+      ],
+    );
+  }
+
+  Widget _input() {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Container(
+          color: Colors.black,
+          padding: const EdgeInsets.all(8.0),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  widget.textStartInput,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth / 2,
+                  ),
+                  child: IntrinsicWidth(
+                    child: TextField(
+                      controller: widget.controller,
+                       focusNode: widget.focus,
+                      readOnly: true,
+                      showCursor: true,
+                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w500),
+                      decoration: const InputDecoration(
+                        fillColor: Colors.transparent,
+                        filled: true,
+                        border: InputBorder.none,
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                    ),
+                  ),
+                ),
+                Text(
+                  widget.textEndInput,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ],
+            ),
           ),
-          NumberPanel(
-            text: '2',
-            onPressed: () => _insertText('2'),
-          ),
-          NumberPanel(
-            text: '3',
-            onPressed: () => _insertText('3'),
-          ),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          NumberPanel(
-            text: '4',
-            onPressed: () => _insertText('4'),
-          ),
-          NumberPanel(
-            text: '5',
-            onPressed: () => _insertText('5'),
-          ),
-          NumberPanel(
-            text: '6',
-            onPressed: () => _insertText('6'),
-          ),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          NumberPanel(
-            text: '7',
-            onPressed: () => _insertText('7'),
-          ),
-          NumberPanel(
-            text: '8',
-            onPressed: () => _insertText('8'),
-          ),
-          NumberPanel(
-            text: '9',
-            onPressed: () => _insertText('9'),
-          ),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Expanded(child: DeleteButton(onBackspace: () => _backspace())),
-          NumberPanel(
-            text: '0',
-            onPressed: () => _insertText('0'),
-          ),
-          Expanded(
-            child: DoneButton(onPressed: () => widget.onSubmit()),
-          )
-        ]),
-        SizedBox(
-          height: 15,
-        )
-      ]),
+        );
+      },
     );
   }
 

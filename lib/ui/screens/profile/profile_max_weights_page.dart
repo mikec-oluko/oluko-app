@@ -28,11 +28,14 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
       barrierColor: false,
       context: context,
       content: Container(
-        height: ScreenUtils.height(context) * 0.4,
+        height: ScreenUtils.height(context) * 0.47,
         child: CustomKeyboard(
           boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
           controller: textController,
           focus: focusNode,
+          showInput: true,
+          textStartInput: 'Enter weight:',
+          textEndInput: 'LBs',
           onSubmit: () {
             Navigator.pop(context);
             focusNode.unfocus();
