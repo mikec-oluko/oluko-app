@@ -46,11 +46,11 @@ class Annotation extends Base with EquatableMixin {
   factory Annotation.fromJson(Map<String, dynamic> json) {
     Annotation annotation = Annotation(
         userId: json['user_id'].toString(),
-        segmentSubmissionId: json['segment_submission_id'].toString(),
+        segmentSubmissionId: json['segment_submission_id'] == null ? null : json['segment_submission_id'].toString(),
         userReference: json['user_reference'] as DocumentReference,
         segmentSubmissionReference: json['segment_submission_reference'] as DocumentReference,
-        segmentName: json['segment_name'].toString(),
-        coachId: json['coach_id'].toString(),
+        segmentName: json['segment_name'] == null ? null : json['segment_name'].toString(),
+        coachId: json['coach_id'] == null ? null : json['coach_id'].toString(),
         coachReference: json['coach_reference'] as DocumentReference,
         // status: AnnotationStatusEnum.values[json['status'] as int],
         favorite: json['favorite'] == null ? false : json['favorite'] as bool,
