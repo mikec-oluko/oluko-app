@@ -99,11 +99,15 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
           ),
         ),
         if (widget.titleForContent != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 2),
-            child: Text(
-              widget.titleForContent,
-              style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
+          SizedBox(
+            width: 170,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 2),
+              child: Text(
+                widget.titleForContent,
+                overflow: TextOverflow.ellipsis,
+                style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
+              ),
             ),
           )
         else
