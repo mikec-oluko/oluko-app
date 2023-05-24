@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -36,9 +37,10 @@ class FriendModalContent extends StatefulWidget {
   FavoriteFriendBloc blocFavoriteFriend;
   UserProgressStreamBloc userProgressStreamBloc;
   Map<String, UserProgress> usersProgess;
+  PointsCardBloc blocPointsCard;
 
   FriendModalContent(this.user, this.currentUserId, this.usersProgess, this.blocFriends, this.friendRequestBloc, this.blocHifiveSend, this.blocHifiveReceived,
-      this.blocUserStatistics, this.blocFavoriteFriend,
+      this.blocUserStatistics, this.blocFavoriteFriend, this.blocPointsCard,
       [this.userProgressStreamBloc]);
   @override
   _FriendModalContentState createState() => _FriendModalContentState();
@@ -58,6 +60,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
     widget.blocFriends.getFriendsByUserId(widget.currentUserId);
     widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
     widget.blocUserStatistics.getUserStatistics(widget.user.id);
+    widget.blocPointsCard.getUserCards(widget.user.id);
     super.initState();
   }
 
@@ -195,10 +198,36 @@ class _FriendModalContentState extends State<FriendModalContent> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            profileAccomplishments(
-                              achievementTitle: OlukoLocalizations.get(context, 'classesCompleted'),
-                              achievementValue: userStats.userStats.completedClasses.toString(),
-                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                profileAccomplishments(
+                                  achievementTitle: OlukoLocalizations.get(context, 'classesCompleted'),
+                                  achievementValue: userStats.userStats.completedClasses.toString(),
+                                ),
+                                Container(
+                                  width: 2.5,
+                                  height: 2.5,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white,
+                                    ),
+                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                ),
+                                BlocBuilder<PointsCardBloc, PointsCardState>(
+                                  bloc: widget.blocPointsCard,
+                                  builder: (pointsCardContext, pointsCards) {
+                                    return pointsCards is PointsCardSuccess
+                                        ? profileAccomplishments(
+                                            achievementTitle: OlukoLocalizations.get(context, 'mvt') + ' ' + OlukoLocalizations.get(context, 'points'),
+                                            achievementValue: pointsCards.userPoints.toString(),
+                                          )
+                                        : const SizedBox();
+                                  },
+                                )
+                              ],
+                            )
                           ],
                         )
                       : const SizedBox();

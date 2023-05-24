@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
@@ -81,7 +82,7 @@ class _MessageBubbleState extends State<MessageBubble> {
           BlocProvider.of<HiFiveReceivedBloc>(context),
           BlocProvider.of<UserStatisticsBloc>(context),
           BlocProvider.of<FavoriteFriendBloc>(context),
-          BlocProvider.of<UserProgressStreamBloc>(context)),
+          BlocProvider.of<PointsCardBloc>(context)),
       context: context,
     );
   }
@@ -134,13 +135,12 @@ class _MessageBubbleState extends State<MessageBubble> {
             )
           else
             AudioSentComponent(
-              record: widget.audioMessage.url,
-              onAudioPlaying: (bool playing) => _onPlayAudio(playing),
-              onStartPlaying: () => _canStartPlaying(),
-              durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
-              showBin: false,
-              keepPlayingInBackground: true
-            )
+                record: widget.audioMessage.url,
+                onAudioPlaying: (bool playing) => _onPlayAudio(playing),
+                onStartPlaying: () => _canStartPlaying(),
+                durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
+                showBin: false,
+                keepPlayingInBackground: true)
         ],
       ),
     );
