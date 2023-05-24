@@ -1,68 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
-class CustomKeyboard extends StatelessWidget {
-  const CustomKeyboard({Key key, this.boxDecoration}) : super(key: key);
+class CustomKeyboard extends StatefulWidget {
+  TextEditingController controller;
   final BoxDecoration boxDecoration;
+  FocusNode focus;
+  Function onSubmit;
+  Function onChanged;
+  CustomKeyboard({Key key, this.boxDecoration, this.controller, this.focus, this.onSubmit, this.onChanged}) : super(key: key);
 
   @override
+  State<CustomKeyboard> createState() => _CustomKeyboardState();
+}
+
+class _CustomKeyboardState extends State<CustomKeyboard> {
+  @override
   Widget build(BuildContext context) {
-    final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+    widget.focus.requestFocus();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      decoration: boxDecoration,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: widget.boxDecoration,
       child: Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           NumberPanel(
             text: '1',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('1')),
+            onPressed: () => _insertText('1'),
           ),
           NumberPanel(
             text: '2',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('2')),
+            onPressed: () => _insertText('2'),
           ),
           NumberPanel(
             text: '3',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('3')),
+            onPressed: () => _insertText('3'),
           ),
         ]),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           NumberPanel(
             text: '4',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('4')),
+            onPressed: () => _insertText('4'),
           ),
           NumberPanel(
             text: '5',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('5')),
+            onPressed: () => _insertText('5'),
           ),
           NumberPanel(
             text: '6',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('6')),
+            onPressed: () => _insertText('6'),
           ),
         ]),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           NumberPanel(
             text: '7',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('7')),
+            onPressed: () => _insertText('7'),
           ),
           NumberPanel(
             text: '8',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('8')),
+            onPressed: () => _insertText('8'),
           ),
           NumberPanel(
             text: '9',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('9')),
+            onPressed: () => _insertText('9'),
           ),
         ]),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Expanded(child: DeleteButton(onBackspace: () => {_customKeyboardBloc.add(DeleteNumber())})),
+          Expanded(child: DeleteButton(onBackspace: () => _backspace())),
           NumberPanel(
             text: '0',
-            onPressed: () => _customKeyboardBloc.add(AddNumber('0')),
+            onPressed: () => _insertText('0'),
           ),
           Expanded(
-            child: DoneButton(onPressed: () => _customKeyboardBloc.add(Submit())),
+            child: DoneButton(onPressed: () => widget.onSubmit()),
           )
         ]),
         SizedBox(
@@ -70,6 +79,84 @@ class CustomKeyboard extends StatelessWidget {
         )
       ]),
     );
+  }
+
+  void _insertText(String myText) {
+    TextEditingController _controller = widget.controller;
+    String text = widget.controller.text;
+    final textSelection = widget.controller.selection;
+    String newText;
+    if (textSelection.start >= 0 && textSelection.end >= 0) {
+      newText = text.replaceRange(
+        textSelection.start,
+        textSelection.end,
+        myText,
+      );
+      final myTextLength = myText.length;
+      _controller.text = newText;
+      _controller.selection = textSelection.copyWith(
+        baseOffset: textSelection.start + myTextLength,
+        extentOffset: textSelection.start + myTextLength,
+      );
+    } else {
+      newText = text.replaceRange(
+        0,
+        0,
+        myText,
+      );
+      final myTextLength = myText.length;
+      _controller.text = newText;
+      _controller.selection = textSelection.copyWith(
+        baseOffset: textSelection.start + 1 + myTextLength,
+        extentOffset: textSelection.start + 1 + myTextLength,
+      );
+    }
+    widget.focus.requestFocus();
+    widget.controller = _controller;
+    if (widget.onChanged != null) {
+      widget.onChanged();
+    }
+    // state.textScrollController?.animateTo(1000, duration: Duration(milliseconds: 1), curve: Curves.bounceIn);
+  }
+
+  void _backspace() {
+    TextEditingController _controller = widget.controller;
+    final text = _controller.text;
+    final textSelection = _controller.selection;
+    final selectionLength = textSelection.end - textSelection.start;
+    // There is a selection.
+    if (selectionLength > 0) {
+      final newText = text.replaceRange(
+        textSelection.start,
+        textSelection.end,
+        '',
+      );
+      _controller.text = newText;
+      _controller.selection = textSelection.copyWith(
+        baseOffset: textSelection.start,
+        extentOffset: textSelection.start,
+      );
+      return;
+    }
+    // The cursor is at the beginning.
+    if (textSelection.start <= 0) {
+      return;
+    }
+    // Delete the previous character
+
+    final newStart = textSelection.start - 1;
+    final newEnd = textSelection.start;
+    final newText = text.replaceRange(
+      newStart,
+      newEnd,
+      '',
+    );
+    _controller.text = newText;
+    _controller.selection = textSelection.copyWith(
+      baseOffset: newStart,
+      extentOffset: newStart,
+    );
+    widget.controller = _controller;
   }
 }
 

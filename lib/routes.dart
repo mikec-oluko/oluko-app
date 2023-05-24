@@ -189,7 +189,6 @@ import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
 import 'blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
-import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/points_card_panel_bloc.dart';
@@ -428,7 +427,6 @@ class Routes {
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
   final UserAudioBloc _userAudioBloc = UserAudioBloc();
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
-  final KeyboardBloc _keyboardBloc = KeyboardBloc();
   final CourseEnrollmentAudioBloc _courseEnrollmentAudioBloc = CourseEnrollmentAudioBloc();
   final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
   final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
@@ -515,8 +513,6 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
-          BlocProvider(create: (_) => KeyboardBloc()),
-          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
@@ -932,7 +928,6 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<FeedbackBloc>.value(value: _feedbackBloc),
           BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
