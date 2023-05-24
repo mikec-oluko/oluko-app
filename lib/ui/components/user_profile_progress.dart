@@ -83,7 +83,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
 
   Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color, bool isClickable = false}) {
     return GestureDetector(
-        onTap: () => isClickable ? _pointsCardAction() : {},
+        onTap: () => isClickable && achievementValue != '0' ? _pointsCardAction() : {},
         child: Padding(
             padding: EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? 0 : 10),
             child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(

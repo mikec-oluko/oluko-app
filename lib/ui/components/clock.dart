@@ -318,11 +318,8 @@ class _State extends State<Clock> {
     final bool isCounterByReps = currentCounter == CounterEnum.reps;
     List<String> counterTxt = SegmentClocksUtils.counterText(context, currentCounter, widget.timerEntries[widget.timerTaskIndex - 1].movement.name);
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/courses/gray_background.png'),
-          fit: BoxFit.cover,
-        ),
+      decoration: BoxDecoration(
+        gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
       ),
       height: 50,
       child: Column(
