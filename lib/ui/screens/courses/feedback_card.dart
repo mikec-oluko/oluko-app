@@ -113,13 +113,11 @@ class _State extends State<FeedbackCard> {
 
   void setFeedback() async {
     if (updateFeedback) {
-      await BlocProvider.of<FeedbackBloc>(context)
-          .update(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId, like);
+      await BlocProvider.of<FeedbackBloc>(context).update(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId, like);
     } else if (like) {
       await BlocProvider.of<FeedbackBloc>(context).like(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId);
     } else {
-      await BlocProvider.of<FeedbackBloc>(context)
-          .dislike(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId);
+      await BlocProvider.of<FeedbackBloc>(context).dislike(widget.courseEnrollment, widget.classIndex, widget.segmentIndex, widget.segmentId);
     }
     updateFeedback = true;
     isProcessingLike = false;
@@ -127,8 +125,7 @@ class _State extends State<FeedbackCard> {
 
   Container neumorphicFeedBackCard(BuildContext context) {
     return Container(
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -163,8 +160,7 @@ class _State extends State<FeedbackCard> {
                       child: Column(
                         children: [
                           Neumorphic(
-                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-                                .copyWith(lightSource: LightSource.bottom, intensity: 1),
+                            style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(lightSource: LightSource.bottom, intensity: 1),
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: Column(
@@ -207,8 +203,7 @@ class _State extends State<FeedbackCard> {
                     child: Column(
                       children: [
                         Neumorphic(
-                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth()
-                              .copyWith(lightSource: LightSource.bottom, intensity: 1),
+                          style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(lightSource: LightSource.bottom, intensity: 1),
                           child: Padding(
                             padding: const EdgeInsets.all(13.0),
                             child: Column(

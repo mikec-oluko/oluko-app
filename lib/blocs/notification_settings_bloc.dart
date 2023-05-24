@@ -45,6 +45,9 @@ class NotificationSettingsBloc extends Cubit<NotificationSettingsState> {
   void update(NotificationSettings notiSettings) {
     try {
       notiSettings.globalNotifications ??= notificationSettings?.globalNotifications ?? true;
+      notiSettings.appOpeningReminderNotifications ??= notificationSettings?.appOpeningReminderNotifications ?? true;
+      notiSettings.coachResponseNotifications ??= notificationSettings?.coachResponseNotifications ?? true;
+      notiSettings.workoutReminderNotifications ??= notificationSettings?.workoutReminderNotifications ?? true;
       notiSettings.segmentClocksSounds ??= notificationSettings?.segmentClocksSounds ?? true;
       notiSettings.userId ??= notificationSettings.userId;
 

@@ -45,7 +45,7 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
       imageCover: Image(
         image: CachedNetworkImageProvider(
           image,
-          maxHeight: 100,
+          maxHeight: 200,
           maxWidth: 120,
         ),
         fit: BoxFit.cover,

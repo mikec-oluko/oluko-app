@@ -203,9 +203,9 @@ class _State extends State<Clock> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.skip_next, color: OlukoColors.white),
+                      const Icon(Icons.skip_next, color: OlukoColors.primary),
                       Text('Skip rest - next movement',
-                          textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
+                          textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
                     ],
                   ),
                 ),
@@ -331,11 +331,8 @@ class _State extends State<Clock> {
     final bool isCounterByReps = currentCounter == CounterEnum.reps;
     List<String> counterTxt = SegmentClocksUtils.counterText(context, currentCounter, widget.timerEntries[widget.timerTaskIndex - 1].movement.name);
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/courses/gray_background.png'),
-          fit: BoxFit.cover,
-        ),
+      decoration: BoxDecoration(
+        gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
       ),
       height: 50,
       child: Column(
