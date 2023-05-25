@@ -4,8 +4,17 @@ class UserHelper {
   }
 
   static String getFullName(String firstName, String lastName, {bool isCurrentUser = true}) {
-    return isCurrentUser
-        ? "${firstName[0].toUpperCase()}${firstName.substring(1).toLowerCase()} ${lastName[0].toUpperCase()}${lastName.substring(1).toLowerCase()}"
-        : '${firstName[0].toUpperCase()}${firstName.substring(1).toLowerCase()} ${lastName[0].toUpperCase()}.';
+    var fullName = '';
+    if (firstName != null && firstName.isNotEmpty) {
+      fullName += isCurrentUser
+          ? '${firstName[0].toUpperCase()}${firstName.substring(1).toLowerCase()} '
+          : '${firstName[0].toUpperCase()}${firstName.substring(1).toLowerCase()} ';
+    }
+    if (lastName != null && lastName.isNotEmpty) {
+      fullName += isCurrentUser
+          ? '${lastName[0].toUpperCase()}${lastName.substring(1).toLowerCase()}'
+          : '${lastName[0].toUpperCase()}.';
+    }
+    return fullName;
   }
 }

@@ -35,6 +35,10 @@ class CoachAudioMessagesFailure extends CoachAudioMessagesState {
   final dynamic exception;
 }
 
+class CoachAudioMessagesSent extends CoachAudioMessagesState {
+  CoachAudioMessagesSent();
+}
+
 class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
   final CoachAudioMessagesRepository _coachAudioMessagesRepository = CoachAudioMessagesRepository();
   CoachAudioMessageBloc() : super(Loading());
@@ -87,8 +91,8 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
       if (requestedAudioMessage.createdAt == null && requestedAudioMessage.updatedAt != null) {
         requestedAudioMessage.createdAt = requestedAudioMessage.updatedAt;
       }
-      audioMessages[audioMessages.indexOf(
-          audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] = requestedAudioMessage;
+      audioMessages[audioMessages.indexOf(audioMessages.where((noAudioMessage) => noAudioMessage.id == requestedAudioMessage.id).toList().first)] =
+          requestedAudioMessage;
     }
     return audioMessages;
   }
@@ -118,6 +122,9 @@ class CoachAudioMessageBloc extends Cubit<CoachAudioMessagesState> {
     try {
       final AudioMessageSubmodel audioContent = await _processAudio(audioRecorded, audioDuration);
       final CoachAudioMessage messageUploaded = await _coachAudioMessagesRepository.saveAudioForCoach(audioContent, userId, coachId);
+      if (messageUploaded != null) {
+        emit(CoachAudioMessagesSent());
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

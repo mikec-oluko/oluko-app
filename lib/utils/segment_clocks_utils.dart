@@ -2,7 +2,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
-import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -105,28 +104,8 @@ class SegmentClocksUtils {
     return counterText;
   }
 
-  static Widget getKeyboard(BuildContext context, bool keyboardVisibilty) {
-    const boxDecoration = BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xff2b2f35), Color(0xff16171b)],
-      ),
-    );
-    return SizedBox(
-      width: ScreenUtils.width(context),
-      child: Visibility(
-        visible: keyboardVisibilty,
-        child: CustomKeyboard(
-          boxDecoration: boxDecoration,
-        ),
-      ),
-    );
-  }
-
-  static Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
+  static Widget nextTaskWidget(String nextTask) {
     return Visibility(
-      visible: !keyboardVisibilty,
       child: ShaderMask(
         shaderCallback: (rect) {
           return const LinearGradient(
@@ -168,22 +147,16 @@ class SegmentClocksUtils {
               OlukoLocalizations.get(context, 'no'),
             ),
           ),
-          BlocBuilder<KeyboardBloc, KeyboardState>(
-            bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
-            builder: (context, state) {
-              return TextButton(
-                onPressed: () {
-                  BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
-                  BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
-                  Navigator.of(context).pop();
-                  result = true;
-                },
-                child: Text(
-                  OlukoLocalizations.get(context, 'yes'),
-                ),
-              );
+          TextButton(
+            onPressed: () {
+              BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
+              Navigator.of(context).pop();
+              result = true;
             },
-          ),
+            child: Text(
+              OlukoLocalizations.get(context, 'yes'),
+            ),
+          )
         ],
       ),
     ));
@@ -262,7 +235,7 @@ class SegmentClocksUtils {
     );
   }
 
-  static Widget recordingTaskSection(bool keyboardVisibilty, BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex) {
+  static Widget recordingTaskSection(BuildContext context, List<TimerEntry> timerEntries, int timerTaskIndex) {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
@@ -305,7 +278,7 @@ class SegmentClocksUtils {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              SizedBox(width: ScreenUtils.width(context) * 0.7, child: currentTaskWidget(keyboardVisibilty, currentTask, true)),
+              SizedBox(width: ScreenUtils.width(context) * 0.7, child: currentTaskWidget(currentTask, true)),
               Positioned(
                 left: ScreenUtils.width(context) - 70,
                 child: Text(
@@ -320,9 +293,8 @@ class SegmentClocksUtils {
     }
   }
 
-  static Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
+  static Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
     return Visibility(
-      visible: !keyboardVisibilty,
       child: Padding(
         padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
         child: Text(

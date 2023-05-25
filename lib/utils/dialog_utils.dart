@@ -3,7 +3,7 @@ import 'package:oluko_app/constants/theme.dart';
 
 class DialogUtils {
   static Future<dynamic> getDialog(BuildContext context, List<Widget> content,
-      {bool showExitButton = true, bool showExitButtonOutside = false, bool showBackgroundColor = false, bool useAppBackground = false}) {
+      {bool showExitButton = true, bool showExitButtonOutside = false, bool showBackgroundColor = true, bool useAppBackground = false}) {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(

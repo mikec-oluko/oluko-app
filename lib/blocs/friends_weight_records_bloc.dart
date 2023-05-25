@@ -6,8 +6,12 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
+import 'package:oluko_app/repositories/friend_repository.dart';
 import 'package:oluko_app/repositories/movement_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+
+import '../models/friend.dart';
+import '../repositories/user_repository.dart';
 
 abstract class FriendWeightRecordState {}
 

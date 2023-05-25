@@ -77,11 +77,9 @@ class _State extends State<MovementVideosSection> {
 
   BoxDecoration decorationImage() {
     return BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/courses/gray_background.png'),
-          fit: BoxFit.cover,
-        ),
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)));
+      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
+    );
   }
 
   List<MovementSubmodel> getSegmentMovements() {
