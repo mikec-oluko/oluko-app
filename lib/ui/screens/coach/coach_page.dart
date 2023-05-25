@@ -177,8 +177,7 @@ class _CoachPageState extends State<CoachPage> {
                                                   listener: (context, state) {
                                                     if (state is CoachAudioMessagesSent) {
                                                       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageSent'));
-                                                    }
-                                                    if (state is CoachAudioMessagesFailure) {
+                                                    } else if (state is CoachAudioMessagesFailure) {
                                                       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageFailed'));
                                                     }
                                                   },
