@@ -151,7 +151,6 @@ class _InsideClassesState extends State<InsideClass> {
     return Future(() => false);
   }
 
-  //TODO: CHECK NAVIGATION
   void _goBackToCourseDetails(BuildContext context) {
     BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([widget.courseEnrollment]);
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
