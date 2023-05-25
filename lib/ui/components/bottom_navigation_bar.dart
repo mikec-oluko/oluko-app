@@ -83,7 +83,7 @@ Widget _menuIcon(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
 
   return BlocBuilder<CommunityTabFriendNotificationBloc, CommunityTabFriendNotificationState>(
     builder: (context, state) {
-      bool friendNotification = state is CommunityTabFriendsNotification && state.friendNotificationQuantity >= 1;
+      bool friendNotification = state is CommunityTabFriendsNotification && state.friendNotifications.isNotEmpty;
       if (olukoBottomNavigationBarItem.route == RouteEnum.friends) {
         return BlocBuilder<ChatSliderMessagesBloc, ChatSliderMessagesState>(
           builder: (context, state) {

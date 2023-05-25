@@ -361,36 +361,45 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   }
 
   Widget getExternalLoginButtons() {
-    final Widget googleButton = SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
+    final Widget googleButton = BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if(state is GoogleLoading){
+                return Center(child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),),);
+              }
+        return SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.white),
+            ),
+            onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithGoogle(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/login/google-logo.png',
+                  width: 20,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  OlukoLocalizations.get(context, 'continueWithGoogle'),
+                  style: const TextStyle(color: OlukoColors.grayColor),
+                )
+              ],
             ),
           ),
-          backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.white),
-        ),
-        onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithGoogle(context),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/login/google-logo.png',
-              width: 20,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              OlukoLocalizations.get(context, 'continueWithGoogle'),
-              style: const TextStyle(color: OlukoColors.grayColor),
-            )
-          ],
-        ),
-      ),
+        );
+      },
     );
 
     if (Platform.isIOS || Platform.isMacOS) {

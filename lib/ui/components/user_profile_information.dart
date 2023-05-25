@@ -136,8 +136,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     final bool canShowDetails = _privacyOptions.canShowDetails(
         isOwner: _isOwner, currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation, connectStatus: widget.connectStatus);
 
-    final profileDefaultProfilePicContent =
-        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
     return BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {
       if (userProgressListState is GetUserProgressSuccess) {
         setState(() {
@@ -358,6 +356,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         coursesCompleted: _archivementsDefaultValue,
         classesCompleted: _archivementsDefaultValue,
         currentUser: widget.currentUser,
+        isOwner: _isOwner,
       );
     } else {
       return UserProfileProgress(
@@ -366,6 +365,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         classesCompleted: widget.userStats.completedClasses.toString(),
         isMinimalRequested: widget.minimalRequested,
         currentUser: widget.currentUser,
+        isOwner: _isOwner,
       );
     }
   }
