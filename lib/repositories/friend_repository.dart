@@ -78,15 +78,13 @@ class FriendRepository {
   }
 
   Future<void> setFriendsRequestAsViewsByUserId(String userId) async {
-    try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getString('projectId'))
-        .collection('friends')
-        .where('id', isEqualTo: userId).get();
+    CollectionReference refFriendCollection = FirebaseFirestore.instance
+                            .collection('projects')
+                            .doc(GlobalConfiguration().getString('projectId'))
+                            .collection('friends');
 
+      QuerySnapshot docRef = await refFriendCollection.where('id', isEqualTo: userId).get();
       Friend friend = docRef.docs.map((friend) => Friend.fromJson(friend.data() as Map<String, dynamic>)).first;
-
       if(friend.friendRequestReceived == null || friend.friendRequestReceived.isEmpty){
         return;
       }
@@ -95,16 +93,7 @@ class FriendRepository {
         element.view = true;
       });
 
-      await FirebaseFirestore.instance
-          .collection('projects')
-          .doc(GlobalConfiguration().getString('projectId'))
-          .collection('friends')
-          .doc(userId)
-          .set(friend.toJson(), SetOptions(merge: true));
-
-    } catch (e) {
-      rethrow;
-    }
+      refFriendCollection.doc(userId).set(friend.toJson(), SetOptions(merge: true));
   }
 
   static Future<List<User>> getUserFriendsSuggestionsByUserId(String userId) async {

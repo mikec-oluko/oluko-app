@@ -58,8 +58,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
   }
 
   void _setFriendsRequestAsViews({int value}){
-    bool isRequestTab = value == 1;
-    if(isRequestTab){
+    if(value == 1){
       BlocProvider.of<CommunityTabFriendNotificationBloc>(context).setFriendsRequestAsViews();
     }
   }
