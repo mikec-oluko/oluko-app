@@ -651,6 +651,8 @@ class Routes {
         break;
       case RouteEnum.friends:
         providers = [
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
@@ -667,6 +669,8 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -692,6 +696,8 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -745,6 +751,8 @@ class Routes {
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UpcomingChallengesBloc>.value(value: _upcomingChallengesBloc),
           BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
@@ -1438,6 +1446,7 @@ class Routes {
       case RouteEnum.homeLatestDesign:
         providers = [
           BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UsersSelfiesBloc>.value(value: _usersSelfiesBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
