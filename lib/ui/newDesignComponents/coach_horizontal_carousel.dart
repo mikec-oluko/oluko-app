@@ -19,6 +19,40 @@ class CoachTabHorizontalCarousel extends StatefulWidget {
 }
 
 class _State extends State<CoachTabHorizontalCarousel> {
+  List<Widget> _growingWidgetList = [];
+  final _listController = ScrollController();
+  final int _batchMaxRange = 10;
+
+  @override
+  void dispose() {
+    _listController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _growingWidgetList =
+        widget.children.isNotEmpty ? [...widget.children.getRange(0, widget.children.length > _batchMaxRange ? _batchMaxRange : widget.children.length)] : [];
+    _listController.addListener(() {
+      if (_listController.position.atEdge) {
+        if (_listController.position.pixels > 0) {
+          if (_growingWidgetList.length != widget.children.length) {
+            _getMoreElements();
+            setState(() {});
+          }
+        }
+      }
+    });
+    super.initState();
+  }
+
+  void _getMoreElements() => _growingWidgetList = widget.children.isNotEmpty
+      ? [
+          ...widget.children.getRange(
+              0, widget.children.length > _growingWidgetList.length + _batchMaxRange ? _growingWidgetList.length + _batchMaxRange : widget.children.length)
+        ]
+      : [];
+
   @override
   Widget build(BuildContext context) {
     return widget.children.isNotEmpty ? _carouselContent() : const SizedBox.shrink();
@@ -37,6 +71,7 @@ class _State extends State<CoachTabHorizontalCarousel> {
   Flexible horizontalScrollComponent() {
     return Flexible(
         child: ListView.builder(
+      controller: _listController,
       padding: EdgeInsets.zero,
       addAutomaticKeepAlives: false,
       addRepaintBoundaries: false,
@@ -45,7 +80,7 @@ class _State extends State<CoachTabHorizontalCarousel> {
       scrollDirection: Axis.horizontal,
       itemBuilder: (BuildContext context, int index) {
         return Row(
-          children: widget.children,
+          children: _growingWidgetList,
         );
       },
     ));

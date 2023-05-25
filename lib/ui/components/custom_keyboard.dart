@@ -180,7 +180,6 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     if (widget.onChanged != null) {
       widget.onChanged();
     }
-    // state.textScrollController?.animateTo(1000, duration: Duration(milliseconds: 1), curve: Curves.bounceIn);
   }
 
   void _backspace() {
