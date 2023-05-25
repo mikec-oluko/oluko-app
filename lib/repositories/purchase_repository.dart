@@ -39,21 +39,24 @@ class PurchaseRepository {
   static Future<UserResponse> create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
     final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final DocumentReference userReference = proyectReference.collection('users').doc(userId);
-    final QuerySnapshot<Map<String, dynamic>> planDocRef =
-        await proyectReference.collection('plans').where('apple_id', isEqualTo: purchaseDetails.productID).get();
-    final Map<String, dynamic> planJson = planDocRef?.docs?.first?.data();
-    final Plan plan = Plan.fromJson(planJson);
-    final Purchase purchase = plan.mapToPurchase(purchaseDetails, plan, userId);
-    purchase.id = proyectReference.collection('purchases').doc().id;
-    if (productDetails != null) {
-      purchase.finalAmount = productDetails.rawPrice is int || productDetails.rawPrice is double ? productDetails.rawPrice.toInt() : purchase.finalAmount;
-    }
-    purchase.currentPeriodEnd = DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch;
-    await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
-    await userReference.update({'current_plan': plan.metadata['level']});
     final userDoc = await userReference.get();
-    final userJson = userDoc.data() as Map<String, dynamic>;
-    return UserResponse.fromJson(userJson);
+    if (userDoc.exists) {
+      final QuerySnapshot<Map<String, dynamic>> planDocRef =
+          await proyectReference.collection('plans').where('apple_id', isEqualTo: purchaseDetails.productID).get();
+      final Map<String, dynamic> planJson = planDocRef?.docs?.first?.data();
+      final Plan plan = Plan.fromJson(planJson);
+      final Purchase purchase = plan.mapToPurchase(purchaseDetails, plan, userId);
+      purchase.id = proyectReference.collection('purchases').doc().id;
+      if (productDetails != null) {
+        purchase.finalAmount = productDetails.rawPrice is int || productDetails.rawPrice is double ? productDetails.rawPrice.toInt() : purchase.finalAmount;
+      }
+      purchase.currentPeriodEnd = DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch;
+      await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
+      await userReference.update({'current_plan': plan.metadata['level']});
+      final userJson = userDoc.data() as Map<String, dynamic>;
+      return UserResponse.fromJson(userJson);
+    }
+    return null;
   }
 
   static restore(String userId, String productId) async {
