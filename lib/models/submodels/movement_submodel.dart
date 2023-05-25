@@ -11,7 +11,7 @@ class MovementSubmodel {
   int value;
   int percentOfMaxWeight;
   CounterEnum counter;
-  bool weightRequired;
+  bool storeWeights;
   bool isRestTime;
   bool isBothSide;
 
@@ -26,7 +26,7 @@ class MovementSubmodel {
       this.value,
       this.percentOfMaxWeight,
       this.isRestTime,
-      this.weightRequired});
+      this.storeWeights});
 
   factory MovementSubmodel.fromJson(Map<String, dynamic> json) {
     return MovementSubmodel(
@@ -41,12 +41,12 @@ class MovementSubmodel {
                   : 0
           : 0,
       image: json['image'] == null ? null : json['image']?.toString(),
-      percentOfMaxWeight: json['max_weight_percentage'] == null ? 0 : json['max_weight_percentage'] as int,
+      percentOfMaxWeight: json['percentage_value'] == null ? 0 : json['percentage_value'] as int,
       isRestTime: json['is_rest_time'] == null ? false : json['is_rest_time'] as bool,
       isBothSide: json['is_both_side'] == null ? false : json['is_both_side'] as bool,
       counter: json['counter'] == null ? null : CounterEnum.values[json['counter'] as int],
       parameter: json['parameter'] == null ? null : ParameterEnum.values[json['parameter'] as int],
-      weightRequired: json['weight_required'] == null ? false : json['weight_required'] as bool,
+      storeWeights: json['store_weights'] == null ? false : json['store_weights'] as bool,
     );
   }
 
@@ -56,12 +56,12 @@ class MovementSubmodel {
         'name': name,
         'image': image,
         'value': value,
-        'max_weight_percentage': percentOfMaxWeight,
+        'percentage_value': percentOfMaxWeight,
         'counter': counter == null ? null : counter.index,
         'parameter': parameter == null ? null : parameter.index,
         'is_rest_time': isRestTime,
         'is_both_side': isBothSide,
-        'weight_required': weightRequired
+        'store_weights': storeWeights
       };
 
   String getLabel() {

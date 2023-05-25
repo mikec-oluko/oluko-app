@@ -75,7 +75,7 @@ class MovementUtils {
   }
 
   static bool checkIfMovementRequireWeigth(MovementSubmodel movement, List<EnrollmentMovement> enrollmentMovements) =>
-      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.weightRequired;
+      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.storeWeights;
 
   static List<MovementSubmodel> getMovementsWithWeights({List<SectionSubmodel> sections, List<EnrollmentMovement> enrollmentMovements}) {
     List<MovementSubmodel> movementsWithWeight = [];

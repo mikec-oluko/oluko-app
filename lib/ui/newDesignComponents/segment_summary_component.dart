@@ -22,6 +22,7 @@ import 'package:oluko_app/utils/segment_utils.dart';
 class SegmentSummaryComponent extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
+  final bool segmentSaveMaxWeights;
   final List<SectionSubmodel> sectionsFromSegment;
   final bool addWeightEnable;
   final List<EnrollmentMovement> enrollmentMovements;
@@ -29,11 +30,12 @@ class SegmentSummaryComponent extends StatefulWidget {
   final bool isResults;
   final bool useImperialSystem;
   final Function(bool) workoutHasWeights;
-  final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementWeigths;
+  final Function(List<WorkoutWeight> listOfWeigthsToUpdate, bool segmentSaveMaxWeights) movementWeights;
 
   const SegmentSummaryComponent(
       {this.classIndex,
       this.segmentIndex,
+      this.segmentSaveMaxWeights,
       this.enrollmentMovements,
       this.sectionsFromSegment,
       this.addWeightEnable = false,
@@ -41,7 +43,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.useImperialSystem = true,
       this.weightRecords,
       this.workoutHasWeights,
-      this.movementWeigths})
+      this.movementWeights})
       : super();
 
   @override
@@ -62,17 +64,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             child: ListView.builder(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
-              itemCount: _segmentSectionAndMovementDetails(showRecommendation).length,
-              itemBuilder: (c, i) => Column(
-                children: [
-                  // OlukoNeumorphicCircleButton(onPressed: () {
-                  //   setState(() {
-                  //     showRecommendation != showRecommendation;
-                  //   });
-                  // }),
-                  _segmentSectionAndMovementDetails(showRecommendation)[i],
-                ],
-              ),
+              itemCount: _segmentSectionAndMovementDetails(showRecommendation).isNotEmpty ? _segmentSectionAndMovementDetails(showRecommendation).length : 1,
+              itemBuilder: (c, i) => _segmentSectionAndMovementDetails(showRecommendation)[i],
             ),
           )
         : Column(
@@ -129,11 +122,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                   ),
                 ),
               ),
-              // OlukoNeumorphicCircleButton(onPressed: () {
-              //   setState(() {
-              //     showRecommendation = !showRecommendation;
-              //   });
-              // }),
               Column(
                 children: _segmentSectionAndMovementDetails(showRecommendation),
               ),
@@ -163,6 +151,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             contentToReturn.add(WeightTileForValue(
               movement: movement,
               showWeightRecommendation: showWeightRecommendation,
+              percentageOfMaxWeight: movement.percentOfMaxWeight,
+              maxWeightValue: 100, //TODO: Replace with value from MAX_WEIGHT BLOC
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
@@ -205,7 +195,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeigths(listOfWeigthsToUpdate);
+    widget.movementWeights(listOfWeigthsToUpdate, widget.segmentSaveMaxWeights);
   }
 
   void _onSubmitWeightValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
@@ -219,7 +209,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeigths(listOfWeigthsToUpdate);
+    widget.movementWeights(listOfWeigthsToUpdate, widget.segmentSaveMaxWeights);
     FocusManager.instance.primaryFocus?.unfocus();
   }
 

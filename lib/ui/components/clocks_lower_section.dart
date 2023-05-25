@@ -47,7 +47,7 @@ class ClocksLowerSection extends StatefulWidget {
   final bool areDiferentMovsWithRepCouter;
   final bool storyShared;
   final UserResponse currentUser;
-  final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementAndWeightsForWorkout;
+  final Function(List<WorkoutWeight> listOfWeigthsToUpdate, bool isSegmentSaveMaxWeights) movementAndWeightsForWorkout;
 
   ClocksLowerSection(
       {this.workState,
@@ -81,7 +81,7 @@ class _State extends State<ClocksLowerSection> {
   bool shareDone = false;
   SegmentSubmission _updatedSegmentSubmission;
   bool keyboardVisibilty = false;
-  bool isWorkoutUsingWeigths = false;
+  bool isWorkoutUsingWeights = false;
   List<EnrollmentMovement> enrollmentMovements = [];
 
   @override
@@ -114,7 +114,7 @@ class _State extends State<ClocksLowerSection> {
         Column(
           crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children: [
-            if (isWorkoutUsingWeigths)
+            if (isWorkoutUsingWeights)
               Padding(
                 padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 5 : 15),
                 child: MovementUtils.movementTitle(OlukoLocalizations.get(context, 'weightsQuestion')),
@@ -164,26 +164,29 @@ class _State extends State<ClocksLowerSection> {
         ? Container(
             height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
             width: ScreenUtils.width(context),
-            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+            decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
             child: SegmentSummaryComponent(
               segmentIndex: widget.segmentIndex,
+              segmentSaveMaxWeights: isSegmentSetsMaxWeights(),
               classIndex: widget.classIndex,
               isResults: true,
               useImperialSystem: widget.currentUser.useImperialSystem,
               sectionsFromSegment: getSegmentSections(),
               enrollmentMovements: enrollmentMovements,
               addWeightEnable: true,
-              movementWeigths: (movementsAndWeights) {
-                widget.movementAndWeightsForWorkout(movementsAndWeights);
+              movementWeights: (movementsAndWeights, segmentSaveMaxWeights) {
+                widget.movementAndWeightsForWorkout(movementsAndWeights, segmentSaveMaxWeights);
               },
-              workoutHasWeights: (useWeigths) {
-                isWorkoutUsingWeigths = useWeigths;
+              workoutHasWeights: (useWeights) {
+                isWorkoutUsingWeights = useWeights;
               },
             ))
         : Column(
             children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
           );
   }
+
+  bool isSegmentSetsMaxWeights() => widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].setsMaxWeight;
 
   void getMovementsWithWeightRequired() {
     enrollmentMovements = MovementUtils.getMovementsFromEnrollmentSegment(courseEnrollmentSections: getCourseEnrollmentSegment().sections);

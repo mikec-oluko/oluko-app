@@ -174,6 +174,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool storyShared = false;
   List<WorkoutWeight> movementsAndWeightsToSave = [];
   UserResponse currentUser;
+  bool isSegmentSaveMaxWeights = false;
 
   @override
   void initState() {
@@ -394,9 +395,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         segmentId: widget.segments[widget.segmentIndex].id,
         currentUser: currentUser,
         storyShared: timerTaskState is SetShareDone ? timerTaskState.shareDone : false,
-        movementAndWeightsForWorkout: (movementsAndWeights) {
+        movementAndWeightsForWorkout: (movementsAndWeights, segmentSaveMaxWeights) {
           setState(() {
             movementsAndWeightsToSave = movementsAndWeights;
+            isSegmentSaveMaxWeights = segmentSaveMaxWeights;
           });
         },
       ),
@@ -1324,6 +1326,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void saveWorkoutMovementAndWeigths() {
     if (movementsAndWeightsToSave.isNotEmpty) {
+      if (isSegmentSaveMaxWeights) {
+        //TODO: ADD CALL TO SAVE MAX WEIGHTS
+      }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }

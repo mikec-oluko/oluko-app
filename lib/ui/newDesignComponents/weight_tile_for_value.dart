@@ -11,7 +11,16 @@ class WeightTileForValue extends StatefulWidget {
   final bool useImperialSystem;
   final MovementSubmodel movement;
   final bool showWeightRecommendation;
-  const WeightTileForValue({Key key, this.weightRecords, this.movement, this.showWeightRecommendation = true, this.useImperialSystem = false})
+  final int percentageOfMaxWeight;
+  final double maxWeightValue;
+  const WeightTileForValue(
+      {Key key,
+      this.weightRecords,
+      this.movement,
+      this.percentageOfMaxWeight,
+      this.maxWeightValue,
+      this.showWeightRecommendation = true,
+      this.useImperialSystem = false})
       : super(key: key);
 
   @override
@@ -26,20 +35,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
-      trailing: MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) == null
-          ? _getAlertCircleWithTooltip()
-          : Container(
-              height: 40,
-              decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: widget.showWeightRecommendation
-                    ? _percentageOfMaxWeightForMovement(
-                        userMaxWeigth: MovementUtils.getMaxWeightByImperialSystemUse(maxWeight: 100, useImperialSystem: widget.useImperialSystem),
-                        percentageOfMaxWeigth: 25)
-                    : _userWeigthRecord(movement),
-              ),
-            ),
+      trailing: getTrailingContent(movement),
       title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
       subtitle: movement.percentOfMaxWeight != null
           ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight} ${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
@@ -47,8 +43,25 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     );
   }
 
+  Container weightContainerForRecommendationOrRecent(MovementSubmodel movement) {
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: widget.showWeightRecommendation
+            ? widget.percentageOfMaxWeight != null && widget.maxWeightValue != null
+                ? _percentageOfMaxWeightForMovement(
+                    userMaxWeight: MovementUtils.getMaxWeightByImperialSystemUse(maxWeight: widget.maxWeightValue, useImperialSystem: widget.useImperialSystem),
+                    percentageOfMaxWeight: widget.percentageOfMaxWeight)
+                : const SizedBox.shrink()
+            : _userWeightRecord(movement),
+      ),
+    );
+  }
+
   Widget _getAlertCircleWithTooltip() {
-    final buttonIcon = '!';
+    const buttonIcon = '!';
     return Tooltip(
       richMessage: WidgetSpan(
           alignment: PlaceholderAlignment.baseline,
@@ -89,7 +102,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Color _getContainerColor() => widget.showWeightRecommendation ? OlukoColors.primary : OlukoColors.primaryLight;
 
-  Row _userWeigthRecord(MovementSubmodel movement) {
+  Row _userWeightRecord(MovementSubmodel movement) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -120,7 +133,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Color _getTextColor() => widget.showWeightRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor;
 
-  Row _percentageOfMaxWeightForMovement({int userMaxWeigth, int percentageOfMaxWeigth}) {
+  Row _percentageOfMaxWeightForMovement({int userMaxWeight, int percentageOfMaxWeight}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -129,7 +142,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
           scale: 3,
         ),
         Text(
-          getRecommendedWeight(maxWeigthValue: userMaxWeigth, percentageToUse: percentageOfMaxWeigth).round().toString(),
+          getRecommendedWeight(maxWeightValue: userMaxWeight, percentageToUse: percentageOfMaxWeight).round().toString(),
           style: OlukoFonts.olukoMediumFont(),
         ),
         const SizedBox(
@@ -143,5 +156,21 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     );
   }
 
-  double getRecommendedWeight({int maxWeigthValue, int percentageToUse}) => (maxWeigthValue * percentageToUse) / 100;
+  Widget getTrailingContent(MovementSubmodel movement) {
+    if (widget.showWeightRecommendation) {
+      if (widget.percentageOfMaxWeight != null && widget.maxWeightValue != null) {
+        return weightContainerForRecommendationOrRecent(movement);
+      } else {
+        return _getAlertCircleWithTooltip();
+      }
+    } else {
+      if (MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) != null) {
+        return weightContainerForRecommendationOrRecent(movement);
+      } else {
+        return _getAlertCircleWithTooltip();
+      }
+    }
+  }
+
+  double getRecommendedWeight({int maxWeightValue, int percentageToUse}) => (maxWeightValue * percentageToUse) / 100;
 }
