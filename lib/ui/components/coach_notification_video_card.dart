@@ -42,8 +42,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
               child: OlukoNeumorphism.isNeumorphismDesign
                   ? OlukoBlueHeader(textContent: headerForCard(widget.fileType))
                   : Text(headerForCard(widget.fileType),
-                      overflow: TextOverflow.ellipsis,
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
+                      overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)),
             ),
             Expanded(
               child: Container(
@@ -79,8 +78,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
                                 width: 50,
                                 height: 50,
                                 child: OlukoBlurredButton(
-                                    childContent: Image.asset('assets/courses/play_arrow.png',
-                                        height: 5, width: 5, scale: 4, color: OlukoColors.white)),
+                                    childContent: Image.asset('assets/courses/play_arrow.png', height: 5, width: 5, scale: 4, color: OlukoColors.white)),
                               )
                             : Image.asset(
                                 'assets/self_recording/play_button.png',
@@ -103,7 +101,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
   String headerForCard(CoachFileTypeEnum fileType) {
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
-        return OlukoLocalizations.of(context).find('personalizedVideo');
+        return OlukoLocalizations.of(context).find('annotatedVideos');
       case CoachFileTypeEnum.recommendedVideo:
         return OlukoLocalizations.of(context).find('recommendedVideos');
       case CoachFileTypeEnum.introductionVideo:
