@@ -71,7 +71,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
 
   Padding neumorphicCoachAudioComponent(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Neumorphic(
         style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
           boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),

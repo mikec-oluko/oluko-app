@@ -9,8 +9,7 @@ import 'coach_timeline_panel.dart';
 import 'dart:math' as math;
 
 class CoachSlidingUpPanel extends StatefulWidget {
-  const CoachSlidingUpPanel(
-      {this.content, this.timelineItemsContent, this.isIntroductionVideoComplete, this.currentUser, this.onCurrentUserSelected});
+  const CoachSlidingUpPanel({this.content, this.timelineItemsContent, this.isIntroductionVideoComplete, this.currentUser, this.onCurrentUserSelected});
   final bool isIntroductionVideoComplete;
   final Widget content;
   final List<CoachTimelineGroup> timelineItemsContent;
@@ -37,7 +36,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       backdropEnabled: true,
       padding: EdgeInsets.zero,
       color: OlukoNeumorphismColors.appBackgroundColor,
-      minHeight: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.075 : 50,
+      minHeight: 80,
       panel: Container(
         decoration: BoxDecoration(
           color: OlukoNeumorphismColors.appBackgroundColor,

@@ -461,6 +461,8 @@
     "weightsQuestion" : "What weights did you use?",
     "seeAll": "See all",
     "annotatedVideos": "Annotated Videos",
+    "audioMessageSent": "Audio message sent",
+    "audioMessageFailed": "The message could not be sent",    
     "scheduleApplied": "The schedule has been successfully applied",
     "privacy": "Privacy",
     "pushNotifications": "Push notifications",

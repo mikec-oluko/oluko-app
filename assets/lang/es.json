@@ -459,6 +459,8 @@
     "weightsQuestion" : "Que pesos usaste?",
     "seeAll": "Ver todo",
     "annotatedVideos": "Vídeos anotados",
+    "audioMessageSent": "Mensaje de audio enviado",
+    "audioMessageFailed": "El mensaje no se pudo enviar",
     "scheduleApplied": "Se ha configurado la agenda correctamente",
     "transformationPhotos": "Fotos de Transformación",
     "privacy": "Privacidad",
