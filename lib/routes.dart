@@ -579,6 +579,7 @@ class Routes {
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
           BlocProvider<CommunityTabFriendNotificationBloc>.value(value: _communityTabFriendNotificationBloc),
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderBloc),
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -1296,6 +1297,7 @@ class Routes {
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1324,6 +1326,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
         newRouteView = CoachPage();
         break;
