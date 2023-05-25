@@ -60,7 +60,7 @@ class SegmentImageSection extends StatefulWidget {
   final int totalSegmentStep;
   final String userId;
   final Function(List<Audio> audios, Challenge challenge) audioAction;
-  final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
+  final Function(List<UserResponse> users, List<UserSubmodel> favorites) peopleAction;
   final Function(String segmentId) clockAction;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
@@ -437,7 +437,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return OlukoNeumorphism.isNeumorphismDesign
         ? ((widget.segment.isChallenge && _canStartSegment) || ((widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge))
             ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(
                   useBorder: true,
                   thinPadding: true,
@@ -450,7 +450,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(
                   useBorder: true,
                   thinPadding: true,
@@ -826,7 +826,7 @@ class PeopleAndIncludedInButtons extends StatelessWidget {
       children: [
         if (state != null)
           GestureDetector(
-            onTap: () => widget.peopleAction(state.users, state.favoriteUsers),
+            onTap: () => widget.peopleAction(state.userResponseList, state.favoriteUsers),
             child: PeopleSection(peopleQty: qty, isChallenge: widget.segment.isChallenge),
           )
         else
