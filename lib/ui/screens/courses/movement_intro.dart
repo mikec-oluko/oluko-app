@@ -41,36 +41,43 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03';
   List<Movement> referenceMovements = [
     Movement(
-        name: 'Airsquats',
-        image: 'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',),
+      name: 'Airsquats',
+      image: 'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',
+    ),
     Movement(
-        name: 'Body Building',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',),
+      name: 'Body Building',
+      image:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',
+    ),
     Movement(
-        name: 'Triceps',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a',),
+      name: 'Triceps',
+      image:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a',
+    ),
     Movement(
-        name: 'Yoga',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6',),
+      name: 'Yoga',
+      image:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6',
+    ),
     Movement(
-        name: 'Body Building',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',),
+      name: 'Body Building',
+      image:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',
+    ),
   ];
   List<Course> referenceCourses = [
     Course(
-        id: '1',
-        name: 'Builder Booty',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_10.png?alt=media&token=e48354c6-6670-472a-9789-516287543cb4',),
+      id: '1',
+      name: 'Builder Booty',
+      image:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_10.png?alt=media&token=e48354c6-6670-472a-9789-516287543cb4',
+    ),
     Course(
-        id: '2',
-        name: 'Marathon Prep',
-        image:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',),
+      id: '2',
+      name: 'Marathon Prep',
+      image:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42',
+    ),
   ];
   // ---------
 
@@ -112,9 +119,11 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             ? const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
             : BoxDecoration(
                 image: DecorationImage(
-                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
-                    fit: BoxFit.cover,
-                    image: CachedNetworkImageProvider(backgroundImageUrl),),),
+                  colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
+                  fit: BoxFit.cover,
+                  image: CachedNetworkImageProvider(backgroundImageUrl),
+                ),
+              ),
         width: ScreenUtils.width(context),
         height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) : ScreenUtils.height(context) - toolbarHeight,
         child: OlukoNeumorphism.isNeumorphismDesign ? _viewBodyNeumorphic() : _viewBody(),
@@ -123,179 +132,200 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   }
 
   Widget _viewBody() {
-    return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      if (movementInfoState is MovementInfoSuccess && _movementSubmodel.id == movementInfoState.movement.id) {
-        if (_movementInfoSuccess == null) {
-          _movementInfoSuccess = movementInfoState;
-          movementInfoState.movementVariants.forEach((element) {
-            tabs.add(element.name);
-            _videoKeys.add(GlobalKey());
-            _videoControllers.add(null);
-          });
+    return BlocBuilder<MovementInfoBloc, MovementInfoState>(
+      builder: (context, movementInfoState) {
+        if (movementInfoState is MovementInfoSuccess && _movementSubmodel.id == movementInfoState.movement.id) {
+          if (_movementInfoSuccess == null) {
+            _movementInfoSuccess = movementInfoState;
+            movementInfoState.movementVariants.forEach((element) {
+              tabs.add(element.name);
+              _videoKeys.add(GlobalKey());
+              _videoControllers.add(null);
+            });
 
-          tabController = TabController(length: tabs.length, vsync: this);
-        }
-        return Container(
-          child: ListView(
-            addAutomaticKeepAlives: false,
-            addRepaintBoundaries: false,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            tabController = TabController(length: tabs.length, vsync: this);
+          }
+          return Container(
+            child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: MovementUtils.movementTitle(_movementSubmodel.name),
-                          ),
-                          const SizedBox(height: 25),
-                          Column(
-                            children: [
-                              Container(
-                                width: ScreenUtils.width(context),
-                                decoration: const BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
-                                child: TabBar(
-                                  isScrollable: true,
-                                  onTap: (index) => setState(() {
-                                    setState(() {
-                                      tabController.index = index;
-                                    });
-                                  }),
-                                  controller: tabController,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  indicator: const BoxDecoration(color: Colors.white),
-                                  tabs: _getTabs(),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: MovementUtils.movementTitle(_movementSubmodel.name),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Builder(builder: (context) {
-                            if (tabController.index == 0) {
-                              return _firstTab(_movementInfoSuccess.movement);
-                            } else {
-                              return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
-                            }
-                          },)
+                                const SizedBox(height: 25),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: ScreenUtils.width(context),
+                                      decoration: const BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
+                                      child: TabBar(
+                                        isScrollable: true,
+                                        onTap: (index) => setState(() {
+                                          setState(() {
+                                            tabController.index = index;
+                                          });
+                                        }),
+                                        controller: tabController,
+                                        indicatorSize: TabBarIndicatorSize.tab,
+                                        indicator: const BoxDecoration(color: Colors.white),
+                                        tabs: _getTabs(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Builder(
+                                  builder: (context) {
+                                    if (tabController.index == 0) {
+                                      return _firstTab(_movementInfoSuccess.movement);
+                                    } else {
+                                      return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    )
-                  ],),
-                ],),
-              ),
-            ],
-          ),
-        );
-      } else {
-        return OlukoCircularProgressIndicator();
-      }
-    },);
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return OlukoCircularProgressIndicator();
+        }
+      },
+    );
   }
 
   Widget _viewBodyNeumorphic() {
-    return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      if (movementInfoState is MovementInfoSuccess && _movementSubmodel.id == movementInfoState.movement.id) {
-        if (_movementInfoSuccess == null) {
-          _movementInfoSuccess = movementInfoState;
-          movementInfoState.movementVariants.forEach((element) {
-            tabs.add(element.name);
-            _videoKeys.add(GlobalKey());
-            _videoControllers.add(null);
-          });
-          tabController = TabController(length: tabs.length, vsync: this);
-        }
-        return Container(
-          child: ListView(
-            addAutomaticKeepAlives: false,
-            addRepaintBoundaries: false,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<MovementInfoBloc, MovementInfoState>(
+      builder: (context, movementInfoState) {
+        if (movementInfoState is MovementInfoSuccess && _movementSubmodel.id == movementInfoState.movement.id) {
+          if (_movementInfoSuccess == null) {
+            _movementInfoSuccess = movementInfoState;
+            movementInfoState.movementVariants.forEach((element) {
+              tabs.add(element.name);
+              _videoKeys.add(GlobalKey());
+              _videoControllers.add(null);
+            });
+            tabController = TabController(length: tabs.length, vsync: this);
+          }
+          return Container(
+            child: ListView(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Container(
-                                    height: 55,
-                                    width: 55,
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.pop(context),
-                                      child: OlukoBlurredButton(
-                                        childContent: Image.asset(
-                                          'assets/courses/left_back_arrow.png',
-                                          scale: 3.5,
+                                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10.0),
+                                        child: Container(
+                                          height: 55,
+                                          width: 55,
+                                          child: GestureDetector(
+                                            onTap: () => Navigator.pop(context),
+                                            child: OlukoBlurredButton(
+                                              childContent: Image.asset(
+                                                'assets/courses/left_back_arrow.png',
+                                                scale: 3.5,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                      SizedBox(
+                                        width: ScreenUtils.width(context) * 0.77,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: MovementUtils.movementTitle(_movementSubmodel.name),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const OlukoNeumorphicDivider(
+                                  isFadeOut: true,
+                                ),
+                                const SizedBox(height: 25),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: ScreenUtils.width(context),
+                                      child: TabBar(
+                                        isScrollable: true,
+                                        onTap: (index) => setState(() {
+                                          setState(() {
+                                            tabController.index = index;
+                                          });
+                                        }),
+                                        controller: tabController,
+                                        indicatorSize: TabBarIndicatorSize.label,
+                                        indicator:
+                                            const BoxDecoration(border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
+                                        tabs: _getTabs(),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: ScreenUtils.width(context) * 0.77,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: MovementUtils.movementTitle(_movementSubmodel.name),
-                                  ),
-                                ),
+                                Builder(
+                                  builder: (context) {
+                                    if (tabController.index == 0) {
+                                      return _firstTab(_movementInfoSuccess.movement);
+                                    } else {
+                                      return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
+                                    }
+                                  },
+                                )
                               ],
                             ),
-                          ),
-                          const OlukoNeumorphicDivider(
-                            isFadeOut: true,
-                          ),
-                          const SizedBox(height: 25),
-                          Column(
-                            children: [
-                              Container(
-                                width: ScreenUtils.width(context),
-                                child: TabBar(
-                                  isScrollable: true,
-                                  onTap: (index) => setState(() {
-                                    setState(() {
-                                      tabController.index = index;
-                                    });
-                                  }),
-                                  controller: tabController,
-                                  indicatorSize: TabBarIndicatorSize.label,
-                                  indicator: const BoxDecoration(border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
-                                  tabs: _getTabs(),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Builder(builder: (context) {
-                            if (tabController.index == 0) {
-                              return _firstTab(_movementInfoSuccess.movement);
-                            } else {
-                              return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
-                            }
-                          },)
+                          )
                         ],
                       ),
-                    )
-                  ],),
-                ],),
-              ),
-            ],
-          ),
-        );
-      } else {
-        return OlukoCircularProgressIndicator();
-      }
-    },);
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return OlukoCircularProgressIndicator();
+        }
+      },
+    );
   }
 
   Widget courseRow(Course course) {
@@ -309,14 +339,18 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             Column(
               children: [
                 GestureDetector(
-                    onTap: () {
-                      if (_videoControllers[tabController.index] != null) {
-                        _videoControllers[tabController.index].pause();
-                      }
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false},);
-                    },
-                    child: Container(height: 100, child: CachedNetworkImage(imageUrl: course.image)),)
+                  onTap: () {
+                    if (_videoControllers[tabController.index] != null) {
+                      _videoControllers[tabController.index].pause();
+                    }
+                    Navigator.pushNamed(
+                      context,
+                      routeLabels[RouteEnum.courseMarketing],
+                      arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false},
+                    );
+                  },
+                  child: Container(height: 100, child: CachedNetworkImage(imageUrl: course.image)),
+                )
               ],
             ),
             Padding(
@@ -377,17 +411,22 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             Column(
               children: [
                 GestureDetector(
-                    onTap: () {
-                      if (_videoControllers[tabController.index] != null) {
-                        _videoControllers[tabController.index].pause();
-                      }
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false},);
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 150,
-                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: CachedNetworkImage(imageUrl: course.image)),),)
+                  onTap: () {
+                    if (_videoControllers[tabController.index] != null) {
+                      _videoControllers[tabController.index].pause();
+                    }
+                    Navigator.pushNamed(
+                      context,
+                      routeLabels[RouteEnum.courseMarketing],
+                      arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false},
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 150,
+                    child: ClipRRect(borderRadius: BorderRadius.circular(5), child: CachedNetworkImage(imageUrl: course.image)),
+                  ),
+                )
               ],
             ),
           ],
@@ -399,16 +438,19 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   List<Widget> _videoPlayer(String videoUrl, int index) {
     _clearUnusedVideoControllers(index);
     List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayer(
+    widgets.add(
+      OlukoVideoPlayer(
         key: _videoKeys[index],
         videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => setState(() {
-              _videoControllers[index] = chewieController;
-            }),),);
+          _videoControllers[index] = chewieController;
+        }),
+      ),
+    );
     // if (_videoControllers[index] == null) {
     //   widgets.add(Center(child: CircularProgressIndicator()));
-    // } 
+    // }
     return widgets;
   }
 
@@ -422,47 +464,57 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   Widget _firstTab(Movement movement) {
     return Container(
-      child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: OlukoNeumorphism.isNeumorphismDesign
-              ? Container(
-                  height: 180,
-                  child: ClipRRect(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: OlukoNeumorphism.isNeumorphismDesign
+                ? Container(
+                    height: 180,
+                    child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       child: Stack(
-                          children: _videoPlayer(
-                              VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index,),),),)
-              : Container(
-                  height: 200,
-                  child: Stack(
+                        children: _videoPlayer(
+                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video),
+                          tabController.index,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    height: 200,
+                    child: Stack(
                       children: _videoPlayer(
-                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video), tabController.index,),),),
-        ),
-        Padding(
-          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(15.0) : const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text(
-                  movement.description,
-                  style: OlukoNeumorphism.isNeumorphismDesign ? OlukoFonts.olukoMediumFont(customColor: Colors.grey) : OlukoFonts.olukoMediumFont(),
-                ),
-              ),
-              Row(
-                children: [
-                  TitleBody(
-                    OlukoLocalizations.get(context, 'referenceMovements'),
-                    bold: true,
+                        VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: movement.videoHls, videoUrl: movement.video),
+                        tabController.index,
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
+          ),
+          Padding(
+            padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(15.0) : const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text(
+                    movement.description,
+                    style: OlukoNeumorphism.isNeumorphismDesign ? OlukoFonts.olukoMediumFont(customColor: Colors.grey) : OlukoFonts.olukoMediumFont(),
+                  ),
+                ),
+                Row(
                   children: [
-                    MovementItemBubblesNeumorphic(
+                    TitleBody(
+                      OlukoLocalizations.get(context, 'referenceMovements'),
+                      bold: true,
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Row(
+                    children: [
+                      MovementItemBubblesNeumorphic(
                         referenceMovementsSection: true,
                         onPressed: (context, movement) {
                           if (_videoControllers[tabController.index] != null) {
@@ -471,11 +523,92 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                         },
                         content: _movementInfoSuccess.relatedMovements,
-                        width: ScreenUtils.width(context) / 1.2,),
+                        width: ScreenUtils.width(context) / 1.2,
+                      ),
+                    ],
+                  ),
+                ),
+                if (_existRelatedCourses)
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TitleBody(
+                          OlukoLocalizations.get(context, 'referenceCourses'),
+                          bold: true,
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  const SizedBox.shrink(),
+                if (OlukoNeumorphism.isNeumorphismDesign)
+                  !_existRelatedCourses
+                      ? const SizedBox.shrink()
+                      : Container(
+                          alignment: Alignment.centerLeft,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: _movementInfoSuccess.relatedCourses
+                                  .map(
+                                    (Course course) => Padding(
+                                      padding: const EdgeInsets.only(right: 20.0),
+                                      child: course != null ? neumorphicCourseRow(course) : const SizedBox(),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        )
+                else
+                  !_existRelatedCourses
+                      ? const SizedBox.shrink()
+                      : Column(
+                          children: _movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList(),
+                        ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  bool get _existRelatedCourses => _movementInfoSuccess.relatedCourses.isNotEmpty;
+
+  _secondTab() {
+    return Container(
+      child: Column(
+        children: [
+          Container(height: 200, child: Stack(children: _videoPlayer(_secondTabVideoUrl, 1))),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text(
+                    _movementInfoSuccess.movement.description,
+                    style: OlukoFonts.olukoMediumFont(),
+                  ),
+                ),
+                Row(
+                  children: [
+                    TitleBody(
+                      OlukoLocalizations.get(context, 'referenceMovements'),
+                      bold: true,
+                    ),
                   ],
                 ),
-              ),
-              if (_existRelatedCourses)
+                /*Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  children: [
+                    MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
+                  ],
+                ),
+              ),*/
                 Row(
                   children: [
                     Padding(
@@ -486,82 +619,13 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       ),
                     ),
                   ],
-                )
-              else
-                const SizedBox.shrink(),
-              if (OlukoNeumorphism.isNeumorphismDesign)
-                !_existRelatedCourses
-                    ? const SizedBox.shrink()
-                    : SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                            children: _movementInfoSuccess.relatedCourses
-                                .map((Course course) => Padding(
-                                      padding: const EdgeInsets.only(right: 20.0),
-                                      child: course != null ? neumorphicCourseRow(course) : const SizedBox(),
-                                    ),)
-                                .toList(),),
-                      )
-              else
-                !_existRelatedCourses
-                    ? const SizedBox.shrink()
-                    : Column(children: _movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
-            ],
-          ),
-        )
-      ],),
-    );
-  }
-
-  bool get _existRelatedCourses => _movementInfoSuccess.relatedCourses.isNotEmpty;
-
-  _secondTab() {
-    return Container(
-      child: Column(children: [
-        Container(height: 200, child: Stack(children: _videoPlayer(_secondTabVideoUrl, 1))),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text(
-                  _movementInfoSuccess.movement.description,
-                  style: OlukoFonts.olukoMediumFont(),
                 ),
-              ),
-              Row(
-                children: [
-                  TitleBody(
-                    OlukoLocalizations.get(context, 'referenceMovements'),
-                    bold: true,
-                  ),
-                ],
-              ),
-              /*Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  children: [
-                    MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
-                  ],
-                ),
-              ),*/
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TitleBody(
-                      OlukoLocalizations.get(context, 'referenceCourses'),
-                      bold: true,
-                    ),
-                  ),
-                ],
-              ),
-              Column(children: referenceCourses.map((Course course) => courseRow(course)).toList()),
-            ],
-          ),
-        )
-      ],),
+                Column(children: referenceCourses.map((Course course) => courseRow(course)).toList()),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -572,15 +636,16 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
         child: Text(
           OlukoNeumorphism.isNeumorphismDesign ? name : name.toUpperCase(),
           style: OlukoFonts.olukoMediumFont(
-              customColor: disabled != null && disabled == true
-                  ? Colors.grey.shade700
-                  : tabController.index == index
-                      ? OlukoNeumorphism.isNeumorphismDesign
-                          ? Colors.white
-                          : OlukoColors.black
-                      : OlukoNeumorphism.isNeumorphismDesign
-                          ? Colors.grey
-                          : Colors.white,),
+            customColor: disabled != null && disabled == true
+                ? Colors.grey.shade700
+                : tabController.index == index
+                    ? OlukoNeumorphism.isNeumorphismDesign
+                        ? Colors.white
+                        : OlukoColors.black
+                    : OlukoNeumorphism.isNeumorphismDesign
+                        ? Colors.grey
+                        : Colors.white,
+          ),
         ),
       ),
     );
