@@ -210,10 +210,8 @@ class OlukoNeumorphism {
         shape: NeumorphicShape.concave,
         lightSource: LightSource.lerp(LightSource.top, LightSource.bottomRight, 1),
         boxShape: NeumorphicBoxShape.rect(),
-        shadowDarkColorEmboss: Color.fromARGB(0, 32, 36, 39),
-        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-        surfaceIntensity: 1,
-        shadowDarkColor: Color.fromARGB(255, 255, 0, 0));
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,);
   }
 
   static BoxDecoration boxDecorationForKeyboard() {
