@@ -356,6 +356,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         coursesCompleted: _archivementsDefaultValue,
         classesCompleted: _archivementsDefaultValue,
         currentUser: widget.currentUser,
+        isOwner: _isOwner,
       );
     } else {
       return UserProfileProgress(
@@ -364,6 +365,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         classesCompleted: widget.userStats.completedClasses.toString(),
         isMinimalRequested: widget.minimalRequested,
         currentUser: widget.currentUser,
+        isOwner: _isOwner,
       );
     }
   }
