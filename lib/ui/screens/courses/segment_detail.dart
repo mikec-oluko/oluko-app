@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
+import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -23,21 +25,34 @@ import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/global_service.dart';
+import 'package:oluko_app/ui/components/coach_request_content.dart';
 import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
+import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_clocks_utils.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
@@ -83,13 +98,24 @@ class _SegmentDetailState extends State<SegmentDetail> {
   int segmentIndexToUse;
   List<Audio> _currentAudios;
   AudioPlayer audioPlayer = AudioPlayer();
+  bool isFinishedBefore = false;
+  bool _canStartSegment = true;
+  CoachRequest _coachRequest;
+  ValueNotifier<int> dotsIndex;
+  ValueNotifier<bool> panelState;
+  bool _isVideoPlaying = false;
+  bool showLowerWidgets = true;
 
+  GlobalService _globalService = GlobalService();
   @override
   void initState() {
     _coachRequests = [];
     segmentIndexToUse = widget.segmentIndex;
     currentSegmentStep = widget.segmentIndex + 1;
+    dotsIndex = ValueNotifier(currentSegmentStep);
+    panelState = ValueNotifier(showLowerWidgets);
     totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
+    _canStartSegment = canStartSegment();
     setSegments();
     super.initState();
   }
@@ -129,11 +155,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
         child: Stack(
-          children: [
-            imageSection(),
-            _body(),
-            slidingUpPanelComponent(),
-          ],
+          children: [imageSection(), _body(), slidingUpPanelComponent(), _segmentStepsDotsComponent(), _segmentStartButton()],
         ),
       ),
     );
@@ -160,7 +182,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
       }
       return Container(
         child: Column(
-          children: [(_segments.length - 1 >= segmentIndexToUse) ? getCarouselSlider() : const SizedBox()],
+          children: [if (_segments.length - 1 >= segmentIndexToUse) getCarouselSlider() else const SizedBox()],
         ),
       );
     });
@@ -229,6 +251,13 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<ChallengeAudioBloc>(context).markAudioAsDeleted(challenge, audiosUpdated, _currentAudios);
   }
 
+  bool canStartSegment() {
+    if (currentSegmentStep < 2) return true;
+    return widget.classSegments[segmentIndexToUse].isChallenge
+        ? widget.courseEnrollment.classes[widget.classIndex].segments[currentSegmentStep - 2].completedAt != null
+        : true;
+  }
+
   Widget downButton() {
     return GestureDetector(
         onTap: () => panelController.close(),
@@ -270,38 +299,294 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getCarouselSlider() {
-    return CarouselSlider(
-      items: getSegmentList(),
-      options: CarouselOptions(
-          height: ScreenUtils.height(context),
-          autoPlay: false,
-          enlargeCenterPage: false,
-          disableCenter: true,
-          enableInfiniteScroll: false,
-          initialPage: segmentIndexToUse,
-          viewportFraction: 1),
-    );
-  }
-
-  List<Widget> getSegmentList() {
-    List<Widget> segmentWidgets = [];
-    for (var i = 0; i < _segments.length; i++) {
-      segmentWidgets.add(challengeCarouselSection(i));
-    }
-    return segmentWidgets;
-  }
-
-  Widget challengeCarouselSection(int i) {
-    return Container(
-        height: ScreenUtils.height(context),
-        child: SlidingUpPanel(
+    return Column(
+      children: [
+        topButtons(),
+        _classTitleComponent(),
+        Container(
+          height: 700,
+          child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             minHeight: 90,
             maxHeight: 185,
+            onPanelSlide: (value) => value > 0 ? panelState.value = false : panelState.value = true,
             collapsed: CollapsedMovementVideosSection(action: getAction()),
-            panel: movementsPanel(i),
-            body: getSegmentImageSection(i)));
+            panel: movementsPanel(),
+            body: Column(
+              children: [
+                CarouselSlider(
+                  items: getSegmentList(),
+                  options: CarouselOptions(
+                      onPageChanged: (index, reason) => dotsIndex.value = index + 1,
+                      height: ScreenUtils.height(context),
+                      autoPlay: false,
+                      enlargeCenterPage: false,
+                      disableCenter: true,
+                      enableInfiniteScroll: false,
+                      initialPage: segmentIndexToUse,
+                      viewportFraction: 1),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Positioned _segmentStartButton() {
+    return Positioned(
+        bottom: 100,
+        child: Align(
+            child: SizedBox(
+                width: ScreenUtils.width(context),
+                child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
+                  if (state is ChallengeHistoricalResult) {
+                    isFinishedBefore = state.wasCompletedBefore;
+                    _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
+                  }
+                  return ValueListenableBuilder(
+                    valueListenable: panelState,
+                    builder: (context, state, child) {
+                      if (state as bool) {
+                        return startWorkoutsButton(isFinishedBefore);
+                      }
+                      return SizedBox();
+                    },
+                  );
+                }))));
+  }
+
+  Widget _segmentStepsDotsComponent() => Positioned(
+      bottom: 150,
+      left: 50,
+      right: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ValueListenableBuilder(
+            valueListenable: panelState,
+            builder: (context, state, child) {
+              if (state as bool) {
+                return ValueListenableBuilder(
+                  valueListenable: dotsIndex,
+                  builder: (context, index, child) {
+                    return SegmentStepSection(currentSegmentStep: index as int, totalSegmentStep: totalSegmentStep);
+                  },
+                );
+              } else
+                return SizedBox();
+            },
+          ),
+        ],
+      ));
+  Widget topButtons() {
+    EdgeInsetsGeometry padding;
+    if (_coachRequests != null) {
+      padding = const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+    } else {
+      padding = const EdgeInsets.only(
+          top: OlukoNeumorphism.isNeumorphismDesign ? 60 : 15,
+          left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
+          right: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+    }
+    return Padding(
+      padding: padding,
+      child: Row(
+        children: [
+          if (!OlukoNeumorphism.isNeumorphismDesign)
+            IconButton(
+              icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+                onPressedAction();
+              },
+            )
+          else
+            OlukoNeumorphicCircleButton(
+              customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
+              onPressed: () {
+                Navigator.pop(context);
+                onPressedAction();
+                ;
+              },
+            ),
+          const Expanded(child: SizedBox()),
+          if (!_isVideoPlaying)
+            const SizedBox()
+          else
+            GestureDetector(
+              onTap: () => changeVideoState(),
+              child: SizedBox(
+                height: 46,
+                width: 46,
+                child: OlukoBlurredButton(
+                  childContent: Image.asset(
+                    'assets/courses/white_cross.png',
+                    scale: 3.5,
+                  ),
+                ),
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
+  Widget startWorkoutsButton(bool isFinihedBefore) {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? ((widget.classSegments[segmentIndexToUse].isChallenge && _canStartSegment) ||
+                ((widget.classSegments[segmentIndexToUse].isChallenge && isFinihedBefore) || !widget.classSegments[segmentIndexToUse].isChallenge))
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
+                child: OlukoNeumorphicPrimaryButton(
+                  useBorder: true,
+                  thinPadding: true,
+                  isExpanded: false,
+                  title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
+                  onPressed: () {
+                    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
+                    navigateToSegmentWithoutRecording();
+                  },
+                ),
+              )
+            : Padding(
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
+                child: OlukoNeumorphicPrimaryButton(
+                  useBorder: true,
+                  thinPadding: true,
+                  isExpanded: false,
+                  isDisabled: true,
+                  title: OlukoLocalizations.get(context, 'locked'),
+                  onPressed: () {},
+                ),
+              )
+        : Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                OlukoPrimaryButton(
+                  title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
+                  color: OlukoColors.primary,
+                  onPressed: () {
+                    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
+
+                    if (_coachRequest != null) {
+                      showCoachDialog();
+                    } else {
+                      navigateToSegmentWithoutRecording();
+                    }
+                  },
+                )
+              ],
+            ),
+          );
+  }
+
+  void showCoachDialog() {
+    BottomDialogUtils.showBottomDialog(
+      context: context,
+      content: CoachRequestContent(
+        name: _coach.firstName,
+        image: _coach.avatar,
+        onNotRecordingAction: navigateToSegmentWithoutRecording,
+        onRecordingAction: navigateToSegmentWithRecording,
+      ),
+    );
+  }
+
+  navigateToSegmentWithRecording() {
+    if (_globalService.videoProcessing) {
+      DialogUtils.getDialog(
+          context,
+          [
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+                ))
+          ],
+          showExitButton: true);
+    } else {
+      Navigator.pushNamed(
+        context,
+        routeLabels[RouteEnum.segmentCameraPreview],
+        arguments: {
+          'segmentIndex': currentSegmentStep - 1,
+          'classIndex': widget.classIndex,
+          'coach': _coach,
+          'courseEnrollment': widget.courseEnrollment,
+          'courseIndex': widget.courseIndex,
+          'segments': _segments,
+        },
+      );
+    }
+  }
+
+  navigateToSegmentWithoutRecording() {
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexToUse].initialTimer);
+    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+  }
+
+  CoachRequest getSegmentCoachRequest(String segmentId) {
+    for (var i = 0; i < _coachRequests.length; i++) {
+      if (_coachRequests[i].segmentId == segmentId) {
+        return _coachRequests[i];
+      }
+    }
+    return null;
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': segmentIndexToUse - 1,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
+      'workoutType': WorkoutType.segment,
+      'coach': _coach,
+      'segments': widget.classSegments,
+      'fromChallenge': widget.fromChallenge,
+      'coachRequest': _coachRequest
+    };
+  }
+
+  Widget _classTitleComponent() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 10),
+          child: Text(
+            _classTitle(),
+            style: _classTitle().length > 25
+                ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+                : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void changeVideoState() {
+    setState(() {
+      _isVideoPlaying = !_isVideoPlaying;
+    });
+  }
+
+  String _classTitle() => widget.courseEnrollment.classes[widget.classIndex].name;
+  List<Widget> getSegmentList() {
+    List<Widget> segmentWidgets = [];
+    for (var i = 0; i < _segments.length; i++) {
+      segmentWidgets.add(Wrap(children: [
+        getSegmentImageSection(i),
+      ]));
+    }
+    return segmentWidgets;
   }
 
   Widget getSegmentImageSection(int i) {
@@ -353,10 +638,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
             (_coach == null &&
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id) ||
-            (_coach != null && coachRequest.coachId == _coach.id &&
+            (_coach != null &&
+                coachRequest.coachId == _coach.id &&
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
         .toList();
+    _coachRequest = getSegmentCoachRequest(widget.classSegments[currentSegmentStep - 1].id);
   }
 
   void onPressedAction() {
@@ -387,13 +674,19 @@ class _SegmentDetailState extends State<SegmentDetail> {
     ;
   }
 
-  Widget movementsPanel(int i) {
+  Widget movementsPanel() {
     if (_segments.length - 1 >= segmentIndexToUse) {
-      return MovementVideosSection(
-          action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
-          segment: _segments[i],
-          onPressedMovement: (BuildContext context, MovementSubmodel movementSubmodel) =>
-              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movementSubmodel}));
+      return ValueListenableBuilder(
+        valueListenable: dotsIndex,
+        builder: (context, index, child) {
+          return MovementVideosSection(
+            action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
+            segment: _segments[(index as int) - 1],
+            onPressedMovement: (BuildContext context, MovementSubmodel movementSubmodel) =>
+                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movementSubmodel}),
+          );
+        },
+      );
     }
     return const SizedBox();
   }

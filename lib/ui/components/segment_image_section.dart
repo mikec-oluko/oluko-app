@@ -106,7 +106,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   bool isVideoVisible = false;
   bool _isVideoPlaying = false;
   CoachRequest _coachRequest;
-  bool _canStartSegment = true;
   List<Audio> _challengeAudios;
   int _audioQty;
   bool isFinishedBefore = false;
@@ -118,7 +117,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   void initState() {
     _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
-    _canStartSegment = canStartSegment();
     if (widget.segment.isChallenge) {
       BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(segmentId: widget.segment.id, userId: widget.userId);
     }
@@ -131,11 +129,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       movementsToDisplayWeight = MovementUtils.getMovementsWithWeights(sections: widget.segment.sections, enrollmentMovements: enrollmentMovements);
     });
     super.initState();
-  }
-
-  bool canStartSegment() {
-    if (widget.currentSegmentStep < 2) return true;
-    return widget.segment.isChallenge ? widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null : true;
   }
 
   @override
@@ -162,11 +155,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       children: [
         Column(
           children: [
-            topButtons(),
             const SizedBox(
               height: 20,
             ),
-            _classTitleComponent(),
             SizedBox(
               height: ScreenUtils.height(context) / 1.3,
               width: ScreenUtils.width(context),
@@ -188,8 +179,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             ),
           ],
         ),
-        _segmentStepsDotsComponent(),
-        _segmentStartButton(),
       ],
     );
   }
@@ -225,35 +214,27 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       children: [
         Column(
           children: [
-            topButtons(),
             const SizedBox(
               height: 20,
             ),
-            _classTitleComponent(),
             SizedBox(
-              height: ScreenUtils.height(context) / 1.3,
+              height: ScreenUtils.height(context) * 0.6,
               width: ScreenUtils.width(context),
               child: ListView(
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                physics: AlwaysScrollableScrollPhysics(),
                 children: [
                   SizedBox(
                     height: 20,
                   ),
                   _segmentCardComponent(),
-                  Container(
-                    height: 200,
-                  ),
                 ],
               ),
             ),
           ],
         ),
-        _segmentStepsDotsComponent(),
-        _segmentStartButton(),
       ],
     );
   }
@@ -265,38 +246,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Positioned _segmentStartButton() {
-    return Positioned(
-        bottom: 100,
-        child: Align(
-            child: SizedBox(
-                width: ScreenUtils.width(context),
-                child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
-                  if (state is ChallengeHistoricalResult) {
-                    isFinishedBefore = state.wasCompletedBefore;
-                    _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
-                  }
-                  return startWorkoutsButton(isFinishedBefore);
-                }))));
-  }
-
-  Positioned _segmentStepsDotsComponent() => Positioned(
-      bottom: 150,
-      left: 50,
-      right: 50,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
-        ],
-      ));
-
   Widget _segmentImageSectionChallenge() {
     return Stack(
       children: [
-        _classTitleComponent(),
         _segmentCardComponent(),
-        topButtons(),
         if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
       ],
     );
@@ -432,57 +385,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
-  Widget startWorkoutsButton(bool isFinihedBefore) {
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? ((widget.segment.isChallenge && _canStartSegment) || ((widget.segment.isChallenge && isFinihedBefore) || !widget.segment.isChallenge))
-            ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
-                child: OlukoNeumorphicPrimaryButton(
-                  useBorder: true,
-                  thinPadding: true,
-                  isExpanded: false,
-                  title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
-                  onPressed: () {
-                    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
-                    navigateToSegmentWithoutRecording();
-                  },
-                ),
-              )
-            : Padding(
-                padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
-                child: OlukoNeumorphicPrimaryButton(
-                  useBorder: true,
-                  thinPadding: true,
-                  isExpanded: false,
-                  isDisabled: true,
-                  title: OlukoLocalizations.get(context, 'locked'),
-                  onPressed: () {},
-                ),
-              )
-        : Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                OlukoPrimaryButton(
-                  title: OlukoNeumorphism.isNeumorphismDesign ? OlukoLocalizations.get(context, 'start') : OlukoLocalizations.get(context, 'startWorkout'),
-                  color: OlukoColors.primary,
-                  onPressed: () {
-                    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
-
-                    if (_coachRequest != null) {
-                      showCoachDialog();
-                    } else {
-                      navigateToSegmentWithoutRecording();
-                    }
-                  },
-                )
-              ],
-            ),
-          );
-  }
-
   void showCoachDialog() {
     BottomDialogUtils.showBottomDialog(
       context: context,
@@ -551,64 +453,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       'fromChallenge': widget.fromChallenge,
       'coachRequest': _coachRequest
     };
-  }
-
-  Widget topButtons() {
-    EdgeInsetsGeometry padding;
-    if (_coachRequest != null) {
-      padding = const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
-    } else {
-      padding = const EdgeInsets.only(
-          top: OlukoNeumorphism.isNeumorphismDesign ? 60 : 15,
-          left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
-          right: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
-    }
-    return Padding(
-      padding: padding,
-      child: Row(
-        children: [
-          if (widget.showBackButton)
-            !OlukoNeumorphism.isNeumorphismDesign
-                ? IconButton(
-                    icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      if (widget.onPressed != null) {
-                        widget.onPressed();
-                      }
-                    },
-                  )
-                : OlukoNeumorphicCircleButton(
-                    customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      if (widget.onPressed != null) {
-                        widget.onPressed();
-                      }
-                    },
-                  )
-          else
-            const SizedBox(),
-          const Expanded(child: SizedBox()),
-          if (!_isVideoPlaying)
-            const SizedBox()
-          else
-            GestureDetector(
-              onTap: () => changeVideoState(),
-              child: SizedBox(
-                height: 46,
-                width: 46,
-                child: OlukoBlurredButton(
-                  childContent: Image.asset(
-                    'assets/courses/white_cross.png',
-                    scale: 3.5,
-                  ),
-                ),
-              ),
-            )
-        ],
-      ),
-    );
   }
 
   Widget getCameraIcon() {
