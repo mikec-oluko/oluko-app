@@ -234,17 +234,17 @@ class CourseEnrollmentRepository {
     final List<EnrollmentMovement> movements = [];
     bool storeWeights = false;
     int percentOfMaxWeight;
-    final promises = section.movements.map((movement) async {
-      if (movement.reference != null) {
-        final DocumentSnapshot qs = await movement.reference.get();
-        final Movement movementRef = Movement.fromJson(qs.data() as Map<String, dynamic>);
-        storeWeights = movementRef.storeWeights;
-        percentOfMaxWeight = movement.percentOfMaxWeight;
+    final promises = section.movements.map((movementFromEnrollmentSegment) async {
+      if (movementFromEnrollmentSegment.reference != null) {
+        final DocumentSnapshot qs = await movementFromEnrollmentSegment.reference.get();
+        final Movement movement = Movement.fromJson(qs.data() as Map<String, dynamic>);
+        storeWeights = movement.storeWeights;
+        percentOfMaxWeight = movementFromEnrollmentSegment.percentOfMaxWeight;
       }
       movements.add(EnrollmentMovement(
-          id: movement.id,
-          reference: movement.reference,
-          name: movement.name,
+          id: movementFromEnrollmentSegment.id,
+          reference: movementFromEnrollmentSegment.reference,
+          name: movementFromEnrollmentSegment.name,
           weight: null,
           storeWeights: storeWeights,
           percentOfMaxWeight: percentOfMaxWeight));

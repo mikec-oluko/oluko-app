@@ -377,6 +377,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 Padding(
                     padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
                     child: SegmentSummaryComponent(
+                      segmentId: widget.segment.id,
                       enrollmentMovements: enrollmentMovements,
                       sectionsFromSegment: widget.segment.sections,
                       useImperialSystem: widget.currentUser.useImperialSystem,

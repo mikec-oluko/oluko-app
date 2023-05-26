@@ -168,6 +168,7 @@ class _State extends State<ClocksLowerSection> {
             child: SegmentSummaryComponent(
               segmentIndex: widget.segmentIndex,
               segmentSaveMaxWeights: isSegmentSetsMaxWeights(),
+              segmentId: getCurrentSegmentId(),
               classIndex: widget.classIndex,
               isResults: true,
               useImperialSystem: widget.currentUser.useImperialSystem,
@@ -187,6 +188,8 @@ class _State extends State<ClocksLowerSection> {
   }
 
   bool isSegmentSetsMaxWeights() => widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].setsMaxWeight;
+
+  String getCurrentSegmentId() => widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id;
 
   void getMovementsWithWeightRequired() {
     enrollmentMovements = MovementUtils.getMovementsFromEnrollmentSegment(courseEnrollmentSections: getCourseEnrollmentSegment().sections);

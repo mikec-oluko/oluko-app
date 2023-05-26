@@ -22,6 +22,7 @@ import 'package:oluko_app/utils/segment_utils.dart';
 class SegmentSummaryComponent extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
+  final String segmentId;
   final bool segmentSaveMaxWeights;
   final List<SectionSubmodel> sectionsFromSegment;
   final bool addWeightEnable;
@@ -35,6 +36,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   const SegmentSummaryComponent(
       {this.classIndex,
       this.segmentIndex,
+      this.segmentId,
       this.segmentSaveMaxWeights,
       this.enrollmentMovements,
       this.sectionsFromSegment,
@@ -150,6 +152,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           } else {
             contentToReturn.add(WeightTileForValue(
               movement: movement,
+              segmentId: widget.segmentId,
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
               maxWeightValue: 100, //TODO: Replace with value from MAX_WEIGHT BLOC

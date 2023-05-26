@@ -10,6 +10,7 @@ class WeightTileForValue extends StatefulWidget {
   final List<WeightRecord> weightRecords;
   final bool useImperialSystem;
   final MovementSubmodel movement;
+  final String segmentId;
   final bool showWeightRecommendation;
   final int percentageOfMaxWeight;
   final double maxWeightValue;
@@ -19,6 +20,7 @@ class WeightTileForValue extends StatefulWidget {
       this.movement,
       this.percentageOfMaxWeight,
       this.maxWeightValue,
+      this.segmentId,
       this.showWeightRecommendation = true,
       this.useImperialSystem = false})
       : super(key: key);
@@ -113,8 +115,11 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
         ),
         Text(
           widget.weightRecords.isNotEmpty
-              ? double.parse(
-                      MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem))
+              ? double.parse(MovementUtils.getWeight(
+                      currentMovement: movement,
+                      segmentId: widget.segmentId,
+                      weightRecordsList: widget.weightRecords,
+                      useImperialSystem: widget.useImperialSystem))
                   .round()
                   .toString()
               : '0',
@@ -164,7 +169,9 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
         return _getAlertCircleWithTooltip();
       }
     } else {
-      if (MovementUtils.getWeight(currentMovement: movement, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) != null) {
+      if (MovementUtils.getWeight(
+              currentMovement: movement, segmentId: widget.segmentId, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) !=
+          null) {
         return weightContainerForRecommendationOrRecent(movement);
       } else {
         return _getAlertCircleWithTooltip();

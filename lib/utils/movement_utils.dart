@@ -74,7 +74,10 @@ class MovementUtils {
     return enrollmentMovements;
   }
 
-  static bool checkIfMovementRequireWeigth(MovementSubmodel movement, List<EnrollmentMovement> enrollmentMovements) =>
+  static bool checkIfMovementRequireWeigth(
+    MovementSubmodel movement,
+    List<EnrollmentMovement> enrollmentMovements,
+  ) =>
       enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.storeWeights;
 
   static List<MovementSubmodel> getMovementsWithWeights({List<SectionSubmodel> sections, List<EnrollmentMovement> enrollmentMovements}) {
@@ -91,11 +94,11 @@ class MovementUtils {
     return movementsWithWeight;
   }
 
-  static String getWeight({MovementSubmodel currentMovement, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
+  static String getWeight({MovementSubmodel currentMovement, String segmentId, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
     String result;
     if (weightRecordsList.isNotEmpty) {
       weightRecordsList.forEach((weightRecord) {
-        if (weightRecord.movementId == currentMovement.id) {
+        if (weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId) {
           if (useImperialSystem) {
             result = weightRecord.weight.toString();
           } else {
