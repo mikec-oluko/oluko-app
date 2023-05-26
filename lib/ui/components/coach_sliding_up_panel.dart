@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
@@ -36,7 +38,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       backdropEnabled: true,
       padding: EdgeInsets.zero,
       color: OlukoNeumorphismColors.appBackgroundColor,
-      minHeight: 80,
+      minHeight: (Platform.isIOS || Platform.isMacOS) ? ScreenUtils.height(context) * 0.15 : ScreenUtils.height(context) * 0.075,
       panel: Container(
         decoration: BoxDecoration(
           color: OlukoNeumorphismColors.appBackgroundColor,
