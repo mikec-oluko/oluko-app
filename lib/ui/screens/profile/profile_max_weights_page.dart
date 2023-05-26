@@ -26,8 +26,8 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
   FocusNode focusNode = FocusNode();
   TextEditingController textController = TextEditingController();
   final ValueNotifier<String> _selectedMovementNotifier = ValueNotifier(null);
-
   String unity;
+  
   @override
   initState() {
     super.initState();
