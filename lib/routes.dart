@@ -1559,7 +1559,8 @@ class Routes {
         providers = [
           BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
-        newRouteView =  const ProfileMaxWeightsPage();
+         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileMaxWeightsPage(user: argumentsToAdd['user'] as UserResponse);
         break;
       default:
         newRouteView = MainPage();

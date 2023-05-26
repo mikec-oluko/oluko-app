@@ -89,4 +89,21 @@ class MovementUtils {
     });
     return movementsWithWeight;
   }
+
+  static int getMaxWeightByImperialSystemUse({double maxWeight, bool useImperialSystem}) =>
+    useImperialSystem ? maxWeight.round() : (maxWeight * _toKilogramsUnit).round();
+
+  static int kilogramToLbs(int maxWeight){
+    return (maxWeight * _toKilogramsUnit).round();
+  }
+
+  static int lbsToKilogram(int maxWeight){
+    return (maxWeight * _passToKilogramsUnit).round();
+  }
+
+  static double get _toKilogramsUnit => 0.453;
+  static double get _passToKilogramsUnit => 2.20462;
+
+
+
 }

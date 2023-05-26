@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CustomKeyboard extends StatefulWidget {
@@ -100,48 +102,50 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   }
 
   Widget _input() {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Container(
-          color: Colors.black,
-          padding: const EdgeInsets.all(8.0),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 18.0, right: 18.0),
-            child: Row(
-              children: <Widget>[
-                Text(
-                  widget.textStartInput,
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth / 2,
+    return Neumorphic(
+      style: OlukoNeumorphism.getNeumorphicStyleForBorderContainer(),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    widget.textStartInput,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
-                  child: IntrinsicWidth(
-                    child: TextField(
-                      controller: widget.controller,
-                       focusNode: widget.focus,
-                      readOnly: true,
-                      showCursor: true,
-                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w500),
-                      decoration: const InputDecoration(
-                        fillColor: Colors.transparent,
-                        filled: true,
-                        border: InputBorder.none,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth / 2,
+                    ),
+                    child: IntrinsicWidth(
+                      child: TextField(
+                        controller: widget.controller,
+                         focusNode: widget.focus,
+                        readOnly: true,
+                        showCursor: true,
+                        style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w500),
+                        decoration: const InputDecoration(
+                          fillColor: Colors.transparent,
+                          filled: true,
+                          border: InputBorder.none,
+                        ),
+                        textAlignVertical: TextAlignVertical.center,
                       ),
-                      textAlignVertical: TextAlignVertical.center,
                     ),
                   ),
-                ),
-                Text(
-                  widget.textEndInput,
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ],
+                  Text(
+                    widget.textEndInput,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

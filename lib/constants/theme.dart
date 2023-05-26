@@ -201,6 +201,21 @@ class OlukoNeumorphism {
         shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForBorderContainer() {
+    return NeumorphicStyle(
+        border: NeumorphicBorder(width: 7, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+        depth: -3,
+        intensity: 10,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shape: NeumorphicShape.concave,
+        lightSource: LightSource.lerp(LightSource.topLeft, LightSource.bottomRight, 1),
+        boxShape: NeumorphicBoxShape.rect(),
+        shadowDarkColorEmboss: Color.fromARGB(0, 32, 36, 39),
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        surfaceIntensity: 1,
+        shadowDarkColor: Color.fromARGB(255, 228, 228, 228));
+  }
+
   static BoxDecoration boxDecorationForKeyboard() {
     return const BoxDecoration(
       gradient: LinearGradient(
@@ -236,6 +251,8 @@ class OlukoNeumorphism {
       1
     ], begin: Alignment.topCenter, end: Alignment.bottomCenter);
   }
+
+  
 }
 
 class OlukoNeumorphismColors {

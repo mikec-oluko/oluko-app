@@ -223,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           arguments: {'isFirstTime': false, 'isFromProfile': true, 'assessmentsDone': profileInfo.assessmentsCompletedAt != null});
                       break;
                     case ProfileOptionsTitle.maxWeights:
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.maxWeights]);
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.maxWeights], arguments: {'user': profileInfo});
                       break;
                     default:
                       Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));

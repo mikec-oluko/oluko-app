@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class ProfileMaxWeightsPage extends StatefulWidget {
-  const ProfileMaxWeightsPage() : super();
+  final UserResponse user;
+
+  const ProfileMaxWeightsPage({
+    this.user,
+    Key key,
+  }) : super(key: key);
 
   @override
   _ProfileMaxWeightsPageState createState() => _ProfileMaxWeightsPageState();
@@ -17,13 +25,17 @@ class ProfileMaxWeightsPage extends StatefulWidget {
 class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
   FocusNode focusNode = FocusNode();
   TextEditingController textController = TextEditingController();
+  final ValueNotifier<Map<String, int>> _setWeightNotifier = ValueNotifier({});
+
+  String unity;
   @override
   initState() {
     super.initState();
-    BlocProvider.of<MaxWeightsBloc>(context).getRecommendedWeightMovements();
+    BlocProvider.of<MaxWeightsBloc>(context).getMaxWeightMovements(widget.user.id);
+    unity = widget.user?.useImperialSystem == true ? 'LBs' : 'Kg';
   }
 
-  void _openKeyboard() {
+  void _openKeyboard(Movement movement, Map<String, int> weightMap, List<Movement> movements) {
     BottomDialogUtils.showBottomDialog(
       barrierColor: false,
       context: context,
@@ -35,28 +47,36 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
           focus: focusNode,
           showInput: true,
           textStartInput: 'Enter weight:',
-          textEndInput: 'LBs',
+          textEndInput: unity,
           onSubmit: () {
             Navigator.pop(context);
             focusNode.unfocus();
+            int weightLBs = !widget.user.useImperialSystem ? MovementUtils.kilogramToLbs(int.parse(textController.text)) : int.parse(textController.text);
+            weightMap[movement.id] = weightLBs;
+            BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightByUserIdAndMovementId(widget.user.id, movement.id, weightLBs);
+            BlocProvider.of<MaxWeightsBloc>(context).emitMaxWeightsMovements(movements, weightMap);
+            textController.text = '';
           },
         ),
       ),
     );
   }
   
-  Widget _setWeight() {
+  Widget _setWeight(Movement movement, Map<String, int> weightMap, List<Movement> movements) {
+    final int weight = weightMap[movement.id]?? 0;
+    final int weightLBs = widget.user.useImperialSystem ? weight : MovementUtils.lbsToKilogram(weight);
+    final String screenWeight = weight == 0 ? 'Set' : '$weight $unity';
     return GestureDetector(
       onTap: () {
-        _openKeyboard();
+        _openKeyboard(movement, weightMap, movements);
       },
       child: Row(
         children: <Widget>[
           Text(
-            '300 Lbs',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            screenWeight,
+            style: const TextStyle(color: Colors.white, fontSize: 18),
           ),
-          IconButton(
+          const IconButton(
             icon: Icon(Icons.arrow_forward_ios_rounded, color: OlukoColors.white, size: 17), 
             onPressed: null,
           ),
@@ -103,12 +123,12 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
                       itemCount: state.movements.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 8.0, bottom: 8.0),
+                          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(state.movements[index].name, style: const TextStyle(fontSize: 16, color: Colors.white)),
-                              _setWeight(),
+                              _setWeight(state.movements[index], state.maxWeightsMap, state.movements),
                             ],
                           ),
                         );
