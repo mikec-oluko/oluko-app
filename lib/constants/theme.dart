@@ -204,16 +204,16 @@ class OlukoNeumorphism {
   static NeumorphicStyle getNeumorphicStyleForBorderContainer() {
     return NeumorphicStyle(
         border: NeumorphicBorder(width: 7, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
-        depth: -3,
-        intensity: 10,
+        depth: -15,
+        intensity: 0.5,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         shape: NeumorphicShape.concave,
-        lightSource: LightSource.lerp(LightSource.topLeft, LightSource.bottomRight, 1),
+        lightSource: LightSource.lerp(LightSource.top, LightSource.bottomRight, 1),
         boxShape: NeumorphicBoxShape.rect(),
         shadowDarkColorEmboss: Color.fromARGB(0, 32, 36, 39),
         shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         surfaceIntensity: 1,
-        shadowDarkColor: Color.fromARGB(255, 228, 228, 228));
+        shadowDarkColor: Color.fromARGB(255, 255, 0, 0));
   }
 
   static BoxDecoration boxDecorationForKeyboard() {
