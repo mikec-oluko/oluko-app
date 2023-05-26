@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class WeightTileWithInput extends StatefulWidget {
   final MovementSubmodel movement;
   final bool useImperialSystem;
-  final Function(String value) onChangeAction;
-  final Function(String value) onSubmitAction;
+  final Function(FocusNode focusNode, TextEditingController textEditingController) open;
 
-  const WeightTileWithInput({Key key, this.movement, this.onChangeAction, this.onSubmitAction, this.useImperialSystem = false}) : super(key: key);
+  const WeightTileWithInput({Key key, this.movement, this.open, this.useImperialSystem = false}) : super(key: key);
 
   @override
   State<WeightTileWithInput> createState() => _WeightTileWithInputState();
 }
 
 class _WeightTileWithInputState extends State<WeightTileWithInput> {
+  final FocusNode focusNode = FocusNode();
+  final TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return _movementTileWithInput(widget.movement);
@@ -42,11 +44,12 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
         width: 120,
         height: 40,
         child: TextFormField(
-          keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+          focusNode: focusNode,
+          controller: textEditingController,
+          showCursor: true,
+          readOnly: true,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onChanged: (value) => widget.onChangeAction(value),
-          onTap: () {},
-          onFieldSubmitted: (value) => widget.onSubmitAction(value),
+          onTap: () => widget.open(focusNode, textEditingController),
           onEditingComplete: () {},
           textAlign: TextAlign.center,
           style: const TextStyle(
@@ -54,7 +57,6 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
             color: OlukoColors.white,
             fontWeight: FontWeight.bold,
           ),
-          showCursor: true,
           decoration: InputDecoration(
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 5),

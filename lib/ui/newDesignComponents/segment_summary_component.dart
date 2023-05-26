@@ -1,19 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
-import 'package:oluko_app/models/submodels/enrollment_section.dart';
-import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
+import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/newDesignComponents/weight_tile_for_value.dart';
 import 'package:oluko_app/ui/newDesignComponents/weight_tile_with_input.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -31,7 +26,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final bool isResults;
   final bool useImperialSystem;
   final Function(bool) workoutHasWeights;
-  final Function(List<WorkoutWeight> listOfWeigthsToUpdate, bool segmentSaveMaxWeights) movementWeights;
+  final Function(List<WorkoutWeight> listOfWeightsToUpdate, bool segmentSaveMaxWeights) movementWeights;
 
   const SegmentSummaryComponent(
       {this.classIndex,
@@ -55,8 +50,21 @@ class SegmentSummaryComponent extends StatefulWidget {
 class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
   Map<String, double> movementsWeights = {};
-  List<WorkoutWeight> listOfWeigthsToUpdate = [];
+  List<WorkoutWeight> listOfWeightsToUpdate = [];
   bool showRecommendation = false;
+  final List<TextEditingController> _listOfControllers = [];
+  final List<FocusNode> _listOfNodes = [];
+
+  @override
+  void dispose() {
+    for (var controller in _listOfControllers) {
+      controller.dispose();
+    }
+    for (var controller in _listOfNodes) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +88,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                     height: 60,
                     width: ScreenUtils.width(context) - 40,
                     decoration:
-                        BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
+                        const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
                     child: Row(
                       children: [
                         GestureDetector(
@@ -94,7 +102,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                             width: (ScreenUtils.width(context) - 80) / 2,
                             decoration: BoxDecoration(
                                 color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
+                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
                             child: Center(
                               child: Text(OlukoLocalizations.get(context, 'recentWeight'),
                                   style: OlukoFonts.olukoMediumFont(
@@ -136,19 +144,24 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     if (widget.enrollmentMovements.isNotEmpty) {
       populateMovements(contentToReturn, showWeightRecommendation);
     }
-    if (listOfWeigthsToUpdate.isNotEmpty) {
+    if (listOfWeightsToUpdate.isNotEmpty) {
       widget.workoutHasWeights(true);
     }
     return contentToReturn;
   }
 
   void populateMovements(List<Widget> contentToReturn, bool showWeightRecommendation) {
+    int controllersIndex = 0;
     widget.sectionsFromSegment.forEach((section) {
       section.movements.forEach((movement) {
         if (MovementUtils.checkIfMovementRequireWeigth(movement, widget.enrollmentMovements)) {
           if (widget.addWeightEnable) {
             _createNewWeightRecord(section, movement);
-            contentToReturn.add(_movementTileWithInput(movement));
+            _listOfControllers.add(TextEditingController());
+            _listOfNodes.add(FocusNode());
+            contentToReturn.add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex]));
+
+            controllersIndex++;
           } else {
             contentToReturn.add(WeightTileForValue(
               movement: movement,
@@ -173,17 +186,12 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  Widget _movementTileWithInput(MovementSubmodel movement) {
+  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController _listOfControllers, FocusNode _listOfNodes) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id);
     return WeightTileWithInput(
       movement: movement,
+      open: (focusNode, textEditingController) => open(movement.id, currentMovementAndWeight, textEditingController, focusNode),
       useImperialSystem: widget.useImperialSystem,
-      onChangeAction: (value) {
-        _onChangeWeightInputValue(value, movement, currentMovementAndWeight);
-      },
-      onSubmitAction: (value) {
-        _onSubmitWeightValue(value, movement, currentMovementAndWeight);
-      },
     );
   }
 
@@ -198,7 +206,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeights(listOfWeigthsToUpdate, widget.segmentSaveMaxWeights);
+    widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
   }
 
   void _onSubmitWeightValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
@@ -212,7 +220,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeights(listOfWeigthsToUpdate, widget.segmentSaveMaxWeights);
+    widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
@@ -223,16 +231,64 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         movementId: movement.id,
         sectionIndex: getSectionIndex(section),
         movementIndex: getMovementIndex(section, movement));
-    if (!listOfWeigthsToUpdate.contains(newWeightHelper)) {
-      listOfWeigthsToUpdate.add(newWeightHelper);
+    if (!listOfWeightsToUpdate.contains(newWeightHelper)) {
+      listOfWeightsToUpdate.add(newWeightHelper);
     }
   }
 
   double get _passToKilogramsUnit => 2.20462;
 
-  WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeigthsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
+  WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
 
   int getMovementIndex(SectionSubmodel section, MovementSubmodel movement) => widget.sectionsFromSegment[getSectionIndex(section)].movements.indexOf(movement);
 
   int getSectionIndex(SectionSubmodel section) => widget.sectionsFromSegment.indexOf(section);
+
+  void open(String movementId, WorkoutWeight currentMovementAndWeight, TextEditingController textEditingController, FocusNode focusNode) {
+    _listOfNodes.forEach((element) {
+      if (element.hasFocus) {
+        element.unfocus();
+      }
+    });
+
+    focusNode.requestFocus();
+
+    BottomDialogUtils.showBottomDialog(
+      barrierColor: false,
+      context: context,
+      content: Container(
+        height: ScreenUtils.height(context) * 0.4,
+        child: CustomKeyboard(
+          boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
+          controller: textEditingController,
+          focus: focusNode,
+          // onChanged: () {},
+          onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
+          onSubmit: () {
+            onSubmit(movementId, currentMovementAndWeight, textEditingController);
+
+            Navigator.pop(context);
+
+            focusNode.unfocus();
+          },
+        ),
+      ),
+    );
+  }
+
+  void onSubmit(String movementId, WorkoutWeight currentMovementAndWeight, TextEditingController textEditingController) {
+    if (textEditingController.text == '') {
+      movementsWeights[movementId] = null;
+    } else {
+      if (widget.useImperialSystem) {
+        movementsWeights[movementId] = double.parse(textEditingController.text);
+      } else {
+        movementsWeights[movementId] = double.parse(textEditingController.text) * _passToKilogramsUnit;
+      }
+    }
+
+    currentMovementAndWeight.weight = movementsWeights[movementId];
+
+    widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
+  }
 }
