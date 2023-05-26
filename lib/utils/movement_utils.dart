@@ -94,11 +94,11 @@ class MovementUtils {
     useImperialSystem ? maxWeight.round() : (maxWeight * _toKilogramsUnit).round();
 
   static int kilogramToLbs(int maxWeight){
-    return (maxWeight * _toKilogramsUnit).round();
+    return (maxWeight * _passToKilogramsUnit).round();
   }
 
   static int lbsToKilogram(int maxWeight){
-    return (maxWeight * _passToKilogramsUnit).round();
+    return (maxWeight * _toKilogramsUnit).round();
   }
 
   static double get _toKilogramsUnit => 0.453;

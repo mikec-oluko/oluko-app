@@ -65,7 +65,7 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
   Widget _setWeight(Movement movement, Map<String, int> weightMap, List<Movement> movements) {
     final int weight = weightMap[movement.id]?? 0;
     final int weightLBs = widget.user.useImperialSystem ? weight : MovementUtils.lbsToKilogram(weight);
-    final String screenWeight = weight == 0 ? 'Set' : '$weight $unity';
+    final String screenWeight = weightLBs == 0 ? 'Set' : '$weightLBs $unity';
     return GestureDetector(
       onTap: () {
         _openKeyboard(movement, weightMap, movements);
