@@ -32,7 +32,7 @@ class _State extends State<OlukoBottomNavigationBar> {
   @override
   void initState() {
     BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.loggedUser.uid);
-    BlocProvider.of<CommunityTabFriendNotificationBloc>(context).listenFriendRequestByUserId(widget.loggedUser.uid);
+    BlocProvider.of<CommunityTabFriendNotificationBloc>(context).listenFriendRequestByUserId(userId: widget.loggedUser.uid);
   }
 
   UserInformationBottomBar userInformation;
@@ -83,7 +83,7 @@ Widget _menuIcon(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
 
   return BlocBuilder<CommunityTabFriendNotificationBloc, CommunityTabFriendNotificationState>(
     builder: (context, state) {
-      bool friendNotification = state is CommunityTabFriendsNotification && state.hasFriendNotification;
+      bool friendNotification = state is CommunityTabFriendsNotification && state.friendNotifications.isNotEmpty;
       if (olukoBottomNavigationBarItem.route == RouteEnum.friends) {
         return BlocBuilder<ChatSliderMessagesBloc, ChatSliderMessagesState>(
           builder: (context, state) {

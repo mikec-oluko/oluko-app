@@ -89,9 +89,9 @@ class OlukoNeumorphism {
         shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
   }
 
-  static NeumorphicStyle getNeumorphicStyleForCircleElement() {
-    return const NeumorphicStyle(
-        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+  static NeumorphicStyle getNeumorphicStyleForCircleElement({bool useBorder = true}) {
+    return NeumorphicStyle(
+        border: useBorder ? NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark) : NeumorphicBorder.none(),
         depth: 3,
         intensity: 0.5,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -215,6 +215,16 @@ class OlukoNeumorphism {
         surfaceIntensity: 1,
         shadowLightColor: OlukoColors.grayColor,
         shadowDarkColor: Colors.black);
+  }
+
+  static BoxDecoration boxDecorationForKeyboard() {
+    return const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+      ),
+    );
   }
 
   static LinearGradient olukoNeumorphicGradientPrimary() {

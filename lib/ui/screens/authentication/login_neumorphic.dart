@@ -9,6 +9,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -17,8 +18,6 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-
-import '../../../routes.dart';
 
 class LoginNeumorphicPage extends StatefulWidget {
   LoginNeumorphicPage({this.dontShowWelcomeTest, this.userDeleted = false, Key key}) : super(key: key);
@@ -105,7 +104,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
     return [
       getWelcomeText(),
       SizedBox(
-        height: ScreenUtils.height(context) * 0.07,
+        height: ScreenUtils.height(context) * 0.04,
       ),
       TextFormField(
         style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold, customColor: Colors.white),
@@ -265,7 +264,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
             ),
           ),
         ),
-      /*const SizedBox(
+      const SizedBox(
         height: 15,
       ),
       SizedBox(
@@ -294,7 +293,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
       SizedBox(
         width: ScreenUtils.width(context),
         child: getExternalLoginButtons(),
-      ),*/
+      ),
     ];
   }
 
@@ -350,7 +349,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
     } else {
       return Column(
         children: [
-          SizedBox(height: ScreenUtils.height(context) * 0.25),
+          SizedBox(height: ScreenUtils.height(context) * 0.22),
           Text(
             OlukoLocalizations.get(context, 'welcomeBack'),
             textAlign: TextAlign.center,
@@ -362,36 +361,45 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
   }
 
   Widget getExternalLoginButtons() {
-    final Widget googleButton = SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
+    final Widget googleButton = BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if(state is GoogleLoading){
+                return Center(child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),),);
+              }
+        return SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.white),
+            ),
+            onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithGoogle(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/login/google-logo.png',
+                  width: 20,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  OlukoLocalizations.get(context, 'continueWithGoogle'),
+                  style: const TextStyle(color: OlukoColors.grayColor),
+                )
+              ],
             ),
           ),
-          backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.white),
-        ),
-        onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithGoogle(context),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/login/google-logo.png',
-              width: 20,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              OlukoLocalizations.get(context, 'continueWithGoogle'),
-              style: const TextStyle(color: OlukoColors.grayColor),
-            )
-          ],
-        ),
-      ),
+        );
+      },
     );
 
     if (Platform.isIOS || Platform.isMacOS) {
@@ -401,36 +409,45 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           const SizedBox(
             height: 5,
           ),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if(state is AppleLoading){
+                return Center(child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),),);
+              }
+              return SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
+                  ),
+                  onPressed: () => BlocProvider.of<AuthBloc>(context).continueWithApple(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/login/apple-logo.png',
+                        width: 18,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        OlukoLocalizations.get(context, 'continueWithApple'),
+                        style: const TextStyle(color: OlukoColors.white),
+                      )
+                    ],
                   ),
                 ),
-                backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
-              ),
-              onPressed: () => BlocProvider.of<AuthBloc>(context).loginWithApple(context),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/login/apple-logo.png',
-                    width: 18,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    OlukoLocalizations.get(context, 'continueWithApple'),
-                    style: const TextStyle(color: OlukoColors.white),
-                  )
-                ],
-              ),
-            ),
+              );
+            },
           )
         ],
       );

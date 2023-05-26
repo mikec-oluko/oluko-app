@@ -23,11 +23,9 @@ class _State extends State<CollapsedMovementVideosSection> {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
+        ),
         child: Column(children: [
           !OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 5),
           !OlukoNeumorphism.isNeumorphismDesign
@@ -40,8 +38,7 @@ class _State extends State<CollapsedMovementVideosSection> {
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
-                child: Text(OlukoLocalizations.get(context, 'movementVideos'),
-                    style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold))),
+                child: Text(OlukoLocalizations.get(context, 'movementVideos'), style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold))),
             SizedBox(width: 10),
             Image.asset(
               'assets/courses/person_running.png',

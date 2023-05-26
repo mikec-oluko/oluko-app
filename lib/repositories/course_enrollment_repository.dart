@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/dto/completion_dto.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
@@ -15,8 +16,10 @@ import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {

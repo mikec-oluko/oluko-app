@@ -37,18 +37,20 @@ class SoundPlayer {
   }
 
   Future playAsset({SoundsEnum soundEnum, String asset, HeadsetState headsetState, bool isForWatch = false}) async {
-    if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
-      // duckAudio: true
-      final AudioPlayer player = AudioPlayer();
-      String assetToPlay = asset;
-      if (soundEnum != null) {
-        final Map courseConfig = ProjectConfigurationBloc().getSoundsConfiguration();
-        assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
+    try {
+      if (globalNotificationsEnabled(soundEnum) && await SoundUtils.canPlaySound(headsetState: headsetState, isForWatch: isForWatch)) {
+        // duckAudio: true
+        final AudioPlayer player = AudioPlayer();
+        String assetToPlay = asset;
+        if (soundEnum != null) {
+          final Map courseConfig = ProjectConfigurationBloc().getSoundsConfiguration();
+          assetToPlay = courseConfig != null ? courseConfig[soundsLabels[soundEnum]].toString() : null;
+        }
+        if (assetToPlay != null && assetToPlay != 'null') {
+          await player.play(AssetSource(assetToPlay), mode: PlayerMode.lowLatency);
+        }
       }
-      if (assetToPlay != null && assetToPlay != 'null') {
-        await player.play(AssetSource(assetToPlay), mode: PlayerMode.lowLatency);
-      }
-    }
+    } catch (e) {}
   }
 
   Future _pause() async {

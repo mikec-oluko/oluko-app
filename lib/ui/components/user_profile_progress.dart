@@ -14,8 +14,10 @@ class UserProfileProgress extends StatefulWidget {
   final String classesCompleted;
   final bool isMinimalRequested;
   final UserResponse currentUser;
+  final bool isOwner;
 
-  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false, this.currentUser})
+  const UserProfileProgress(
+      {this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false, this.currentUser, this.isOwner})
       : super();
 
   @override
@@ -51,14 +53,19 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
               children: [
                 profileNeumorphicAccomplishments(
                     achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
-                BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
-                  if (state is PointsCardSuccess) {
-                    return profileNeumorphicAccomplishments(
-                        achievementTitleKey: ['mvt', 'points'], achievementValue: state.userPoints.toString(), color: OlukoColors.white, isClickable: true);
-                  } else {
-                    return OlukoCircularProgressIndicator();
-                  }
-                }),
+                widget.isOwner
+                    ? BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
+                        if (state is PointsCardSuccess) {
+                          return profileNeumorphicAccomplishments(
+                              achievementTitleKey: ['mvt', 'points'],
+                              achievementValue: state.userPoints.toString(),
+                              color: OlukoColors.white,
+                              isClickable: true);
+                        } else {
+                          return OlukoCircularProgressIndicator();
+                        }
+                      })
+                    : SizedBox(),
               ],
             ),
           ),
@@ -83,7 +90,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
 
   Widget profileNeumorphicAccomplishments({List<String> achievementTitleKey, String achievementValue, Color color, bool isClickable = false}) {
     return GestureDetector(
-        onTap: () => isClickable ? _pointsCardAction() : {},
+        onTap: () => isClickable && achievementValue != '0' ? _pointsCardAction() : {},
         child: Padding(
             padding: EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? 0 : 10),
             child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(
