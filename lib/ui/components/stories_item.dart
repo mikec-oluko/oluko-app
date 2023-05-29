@@ -126,7 +126,7 @@ class _State extends State<StoriesItem> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (true) Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
+                  if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
                   if (widget.showUserProgress) Positioned(bottom: 0, top: 0, left: 0, right: 0, child: userProgressIndicator()) else const SizedBox(),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
