@@ -151,10 +151,9 @@ class _InsideClassesState extends State<InsideClass> {
     return Future(() => false);
   }
 
-  //TODO: CHECK NAVIGATION
   void _goBackToCourseDetails(BuildContext context) {
     BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([widget.courseEnrollment]);
-    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
+    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
       'courseEnrollments': [widget.courseEnrollment],
       'authState': currentAuthState,
       'courses': [widget.actualCourse],
@@ -348,13 +347,9 @@ class _InsideClassesState extends State<InsideClass> {
         } else {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
-              ),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
             ),
             child: segmentState is LoadingSegment ? OlukoCircularProgressIndicator() : const SizedBox(),
           );

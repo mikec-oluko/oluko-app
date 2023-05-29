@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
@@ -66,6 +67,7 @@ import 'package:oluko_app/ui/newDesignComponents/coach_horizontal_carousel.dart'
 import 'package:oluko_app/ui/newDesignComponents/coach_upcoming_challenges.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_loading_full_screen.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -171,7 +173,16 @@ class _CoachPageState extends State<CoachPage> {
                                                 if (state is Success) {
                                                   _welcomeVideoUrl = state.mediaURL;
                                                 }
-                                                return _panelAndViewCreation(context);
+                                                return BlocListener<CoachAudioMessageBloc, CoachAudioMessagesState>(
+                                                  listener: (context, state) {
+                                                    if (state is CoachAudioMessagesSent) {
+                                                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageSent'));
+                                                    } else if (state is CoachAudioMessagesFailure) {
+                                                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageFailed'));
+                                                    }
+                                                  },
+                                                  child: _panelAndViewCreation(context),
+                                                );
                                               },
                                             );
                                           },
@@ -201,7 +212,8 @@ class _CoachPageState extends State<CoachPage> {
   CoachAppBar _getCoachAppBar(BuildContext context) => CoachAppBar(
         coachUser: _coachUser,
         currentUser: _currentAuthUser,
-        onNavigation: () => !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
+        onNavigationAction: () =>
+            !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
       );
 
   Widget _panelAndViewCreation(BuildContext context) {
@@ -222,13 +234,13 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void _requestCurrentUserData(BuildContext context, {String userId, String coachId}) {
+    BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(userId, coachId);
+    BlocProvider.of<CoachVideoMessageBloc>(context).getStream(userId: userId, coachId: coachId);
     BlocProvider.of<AssessmentBloc>(context).getById(assessmentId);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(userId, coachId);
-    BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(userId, coachId);
     BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(userId);
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(userId);
-    BlocProvider.of<CoachVideoMessageBloc>(context).getStream(userId: userId, coachId: coachId);
   }
 
   Widget _coachViewPageContent(BuildContext context) {
@@ -280,118 +292,131 @@ class _CoachPageState extends State<CoachPage> {
   Widget _getRecommendedCourses(BuildContext context) {
     final List<CoachRecommendationDefault> recommededCourses =
         CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.course, [], onlyContent: true);
-    return coachTabCarouselComponent(
-        viewAllTapAction: () {
-          BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
-              arguments: {'recommendedContent': recommededCourses, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')});
-        },
-        contentForCarousel: recommededCourses
-            .map((recommendedCourse) => CoachCarouselContent(
-                  contentImage: recommendedCourse.contentImage,
-                  isForPosterContent: true,
-                  onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                      arguments: {'course': recommendedCourse.courseContent, 'fromCoach': true, 'isCoachRecommendation': true}),
-                ))
-            .toList(),
-        titleForCarousel: OlukoLocalizations.of(context).find('recommendedCourses'),
-        heightForCarousel: heightForCardContent);
+    return recommededCourses.isNotEmpty
+        ? coachTabCarouselComponent(
+            viewAllTapAction: () {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+                  arguments: {'recommendedContent': recommededCourses, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')});
+            },
+            contentForCarousel: recommededCourses
+                .map((recommendedCourse) => CoachCarouselContent(
+                      contentImage: recommendedCourse.contentImage,
+                      isForPosterContent: true,
+                      onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                          arguments: {'course': recommendedCourse.courseContent, 'fromCoach': true, 'isCoachRecommendation': true}),
+                    ))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.of(context).find('recommendedCourses'),
+            heightForCarousel: heightForCardContent)
+        : const SizedBox.shrink();
   }
 
   Widget _getRecommendedMovements(BuildContext context) {
     final List<CoachRecommendationDefault> recommendedMovements =
         CoachHelperFunctions.getRecommendedContentByType(_coachRecommendationList, TimelineInteractionType.movement, [], onlyContent: true);
-    return coachTabCarouselComponent(
-        viewAllTapAction: () {
-          BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
-          Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
-              arguments: {'recommendedContent': recommendedMovements, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')});
-        },
-        contentForCarousel: recommendedMovements
-            .map((recommendedMovement) => CoachCarouselContent(
-                contentImage: recommendedMovement.contentImage,
-                titleForContent: recommendedMovement.contentTitle,
-                onTapContent: () =>
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': recommendedMovement.movementContent})))
-            .toList(),
-        titleForCarousel: OlukoLocalizations.of(context).find('recommendedMovements'),
-        heightForCarousel: heightForVideoContent);
+    return recommendedMovements.isNotEmpty
+        ? coachTabCarouselComponent(
+            viewAllTapAction: () {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+                  arguments: {'recommendedContent': recommendedMovements, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedMovements')});
+            },
+            contentForCarousel: recommendedMovements
+                .map((recommendedMovement) => CoachCarouselContent(
+                    contentImage: recommendedMovement.contentImage,
+                    titleForContent: recommendedMovement.contentTitle,
+                    onTapContent: () =>
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': recommendedMovement.movementContent})))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.of(context).find('recommendedMovements'),
+            heightForCarousel: heightForVideoContent)
+        : const SizedBox.shrink();
   }
 
   Widget _getRecommendedVideos(BuildContext context) {
     List<RecommendationMedia> recommendedVideos = CoachHelperFunctions.getRecommendedVideosContent(_coachRecommendationList);
-    return coachTabCarouselComponent(
-        viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
-            arguments: {'recommendedVideoContent': recommendedVideos, 'titleForAppBar': OlukoLocalizations.get(context, 'recommendedVideos')}),
-        contentForCarousel: recommendedVideos
-            .map((recommendedVideo) => CoachCarouselContent(
-                  contentImage: recommendedVideo.video.thumbUrl,
-                  titleForContent: recommendedVideo.title,
-                  onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: recommendedVideo.videoHls, videoUrl: recommendedVideo.video.url),
-                    'aspectRatio': recommendedVideo.video.aspectRatio,
-                    'titleForContent': OlukoLocalizations.get(context, 'recommendedVideos')
-                  }),
-                ))
-            .toList(),
-        titleForCarousel: OlukoLocalizations.of(context).find('recommendedVideos'),
-        heightForCarousel: heightForVideoContent);
+    return recommendedVideos.isNotEmpty
+        ? coachTabCarouselComponent(
+            viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+                arguments: {'recommendedVideoContent': recommendedVideos, 'titleForAppBar': OlukoLocalizations.get(context, 'recommendedVideos')}),
+            contentForCarousel: recommendedVideos
+                .map((recommendedVideo) => CoachCarouselContent(
+                      contentImage: recommendedVideo.video.thumbUrl,
+                      titleForContent: recommendedVideo.title,
+                      onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                        'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: recommendedVideo.videoHls, videoUrl: recommendedVideo.video.url),
+                        'aspectRatio': recommendedVideo.video.aspectRatio,
+                        'titleForContent': OlukoLocalizations.get(context, 'recommendedVideos')
+                      }),
+                    ))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.of(context).find('recommendedVideos'),
+            heightForCarousel: heightForVideoContent)
+        : const SizedBox.shrink();
   }
 
   Widget _getMessageVideos(BuildContext context) {
-    return coachTabCarouselComponent(
-        viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'coachVideoMessages': _coachVideoMessageList}),
-        contentForCarousel: _coachVideoMessageList
-            .map((coachVideoMessage) => CoachCarouselContent(
-                  contentImage: coachVideoMessage.video.thumbUrl,
-                  titleForContent: coachVideoMessage.video.name,
-                  onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: coachVideoMessage.videoHls, videoUrl: coachVideoMessage.video.url),
-                    'aspectRatio': coachVideoMessage.video.aspectRatio,
-                    'titleForContent': OlukoLocalizations.get(context, 'coachMessageVideo')
-                  }),
-                ))
-            .toList(),
-        titleForCarousel: OlukoLocalizations.get(context, 'coachMessageVideo'),
-        heightForCarousel: heightForVideoContent);
+    return _coachVideoMessageList.isNotEmpty
+        ? coachTabCarouselComponent(
+            viewAllTapAction: () =>
+                Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'coachVideoMessages': _coachVideoMessageList}),
+            contentForCarousel: _coachVideoMessageList
+                .map((coachVideoMessage) => CoachCarouselContent(
+                      contentImage: coachVideoMessage.video.thumbUrl,
+                      titleForContent: coachVideoMessage.video.name,
+                      onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                        'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: coachVideoMessage.videoHls, videoUrl: coachVideoMessage.video.url),
+                        'aspectRatio': coachVideoMessage.video.aspectRatio,
+                        'titleForContent': OlukoLocalizations.get(context, 'coachMessageVideo')
+                      }),
+                    ))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.get(context, 'coachMessageVideo'),
+            heightForCarousel: heightForVideoContent)
+        : const SizedBox.shrink();
   }
 
   Widget _getSendVideos(BuildContext context) {
-    return coachTabCarouselComponent(
-        viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos], arguments: {'sentVideosContent': _sentVideosList}),
-        contentForCarousel: _sentVideosList
-            .map((sentVideo) => CoachCarouselContent(
-                  contentImage: sentVideo.video.thumbUrl,
-                  titleForContent: sentVideo.segmentName ?? sentVideo.segmentId,
-                  onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': sentVideo.video.url,
-                    'aspectRatio': sentVideo.video.aspectRatio,
-                    'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
-                  }),
-                ))
-            .toList(),
-        titleForCarousel: OlukoLocalizations.get(context, 'sentVideos'),
-        heightForCarousel: heightForVideoContent);
+    return _sentVideosList.isNotEmpty
+        ? coachTabCarouselComponent(
+            viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos], arguments: {'sentVideosContent': _sentVideosList}),
+            contentForCarousel: _sentVideosList
+                .map((sentVideo) => CoachCarouselContent(
+                      contentImage: sentVideo.video.thumbUrl,
+                      titleForContent: sentVideo.segmentName ?? sentVideo.segmentId,
+                      onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                        'videoUrl': sentVideo.video.url,
+                        'aspectRatio': sentVideo.video.aspectRatio,
+                        'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
+                      }),
+                    ))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.get(context, 'sentVideos'),
+            heightForCarousel: heightForVideoContent)
+        : const SizedBox.shrink();
   }
 
   Widget _getMentoredVideos(BuildContext context) {
-    return coachTabCarouselComponent(
-        viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'coachAnnotation': _annotationVideosList}),
-        contentForCarousel: _annotationVideosList
-            .map((annotation) => CoachCarouselContent(
-                  contentImage: annotation.video.thumbUrl,
-                  titleForContent: annotation.id == _defaultIntroductionVideoId
-                      ? OlukoLocalizations.get(context, 'introductionVideo')
-                      : annotation.segmentName ?? annotation.segmentSubmissionId,
-                  onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: annotation.videoHLS, videoUrl: annotation.video.url),
-                    'aspectRatio': annotation.video.aspectRatio,
-                    'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
-                  }),
-                ))
-            .toList(),
-        titleForCarousel: OlukoLocalizations.get(context, 'annotatedVideos'),
-        heightForCarousel: heightForVideoContent);
+    return _annotationVideosList.isNotEmpty
+        ? coachTabCarouselComponent(
+            viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'coachAnnotation': _annotationVideosList}),
+            contentForCarousel: _annotationVideosList
+                .map((annotation) => CoachCarouselContent(
+                      contentImage: annotation.video.thumbUrl,
+                      titleForContent: annotation.id == _defaultIntroductionVideoId
+                          ? OlukoLocalizations.get(context, 'introductionVideo')
+                          : annotation.segmentName ?? annotation.segmentSubmissionId,
+                      onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                        'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: annotation.videoHLS, videoUrl: annotation.video.url),
+                        'aspectRatio': annotation.video.aspectRatio,
+                        'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
+                      }),
+                    ))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.get(context, 'annotatedVideos'),
+            heightForCarousel: heightForVideoContent)
+        : const SizedBox.shrink();
   }
 
   void _pendingReviewProccess() => _sentVideosList.forEach((sentVideo) {

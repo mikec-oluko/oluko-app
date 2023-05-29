@@ -80,10 +80,8 @@ class ClocksLowerSection extends StatefulWidget {
 class _State extends State<ClocksLowerSection> {
   bool shareDone = false;
   SegmentSubmission _updatedSegmentSubmission;
-  bool keyboardVisibilty = false;
   bool isWorkoutUsingWeigths = false;
   List<EnrollmentMovement> enrollmentMovements = [];
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TimerTaskBloc, TimerTaskState>(builder: (context, timerTaskState) {

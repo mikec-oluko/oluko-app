@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
@@ -9,8 +11,7 @@ import 'coach_timeline_panel.dart';
 import 'dart:math' as math;
 
 class CoachSlidingUpPanel extends StatefulWidget {
-  const CoachSlidingUpPanel(
-      {this.content, this.timelineItemsContent, this.isIntroductionVideoComplete, this.currentUser, this.onCurrentUserSelected});
+  const CoachSlidingUpPanel({this.content, this.timelineItemsContent, this.isIntroductionVideoComplete, this.currentUser, this.onCurrentUserSelected});
   final bool isIntroductionVideoComplete;
   final Widget content;
   final List<CoachTimelineGroup> timelineItemsContent;
@@ -37,7 +38,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       backdropEnabled: true,
       padding: EdgeInsets.zero,
       color: OlukoNeumorphismColors.appBackgroundColor,
-      minHeight: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) * 0.075 : 50,
+      minHeight: (Platform.isIOS || Platform.isMacOS) ? ScreenUtils.height(context) * 0.12 : ScreenUtils.height(context) * 0.075,
       panel: Container(
         decoration: BoxDecoration(
           color: OlukoNeumorphismColors.appBackgroundColor,

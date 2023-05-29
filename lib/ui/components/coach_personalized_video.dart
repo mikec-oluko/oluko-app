@@ -86,9 +86,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: Text(
-                    widget.personalizedVideo.annotationContent != null
-                        ? widget.personalizedVideo.annotationContent.segmentName
-                        : widget.personalizedVideo.videoMessageContent.video.name,
+                    getContentTitle(widget.personalizedVideo),
                     style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                   ),
                 ),
@@ -160,5 +158,23 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
             BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageAsFavorite(widget.currentUser.id, personalizedVideo.videoMessageContent);
           }
         });
+  }
+
+  String getContentTitle(CoachPersonalizedVideo personalizedVideo) {
+    const String defaultIntroductionVideoId = 'introVideo';
+    String titleForVideoContent = 'MVT Video';
+    if (personalizedVideo.annotationContent != null) {
+      if (personalizedVideo.annotationContent.segmentName != null) {
+        titleForVideoContent = personalizedVideo.annotationContent?.segmentName;
+      }
+      if (personalizedVideo.annotationContent.id == defaultIntroductionVideoId) {
+        titleForVideoContent = OlukoLocalizations.get(context, 'introductionVideo');
+      }
+    } else if (personalizedVideo.videoMessageContent != null) {
+      if (personalizedVideo.videoMessageContent.video.name != null) {
+        titleForVideoContent = personalizedVideo.videoMessageContent.video.name;
+      }
+    }
+    return titleForVideoContent;
   }
 }

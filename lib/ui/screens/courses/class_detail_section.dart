@@ -80,13 +80,10 @@ class _State extends State<ClassDetailSection> {
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 25),
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
+        ),
         child: Column(children: [
           Padding(
               padding: EdgeInsets.only(top: 10, bottom: 10),

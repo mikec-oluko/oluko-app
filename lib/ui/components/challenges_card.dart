@@ -139,8 +139,6 @@ class _State extends State<ChallengesCard> {
             alignment: Alignment.center,
             children: [
               CachedNetworkImage(
-                maxWidthDiskCache: 100,
-                maxHeightDiskCache: 100,
                 imageUrl: widget.segmentChallenge.challengeSegment.image,
                 imageBuilder: (context, imageProvider) => Container(
                   height: 160,
