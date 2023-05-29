@@ -109,10 +109,10 @@ class _State extends State<ImageAndVideoPreviewCard> {
                                 widget.editAction();
                               }
                             },
-                            // child: Image.asset(
-                            //   'assets/neumorphic/bin.png',
-                            //   scale: 3,
-                            // ),
+                            child: Image.asset(
+                              'assets/neumorphic/bin.png',
+                              scale: 3,
+                            ),
                           )
                         : Text(
                             titleForPreviewImage != null ? titleForPreviewImage : '',
