@@ -478,5 +478,6 @@
     "percentageOfMaxWeight": "% of Max Weight",
     "recentWeight": "Recent weight",
     "recommendationTooltipText": "To display recommendation, complete MVT KICK OFF course, or manually add Max Weights in profile tab.",
-    "loggedWeightTooltipText": "Log weights after segment to know what you did next time around!"
-    }
+    "loggedWeightTooltipText": "Log weights after segment to know what you did next time around!",
+    "maxWeights": "Max Weights"
+}

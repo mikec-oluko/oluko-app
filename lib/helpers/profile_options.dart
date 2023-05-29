@@ -8,6 +8,7 @@ class ProfileOptions {
 
   static List<ProfileOptions> profileOptions = [
     ProfileOptions(option: ProfileOptionsTitle.myAccount),
+    ProfileOptions(option: ProfileOptionsTitle.maxWeights),
     ProfileOptions(option: ProfileOptionsTitle.assessmentVideos),
     ProfileOptions(option: ProfileOptionsTitle.transformationPhotos),
     // ProfileOptions(option: ProfileOptionsTitle.transformationJourney),
