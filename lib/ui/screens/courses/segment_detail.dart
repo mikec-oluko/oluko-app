@@ -73,7 +73,7 @@ class SegmentDetail extends StatefulWidget {
   final int classIndex;
   final int courseIndex;
   final bool fromChallenge;
-  final List<Segment> classSegments;
+  List<Segment> classSegments;
   final Course actualCourse;
   final List<UserResponse> favoriteUsers;
 
@@ -115,7 +115,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     dotsIndex = ValueNotifier(currentSegmentStep);
     panelState = ValueNotifier(showLowerWidgets);
     totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
-    _canStartSegment = canStartSegment();
     setSegments();
     super.initState();
   }
@@ -166,7 +165,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
         ? BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
             if (segmentState is GetSegmentsSuccess) {
               _segments = segmentState.segments;
+              widget.classSegments = segmentState.segments;
               setTotalSegments();
+              _canStartSegment = canStartSegment(_segments);
               return _viewBody();
             } else {
               return OlukoCircularProgressIndicator();
@@ -251,11 +252,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<ChallengeAudioBloc>(context).markAudioAsDeleted(challenge, audiosUpdated, _currentAudios);
   }
 
-  bool canStartSegment() {
+  bool canStartSegment(List<Segment> segments) {
     if (currentSegmentStep < 2) return true;
-    return widget.classSegments[segmentIndexToUse].isChallenge
-        ? widget.courseEnrollment.classes[widget.classIndex].segments[currentSegmentStep - 2].completedAt != null
-        : true;
+    if (segments != null && segments.isNotEmpty) {
+      return segments[segmentIndexToUse].isChallenge
+          ? widget.courseEnrollment.classes[widget.classIndex].segments[currentSegmentStep - 2].completedAt != null
+          : true;
+    }
+    return false;
   }
 
   Widget downButton() {
@@ -347,8 +351,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   }
                   return ValueListenableBuilder(
                     valueListenable: panelState,
-                    builder: (context, state, child) {
-                      if (state as bool) {
+                    builder: (context, panelStates, child) {
+                      if (panelStates as bool && widget.classSegments != null) {
                         return startWorkoutsButton(isFinishedBefore);
                       }
                       return SizedBox();
@@ -710,9 +714,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   void setSegments() {
-    if (widget.classSegments != null) {
+    if (widget.classSegments != null && widget.classSegments.isNotEmpty) {
       _segments = widget.classSegments;
       setTotalSegments();
+      _canStartSegment = canStartSegment(_segments);
     } else {
       BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(widget.courseEnrollment.classes[widget.classIndex]);
     }

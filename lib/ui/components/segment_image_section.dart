@@ -327,6 +327,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 _segmentCardTitle(),
                 const SizedBox(height: 10),
                 _segmentCardDescription(),
+                const SizedBox(height: 10),
+                _roundTitle(widget.segment),
                 Padding(
                     padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
                     child: SegmentSummaryComponent(
@@ -361,6 +363,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         style: OlukoFonts.olukoSuperBigFont(
           customFontWeight: FontWeight.bold,
           customColor: OlukoColors.white,
+        ),
+        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+      ),
+    );
+  }
+
+  SizedBox _roundTitle(Segment segment) {
+    return SizedBox(
+      child: Text(
+        SegmentUtils.getRoundTitle(segment, context),
+        style: OlukoFonts.olukoBigFont(
+          customColor: OlukoColors.grayColor,
         ),
         overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
       ),
