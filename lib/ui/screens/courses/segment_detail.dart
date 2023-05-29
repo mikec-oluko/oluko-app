@@ -318,15 +318,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 CarouselSlider(
                   items: getSegmentList(),
                   options: CarouselOptions(
-                      onPageChanged: (index, reason) => dotsIndex.value = index + 1,
-                      height: ScreenUtils.height(context),
-                      autoPlay: false,
-                      enlargeCenterPage: false,
-                      disableCenter: true,
-                      enableInfiniteScroll: false,
-                      initialPage: segmentIndexToUse,
-                      viewportFraction: 1),
-                ),
+                    onPageChanged: (index, reason) => dotsIndex.value = index + 1,
+                    height: ScreenUtils.height(context),
+                    disableCenter: true,
+                    enableInfiniteScroll: false,
+                    initialPage: segmentIndexToUse,
+                    viewportFraction: 0.85,
+                  ),
+                )
               ],
             ),
           ),
@@ -598,25 +597,33 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
               coachLogic(coachUserState, coachRequestStreamState);
               Challenge challenge = getSegmentChallenge(_segments[i].id);
-              return SegmentImageSection(
-                onPressed: () => onPressedAction(),
-                segment: _segments[i],
-                challenge: challenge,
-                currentSegmentStep: i + 1,
-                totalSegmentStep: totalSegmentStep,
-                userId: _user.id,
-                audioAction: _audioAction,
-                peopleAction: _peopleAction,
-                clockAction: _clockAction,
-                courseEnrollment: widget.courseEnrollment,
-                courseIndex: widget.courseIndex,
-                segments: _segments,
-                classIndex: widget.classIndex,
-                coachRequests: _coachRequests,
-                coach: _coach,
-                currentUser: _user,
-                fromChallenge: widget.fromChallenge,
-                favoriteUsers: widget.favoriteUsers ?? [],
+              return ValueListenableBuilder(
+                valueListenable: dotsIndex,
+                builder: (context, index, child) {
+                  return Opacity(
+                    opacity: index == i + 1 ? 1 : 0.5,
+                    child: SegmentImageSection(
+                      onPressed: () => onPressedAction(),
+                      segment: _segments[i],
+                      challenge: challenge,
+                      currentSegmentStep: i + 1,
+                      totalSegmentStep: totalSegmentStep,
+                      userId: _user.id,
+                      audioAction: _audioAction,
+                      peopleAction: _peopleAction,
+                      clockAction: _clockAction,
+                      courseEnrollment: widget.courseEnrollment,
+                      courseIndex: widget.courseIndex,
+                      segments: _segments,
+                      classIndex: widget.classIndex,
+                      coachRequests: _coachRequests,
+                      coach: _coach,
+                      currentUser: _user,
+                      fromChallenge: widget.fromChallenge,
+                      favoriteUsers: widget.favoriteUsers ?? [],
+                    ),
+                  );
+                },
               );
             } else {
               return OlukoCircularProgressIndicator();
