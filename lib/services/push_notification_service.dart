@@ -12,13 +12,13 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 
 class PushNotificationService {
-  static FirebaseMessaging messagin = FirebaseMessaging.instance;
+  static FirebaseMessaging messaging = FirebaseMessaging.instance;
   static String token;
   static bool bottomDialogDisplayed = false;
 
   static Future<void> initializePushNotifications(BuildContext context, String userId) async {
-    await messagin.requestPermission();
-    final String token = await messagin.getToken();
+    await messaging.requestPermission();
+    final String token = await messaging.getToken();
     BlocProvider.of<UserBloc>(context).saveToken(userId, token);
   }
 
@@ -60,12 +60,13 @@ class PushNotificationService {
   }
 
   static void listenPushNotifications(BuildContext contextPush) {
-    messagin.getInitialMessage().then((RemoteMessage message) {
+    messaging.getInitialMessage().then((RemoteMessage message) {
       notifyNewPushNotification(message, contextPush);
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.data != null && !bottomDialogDisplayed) {
+      final RemoteNotification notification = message.notification;
+      if (notification != null && !bottomDialogDisplayed) {
         bottomDialogDisplayed = true;
         BottomDialogUtils.showBottomDialog(
           content: Container(
@@ -85,14 +86,14 @@ class PushNotificationService {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      message.data['title']?.toString(),
+                      notification.title,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
                     ),
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      message.data['body']?.toString(),
+                      notification.body,
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.grey),
                     ),
                   ),
@@ -150,7 +151,7 @@ class PushNotificationService {
   }
 
   static void notifyNewPushNotification(RemoteMessage message, BuildContext contextPush) {
-    if (message != null && message.data != null) {
+    if (message != null && message.notification != null) {
       final int tabNumber = message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder] ? 2 : 1;
       BlocProvider.of<PushNotificationBloc>(contextPush).notifyNewPushNotification(tabNumber);
     }
