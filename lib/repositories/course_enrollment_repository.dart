@@ -4,6 +4,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/dto/completion_dto.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -206,13 +207,15 @@ class CourseEnrollmentRepository {
 
     final enrollmentSegments = await Future.wait(List.generate(classObj.segments.length, (index) async {
       final SegmentSubmodel segment = classObj.segments[index];
+      final DocumentSnapshot currentSegmentData = await segment.reference.get();
+      final Segment segmentInfo = Segment.fromJson(currentSegmentData.data() as Map<String, dynamic>);
       final sections = await getEnrollmentSections(segment);
       return EnrollmentSegment(
         id: segment.id,
         name: segment.name,
         reference: segment.reference,
         isChallenge: segment.isChallenge,
-        setsMaxWeight: segment.setsMaxWeight,
+        setsMaxWeight: segmentInfo.setMaxWeights,
         image: segment.image,
         sections: sections,
       );

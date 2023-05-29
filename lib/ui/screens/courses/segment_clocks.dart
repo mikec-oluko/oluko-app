@@ -20,6 +20,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
@@ -640,7 +641,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   Future<void> nextSegmentAction() async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
-    saveWorkoutMovementAndWeigths();
+    saveWorkoutMovementAndWeights();
 
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
@@ -670,7 +671,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void goToClassAction() {
-    saveWorkoutMovementAndWeigths();
+    saveWorkoutMovementAndWeights();
     _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
     Navigator.pushReplacementNamed(
       context,
@@ -1314,10 +1315,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                 : screenProportion * 0.4;
   }
 
-  void saveWorkoutMovementAndWeigths() {
+  void saveWorkoutMovementAndWeights() {
     if (movementsAndWeightsToSave.isNotEmpty) {
       if (isSegmentSaveMaxWeights) {
-        //TODO: ADD CALL TO SAVE MAX WEIGHTS
+        BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);

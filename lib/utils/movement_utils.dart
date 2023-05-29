@@ -74,7 +74,7 @@ class MovementUtils {
     return enrollmentMovements;
   }
 
-  static bool checkIfMovementRequireWeigth(
+  static bool checkIfMovementRequireWeight(
     MovementSubmodel movement,
     List<EnrollmentMovement> enrollmentMovements,
   ) =>
@@ -84,7 +84,7 @@ class MovementUtils {
     List<MovementSubmodel> movementsWithWeight = [];
     sections.forEach((section) {
       section.movements.forEach((movement) {
-        if (MovementUtils.checkIfMovementRequireWeigth(movement, enrollmentMovements)) {
+        if (MovementUtils.checkIfMovementRequireWeight(movement, enrollmentMovements)) {
           if (movementsWithWeight.where((movementRecord) => movementRecord.id == movement.id).isEmpty) {
             movementsWithWeight.add(movement);
           }

@@ -1,5 +1,6 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
@@ -22,6 +23,7 @@ class SegmentSummaryComponent extends StatefulWidget {
   final List<SectionSubmodel> sectionsFromSegment;
   final bool addWeightEnable;
   final List<EnrollmentMovement> enrollmentMovements;
+  final List<MaxWeight> maxWeightRecords;
   final List<WeightRecord> weightRecords;
   final bool isResults;
   final bool useImperialSystem;
@@ -35,6 +37,7 @@ class SegmentSummaryComponent extends StatefulWidget {
       this.segmentSaveMaxWeights,
       this.enrollmentMovements,
       this.sectionsFromSegment,
+      this.maxWeightRecords,
       this.addWeightEnable = false,
       this.isResults = false,
       this.useImperialSystem = true,
@@ -154,7 +157,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     int controllersIndex = 0;
     widget.sectionsFromSegment.forEach((section) {
       section.movements.forEach((movement) {
-        if (MovementUtils.checkIfMovementRequireWeigth(movement, widget.enrollmentMovements)) {
+        if (MovementUtils.checkIfMovementRequireWeight(movement, widget.enrollmentMovements)) {
           if (widget.addWeightEnable) {
             _createNewWeightRecord(section, movement);
             _listOfControllers.add(TextEditingController());
@@ -168,7 +171,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               segmentId: widget.segmentId,
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
-              maxWeightValue: 100, //TODO: Replace with value from MAX_WEIGHT BLOC
+              maxWeightValue: getMaxWeightForMovement(movement) != 0 ? double.parse(getMaxWeightForMovement(movement).toString()) : null,
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
@@ -178,6 +181,16 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         }
       });
     });
+  }
+
+  int getMaxWeightForMovement(MovementSubmodel movement) {
+    int maxWeightRecord = 0;
+    if (widget.maxWeightRecords != null && widget.maxWeightRecords.isNotEmpty) {
+      if (widget.maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
+        maxWeightRecord = widget.maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
+      }
+    }
+    return maxWeightRecord;
   }
 
   ListTile _defaultMovementTile(MovementSubmodel movement) {
