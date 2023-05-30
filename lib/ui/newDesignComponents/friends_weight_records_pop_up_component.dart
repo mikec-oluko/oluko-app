@@ -12,13 +12,21 @@ import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsWeightRecordsPopUpComponent extends StatefulWidget {
   final Text segmentStep;
+  final String segmentId;
   final Widget segmentTitleWidget;
   final Map<UserResponse, List<WeightRecord>> friendsRecords;
   final List<MovementSubmodel> movementsForWeight;
   final bool useImperial;
   final List<WeightRecord> currentUserRecords;
   const FriendsWeightRecordsPopUpComponent(
-      {Key key, this.segmentStep, this.segmentTitleWidget, this.friendsRecords, this.movementsForWeight, this.currentUserRecords, this.useImperial = true})
+      {Key key,
+      this.segmentStep,
+      this.segmentId,
+      this.segmentTitleWidget,
+      this.friendsRecords,
+      this.movementsForWeight,
+      this.currentUserRecords,
+      this.useImperial = true})
       : super(key: key);
 
   @override
@@ -46,14 +54,14 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             height: 10,
           ),
           Column(
-            children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement, currentUserRecord: '20')).toList(),
+            children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement)).toList(),
           )
         ],
       ),
     );
   }
 
-  Widget getWorkoutRecordsComponent({MovementSubmodel currentMovement, String currentUserRecord}) {
+  Widget getWorkoutRecordsComponent({MovementSubmodel currentMovement}) {
     return Container(
       decoration: const BoxDecoration(
         color: OlukoNeumorphismColors.appBackgroundColor,
@@ -72,7 +80,9 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
                     customColor: OlukoColors.grayColor,
                   ),
                 ),
-                if (widget.currentUserRecords.where((currentUserRecord) => currentUserRecord.movementId == currentMovement.id).isNotEmpty)
+                if (widget.currentUserRecords
+                    .where((currentUserRecord) => currentUserRecord.movementId == currentMovement.id && currentUserRecord.segmentId == widget.segmentId)
+                    .isNotEmpty)
                   getWeightComponent(currentMovement)
                 else
                   const SizedBox.shrink(),
@@ -189,6 +199,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
   }
 
   double get _toKilogramsUnit => 0.453;
-  WeightRecord getUserWeightRecordForMovement(MovementSubmodel movement) =>
-      widget.currentUserRecords.where((currentUserRecord) => currentUserRecord.movementId == movement.id).first;
+  WeightRecord getUserWeightRecordForMovement(MovementSubmodel movement) => widget.currentUserRecords
+      .where((currentUserRecord) => currentUserRecord.movementId == movement.id && currentUserRecord.segmentId == widget.segmentId)
+      .first;
 }

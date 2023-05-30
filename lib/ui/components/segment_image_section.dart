@@ -370,6 +370,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                         segmentTitleWidget: _segmentCardTitle(),
                         useImperial: widget.currentUser.useImperialSystem,
                         currentUserRecords: weightRecords,
+                        currentSegmentId: widget.segment.id,
                       )
                   ],
                 ),

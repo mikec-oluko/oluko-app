@@ -56,6 +56,7 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
                           movementsForWeight: widget.movementsForWeight,
                           useImperial: widget.useImperial,
                           currentUserRecords: widget.currentUserRecords,
+                          segmentId: widget.currentSegmentId,
                         )
                       ],
                       useAppBackground: true);
