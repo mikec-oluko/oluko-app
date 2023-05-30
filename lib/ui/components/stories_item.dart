@@ -247,16 +247,16 @@ class _State extends State<StoriesItem> {
   double getScale() {
     switch (widget.from) {
       case StoriesItemFrom.home:
-        return 7;
+        return 12;
         break;
       case StoriesItemFrom.neumorphicHome:
-        return 8.2;
+        return 15.2;
         break;
       case StoriesItemFrom.friendsModal:
-        return 6.2;
+        return 13.2;
         break;
       case StoriesItemFrom.friends:
-        return 7.3;
+        return 14.3;
         break;
       case StoriesItemFrom.longPressHome:
         return 10;
