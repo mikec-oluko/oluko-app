@@ -224,7 +224,7 @@ class _State extends State<ChallengesCard> {
                   image: DecorationImage(
                       fit: BoxFit.cover,
                       image: widget.segmentChallenge.challengeSegment.image != null
-                          ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image)
+                          ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image, maxHeight: 160, maxWidth: 115)
                           : defaultImage),
                 ),
               ),
