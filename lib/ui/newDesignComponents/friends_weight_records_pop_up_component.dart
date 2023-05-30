@@ -1,11 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -17,8 +27,18 @@ class FriendsWeightRecordsPopUpComponent extends StatefulWidget {
   final List<MovementSubmodel> movementsForWeight;
   final bool useImperial;
   final List<WeightRecord> currentUserRecords;
+  final BuildContext context;
+  final String userId;
   const FriendsWeightRecordsPopUpComponent(
-      {Key key, this.segmentStep, this.segmentTitleWidget, this.friendsRecords, this.movementsForWeight, this.currentUserRecords, this.useImperial = true})
+      {Key key,
+      this.segmentStep,
+      this.segmentTitleWidget,
+      this.friendsRecords,
+      this.movementsForWeight,
+      this.currentUserRecords,
+      this.useImperial = true,
+      this.context,
+      this.userId})
       : super(key: key);
 
   @override
@@ -106,13 +126,30 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             padding: const EdgeInsets.only(right: 20),
             child: Column(
               children: [
-                if (friendUser.avatar != null)
-                  CircleAvatar(
-                    minRadius: 25,
-                    backgroundImage: CachedNetworkImageProvider(friendUser.avatarThumbnail ?? friendUser.avatar),
-                  )
-                else
-                  UserUtils.avatarImageDefault(maxRadius: 25, name: friendUser.firstName, lastname: friendUser.lastName),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      BottomDialogUtils.showBottomDialog(
+                        content: FriendModalContent(
+                            friendUser,
+                            widget.userId,
+                            null,
+                            BlocProvider.of<FriendBloc>(widget.context),
+                            BlocProvider.of<FriendRequestBloc>(widget.context),
+                            BlocProvider.of<HiFiveSendBloc>(widget.context),
+                            BlocProvider.of<HiFiveReceivedBloc>(widget.context),
+                            BlocProvider.of<UserStatisticsBloc>(widget.context),
+                            BlocProvider.of<FavoriteFriendBloc>(widget.context),
+                            BlocProvider.of<UserProgressStreamBloc>(widget.context)),
+                        context: widget.context,
+                      );
+                    },
+                    child: friendUser.avatar != null
+                        ? CircleAvatar(
+                            minRadius: 25,
+                            backgroundImage: CachedNetworkImageProvider(friendUser.avatarThumbnail ?? friendUser.avatar),
+                          )
+                        : UserUtils.avatarImageDefault(maxRadius: 25, name: friendUser.firstName, lastname: friendUser.lastName)),
                 const SizedBox(
                   height: 10,
                 ),
