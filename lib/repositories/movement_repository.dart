@@ -67,6 +67,18 @@ class MovementRepository {
     return items;
   }
 
+  Future<List<Movement>> getRecommendedWeightMovements() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getString('projectId'))
+        .collection('movements')
+        .where('recommended_weight', isEqualTo: true)
+        .where('is_deleted', isEqualTo: false)
+        .get();
+    return mapQueryToMovement(querySnapshot);
+  }
+
+
   static Future<MovementRelation> getRelations(String id) async {
     DocumentSnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('movementRelations').doc(id).get();

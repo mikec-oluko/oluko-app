@@ -202,7 +202,7 @@ class _State extends State<CourseCard> {
   CircleAvatar _userAvatar(String userUrl) {
     return CircleAvatar(
       minRadius: userRadius,
-      backgroundImage: CachedNetworkImageProvider(userUrl),
+      backgroundImage: CachedNetworkImageProvider(userUrl, maxHeight: 90, maxWidth: 90),
     );
   }
 }
