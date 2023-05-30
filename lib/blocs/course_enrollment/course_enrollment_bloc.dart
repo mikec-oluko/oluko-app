@@ -62,9 +62,9 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void create(User user, Course course) async {
+  Future<void> create(User user, Course course) async {
     try {
-      CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.create(user, course);
+      final CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.create(user, course);
       emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
