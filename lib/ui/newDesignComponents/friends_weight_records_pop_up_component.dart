@@ -96,7 +96,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
               width: ScreenUtils.width(context),
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: test(currentMovement),
+                children: friendUsersRecords(currentMovement),
               ),
             )
           ],
@@ -105,7 +105,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
     );
   }
 
-  List<Widget> test(MovementSubmodel currentMovement) {
+  List<Widget> friendUsersRecords(MovementSubmodel currentMovement) {
     List<Widget> contentToReturn = [];
     Widget newFriendRecord = SizedBox.shrink();
 
@@ -156,7 +156,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
   bool canShowUserRecords(UserResponse friendUser) => PrivacyOptions.userRequestedPrivacyOption(friendUser) != SettingsPrivacyOptions.anonymous;
 
   Iterable<WeightRecord> checkMovementRecordInsideFriendRecords(List<WeightRecord> friendRecords, MovementSubmodel currentMovement) =>
-      friendRecords.where((weightRecord) => weightRecord.movementId == currentMovement.id);
+      friendRecords.where((weightRecord) => weightRecord.movementId == currentMovement.id && weightRecord.segmentId == widget.segmentId);
 
   Widget getWeightComponent(MovementSubmodel currentMovement) {
     return Container(
