@@ -129,19 +129,11 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
                 GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
-                      BottomDialogUtils.showBottomDialog(
-                        content: FriendModalContent(
-                            friendUser,
-                            widget.userId,
-                            null,
-                            BlocProvider.of<FriendBloc>(widget.context),
-                            BlocProvider.of<FriendRequestBloc>(widget.context),
-                            BlocProvider.of<HiFiveSendBloc>(widget.context),
-                            BlocProvider.of<HiFiveReceivedBloc>(widget.context),
-                            BlocProvider.of<UserStatisticsBloc>(widget.context),
-                            BlocProvider.of<FavoriteFriendBloc>(widget.context),
-                            BlocProvider.of<UserProgressStreamBloc>(widget.context)),
-                        context: widget.context,
+                      BottomDialogUtils.friendsModal(
+                        friendUser,
+                        widget.userId,
+                        null,
+                        widget.context,
                       );
                     },
                     child: friendUser.avatar != null
