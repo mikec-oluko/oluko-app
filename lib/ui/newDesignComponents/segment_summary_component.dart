@@ -52,7 +52,7 @@ class SegmentSummaryComponent extends StatefulWidget {
 
 class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   bool keyboardVisibilty = false;
-  Map<String, double> movementsWeights = {};
+  Map<String, int> movementsWeights = {};
   List<WorkoutWeight> listOfWeightsToUpdate = [];
   bool showRecommendation = false;
   final List<TextEditingController> _listOfControllers = [];
@@ -213,9 +213,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       movementsWeights[movement.id] = null;
     } else {
       if (widget.useImperialSystem) {
-        movementsWeights[movement.id] = double.parse(value);
+        movementsWeights[movement.id] = int.parse(value);
       } else {
-        movementsWeights[movement.id] = double.parse(value) * _passToKilogramsUnit;
+        movementsWeights[movement.id] = weightToKg(value).toInt();
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
@@ -227,9 +227,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       movementsWeights[movement.id] = null;
     } else {
       if (widget.useImperialSystem) {
-        movementsWeights[movement.id] = double.parse(value);
+        movementsWeights[movement.id] = int.parse(value);
       } else {
-        movementsWeights[movement.id] = double.parse(value) * _passToKilogramsUnit;
+        movementsWeights[movement.id] = weightToKg(value).toInt();
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
@@ -275,7 +275,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
           controller: textEditingController,
           focus: focusNode,
-          // onChanged: () {},
           onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
           onSubmit: () {
             onSubmit(movementId, currentMovementAndWeight, textEditingController);
@@ -294,9 +293,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       movementsWeights[movementId] = null;
     } else {
       if (widget.useImperialSystem) {
-        movementsWeights[movementId] = double.parse(textEditingController.text);
+        movementsWeights[movementId] = int.parse(textEditingController.text);
       } else {
-        movementsWeights[movementId] = double.parse(textEditingController.text) * _passToKilogramsUnit;
+        movementsWeights[movementId] = textControllerValueToKg(textEditingController).toInt();
       }
     }
 
@@ -304,4 +303,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
     widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
   }
+
+  double weightToKg(String value) => int.parse(value) * _passToKilogramsUnit;
+
+  double textControllerValueToKg(TextEditingController textEditingController) => double.parse(textEditingController.text) * _passToKilogramsUnit;
 }

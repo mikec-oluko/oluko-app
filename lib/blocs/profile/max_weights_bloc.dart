@@ -53,7 +53,7 @@ class MaxWeightsBloc extends Cubit<MaxWeightsState> {
     }
   }
 
-  setMaxWeightByUserIdAndMovementId(String userId, String movementId, int weightLBs) async {
+  Future<void> setMaxWeightByUserIdAndMovementId(String userId, String movementId, int weightLBs) async {
     try {
       MaxWeight maxWeight = MaxWeight(
         id: movementId,
@@ -81,10 +81,10 @@ class MaxWeightsBloc extends Cubit<MaxWeightsState> {
     return userMaxWeights;
   }
 
-  Future<bool> setMaxWeightForSegmentMovements(String userId, List<WorkoutWeight> movementsAndWeightsToSave) async {
+  bool setMaxWeightForSegmentMovements(String userId, List<WorkoutWeight> movementsAndWeightsToSave) {
     try {
-      await Future.wait(movementsAndWeightsToSave.map((movementMaxWeight) async {
-        await setMaxWeightByUserIdAndMovementId(userId, movementMaxWeight.movementId, int.parse(movementMaxWeight.weight.toString()));
+      Future.wait(movementsAndWeightsToSave.map((movementMaxWeight) async {
+        setMaxWeightByUserIdAndMovementId(userId, movementMaxWeight.movementId, movementMaxWeight.weight);
       }));
       return true;
     } catch (e) {

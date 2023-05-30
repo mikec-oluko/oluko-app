@@ -149,7 +149,7 @@ class CourseEnrollmentRepository {
 
     movementsAndWeights.forEach((workoutElement) {
       courseEnrollmentLatestVersion.classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex]
-          .movements[workoutElement.movementIndex].weight = workoutElement.weight;
+          .movements[workoutElement.movementIndex].weight = workoutElement.weight.toDouble();
     });
 
     courseEnrollmentReference.update({
