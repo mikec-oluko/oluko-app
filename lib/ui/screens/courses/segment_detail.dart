@@ -181,10 +181,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
       if (challengeSegmentState is ChallengesSuccess) {
         _challenges = challengeSegmentState.challenges;
       }
-      return Container(
-        child: Column(
-          children: [if (_segments.length - 1 >= segmentIndexToUse) getCarouselSlider() else const SizedBox()],
-        ),
+      return Column(
+        children: [if (_segments.length - 1 >= segmentIndexToUse) getCarouselSlider() else const SizedBox()],
       );
     });
   }
@@ -308,7 +306,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: 700,
+          height: 670,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -559,19 +557,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _classTitleComponent() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 10),
-          child: Text(
-            _classTitle(),
-            style: _classTitle().length > 25
-                ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-                : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-          ),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, top: 10),
+      child: Text(
+        _classTitle(),
+        style: _classTitle().length > 25
+            ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+            : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+      ),
     );
   }
 
