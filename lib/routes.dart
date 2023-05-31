@@ -57,6 +57,7 @@ import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/profile/mail_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/profile/my_account_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
@@ -166,6 +167,7 @@ import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_contact_us.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_max_weights_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
@@ -275,7 +277,8 @@ enum RouteEnum {
   homeLatestDesign,
   courseHomePage,
   welcomeVideoFirstTimeLogin,
-  courseChat
+  courseChat,
+  maxWeights
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -341,7 +344,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLatestDesign: '/home-view',
   RouteEnum.courseHomePage: '/course-home-page',
   RouteEnum.welcomeVideoFirstTimeLogin: '/welcome-video-home-page',
-  RouteEnum.courseChat: '/course-chat'
+  RouteEnum.courseChat: '/course-chat',
+  RouteEnum.maxWeights: '/max-weights',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -473,6 +477,7 @@ class Routes {
   final FriendsWeightRecordsBloc _friendsWeightRecordsBloc = FriendsWeightRecordsBloc();
   final CommunityTabFriendNotificationBloc _communityTabFriendNotificationBloc = CommunityTabFriendNotificationBloc();
   final ChatSliderBloc _chatSliderBloc = ChatSliderBloc();
+  final MaxWeightsBloc _maxWeightsBloc = MaxWeightsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -1562,7 +1567,13 @@ class Routes {
             currentUser: argumentsToAdd['currentUser'] as UserResponse,
             enrollments: argumentsToAdd['enrollments'] as List<CourseEnrollment>);
         break;
-
+      case RouteEnum.maxWeights:
+        providers = [
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
+        ];
+         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileMaxWeightsPage(user: argumentsToAdd['user'] as UserResponse);
+        break;
       default:
         newRouteView = MainPage();
         break;

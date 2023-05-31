@@ -71,12 +71,8 @@ class WeekDaysHelper {
       frequency: Frequency.daily,
       count: daysAmountDifference,
     );
-    final DateTime currentDate = DateTime.now().subtract(const Duration(days: 1)).copyWith(isUtc: true);
-    final List<DateTime> datesList = rrule.getInstances(start: currentDate)
-                                            .where((currentDay) => 
-                                            currentDay.year == endOfWeek.year &&
-                                            currentDay.month == endOfWeek.month &&
-                                            currentDay.day <= endOfWeek.day).toList();
+    final DateTime currentDate = DateTime.now().copyWith(isUtc: true);
+    final List<DateTime> datesList = rrule.getInstances(start: currentDate).toList();
     return datesList;
   }
 

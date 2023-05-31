@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/dto/change_user_information.dart';
+import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -328,4 +329,23 @@ class UserRepository {
   Stream<DocumentSnapshot<Map<String, dynamic>>> getUserPlanStream({@required String userId}) {
     return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('users').doc(userId).snapshots();
   }
+
+  saveMaxWeight(MaxWeight maxWeight, String userId) {
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
+    final CollectionReference reference = projectReference.collection('users').doc(userId).collection('maxWeights');
+    DocumentReference docRef = reference.doc(maxWeight.id);
+    docRef.set(maxWeight.toJson());
+  }
+
+Future<List<MaxWeight>> getMaxWeightsByUserId(String userId) async{
+    final QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration()
+          .getString('projectId'))
+          .collection('users')
+          .doc(userId)
+          .collection('maxWeights')
+          .get();
+    return snapshot.docs.map((weight) => MaxWeight.fromJson(weight.data())).toList();
+}
 }

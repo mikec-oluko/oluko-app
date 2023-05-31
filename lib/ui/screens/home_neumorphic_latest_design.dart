@@ -157,7 +157,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                     return Column(
                       children: [
                         _userCoverAndProfileDetails(),
-                        _userCoursesSchedule(context),
+                        _userCoursesSchedule(),
                         _enrolledCoursesAndPeople(),
                         myListOfCoursesAndFriendsRecommended(),
                         _challengesSection(),
@@ -193,12 +193,12 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     ];
   }
 
-  List<WorkoutDay> getThisWeekScheduledWorkouts(BuildContext context) {
+  List<WorkoutDay> getThisWeekScheduledWorkouts() {
     return ScheduleUtils.getThisWeekClasses(context, _courseEnrollmentList);
   }
 
-  Widget _userCoursesSchedule(BuildContext context) {
-    final List<WorkoutDay> thisWeekWorkouts = getThisWeekScheduledWorkouts(context);
+  Widget _userCoursesSchedule() {
+    final List<WorkoutDay> thisWeekWorkouts = getThisWeekScheduledWorkouts();
     if (thisWeekWorkouts.isEmpty) {
       hasScheduledCourses = false;
       return const SizedBox.shrink();
