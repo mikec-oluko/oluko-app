@@ -23,6 +23,7 @@ class ScheduleModalContent extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final User user;
   final int totalClasses;
+  final int lastCompletedClassIndex;
   final dynamic firstAppInteractionAt;
   final bool isCoachRecommendation;
   final AuthBloc blocAuth;
@@ -32,7 +33,8 @@ class ScheduleModalContent extends StatefulWidget {
   final VoidCallback onUpdateScheduleAction;
   final bool disableAction;
 
-  const ScheduleModalContent({this.course, this.scheduleRecommendations, this.user, this.totalClasses, this.firstAppInteractionAt, this.isCoachRecommendation,
+  const ScheduleModalContent({this.course, this.scheduleRecommendations, this.user, this.totalClasses,
+                        this.lastCompletedClassIndex, this.firstAppInteractionAt, this.isCoachRecommendation,
                         this.disableAction, this.blocAuth, this.blocCourseEnrollment, this.blocRecommendation, this.onEnrollAction,
                         this.courseEnrollment, this.onUpdateScheduleAction,});
   @override
@@ -258,7 +260,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
 
   Future<void> updateSchedule(BuildContext context) async {
     widget.courseEnrollment.weekDays = weekDays;
-    widget.blocCourseEnrollment.scheduleCourse(widget.courseEnrollment, scheduledDates);
+    widget.blocCourseEnrollment.scheduleCourse(widget.courseEnrollment, scheduledDates, widget.lastCompletedClassIndex);
     AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'scheduleApplied'));
     widget.onUpdateScheduleAction();
   }
