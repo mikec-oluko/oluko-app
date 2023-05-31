@@ -31,7 +31,17 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+              if (movement.percentOfMaxWeight != null)
+                SegmentUtils.getTextWidget(
+                    '(${movement.percentOfMaxWeight} ${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
+              else
+                const SizedBox.shrink(),
+            ],
+          ),
           _inputComponent(movement.id),
         ],
       ),

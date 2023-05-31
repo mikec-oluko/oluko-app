@@ -65,11 +65,12 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   Widget _getAlertCircleWithTooltip() {
     const buttonIcon = '!';
     return Tooltip(
+      triggerMode: TooltipTriggerMode.tap,
       richMessage: WidgetSpan(
           alignment: PlaceholderAlignment.baseline,
-          baseline: TextBaseline.alphabetic,
+          baseline: TextBaseline.ideographic,
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 150),
+            constraints: const BoxConstraints(maxWidth: 180, minWidth: 150),
             child: Center(
               child: Text(
                   widget.showWeightRecommendation
@@ -80,7 +81,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
           )),
       textAlign: TextAlign.center,
       preferBelow: true,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.all(20),
       height: 100,
       decoration: const BoxDecoration(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,

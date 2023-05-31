@@ -161,7 +161,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
   Widget getWeightComponent(MovementSubmodel currentMovement) {
     return Container(
       height: 40,
-      decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+      decoration: const BoxDecoration(color: OlukoColors.primaryLight, borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Row(
@@ -170,17 +170,18 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             Image.asset(
               'assets/courses/weight_icon.png',
               scale: 3,
+              color: OlukoNeumorphismColors.appBackgroundColor,
             ),
             Text(
               getWeight(currentMovement, getUserWeightRecordForMovement(currentMovement).weight),
-              style: OlukoFonts.olukoMediumFont(),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoNeumorphismColors.appBackgroundColor),
             ),
             const SizedBox(
               width: 2,
             ),
             Text(
               widget.useImperial ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-              style: OlukoFonts.olukoMediumFont(),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoNeumorphismColors.appBackgroundColor),
             )
           ],
         ),

@@ -107,7 +107,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
                                 color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
                                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
                             child: Center(
-                              child: Text(OlukoLocalizations.get(context, 'recentWeight'),
+                              child: Text(OlukoLocalizations.get(context, 'loggedWeight'),
                                   style: OlukoFonts.olukoMediumFont(
                                       customFontWeight: FontWeight.w500,
                                       customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor)),
