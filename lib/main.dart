@@ -14,7 +14,6 @@ import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/services/push_notification_service.dart';
 import 'package:oluko_app/ui/newDesignComponents/animation.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
@@ -29,11 +28,8 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  FirebaseAnalyticsObserver observer = 
-      FirebaseAnalyticsObserver(analytics: analytics);
-      
-  await PushNotificationService.initializeBackgroundNotificationsHandler();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
   if(alreadyLoggedUserResponse != null){

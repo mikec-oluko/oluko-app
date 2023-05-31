@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -20,43 +18,6 @@ class PushNotificationService {
     await messaging.requestPermission();
     final String token = await messaging.getToken();
     BlocProvider.of<UserBloc>(context).saveToken(userId, token);
-  }
-
-  static Future<void> initializeBackgroundNotificationsHandler() async{
-    await AwesomeNotifications().initialize(
-          'resource://drawable/icon',
-          [
-            NotificationChannel(channelKey: 'basic_channel',
-                                channelName: 'Oluko push notifications',
-                                channelDescription: 'Oluko push notifications',
-                                importance: NotificationImportance.High,
-                                channelShowBadge: true,
-                                )
-          ],
-          debug: true,
-        );
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  }
-
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    final String userAvatar = message.data['avatar'].toString();
-    final NotificationContent notificationContent = NotificationContent(
-          id: 10,
-          channelKey: 'basic_channel',
-          title: message.data['title']?.toString(),
-          body: message.data['body'].toString(),
-    );
-    if (userAvatar?.isNotEmpty ?? false){
-      notificationContent.notificationLayout = NotificationLayout.BigPicture;
-      if (Platform.isAndroid){
-        notificationContent.largeIcon = userAvatar;
-      }else{
-        notificationContent.bigPicture = userAvatar;
-      }
-    }
-    AwesomeNotifications().createNotification(
-      content: notificationContent,
-    );
   }
 
   static void listenPushNotifications(BuildContext contextPush) {
