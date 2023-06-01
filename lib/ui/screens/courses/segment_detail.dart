@@ -436,10 +436,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
-  Widget startWorkoutsButton(bool isFinihedBefore) {
+  Widget startWorkoutsButton(bool isFinishedBefore) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? ((widget.classSegments[segmentIndexToUse].isChallenge && _canStartSegment) ||
-                ((widget.classSegments[segmentIndexToUse].isChallenge && isFinihedBefore) || !widget.classSegments[segmentIndexToUse].isChallenge))
+                ((widget.classSegments[segmentIndexToUse].isChallenge && isFinishedBefore) || !widget.classSegments[segmentIndexToUse].isChallenge))
             ? Padding(
                 padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(
@@ -545,7 +545,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Object getArguments() {
     return {
-      'segmentIndex': segmentIndexToUse - 1,
+      'segmentIndex': segmentIndexToUse,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
       'courseIndex': widget.courseIndex,
