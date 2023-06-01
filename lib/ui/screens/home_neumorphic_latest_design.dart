@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
@@ -29,10 +30,12 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/oluko_exception_message.dart';
 import 'package:oluko_app/helpers/profile_helper_functions.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/collected_card.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
+import 'package:oluko_app/models/points_card.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -42,6 +45,7 @@ import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/hand_widget.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/points_card_component.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
@@ -55,6 +59,7 @@ import 'package:oluko_app/ui/newDesignComponents/user_transformation_journey_sec
 import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/course_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/models/workout_day.dart';
@@ -138,45 +143,62 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           if (state is CourseEnrollmentsByUserStreamSuccess) {
             _courseEnrollmentList = state.courseEnrollments;
           }
-          return Scaffold(
-            body: NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return _stories(widget.authState);
-              },
-              body: Container(
-                color: OlukoNeumorphismColors.appBackgroundColor,
-                constraints: const BoxConstraints.expand(),
-                child: ListView.builder(
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
-                  clipBehavior: Clip.none,
-                  padding: EdgeInsets.zero,
-                  itemCount: 1,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      children: [
-                        _userCoverAndProfileDetails(),
-                        _userCoursesSchedule(),
-                        _enrolledCoursesAndPeople(),
-                        myListOfCoursesAndFriendsRecommended(),
-                        _challengesSection(),
-                        _transformationPhotos(),
-                        _assessmentVideos(),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          width: MediaQuery.of(context).size.width,
-                        )
-                      ],
-                    );
-                  },
+          return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
+            if (ModalRoute.of(context).isCurrent && pointsCardsState is NewCardsCollected) {
+              for (var card in pointsCardsState.pointsCards) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showPointsCardDialog(context, card);
+                  BlocProvider.of<PointsCardBloc>(context).emitDefaultState();
+                });
+
+                BlocProvider.of<PointsCardBloc>(context).getUserCards(widget.currentUser.id);
+              }
+            }
+            return Scaffold(
+              body: NestedScrollView(
+                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                  return _stories(widget.authState);
+                },
+                body: Container(
+                  color: OlukoNeumorphismColors.appBackgroundColor,
+                  constraints: const BoxConstraints.expand(),
+                  child: ListView.builder(
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    clipBehavior: Clip.none,
+                    padding: EdgeInsets.zero,
+                    itemCount: 1,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Column(
+                        children: [
+                          _userCoverAndProfileDetails(),
+                          _userCoursesSchedule(),
+                          _enrolledCoursesAndPeople(),
+                          myListOfCoursesAndFriendsRecommended(),
+                          _challengesSection(),
+                          _transformationPhotos(),
+                          _assessmentVideos(),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width,
+                          )
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          });
         },
       );
     }
+  }
+
+  void _showPointsCardDialog(BuildContext context, PointsCard card) {
+    DialogUtils.getDialog(context, [SizedBox(height: 240, width: 203.5, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
+        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true, addTopPadding: true);
   }
 
   void _markWelcomeVideoAsSeen(bool value, BuildContext context) {
