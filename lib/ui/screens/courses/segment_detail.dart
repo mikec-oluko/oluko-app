@@ -301,17 +301,18 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getCarouselSlider() {
+    var a = ScreenUtils.height(context);
     return Column(
       children: [
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: 670,
+          height: ScreenUtils.height(context) * 0.80,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-            minHeight: 90,
-            maxHeight: 185,
+            minHeight: ScreenUtils.height(context) * 0.12,
+            maxHeight: ScreenUtils.height(context) * 0.26,
             onPanelSlide: (value) => value > 0 ? panelState.value = false : panelState.value = true,
             collapsed: CollapsedMovementVideosSection(action: getAction()),
             panel: movementsPanel(),
@@ -338,7 +339,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Positioned _segmentStartButton() {
     return Positioned(
-        bottom: 100,
+        bottom: ScreenUtils.height(context) * 0.15,
         child: Align(
             child: SizedBox(
                 width: ScreenUtils.width(context),
