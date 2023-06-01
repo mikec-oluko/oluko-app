@@ -271,7 +271,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   void _showPointsCardDialog(BuildContext context, PointsCard card) {
-    DialogUtils.getDialog(context, [SizedBox(height: 280, width: 230, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
+    DialogUtils.getDialog(context, [SizedBox(height: 240, width: 203.5, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
         showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true);
   }
 
