@@ -18,6 +18,7 @@ import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:oluko_app/utils/schedule_utils.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -123,6 +124,7 @@ class CourseEnrollmentRepository {
         }
       }
       classes[classIndex].completedAt = Timestamp.now();
+      ScheduleUtils.reScheduleClasses(classes, courseEnrollment.weekDays, classIndex);
     }
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
