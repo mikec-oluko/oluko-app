@@ -173,10 +173,14 @@ Widget _menuIcon(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
                               backgroundColor:
                                   userInformation != null ? OlukoColors.userColor(userInformation.firstName, userInformation.lastName) : OlukoColors.black,
                               radius: 15.0,
-                              child: FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
-                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
+                              child: SizedBox(
+                                width: 25,
+                                height: 25,
+                                child: FittedBox(
+                                  fit: BoxFit.fitWidth,
+                                  child: Text(userInformation != null ? userInformation.loadProfileDefaultPicContent() : '',
+                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500)),
+                                ),
                               ),
                             ),
                         if (olukoBottomNavigationBarItem.route != RouteEnum.profile) _menuIcon(olukoBottomNavigationBarItem),
