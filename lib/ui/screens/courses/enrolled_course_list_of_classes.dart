@@ -93,12 +93,17 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   }
 
   void _openEditSchedule(BuildContext context) {
+    final int lastCompletedClassIndex = widget.courseEnrollment.classes.lastIndexWhere((classItem) => classItem.completedAt != null);
+    final int totalClasses = widget.courseEnrollment.classes.where((classItem) =>
+                                                                widget.courseEnrollment.classes.indexOf(classItem) > lastCompletedClassIndex &&
+                                                                classItem.completedAt == null).length;
     BottomDialogUtils.showBottomDialog(
       content: ScheduleModalContent(
         scheduleRecommendations: widget.course.scheduleRecommendations,
         isCoachRecommendation: widget.isCoachRecommendation,
         courseEnrollment: widget.courseEnrollment,
-        totalClasses: _classItemList.length,
+        totalClasses: totalClasses,
+        lastCompletedClassIndex: lastCompletedClassIndex,
         blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
         onUpdateScheduleAction: () {
           setState(() {
