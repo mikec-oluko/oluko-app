@@ -364,14 +364,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       const SizedBox.shrink()
                     else
                       FriendsRecordsStack(
-                        friendsUsers: widget.favoriteUsers,
-                        movementsForWeight: movementsToDisplayWeight,
-                        segmentStep: _segmentSteps(),
-                        segmentTitleWidget: _segmentCardTitle(),
-                        useImperial: widget.currentUser.useImperialSystem,
-                        currentUserRecords: weightRecords,
-                        currentSegmentId: widget.segment.id,
-                      )
+                          friendsUsers: widget.favoriteUsers,
+                          movementsForWeight: movementsToDisplayWeight,
+                          segmentStep: _segmentSteps(),
+                          segmentTitleWidget: _segmentCardTitle(),
+                          useImperial: widget.currentUser.useImperialSystem,
+                          currentUserRecords: weightRecords,
+                          currentSegmentId: widget.segment.id,
+                          userId: widget.currentUser.id)
                   ],
                 ),
                 const SizedBox(height: 10),

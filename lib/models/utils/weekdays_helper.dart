@@ -40,14 +40,18 @@ class WeekDaysHelper {
     }
   }
 
-  static List<DateTime> getRecurringDates(Frequency frequency, int count){
-    final List<Map<String, Object>> selectedDays = selectedWeekdays
+  static List<DateTime> getRecurringDates(Frequency frequency, int count, { List<String> weekDays = const [] }){
+    final List<Map<String, Object>> selectedDays = weekDays.isEmpty ? selectedWeekdays
                                               .where((item) => item['selected'] as bool == true)
                                               .map((item) => {
                                                 'day': item['day'].toString(),
                                                 'number': WeekDaysHelper.selectedWeekdays.indexOf(item) + 1
                                               },)
-                                              .toList();
+                                              .toList() : 
+                                              weekDays.map((item) => {
+                                                'day': item,
+                                                'number': selectedWeekdays.indexWhere((selectedWeekdayItem) => selectedWeekdayItem['day'].toString() == item) + 1
+                                              }).toList();
     if (selectedDays.isEmpty){
       return [];
     }

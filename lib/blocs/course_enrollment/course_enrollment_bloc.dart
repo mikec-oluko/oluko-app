@@ -7,6 +7,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:oluko_app/utils/schedule_utils.dart';
 
 abstract class CourseEnrollmentState {}
 
@@ -76,11 +77,9 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  Future<void> scheduleCourse(CourseEnrollment enrolledCourse, List<DateTime> scheduledDates) async {
+  Future<void> scheduleCourse(CourseEnrollment enrolledCourse, List<DateTime> scheduledDates, int lastCompletedClassIndex) async {
     try {
-      for (int i = 0; i < scheduledDates.length; i++) {
-        enrolledCourse.classes[i].scheduledDate = scheduledDates.isNotEmpty && scheduledDates[i] != null ? Timestamp.fromDate(scheduledDates[i]) : null;
-      }
+      ScheduleUtils.scheduleUncompletedClasses(enrolledCourse.classes, lastCompletedClassIndex);
       final CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.scheduleCourse(enrolledCourse);
       emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {

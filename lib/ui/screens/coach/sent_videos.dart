@@ -46,7 +46,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
       builder: (context, state) {
         if (state is CoachSentVideosSuccess) {
-          content = state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
+          content = state.sentVideos.where((sentVideo) => sentVideo?.video != null)?.toList();
         }
         return Scaffold(
           appBar: OlukoAppBar(
@@ -184,7 +184,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                           Padding(
                             padding: const EdgeInsets.only(left: 5),
                             child: Text(
-                              segmentSubmitted.segmentName,
+                              segmentSubmitted.segmentName ?? '',
                               style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                             ),
                           ),

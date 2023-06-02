@@ -72,7 +72,7 @@ class MovementRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
         .collection('movements')
-        .where('recommended_weight', isEqualTo: true)
+        .where('recommend_weight', isEqualTo: true)
         .where('is_deleted', isEqualTo: false)
         .get();
     return mapQueryToMovement(querySnapshot);
