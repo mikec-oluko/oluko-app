@@ -79,20 +79,7 @@ class SearchUtils {
   }
 
   static modalOnUserTap(UserResponse friendUser, UserResponse authUser, BuildContext context) {
-    BottomDialogUtils.showBottomDialog(
-      content: FriendModalContent(
-          friendUser,
-          authUser.id,
-          null,
-          BlocProvider.of<FriendBloc>(context),
-          BlocProvider.of<FriendRequestBloc>(context),
-          BlocProvider.of<HiFiveSendBloc>(context),
-          BlocProvider.of<HiFiveReceivedBloc>(context),
-          BlocProvider.of<UserStatisticsBloc>(context),
-          BlocProvider.of<FavoriteFriendBloc>(context),
-          BlocProvider.of<UserProgressStreamBloc>(context)),
-      context: context,
-    );
+    BottomDialogUtils.friendsModal(friendUser, authUser.id, null, context);
   }
 
   static List<Course> searchCoursesMethod(String query, List<Course> collection, List<Tag> selectedTags) {

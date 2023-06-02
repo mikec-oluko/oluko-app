@@ -361,7 +361,7 @@ class _State extends State<Clock> {
       barrierColor: false,
       context: context,
       content: Container(
-        height: ScreenUtils.height(context) * 0.4,
+        height: ScreenUtils.height(context) * 0.35,
         child: CustomKeyboard(
           boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
           controller: widget.textController,

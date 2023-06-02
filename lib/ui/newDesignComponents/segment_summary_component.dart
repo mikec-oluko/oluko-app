@@ -102,19 +102,16 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     BottomDialogUtils.showBottomDialog(
       barrierColor: false,
       context: context,
-      content: Container(
-        height: ScreenUtils.height(context) * 0.4,
-        child: CustomKeyboard(
-          boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
-          controller: textEditingController,
-          focus: focusNode,
-          onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
-          onSubmit: () {
-            onSubmit(movementId, currentMovementAndWeight, textEditingController);
-            Navigator.pop(context);
-            focusNode.unfocus();
-          },
-        ),
+      content: CustomKeyboard(
+        boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
+        controller: textEditingController,
+        focus: focusNode,
+        onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
+        onSubmit: () {
+          onSubmit(movementId, currentMovementAndWeight, textEditingController);
+          Navigator.pop(context);
+          focusNode.unfocus();
+        },
       ),
     );
   }

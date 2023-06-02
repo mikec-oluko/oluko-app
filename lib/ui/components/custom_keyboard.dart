@@ -33,72 +33,70 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   @override
   Widget build(BuildContext context) {
     widget.focus.requestFocus();
-    return Column(
-      children: [
-        if (widget.showInput) _input(),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: widget.boxDecoration,
-          child: Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              NumberPanel(
-                text: '1',
-                onPressed: () => _insertText('1'),
-              ),
-              NumberPanel(
-                text: '2',
-                onPressed: () => _insertText('2'),
-              ),
-              NumberPanel(
-                text: '3',
-                onPressed: () => _insertText('3'),
-              ),
-            ]),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              NumberPanel(
-                text: '4',
-                onPressed: () => _insertText('4'),
-              ),
-              NumberPanel(
-                text: '5',
-                onPressed: () => _insertText('5'),
-              ),
-              NumberPanel(
-                text: '6',
-                onPressed: () => _insertText('6'),
-              ),
-            ]),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              NumberPanel(
-                text: '7',
-                onPressed: () => _insertText('7'),
-              ),
-              NumberPanel(
-                text: '8',
-                onPressed: () => _insertText('8'),
-              ),
-              NumberPanel(
-                text: '9',
-                onPressed: () => _insertText('9'),
-              ),
-            ]),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              Expanded(child: DeleteButton(onBackspace: () => _backspace())),
-              NumberPanel(
-                text: '0',
-                onPressed: () => _insertText('0'),
-              ),
-              Expanded(
-                child: DoneButton(onPressed: () => widget.onSubmit()),
-              )
-            ]),
-            const SizedBox(
-              height: 15,
+    return Wrap(children: [
+      if (widget.showInput) _input(),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        decoration: widget.boxDecoration,
+        child: Column(children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            NumberPanel(
+              text: '1',
+              onPressed: () => _insertText('1'),
+            ),
+            NumberPanel(
+              text: '2',
+              onPressed: () => _insertText('2'),
+            ),
+            NumberPanel(
+              text: '3',
+              onPressed: () => _insertText('3'),
+            ),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            NumberPanel(
+              text: '4',
+              onPressed: () => _insertText('4'),
+            ),
+            NumberPanel(
+              text: '5',
+              onPressed: () => _insertText('5'),
+            ),
+            NumberPanel(
+              text: '6',
+              onPressed: () => _insertText('6'),
+            ),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            NumberPanel(
+              text: '7',
+              onPressed: () => _insertText('7'),
+            ),
+            NumberPanel(
+              text: '8',
+              onPressed: () => _insertText('8'),
+            ),
+            NumberPanel(
+              text: '9',
+              onPressed: () => _insertText('9'),
+            ),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            Expanded(child: DeleteButton(onBackspace: () => _backspace())),
+            NumberPanel(
+              text: '0',
+              onPressed: () => _insertText('0'),
+            ),
+            Expanded(
+              child: DoneButton(onPressed: () => widget.onSubmit()),
             )
           ]),
-        ),
-      ],
-    );
+          const SizedBox(
+            height: 15,
+          )
+        ]),
+      ),
+    ]);
   }
 
   Widget _input() {
@@ -123,7 +121,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
                     child: IntrinsicWidth(
                       child: TextField(
                         controller: widget.controller,
-                         focusNode: widget.focus,
+                        focusNode: widget.focus,
                         readOnly: true,
                         showCursor: true,
                         style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w500),
