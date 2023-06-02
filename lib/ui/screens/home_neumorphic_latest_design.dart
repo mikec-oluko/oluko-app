@@ -157,7 +157,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                     return Column(
                       children: [
                         _userCoverAndProfileDetails(),
-                        _userCoursesSchedule(context),
+                        _userCoursesSchedule(),
                         _enrolledCoursesAndPeople(),
                         myListOfCoursesAndFriendsRecommended(),
                         _challengesSection(),
@@ -193,13 +193,13 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     ];
   }
 
-  List<WorkoutDay> getThisWeekScheduledWorkouts(BuildContext context){
+  List<WorkoutDay> getThisWeekScheduledWorkouts() {
     return ScheduleUtils.getThisWeekClasses(context, _courseEnrollmentList);
   }
 
-  Widget _userCoursesSchedule(BuildContext context) {
-    final List<WorkoutDay> thisWeekWorkouts = getThisWeekScheduledWorkouts(context);
-    if (thisWeekWorkouts.isEmpty){
+  Widget _userCoursesSchedule() {
+    final List<WorkoutDay> thisWeekWorkouts = getThisWeekScheduledWorkouts();
+    if (thisWeekWorkouts.isEmpty) {
       hasScheduledCourses = false;
       return const SizedBox.shrink();
     }
@@ -220,15 +220,14 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           Align(
             alignment: Alignment.centerLeft,
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: _getScheduledWorkouts(thisWeekWorkouts),
                 ),
               ],
             ),
-
           ),
         ],
       ),
@@ -257,78 +256,81 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([workoutSchedule.courseEnrollment]);
     final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment.course.reference.get();
     final Course actualCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
-    Navigator.pushNamed(context, routeLabels[RouteEnum.courseHomePage], arguments: {
-      'courseEnrollments': [workoutSchedule.courseEnrollment],
-      'authState': widget.authState,
-      'courses': [actualCourse],
-      'user': currentUserLatestVersion,
-      'isFromHome': true,
-      'openEditScheduleOnInit': true,
-    },);
+    Navigator.pushNamed(
+      context,
+      routeLabels[RouteEnum.courseHomePage],
+      arguments: {
+        'courseEnrollments': [workoutSchedule.courseEnrollment],
+        'authState': widget.authState,
+        'courses': [actualCourse],
+        'user': currentUserLatestVersion,
+        'isFromHome': true,
+        'openEditScheduleOnInit': true,
+      },
+    );
   }
 
-  List<Widget> _getScheduledWorkouts(List<WorkoutDay> thisWeekWorkouts){
+  List<Widget> _getScheduledWorkouts(List<WorkoutDay> thisWeekWorkouts) {
     return thisWeekWorkouts.map((workout) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      workout.day,
-                                      style: OlukoFonts.olukoMediumFont(
-                                        customColor: OlukoColors.white,
-                                        customFontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: workout.scheduledWorkouts.map((scheduledWorkout) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                constraints: const BoxConstraints(maxWidth: 200),
-                                                child: 
-                                                GestureDetector(
-                                                  child: Text(
-                                                    scheduledWorkout.className,
-                                                    style: OlukoFonts.olukoMediumFont(
-                                                      customColor: OlukoColors.yellow,
-                                                      customFontWeight: FontWeight.w500,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                  onTap: () {
-                                                    _navigateToCourseSelectedScheduledClass(context, scheduledWorkout);
-                                                  },
-                                                ),
-                                              ),
-                                              const SizedBox(width: 10),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  _goToEditSchedule(context, scheduledWorkout);
-                                                },
-                                                child: Text(
-                                                  OlukoLocalizations.get(context, 'editSchedule'),
-                                                  style: OlukoFonts.olukoMediumFont(
-                                                    customColor: OlukoColors.grayColor,
-                                                    customFontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    // Add more widgets here to display other information
-                                  ],
-                                ),
-                              );
-                            }).toList();
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              workout.day,
+              style: OlukoFonts.olukoMediumFont(
+                customColor: OlukoColors.white,
+                customFontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: workout.scheduledWorkouts.map((scheduledWorkout) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        constraints: const BoxConstraints(maxWidth: 200),
+                        child: GestureDetector(
+                          child: Text(
+                            scheduledWorkout.className,
+                            style: OlukoFonts.olukoMediumFont(
+                              customColor: OlukoColors.yellow,
+                              customFontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          onTap: () {
+                            _navigateToCourseSelectedScheduledClass(context, scheduledWorkout);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () {
+                          _goToEditSchedule(context, scheduledWorkout);
+                        },
+                        child: Text(
+                          OlukoLocalizations.get(context, 'editSchedule'),
+                          style: OlukoFonts.olukoMediumFont(
+                            customColor: OlukoColors.grayColor,
+                            customFontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+            // Add more widgets here to display other information
+          ],
+        ),
+      );
+    }).toList();
   }
 
   Widget _userCoverAndProfileDetails() {
@@ -339,7 +341,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         }
         return Container(
           width: MediaQuery.of(context).size.width,
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
+          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 1.8,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -425,7 +427,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           _usersProgress = userProgressListState.usersProgress;
         }
         return Padding(
-          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 100, 20, 50),
+          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 45, 20, 50),
           child: _courseAndPeopleContent(context),
         );
       },

@@ -30,12 +30,10 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
       padding: EdgeInsets.zero,
       child: BlocBuilder<PersonalRecordBloc, PersonalRecordState>(builder: (context, personalRecordState) {
         return Container(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/courses/gray_background.png'),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            gradient: OlukoNeumorphism.olukoNeumorphicGradientDark(),
+          ),
           child: Column(
             children: [
               Row(

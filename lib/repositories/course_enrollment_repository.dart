@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/dto/completion_dto.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
@@ -16,11 +15,10 @@ import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
-import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:oluko_app/utils/schedule_utils.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -126,6 +124,7 @@ class CourseEnrollmentRepository {
         }
       }
       classes[classIndex].completedAt = Timestamp.now();
+      ScheduleUtils.reScheduleClasses(classes, courseEnrollment.weekDays, classIndex);
     }
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
@@ -167,7 +166,7 @@ class CourseEnrollmentRepository {
         CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: [], weekDays: course.weekDays);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
-    docRef.set(courseEnrollment.toJson());
+    await docRef.set(courseEnrollment.toJson());
     return courseEnrollment;
   }
 
@@ -175,7 +174,7 @@ class CourseEnrollmentRepository {
     final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference docRef = reference.doc(enrolledCourse.id);
-    docRef.set(enrolledCourse.toJson(), SetOptions(merge: true));
+    await docRef.set(enrolledCourse.toJson(), SetOptions(merge: true));
     return enrolledCourse;
   }
 

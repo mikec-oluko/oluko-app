@@ -3,7 +3,6 @@
 SetupDevEnv () {
     echo "Setting up development environment" && flutter clean && \
     cp environments/dev/icon.png assets/icon && \
-    cp environments/dev/icon.png android/app/src/main/res/drawable && \
     cp ios/Flutter/src/development/GoogleService-Info.plist ios/Flutter && \
     cp -a android/app/src/development/ android/app && \
     cp -a android/fastlane/src/dev/metadata android/fastlane && \
@@ -16,7 +15,6 @@ SetupDevEnv () {
 SetupProdEnv () {
     echo "Setting up production environment" && flutter clean && \
     cp environments/prod/icon.png assets/icon && \
-    cp environments/prod/icon.png android/app/src/main/res/drawable && \
     cp ios/Flutter/src/production/GoogleService-Info.plist ios/Flutter && \
     cp -a android/app/src/production/ android/app && \
     cp -a android/fastlane/src/production/metadata android/fastlane && \
@@ -29,7 +27,6 @@ SetupProdEnv () {
 SetupStagingEnv () {
     echo "Setting up staging environment" && flutter clean && \
     cp environments/staging/icon.png assets/icon && \
-    cp environments/staging/icon.png android/app/src/main/res/drawable && \
     cp ios/Flutter/src/staging/GoogleService-Info.plist ios/Flutter && \
     cp -a android/app/src/staging/ android/app && \
     cp -a android/fastlane/src/staging/metadata android/fastlane && \
@@ -42,7 +39,6 @@ SetupStagingEnv () {
 SetupQAEnv () {
     echo "Setting up qa environment" && flutter clean && \
     cp environments/qa/icon.png assets/icon && \
-    cp environments/qa/icon.png android/app/src/main/res/drawable && \
     cp ios/Flutter/src/qa/GoogleService-Info.plist ios/Flutter && \
     cp -a android/app/src/qa/ android/app  && \
     cp -a android/fastlane/src/qa/metadata android/fastlane && \

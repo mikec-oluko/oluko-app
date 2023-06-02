@@ -28,20 +28,20 @@ class CourseClassCardsList extends StatefulWidget {
   final Function onPressed;
   final bool isFromHome;
   final bool openEditScheduleOnInit;
-  const CourseClassCardsList(
-      {this.course,
-      this.courseEnrollment,
-      this.classes,
-      this.courseIndex,
-      this.fromCoach,
-      this.isCoachRecommendation,
-      this.fromHome,
-      this.playPauseVideo,
-      this.closeVideo,
-      this.onPressed,
-      this.isFromHome = false,
-      this.openEditScheduleOnInit = false,})
-      : super();
+  const CourseClassCardsList({
+    this.course,
+    this.courseEnrollment,
+    this.classes,
+    this.courseIndex,
+    this.fromCoach,
+    this.isCoachRecommendation,
+    this.fromHome,
+    this.playPauseVideo,
+    this.closeVideo,
+    this.onPressed,
+    this.isFromHome = false,
+    this.openEditScheduleOnInit = false,
+  }) : super();
 
   @override
   State<CourseClassCardsList> createState() => _CourseClassCardsListState();
@@ -57,9 +57,8 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
       _classItemList = _buildClassesList();
     });
     super.initState();
-    if (widget.openEditScheduleOnInit){
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => _openEditSchedule(context));
+    if (widget.openEditScheduleOnInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openEditSchedule(context));
     }
   }
 
@@ -93,15 +92,20 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
     );
   }
 
-  void _openEditSchedule(BuildContext context){
+  void _openEditSchedule(BuildContext context) {
+    final int lastCompletedClassIndex = widget.courseEnrollment.classes.lastIndexWhere((classItem) => classItem.completedAt != null);
+    final int totalClasses = widget.courseEnrollment.classes.where((classItem) =>
+                                                                widget.courseEnrollment.classes.indexOf(classItem) > lastCompletedClassIndex &&
+                                                                classItem.completedAt == null).length;
     BottomDialogUtils.showBottomDialog(
       content: ScheduleModalContent(
         scheduleRecommendations: widget.course.scheduleRecommendations,
         isCoachRecommendation: widget.isCoachRecommendation,
         courseEnrollment: widget.courseEnrollment,
-        totalClasses: _classItemList.length,
+        totalClasses: totalClasses,
+        lastCompletedClassIndex: lastCompletedClassIndex,
         blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
-        onUpdateScheduleAction: (){
+        onUpdateScheduleAction: () {
           setState(() {
             _classItemList = _updateClassScheduledDates();
           });
@@ -209,18 +213,10 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
   }
 
   void getNavigationToClass(CourseEnrollment enrollment, int classIndex, int courseIndex) {
-    if (widget.isFromHome) {
-      Navigator.popAndPushNamed(
-        context,
-        routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': enrollment, 'classIndex': classIndex, 'courseIndex': courseIndex, 'actualCourse': widget.course},
-      );
-    } else {
-      Navigator.pushNamed(
-        context,
-        routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': enrollment, 'classIndex': classIndex, 'courseIndex': courseIndex, 'actualCourse': widget.course},
-      );
-    }
+    Navigator.popAndPushNamed(
+      context,
+      routeLabels[RouteEnum.insideClass],
+      arguments: {'courseEnrollment': enrollment, 'classIndex': classIndex, 'courseIndex': courseIndex, 'actualCourse': widget.course},
+    );
   }
 }

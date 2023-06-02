@@ -167,4 +167,22 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
           }
         });
   }
+
+  String getContentTitle(CoachPersonalizedVideo personalizedVideo) {
+    const String defaultIntroductionVideoId = 'introVideo';
+    String titleForVideoContent = 'MVT Video';
+    if (personalizedVideo.annotationContent != null) {
+      if (personalizedVideo.annotationContent.segmentName != null) {
+        titleForVideoContent = personalizedVideo.annotationContent?.segmentName;
+      }
+      if (personalizedVideo.annotationContent.id == defaultIntroductionVideoId) {
+        titleForVideoContent = OlukoLocalizations.get(context, 'introductionVideo');
+      }
+    } else if (personalizedVideo.videoMessageContent != null) {
+      if (personalizedVideo.videoMessageContent.video.name != null) {
+        titleForVideoContent = personalizedVideo.videoMessageContent.video.name;
+      }
+    }
+    return titleForVideoContent;
+  }
 }
