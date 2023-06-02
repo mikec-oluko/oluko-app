@@ -650,7 +650,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           'classIndex': widget.classIndex,
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
-          'fromChallenge': _isFromChallenge
+          'fromChallenge': _isFromChallenge,
+          'classSegments': widget.segments,
         },
       );
     } else {

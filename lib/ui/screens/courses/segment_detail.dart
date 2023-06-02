@@ -307,12 +307,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.height(context) * 0.80,
+          height: ScreenUtils.height(context) * 0.78,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-            minHeight: ScreenUtils.height(context) * 0.12,
-            maxHeight: ScreenUtils.height(context) * 0.26,
+            minHeight: 90,
+            maxHeight: 180,
             onPanelSlide: (value) => value > 0 ? panelState.value = false : panelState.value = true,
             collapsed: CollapsedMovementVideosSection(action: getAction()),
             panel: movementsPanel(),
@@ -339,7 +339,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Positioned _segmentStartButton() {
     return Positioned(
-        bottom: ScreenUtils.height(context) * 0.15,
+        bottom: ScreenUtils.height(context) * 0.165,
         child: Align(
             child: SizedBox(
                 width: ScreenUtils.width(context),
@@ -361,7 +361,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _segmentStepsDotsComponent() => Positioned(
-      bottom: 150,
+      bottom: ScreenUtils.height(context) * 0.225,
       left: 50,
       right: 50,
       child: Row(
@@ -545,7 +545,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Object getArguments() {
     return {
-      'segmentIndex': segmentIndexToUse - 1,
+      'segmentIndex': dotsIndex.value - 1,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
       'courseIndex': widget.courseIndex,
@@ -600,7 +600,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 valueListenable: dotsIndex,
                 builder: (context, index, child) {
                   return Opacity(
-                    opacity: index == i + 1 ? 1 : 0.5,
+                    opacity: (index as int) == i + 1 ? 1 : 0.5,
                     child: SegmentImageSection(
                       onPressed: () => onPressedAction(),
                       segment: _segments[i],

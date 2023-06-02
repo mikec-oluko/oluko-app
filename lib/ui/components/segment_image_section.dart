@@ -226,9 +226,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 children: [
-                  SizedBox(
-                    height: 20,
-                  ),
                   _segmentCardComponent(),
                 ],
               ),
