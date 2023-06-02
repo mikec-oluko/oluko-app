@@ -235,13 +235,13 @@ class CourseEnrollmentRepository {
 
   static Future<List<EnrollmentMovement>> getEnrollmentMovements(SectionSubmodel section) async {
     final List<EnrollmentMovement> movements = [];
-    bool storeWeights = false;
+    bool storeWeight = false;
     int percentOfMaxWeight;
     final promises = section.movements.map((movementFromEnrollmentSegment) async {
       if (movementFromEnrollmentSegment.reference != null) {
         final DocumentSnapshot qs = await movementFromEnrollmentSegment.reference.get();
         final Movement movement = Movement.fromJson(qs.data() as Map<String, dynamic>);
-        storeWeights = movement.storeWeights;
+        storeWeight = movement.storeWeight;
         percentOfMaxWeight = movementFromEnrollmentSegment.percentOfMaxWeight;
       }
       movements.add(EnrollmentMovement(
@@ -249,7 +249,7 @@ class CourseEnrollmentRepository {
           reference: movementFromEnrollmentSegment.reference,
           name: movementFromEnrollmentSegment.name,
           weight: null,
-          storeWeights: storeWeights,
+          storeWeight: storeWeight,
           percentOfMaxWeight: percentOfMaxWeight));
     });
     await Future.wait(promises);

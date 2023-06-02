@@ -5,11 +5,11 @@ class EnrollmentMovement {
   DocumentReference reference;
   String name;
   List<int> counters;
-  bool storeWeights;
+  bool storeWeight;
   int percentOfMaxWeight;
   double weight;
 
-  EnrollmentMovement({this.id, this.reference, this.name, this.counters, this.storeWeights, this.percentOfMaxWeight, this.weight});
+  EnrollmentMovement({this.id, this.reference, this.name, this.counters, this.storeWeight, this.percentOfMaxWeight, this.weight});
 
   factory EnrollmentMovement.fromJson(Map<String, dynamic> json) {
     return EnrollmentMovement(
@@ -24,7 +24,7 @@ class EnrollmentMovement {
                     (json['counters'] as Iterable).map((counter) => counter as int),
                   ),
         percentOfMaxWeight: json['percentage_value'] as int,
-        storeWeights: json['store_weights'] == null ? false : json['store_weights'] as bool,
+        storeWeight: json['store_weight'] == null ? false : json['store_weight'] as bool,
         weight: json['weight'] == null ? 0 : (json['weight'] as num).toDouble());
   }
 
@@ -33,7 +33,7 @@ class EnrollmentMovement {
         'reference': reference,
         'name': name,
         'counters': counters == null ? null : counters,
-        'store_weights': storeWeights,
+        'store_weight': storeWeight,
         'percentage_value': percentOfMaxWeight,
         'weight': weight
       };

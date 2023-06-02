@@ -36,8 +36,7 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
             children: [
               SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
               if (movement.percentOfMaxWeight != null)
-                SegmentUtils.getTextWidget(
-                    '(${movement.percentOfMaxWeight} ${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
+                SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
               else
                 const SizedBox.shrink(),
             ],
@@ -69,7 +68,7 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
           ),
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
             hintText: OlukoLocalizations.get(context, 'addWeight'),

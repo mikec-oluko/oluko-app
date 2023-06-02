@@ -40,7 +40,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
       trailing: getTrailingContent(movement),
       title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
       subtitle: movement.percentOfMaxWeight != null
-          ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight} ${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
+          ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
           : const SizedBox.shrink(),
     );
   }

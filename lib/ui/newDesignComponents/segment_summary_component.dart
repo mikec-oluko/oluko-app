@@ -55,8 +55,22 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   Map<String, int> movementsWeights = {};
   List<WorkoutWeight> listOfWeightsToUpdate = [];
   bool showRecommendation = false;
+  bool segmentHasRecommendations = false;
+  bool segmentHasWeights = false;
   final List<TextEditingController> _listOfControllers = [];
   final List<FocusNode> _listOfNodes = [];
+
+  @override
+  void initState() {
+    setState(() {
+      if (!widget.addWeightEnable) {
+        segmentHasWeights = segmentHasWeightRecords();
+        segmentHasRecommendations = segmentHasWeightRecommendations();
+        showRecommendation = segmentHasRecommendations;
+      }
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -83,63 +97,109 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           )
         : Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Neumorphic(
-                  style: OlukoNeumorphism.getNeumorphicStyleForStadiumShapeElement(),
-                  child: Container(
-                    height: 60,
-                    width: ScreenUtils.width(context) - 40,
-                    decoration:
-                        const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showRecommendation = false;
-                            });
-                          },
-                          child: Container(
-                            height: 60,
-                            width: (ScreenUtils.width(context) - 80) / 2,
-                            decoration: BoxDecoration(
-                                color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
-                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
-                            child: Center(
-                              child: Text(OlukoLocalizations.get(context, 'loggedWeight'),
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customFontWeight: FontWeight.w500,
-                                      customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor)),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showRecommendation = true;
-                            });
-                          },
-                          child: Container(
-                            height: 60,
-                            color: showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
-                            width: (ScreenUtils.width(context) - 80) / 2,
-                            child: Center(
-                              child: Text(OlukoLocalizations.get(context, 'recommended'),
-                                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              weightTabsComponent(context),
               Column(
                 children: _segmentSectionAndMovementDetails(showRecommendation),
               ),
             ],
           );
+  }
+
+  Widget weightTabsComponent(BuildContext context) {
+    if (segmentHasWeights && segmentHasRecommendations) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForStadiumShapeElement(),
+          child: Container(
+            height: 60,
+            width: ScreenUtils.width(context) - 40,
+            decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
+            child: Row(
+              children: [_loggedWeightComponent(context), _recommendedWeightComponent(context)],
+            ),
+          ),
+        ),
+      );
+    }
+    if (segmentHasWeights && !segmentHasRecommendations) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Container(
+          height: 60,
+          width: ScreenUtils.width(context) - 40,
+          decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(OlukoLocalizations.get(context, 'loggedWeight'),
+                  style: OlukoFonts.olukoMediumFont(
+                      customFontWeight: FontWeight.w500, customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor))
+            ],
+          ),
+        ),
+      );
+    }
+    if (!segmentHasWeights && segmentHasRecommendations) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Container(
+          height: 60,
+          width: ScreenUtils.width(context) - 40,
+          decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(OlukoLocalizations.get(context, 'recommended'),
+                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white))
+            ],
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  GestureDetector _recommendedWeightComponent(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          showRecommendation = true;
+        });
+      },
+      child: Container(
+        height: 60,
+        color: showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
+        width: (ScreenUtils.width(context) - 80) / 2,
+        child: Center(
+          child: Text(OlukoLocalizations.get(context, 'recommended'),
+              style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector _loggedWeightComponent(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          showRecommendation = false;
+        });
+      },
+      child: Container(
+        height: 60,
+        width: (ScreenUtils.width(context) - 80) / 2,
+        decoration: BoxDecoration(
+            color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
+        child: Center(
+          child: Text(OlukoLocalizations.get(context, 'loggedWeight'),
+              style: OlukoFonts.olukoMediumFont(
+                  customFontWeight: FontWeight.w500, customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor)),
+        ),
+      ),
+    );
   }
 
   List<Widget> _segmentSectionAndMovementDetails(bool showWeightRecommendation) {
@@ -302,6 +362,34 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     currentMovementAndWeight.weight = movementsWeights[movementId];
 
     widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
+  }
+
+  bool segmentHasWeightRecords() {
+    bool hasWeightRecords = false;
+    List<String> actualMovementsIds = [];
+    widget.sectionsFromSegment.forEach((section) {
+      actualMovementsIds = section.movements.map((movement) => movement.id).toList();
+    });
+    widget.weightRecords.forEach((weightRecord) {
+      if (actualMovementsIds.contains(weightRecord.movementId) && weightRecord.segmentId == widget.segmentId) {
+        hasWeightRecords = true;
+      }
+    });
+    return hasWeightRecords;
+  }
+
+  bool segmentHasWeightRecommendations() {
+    List<EnrollmentMovement> movementsWithWeightRecommendation = [];
+    widget.enrollmentMovements.forEach((movement) {
+      if (movement.storeWeight && (movement.percentOfMaxWeight != null && movement.percentOfMaxWeight > 0)) {
+        movementsWithWeightRecommendation.add(movement);
+      }
+    });
+    if (movementsWithWeightRecommendation.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   double weightToKg(String value) => int.parse(value) * _passToKilogramsUnit;
