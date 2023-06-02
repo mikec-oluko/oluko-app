@@ -91,7 +91,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                     padding: const EdgeInsets.only(left: 5),
                     child: Text(
                       widget.personalizedVideo.annotationContent != null
-                          ? widget.personalizedVideo.annotationContent.segmentName
+                          ? widget.personalizedVideo.annotationContent.segmentName ?? ''
                           : widget.personalizedVideo.videoMessageContent.video.name,
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
