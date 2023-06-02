@@ -337,7 +337,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 thinPadding: true,
                 title: OlukoLocalizations.get(context, 'enroll'),
                 onPressed: () {
-                  showScheduleDialog(context);
+                  if (!_disableAction){
+                    showScheduleDialog(context);
+                  }
                 },
               )
             else
@@ -345,7 +347,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 title: OlukoLocalizations.get(context, 'enroll'),
                 isDisabled: _disableAction,
                 onPressed: () {
-                  showScheduleDialog(context);
+                  if (!_disableAction){
+                    showScheduleDialog(context);
+                  }
                 },
               ),
           ],

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/models/utils/json_utils.dart';
 import 'package:oluko_app/models/utils/weekdays_helper.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/workout_day.dart';
@@ -39,7 +40,7 @@ class ScheduleUtils {
             className: "${courseEnrollment.course.name} ${OlukoLocalizations.get(context, 'class')} ${classIndex + 1}",
             classIndex: classIndex,
             scheduledDate: scheduledDate,
-            enrolledDate: courseEnrollment.createdAt?.toDate(),
+            enrolledDate: courseEnrollment.createdAt?.toDate() ?? DateTime.now(),
             day: OlukoLocalizations.get(context, DateFormat('EEEE').format(scheduledDate).toLowerCase())
           );
         }).toList());
