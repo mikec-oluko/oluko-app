@@ -37,6 +37,7 @@ platform :ios do
     end
     match(
       type: "appstore",
+      app_identifier:["com.app.olukoApp","com.app.olukoApp.ImageNoti"],
       readonly: is_ci,
       keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
