@@ -115,12 +115,12 @@ class MovementUtils {
 
   static double get _toKilogramsUnit => 0.453;
 
-  static int kilogramToLbs(int maxWeight) {
-    return (maxWeight * _toKilogramsUnit).round();
+  static int kilogramToLbs(int maxWeightInKg) {
+    return (maxWeightInKg * _passToKilogramsUnit).round();
   }
 
-  static int lbsToKilogram(int maxWeight) {
-    return (maxWeight * _passToKilogramsUnit).round();
+  static int lbsToKilogram(int maxWeightInLbs) {
+    return (maxWeightInLbs * _toKilogramsUnit).round();
   }
 
   static double get _passToKilogramsUnit => 2.20462;
