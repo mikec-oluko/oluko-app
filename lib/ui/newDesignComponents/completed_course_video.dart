@@ -46,13 +46,14 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
         await _videoPlayerController.dispose();
         if (Navigator.canPop(context)) {
           Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
+          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root]);
         }
       }
     });
 
     return chewieController;
   }
-                                                               
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -80,7 +81,8 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
                   onTap: () async {
                     if (_videoPlayerController != null && Navigator.canPop(context)) {
                       await _videoPlayerController.dispose();
-                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
+                      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root]);
                     }
                   },
                   child: SizedBox(

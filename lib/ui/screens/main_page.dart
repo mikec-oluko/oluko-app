@@ -193,34 +193,50 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 ),
               );
             } else {
-              return Scaffold(
-                backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                body: Stack(alignment: AlignmentDirectional.center, children: [
-                  _scaffoldBody(),
-                  _slidingUpPanel(),
-                ]),
-                extendBody: true,
-                bottomNavigationBar: _isBottomTabActive
-                    ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
-                        if (state is PointsCardPanelOpen) {
-                          return const SizedBox();
-                        } else {
-                          return OlukoBottomNavigationBar(
-                            loggedUser: loggedUser,
-                            selectedIndex: this.tabController.index,
-                            onPressed: (index) => this.setState(() {
-                              this.tabController.animateTo(index as int);
-                            }),
-                          );
-                        }
-                      })
-                    : const SizedBox(),
-              );
+              return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
+                if (ModalRoute.of(context).isCurrent && pointsCardsState is NewCardsCollected) {
+                  for (var card in pointsCardsState.pointsCards) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _showPointsCardDialog(context, card);
+                      BlocProvider.of<PointsCardBloc>(context).emitDefaultState();
+                    });
+                    BlocProvider.of<PointsCardBloc>(context).getUserCards(loggedUser.uid);
+                  }
+                }
+                return Scaffold(
+                  backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+                  body: Stack(alignment: AlignmentDirectional.center, children: [
+                    _scaffoldBody(),
+                    _slidingUpPanel(),
+                  ]),
+                  extendBody: true,
+                  bottomNavigationBar: _isBottomTabActive
+                      ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+                          if (state is PointsCardPanelOpen) {
+                            return const SizedBox();
+                          } else {
+                            return OlukoBottomNavigationBar(
+                              loggedUser: loggedUser,
+                              selectedIndex: this.tabController.index,
+                              onPressed: (index) => this.setState(() {
+                                this.tabController.animateTo(index as int);
+                              }),
+                            );
+                          }
+                        })
+                      : const SizedBox(),
+                );
+              });
             }
           },
         );
       }),
     );
+  }
+
+  void _showPointsCardDialog(BuildContext context, PointsCard card) {
+    DialogUtils.getDialog(context, [SizedBox(height: 240, width: 203.5, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
+        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true, addTopPadding: true);
   }
 
   Widget _slidingUpPanel() {
