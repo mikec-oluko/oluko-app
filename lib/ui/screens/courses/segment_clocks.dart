@@ -889,7 +889,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       recordingPanelController.close();
     }
 
-    if (timerEntries[timerTaskIndex].round > 0) {
+    if (timerEntries[timerTaskIndex].round != null && timerEntries[timerTaskIndex].round > 0) {
       Future.delayed(const Duration(milliseconds: 2000), () {
         cameraController?.dispose();
       });

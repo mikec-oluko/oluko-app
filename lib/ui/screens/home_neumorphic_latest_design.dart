@@ -99,7 +99,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   void initState() {
     // BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
     // BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
-
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
       currentUserLatestVersion = widget.currentUser;
@@ -143,62 +142,45 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           if (state is CourseEnrollmentsByUserStreamSuccess) {
             _courseEnrollmentList = state.courseEnrollments;
           }
-          return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
-            if (ModalRoute.of(context).isCurrent && pointsCardsState is NewCardsCollected) {
-              for (var card in pointsCardsState.pointsCards) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _showPointsCardDialog(context, card);
-                  BlocProvider.of<PointsCardBloc>(context).emitDefaultState();
-                });
-
-                BlocProvider.of<PointsCardBloc>(context).getUserCards(widget.currentUser.id);
-              }
-            }
-            return Scaffold(
-              body: NestedScrollView(
-                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                  return _stories(widget.authState);
-                },
-                body: Container(
-                  color: OlukoNeumorphismColors.appBackgroundColor,
-                  constraints: const BoxConstraints.expand(),
-                  child: ListView.builder(
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    clipBehavior: Clip.none,
-                    padding: EdgeInsets.zero,
-                    itemCount: 1,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          _userCoverAndProfileDetails(),
-                          _userCoursesSchedule(),
-                          _enrolledCoursesAndPeople(),
-                          myListOfCoursesAndFriendsRecommended(),
-                          _challengesSection(),
-                          _transformationPhotos(),
-                          _assessmentVideos(),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.width,
-                          )
-                        ],
-                      );
-                    },
-                  ),
+          return Scaffold(
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return _stories(widget.authState);
+              },
+              body: Container(
+                color: OlukoNeumorphismColors.appBackgroundColor,
+                constraints: const BoxConstraints.expand(),
+                child: ListView.builder(
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  clipBehavior: Clip.none,
+                  padding: EdgeInsets.zero,
+                  itemCount: 1,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        _userCoverAndProfileDetails(),
+                        _userCoursesSchedule(),
+                        _enrolledCoursesAndPeople(),
+                        myListOfCoursesAndFriendsRecommended(),
+                        _challengesSection(),
+                        _transformationPhotos(),
+                        _assessmentVideos(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.width,
+                        )
+                      ],
+                    );
+                  },
                 ),
               ),
-            );
-          });
+            ),
+          );
         },
       );
     }
-  }
-
-  void _showPointsCardDialog(BuildContext context, PointsCard card) {
-    DialogUtils.getDialog(context, [SizedBox(height: 240, width: 203.5, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
-        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true, addTopPadding: true);
   }
 
   void _markWelcomeVideoAsSeen(bool value, BuildContext context) {
