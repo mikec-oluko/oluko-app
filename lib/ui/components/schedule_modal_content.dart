@@ -237,6 +237,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
 
   Future<void> enrollCourse(BuildContext context) async {
     if (widget.disableAction == false) {
+      widget.onEnrollAction();
       if (widget.firstAppInteractionAt == null) {
         widget.blocAuth.storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
       }
@@ -246,7 +247,6 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
       }
       await _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
-    widget.onEnrollAction();
   }
 
   Future<void> skipSchedule(BuildContext context) async {

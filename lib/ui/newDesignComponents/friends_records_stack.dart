@@ -17,6 +17,7 @@ class FriendsRecordsStack extends StatefulWidget {
   final bool useImperial;
   final List<WeightRecord> currentUserRecords;
   final String currentSegmentId;
+  final String userId;
   const FriendsRecordsStack(
       {Key key,
       this.friendsUsers,
@@ -25,7 +26,8 @@ class FriendsRecordsStack extends StatefulWidget {
       this.segmentTitleWidget,
       this.useImperial = true,
       this.currentUserRecords,
-      this.currentSegmentId})
+      this.currentSegmentId,
+      this.userId})
       : super(key: key);
 
   @override
@@ -50,13 +52,14 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
                       context,
                       [
                         FriendsWeightRecordsPopUpComponent(
-                          segmentStep: widget.segmentStep,
-                          segmentTitleWidget: widget.segmentTitleWidget,
-                          friendsRecords: myFriendsrecords,
-                          movementsForWeight: widget.movementsForWeight,
-                          useImperial: widget.useImperial,
-                          currentUserRecords: widget.currentUserRecords,
-                        )
+                            segmentStep: widget.segmentStep,
+                            segmentTitleWidget: widget.segmentTitleWidget,
+                            friendsRecords: myFriendsrecords,
+                            movementsForWeight: widget.movementsForWeight,
+                            useImperial: widget.useImperial,
+                            currentUserRecords: widget.currentUserRecords,
+                            context: context,
+                            userId: widget.userId)
                       ],
                       useAppBackground: true);
                 },

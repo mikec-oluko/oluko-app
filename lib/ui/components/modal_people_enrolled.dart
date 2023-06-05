@@ -155,20 +155,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
 
   showFriendModal(dynamic friendUser) {
     if (friendUser is UserResponse) {
-      BottomDialogUtils.showBottomDialog(
-        content: FriendModalContent(
-            friendUser,
-            widget.userId,
-            _usersProgress,
-            BlocProvider.of<FriendBloc>(context),
-            BlocProvider.of<FriendRequestBloc>(context),
-            BlocProvider.of<HiFiveSendBloc>(context),
-            BlocProvider.of<HiFiveReceivedBloc>(context),
-            BlocProvider.of<UserStatisticsBloc>(context),
-            BlocProvider.of<FavoriteFriendBloc>(context),
-            BlocProvider.of<UserProgressStreamBloc>(context)),
-        context: context,
-      );
+      BottomDialogUtils.friendsModal(friendUser, widget.userId, _usersProgress, context);
     }
   }
 
