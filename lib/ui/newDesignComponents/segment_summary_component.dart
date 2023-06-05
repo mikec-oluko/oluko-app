@@ -261,7 +261,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       if (widget.useImperialSystem) {
         movementsWeights[movement.id] = int.parse(value);
       } else {
-        movementsWeights[movement.id] = weightToKg(value).toInt();
+        movementsWeights[movement.id] = MovementUtils.lbsToKilogram(int.parse(value));
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
@@ -275,7 +275,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       if (widget.useImperialSystem) {
         movementsWeights[movement.id] = int.parse(value);
       } else {
-        movementsWeights[movement.id] = weightToKg(value).toInt();
+        movementsWeights[movement.id] = MovementUtils.lbsToKilogram(int.parse(value));
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
@@ -336,7 +336,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       if (widget.useImperialSystem) {
         movementsWeights[movementId] = int.parse(textEditingController.text);
       } else {
-        movementsWeights[movementId] = textControllerValueToKg(textEditingController).toInt();
+        movementsWeights[movementId] = MovementUtils.lbsToKilogram(int.parse(textEditingController.text));
       }
     }
 
@@ -365,7 +365,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     return movementsWithWeightRecommendation.isNotEmpty;
   }
 
-  double weightToKg(String value) => int.parse(value) * _passToKilogramsUnit;
+  // double weightToKg(String value) => int.parse(value) * _passToKilogramsUnit;
 
-  double textControllerValueToKg(TextEditingController textEditingController) => double.parse(textEditingController.text) * _passToKilogramsUnit;
+  // double textControllerValueToKg(TextEditingController textEditingController) => double.parse(textEditingController.text) * _passToKilogramsUnit;
 }

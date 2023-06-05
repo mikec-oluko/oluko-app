@@ -18,6 +18,11 @@ class UserMaxWeights extends MaxWeightsState {
   UserMaxWeights({this.maxWeightRecords});
 }
 
+class UserMaxWeightsDispose extends MaxWeightsState {
+  List<MaxWeight> maxWeightRecords;
+  UserMaxWeightsDispose({this.maxWeightRecords});
+}
+
 class MaxWeightsMovements extends MaxWeightsState {
   final List<Movement> movements;
   Map<String, int> maxWeightsMap;
@@ -31,6 +36,11 @@ class Failure extends MaxWeightsState {
 
 class MaxWeightsBloc extends Cubit<MaxWeightsState> {
   MaxWeightsBloc() : super(MaxWeightsLoading());
+
+  @override
+  void dispose() {
+    emit(UserMaxWeightsDispose(maxWeightRecords: []));
+  }
 
   Future<void> getMaxWeightMovements(String userId) async {
     try {

@@ -344,6 +344,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           weightRecords = state.records;
           getMovementsWithWeightRequired();
         }
+        if (state is WeightRecordsDispose) {
+          weightRecords = state.records;
+        }
         return Container(
           width: ScreenUtils.width(context) - 40,
           decoration: BoxDecoration(
@@ -383,6 +386,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     child: BlocBuilder<MaxWeightsBloc, MaxWeightsState>(
                       builder: (context, state) {
                         if (state is UserMaxWeights) {
+                          maxWeightRecords = state.maxWeightRecords;
+                        }
+                        if (state is UserMaxWeightsDispose) {
                           maxWeightRecords = state.maxWeightRecords;
                         }
                         return SegmentSummaryComponent(
