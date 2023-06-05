@@ -27,7 +27,7 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
 
   Padding _movementTileWithInput(MovementSubmodel movement) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -35,7 +35,7 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
-              if (movement.percentOfMaxWeight != null)
+              if (canShowRecommendationSubtitle(movement))
                 SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
               else
                 const SizedBox.shrink(),
@@ -46,6 +46,8 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
       ),
     );
   }
+
+  bool canShowRecommendationSubtitle(MovementSubmodel movement) => movement.percentOfMaxWeight != null && movement.percentOfMaxWeight != 0;
 
   Container _inputComponent(String movementId) {
     return Container(

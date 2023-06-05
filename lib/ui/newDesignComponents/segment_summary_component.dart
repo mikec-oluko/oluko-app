@@ -64,7 +64,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   void initState() {
     setState(() {
       if (!widget.addWeightEnable) {
-        segmentHasWeights = segmentHasWeightRecords();
+        segmentHasWeights = segmentUseWeights();
         segmentHasRecommendations = segmentHasWeightRecommendations();
         showRecommendation = segmentHasRecommendations;
       }
@@ -106,7 +106,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   }
 
   Widget weightTabsComponent(BuildContext context) {
-    if (segmentHasWeights && segmentHasRecommendations) {
+    if (segmentHasRecommendations && segmentHasWeights) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Neumorphic(
@@ -114,44 +114,30 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           child: Container(
             height: 60,
             width: ScreenUtils.width(context) - 40,
-            decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
+            decoration: const BoxDecoration(color: OlukoNeumorphismColors.appBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(50))),
             child: Row(
               children: [_loggedWeightComponent(context), _recommendedWeightComponent(context)],
             ),
           ),
         ),
       );
-    }
-    if (segmentHasWeights && !segmentHasRecommendations) {
+    } else if (segmentHasWeights && !segmentHasRecommendations) {
+      setState(() {
+        showRecommendation = false;
+      });
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Container(
-          height: 60,
+          height: 20,
           width: ScreenUtils.width(context) - 40,
-          decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(OlukoLocalizations.get(context, 'loggedWeight'),
-                  style: OlukoFonts.olukoMediumFont(
-                      customFontWeight: FontWeight.w500, customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor))
-            ],
-          ),
-        ),
-      );
-    }
-    if (!segmentHasWeights && segmentHasRecommendations) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Container(
-          height: 60,
-          width: ScreenUtils.width(context) - 40,
-          decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, borderRadius: BorderRadius.all(Radius.circular(50))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(OlukoLocalizations.get(context, 'recommended'),
-                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white))
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: Text(OlukoLocalizations.get(context, 'loggedWeight'),
+                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
+              )
             ],
           ),
         ),
@@ -359,18 +345,14 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
   }
 
-  bool segmentHasWeightRecords() {
-    bool hasWeightRecords = false;
-    List<String> actualMovementsIds = [];
-    widget.sectionsFromSegment.forEach((section) {
-      actualMovementsIds = section.movements.map((movement) => movement.id).toList();
-    });
-    widget.weightRecords.forEach((weightRecord) {
-      if (actualMovementsIds.contains(weightRecord.movementId) && weightRecord.segmentId == widget.segmentId) {
-        hasWeightRecords = true;
+  bool segmentUseWeights() {
+    List<EnrollmentMovement> movementsStoreWeights = [];
+    widget.enrollmentMovements.forEach((movement) {
+      if (movement.storeWeight) {
+        movementsStoreWeights.add(movement);
       }
     });
-    return hasWeightRecords;
+    return movementsStoreWeights.isNotEmpty;
   }
 
   bool segmentHasWeightRecommendations() {
@@ -380,11 +362,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         movementsWithWeightRecommendation.add(movement);
       }
     });
-    if (movementsWithWeightRecommendation.isNotEmpty) {
-      return true;
-    } else {
-      return false;
-    }
+    return movementsWithWeightRecommendation.isNotEmpty;
   }
 
   double weightToKg(String value) => int.parse(value) * _passToKilogramsUnit;

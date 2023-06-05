@@ -39,11 +39,13 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     return ListTile(
       trailing: getTrailingContent(movement),
       title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
-      subtitle: movement.percentOfMaxWeight != null
+      subtitle: canShowRecommendationSubtitle(movement)
           ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
           : const SizedBox.shrink(),
     );
   }
+
+  bool canShowRecommendationSubtitle(MovementSubmodel movement) => movement.percentOfMaxWeight != null && movement.percentOfMaxWeight != 0;
 
   Container weightContainerForRecommendationOrRecent(MovementSubmodel movement) {
     return Container(
