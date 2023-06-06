@@ -145,6 +145,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget enrolled() {
     if (widget.courseEnrollments.length == _activeCourses.length) {
       return Scaffold(
+        extendBody: true,
         backgroundColor: OlukoColors.black,
         body: Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
@@ -152,7 +153,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 // if (showLogo) getLogo() else const SliverToBoxAdapter(),
-                getLogo(),
+                // getLogo(), REMOVED TO TEST FLOW
                 if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
               ];
             },
@@ -295,8 +296,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
-      pinned: true,
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      // pinned: true,
+      backgroundColor: Colors.transparent,
       title: Container(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Row(
@@ -377,6 +378,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 }
               },
               child: OlukoVideoPreview(
+                showBackButton: true,
                 image: _activeCourses[index].image,
                 video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[index].videoHls, videoUrl: _activeCourses[index].video),
                 onBackPressed: () => Navigator.pop(context),
