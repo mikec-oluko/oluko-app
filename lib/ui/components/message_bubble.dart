@@ -70,20 +70,7 @@ class _MessageBubbleState extends State<MessageBubble> {
   }
 
   friendModal(BuildContext context) {
-    BottomDialogUtils.showBottomDialog(
-      content: FriendModalContent(
-          widget.user,
-          widget.authUserId,
-          null,
-          BlocProvider.of<FriendBloc>(context),
-          BlocProvider.of<FriendRequestBloc>(context),
-          BlocProvider.of<HiFiveSendBloc>(context),
-          BlocProvider.of<HiFiveReceivedBloc>(context),
-          BlocProvider.of<UserStatisticsBloc>(context),
-          BlocProvider.of<FavoriteFriendBloc>(context),
-          BlocProvider.of<UserProgressStreamBloc>(context)),
-      context: context,
-    );
+    BottomDialogUtils.friendsModal(widget.user, widget.authUserId, null, context);
   }
 
   Widget _buildUserAvatar() {
@@ -134,13 +121,12 @@ class _MessageBubbleState extends State<MessageBubble> {
             )
           else
             AudioSentComponent(
-              record: widget.audioMessage.url,
-              onAudioPlaying: (bool playing) => _onPlayAudio(playing),
-              onStartPlaying: () => _canStartPlaying(),
-              durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
-              showBin: false,
-              keepPlayingInBackground: true
-            )
+                record: widget.audioMessage.url,
+                onAudioPlaying: (bool playing) => _onPlayAudio(playing),
+                onStartPlaying: () => _canStartPlaying(),
+                durationFromRecord: Duration(milliseconds: widget.audioMessage?.duration),
+                showBin: false,
+                keepPlayingInBackground: true)
         ],
       ),
     );

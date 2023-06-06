@@ -17,6 +17,7 @@ class FriendsRecordsStack extends StatefulWidget {
   final bool useImperial;
   final List<WeightRecord> currentUserRecords;
   final String currentSegmentId;
+  final String userId;
   const FriendsRecordsStack(
       {Key key,
       this.friendsUsers,
@@ -25,7 +26,8 @@ class FriendsRecordsStack extends StatefulWidget {
       this.segmentTitleWidget,
       this.useImperial = true,
       this.currentUserRecords,
-      this.currentSegmentId})
+      this.currentSegmentId,
+      this.userId})
       : super(key: key);
 
   @override
@@ -50,13 +52,15 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
                       context,
                       [
                         FriendsWeightRecordsPopUpComponent(
-                          segmentStep: widget.segmentStep,
-                          segmentTitleWidget: widget.segmentTitleWidget,
-                          friendsRecords: myFriendsrecords,
-                          movementsForWeight: widget.movementsForWeight,
-                          useImperial: widget.useImperial,
-                          currentUserRecords: widget.currentUserRecords,
-                        )
+                            segmentStep: widget.segmentStep,
+                            segmentTitleWidget: widget.segmentTitleWidget,
+                            friendsRecords: myFriendsrecords,
+                            movementsForWeight: widget.movementsForWeight,
+                            useImperial: widget.useImperial,
+                            currentUserRecords: widget.currentUserRecords,
+                            segmentId: widget.currentSegmentId,
+                            context: context,
+                            userId: widget.userId)
                       ],
                       useAppBackground: true);
                 },
@@ -99,7 +103,9 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
     List<WeightRecord> recordsList = [];
     if (myFriendsrecords[friend] != null) {
       myFriendsrecords[friend].forEach((recordElement) {
-        if (widget.movementsForWeight.where((movement) => movement.id == recordElement.movementId).isNotEmpty) {
+        if (widget.movementsForWeight
+            .where((movement) => movement.id == recordElement.movementId && recordElement.segmentId == widget.currentSegmentId)
+            .isNotEmpty) {
           recordsList.add(recordElement);
         }
       });

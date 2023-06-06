@@ -122,20 +122,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
           width: 85,
           height: 100,
           child: GestureDetector(
-            onTap: () => BottomDialogUtils.showBottomDialog(
-              content: FriendModalContent(
-                  itemUser,
-                  currentUserId,
-                  _usersProgress,
-                  BlocProvider.of<FriendBloc>(context),
-                  BlocProvider.of<FriendRequestBloc>(context),
-                  BlocProvider.of<HiFiveSendBloc>(context),
-                  BlocProvider.of<HiFiveReceivedBloc>(context),
-                  BlocProvider.of<UserStatisticsBloc>(context),
-                  BlocProvider.of<FavoriteFriendBloc>(context),
-                  BlocProvider.of<UserProgressStreamBloc>(context)),
-              context: context,
-            ),
+            onTap: () => BottomDialogUtils.friendsModal(itemUser, currentUserId, _usersProgress, context),
             child: Column(
               children: [
                 StoriesItem(

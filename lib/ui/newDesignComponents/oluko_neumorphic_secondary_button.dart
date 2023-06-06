@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 
+import '../../models/enums/neumorphic_button_shape.dart';
+
 class OlukoNeumorphicSecondaryButton extends StatefulWidget {
   final Function() onPressed;
   final String title;
@@ -17,23 +19,25 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
   final bool isExpanded;
   final bool lighterButton;
   final double customHeight;
-  const OlukoNeumorphicSecondaryButton(
-      {@required this.title,
-      @required this.onPressed,
-      this.thinPadding = false,
-      // this.color,
-      this.textColor = OlukoColors.grayColor,
-      this.textAlign = TextAlign.center,
-      this.icon,
-      this.buttonShape,
-      this.isDisabled = false,
-      this.onlyIcon = false,
-      this.isExpanded = true,
-      this.customHeight = 50,
-      this.useBorder = false,
-      this.isPrimary = true,
-      this.lighterButton = false})
-      : super();
+  final NeumorphicButtonShape shape;
+  const OlukoNeumorphicSecondaryButton({
+    @required this.title,
+    @required this.onPressed,
+    this.thinPadding = false,
+    // this.color,
+    this.textColor = OlukoColors.grayColor,
+    this.textAlign = TextAlign.center,
+    this.icon,
+    this.buttonShape,
+    this.isDisabled = false,
+    this.onlyIcon = false,
+    this.isExpanded = true,
+    this.customHeight = 50,
+    this.useBorder = false,
+    this.isPrimary = true,
+    this.lighterButton = false,
+    this.shape = NeumorphicButtonShape.stadium,
+  }) : super();
 
   @override
   _OlukoNeumorphicButtonState createState() => _OlukoNeumorphicButtonState();
@@ -58,10 +62,17 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       },
       padding: const EdgeInsets.all(2),
       style: OlukoNeumorphism.secondaryButtonStyle(
-          useBorder: widget.useBorder, buttonShape: widget.buttonShape, boxShape: NeumorphicBoxShape.stadium(), lightShadow: true, darkShadow: true),
+          useBorder: widget.useBorder,
+          buttonShape: widget.buttonShape,
+          boxShape: (widget.shape == NeumorphicButtonShape.circle) ? const NeumorphicBoxShape.circle() : const NeumorphicBoxShape.stadium(),
+          lightShadow: true,
+          darkShadow: true),
       child: Neumorphic(
         style: OlukoNeumorphism.secondaryButtonStyle(
-            buttonShape: widget.buttonShape, boxShape: const NeumorphicBoxShape.stadium(), lightShadow: true, darkShadow: true),
+            buttonShape: widget.buttonShape,
+            boxShape: (widget.shape == NeumorphicButtonShape.circle) ? const NeumorphicBoxShape.circle() : const NeumorphicBoxShape.stadium(),
+            lightShadow: true,
+            darkShadow: true),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),

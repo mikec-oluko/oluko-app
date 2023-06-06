@@ -11,7 +11,8 @@ class Movement extends Base {
   int index;
   String image;
   List<dynamic> images;
-  bool weightRequired;
+  bool storeWeight;
+  bool recommendWeight;
 
   Movement(
       {this.name,
@@ -22,7 +23,8 @@ class Movement extends Base {
       this.index,
       this.image,
       this.images,
-      this.weightRequired,
+      this.storeWeight,
+      this.recommendWeight,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -41,7 +43,8 @@ class Movement extends Base {
         index: json['index'] as int,
         image: json['image'] == null ? null : json['image']?.toString(),
         images: json['images'] as List<dynamic>,
-        weightRequired: json['weight_required'] == null ? false : json['weight_required'] as bool,
+        storeWeight: json['store_weight'] == null ? false : json['store_weight'] as bool,
+        recommendWeight: json['recommend_weight'] == null ? false : json['recommend_weight'] as bool,
         tags: json['tags'] == null
             ? null
             : (json['tags'] as Iterable).map<ObjectSubmodel>((tag) => ObjectSubmodel.fromJson(tag as Map<String, dynamic>)).toList());
@@ -58,7 +61,8 @@ class Movement extends Base {
       'index': index,
       'image': image,
       'images': images,
-      'weight_required': weightRequired,
+      'store_weight': storeWeight,
+      'recommend_weight': recommendWeight,
       'tags': tags == null ? null : List<dynamic>.from(tags),
     };
     movementJson.addEntries(super.toJson().entries);

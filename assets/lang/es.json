@@ -473,5 +473,10 @@
     "coachResponseSubtitle": "El Coach te ha respondido un audio o video",
     "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
     "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días",
-    "goToCourses": "Ir a cursos"
+    "goToCourses": "Ir a cursos",
+    "percentageOfMaxWeight": "% del Peso Máximo",
+    "loggedWeight": "Peso registrado",
+    "recommendationTooltipText": "Para mostrar la recomendación, complete el curso MVT KICK OFF o agregue manualmente Max Weights en la pestaña de perfil.",
+    "loggedWeightTooltipText": "Registre los pesos después del segmento para saber qué hizo la próxima vez!",
+    "maxWeights": "Peso Maximo"
 }

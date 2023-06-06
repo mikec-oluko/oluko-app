@@ -103,7 +103,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
 
   Widget _coachProfilePicWithNavigation(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 25),
       child: SizedBox(
         height: 100,
         child: Column(
