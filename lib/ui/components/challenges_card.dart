@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
+import 'package:oluko_app/models/enums/neumorphic_button_shape.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
@@ -78,6 +79,7 @@ class _State extends State<ChallengesCard> {
               isExpanded: false,
               thinPadding: true,
               onlyIcon: true,
+              shape: NeumorphicButtonShape.circle,
               icon: Stack(
                 alignment: Alignment.center,
                 children: [
