@@ -444,7 +444,11 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return HomeCoursesAndPeople(
       courseEnrollments: _courseEnrollmentList,
       usersProgress: _usersProgress,
-      courseIndex: courseIndex > _courseEnrollmentList.length ? _courseEnrollmentList.length : courseIndex,
+      courseIndex: courseIndex > _courseEnrollmentList.length
+          ? _courseEnrollmentList.length == 1
+              ? 0
+              : _courseEnrollmentList.length
+          : courseIndex,
       onCourseDeleted: (index) {
         setState(() {
           courseIndex = 0;
@@ -452,14 +456,22 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       },
       onCourseChange: (index) {
         setState(() {
-          courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
+          courseIndex = index > _courseEnrollmentList.length
+              ? _courseEnrollmentList.length == 1
+                  ? 0
+                  : _courseEnrollmentList.length
+              : index;
         });
         BlocProvider.of<SubscribedCourseUsersBloc>(context)
             .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
       },
       onCourseTap: (index) {
         setState(() {
-          courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
+          courseIndex = index > _courseEnrollmentList.length
+              ? _courseEnrollmentList.length == 1
+                  ? 0
+                  : _courseEnrollmentList.length
+              : index;
         });
         _navigateToCourseFirstClassToComplete(context);
       },
