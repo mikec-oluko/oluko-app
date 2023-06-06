@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -124,4 +125,14 @@ class MovementUtils {
   }
 
   static double get _passToKilogramsUnit => 2.20462;
+
+  static int getMaxWeightForMovement(MovementSubmodel movement, List<MaxWeight> maxWeightRecords) {
+    int maxWeightRecord = 0;
+    if (maxWeightRecords != null && maxWeightRecords.isNotEmpty) {
+      if (maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
+        maxWeightRecord = maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
+      }
+    }
+    return maxWeightRecord;
+  }
 }

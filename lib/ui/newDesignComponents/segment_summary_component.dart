@@ -217,7 +217,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               segmentId: widget.segmentId,
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
-              maxWeightValue: getMaxWeightForMovement(movement) != 0 ? double.parse(getMaxWeightForMovement(movement).toString()) : null,
+              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) != 0
+                  ? double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString())
+                  : null,
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
@@ -227,16 +229,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         }
       });
     });
-  }
-
-  int getMaxWeightForMovement(MovementSubmodel movement) {
-    int maxWeightRecord = 0;
-    if (widget.maxWeightRecords != null && widget.maxWeightRecords.isNotEmpty) {
-      if (widget.maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
-        maxWeightRecord = widget.maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
-      }
-    }
-    return maxWeightRecord;
   }
 
   ListTile _defaultMovementTile(MovementSubmodel movement) {
