@@ -58,6 +58,7 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
                             movementsForWeight: widget.movementsForWeight,
                             useImperial: widget.useImperial,
                             currentUserRecords: widget.currentUserRecords,
+                            segmentId: widget.currentSegmentId,
                             context: context,
                             userId: widget.userId)
                       ],
@@ -102,7 +103,9 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
     List<WeightRecord> recordsList = [];
     if (myFriendsrecords[friend] != null) {
       myFriendsrecords[friend].forEach((recordElement) {
-        if (widget.movementsForWeight.where((movement) => movement.id == recordElement.movementId).isNotEmpty) {
+        if (widget.movementsForWeight
+            .where((movement) => movement.id == recordElement.movementId && recordElement.segmentId == widget.currentSegmentId)
+            .isNotEmpty) {
           recordsList.add(recordElement);
         }
       });

@@ -7,32 +7,38 @@ class SegmentSubmodel {
   DocumentReference reference;
   String name;
   bool isChallenge;
+  bool setsMaxWeight;
   String image;
   List<SectionSubmodel> sections;
   SegmentTypeEnum type;
   int rounds;
   int totalTime;
 
-  SegmentSubmodel({this.id, this.reference, this.image, this.name, this.sections, this.isChallenge,this.rounds,this.totalTime,this.type});
+  SegmentSubmodel(
+      {this.id, this.reference, this.image, this.name, this.sections, this.isChallenge, this.setsMaxWeight, this.rounds, this.totalTime, this.type});
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
     return SegmentSubmodel(
-        id: json['id']?.toString(),
-        reference: json['reference'] as DocumentReference,
-        name: json['name']?.toString(),
-        isChallenge: json['is_challenge'] == null
-            ? false
-            : json['is_challenge'] is bool
-                ? json['is_challenge'] as bool
-                : false,
-        image: json['image'] == null ? null : json['image']?.toString(),
-        sections: json['sections'] == null
-            ? null
-            : List<SectionSubmodel>.from((json['sections'] as Iterable)
-                .map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))),
-        rounds: json['rounds'] as int,
-        totalTime:json['total_time'] is int? json['total_time'] as int:int.tryParse(json['total_time'].toString()),
-        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
-                );
+      id: json['id']?.toString(),
+      reference: json['reference'] as DocumentReference,
+      name: json['name']?.toString(),
+      isChallenge: json['is_challenge'] == null
+          ? false
+          : json['is_challenge'] is bool
+              ? json['is_challenge'] as bool
+              : false,
+      setsMaxWeight: json['sets_max_weights'] == null
+          ? false
+          : json['sets_max_weights'] is bool
+              ? json['sets_max_weights'] as bool
+              : false,
+      image: json['image'] == null ? null : json['image']?.toString(),
+      sections: json['sections'] == null
+          ? null
+          : List<SectionSubmodel>.from((json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))),
+      rounds: json['rounds'] as int,
+      totalTime: json['total_time'] is int ? json['total_time'] as int : int.tryParse(json['total_time'].toString()),
+      type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -40,6 +46,7 @@ class SegmentSubmodel {
         'reference': reference,
         'name': name,
         'is_challenge': isChallenge,
+        'sets_max_weights': setsMaxWeight,
         'image': image,
         'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
       };

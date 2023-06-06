@@ -27,7 +27,7 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
   TextEditingController textController = TextEditingController();
   final ValueNotifier<String> _selectedMovementNotifier = ValueNotifier(null);
   String unity;
-  
+
   @override
   initState() {
     super.initState();
@@ -88,37 +88,37 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
     );
   }
 
-  Widget _movementList(MaxWeightsMovements state){
+  Widget _movementList(MaxWeightsMovements state) {
     return Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: state.movements.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: ValueListenableBuilder(
-                valueListenable: _selectedMovementNotifier,
-                builder: (context, selectedMovementId, _) {
-                  Color textColor;
-                  if (selectedMovementId == null) {
-                    textColor = OlukoColors.white;
-                  } else {
-                    textColor = selectedMovementId == state.movements[index].id ? OlukoColors.white : OlukoColors.grayColor;
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(state.movements[index].name, style: TextStyle(fontSize: 18, color: textColor, fontWeight: FontWeight.w300)),
-                      _setWeight(state.movements[index], state.maxWeightsMap, state.movements, textColor),
-                    ],
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      );
+      padding: const EdgeInsets.only(top: 16.0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: state.movements.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+            child: ValueListenableBuilder(
+              valueListenable: _selectedMovementNotifier,
+              builder: (context, selectedMovementId, _) {
+                Color textColor;
+                if (selectedMovementId == null) {
+                  textColor = OlukoColors.white;
+                } else {
+                  textColor = selectedMovementId == state.movements[index].id ? OlukoColors.white : OlukoColors.grayColor;
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(state.movements[index].name, style: TextStyle(fontSize: 18, color: textColor, fontWeight: FontWeight.w300)),
+                    _setWeight(state.movements[index], state.maxWeightsMap, state.movements, textColor),
+                  ],
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
