@@ -58,10 +58,10 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       },
       padding: const EdgeInsets.all(2),
       style: OlukoNeumorphism.secondaryButtonStyle(
-          useBorder: widget.useBorder, buttonShape: widget.buttonShape, boxShape: NeumorphicBoxShape.stadium(), lightShadow: true, darkShadow: true),
+          useBorder: widget.useBorder, buttonShape: widget.buttonShape, boxShape: const NeumorphicBoxShape.circle(), lightShadow: true, darkShadow: true),
       child: Neumorphic(
         style: OlukoNeumorphism.secondaryButtonStyle(
-            buttonShape: widget.buttonShape, boxShape: const NeumorphicBoxShape.stadium(), lightShadow: true, darkShadow: true),
+            buttonShape: widget.buttonShape, boxShape: const NeumorphicBoxShape.circle(), lightShadow: true, darkShadow: true),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),
