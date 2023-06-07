@@ -120,7 +120,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             if (_activeCourses.isNotEmpty) {
               return enrolled();
             } else {
-              return notEnrolled();
+              returnToHome(context);
+              return const SizedBox.shrink();
             }
           } else {
             return OlukoCircularProgressIndicator();
@@ -130,6 +131,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     } else {
       return notEnrolled();
     }
+  }
+
+  void returnToHome(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 20), () {
+      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root], arguments: {
+        'tab': 0,
+      });
+    });
   }
 
   void _addFirstChunkOfCourses() {
@@ -152,8 +161,11 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           child: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return [
-                // if (showLogo) getLogo() else const SliverToBoxAdapter(),
-                // getLogo(), REMOVED TO TEST FLOW
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 0.0001,
+                  ),
+                ),
                 if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
               ];
             },

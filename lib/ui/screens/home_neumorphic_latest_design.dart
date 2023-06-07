@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -168,7 +170,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                         _transformationPhotos(),
                         _assessmentVideos(),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: Platform.isIOS ? MediaQuery.of(context).size.height * 0.1 : MediaQuery.of(context).size.height * 0.05,
                           width: MediaQuery.of(context).size.width,
                         )
                       ],
