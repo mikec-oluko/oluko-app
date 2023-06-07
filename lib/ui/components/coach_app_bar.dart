@@ -9,17 +9,12 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/coach_app_bar_record_audio_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
-import 'package:oluko_app/utils/image_utils.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/sound_recorder.dart';
-import 'package:oluko_app/utils/time_converter.dart';
 
 class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
   final CoachUser coachUser;
   final UserResponse currentUser;
-  final Function() onNavigation;
-  const CoachAppBar({this.coachUser, this.currentUser, this.onNavigation});
+  final Function() onNavigationAction;
+  const CoachAppBar({this.coachUser, this.currentUser, this.onNavigationAction});
 
   @override
   _CoachAppBarState createState() => _CoachAppBarState();
@@ -53,21 +48,20 @@ class _CoachAppBarState extends State<CoachAppBar> {
         if (state is CoachReviewPendingSuccess) {
           numberOfReviewPendingItems = state.reviewsPending;
         }
-        return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAppBar(context) : defaultAppBar(context);
+        return neumorphicCoachAppBar(context);
       },
     );
   }
 
   PreferredSize neumorphicCoachAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
         automaticallyImplyLeading: false,
         leading: Visibility(
           visible: false,
           child: Container(
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 OlukoNeumorphicCircleButton(
                   onPressed: () {
@@ -81,95 +75,65 @@ class _CoachAppBarState extends State<CoachAppBar> {
         flexibleSpace: showCoachProfle
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(kToolbarHeight),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 5).copyWith(top: 5),
-                    child: Container(
-                      child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (widget.coachUser != null)
-                            CoachAppBarRecordAudioComponent(
-                              coachId: widget.coachUser.id,
-                              userId: widget.currentUser.id,
-                            ),
-                          const SizedBox(width: 5),
-                          if (widget.coachUser != null && widget.coachUser.avatar != null)
-                            OlukoNeumorphism.isNeumorphismDesign
-                                ? Padding(
-                                    padding: EdgeInsets.only(top: ScreenUtils.height(context) * 0.01),
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          widget.onNavigation();
-                                          Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
-                                              arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
-                                        },
-                                        child: Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachAvatarImage())),
-                                  )
-                                : coachAvatarImage()
-                          else
-                            OlukoNeumorphism.isNeumorphismDesign
-                                ? GestureDetector(
-                                    onTap: () {
-                                      widget.onNavigation();
-                                      Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
-                                          arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
-                                    },
-                                    child: Neumorphic(style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(), child: coachDefaultAvatar()))
-                                : coachDefaultAvatar(),
-                        ],
-                      ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    getSpacerWidget(),
+                    Row(
+                      children: [
+                        if (widget.coachUser != null)
+                          CoachAppBarRecordAudioComponent(
+                            coachId: widget.coachUser.id,
+                            userId: widget.currentUser.id,
+                          ),
+                        const SizedBox(width: 5),
+                        _coachProfilePicWithNavigation(context)
+                      ],
                     ),
-                  ),
+                    getSpacerWidget()
+                  ],
                 ),
               )
             : const SizedBox.shrink(),
-        bottom: PreferredSize(preferredSize: const Size.fromHeight(kToolbarHeight), child: OlukoNeumorphicDivider()),
+        bottom: const PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: OlukoNeumorphicDivider()),
         backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
       ),
     );
   }
 
-  AppBar defaultAppBar(BuildContext context) {
-    return AppBar(
-      actions: [
-        Row(
+  Widget _coachProfilePicWithNavigation(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 25),
+      child: SizedBox(
+        height: 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: showCoachProfle
-                  ? goToCoachProfile(context)
-                  : Text(
-                      '$numberOfReviewPendingItems  ${OlukoLocalizations.get(context, 'reviewsPending').toUpperCase()}',
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, customFontWeight: FontWeight.w500),
-                    ),
-            ),
-            if (showCoachProfle)
-              widget.coachUser != null && widget.coachUser.avatar != null ? coachAvatarImage() : coachDefaultAvatar()
-            else
-              const SizedBox.shrink(),
+            getSpacerWidget(),
+            GestureDetector(
+                onTap: () {
+                  widget.onNavigationAction();
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
+                      arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
+                },
+                child: Neumorphic(
+                    style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                    child: widget.coachUser != null && widget.coachUser.avatar != null ? coachAvatarImage() : coachDefaultAvatar())),
+            getSpacerWidget()
           ],
-        )
-      ],
-      elevation: 0.0,
-      backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          color: Colors.white,
         ),
-        onPressed: () {
-          Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
-        },
       ),
     );
   }
+
+  Expanded getSpacerWidget() => const Expanded(child: SizedBox());
 
   Stack coachDefaultAvatar() {
     return Stack(children: [
       CircleAvatar(
         backgroundColor: widget.coachUser != null ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName) : OlukoColors.black,
-        radius: 24.0,
+        radius: 22.0,
         child: Text(
             widget.coachUser != null
                 ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
@@ -180,7 +144,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
   }
 
   Widget coachAvatarImage() {
-    final double _imageRadius = 24;
+    const double _imageRadius = 22;
     return CachedNetworkImage(
       height: _imageRadius * 2,
       width: _imageRadius * 2,
@@ -192,20 +156,6 @@ class _CoachAppBarState extends State<CoachAppBar> {
         maxRadius: _imageRadius ?? 30,
       ),
       imageUrl: widget.coachUser.avatar,
-    );
-  }
-
-  GestureDetector goToCoachProfile(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        widget.onNavigation();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile], arguments: {'coachUser': widget.coachUser, 'currentUser': widget.currentUser});
-      },
-      child: Text(
-        OlukoLocalizations.get(context, 'hiCoach'),
-        style: OlukoFonts.olukoMediumFont(
-            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary, customFontWeight: FontWeight.w500),
-      ),
     );
   }
 }

@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/models/utils/json_utils.dart';
 import 'package:oluko_app/models/utils/weekdays_helper.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/workout_day.dart';
 import 'package:oluko_app/models/workout_schedule.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:rrule/rrule.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
 
 class ScheduleUtils {
   static List<WorkoutDay> getThisWeekClasses(BuildContext context, List<CourseEnrollment> courseEnrollmentList){
@@ -36,7 +40,7 @@ class ScheduleUtils {
             className: "${courseEnrollment.course.name} ${OlukoLocalizations.get(context, 'class')} ${classIndex + 1}",
             classIndex: classIndex,
             scheduledDate: scheduledDate,
-            enrolledDate: courseEnrollment.createdAt.toDate(),
+            enrolledDate: courseEnrollment.createdAt?.toDate() ?? DateTime.now(),
             day: OlukoLocalizations.get(context, DateFormat('EEEE').format(scheduledDate).toLowerCase())
           );
         }).toList());
@@ -62,5 +66,43 @@ class ScheduleUtils {
       workoutClasses.sort((a, b) => a.scheduledDay.compareTo(b.scheduledDay));
     }
     return workoutClasses;
+  }
+
+  static void reScheduleClasses(List<EnrollmentClass> classes, List<String> weekDays, int classIndex){
+    if (classes[classIndex].scheduledDate == null){
+      return;
+    }
+    
+    final bool existsNextCompletedClass = classes.any((classItem) => classes.indexOf(classItem) > classIndex && classItem.completedAt != null);
+    final DateTime selectedClassScheduledDate = classes[classIndex].scheduledDate.toDate();
+    final DateTime currentDate = DateTime.now();
+    final bool isClassTakenOnScheduledDate = selectedClassScheduledDate.year == currentDate.year &&
+                                              selectedClassScheduledDate.month == currentDate.month &&
+                                              selectedClassScheduledDate.day == currentDate.day;
+    final bool shouldReSchedule = weekDays != null && weekDays.isNotEmpty &&
+                                  !existsNextCompletedClass &&
+                                  !isClassTakenOnScheduledDate;
+    if (!shouldReSchedule){
+      classes[classIndex].scheduledDate = null;
+      return;
+    }
+    scheduleUncompletedClasses(classes, classIndex, weekDays: weekDays);
+  }
+
+  static void scheduleUncompletedClasses(List<EnrollmentClass> classes, int classIndex, { List<String> weekDays = const []}){
+    final int remainingClassesAmount = classes.where((classItem) => classes.indexOf(classItem) > classIndex &&
+                                                                    classItem.completedAt == null).length;
+    if (remainingClassesAmount > 0){
+      final List<DateTime> scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, remainingClassesAmount, weekDays: weekDays);
+      int scheduledDatesIndex = 0;
+      for (int i = 0; i < classes.length; i++) {
+        if (i <= classIndex){
+          classes[i].scheduledDate = null;
+        }else{
+          classes[i].scheduledDate = Timestamp.fromDate(scheduledDates[scheduledDatesIndex]);
+          scheduledDatesIndex++;
+        }
+      }
+    }
   }
 }

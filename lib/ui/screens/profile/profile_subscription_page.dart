@@ -29,7 +29,7 @@ class ProfileSubscriptionPage extends StatefulWidget {
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with TickerProviderStateMixin {
   TabController _controller;
   int _selectedIndex = 0;
-  int _currentPlan = 0;
+  int _currentPlan = -1;
 
   @override
   void initState() {
@@ -315,7 +315,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           useBorder: true,
           flatStyle: true,
           onPressed: () async {
-            await BlocProvider.of<AuthBloc>(context).logout(context);
+            if (_currentPlan == -1) {
+              await BlocProvider.of<AuthBloc>(context).logout(context);
+            } else {
+              Navigator.pop(context);
+            }
           },
           title: OlukoLocalizations.get(context, 'cancel'),
         ),

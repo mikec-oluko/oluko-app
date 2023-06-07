@@ -1,24 +1,46 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/weight_record.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsWeightRecordsPopUpComponent extends StatefulWidget {
   final Text segmentStep;
+  final String segmentId;
   final Widget segmentTitleWidget;
   final Map<UserResponse, List<WeightRecord>> friendsRecords;
   final List<MovementSubmodel> movementsForWeight;
   final bool useImperial;
   final List<WeightRecord> currentUserRecords;
+  final BuildContext context;
+  final String userId;
   const FriendsWeightRecordsPopUpComponent(
-      {Key key, this.segmentStep, this.segmentTitleWidget, this.friendsRecords, this.movementsForWeight, this.currentUserRecords, this.useImperial = true})
+      {Key key,
+      this.segmentStep,
+      this.segmentId,
+      this.segmentTitleWidget,
+      this.friendsRecords,
+      this.movementsForWeight,
+      this.currentUserRecords,
+      this.useImperial = true,
+      this.context,
+      this.userId})
       : super(key: key);
 
   @override
@@ -46,14 +68,14 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             height: 10,
           ),
           Column(
-            children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement, currentUserRecord: '20')).toList(),
+            children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement)).toList(),
           )
         ],
       ),
     );
   }
 
-  Widget getWorkoutRecordsComponent({MovementSubmodel currentMovement, String currentUserRecord}) {
+  Widget getWorkoutRecordsComponent({MovementSubmodel currentMovement}) {
     return Container(
       decoration: const BoxDecoration(
         color: OlukoNeumorphismColors.appBackgroundColor,
@@ -72,7 +94,9 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
                     customColor: OlukoColors.grayColor,
                   ),
                 ),
-                if (widget.currentUserRecords.where((currentUserRecord) => currentUserRecord.movementId == currentMovement.id).isNotEmpty)
+                if (widget.currentUserRecords
+                    .where((currentUserRecord) => currentUserRecord.movementId == currentMovement.id && currentUserRecord.segmentId == widget.segmentId)
+                    .isNotEmpty)
                   getWeightComponent(currentMovement)
                 else
                   const SizedBox.shrink(),
@@ -86,7 +110,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
               width: ScreenUtils.width(context),
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: test(currentMovement),
+                children: friendUsersRecords(currentMovement),
               ),
             )
           ],
@@ -95,7 +119,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
     );
   }
 
-  List<Widget> test(MovementSubmodel currentMovement) {
+  List<Widget> friendUsersRecords(MovementSubmodel currentMovement) {
     List<Widget> contentToReturn = [];
     Widget newFriendRecord = SizedBox.shrink();
 
@@ -106,13 +130,22 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             padding: const EdgeInsets.only(right: 20),
             child: Column(
               children: [
-                if (friendUser.avatar != null)
-                  CircleAvatar(
-                    minRadius: 25,
-                    backgroundImage: CachedNetworkImageProvider(friendUser.avatarThumbnail ?? friendUser.avatar),
-                  )
-                else
-                  UserUtils.avatarImageDefault(maxRadius: 25, name: friendUser.firstName, lastname: friendUser.lastName),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      BottomDialogUtils.friendsModal(
+                        friendUser,
+                        widget.userId,
+                        null,
+                        widget.context,
+                      );
+                    },
+                    child: friendUser.avatar != null
+                        ? CircleAvatar(
+                            minRadius: 25,
+                            backgroundImage: CachedNetworkImageProvider(friendUser.avatarThumbnail ?? friendUser.avatar),
+                          )
+                        : UserUtils.avatarImageDefault(maxRadius: 25, name: friendUser.firstName, lastname: friendUser.lastName)),
                 const SizedBox(
                   height: 10,
                 ),
@@ -146,12 +179,12 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
   bool canShowUserRecords(UserResponse friendUser) => PrivacyOptions.userRequestedPrivacyOption(friendUser) != SettingsPrivacyOptions.anonymous;
 
   Iterable<WeightRecord> checkMovementRecordInsideFriendRecords(List<WeightRecord> friendRecords, MovementSubmodel currentMovement) =>
-      friendRecords.where((weightRecord) => weightRecord.movementId == currentMovement.id);
+      friendRecords.where((weightRecord) => weightRecord.movementId == currentMovement.id && weightRecord.segmentId == widget.segmentId);
 
   Widget getWeightComponent(MovementSubmodel currentMovement) {
     return Container(
       height: 40,
-      decoration: const BoxDecoration(color: OlukoColors.grayColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+      decoration: const BoxDecoration(color: OlukoColors.primaryLight, borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Row(
@@ -160,17 +193,18 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             Image.asset(
               'assets/courses/weight_icon.png',
               scale: 3,
+              color: OlukoNeumorphismColors.appBackgroundColor,
             ),
             Text(
               getWeight(currentMovement, getUserWeightRecordForMovement(currentMovement).weight),
-              style: OlukoFonts.olukoMediumFont(),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoNeumorphismColors.appBackgroundColor),
             ),
             const SizedBox(
               width: 2,
             ),
             Text(
               widget.useImperial ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
-              style: OlukoFonts.olukoMediumFont(),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoNeumorphismColors.appBackgroundColor),
             )
           ],
         ),
@@ -189,6 +223,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
   }
 
   double get _toKilogramsUnit => 0.453;
-  WeightRecord getUserWeightRecordForMovement(MovementSubmodel movement) =>
-      widget.currentUserRecords.where((currentUserRecord) => currentUserRecord.movementId == movement.id).first;
+  WeightRecord getUserWeightRecordForMovement(MovementSubmodel movement) => widget.currentUserRecords
+      .where((currentUserRecord) => currentUserRecord.movementId == movement.id && currentUserRecord.segmentId == widget.segmentId)
+      .first;
 }

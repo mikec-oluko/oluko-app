@@ -6,12 +6,14 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/submodels/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
 import 'package:oluko_app/ui/screens/friends/friends_requests_page.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/community_tab.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/search_utils.dart';
@@ -33,6 +35,8 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
   TextEditingController searchBarController;
   SearchResults<UserResponse> searchResults = SearchResults(query: '', suggestedItems: []);
   List<UserResponse> _users = [];
+  List<dynamic> _friendNotifications = [];
+
   @override
   void initState() {
     _tabController = TabController(length: _numOfTabs, vsync: this);
@@ -51,6 +55,12 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
     setState(() {
       _activeTabIndex = value;
     });
+  }
+
+  void _setFriendsRequestAsViews({int value}) {
+    if (value == 1) {
+      BlocProvider.of<CommunityTabFriendNotificationBloc>(context).setFriendsRequestAsViews();
+    }
   }
 
   @override
@@ -156,30 +166,48 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
       children: [
         Expanded(
           child: TabBar(
-            onTap: (int value) {
-              _setActiveTabIndex(value: value);
-            },
-            labelPadding: EdgeInsets.all(0),
-            indicatorColor: OlukoColors.grayColor,
-            indicator: BoxDecoration(
-                borderRadius: _activeTabIndex == 0
-                    ? BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))
-                    : BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-                color: OlukoColors.primary),
-            unselectedLabelColor: OlukoColors.white,
-            labelColor: OlukoColors.white,
-            controller: _tabController,
-            tabs: [
-              Tab(text: OlukoLocalizations.get(context, 'friends')),
-              BlocBuilder<CommunityTabFriendNotificationBloc, CommunityTabFriendNotificationState>(
-                builder: (context, state) {
-                  return Tab(text: OlukoLocalizations.get(context, 'requests') + 
-                  (state is CommunityTabFriendsNotification && state.friendNotificationQuantity >= 1 ? 
-                  ' (${state.friendNotificationQuantity})' : ''));
-                },
-              )
-            ],
-          ),
+              onTap: (int value) {
+                _setActiveTabIndex(value: value);
+                _setFriendsRequestAsViews(value: value);
+              },
+              labelPadding: EdgeInsets.all(0),
+              indicatorColor: OlukoColors.grayColor,
+              indicator: BoxDecoration(
+                  borderRadius: _activeTabIndex == 0
+                      ? const BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))
+                      : const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                  color: OlukoColors.primary),
+              unselectedLabelColor: OlukoColors.white,
+              labelColor: OlukoColors.white,
+              controller: _tabController,
+              tabs: [
+                Tab(text: OlukoLocalizations.get(context, 'friends')),
+                BlocBuilder<CommunityTabFriendNotificationBloc, CommunityTabFriendNotificationState>(
+                  builder: (context, state) {
+                    return Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (state is CommunityTabFriendsNotification && CommunityTabUtils.friendNotificationsAreSeen(state.friendNotifications))
+                            Container(
+                              margin: const EdgeInsets.only(right: 6),
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          Text(OlukoLocalizations.get(context, 'requests') +
+                              (state is CommunityTabFriendsNotification && state.friendNotifications.isNotEmpty
+                                  ? ' (${state.friendNotifications.length})'
+                                  : '')),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              ]),
         ),
       ],
     );
@@ -191,7 +219,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
       showTitle: true,
       searchKey: searchFriendsKey,
       showBackButton: false,
-      title: OlukoLocalizations.get(context, 'friends'),
+      title: OlukoLocalizations.get(context, 'community'),
       actions: [],
       onSearchSubmit: (SearchResults<UserResponse> results) => setState(() {
         searchResults = results;

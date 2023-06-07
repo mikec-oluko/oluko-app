@@ -56,7 +56,7 @@ enum ActualProfileRoute { rootProfile, userProfile, userAssessmentVideos, transf
 //Enum of options for upload content
 enum DeviceContentFrom { camera, gallery, microphone }
 
-enum ProfileOptionsTitle { myAccount, assessmentVideos, transformationPhotos, transformationJourney, subscription, settings, helpAndSupport, logout }
+enum ProfileOptionsTitle { myAccount, maxWeights, assessmentVideos, transformationPhotos, transformationJourney, subscription, settings, helpAndSupport, logout }
 
 enum ErrorTypeOption { noConnection, noContent }
 

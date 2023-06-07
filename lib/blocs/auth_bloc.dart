@@ -19,7 +19,9 @@ import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscription_content_bloc.dart';
@@ -72,6 +74,8 @@ class AuthFailure extends AuthState {
 class AuthLoading extends AuthState {}
 
 class AppleLoading extends AuthState {}
+
+class GoogleLoading extends AuthState {}
 
 class AuthResetPassSent extends AuthState {}
 
@@ -186,7 +190,7 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'noInternetConnectionHeaderText');
       return;
     }
-    emit(AuthLoading());
+    emit(GoogleLoading());
     UserCredential result;
     try {
       try {
@@ -224,12 +228,16 @@ class AuthBloc extends Cubit<AuthState> {
       if (firebaseUser != null) {
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
         if (userResponse.firstLoginAt == null) {
-            setNotificationSettings(userResponse.id);
+          setNotificationSettings(userResponse.id);
         }
         if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
-          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-          AppNavigator().goToSubscriptionsFromRegister(context);
-          emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+          if (Platform.isIOS || Platform.isMacOS) {
+            AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+            AppNavigator().goToSubscriptionsFromRegister(context);
+            emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+          } else {
+            AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
+          }
           return;
         }
         emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
@@ -288,9 +296,13 @@ class AuthBloc extends Cubit<AuthState> {
         setNotificationSettings(user.id);
       }
       if (user.currentPlan < 0 || user.currentPlan == null) {
-        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-        AppNavigator().goToSubscriptionsFromRegister(context);
-        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        if (Platform.isIOS || Platform.isMacOS) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+          AppNavigator().goToSubscriptionsFromRegister(context);
+          emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        } else {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
+        }
         return;
       }
 
@@ -305,7 +317,7 @@ class AuthBloc extends Cubit<AuthState> {
       return;
     }
     emit(AppleLoading());
-    User result;
+    UserCredential result;
     try {
       try {
         result = await _authRepository.signInWithApple();
@@ -322,8 +334,8 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      
-      final UserResponse userResponse = await UserRepository().get(result?.email);
+
+      final UserResponse userResponse = await UserRepository().get(result?.user?.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
@@ -340,15 +352,19 @@ class AuthBloc extends Cubit<AuthState> {
         setNotificationSettings(userResponse.id);
       }
       if (userResponse.currentPlan < 0 || userResponse.currentPlan == null) {
-        AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
-        AppNavigator().goToSubscriptionsFromRegister(context);
-        emit(AuthSuccess(user: userResponse, firebaseUser: result));
+        if (Platform.isIOS || Platform.isMacOS) {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'selectASubscription');
+          AppNavigator().goToSubscriptionsFromRegister(context);
+          emit(AuthSuccess(user: userResponse, firebaseUser: result.user));
+        } else {
+          AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseSubscribe');
+        }
         return;
       }
       if (result != null) {
-        emit(AuthSuccess(user: userResponse, firebaseUser: result));
+        emit(AuthSuccess(user: userResponse, firebaseUser: result.user));
         AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${userResponse?.firstName ?? userResponse?.username}');
-        navigateToNextScreen(context, result.uid);
+        navigateToNextScreen(context, result.user.uid);
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
@@ -382,10 +398,12 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> setNotificationSettings(String userId) async {
-    final notificationSettings = oluko_notification_settings.NotificationSettings(globalNotifications: true,
-                                                                            appOpeningReminderNotifications: true,
-                                                                            workoutReminderNotifications: true,
-                                                                            coachResponseNotifications: true,);
+    final notificationSettings = oluko_notification_settings.NotificationSettings(
+      globalNotifications: true,
+      appOpeningReminderNotifications: true,
+      workoutReminderNotifications: true,
+      coachResponseNotifications: true,
+    );
     notificationSettings.userId = userId;
     notificationSettings.segmentClocksSounds = true;
     NotificationSettingsRepository.updateNotificationSetting(notificationSettings);
@@ -447,6 +465,8 @@ class AuthBloc extends Cubit<AuthState> {
         BlocProvider.of<UserPlanSubscriptionBloc>(context).dispose();
         BlocProvider.of<CourseEnrollmentBloc>(context).dispose();
         BlocProvider.of<UpcomingChallengesBloc>(context).dispose();
+        BlocProvider.of<WorkoutWeightBloc>(context).dispose();
+        BlocProvider.of<MaxWeightsBloc>(context).dispose();
       } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {

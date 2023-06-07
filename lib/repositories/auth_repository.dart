@@ -4,7 +4,6 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
-import 'package:oluko_app/models/dto/external_auth.dart';
 import 'package:oluko_app/models/dto/forgot_password_dto.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:http/http.dart' show Client, Response;
@@ -23,16 +22,15 @@ class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
   final String url = GlobalConfiguration().getString('firebaseFunctions').toString() + '/auth';
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
-    this.http = http;
-    this.firebaseAuthInstance = firebaseAuthInstance;
+    http = http;
+    firebaseAuthInstance = firebaseAuthInstance;
   }
 
   AuthRepository() {
-    this.http = Client();
-    this.firebaseAuthInstance = FirebaseAuth.instance;
+    http = Client();
+    firebaseAuthInstance = FirebaseAuth.instance;
   }
 
   Future<String> getApiToken() async {
@@ -84,29 +82,54 @@ class AuthRepository {
   }
 
   Future<UserCredential> signInWithGoogle() async {
+    await firebaseAuthInstance.signOut();
     try {
-      await _googleSignIn.signOut();
-      _googleSignIn = GoogleSignIn(scopes: ['email']);
-      GoogleSignInAccount googleUser;
+      final googleSignIn = GoogleSignIn(
+        scopes: [
+          'email',
+          'https://www.googleapis.com/auth/contacts.readonly',
+        ],
+      );
       // Trigger the authentication flow
-      googleUser = await _googleSignIn.signIn();
+      final googleUser = await googleSignIn.signIn();
+      
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser?.authentication;
 
       // Create a new credential
-      final credential = GoogleAuthProvider.credential(
+      final OAuthCredential credentials = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
 
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('apiToken', googleAuth?.idToken);
+      final UserCredential response = await firebaseAuthInstance.signInWithCredential(credentials);
 
-      // Once signed in, return the UserCredential
-      final response = await FirebaseAuth.instance.signInWithCredential(credential);
-      return response;
-    } catch (e) {
-      print(e.toString());
+      var model = {};
+      if (response.additionalUserInfo.profile['given_name'] != null && response.additionalUserInfo.profile['given_name'] != '') {
+        model['firstName'] = response.additionalUserInfo.profile['given_name'];
+      } else {
+        model['firstName'] = response.user.displayName;
+      }
+      model['lastName'] = response.additionalUserInfo.profile['family_name'];
+      model['avatar'] = response.user.photoURL;
+      model['email'] = response.user.email;
+      model['tokenId'] = await response.user.getIdToken();
+      model['projectId'] = GlobalConfiguration().getString('projectId');
+
+      try {
+        final externalAuthResponse = await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(model), headers: {'content-type': 'application/json'});
+        if (externalAuthResponse.statusCode >= 200 && externalAuthResponse.statusCode < 300) {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('apiToken', model['tokenId']?.toString());
+          return response;
+        }
+        return null;
+      } catch (e) {
+        print('Error: ' + e.toString());
+        return null;
+      }
+    } catch (exception) {
+      print('Error: ' + e.toString());
       return null;
     }
   }
@@ -150,15 +173,16 @@ class AuthRepository {
     return digest.toString();
   }
 
-  Future<User> signInWithApple() async {
+  Future<UserCredential> signInWithApple() async {
     await firebaseAuthInstance.signOut();
-    // To prevent replay attacks with the credential returned from Apple, we
-    // include a nonce in the credential request. When signing in in with
-    // Firebase, the nonce in the id token returned by Apple, is expected to
-    // match the sha256 hash of `rawNonce`.
-    final rawNonce = generateNonce();
-    final nonce = sha256ofString(rawNonce);
     try {
+      // To prevent replay attacks with the credential returned from Apple, we
+      // include a nonce in the credential request. When signing in in with
+      // Firebase, the nonce in the id token returned by Apple, is expected to
+      // match the sha256 hash of `rawNonce`.
+      final rawNonce = generateNonce();
+      final nonce = sha256ofString(rawNonce);
+
       final AuthorizationCredentialAppleID appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -167,40 +191,75 @@ class AuthRepository {
         nonce: nonce,
       );
 
-      final oauthCredential = OAuthProvider('apple.com').credential(
+      final OAuthCredential credentials = OAuthProvider('apple.com').credential(
         idToken: appleCredential.identityToken,
         rawNonce: rawNonce,
       );
-
-      final authResult = await firebaseAuthInstance.signInWithCredential(oauthCredential);
+      final UserCredential userCred = await firebaseAuthInstance.signInWithCredential(credentials);
 
       final externalAuth = {};
       final String token = await firebaseAuthInstance.currentUser.getIdToken();
       externalAuth['tokenId'] = token;
       externalAuth['projectId'] = GlobalConfiguration().getString('projectId');
-      if (appleCredential.email != null || authResult.user.email != null) {
-        externalAuth['email'] = appleCredential.email ?? authResult.user.email;
+      if (appleCredential.email != null || userCred.user.email != null) {
+        externalAuth['email'] = appleCredential.email ?? userCred.user.email;
       }
-      if (appleCredential.givenName != null || authResult.user.displayName != null) {
-        externalAuth['firstName'] = appleCredential.givenName ?? authResult.user.displayName;
+      if (appleCredential.givenName != null || userCred.user.displayName != null) {
+        externalAuth['firstName'] = appleCredential.givenName ?? userCred.user.displayName;
       }
       if (appleCredential.familyName != null) {
         externalAuth['lastName'] = appleCredential.familyName;
       }
 
-      final response = await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(externalAuth), headers: {'content-type': 'application/json'});
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('apiToken', token);
-
-        return authResult.user;
+      try {
+        final externalAuthResponse =
+            await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(externalAuth), headers: {'content-type': 'application/json'});
+        if (externalAuthResponse.statusCode >= 200 && externalAuthResponse.statusCode < 300) {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('apiToken', externalAuth['tokenId']?.toString());
+          return userCred;
+        }
+        return null;
+      } catch (e) {
+        print('Error: ' + e.toString());
+        return null;
       }
-      return null;
     } catch (exception) {
       print(e.toString());
       return null;
     }
+  }
+
+  Future<UserCredential> externalLoginPopup(String provider) async {
+    AuthCredential credentials;
+    switch (provider) {
+      case 'facebook':
+        credentials = null;
+        break;
+      case 'apple':
+        // To prevent replay attacks with the credential returned from Apple, we
+        // include a nonce in the credential request. When signing in in with
+        // Firebase, the nonce in the id token returned by Apple, is expected to
+        // match the sha256 hash of `rawNonce`.
+        final rawNonce = generateNonce();
+        final nonce = sha256ofString(rawNonce);
+        final AuthorizationCredentialAppleID appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          nonce: nonce,
+        );
+
+        credentials = OAuthProvider('apple.com').credential(
+          idToken: appleCredential.identityToken,
+          rawNonce: rawNonce,
+        );
+        break;
+      default:
+        break;
+    }
+    return firebaseAuthInstance.signInWithCredential(credentials);
   }
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {

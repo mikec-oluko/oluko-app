@@ -88,7 +88,15 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
     final ImageProvider _defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
     if (widget.isForCarousel) {
       return Image(
-        image: widget.backgroundImage == null ? _defaultImage : CachedNetworkImageProvider(widget.backgroundImage),
+        image: widget.backgroundImage == null
+            ? _defaultImage
+            : ResizeImage(
+                CachedNetworkImageProvider(
+                  widget.backgroundImage,
+                ),
+                height: 250,
+                width: 150,
+              ),
         fit: BoxFit.contain,
         height: 150,
         width: 250,
@@ -97,7 +105,15 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
       );
     }
     return Image(
-      image: widget.backgroundImage == null ? _defaultImage : CachedNetworkImageProvider(widget.backgroundImage),
+      image: widget.backgroundImage == null
+          ? _defaultImage
+          : ResizeImage(
+              CachedNetworkImageProvider(
+                widget.backgroundImage,
+              ),
+              height: 250,
+              width: 150,
+            ),
       fit: BoxFit.contain,
       height: widget.isCoach ? 150 : 120,
       width: 120,

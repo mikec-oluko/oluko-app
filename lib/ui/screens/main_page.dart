@@ -194,13 +194,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               );
             } else {
               return BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, pointsCardsState) {
-                if (pointsCardsState is NewCardsCollected) {
+                if (ModalRoute.of(context).isCurrent && pointsCardsState is NewCardsCollected) {
                   for (var card in pointsCardsState.pointsCards) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       _showPointsCardDialog(context, card);
                       BlocProvider.of<PointsCardBloc>(context).emitDefaultState();
                     });
-
                     BlocProvider.of<PointsCardBloc>(context).getUserCards(loggedUser.uid);
                   }
                 }
@@ -233,6 +232,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         );
       }),
     );
+  }
+
+  void _showPointsCardDialog(BuildContext context, PointsCard card) {
+    DialogUtils.getDialog(context, [SizedBox(height: 240, width: 203.5, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
+        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true, addTopPadding: true);
   }
 
   Widget _slidingUpPanel() {
@@ -268,11 +272,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         children: tabs,
       ),
     );
-  }
-
-  void _showPointsCardDialog(BuildContext context, PointsCard card) {
-    DialogUtils.getDialog(context, [SizedBox(height: 280, width: 230, child: PointsCardComponent(bigCard: true, collectedCard: CollectedCard(card: card)))],
-        showBackgroundColor: false, showExitButton: false, showExitButtonOutside: true);
   }
 
   void _showPopUp(BuildContext context, String route, UserChangedPlan state) {

@@ -120,10 +120,16 @@ class SubscriptionContentBloc extends Cubit<SubscriptionContentState> {
         case PurchaseStatus.purchased:
           try {
             final String userId = (purchaseDetails as dynamic)?.skPaymentTransaction?.payment?.applicationUsername?.toString();
-            final UserResponse user = await PurchaseRepository.create(purchaseDetails, productDetails, userId);
-            emit(PurchaseSuccess(user: user));
+            if (userId != null && userId.isNotEmpty) {
+              final UserResponse user = await PurchaseRepository.create(purchaseDetails, productDetails, userId);
+              if (user != null) {
+                processStarted = false;
+                emit(PurchaseSuccess(user: user));
+              }
+            }
           } catch (e) {
             if (processStarted) {
+              processStarted = false;
               emit(FailureState(exception: e));
             }
           }

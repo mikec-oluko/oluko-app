@@ -89,9 +89,9 @@ class OlukoNeumorphism {
         shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
   }
 
-  static NeumorphicStyle getNeumorphicStyleForCircleElement() {
-    return const NeumorphicStyle(
-        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+  static NeumorphicStyle getNeumorphicStyleForCircleElement({bool useBorder = true}) {
+    return NeumorphicStyle(
+        border: useBorder ? NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark) : NeumorphicBorder.none(),
         depth: 3,
         intensity: 0.5,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -201,6 +201,46 @@ class OlukoNeumorphism {
         shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForStadiumShapeElement() {
+    return const NeumorphicStyle(
+        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: 3,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.stadium(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.initialGradientColorPrimary,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoColors.grayColor,
+        shadowDarkColor: Colors.black);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForBorderContainer() {
+    return NeumorphicStyle(
+      border: NeumorphicBorder(width: 2, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+      depth: -15,
+      intensity: 0.7,
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      shape: NeumorphicShape.concave,
+      lightSource: LightSource.lerp(LightSource.top, LightSource.bottomRight, 1),
+      boxShape: NeumorphicBoxShape.rect(),
+      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+    );
+  }
+
+  static BoxDecoration boxDecorationForKeyboard() {
+    return const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+      ),
+    );
+  }
+
   static LinearGradient olukoNeumorphicGradientPrimary() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],
@@ -255,6 +295,8 @@ class OlukoColors {
   static const Color initial = Color.fromRGBO(23, 43, 77, 1.0);
 
   static const Color primary = Color.fromRGBO(170, 176, 144, 1.0);
+
+  static const Color primaryLight = Color.fromRGBO(210, 216, 177, 1.0);
 
   static const Color secondary = Color.fromRGBO(228, 155, 149, 1.0);
 
@@ -328,7 +370,7 @@ class OlukoColors {
 
   static const Color lightSkyblue = Color.fromRGBO(171, 247, 233, 1);
 
-    static const Color strongYellow = Color.fromRGBO(254, 192, 0, 1);
+  static const Color strongYellow = Color.fromRGBO(254, 192, 0, 1);
 
   static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
 
@@ -364,7 +406,7 @@ class OlukoFonts {
   static const double olukoSuperBigFontSize = 21.0;
   static const double olukoMediumFontSize = 14.0;
   static const double olukoSmallFontSize = 11.0;
-    static const double olukoSuperSmallFontSize = 8.0;
+  static const double olukoSuperSmallFontSize = 8.0;
   static const double olukoBiggestFontSize = 40.0;
 
   static TextStyle olukoMediumFont({FontWeight customFontWeight, Color customColor, TextDecoration decoration}) {
@@ -416,7 +458,7 @@ class OlukoFonts {
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-    static TextStyle olukoSuperSmallFont({FontWeight customFontWeight, Color customColor}) {
+  static TextStyle olukoSuperSmallFont({FontWeight customFontWeight, Color customColor}) {
     return TextStyle(
         fontFamily: 'Roboto',
         fontSize: olukoSuperSmallFontSize,

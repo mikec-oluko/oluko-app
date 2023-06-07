@@ -18,6 +18,12 @@ class WeightRecordsSuccess extends MovementWorkoutState {
   WeightRecordsSuccess({this.records});
 }
 
+class WeightRecordsDispose extends MovementWorkoutState {
+  final List<WeightRecord> records;
+
+  WeightRecordsDispose({this.records});
+}
+
 class Failure extends MovementWorkoutState {
   final dynamic exception;
 
@@ -35,6 +41,7 @@ class WorkoutWeightBloc extends Cubit<MovementWorkoutState> {
       subscription.cancel();
       subscription = null;
     }
+    emit(WeightRecordsDispose(records: []));
   }
 
   void saveWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> workoutMovementsAndWeights}) async {

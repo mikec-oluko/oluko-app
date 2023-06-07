@@ -14,8 +14,10 @@ class UserProfileProgress extends StatefulWidget {
   final String classesCompleted;
   final bool isMinimalRequested;
   final UserResponse currentUser;
+  final bool isOwner;
 
-  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false, this.currentUser})
+  const UserProfileProgress(
+      {this.challengesCompleted, this.coursesCompleted, this.classesCompleted, this.isMinimalRequested = false, this.currentUser, this.isOwner})
       : super();
 
   @override
@@ -51,14 +53,19 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
               children: [
                 profileNeumorphicAccomplishments(
                     achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
-                BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
-                  if (state is PointsCardSuccess) {
-                    return profileNeumorphicAccomplishments(
-                        achievementTitleKey: ['mvt', 'points'], achievementValue: state.userPoints.toString(), color: OlukoColors.white, isClickable: true);
-                  } else {
-                    return OlukoCircularProgressIndicator();
-                  }
-                }),
+                widget.isOwner
+                    ? BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
+                        if (state is PointsCardSuccess) {
+                          return profileNeumorphicAccomplishments(
+                              achievementTitleKey: ['mvt', 'points'],
+                              achievementValue: state.userPoints.toString(),
+                              color: OlukoColors.white,
+                              isClickable: true);
+                        } else {
+                          return OlukoCircularProgressIndicator();
+                        }
+                      })
+                    : SizedBox(),
               ],
             ),
           ),
@@ -86,23 +93,13 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
         onTap: () => isClickable && achievementValue != '0' ? _pointsCardAction() : {},
         child: Padding(
             padding: EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? 0 : 10),
-            child: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(
-              builder: (context, state) {
-                if (state is PointsCardPanelOpen) {
-                  return _statisticsComponent(achievementValue, achievementTitleKey, isClicked: isClickable);
-                } else {
-                  return _statisticsComponent(achievementValue, achievementTitleKey);
-                }
-              },
-            )));
+            child: _statisticsComponent(achievementValue, achievementTitleKey, isClicked: isClickable)));
   }
 
   Widget _textElem(List<String> achievementTitleKey, bool isClicked) {
     return Text(
       '${OlukoLocalizations.get(context, achievementTitleKey[0])}\n${OlukoLocalizations.get(context, achievementTitleKey[1])}',
-      style: ScreenUtils.smallScreen(context) && isClicked
-          ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)
-          : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
+      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400),
     );
   }
 
@@ -122,7 +119,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
       children: [
         Text(
           achievementValue,
-          style: _style(isClicked),
+          style: _style(isClicked, int.parse(achievementValue)),
         ),
         const SizedBox(
           width: 8,
@@ -139,11 +136,13 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     BlocProvider.of<PointsCardPanelBloc>(context).openPointsCardPanel();
   }
 
-  TextStyle _style(bool clicked) {
+  TextStyle _style(bool clicked, int points) {
     if (clicked) {
       return ScreenUtils.smallScreen(context)
-          ? OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700)
-          : OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700);
+          ? OlukoFonts.olukoBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700)
+          : points <= 999
+              ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700)
+              : OlukoFonts.olukoBigFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700);
     } else {
       return ScreenUtils.smallScreen(context)
           ? OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500)

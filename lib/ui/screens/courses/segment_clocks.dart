@@ -17,10 +17,10 @@ import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
-import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/stopwatch_bloc.dart';
@@ -174,6 +174,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool storyShared = false;
   List<WorkoutWeight> movementsAndWeightsToSave = [];
   UserResponse currentUser;
+  bool isSegmentSaveMaxWeights = false;
 
   @override
   void initState() {
@@ -302,9 +303,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
-  Widget topSection(bool keyboardVisibilty) {
+  Widget topSection() {
     return SizedBox(
-      height: clockScreenProportion(keyboardVisibilty, true),
+      height: clockScreenProportion(true),
       child: BlocBuilder<CurrentTimeBloc, CurrentTimeState>(
         builder: (context, state) {
           if (state is CurrentTimeValue) {
@@ -318,22 +319,22 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                           ? 44
                           : 55),
               child: OrientationBuilder(builder: (context, orientation) {
-                return orientatedClock(keyboardVisibilty);
+                return orientatedClock();
               }));
         },
       ),
     );
   }
 
-  Widget orientatedClock(bool keyboardVisibilty) {
+  Widget orientatedClock() {
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
-      return getClock(keyboardVisibilty);
+      return getClock();
     } else {
-      return RotationTransition(turns: AlwaysStoppedAnimation(90 / 360), child: getClock(keyboardVisibilty));
+      return RotationTransition(turns: AlwaysStoppedAnimation(90 / 360), child: getClock());
     }
   }
 
-  Widget getClock(bool keyboardVisibilty) {
+  Widget getClock() {
     return Clock(
       workState: workState,
       segments: widget.segments,
@@ -344,19 +345,18 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       actionAMRAP: actionAMRAP,
       setPaused: setPaused,
       workoutType: workoutType,
-      keyboardVisibilty: keyboardVisibilty,
       timerTaskIndex: timerTaskIndex,
       timeLeft: currentTime ?? Duration(seconds: timerEntries[timerTaskIndex].value),
     );
   }
 
-  Widget bottomSection(bool keyboardVisibilty) {
+  Widget bottomSection() {
     return Container(
         decoration: BoxDecoration(
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
         ),
-        height: lowerSectionScreenProportion(keyboardVisibilty, true),
+        height: lowerSectionScreenProportion(true),
         child: OrientationBuilder(builder: (context, orientation) {
           return orientatedLowerSection();
         }));
@@ -394,9 +394,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         segmentId: widget.segments[widget.segmentIndex].id,
         currentUser: currentUser,
         storyShared: timerTaskState is SetShareDone ? timerTaskState.shareDone : false,
-        movementAndWeightsForWorkout: (movementsAndWeights) {
+        movementAndWeightsForWorkout: (movementsAndWeights, segmentSaveMaxWeights) {
           setState(() {
             movementsAndWeightsToSave = movementsAndWeights;
+            isSegmentSaveMaxWeights = segmentSaveMaxWeights;
           });
         },
       ),
@@ -479,32 +480,25 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget bodyWithPlayPausePanel() {
-    bool keyboardVisibilty = false;
-    return BlocBuilder<KeyboardBloc, KeyboardState>(
-      builder: (context, state) {
-        keyboardVisibilty = state.setVisible;
-        textController = state.textEditingController;
-        return !keyboardVisibilty && isSegmentWithoutRecording() && (workState != WorkState.finished)
-            ? SlidingUpPanel(
-                controller: panelController,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                minHeight: 90.0,
-                maxHeight: 185.0,
-                collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
-                panel: MovementVideosSection(
-                    action: getPlayPauseAction(),
-                    segment: widget.segments[widget.segmentIndex],
-                    onPressedMovement: (BuildContext context, MovementSubmodel movement) {
-                      if (workState != WorkState.paused) {
-                        changeSegmentState();
-                      }
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
-                    }),
-                body: _body(keyboardVisibilty),
-              )
-            : _body(keyboardVisibilty);
-      },
-    );
+    return isSegmentWithoutRecording() && (workState != WorkState.finished)
+        ? SlidingUpPanel(
+            controller: panelController,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            minHeight: 90.0,
+            maxHeight: 185.0,
+            collapsed: CollapsedMovementVideosSection(action: getPlayPauseAction()),
+            panel: MovementVideosSection(
+                action: getPlayPauseAction(),
+                segment: widget.segments[widget.segmentIndex],
+                onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+                  if (workState != WorkState.paused) {
+                    changeSegmentState();
+                  }
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
+                }),
+            body: _body(),
+          )
+        : _body();
   }
 
   Widget getPlayPauseAction() {
@@ -594,7 +588,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
-  Widget _body(bool keyboardVisibilty) {
+  Widget _body() {
     if (recordingPanelController.isAttached && open) {
       recordingPanelController.open();
       open = false;
@@ -604,8 +598,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       child: Stack(children: [
         Column(
           children: [
-            topSection(keyboardVisibilty),
-            bottomSection(keyboardVisibilty),
+            topSection(),
+            bottomSection(),
           ],
         ),
         if (isWorkStateFinished())
@@ -647,7 +641,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   Future<void> nextSegmentAction() async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
-    saveWorkoutMovementAndWeigths();
+    saveWorkoutMovementAndWeights();
 
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
@@ -677,7 +671,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void goToClassAction() {
-    saveWorkoutMovementAndWeigths();
+    saveWorkoutMovementAndWeights();
     _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
     Navigator.pushReplacementNamed(
       context,
@@ -843,8 +837,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _goToNextStep() {
-    BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
-
     if (alertTimer != null) {
       alertTimer.cancel();
     }
@@ -864,6 +856,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (timerTaskIndex == timerEntries.length - 1 && realTaskIndex <= timerEntries.length - 1) {
       _finishWorkout();
       realTaskIndex++;
+      setState(() {});
       return;
     }
     if (timerTaskIndex < timerEntries.length - 1) {
@@ -899,7 +892,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       recordingPanelController.close();
     }
 
-    if (timerEntries[timerTaskIndex].round > 0) {
+    if (timerEntries[timerTaskIndex].round != null && timerEntries[timerTaskIndex].round > 0) {
       Future.delayed(const Duration(milliseconds: 2000), () {
         cameraController?.dispose();
       });
@@ -1300,9 +1293,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return timerEntries[timerTaskIndex].isInitialTimer != null && timerEntries[timerTaskIndex].isInitialTimer;
   }
 
-  double clockScreenProportion(bool keyboardVisibilty, bool isHeight) {
+  double clockScreenProportion(bool isHeight) {
     double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
-    return keyboardVisibilty || getCurrentTaskWorkState() == WorkState.countdown
+    return getCurrentTaskWorkState() == WorkState.countdown
         ? screenProportion
         : isWorkStateFinished()
             ? screenProportion * 0.4
@@ -1311,9 +1304,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                 : screenProportion * 0.6;
   }
 
-  double lowerSectionScreenProportion(bool keyboardVisibilty, bool isHeight) {
+  double lowerSectionScreenProportion(bool isHeight) {
     double screenProportion = isHeight ? ScreenUtils.height(context) : ScreenUtils.width(context);
-    return keyboardVisibilty || getCurrentTaskWorkState() == WorkState.countdown
+    return getCurrentTaskWorkState() == WorkState.countdown
         ? 0
         : isWorkStateFinished()
             ? screenProportion * 0.46
@@ -1322,8 +1315,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                 : screenProportion * 0.4;
   }
 
-  void saveWorkoutMovementAndWeigths() {
+  void saveWorkoutMovementAndWeights() {
     if (movementsAndWeightsToSave.isNotEmpty) {
+      if (isSegmentSaveMaxWeights) {
+        BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
+      }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }

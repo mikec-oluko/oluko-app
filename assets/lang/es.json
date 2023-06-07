@@ -459,6 +459,8 @@
     "weightsQuestion" : "Que pesos usaste?",
     "seeAll": "Ver todo",
     "annotatedVideos": "Vídeos anotados",
+    "audioMessageSent": "Mensaje de audio enviado",
+    "audioMessageFailed": "El mensaje no se pudo enviar",
     "scheduleApplied": "Se ha configurado la agenda correctamente",
     "transformationPhotos": "Fotos de Transformación",
     "privacy": "Privacidad",
@@ -471,5 +473,10 @@
     "coachResponseSubtitle": "El Coach te ha respondido un audio o video",
     "workoutReminderSubtitle": "Recordatorio de ejercicio basado en la agenda",
     "appOpeningReminderSubtitle": "Recordatorio para abrir la app cada 3, 7 o 14 días",
-    "goToCourses": "Ir a cursos"
+    "goToCourses": "Ir a cursos",
+    "percentageOfMaxWeight": "% del Peso Máximo",
+    "loggedWeight": "Peso registrado",
+    "recommendationTooltipText": "Para mostrar la recomendación, complete el curso MVT KICK OFF o agregue manualmente Max Weights en la pestaña de perfil.",
+    "loggedWeightTooltipText": "Registre los pesos después del segmento para saber qué hizo la próxima vez!",
+    "maxWeights": "Peso Maximo"
 }

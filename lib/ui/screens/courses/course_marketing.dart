@@ -337,7 +337,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 thinPadding: true,
                 title: OlukoLocalizations.get(context, 'enroll'),
                 onPressed: () {
-                  showScheduleDialog(context);
+                  if (!_disableAction) {
+                    showScheduleDialog(context);
+                  }
                 },
               )
             else
@@ -345,7 +347,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 title: OlukoLocalizations.get(context, 'enroll'),
                 isDisabled: _disableAction,
                 onPressed: () {
-                  showScheduleDialog(context);
+                  if (!_disableAction) {
+                    showScheduleDialog(context);
+                  }
                 },
               ),
           ],
@@ -356,28 +360,28 @@ class _CourseMarketingState extends State<CourseMarketing> {
     }
   }
 
-  void showScheduleDialog(BuildContext context){
+  void showScheduleDialog(BuildContext context) {
     BottomDialogUtils.showBottomDialog(
-          content: ScheduleModalContent(
-            course: widget.course,
-            scheduleRecommendations: widget.course.scheduleRecommendations,
-            user: _user,
-            totalClasses: _allCourseClasses.length,
-            firstAppInteractionAt: _userState.user.firstAppInteractionAt,
-            isCoachRecommendation: widget.isCoachRecommendation,
-            disableAction: _disableAction,
-            blocAuth: BlocProvider.of<AuthBloc>(context),
-            blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
-            blocRecommendation: BlocProvider.of<RecommendationBloc>(context),
-            onEnrollAction: (){
-              setState(() {
-                _disableAction = true;
-              });
-            },
-          ),
-          isScrollControlled: true,
-          context: context,
-        );
+      content: ScheduleModalContent(
+        course: widget.course,
+        scheduleRecommendations: widget.course.scheduleRecommendations,
+        user: _user,
+        totalClasses: _allCourseClasses.length,
+        firstAppInteractionAt: _userState.user.firstAppInteractionAt,
+        isCoachRecommendation: widget.isCoachRecommendation,
+        disableAction: _disableAction,
+        blocAuth: BlocProvider.of<AuthBloc>(context),
+        blocCourseEnrollment: BlocProvider.of<CourseEnrollmentBloc>(context),
+        blocRecommendation: BlocProvider.of<RecommendationBloc>(context),
+        onEnrollAction: () {
+          setState(() {
+            _disableAction = true;
+          });
+        },
+      ),
+      isScrollControlled: true,
+      context: context,
+    );
   }
 
   Future<void> enrollAction(BuildContext context) async {
@@ -545,15 +549,18 @@ class _CourseMarketingState extends State<CourseMarketing> {
           else
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 15),
-              child: GestureDetector(
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseShareView],
-                    arguments: {'currentUser': _userState.user, 'courseToShare': widget.course}),
-                child: topButtonsBackground(Image.asset(
+              child: topButtonsBackground(
+                Image.asset(
                   'assets/courses/grey_share_outlined.png',
                   scale: 3.5,
-                )),
+                ),
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.courseShareView],
+                  arguments: {'currentUser': _userState.user, 'courseToShare': widget.course},
+                ),
               ),
-            )
+            ),
         ],
       ),
     );

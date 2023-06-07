@@ -57,6 +57,7 @@ import 'package:oluko_app/blocs/notification_settings_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/profile/mail_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/profile/my_account_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/push_notification_bloc.dart';
@@ -166,6 +167,7 @@ import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_contact_us.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_max_weights_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
@@ -187,7 +189,6 @@ import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
 import 'blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
-import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/points_card_panel_bloc.dart';
@@ -276,7 +277,8 @@ enum RouteEnum {
   homeLatestDesign,
   courseHomePage,
   welcomeVideoFirstTimeLogin,
-  courseChat
+  courseChat,
+  maxWeights
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -342,7 +344,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.homeLatestDesign: '/home-view',
   RouteEnum.courseHomePage: '/course-home-page',
   RouteEnum.welcomeVideoFirstTimeLogin: '/welcome-video-home-page',
-  RouteEnum.courseChat: '/course-chat'
+  RouteEnum.courseChat: '/course-chat',
+  RouteEnum.maxWeights: '/max-weights',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -424,7 +427,6 @@ class Routes {
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
   final UserAudioBloc _userAudioBloc = UserAudioBloc();
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
-  final KeyboardBloc _keyboardBloc = KeyboardBloc();
   final CourseEnrollmentAudioBloc _courseEnrollmentAudioBloc = CourseEnrollmentAudioBloc();
   final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
   final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
@@ -475,6 +477,7 @@ class Routes {
   final FriendsWeightRecordsBloc _friendsWeightRecordsBloc = FriendsWeightRecordsBloc();
   final CommunityTabFriendNotificationBloc _communityTabFriendNotificationBloc = CommunityTabFriendNotificationBloc();
   final ChatSliderBloc _chatSliderBloc = ChatSliderBloc();
+  final MaxWeightsBloc _maxWeightsBloc = MaxWeightsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -510,8 +513,6 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
-          BlocProvider(create: (_) => KeyboardBloc()),
-          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
@@ -583,6 +584,7 @@ class Routes {
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
           BlocProvider<CommunityTabFriendNotificationBloc>.value(value: _communityTabFriendNotificationBloc),
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderBloc),
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
@@ -896,6 +898,7 @@ class Routes {
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -935,13 +938,13 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRequestStreamBloc>.value(value: _coachRequestStreamBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc),
           BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<FeedbackBloc>.value(value: _feedbackBloc),
           BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
@@ -1002,6 +1005,7 @@ class Routes {
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -1025,6 +1029,7 @@ class Routes {
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -1042,6 +1047,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, Course> argumentsToAdd = arguments as Map<String, Course>;
         newRouteView = EnrolledClass(course: argumentsToAdd['course']);
@@ -1074,6 +1080,7 @@ class Routes {
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
           BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1301,6 +1308,7 @@ class Routes {
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -1329,6 +1337,7 @@ class Routes {
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
         newRouteView = CoachPage();
         break;
@@ -1564,7 +1573,13 @@ class Routes {
             currentUser: argumentsToAdd['currentUser'] as UserResponse,
             enrollments: argumentsToAdd['enrollments'] as List<CourseEnrollment>);
         break;
-
+      case RouteEnum.maxWeights:
+        providers = [
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileMaxWeightsPage(user: argumentsToAdd['user'] as UserResponse);
+        break;
       default:
         newRouteView = MainPage();
         break;

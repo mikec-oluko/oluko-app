@@ -14,6 +14,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/models/coach_media_message.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachPersonalizedVideoComponent extends StatefulWidget {
   final CoachPersonalizedVideo personalizedVideo;
@@ -65,6 +66,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                   Text(
                     DateFormat.yMMMd().format(widget.personalizedVideo.createdAt.toDate()),
                     style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.lightOrange, customFontWeight: FontWeight.w700),
+                    overflow: TextOverflow.ellipsis,
                   )
                 else
                   Column(
@@ -83,13 +85,17 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                       )
                     ],
                   ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: Text(
-                    widget.personalizedVideo.annotationContent != null
-                        ? widget.personalizedVideo.annotationContent.segmentName
-                        : widget.personalizedVideo.videoMessageContent.video.name,
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                SizedBox(
+                  width: ScreenUtils.width(context) * 0.5,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Text(
+                      widget.personalizedVideo.annotationContent != null
+                          ? widget.personalizedVideo.annotationContent.segmentName ?? ''
+                          : widget.personalizedVideo.videoMessageContent.video.name,
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ],
@@ -160,5 +166,23 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
             BlocProvider.of<CoachVideoMessageBloc>(context).markVideoMessageAsFavorite(widget.currentUser.id, personalizedVideo.videoMessageContent);
           }
         });
+  }
+
+  String getContentTitle(CoachPersonalizedVideo personalizedVideo) {
+    const String defaultIntroductionVideoId = 'introVideo';
+    String titleForVideoContent = 'MVT Video';
+    if (personalizedVideo.annotationContent != null) {
+      if (personalizedVideo.annotationContent.segmentName != null) {
+        titleForVideoContent = personalizedVideo.annotationContent?.segmentName;
+      }
+      if (personalizedVideo.annotationContent.id == defaultIntroductionVideoId) {
+        titleForVideoContent = OlukoLocalizations.get(context, 'introductionVideo');
+      }
+    } else if (personalizedVideo.videoMessageContent != null) {
+      if (personalizedVideo.videoMessageContent.video.name != null) {
+        titleForVideoContent = personalizedVideo.videoMessageContent.video.name;
+      }
+    }
+    return titleForVideoContent;
   }
 }

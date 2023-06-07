@@ -45,8 +45,8 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
       imageCover: Image(
         image: CachedNetworkImageProvider(
           image,
-          maxHeight: 200,
-          maxWidth: 120,
+          maxHeight: 300,
+          maxWidth: 300,
         ),
         fit: BoxFit.cover,
         frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
@@ -72,8 +72,8 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
                 Image(
                   image: CachedNetworkImageProvider(
                     image,
-                    maxHeight: 100,
-                    maxWidth: 120,
+                    maxHeight: 300,
+                    maxWidth: 300,
                   ),
                   width: 160,
                   fit: BoxFit.cover,
@@ -99,11 +99,15 @@ class _CoachCarouselContentState extends State<CoachCarouselContent> {
           ),
         ),
         if (widget.titleForContent != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 2),
-            child: Text(
-              widget.titleForContent,
-              style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
+          SizedBox(
+            width: 170,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 2),
+              child: Text(
+                widget.titleForContent,
+                overflow: TextOverflow.ellipsis,
+                style: OlukoFonts.olukoSmallFont(customColor: Colors.white),
+              ),
             ),
           )
         else
