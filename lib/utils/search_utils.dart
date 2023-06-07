@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -79,7 +80,21 @@ class SearchUtils {
   }
 
   static modalOnUserTap(UserResponse friendUser, UserResponse authUser, BuildContext context) {
-    BottomDialogUtils.friendsModal(friendUser, authUser.id, null, context);
+    BottomDialogUtils.showBottomDialog(
+      content: FriendModalContent(
+          friendUser,
+          authUser.id,
+          null,
+          BlocProvider.of<FriendBloc>(context),
+          BlocProvider.of<FriendRequestBloc>(context),
+          BlocProvider.of<HiFiveSendBloc>(context),
+          BlocProvider.of<HiFiveReceivedBloc>(context),
+          BlocProvider.of<UserStatisticsBloc>(context),
+          BlocProvider.of<FavoriteFriendBloc>(context),
+          BlocProvider.of<PointsCardBloc>(context),
+          BlocProvider.of<UserProgressStreamBloc>(context)),
+      context: context,
+    );
   }
 
   static List<Course> searchCoursesMethod(String query, List<Course> collection, List<Tag> selectedTags) {

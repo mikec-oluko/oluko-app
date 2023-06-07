@@ -675,8 +675,8 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
-          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
           BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
