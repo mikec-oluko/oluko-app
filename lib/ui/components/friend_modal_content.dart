@@ -54,7 +54,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
   FriendModel friendModel;
   Friend friend;
   String _buttonTextContent = '';
-  Widget friendButtons = const SizedBox.shrink();
+  Widget friendButton = const SizedBox.shrink();
   @override
   void initState() {
     widget.blocFriends.getFriendsByUserId(widget.currentUserId);
@@ -90,150 +90,14 @@ class _FriendModalContentState extends State<FriendModalContent> {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         child: Column(
           children: [
-            Row(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: StoriesItem(
-                    showUserProgress: true,
-                    itemUserId: widget.user.id,
-                    userProgress: widget.usersProgess != null ? widget.usersProgess[widget.user.id] : null,
-                    maxRadius: 40,
-                    imageUrl: widget.user.getAvatarThumbnail(),
-                    name: widget.user.firstName,
-                    lastname: widget.user.lastName,
-                    userProgressStreamBloc: widget.userProgressStreamBloc,
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.user.getFullName(),
-                          textAlign: TextAlign.start,
-                          overflow: TextOverflow.ellipsis,
-                          style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w700),
-                        ),
-                        _getUserInfo()
-                      ],
-                    ),
-                  ),
-                ),
-                BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
-                  bloc: widget.blocHifiveReceived,
-                  builder: (hiFiveReceivedContext, hiFiveReceivedState) {
-                    return widget.user.privacy == 0
-                        ? Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    widget.blocHifiveSend.set(context, widget.currentUserId, widget.user.id);
-                                    AppMessages().showHiFiveSentDialog(context);
-                                  },
-                                  child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                                    bloc: widget.blocHifiveSend,
-                                    listener: (hiFiveSendContext, hiFiveSendState) {
-                                      if (hiFiveSendState is HiFiveSendSuccess) {
-                                        AppMessages.clearAndShowSnackbar(
-                                          context,
-                                          hiFiveSendState.hiFive
-                                              ? OlukoLocalizations.get(context, 'hiFiveSent')
-                                              : OlukoLocalizations.get(context, 'hiFiveRemoved'),
-                                        );
-                                      }
-                                      if (hiFiveSendState is HiFiveSendSuccess) {
-                                        widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
-                                      }
-                                    },
-                                    child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        : const SizedBox();
-                  },
-                ),
-              ],
-            ),
+            _getTopSection(),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 25),
               child: OlukoNeumorphicDivider(
                 isFadeOut: true,
               ),
             ),
-            Expanded(
-              child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-                bloc: widget.blocUserStatistics,
-                builder: (userStatisticsContext, userStats) {
-                  return userStats is StatisticsSuccess && widget.user.privacy == 0
-                      ? Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                profileAccomplishments(
-                                  achievementTitle: OlukoLocalizations.get(context, 'challengesCompleted'),
-                                  achievementValue: userStats.userStats.completedChallenges.toString(),
-                                ),
-                                Container(
-                                  width: 2.5,
-                                  height: 2.5,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white,
-                                    ),
-                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                ),
-                                profileAccomplishments(
-                                  achievementTitle: OlukoLocalizations.get(context, 'coursesCompleted'),
-                                  achievementValue: userStats.userStats.completedCourses.toString(),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                profileAccomplishments(
-                                  achievementTitle: OlukoLocalizations.get(context, 'classesCompleted'),
-                                  achievementValue: userStats.userStats.completedClasses.toString(),
-                                ),
-                                Container(
-                                  width: 2.5,
-                                  height: 2.5,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white,
-                                    ),
-                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                ),
-                                BlocBuilder<PointsCardBloc, PointsCardState>(
-                                  bloc: widget.blocPointsCard,
-                                  builder: (pointsCardContext, pointsCards) {
-                                    return pointsCards is PointsCardSuccess
-                                        ? profileAccomplishments(
-                                            achievementTitle: OlukoLocalizations.get(context, 'mvt') + ' ' + OlukoLocalizations.get(context, 'points'),
-                                            achievementValue: pointsCards.userPoints.toString(),
-                                          )
-                                        : const SizedBox();
-                                  },
-                                )
-                              ],
-                            )
-                          ],
-                        )
-                      : const SizedBox();
-                },
-              ),
-            ),
+            _getStatisticsSection(),
             BlocBuilder<FriendBloc, FriendState>(
               bloc: widget.blocFriends,
               builder: (context, friendState) {
@@ -244,38 +108,16 @@ class _FriendModalContentState extends State<FriendModalContent> {
                   friendModelList = friend.friends.where((element) => element.id == widget.user.id).toList();
                   friendModel = friendModelList.isNotEmpty ? friendModelList.first : null;
                   connectionRequested = friend.friendRequestSent.where((friendRequest) => friendRequest.id == widget.user.id).toList().isNotEmpty;
-                  friendButtons = _getButtons(connectionRequested, friendState, userIsFriend);
+                  friendButton = _getLeftButton(connectionRequested, friendState, userIsFriend);
                 }
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 5),
+                  padding: EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? 3 : 35, left: userIsFriend ? 0 : 25, right: userIsFriend ? 0 : 25),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: userIsFriend ? MainAxisAlignment.spaceAround : MainAxisAlignment.start,
                     children: [
-                      Visibility(
-                        visible: userIsFriend,
-                        child: SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: OlukoNeumorphicSecondaryButton(
-                            title: '',
-                            isExpanded: false,
-                            onPressed: () {
-                              if (userIsFriend && friendModel != null) {
-                                widget.blocFavoriteFriend.favoriteFriend(context, friend, friendModel);
-                              }
-                            },
-                            icon: SizedBox(
-                              height: 25,
-                              width: 25,
-                              child: Image.asset(
-                                friendModel != null && friendModel.isFavorite ? 'assets/icon/heart_filled.png' : 'assets/icon/heart.png',
-                              ),
-                            ),
-                            onlyIcon: true,
-                          ),
-                        ),
-                      ),
-                      friendButtons,
+                      Visibility(visible: userIsFriend, child: _getFavoriteButton()),
+                      friendButton,
+                      userIsFriend ? SizedBox() : Expanded(child: SizedBox()),
                       _getViewProfileButton(userIsFriend),
                     ],
                   ),
@@ -285,6 +127,176 @@ class _FriendModalContentState extends State<FriendModalContent> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _getFavoriteButton() {
+    return SizedBox(
+      height: 50,
+      width: 50,
+      child: OlukoNeumorphicSecondaryButton(
+        title: '',
+        isExpanded: false,
+        onPressed: () {
+          if (userIsFriend && friendModel != null) {
+            widget.blocFavoriteFriend.favoriteFriend(context, friend, friendModel);
+          }
+        },
+        icon: SizedBox(
+          height: 25,
+          width: 25,
+          child: Image.asset(
+            friendModel != null && friendModel.isFavorite ? 'assets/icon/heart_filled.png' : 'assets/icon/heart.png',
+          ),
+        ),
+        onlyIcon: true,
+      ),
+    );
+  }
+
+  Widget _getStatisticsSection() {
+    return Expanded(
+      child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+        bloc: widget.blocUserStatistics,
+        builder: (userStatisticsContext, userStats) {
+          return userStats is StatisticsSuccess && widget.user.privacy == 0
+              ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        profileAccomplishments(
+                          achievementTitle: OlukoLocalizations.get(context, 'challengesCompleted'),
+                          achievementValue: userStats.userStats.completedChallenges.toString(),
+                        ),
+                        Container(
+                          width: 2.5,
+                          height: 2.5,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.white,
+                            ),
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        profileAccomplishments(
+                          achievementTitle: OlukoLocalizations.get(context, 'coursesCompleted'),
+                          achievementValue: userStats.userStats.completedCourses.toString(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        profileAccomplishments(
+                          achievementTitle: OlukoLocalizations.get(context, 'classesCompleted'),
+                          achievementValue: userStats.userStats.completedClasses.toString(),
+                        ),
+                        Container(
+                          width: 2.5,
+                          height: 2.5,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.white,
+                            ),
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        BlocBuilder<PointsCardBloc, PointsCardState>(
+                          bloc: widget.blocPointsCard,
+                          builder: (pointsCardContext, pointsCards) {
+                            return pointsCards is PointsCardSuccess
+                                ? profileAccomplishments(
+                                    achievementTitle: OlukoLocalizations.get(context, 'mvt') + ' ' + OlukoLocalizations.get(context, 'points'),
+                                    achievementValue: pointsCards.userPoints.toString(),
+                                  )
+                                : const SizedBox();
+                          },
+                        )
+                      ],
+                    )
+                  ],
+                )
+              : const SizedBox();
+        },
+      ),
+    );
+  }
+
+  Widget _getTopSection() {
+    return Row(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: StoriesItem(
+            showUserProgress: true,
+            itemUserId: widget.user.id,
+            userProgress: widget.usersProgess != null ? widget.usersProgess[widget.user.id] : null,
+            maxRadius: 40,
+            imageUrl: widget.user.getAvatarThumbnail(),
+            name: widget.user.firstName,
+            lastname: widget.user.lastName,
+            userProgressStreamBloc: widget.userProgressStreamBloc,
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.user.getFullName(),
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w700),
+                ),
+                _getUserInfo()
+              ],
+            ),
+          ),
+        ),
+        _getHiFive(),
+      ],
+    );
+  }
+
+  Widget _getHiFive() {
+    return BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
+      bloc: widget.blocHifiveReceived,
+      builder: (hiFiveReceivedContext, hiFiveReceivedState) {
+        return widget.user.privacy == 0
+            ? Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        widget.blocHifiveSend.set(context, widget.currentUserId, widget.user.id);
+                        AppMessages().showHiFiveSentDialog(context);
+                      },
+                      child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                        bloc: widget.blocHifiveSend,
+                        listener: (hiFiveSendContext, hiFiveSendState) {
+                          if (hiFiveSendState is HiFiveSendSuccess) {
+                            AppMessages.clearAndShowSnackbar(
+                              context,
+                              hiFiveSendState.hiFive ? OlukoLocalizations.get(context, 'hiFiveSent') : OlukoLocalizations.get(context, 'hiFiveRemoved'),
+                            );
+                          }
+                          if (hiFiveSendState is HiFiveSendSuccess) {
+                            widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
+                          }
+                        },
+                        child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox();
+      },
     );
   }
 
@@ -459,7 +471,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
     );
   }
 
-  Widget _getButtons(bool connectionRequested, FriendState friendState, bool userIsFriend) {
+  Widget _getLeftButton(bool connectionRequested, FriendState friendState, bool userIsFriend) {
     if (connectionRequested) {
       _buttonTextContent = OlukoLocalizations.of(context).find('connectionRequestCancelled');
       return Container(
