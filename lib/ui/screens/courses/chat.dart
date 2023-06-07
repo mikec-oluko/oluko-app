@@ -281,6 +281,7 @@ class _ChatScreenState extends State<ChatScreen> {
             title: widget.courseEnrollment.course.name,
             showTitle: true,
             courseImage: widget.courseEnrollment.course.image,
+            rightPadding: false,
             onPressed: () => {BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.currentUser.id, enrollments: widget.enrollments), Navigator.pop(context)}),
         body: SafeArea(
           child: Column(
