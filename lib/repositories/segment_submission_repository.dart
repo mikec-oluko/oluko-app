@@ -130,4 +130,11 @@ class SegmentSubmissionRepository {
         .doc(segmentSubmission.id);
     reference.update({'video_state.error': segmentSubmission.videoState.error});
   }
+
+  Future<SegmentSubmission> getById(String id) async {
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('segmentSubmissions').doc(id);
+    DocumentSnapshot ds = await reference.get();
+    return SegmentSubmission.fromJson(ds.data() as Map<String, dynamic>);
+  }
 }

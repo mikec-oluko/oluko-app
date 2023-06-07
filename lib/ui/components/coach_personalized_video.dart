@@ -19,7 +19,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class CoachPersonalizedVideoComponent extends StatefulWidget {
   final CoachPersonalizedVideo personalizedVideo;
   final UserResponse currentUser;
-  const CoachPersonalizedVideoComponent({@required this.personalizedVideo, @required this.currentUser}) : super();
+  final Annotation annotation;
+  const CoachPersonalizedVideoComponent({@required this.personalizedVideo, @required this.currentUser, this.annotation}) : super();
 
   @override
   State<CoachPersonalizedVideoComponent> createState() => _CoachPersonalizedVideoComponentState();
@@ -119,7 +120,9 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
           Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
             'videoUrl': videoUrl,
             'aspectRatio': widget.personalizedVideo.videoContent.aspectRatio,
-            'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos')
+            'titleForContent': OlukoLocalizations.get(context, 'personalizedVideos'),
+            'segmentSubmissionId': widget.annotation.segmentSubmissionId,
+            'currentUser': widget.currentUser
           });
         },
         child: OlukoNeumorphism.isNeumorphismDesign

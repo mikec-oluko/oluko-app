@@ -26,6 +26,7 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
+import 'package:oluko_app/blocs/coach_show_video_content_bloc.dart';
 import 'package:oluko_app/blocs/community_tab_friend_notification_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
@@ -478,6 +479,7 @@ class Routes {
   final CommunityTabFriendNotificationBloc _communityTabFriendNotificationBloc = CommunityTabFriendNotificationBloc();
   final ChatSliderBloc _chatSliderBloc = ChatSliderBloc();
   final MaxWeightsBloc _maxWeightsBloc = MaxWeightsBloc();
+  final CoachShowVideoContentBloc _coachShowVideoContent = CoachShowVideoContentBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -1359,13 +1361,18 @@ class Routes {
             coachVideoMessage: argumentsToAdd['coachVideoMessages'] as List<CoachMediaMessage>);
         break;
       case RouteEnum.coachShowVideo:
+        providers = [
+          BlocProvider<CoachShowVideoContentBloc>.value(value: _coachShowVideoContent),
+          BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc)
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
 
         newRouteView = CoachShowVideo(
-          videoUrl: argumentsToAdd['videoUrl'].toString(),
-          titleForContent: argumentsToAdd['titleForContent'].toString(),
-          aspectRatio: argumentsToAdd['aspectRatio'] != null ? double.parse(argumentsToAdd['aspectRatio'].toString()) : null,
-        );
+            videoUrl: argumentsToAdd['videoUrl'].toString(),
+            titleForContent: argumentsToAdd['titleForContent'].toString(),
+            aspectRatio: argumentsToAdd['aspectRatio'] != null ? double.parse(argumentsToAdd['aspectRatio'].toString()) : null,
+            segmentSubmissionId: argumentsToAdd['segmentSubmissionId'] != null ? argumentsToAdd['segmentSubmissionId'] as String : null,
+            currentUser: argumentsToAdd['currentUser'] != null ? argumentsToAdd['currentUser'] as UserResponse : null);
         break;
       case RouteEnum.coachProfile:
         providers = [
