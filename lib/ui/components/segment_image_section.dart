@@ -9,12 +9,14 @@ import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
+import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
@@ -113,6 +115,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   List<WeightRecord> weightRecords = [];
   List<EnrollmentMovement> enrollmentMovements = [];
   List<MovementSubmodel> movementsToDisplayWeight = [];
+  List<MaxWeight> maxWeightRecords = [];
 
   @override
   void initState() {
@@ -341,6 +344,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           weightRecords = state.records;
           getMovementsWithWeightRequired();
         }
+        if (state is WeightRecordsDispose) {
+          weightRecords = state.records;
+        }
         return Container(
           width: ScreenUtils.width(context) - 40,
           decoration: BoxDecoration(
@@ -361,13 +367,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       const SizedBox.shrink()
                     else
                       FriendsRecordsStack(
-                        friendsUsers: widget.favoriteUsers,
-                        movementsForWeight: movementsToDisplayWeight,
-                        segmentStep: _segmentSteps(),
-                        segmentTitleWidget: _segmentCardTitle(),
-                        useImperial: widget.currentUser.useImperialSystem,
-                        currentUserRecords: weightRecords,
-                      )
+                          friendsUsers: widget.favoriteUsers,
+                          movementsForWeight: movementsToDisplayWeight,
+                          segmentStep: _segmentSteps(),
+                          segmentTitleWidget: _segmentCardTitle(),
+                          useImperial: widget.currentUser.useImperialSystem,
+                          currentUserRecords: weightRecords,
+                          currentSegmentId: widget.segment.id,
+                          userId: widget.currentUser.id)
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -376,11 +383,23 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 _segmentCardDescription(),
                 Padding(
                     padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
-                    child: SegmentSummaryComponent(
-                      enrollmentMovements: enrollmentMovements,
-                      sectionsFromSegment: widget.segment.sections,
-                      useImperialSystem: widget.currentUser.useImperialSystem,
-                      weightRecords: weightRecords ?? [],
+                    child: BlocBuilder<MaxWeightsBloc, MaxWeightsState>(
+                      builder: (context, state) {
+                        if (state is UserMaxWeights) {
+                          maxWeightRecords = state.maxWeightRecords;
+                        }
+                        if (state is UserMaxWeightsDispose) {
+                          maxWeightRecords = state.maxWeightRecords;
+                        }
+                        return SegmentSummaryComponent(
+                          segmentId: widget.segment.id,
+                          enrollmentMovements: enrollmentMovements,
+                          sectionsFromSegment: widget.segment.sections,
+                          useImperialSystem: widget.currentUser.useImperialSystem,
+                          weightRecords: weightRecords ?? [],
+                          maxWeightRecords: maxWeightRecords,
+                        );
+                      },
                     )),
               ],
             ),

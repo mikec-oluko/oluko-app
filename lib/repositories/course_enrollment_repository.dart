@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/completion_dto.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -147,7 +148,7 @@ class CourseEnrollmentRepository {
 
     movementsAndWeights.forEach((workoutElement) {
       courseEnrollmentLatestVersion.classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex]
-          .movements[workoutElement.movementIndex].weight = workoutElement.weight;
+          .movements[workoutElement.movementIndex].weight = workoutElement.weight.toDouble();
     });
 
     courseEnrollmentReference.update({
@@ -204,13 +205,16 @@ class CourseEnrollmentRepository {
     final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
 
     final enrollmentSegments = await Future.wait(List.generate(classObj.segments.length, (index) async {
-      final segment = classObj.segments[index];
+      final SegmentSubmodel segment = classObj.segments[index];
+      final DocumentSnapshot currentSegmentData = await segment.reference.get();
+      final Segment segmentInfo = Segment.fromJson(currentSegmentData.data() as Map<String, dynamic>);
       final sections = await getEnrollmentSections(segment);
       return EnrollmentSegment(
         id: segment.id,
         name: segment.name,
         reference: segment.reference,
         isChallenge: segment.isChallenge,
+        setsMaxWeight: segmentInfo.setMaxWeights,
         image: segment.image,
         sections: sections,
       );
@@ -233,14 +237,22 @@ class CourseEnrollmentRepository {
 
   static Future<List<EnrollmentMovement>> getEnrollmentMovements(SectionSubmodel section) async {
     final List<EnrollmentMovement> movements = [];
-    bool weightRequired = false;
-    final promises = section.movements.map((movement) async {
-      if (movement.reference != null) {
-        final DocumentSnapshot qs = await movement.reference.get();
-        final Movement movementRef = Movement.fromJson(qs.data() as Map<String, dynamic>);
-        weightRequired = movementRef.weightRequired;
+    bool storeWeight = false;
+    int percentOfMaxWeight;
+    final promises = section.movements.map((movementFromEnrollmentSegment) async {
+      if (movementFromEnrollmentSegment.reference != null) {
+        final DocumentSnapshot qs = await movementFromEnrollmentSegment.reference.get();
+        final Movement movement = Movement.fromJson(qs.data() as Map<String, dynamic>);
+        storeWeight = movement.storeWeight;
+        percentOfMaxWeight = movementFromEnrollmentSegment.percentOfMaxWeight;
       }
-      movements.add(EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name, weight: null, weightRequired: weightRequired));
+      movements.add(EnrollmentMovement(
+          id: movementFromEnrollmentSegment.id,
+          reference: movementFromEnrollmentSegment.reference,
+          name: movementFromEnrollmentSegment.name,
+          weight: null,
+          storeWeight: storeWeight,
+          percentOfMaxWeight: percentOfMaxWeight));
     });
     await Future.wait(promises);
     return movements;

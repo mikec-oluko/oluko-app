@@ -283,69 +283,67 @@ class _ChatScreenState extends State<ChatScreen> {
             showTitle: true,
             courseImage: widget.courseEnrollment.course.image,
             onPressed: () => {BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.currentUser.id, enrollments: widget.enrollments), Navigator.pop(context)}),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(child: Container(
-                child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
-                  builder: (context, state) {
-                    if (state is LoadingMessages) {
-                      return ValueListenableBuilder<bool>(
-                        valueListenable: _showIndicator,
-                        builder: (context, value, child) {
-                          if (value) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      );
-                    }
-                    else if (state is MessagesUpdated) {
-                      messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants, false);
-                    } else if (state is MessagesScroll) {
-                      _isLoadingMoreMessages = false;
-                      _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
-                      } else if (state is LoadingScrollMessages) {
-                        return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, true);
-                     } else if (messages.isNotEmpty) {
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                ),
-              )),
-              Neumorphic(
-                style: OlukoNeumorphism.getNeumorphicStyleForBottomChat(),
-                child: SizedBox(
-                  height: 115,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                    decoration: const BoxDecoration(
-                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15.0),
-                        topRight: Radius.circular(15.0),
+        body: Column(
+          children: [
+            Expanded(child: Container(
+              child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+                builder: (context, state) {
+                  if (state is LoadingMessages) {
+                    return ValueListenableBuilder<bool>(
+                      valueListenable: _showIndicator,
+                      builder: (context, value, child) {
+                        if (value) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    );
+                  }
+                  else if (state is MessagesUpdated) {
+                    messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants, false);
+                  } else if (state is MessagesScroll) {
+                    _isLoadingMoreMessages = false;
+                    _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
+                    } else if (state is LoadingScrollMessages) {
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, true);
+                   } else if (messages.isNotEmpty) {
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            )),
+            Neumorphic(
+              style: OlukoNeumorphism.getNeumorphicStyleForBottomChat(),
+              child: SizedBox(
+                height: 115,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                  decoration: const BoxDecoration(
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _chatInput(),
+                      Flexible(
+                        flex: 1,
+                        child: _buttonSend(_textController.text.isNotEmpty),
                       ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _chatInput(),
-                        Flexible(
-                          flex: 1,
-                          child: _buttonSend(_textController.text.isNotEmpty),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }

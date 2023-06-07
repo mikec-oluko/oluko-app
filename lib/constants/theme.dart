@@ -201,6 +201,22 @@ class OlukoNeumorphism {
         shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForStadiumShapeElement() {
+    return const NeumorphicStyle(
+        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: 3,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.stadium(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.initialGradientColorPrimary,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoColors.grayColor,
+        shadowDarkColor: Colors.black);
+  }
+
   static NeumorphicStyle getNeumorphicStyleForBorderContainer() {
     return NeumorphicStyle(
       border: NeumorphicBorder(width: 2, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
@@ -292,6 +308,8 @@ class OlukoColors {
   static const Color initial = Color.fromRGBO(23, 43, 77, 1.0);
 
   static const Color primary = Color.fromRGBO(170, 176, 144, 1.0);
+
+  static const Color primaryLight = Color.fromRGBO(210, 216, 177, 1.0);
 
   static const Color secondary = Color.fromRGBO(228, 155, 149, 1.0);
 

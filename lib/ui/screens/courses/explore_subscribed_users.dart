@@ -192,19 +192,6 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   }
 
   showFriendModal(UserResponse friendUser) {
-    BottomDialogUtils.showBottomDialog(
-      content: FriendModalContent(
-          friendUser,
-          loggedUser.user.id,
-          _usersProgress,
-          BlocProvider.of<FriendBloc>(context),
-          BlocProvider.of<FriendRequestBloc>(context),
-          BlocProvider.of<HiFiveSendBloc>(context),
-          BlocProvider.of<HiFiveReceivedBloc>(context),
-          BlocProvider.of<UserStatisticsBloc>(context),
-          BlocProvider.of<FavoriteFriendBloc>(context),
-          BlocProvider.of<UserProgressStreamBloc>(context)),
-      context: context,
-    );
+    BottomDialogUtils.friendsModal(friendUser, loggedUser.user.id, _usersProgress, context);
   }
 }
