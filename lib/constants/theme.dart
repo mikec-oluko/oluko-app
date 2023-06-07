@@ -215,6 +215,19 @@ class OlukoNeumorphism {
     );
   }
 
+    static NeumorphicStyle getNeumorphicStyleForBottomChat() {
+    return NeumorphicStyle(
+      border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+      depth: -4,
+      intensity: 0.7,
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      shape: NeumorphicShape.concave,
+      lightSource: LightSource.lerp(LightSource.top, LightSource.top, 01),
+      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+    );
+  }
+
   static BoxDecoration boxDecorationForKeyboard() {
     return const BoxDecoration(
       gradient: LinearGradient(

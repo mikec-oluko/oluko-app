@@ -24,6 +24,7 @@ import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:oluko_app/utils/chat_utils.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 
 class Chat extends StatelessWidget {
@@ -317,26 +318,29 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               )),
-              SizedBox(
-                height: 115,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                  decoration: const BoxDecoration(
-                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15.0),
-                      topRight: Radius.circular(15.0),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _chatInput(),
-                      Flexible(
-                        flex: 1,
-                        child: _buttonSend(_textController.text.isNotEmpty),
+              Neumorphic(
+                style: OlukoNeumorphism.getNeumorphicStyleForBottomChat(),
+                child: SizedBox(
+                  height: 115,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                    decoration: const BoxDecoration(
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15.0),
+                        topRight: Radius.circular(15.0),
                       ),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _chatInput(),
+                        Flexible(
+                          flex: 1,
+                          child: _buttonSend(_textController.text.isNotEmpty),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
