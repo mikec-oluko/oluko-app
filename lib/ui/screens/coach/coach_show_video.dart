@@ -108,48 +108,39 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
     return BlocBuilder<CoachShowVideoContentBloc, CoachShowVideoContentState>(
       builder: (context, state) {
         if (state is CoachShowVideoContentStateSuccess) {
-          return BlocBuilder<WorkoutWeightBloc, MovementWorkoutState>(
-            builder: (workoutContext, workoutState) {
-              if (workoutState is WeightRecordsSuccess) {
-                final weightRecords = workoutState.records;
-                getMovementsWithWeightRequired(state.enrollmentSegment.sections);
-                return Container(
-                  width: ScreenUtils.width(context) - 40,
-                  decoration: BoxDecoration(
-                    color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
-                    borderRadius: BorderRadius.circular(15),
+          getMovementsWithWeightRequired(state.enrollmentSegment.sections);
+          return Container(
+            width: ScreenUtils.width(context) - 40,
+            decoration: BoxDecoration(
+              color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _classTitle(state.enrollmentClass),
+                    ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _classTitle(state.enrollmentClass),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        _segmentTitle(state.segment),
-                        Padding(
-                          padding: EdgeInsets.only(top: SegmentUtils.hasTitle(state.segment) ? 20 : 0, bottom: 20),
-                          child: SegmentDetailsComponent(
-                            segmentId: state.segment.id,
-                            enrollmentMovements: enrollmentMovements,
-                            sectionsFromSegment: state.segment.sections,
-                            useImperialSystem: widget.currentUser.useImperialSystem,
-                            weightRecords: weightRecords ?? [],
-                            maxWeightRecords: [],
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 10),
+                  _segmentTitle(state.segment),
+                  Padding(
+                    padding: EdgeInsets.only(top: SegmentUtils.hasTitle(state.segment) ? 20 : 0, bottom: 20),
+                    child: SegmentDetailsComponent(
+                      segmentId: state.segment.id,
+                      enrollmentMovements: enrollmentMovements,
+                      sectionsFromSegment: state.segment.sections,
+                      useImperialSystem: widget.currentUser.useImperialSystem,
+                      weightRecords: state.weights ?? [],
                     ),
                   ),
-                );
-              }
-              return const SizedBox();
-            },
+                ],
+              ),
+            ),
           );
         }
         return const SizedBox();
