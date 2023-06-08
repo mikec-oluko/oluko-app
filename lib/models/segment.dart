@@ -21,6 +21,7 @@ class Segment extends Base {
   bool isPublished;
   List<SectionSubmodel> sections;
   bool isChallenge;
+  bool setMaxWeights;
   String challengeImage;
   int likes;
   int dislikes;
@@ -36,6 +37,7 @@ class Segment extends Base {
       this.isPublished,
       this.totalTime,
       this.isChallenge,
+      this.setMaxWeights,
       this.challengeVideo,
       this.challengeImage,
       this.type,
@@ -49,14 +51,7 @@ class Segment extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -65,32 +60,37 @@ class Segment extends Base {
       json['total_time'] = null;
     }
     Segment segment = Segment(
-        challengeVideo: json['challenge_video'] == null ? null : json['challenge_video'].toString(),
-        name: json['name']?.toString(),
-        image: json['image']?.toString(),
-        video: json['video']?.toString(),
-        rounds: json['rounds'] as int,
-        description: json['description']?.toString(),
-        isChallenge: json['is_challenge'] == null
-            ? false
-            : json['is_challenge'] is bool
-                ? json['is_challenge'] as bool
-                : false,
-        challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
-        totalTime: json['total_time'] as int,
-        initialTimer: json['initial_timer'] as int,
-        isPublished: json['is_published'] as bool,
-        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
-        roundsAlerts: json['rounds_alerts'] == null
-            ? null
-            : List<RoundsAlerts>.from(
-                (json['rounds_alerts'] as Iterable).map((roundAlerts) => roundAlerts == null ? null : RoundsAlerts.fromJson(roundAlerts as Map<String, dynamic>))),
-        sections: json['sections'] == null
-            ? null
-            : List<SectionSubmodel>.from(
-                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))),
-        likes:json['likes']!=null?json['likes'] as int:0,
-        dislikes:json['dislikes']!=null?json['dislikes'] as int:0,);
+      challengeVideo: json['challenge_video'] == null ? null : json['challenge_video'].toString(),
+      name: json['name']?.toString(),
+      image: json['image']?.toString(),
+      video: json['video']?.toString(),
+      rounds: json['rounds'] as int,
+      description: json['description']?.toString(),
+      isChallenge: json['is_challenge'] == null
+          ? false
+          : json['is_challenge'] is bool
+              ? json['is_challenge'] as bool
+              : false,
+      setMaxWeights: json['sets_max_weights'] == null
+          ? false
+          : json['sets_max_weights'] is bool
+              ? json['sets_max_weights'] as bool
+              : false,
+      challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
+      totalTime: json['total_time'] as int,
+      initialTimer: json['initial_timer'] as int,
+      isPublished: json['is_published'] as bool,
+      type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
+      roundsAlerts: json['rounds_alerts'] == null
+          ? null
+          : List<RoundsAlerts>.from((json['rounds_alerts'] as Iterable)
+              .map((roundAlerts) => roundAlerts == null ? null : RoundsAlerts.fromJson(roundAlerts as Map<String, dynamic>))),
+      sections: json['sections'] == null
+          ? null
+          : List<SectionSubmodel>.from((json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))),
+      likes: json['likes'] != null ? json['likes'] as int : 0,
+      dislikes: json['dislikes'] != null ? json['dislikes'] as int : 0,
+    );
     segment.setBase(json);
     return segment;
   }
@@ -106,12 +106,13 @@ class Segment extends Base {
       'initial_timer': initialTimer,
       'is_published': isPublished,
       'is_challenge': isChallenge,
+      'sets_max_weights': setMaxWeights,
       'challenge_image': challengeImage,
       'rounds_alerts': roundsAlerts == null ? null : List<dynamic>.from(roundsAlerts.map((roundAlerts) => roundAlerts.toJson())),
       'type': type == null ? null : type.index,
       'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
-      'likes':likes ?? 0,
-      'dislikes':likes ?? 0,
+      'likes': likes ?? 0,
+      'dislikes': likes ?? 0,
     };
     segmentJson.addEntries(super.toJson().entries);
     return segmentJson;

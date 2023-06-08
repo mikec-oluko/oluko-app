@@ -675,8 +675,8 @@ class Routes {
         break;
       case RouteEnum.profile:
         providers = [
-          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
           BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
@@ -898,6 +898,7 @@ class Routes {
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -943,6 +944,7 @@ class Routes {
           BlocProvider<NotificationSettingsBloc>.value(value: _notificationSettingsBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
@@ -1003,6 +1005,7 @@ class Routes {
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -1026,6 +1029,7 @@ class Routes {
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = EnrolledCourse(
@@ -1043,6 +1047,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, Course> argumentsToAdd = arguments as Map<String, Course>;
         newRouteView = EnrolledClass(course: argumentsToAdd['course']);
@@ -1075,6 +1080,7 @@ class Routes {
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
           BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
+          BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -1571,7 +1577,7 @@ class Routes {
         providers = [
           BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
         ];
-         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = ProfileMaxWeightsPage(user: argumentsToAdd['user'] as UserResponse);
         break;
       default:
