@@ -710,5 +710,3 @@ class _UserProfilePageState extends State<UserProfilePage> {
         : ScreenUtils.height(context) / 5;
   }
 }
-
-enum PanelState { open, close }
