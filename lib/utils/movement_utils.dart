@@ -129,8 +129,8 @@ class MovementUtils {
   static int getMaxWeightForMovement(MovementSubmodel movement, List<MaxWeight> maxWeightRecords) {
     int maxWeightRecord = 0;
     if (maxWeightRecords != null && maxWeightRecords.isNotEmpty) {
-      if (maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
-        maxWeightRecord = maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
+      if (maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.movementId == movement.id).isNotEmpty) {
+        maxWeightRecord = maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.movementId == movement.id).weight;
       }
     }
     return maxWeightRecord;
