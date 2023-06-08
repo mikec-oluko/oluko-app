@@ -132,7 +132,7 @@ class _State extends State<Courses> {
                         body: Container(
                             color: OlukoColors.black,
                             child: Scaffold(
-                                backgroundColor: OlukoColors.black,
+                                backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                 appBar: _appBar(widget.homeEnrollTocourse ?? false),
                                 body: _courseWidget(context, tagState))));
                   });

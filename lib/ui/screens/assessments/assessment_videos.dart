@@ -124,6 +124,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     return Form(
         key: _formKey,
         child: Scaffold(
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(
               showActions: widget.isFirstTime,
               onPressed: widget.isForCoachPage

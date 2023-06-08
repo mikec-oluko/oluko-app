@@ -95,6 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Form(
         key: _formKey,
         child: Scaffold(
+          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           appBar: OlukoAppBar(
             showBackButton: false,
             title: ProfileViewConstants.profileTitle,

@@ -55,6 +55,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   Widget build(BuildContext context) {
     final difference = _auction.difference(_now);
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'coach'), showBackButton: false, showTitle: true, showLogo: false),
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -206,8 +207,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                     width: ScreenUtils.width(context) * 0.15,
                                     color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                     child: buildWatchField(
-                                        valueToUse: _minutesValue < _timeMinValue ? _timeMinValue : _minutesValue,
-                                        maxValue: _minutesSecondsMaxValue)),
+                                        valueToUse: _minutesValue < _timeMinValue ? _timeMinValue : _minutesValue, maxValue: _minutesSecondsMaxValue)),
                               ],
                             ),
                           ),
@@ -223,8 +223,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                                   width: ScreenUtils.width(context) * 0.15,
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                   child: buildWatchField(
-                                      valueToUse: _secondsValue < _timeMinValue ? _timeMinValue : _secondsValue,
-                                      maxValue: _minutesSecondsMaxValue),
+                                      valueToUse: _secondsValue < _timeMinValue ? _timeMinValue : _secondsValue, maxValue: _minutesSecondsMaxValue),
                                 ),
                               ],
                             ),

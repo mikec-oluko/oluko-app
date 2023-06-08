@@ -49,6 +49,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
           content = state.sentVideos.where((sentVideo) => sentVideo?.video != null)?.toList();
         }
         return Scaffold(
+          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           appBar: OlukoAppBar(
             showTitle: true,
             showActions: true,

@@ -27,6 +27,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         showTitle: OlukoNeumorphism.isNeumorphismDesign ? true : false,
         title: OlukoLocalizations.get(context, 'coach'),

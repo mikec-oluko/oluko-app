@@ -53,6 +53,7 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
 
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         appBar: OlukoAppBar(
             showBackButton: OlukoNeumorphism.isNeumorphismDesign,
             title: ProfileViewConstants.profileOptionsAssessmentVideos,
