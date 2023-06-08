@@ -26,6 +26,11 @@ class UserProfileProgress extends StatefulWidget {
 
 class _UserProfileProgressState extends State<UserProfileProgress> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10), child: widget.isMinimalRequested ? const SizedBox.shrink() : buildUserNeumorphicStatistics());
@@ -53,19 +58,14 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
               children: [
                 profileNeumorphicAccomplishments(
                     achievementTitleKey: ['courses', 'completed'], achievementValue: widget.coursesCompleted, color: OlukoColors.white),
-                widget.isOwner
-                    ? BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
-                        if (state is PointsCardSuccess) {
-                          return profileNeumorphicAccomplishments(
-                              achievementTitleKey: ['mvt', 'points'],
-                              achievementValue: state.userPoints.toString(),
-                              color: OlukoColors.white,
-                              isClickable: true);
-                        } else {
-                          return OlukoCircularProgressIndicator();
-                        }
-                      })
-                    : SizedBox(),
+                BlocBuilder<PointsCardBloc, PointsCardState>(builder: (context, state) {
+                  if (state is PointsCardSuccess) {
+                    return profileNeumorphicAccomplishments(
+                        achievementTitleKey: ['mvt', 'points'], achievementValue: state.userPoints.toString(), color: OlukoColors.white, isClickable: true);
+                  } else {
+                    return OlukoCircularProgressIndicator();
+                  }
+                })
               ],
             ),
           ),

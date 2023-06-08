@@ -55,6 +55,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Friend friend;
   String _buttonTextContent = '';
   Widget friendButton = const SizedBox.shrink();
+  
   @override
   void initState() {
     widget.blocFriends.getFriendsByUserId(widget.currentUserId);

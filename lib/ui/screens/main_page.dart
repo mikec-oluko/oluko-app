@@ -205,10 +205,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 }
                 return Scaffold(
                   backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
-                  body: Stack(alignment: AlignmentDirectional.center, children: [
-                    _scaffoldBody(),
-                    _slidingUpPanel(),
-                  ]),
                   extendBody: true,
                   bottomNavigationBar: _isBottomTabActive
                       ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
@@ -225,6 +221,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                           }
                         })
                       : const SizedBox(),
+                  body: Stack(alignment: AlignmentDirectional.center, children: [
+                    _scaffoldBody(),
+                    _slidingUpPanel(),
+                  ]),
                 );
               });
             }
