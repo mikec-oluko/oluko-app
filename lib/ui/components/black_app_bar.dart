@@ -302,6 +302,8 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
   }
 
   Widget getCourseImage() {
+    final int maxWidth = (ScreenUtils.width(context) * 0.5).toInt();
+    final int maxHeight = (ScreenUtils.height(context) * 0.5).toInt();
     if (widget.courseImage != null) {
       return SizedBox(
         width: 70,
@@ -312,10 +314,10 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
               borderRadius: BorderRadius.circular(10.0),
               child: CachedNetworkImage(
                 imageUrl: widget.courseImage,
-                maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
-                maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
-                memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
-                memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
+                maxWidthDiskCache: maxWidth,
+                maxHeightDiskCache: maxHeight,
+                memCacheWidth: maxWidth,
+                memCacheHeight: maxHeight,
                 fit: BoxFit.scaleDown,
               ),
             ),
