@@ -39,8 +39,7 @@ class PurchaseRepository {
   static Future<UserResponse> create(PurchaseDetails purchaseDetails, ProductDetails productDetails, String userId) async {
     final DocumentReference proyectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId'));
     final DocumentReference userReference = proyectReference.collection('users').doc(userId);
-    final userDoc = await userReference.get();
-    if (userDoc.exists) {
+    if ((await userReference.get()).exists) {
       final QuerySnapshot<Map<String, dynamic>> planDocRef =
           await proyectReference.collection('plans').where('apple_id', isEqualTo: purchaseDetails.productID).get();
       final Map<String, dynamic> planJson = planDocRef?.docs?.first?.data();
@@ -53,6 +52,7 @@ class PurchaseRepository {
       purchase.currentPeriodEnd = DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch;
       await userReference.collection('purchases').doc(purchase.id).set(purchase.toJson());
       await userReference.update({'current_plan': plan.metadata['level']});
+      final userDoc = await userReference.get();
       final userJson = userDoc.data() as Map<String, dynamic>;
       return UserResponse.fromJson(userJson);
     }

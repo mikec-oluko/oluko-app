@@ -77,7 +77,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         } else if (subscriptionContentState is PurchaseSuccess) {
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'successfullySubscribed');
-          AuthRepository().storeLoginData(subscriptionContentState.user);
+          await AuthRepository().storeLoginData(subscriptionContentState.user);
           BlocProvider.of<AuthBloc>(context).updateAuthSuccess(subscriptionContentState.user, AuthRepository.getLoggedUser());
           if (widget.fromRegister) {
             BlocProvider.of<AuthBloc>(context).navigateToNextScreen(context, subscriptionContentState.user.id);
