@@ -10,11 +10,11 @@ import 'package:oluko_app/models/weight_record.dart';
 import 'oluko_localizations.dart';
 
 class MovementUtils {
-  static Text movementTitle(String title) {
+  static Text movementTitle(String title, {bool bold = true}) {
     return Text(
       title,
       textAlign: TextAlign.center,
-      style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
+      style: OlukoFonts.olukoSubtitleFont(customFontWeight: bold ? FontWeight.bold : FontWeight.normal),
     );
   }
 
