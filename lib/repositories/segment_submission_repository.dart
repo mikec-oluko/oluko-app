@@ -8,7 +8,9 @@ import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/coach_request_repository.dart';
+import 'package:oluko_app/repositories/movement_repository.dart';
 
 class SegmentSubmissionRepository {
   FirebaseFirestore firestoreInstance;
@@ -35,6 +37,8 @@ class SegmentSubmissionRepository {
 
     DocumentReference coachReference;
 
+    List<WeightRecord> submissionWeights = await MovementRepository().getFriendsRecords(user.uid);
+
     if (coachId != null) {
       coachReference = projectReference.collection("users").doc(coachId);
     }
@@ -42,18 +46,20 @@ class SegmentSubmissionRepository {
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
     SegmentSubmission segmentSubmission = SegmentSubmission(
-        userId: user.uid,
-        userReference: userReference,
-        segmentId: segment.id,
-        segmentReference: segmentReference,
-        segmentName: segment.name,
-        courseEnrollmentId: courseEnrollment.id,
-        courseEnrollmentReference: courseEnrollmentReference,
-        status: SegmentSubmissionStatusEnum.created,
-        createdBy: user.uid,
-        coachId: coachId,
-        coachReference: coachReference,
-        videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
+      userId: user.uid,
+      userReference: userReference,
+      segmentId: segment.id,
+      segmentReference: segmentReference,
+      segmentName: segment.name,
+      courseEnrollmentId: courseEnrollment.id,
+      courseEnrollmentReference: courseEnrollmentReference,
+      status: SegmentSubmissionStatusEnum.created,
+      createdBy: user.uid,
+      coachId: coachId,
+      coachReference: coachReference,
+      videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath),
+      submissionWeight: submissionWeights,
+    );
 
     segmentSubmission.id = docRef.id;
     return segmentSubmission;
@@ -94,7 +100,9 @@ class SegmentSubmissionRepository {
       if (coachRequest != null) {
         await CoachRequestRepository().updateSegmentSubmission(segmentSubmission.userId, coachRequest, segmentSubmission.id, reference);
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {

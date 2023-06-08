@@ -217,9 +217,13 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               segmentId: widget.segmentId,
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
-              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) != 0
-                  ? double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString())
-                  : null,
+              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) == null
+                  ? 0
+                  : double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString()),
+
+              //  MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) != 0
+              //     ? double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString())
+              //     : 0,
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
