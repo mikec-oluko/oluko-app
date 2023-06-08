@@ -65,6 +65,7 @@ class SearchUtils {
                       authUser: authUser,
                       users: search.searchResults,
                       onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser, authUser, context),
+                      isForSearch: true,
                     ),
                   )
                 else
@@ -73,6 +74,7 @@ class SearchUtils {
                     authUser: authUser,
                     users: search.searchResults,
                     onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser, authUser, context),
+                    isForSearch: true,
                   ),
               ],
             ),
