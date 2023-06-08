@@ -1321,7 +1321,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
       BlocProvider.of<WorkoutWeightBloc>(context)
-          .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);
+          .saveWeightToWorkout(currentCourseEnrollment: widget.courseEnrollment, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }
   }
 }

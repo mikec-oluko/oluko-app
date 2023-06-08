@@ -98,15 +98,9 @@ class MovementUtils {
   static String getWeight({MovementSubmodel currentMovement, String segmentId, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
     String result;
     if (weightRecordsList.isNotEmpty) {
-      weightRecordsList.forEach((weightRecord) {
-        if (weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId) {
-          if (useImperialSystem) {
-            result = weightRecord.weight.toString();
-          } else {
-            result = (weightRecord.weight * _toKilogramsUnit).round().toString();
-          }
-        }
-      });
+      if (getWeightOnRecords(weightRecordsList, currentMovement, segmentId).isNotEmpty) {
+        result = getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString();
+      }
     }
     return result;
   }
@@ -134,5 +128,9 @@ class MovementUtils {
       }
     }
     return maxWeightRecord;
+  }
+
+  static Iterable<WeightRecord> getWeightOnRecords(List<WeightRecord> weightRecordsList, MovementSubmodel currentMovement, String segmentId) {
+    return weightRecordsList.where((weightRecord) => weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId);
   }
 }

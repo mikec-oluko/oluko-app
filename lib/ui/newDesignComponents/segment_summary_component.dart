@@ -237,10 +237,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController _listOfControllers, FocusNode _listOfNodes) {
+  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id);
     return WeightTileWithInput(
       movement: movement,
+      currentTextEditingController: textController,
       open: (focusNode, textEditingController) => open(movement.id, currentMovementAndWeight, textEditingController, focusNode),
       useImperialSystem: widget.useImperialSystem,
     );
