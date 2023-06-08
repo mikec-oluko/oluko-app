@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
@@ -35,6 +36,7 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
+import 'package:oluko_app/ui/components/modal_cards.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -109,20 +111,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
           BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
           _friendsRequested = true;
         }
-        return SlidingUpPanel(
-            backdropEnabled: canHidePanel,
-            margin: EdgeInsets.zero,
-            header: defaultWidgetNoContent,
-            padding: EdgeInsets.zero,
-            color: OlukoColors.black,
-            minHeight: 0,
-            maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
-            collapsed: defaultWidgetNoContent,
-            controller: _panelController,
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-            panel: ChallengeCoursesPanelContent(panelController: _panelController),
-            body: _buildUserProfileView(
-                profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser));
+        return Material(
+            type: MaterialType.transparency,
+            child: SlidingUpPanel(
+                backdropEnabled: canHidePanel,
+                margin: EdgeInsets.zero,
+                header: defaultWidgetNoContent,
+                padding: EdgeInsets.zero,
+                color: OlukoColors.black,
+                minHeight: 0,
+                maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
+                collapsed: defaultWidgetNoContent,
+                controller: _panelController,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                panel: _getPanel(),
+                body: _buildUserProfileView(
+                    profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser)));
       } else {
         return Container(
           color: OlukoColors.black,
@@ -130,6 +134,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
           width: MediaQuery.of(context).size.width,
           child: OlukoCircularProgressIndicator(),
         );
+      }
+    });
+  }
+
+  Widget _getPanel() {
+    return BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+      if (state is PointsCardPanelOpen) {
+        _panelController.open();
+        return ModalCards();
+      } else {
+        return ChallengeCoursesPanelContent(panelController: _panelController);
       }
     });
   }
@@ -211,10 +226,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
             child: Stack(
               clipBehavior: Clip.none,
-              children: [
-                profileCoverImage(),
-                userInformationPanel()
-              ],
+              children: [profileCoverImage(), userInformationPanel()],
             ),
           ),
           if (OlukoNeumorphism.isNeumorphismDesign)
@@ -477,7 +489,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                   child: Container(
                       color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
                       width: 52,

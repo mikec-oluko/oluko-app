@@ -133,7 +133,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   }
 
   void _pointsCardAction() {
-    BlocProvider.of<PointsCardPanelBloc>(context).openPointsCardPanel();
+    BlocProvider.of<PointsCardPanelBloc>(context).openPointsCardPanel(widget.isOwner);
   }
 
   TextStyle _style(bool clicked, int points) {
