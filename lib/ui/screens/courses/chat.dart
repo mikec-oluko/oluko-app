@@ -24,6 +24,7 @@ import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:oluko_app/utils/chat_utils.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 
 class Chat extends StatelessWidget {
@@ -282,42 +283,43 @@ class _ChatScreenState extends State<ChatScreen> {
             showTitle: true,
             courseImage: widget.courseEnrollment.course.image,
             onPressed: () => {BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.currentUser.id, enrollments: widget.enrollments), Navigator.pop(context)}),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(child: Container(
-                child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
-                  builder: (context, state) {
-                    if (state is LoadingMessages) {
-                      return ValueListenableBuilder<bool>(
-                        valueListenable: _showIndicator,
-                        builder: (context, value, child) {
-                          if (value) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      );
-                    }
-                    else if (state is MessagesUpdated) {
-                      messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants, false);
-                    } else if (state is MessagesScroll) {
-                      _isLoadingMoreMessages = false;
-                      _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
-                      } else if (state is LoadingScrollMessages) {
-                        return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, true);
-                     } else if (messages.isNotEmpty) {
-                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                ),
-              )),
-              SizedBox(
+        body: Column(
+          children: [
+            Expanded(child: Container(
+              child: BlocBuilder<CourseEnrollmentChatBloc, CourseEnrollmentChatState>(
+                builder: (context, state) {
+                  if (state is LoadingMessages) {
+                    return ValueListenableBuilder<bool>(
+                      valueListenable: _showIndicator,
+                      builder: (context, value, child) {
+                        if (value) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    );
+                  }
+                  else if (state is MessagesUpdated) {
+                    messages = ChatUtils.concatenateMessagesByListenedMessagesAndOldMessages(state.messages, [...messages]);
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, state.participants, false);
+                  } else if (state is MessagesScroll) {
+                    _isLoadingMoreMessages = false;
+                    _addNewMessagesAndParticipantsToArraysIfScroll(state.messages, state.participants);
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
+                    } else if (state is LoadingScrollMessages) {
+                      return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, true);
+                   } else if (messages.isNotEmpty) {
+                    return _buildMessagesList(messages, widget.courseEnrollment.userId, participants, false);
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            )),
+            Neumorphic(
+              style: OlukoNeumorphism.getNeumorphicStyleForBottomChat(),
+              child: SizedBox(
                 height: 115,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -340,8 +342,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }
