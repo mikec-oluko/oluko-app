@@ -19,8 +19,10 @@ class UserListComponent extends StatefulWidget {
   final Function(UserResponse friendUser) onTapUser;
   final Function() onTopScroll;
   final Map<String, UserProgress> usersProgress;
+  final bool isForSearch;
 
-  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgress, this.onTopScroll}) : super();
+
+  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgress, this.onTopScroll, this.isForSearch = false}) : super();
 
   @override
   State<UserListComponent> createState() => _UserListComponentState();
@@ -35,7 +37,7 @@ class _UserListComponentState extends State<UserListComponent> {
   void dispose() {
     _listController.dispose();
     super.dispose();
-  }
+  } 
 
   @override
   void initState() {
@@ -66,6 +68,9 @@ class _UserListComponentState extends State<UserListComponent> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isForSearch) {
+      _getMoreUsers();
+    }
     return widget.users.isEmpty ? _noUsersMessage(context) : _userListWidget(context);
   }
 
