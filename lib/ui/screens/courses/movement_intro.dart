@@ -165,7 +165,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: MovementUtils.movementTitle(_movementSubmodel.name),
+                                  child: MovementUtils.movementTitle(title: _movementSubmodel.name),
                                 ),
                                 const SizedBox(height: 25),
                                 Column(
@@ -271,7 +271,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                         width: ScreenUtils.width(context) * 0.77,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: MovementUtils.movementTitle(_movementSubmodel.name),
+                                          child: MovementUtils.movementTitle(title: _movementSubmodel.name),
                                         ),
                                       ),
                                     ],
