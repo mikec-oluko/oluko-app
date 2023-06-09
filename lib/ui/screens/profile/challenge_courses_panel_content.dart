@@ -15,7 +15,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 class ChallengeCoursesPanelContent extends StatefulWidget {
   final PanelController panelController;
 
-  ChallengeCoursesPanelContent({this.panelController});
+  const ChallengeCoursesPanelContent({this.panelController});
 
   @override
   _State createState() => _State();

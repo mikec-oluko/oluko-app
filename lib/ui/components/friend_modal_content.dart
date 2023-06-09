@@ -55,6 +55,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Friend friend;
   String _buttonTextContent = '';
   Widget friendButton = const SizedBox.shrink();
+
   @override
   void initState() {
     widget.blocFriends.getFriendsByUserId(widget.currentUserId);
@@ -62,6 +63,12 @@ class _FriendModalContentState extends State<FriendModalContent> {
     widget.blocUserStatistics.getUserStatistics(widget.user.id);
     widget.blocPointsCard.getUserCards(widget.user.id);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.blocPointsCard.getUserCards(widget.currentUserId);
+    super.dispose();
   }
 
   @override
