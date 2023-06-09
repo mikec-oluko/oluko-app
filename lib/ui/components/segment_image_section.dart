@@ -702,33 +702,6 @@ class PeopleAndIncludedInButtons extends StatelessWidget {
           )
         else
           PeopleSection(peopleQty: 0, isChallenge: widget.segment.isChallenge),
-        const verticalDivider.VerticalDivider(
-          width: 30,
-          height: OlukoNeumorphism.isNeumorphismDesign ? 80 : 60,
-        ),
-        if (OlukoNeumorphism.isNeumorphismDesign)
-          Column(
-            children: [
-              Text(
-                OlukoLocalizations.get(context, 'includedIn'),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
-              ),
-              Text(
-                state != null && state.occurrencesInClasses != null ? state.occurrencesInClasses.toString() : '0',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: OlukoColors.primary),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                OlukoLocalizations.get(context, 'classes').toLowerCase(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
-              ),
-            ],
-          )
-        else
-          const SizedBox(),
       ],
     );
   }
