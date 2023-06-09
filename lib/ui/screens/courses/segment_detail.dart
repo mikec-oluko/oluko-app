@@ -309,7 +309,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.height(context) * 0.78,
+          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.78 : ScreenUtils.height(context) * 0.83,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -341,7 +341,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Positioned _segmentStartButton() {
     return Positioned(
-        bottom: ScreenUtils.height(context) * 0.165,
+        bottom: ScreenUtils.height(context) * 0.15,
         child: Align(
             child: SizedBox(
                 width: ScreenUtils.width(context),
@@ -363,7 +363,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _segmentStepsDotsComponent() => Positioned(
-      bottom: ScreenUtils.height(context) * 0.225,
+      bottom: ScreenUtils.height(context) * 0.22,
       left: 50,
       right: 50,
       child: Row(
