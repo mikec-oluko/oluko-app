@@ -310,12 +310,15 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 20),
-          child: Text(
-            _classTitle(),
-            style: _classTitle().length > 25
-                ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-                : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-            overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+          child: SizedBox(
+            width: ScreenUtils.width(context) - 20,
+            child: Text(
+              _classTitle(),
+              style: _classTitle().length > 25
+                  ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ],

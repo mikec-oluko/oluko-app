@@ -133,14 +133,17 @@ class _State extends State<ClocksLowerSection> {
             children: [
               Container(
                   width: ScreenUtils.width(context) - 40,
-                  height: 180,
+                  height: _showShareCard ? 185 : 150,
                   child: Column(
                     children: [
-                      OlukoNeumorphicDivider(
-                        isForList: false,
+                      const SizedBox(height: 5),
+                      const OlukoNeumorphicDivider(
                         isFadeOut: true,
                       ),
-                      getCard(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: getCard(),
+                      ),
                     ],
                   )),
             ],
@@ -149,6 +152,8 @@ class _State extends State<ClocksLowerSection> {
       ]),
     );
   }
+
+  bool get _showShareCard => widget.originalWorkoutType != WorkoutType.segment || !shareDone;
 
   EnrollmentSegment getCourseEnrollmentSegment() {
     final EnrollmentSegment currentEnrollmentSegment =
@@ -161,7 +166,11 @@ class _State extends State<ClocksLowerSection> {
     getMovementsWithWeightRequired();
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
-            height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
+            height: ScreenUtils.smallScreen(context)
+                ? ScreenUtils.height(context) / 7.2
+                : _showShareCard
+                    ? ScreenUtils.height(context) / 5.5
+                    : ScreenUtils.height(context) / 5,
             width: ScreenUtils.width(context),
             decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
             child: SegmentSummaryComponent(
