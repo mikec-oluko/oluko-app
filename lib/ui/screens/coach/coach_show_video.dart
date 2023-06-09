@@ -79,7 +79,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
                 ),
               ),
               if (widget.segmentSubmissionId == null) const SizedBox(height: 250),
-              if (widget.currentUser != null)
+              if (widget.segmentSubmissionId != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: showSegmentDetails(),
