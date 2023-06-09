@@ -253,10 +253,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   bool canStartSegment(List<Segment> segments) {
-    if (currentSegmentStep < 2) return true;
+    if (dotsIndex.value - 1 < 2) return true;
     if (segments != null && segments.isNotEmpty) {
-      return segments[segmentIndexToUse].isChallenge
-          ? widget.courseEnrollment.classes[widget.classIndex].segments[currentSegmentStep - 2].completedAt != null
+      return segments[dotsIndex.value - 1].isChallenge
+          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 1) - 2].completedAt != null
           : true;
     }
     return false;
@@ -323,7 +323,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 CarouselSlider(
                   items: getSegmentList(),
                   options: CarouselOptions(
-                    onPageChanged: (index, reason) => dotsIndex.value = index + 1,
+                    onPageChanged: (index, reason) {
+                      dotsIndex.value = index + 1;
+                      if (widget.classSegments[index].isChallenge) {
+                        _canStartSegment = canStartSegment(_segments);
+
+                        BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
+                            .completedChallengeBefore(segmentId: widget.classSegments[index].id, userId: _user.id);
+                      }
+                    },
                     height: ScreenUtils.height(context),
                     disableCenter: true,
                     enableInfiniteScroll: false,
@@ -345,21 +353,32 @@ class _SegmentDetailState extends State<SegmentDetail> {
         child: Align(
             child: SizedBox(
                 width: ScreenUtils.width(context),
-                child: BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
-                  if (state is ChallengeHistoricalResult) {
-                    isFinishedBefore = state.wasCompletedBefore;
-                    _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
-                  }
-                  return ValueListenableBuilder(
-                    valueListenable: panelState,
-                    builder: (context, panelStates, child) {
-                      if (panelStates as bool && widget.classSegments != null) {
-                        return startWorkoutsButton(isFinishedBefore);
-                      }
-                      return SizedBox();
-                    },
-                  );
-                }))));
+                child: BlocBuilder<SegmentBloc, SegmentState>(
+                  builder: (context, segmentState) {
+                    if (segmentState is GetSegmentsSuccess) {
+                      return BlocBuilder<ChallengeCompletedBeforeBloc, ChallengeCompletedBeforeState>(builder: (context, state) {
+                        if (state is ChallengeHistoricalResult) {
+                          isFinishedBefore = state.wasCompletedBefore;
+                          _canStartSegment = isFinishedBefore ? isFinishedBefore : _canStartSegment;
+                        }
+                        return ValueListenableBuilder(
+                          valueListenable: panelState,
+                          builder: (context, panelStates, child) {
+                            if (panelStates as bool && widget.classSegments != null) {
+                              return ValueListenableBuilder(
+                                  valueListenable: dotsIndex,
+                                  builder: (context, panelStates, child) {
+                                    return startWorkoutsButton(isFinishedBefore);
+                                  });
+                            }
+                            return SizedBox();
+                          },
+                        );
+                      });
+                    }
+                    return SizedBox();
+                  },
+                ))));
   }
 
   Widget _segmentStepsDotsComponent() => Positioned(
@@ -440,8 +459,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget startWorkoutsButton(bool isFinishedBefore) {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? ((widget.classSegments[segmentIndexToUse].isChallenge && _canStartSegment) ||
-                ((widget.classSegments[segmentIndexToUse].isChallenge && isFinishedBefore) || !widget.classSegments[segmentIndexToUse].isChallenge))
+        ? ((widget.classSegments[dotsIndex.value - 1].isChallenge && _canStartSegment) ||
+                ((widget.classSegments[dotsIndex.value - 1].isChallenge && isFinishedBefore) || !widget.classSegments[dotsIndex.value - 1].isChallenge))
             ? Padding(
                 padding: EdgeInsets.symmetric(horizontal: ScreenUtils.width(context) * 0.14),
                 child: OlukoNeumorphicPrimaryButton(

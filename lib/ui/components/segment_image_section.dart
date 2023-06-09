@@ -120,9 +120,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   void initState() {
     _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
-    if (widget.segment.isChallenge) {
-      BlocProvider.of<ChallengeCompletedBeforeBloc>(context).completedChallengeBefore(segmentId: widget.segment.id, userId: widget.userId);
-    }
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     if (widget.challenge != null) {
       _audioQty = AudioService.getUnseenAudios(widget.challenge.audios);
