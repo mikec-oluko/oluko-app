@@ -126,7 +126,7 @@ class SegmentSubmissionRepository {
         'submission_weight': submissionWeights == null ? [] : List<dynamic>.from(submissionWeights.map((weight) => weight.toJson())),
       });
     } catch (e) {
-      print("se cayo");
+      print(e);
     }
   }
 
