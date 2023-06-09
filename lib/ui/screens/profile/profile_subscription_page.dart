@@ -29,7 +29,7 @@ class ProfileSubscriptionPage extends StatefulWidget {
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with TickerProviderStateMixin {
   TabController _controller;
   int _selectedIndex = 0;
-  int _currentPlan = 0;
+  int _currentPlan = -1;
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         } else if (subscriptionContentState is PurchaseSuccess) {
           removeSubscriptionStream();
           AppMessages.clearAndShowSnackbarTranslated(context, 'successfullySubscribed');
-          AuthRepository().storeLoginData(subscriptionContentState.user);
+          await AuthRepository().storeLoginData(subscriptionContentState.user);
           BlocProvider.of<AuthBloc>(context).updateAuthSuccess(subscriptionContentState.user, AuthRepository.getLoggedUser());
           if (widget.fromRegister) {
             BlocProvider.of<AuthBloc>(context).navigateToNextScreen(context, subscriptionContentState.user.id);
@@ -315,7 +315,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           useBorder: true,
           flatStyle: true,
           onPressed: () async {
-            await BlocProvider.of<AuthBloc>(context).logout(context);
+            if (_currentPlan == -1) {
+              await BlocProvider.of<AuthBloc>(context).logout(context);
+            } else {
+              Navigator.pop(context);
+            }
           },
           title: OlukoLocalizations.get(context, 'cancel'),
         ),

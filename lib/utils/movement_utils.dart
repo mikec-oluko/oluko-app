@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'oluko_localizations.dart';
 
 class MovementUtils {
@@ -73,14 +75,17 @@ class MovementUtils {
     return enrollmentMovements;
   }
 
-  static bool checkIfMovementRequireWeigth(MovementSubmodel movement, List<EnrollmentMovement> enrollmentMovements) =>
-      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.weightRequired;
+  static bool checkIfMovementRequireWeight(
+    MovementSubmodel movement,
+    List<EnrollmentMovement> enrollmentMovements,
+  ) =>
+      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.storeWeight;
 
   static List<MovementSubmodel> getMovementsWithWeights({List<SectionSubmodel> sections, List<EnrollmentMovement> enrollmentMovements}) {
     List<MovementSubmodel> movementsWithWeight = [];
     sections.forEach((section) {
       section.movements.forEach((movement) {
-        if (MovementUtils.checkIfMovementRequireWeigth(movement, enrollmentMovements)) {
+        if (MovementUtils.checkIfMovementRequireWeight(movement, enrollmentMovements)) {
           if (movementsWithWeight.where((movementRecord) => movementRecord.id == movement.id).isEmpty) {
             movementsWithWeight.add(movement);
           }
@@ -88,5 +93,46 @@ class MovementUtils {
       });
     });
     return movementsWithWeight;
+  }
+
+  static String getWeight({MovementSubmodel currentMovement, String segmentId, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
+    String result;
+    if (weightRecordsList.isNotEmpty) {
+      weightRecordsList.forEach((weightRecord) {
+        if (weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId) {
+          if (useImperialSystem) {
+            result = weightRecord.weight.toString();
+          } else {
+            result = (weightRecord.weight * _toKilogramsUnit).round().toString();
+          }
+        }
+      });
+    }
+    return result;
+  }
+
+  static int getMaxWeightByImperialSystemUse({double maxWeight, bool useImperialSystem}) =>
+      useImperialSystem ? maxWeight.round() : (maxWeight * _toKilogramsUnit).round();
+
+  static double get _toKilogramsUnit => 0.453;
+
+  static int kilogramToLbs(int maxWeightInKg) {
+    return (maxWeightInKg * _passToKilogramsUnit).round();
+  }
+
+  static int lbsToKilogram(int maxWeightInLbs) {
+    return (maxWeightInLbs * _toKilogramsUnit).round();
+  }
+
+  static double get _passToKilogramsUnit => 2.20462;
+
+  static int getMaxWeightForMovement(MovementSubmodel movement, List<MaxWeight> maxWeightRecords) {
+    int maxWeightRecord = 0;
+    if (maxWeightRecords != null && maxWeightRecords.isNotEmpty) {
+      if (maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
+        maxWeightRecord = maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
+      }
+    }
+    return maxWeightRecord;
   }
 }

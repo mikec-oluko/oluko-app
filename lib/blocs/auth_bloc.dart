@@ -19,7 +19,9 @@ import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/notification_bloc.dart';
+import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/project_configuration_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscription_content_bloc.dart';
@@ -463,6 +465,8 @@ class AuthBloc extends Cubit<AuthState> {
         BlocProvider.of<UserPlanSubscriptionBloc>(context).dispose();
         BlocProvider.of<CourseEnrollmentBloc>(context).dispose();
         BlocProvider.of<UpcomingChallengesBloc>(context).dispose();
+        BlocProvider.of<WorkoutWeightBloc>(context).dispose();
+        BlocProvider.of<MaxWeightsBloc>(context).dispose();
       } catch (e) {}
 
       if (Platform.isIOS || Platform.isMacOS) {

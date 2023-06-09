@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
@@ -133,6 +134,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
                   BlocProvider.of<HiFiveReceivedBloc>(context),
                   BlocProvider.of<UserStatisticsBloc>(context),
                   BlocProvider.of<FavoriteFriendBloc>(context),
+                  BlocProvider.of<PointsCardBloc>(context),
                   BlocProvider.of<UserProgressStreamBloc>(context)),
               context: context,
             ),

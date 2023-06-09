@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
+import 'package:oluko_app/models/dto/user_progress.dart';
 import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 
@@ -20,6 +30,33 @@ class BottomDialogUtils {
         .whenComplete(() => {
               if (onDismissAction != null) {onDismissAction()}
             });
+  }
+
+  static friendsModal(
+    UserResponse friendUser,
+    String currentUserId,
+    Map<String, UserProgress> usersProgess,
+    BuildContext context, {
+    bool barrierColor = true,
+  }) {
+    showModalBottomSheet(
+      barrierColor: barrierColor ? null : Colors.transparent,
+      context: context,
+      builder: (_) {
+        return FriendModalContent(
+            friendUser,
+            currentUserId,
+            usersProgess,
+            BlocProvider.of<FriendBloc>(context),
+            BlocProvider.of<FriendRequestBloc>(context),
+            BlocProvider.of<HiFiveSendBloc>(context),
+            BlocProvider.of<HiFiveReceivedBloc>(context),
+            BlocProvider.of<UserStatisticsBloc>(context),
+            BlocProvider.of<FavoriteFriendBloc>(context),
+            BlocProvider.of<PointsCardBloc>(context),
+            BlocProvider.of<UserProgressStreamBloc>(context));
+      },
+    );
   }
 
   static void removeConfirmationPopup(String userId, UserResponse userToDelete, Friend friend, BuildContext context, FriendBloc blocFriends) {

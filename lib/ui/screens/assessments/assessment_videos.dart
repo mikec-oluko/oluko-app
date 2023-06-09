@@ -104,7 +104,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
               return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
                 if (assessmentState is AssessmentSuccess && assessmentState.assessment != null) {
                   _assessment = assessmentState.assessment;
-                  assessmentsTasksQty = UserUtils.getUserAssesmentsQty(_assessment, _user.currentPlan);
+                  assessmentsTasksQty = UserUtils.getUserAssesmentsQty(_assessment, _user.currentPlan) ?? 0;
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
 
                   BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);

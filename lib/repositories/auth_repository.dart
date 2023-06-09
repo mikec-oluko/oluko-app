@@ -84,9 +84,52 @@ class AuthRepository {
   Future<UserCredential> signInWithGoogle() async {
     await firebaseAuthInstance.signOut();
     try {
-      return await externalLoginFlow('google');
+      final googleSignIn = GoogleSignIn(
+        scopes: [
+          'email',
+          'https://www.googleapis.com/auth/contacts.readonly',
+        ],
+      );
+      // Trigger the authentication flow
+      final googleUser = await googleSignIn.signIn();
+      
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser?.authentication;
+
+      // Create a new credential
+      final OAuthCredential credentials = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      final UserCredential response = await firebaseAuthInstance.signInWithCredential(credentials);
+
+      var model = {};
+      if (response.additionalUserInfo.profile['given_name'] != null && response.additionalUserInfo.profile['given_name'] != '') {
+        model['firstName'] = response.additionalUserInfo.profile['given_name'];
+      } else {
+        model['firstName'] = response.user.displayName;
+      }
+      model['lastName'] = response.additionalUserInfo.profile['family_name'];
+      model['avatar'] = response.user.photoURL;
+      model['email'] = response.user.email;
+      model['tokenId'] = await response.user.getIdToken();
+      model['projectId'] = GlobalConfiguration().getString('projectId');
+
+      try {
+        final externalAuthResponse = await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(model), headers: {'content-type': 'application/json'});
+        if (externalAuthResponse.statusCode >= 200 && externalAuthResponse.statusCode < 300) {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('apiToken', model['tokenId']?.toString());
+          return response;
+        }
+        return null;
+      } catch (e) {
+        print('Error: ' + e.toString());
+        return null;
+      }
     } catch (exception) {
-      print(e.toString());
+      print('Error: ' + e.toString());
       return null;
     }
   }
@@ -133,38 +176,56 @@ class AuthRepository {
   Future<UserCredential> signInWithApple() async {
     await firebaseAuthInstance.signOut();
     try {
-      return await externalLoginFlow('apple');
+      // To prevent replay attacks with the credential returned from Apple, we
+      // include a nonce in the credential request. When signing in in with
+      // Firebase, the nonce in the id token returned by Apple, is expected to
+      // match the sha256 hash of `rawNonce`.
+      final rawNonce = generateNonce();
+      final nonce = sha256ofString(rawNonce);
+
+      final AuthorizationCredentialAppleID appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final OAuthCredential credentials = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+      final UserCredential userCred = await firebaseAuthInstance.signInWithCredential(credentials);
+
+      final externalAuth = {};
+      final String token = await firebaseAuthInstance.currentUser.getIdToken();
+      externalAuth['tokenId'] = token;
+      externalAuth['projectId'] = GlobalConfiguration().getString('projectId');
+      if (appleCredential.email != null || userCred.user.email != null) {
+        externalAuth['email'] = appleCredential.email ?? userCred.user.email;
+      }
+      if (appleCredential.givenName != null || userCred.user.displayName != null) {
+        externalAuth['firstName'] = appleCredential.givenName ?? userCred.user.displayName;
+      }
+      if (appleCredential.familyName != null) {
+        externalAuth['lastName'] = appleCredential.familyName;
+      }
+
+      try {
+        final externalAuthResponse =
+            await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(externalAuth), headers: {'content-type': 'application/json'});
+        if (externalAuthResponse.statusCode >= 200 && externalAuthResponse.statusCode < 300) {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('apiToken', externalAuth['tokenId']?.toString());
+          return userCred;
+        }
+        return null;
+      } catch (e) {
+        print('Error: ' + e.toString());
+        return null;
+      }
     } catch (exception) {
       print(e.toString());
-      return null;
-    }
-  }
-
-  Future<UserCredential> externalLoginFlow(String provider) async {
-    final response = await externalLoginPopup(provider);
-    var model = {};
-    if (response.additionalUserInfo.profile[provider == 'facebook' ? 'first_name' : 'given_name'] != null &&
-        response.additionalUserInfo.profile[provider == 'facebook' ? 'first_name' : 'given_name'] != '') {
-      model['firstName'] = response.additionalUserInfo.profile[provider == 'facebook' ? 'first_name' : 'given_name'];
-    } else {
-      model['firstName'] = response.user.displayName;
-    }
-    model['lastName'] = response.additionalUserInfo.profile[provider == 'facebook' ? 'last_name' : 'family_name'];
-    model['avatar'] = response.user.photoURL;
-    model['email'] = response.user.email;
-    model['tokenId'] = await response.user.getIdToken();
-    model['projectId'] = GlobalConfiguration().getString('projectId');
-
-    try {
-      final externalAuthResponse = await http.post(Uri.parse('$url/externalAuth'), body: jsonEncode(model), headers: {'content-type': 'application/json'});
-      if (externalAuthResponse.statusCode >= 200 && externalAuthResponse.statusCode < 300) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('apiToken', model['tokenId']?.toString());
-        return response;
-      }
-      return null;
-    } catch (e) {
-      print('Error: ' + e.toString());
       return null;
     }
   }
@@ -196,22 +257,6 @@ class AuthRepository {
         );
         break;
       default:
-        final googleSignIn = GoogleSignIn(
-          scopes: [
-            'email',
-            'https://www.googleapis.com/auth/contacts.readonly',
-          ],
-        );
-        // Trigger the authentication flow
-        final googleUser = await googleSignIn.signIn();
-        // Obtain the auth details from the request
-        final GoogleSignInAuthentication googleAuth = await googleUser?.authentication;
-
-        // Create a new credential
-        credentials = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
         break;
     }
     return firebaseAuthInstance.signInWithCredential(credentials);
