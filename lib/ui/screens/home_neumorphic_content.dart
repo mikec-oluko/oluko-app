@@ -308,7 +308,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
-      // pinned: true,
       backgroundColor: Colors.transparent,
       title: Container(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,

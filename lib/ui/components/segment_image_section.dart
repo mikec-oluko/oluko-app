@@ -425,13 +425,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   SizedBox _segmentCardTitle() {
     return SizedBox(
+      width: ScreenUtils.width(context) - 40,
       child: Text(
         widget.segment.name,
         style: OlukoFonts.olukoSuperBigFont(
           customFontWeight: FontWeight.bold,
           customColor: OlukoColors.white,
         ),
-        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
