@@ -116,7 +116,7 @@ class _State extends State<ClocksLowerSection> {
             if (isWorkoutUsingWeights)
               Padding(
                 padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 5 : 15),
-                child: MovementUtils.movementTitle(OlukoLocalizations.get(context, 'weightsQuestion')),
+                child: MovementUtils.movementTitle(title: OlukoLocalizations.get(context, 'weightsQuestion'), isSmallScreen: ScreenUtils.smallScreen(context)),
               )
             else
               getTitle(),
@@ -235,10 +235,10 @@ class _State extends State<ClocksLowerSection> {
               child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: MovementUtils.movementTitle(
-                  widget.segments[widget.segmentIndex].isChallenge
-                      ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
-                      : widget.segments[widget.segmentIndex].name,
-                ),
+                    title: widget.segments[widget.segmentIndex].isChallenge
+                        ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                        : widget.segments[widget.segmentIndex].name,
+                    isSmallScreen: ScreenUtils.smallScreen(context)),
               )),
         ],
       ),
