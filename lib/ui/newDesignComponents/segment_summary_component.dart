@@ -157,7 +157,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       child: Container(
         height: 60,
         color: showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
-        width: (ScreenUtils.width(context) - 80) / 2,
+        width: (ScreenUtils.width(context)) * 0.35,
         child: Center(
           child: Text(OlukoLocalizations.get(context, 'recommended'),
               style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
@@ -175,7 +175,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       },
       child: Container(
         height: 60,
-        width: (ScreenUtils.width(context) - 80) / 2,
+        width: (ScreenUtils.width(context) - 100) / 2,
         decoration: BoxDecoration(
             color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
