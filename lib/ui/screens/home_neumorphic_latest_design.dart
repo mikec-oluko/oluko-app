@@ -172,7 +172,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                         _transformationPhotos(),
                         _assessmentVideos(),
                         SizedBox(
-                          height: Platform.isIOS ? MediaQuery.of(context).size.height * 0.1 : MediaQuery.of(context).size.height * 0.05,
+                          height: Platform.isIOS ? MediaQuery.of(context).size.height * 0.12 : MediaQuery.of(context).size.height * 0.05,
                           width: MediaQuery.of(context).size.width,
                         )
                       ],
