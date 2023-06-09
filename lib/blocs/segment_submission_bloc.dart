@@ -90,6 +90,20 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
     }
   }
 
+  void updateWeights(SegmentSubmission segmentSubmission) async {
+    try {
+      await SegmentSubmissionRepository.updateWeights(segmentSubmission);
+      emit(UpdateSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
   void saveSegmentSubmissionWithVideo(SegmentSubmission segmentSubmission, CoachRequest coachRequest) async {
     try {
       await SegmentSubmissionRepository.saveSegmentSubmissionWithVideo(segmentSubmission, coachRequest);

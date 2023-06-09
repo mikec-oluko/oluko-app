@@ -135,7 +135,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
                       enrollmentMovements: enrollmentMovements,
                       sectionsFromSegment: state.segment.sections,
                       useImperialSystem: widget.currentUser.useImperialSystem,
-                      weightRecords: state.weights ?? [],
+                      weightRecords: state.segmentSubmission.submissionWeight ?? [],
                     ),
                   ),
                 ],

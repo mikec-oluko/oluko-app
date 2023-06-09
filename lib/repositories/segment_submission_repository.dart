@@ -37,8 +37,6 @@ class SegmentSubmissionRepository {
 
     DocumentReference coachReference;
 
-    List<WeightRecord> submissionWeights = await MovementRepository().getFriendsRecords(user.uid);
-
     if (coachId != null) {
       coachReference = projectReference.collection("users").doc(coachId);
     }
@@ -58,7 +56,7 @@ class SegmentSubmissionRepository {
       coachId: coachId,
       coachReference: coachReference,
       videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath),
-      submissionWeight: submissionWeights,
+      submissionWeight: [],
     );
 
     segmentSubmission.id = docRef.id;
@@ -114,6 +112,22 @@ class SegmentSubmissionRepository {
     reference.update({
       'isDeleted': deleted,
     });
+  }
+
+  static Future<void> updateWeights(SegmentSubmission segmentSubmission) async {
+    try {
+      List<WeightRecord> submissionWeights = await MovementRepository().getFriendsRecords(segmentSubmission.userId);
+      DocumentReference reference = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getString("projectId"))
+          .collection('segmentSubmissions')
+          .doc(segmentSubmission.id);
+      reference.update({
+        'submission_weight': submissionWeights == null ? [] : List<dynamic>.from(submissionWeights.map((weight) => weight.toJson())),
+      });
+    } catch (e) {
+      print("se cayo");
+    }
   }
 
   static Future<void> updateStateToEncoded(SegmentSubmission segmentSubmission) async {

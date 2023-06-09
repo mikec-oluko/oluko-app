@@ -1319,6 +1319,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     if (movementsAndWeightsToSave.isNotEmpty) {
       if (isSegmentSaveMaxWeights) {
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
+        BlocProvider.of<SegmentSubmissionBloc>(context).updateWeights(_segmentSubmission);
       }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);

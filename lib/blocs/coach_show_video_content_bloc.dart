@@ -20,8 +20,8 @@ class CoachShowVideoContentStateSuccess extends CoachShowVideoContentState {
   final Segment segment;
   final EnrollmentClass enrollmentClass;
   final EnrollmentSegment enrollmentSegment;
-  final List<WeightRecord> weights;
-  CoachShowVideoContentStateSuccess({this.weights, this.segment, this.enrollmentClass, this.enrollmentSegment});
+  final SegmentSubmission segmentSubmission;
+  CoachShowVideoContentStateSuccess({this.segment, this.enrollmentClass, this.enrollmentSegment, this.segmentSubmission});
 }
 
 class Failure extends CoachShowVideoContentState {
@@ -49,9 +49,15 @@ class CoachShowVideoContentBloc extends Cubit<CoachShowVideoContentState> {
           next = false;
         }
       }
-      final List<WeightRecord> weights = await MovementRepository().getFriendsRecords(userId);
       final Segment segment = await SegmentRepository.get(enrollmentSegment.id);
-      emit(CoachShowVideoContentStateSuccess(weights: weights, enrollmentClass: enrollmentClass, enrollmentSegment: enrollmentSegment, segment: segment));
+      emit(
+        CoachShowVideoContentStateSuccess(
+          enrollmentClass: enrollmentClass,
+          enrollmentSegment: enrollmentSegment,
+          segment: segment,
+          segmentSubmission: segmentSubmission,
+        ),
+      );
     } catch (e) {
       emit(Failure(exception: e));
     }
