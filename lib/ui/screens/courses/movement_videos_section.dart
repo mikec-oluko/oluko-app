@@ -24,12 +24,12 @@ class _State extends State<MovementVideosSection> {
 
   @override
   void initState() {
-    segmentMovements = getSegmentMovements();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    segmentMovements = getSegmentMovements();
     return Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(

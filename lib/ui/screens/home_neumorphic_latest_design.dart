@@ -141,8 +141,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         builder: (context, state) {
           if (state is CourseEnrollmentsByUserStreamSuccess) {
             _courseEnrollmentList = state.courseEnrollments;
-            BlocProvider.of<SubscribedCourseUsersBloc>(context)
-                .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
+            if (_courseEnrollmentList.isNotEmpty) {
+              BlocProvider.of<SubscribedCourseUsersBloc>(context)
+                  .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
+            }
           }
           return Scaffold(
             body: NestedScrollView(

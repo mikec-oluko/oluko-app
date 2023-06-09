@@ -169,11 +169,12 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     right: ((widget.centerTitle && widget.title.length <= _titleBreakingPointLength) ||
-                                            (widget.showBackButton && !widget.showActions)) && widget.rightPadding
+                                                (widget.showBackButton && !widget.showActions)) &&
+                                            widget.rightPadding
                                         ? 40
                                         : 0),
                                 child: Align(
-                                  alignment: widget.centerTitle == false ? Alignment.centerLeft: Alignment.center,
+                                  alignment: widget.centerTitle ? Alignment.centerLeft : Alignment.center,
                                   child: TitleHeader(
                                     widget.title,
                                     isNeumorphic: true,
@@ -310,18 +311,17 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
         height: 90,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: CachedNetworkImage(
-                imageUrl: widget.courseImage,
-                maxWidthDiskCache: maxWidth,
-                maxHeightDiskCache: maxHeight,
-                memCacheWidth: maxWidth,
-                memCacheHeight: maxHeight,
-                fit: BoxFit.scaleDown,
-              ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: CachedNetworkImage(
+              imageUrl: widget.courseImage,
+              maxWidthDiskCache: maxWidth,
+              maxHeightDiskCache: maxHeight,
+              memCacheWidth: maxWidth,
+              memCacheHeight: maxHeight,
+              fit: BoxFit.scaleDown,
             ),
-
+          ),
         ),
       );
     }
