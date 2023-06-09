@@ -78,6 +78,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
                       : showVideoPlayer(widget.videoUrl, widget.aspectRatio),
                 ),
               ),
+              if (widget.segmentSubmissionId == null) const SizedBox(height: 250),
               if (widget.currentUser != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
