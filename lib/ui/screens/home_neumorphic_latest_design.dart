@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -172,7 +174,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                         _transformationPhotos(),
                         _assessmentVideos(),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: Platform.isIOS ? MediaQuery.of(context).size.height * 0.12 : MediaQuery.of(context).size.height * 0.05,
                           width: MediaQuery.of(context).size.width,
                         )
                       ],
@@ -448,7 +450,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return HomeCoursesAndPeople(
       courseEnrollments: _courseEnrollmentList,
       usersProgress: _usersProgress,
-      courseIndex: courseIndex > _courseEnrollmentList.length ? _courseEnrollmentList.length : courseIndex,
+      courseIndex: courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : courseIndex,
       onCourseDeleted: (index) {
         setState(() {
           courseIndex = 0;
@@ -456,18 +458,22 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       },
       onCourseChange: (index) {
         setState(() {
-          courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
+          courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
         });
         BlocProvider.of<SubscribedCourseUsersBloc>(context)
             .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
       },
       onCourseTap: (index) {
         setState(() {
-          courseIndex = index > _courseEnrollmentList.length ? _courseEnrollmentList.length : index;
+          courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
         });
         _navigateToCourseFirstClassToComplete(context);
       },
     );
+  }
+
+  int getIndexForLastCourse() {
+    return _courseEnrollmentList.length == 1 ? 0 : _courseEnrollmentList.length;
   }
 
   void _navigateToCourseFirstClassToComplete(BuildContext context) {
