@@ -35,10 +35,12 @@ class FriendsWeightRecordsBloc extends Cubit<FriendWeightRecordState> {
 
   void getFriendsWeight({List<UserResponse> friends}) async {
     Map<UserResponse, List<WeightRecord>> friendResults = {};
-    await Future.wait(friends.map((friend) async {
-      List<WeightRecord> recordsForFriend = await _movementRepository.getFriendsRecords(friend.id);
-      friendResults[friend] = recordsForFriend;
-    }));
+    if (friends != null) {
+      await Future.wait(friends.map((friend) async {
+        List<WeightRecord> recordsForFriend = await _movementRepository.getFriendsRecords(friend.id);
+        friendResults[friend] = recordsForFriend;
+      }));
+    }
     emit(FriendsWeightRecordsSuccess(records: friendResults));
   }
 }

@@ -871,8 +871,15 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
-          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<CurrentTimeBloc>.value(value: _currentTimeBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
@@ -888,12 +895,6 @@ class Routes {
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<FriendBloc>.value(value: _friendBloc),
-          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
-          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
-          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
-          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
-          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
@@ -982,6 +983,13 @@ class Routes {
         break;
       case RouteEnum.courseMarketing:
         providers = [
+          BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
           BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
@@ -995,12 +1003,8 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
-          BlocProvider<FriendBloc>.value(value: _friendBloc),
-          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
           BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
-          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
-          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
@@ -1054,8 +1058,17 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
-          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<CoursePanelBloc>.value(value: _coursePanelBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
+          BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
+          BlocProvider<PointsCardPanelBloc>.value(value: _pointsCardPanelBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
           BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
@@ -1068,12 +1081,6 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
           BlocProvider<DownloadAssetBloc>.value(value: _downloadAssetBloc),
-          BlocProvider<FriendBloc>.value(value: _friendBloc),
-          BlocProvider<FriendRequestBloc>.value(value: _friendRequestBloc),
-          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
-          BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
-          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
-          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
@@ -1092,6 +1099,7 @@ class Routes {
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
@@ -1270,6 +1278,7 @@ class Routes {
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
         providers = [
+          BlocProvider<PointsCardBloc>.value(value: _pointsCardBloc),
           BlocProvider<UserProgressListBloc>.value(value: _userProgressListBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
