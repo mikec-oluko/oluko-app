@@ -11,6 +11,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class SentVideosPage extends StatefulWidget {
   final List<SegmentSubmission> segmentSubmissions;
@@ -180,13 +181,18 @@ class _SentVideosPageState extends State<SentVideosPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           _getDateWidget(segmentSubmitted),
                           Padding(
                             padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              segmentSubmitted.segmentName ?? '',
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                            child: SizedBox(
+                              width: ScreenUtils.width(context) * 0.5,
+                              child: Text(
+                                segmentSubmitted.segmentName ?? '',
+                                overflow: TextOverflow.ellipsis,
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                              ),
                             ),
                           ),
                         ],

@@ -130,9 +130,10 @@ class _State extends State<Courses> {
                             primaryButtonAction: cancelAction,
                             textButtonAction: () => panelController.close()),
                         body: Container(
-                            color: OlukoColors.black,
+                            color: OlukoNeumorphismColors.appBackgroundColor,
                             child: Scaffold(
-                                backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                extendBody: true,
+                                backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
                                 appBar: _appBar(widget.homeEnrollTocourse ?? false),
                                 body: _courseWidget(context, tagState))));
                   });

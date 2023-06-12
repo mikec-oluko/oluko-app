@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/movement_info_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/enums/neumorphic_button_shape.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/routes.dart';
@@ -17,6 +18,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -169,7 +171,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: MovementUtils.movementTitle(_movementSubmodel.name),
+                                  child: MovementUtils.movementTitle(title: _movementSubmodel.name),
                                 ),
                                 const SizedBox(height: 25),
                                 Column(

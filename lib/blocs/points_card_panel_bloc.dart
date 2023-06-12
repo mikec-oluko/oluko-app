@@ -6,7 +6,10 @@ class PointsCardPanelLoading extends PointsCardPanelState {}
 
 class PointsCardPanelDefault extends PointsCardPanelState {}
 
-class PointsCardPanelOpen extends PointsCardPanelState {}
+class PointsCardPanelOpen extends PointsCardPanelState {
+  bool isOwner;
+  PointsCardPanelOpen({this.isOwner});
+}
 
 class PointsCardPanelSuccess extends PointsCardPanelState {}
 
@@ -22,7 +25,7 @@ class PointsCardPanelBloc extends Cubit<PointsCardPanelState> {
     emit(PointsCardPanelDefault());
   }
 
-  void openPointsCardPanel() {
-    emit(PointsCardPanelOpen());
+  void openPointsCardPanel([bool isOwner = true]) {
+    emit(PointsCardPanelOpen(isOwner: isOwner));
   }
 }
