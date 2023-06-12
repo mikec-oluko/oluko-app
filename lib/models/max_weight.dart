@@ -39,7 +39,7 @@ class MaxWeight extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> maxWeight = {
       'weight': weight,
-      'movementId': movementId,
+      'movement_id': movementId,
     };
     maxWeight.addEntries(super.toJson().entries);
     return maxWeight;
