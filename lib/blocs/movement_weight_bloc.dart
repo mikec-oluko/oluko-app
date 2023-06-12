@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
@@ -44,10 +46,10 @@ class WorkoutWeightBloc extends Cubit<MovementWorkoutState> {
     emit(WeightRecordsDispose(records: []));
   }
 
-  void saveWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> workoutMovementsAndWeights}) async {
+  Future<void> saveWeightToWorkout({@required CourseEnrollment currentCourseEnrollment, List<WorkoutWeight> workoutMovementsAndWeights}) async {
     try {
-      List<WorkoutWeight> onlyAddedWeights = _removeWeightWithoutValue(workoutMovementsAndWeights);
-      await CourseEnrollmentRepository.addWeightToWorkout(courseEnrollmentId: courseEnrollmentId, movementsAndWeights: onlyAddedWeights);
+      final List<WorkoutWeight> onlyAddedWeights = _removeWeightWithoutValue(workoutMovementsAndWeights);
+      await CourseEnrollmentRepository.addWeightToWorkout(currentCourseEnrollment: currentCourseEnrollment, movementsAndWeights: onlyAddedWeights);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

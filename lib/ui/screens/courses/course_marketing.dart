@@ -514,7 +514,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
     return Padding(
-      padding: EdgeInsets.only(top: 15),
+      padding: OlukoNeumorphism.buttonBackPaddingFromTop,
       child: Row(
         children: [
           Container(

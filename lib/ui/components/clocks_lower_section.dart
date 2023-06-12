@@ -116,7 +116,7 @@ class _State extends State<ClocksLowerSection> {
             if (isWorkoutUsingWeights)
               Padding(
                 padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 5 : 15),
-                child: MovementUtils.movementTitle(OlukoLocalizations.get(context, 'weightsQuestion')),
+                child: MovementUtils.movementTitle(title: OlukoLocalizations.get(context, 'weightsQuestion'), isSmallScreen: ScreenUtils.smallScreen(context)),
               )
             else
               getTitle(),
@@ -133,14 +133,17 @@ class _State extends State<ClocksLowerSection> {
             children: [
               Container(
                   width: ScreenUtils.width(context) - 40,
-                  height: 180,
+                  height: _showShareCard ? 185 : 150,
                   child: Column(
                     children: [
-                      OlukoNeumorphicDivider(
-                        isForList: false,
+                      const SizedBox(height: 5),
+                      const OlukoNeumorphicDivider(
                         isFadeOut: true,
                       ),
-                      getCard(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: getCard(),
+                      ),
                     ],
                   )),
             ],
@@ -149,6 +152,8 @@ class _State extends State<ClocksLowerSection> {
       ]),
     );
   }
+
+  bool get _showShareCard => widget.originalWorkoutType != WorkoutType.segment || !shareDone;
 
   EnrollmentSegment getCourseEnrollmentSegment() {
     final EnrollmentSegment currentEnrollmentSegment =
@@ -161,7 +166,11 @@ class _State extends State<ClocksLowerSection> {
     getMovementsWithWeightRequired();
     return OlukoNeumorphism.isNeumorphismDesign
         ? Container(
-            height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 7.2 : ScreenUtils.height(context) / 5.8,
+            height: ScreenUtils.smallScreen(context)
+                ? ScreenUtils.height(context) / 7.2
+                : _showShareCard
+                    ? ScreenUtils.height(context) / 5.5
+                    : ScreenUtils.height(context) / 5,
             width: ScreenUtils.width(context),
             decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
             child: SegmentSummaryComponent(
@@ -226,10 +235,10 @@ class _State extends State<ClocksLowerSection> {
               child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: MovementUtils.movementTitle(
-                  widget.segments[widget.segmentIndex].isChallenge
-                      ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
-                      : widget.segments[widget.segmentIndex].name,
-                ),
+                    title: widget.segments[widget.segmentIndex].isChallenge
+                        ? OlukoLocalizations.get(context, 'challengeTitle') + widget.segments[widget.segmentIndex].name
+                        : widget.segments[widget.segmentIndex].name,
+                    isSmallScreen: ScreenUtils.smallScreen(context)),
               )),
         ],
       ),

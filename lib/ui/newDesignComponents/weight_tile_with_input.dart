@@ -9,9 +9,10 @@ import 'package:oluko_app/utils/segment_utils.dart';
 class WeightTileWithInput extends StatefulWidget {
   final MovementSubmodel movement;
   final bool useImperialSystem;
+  final TextEditingController currentTextEditingController;
   final Function(FocusNode focusNode, TextEditingController textEditingController) open;
 
-  const WeightTileWithInput({Key key, this.movement, this.open, this.useImperialSystem = false}) : super(key: key);
+  const WeightTileWithInput({Key key, this.movement, this.open, this.currentTextEditingController, this.useImperialSystem = false}) : super(key: key);
 
   @override
   State<WeightTileWithInput> createState() => _WeightTileWithInputState();
@@ -56,11 +57,11 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
         height: 40,
         child: TextFormField(
           focusNode: focusNode,
-          controller: textEditingController,
+          controller: widget.currentTextEditingController,
           showCursor: true,
           readOnly: true,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onTap: () => widget.open(focusNode, textEditingController),
+          onTap: () => widget.open(focusNode, widget.currentTextEditingController),
           onEditingComplete: () {},
           textAlign: TextAlign.center,
           style: const TextStyle(
@@ -70,7 +71,7 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
           ),
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
             hintText: OlukoLocalizations.get(context, 'addWeight'),

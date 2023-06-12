@@ -653,7 +653,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           'classIndex': widget.classIndex,
           'courseEnrollment': widget.courseEnrollment,
           'courseIndex': widget.courseIndex,
-          'fromChallenge': _isFromChallenge
+          'fromChallenge': _isFromChallenge,
+          'classSegments': widget.segments,
         },
       );
     } else {
@@ -1321,7 +1322,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
       BlocProvider.of<WorkoutWeightBloc>(context)
-          .saveWeightToWorkout(courseEnrollmentId: widget.courseEnrollment.id, workoutMovementsAndWeights: movementsAndWeightsToSave);
+          .saveWeightToWorkout(currentCourseEnrollment: widget.courseEnrollment, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }
   }
 }
