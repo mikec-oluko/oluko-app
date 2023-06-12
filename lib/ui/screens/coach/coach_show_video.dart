@@ -66,7 +66,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
       body: SingleChildScrollView(
         child: Container(
           width: ScreenUtils.width(context),
-          height: ScreenUtils.height(context),
+          height: widget.segmentSubmissionId == null ? ScreenUtils.height(context) : ScreenUtils.height(context) * 1.5,
           color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             children: [

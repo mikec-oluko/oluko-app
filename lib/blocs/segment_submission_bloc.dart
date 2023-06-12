@@ -92,7 +92,7 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
     }
   }
 
-  void updateWeights(SegmentSubmission segmentSubmission, List<WeightRecord> submissionWeights) async {
+  void updateSubmissionWeights(SegmentSubmission segmentSubmission, List<WeightRecord> submissionWeights) async {
     try {
       await SegmentSubmissionRepository.updateWeights(segmentSubmission, submissionWeights);
       emit(UpdateSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));

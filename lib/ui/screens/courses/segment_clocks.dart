@@ -1322,16 +1322,16 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       if (isSegmentSaveMaxWeights) {
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
-      if (_segmentSubmission != null) {
-        final List<WeightRecord> segmentSubmissionWeights = submissionWeights();
-        BlocProvider.of<SegmentSubmissionBloc>(context).updateWeights(_segmentSubmission, segmentSubmissionWeights);
+      if (_segmentSubmission != null && existMovementsWithWeight()) {
+        final List<WeightRecord> segmentSubmissionWeights = setWeightsForSubmission();
+        BlocProvider.of<SegmentSubmissionBloc>(context).updateSubmissionWeights(_segmentSubmission, segmentSubmissionWeights);
       }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(currentCourseEnrollment: widget.courseEnrollment, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }
   }
 
-  List<WeightRecord> submissionWeights() {
+  List<WeightRecord> setWeightsForSubmission() {
     final List<WeightRecord> weightsToSave = [];
 
     movementsAndWeightsToSave.forEach((element) {
@@ -1350,4 +1350,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
     return weightsToSave;
   }
+
+  bool existMovementsWithWeight() => movementsAndWeightsToSave.where((record) => record.weight != null).toList().isNotEmpty;
 }
