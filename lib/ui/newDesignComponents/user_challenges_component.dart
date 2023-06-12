@@ -40,7 +40,7 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
 
   Widget getCarouselSection(List<Widget> challengeList, String title, {bool isCompletedChallenges = false, bool isUpcomingChallenges = false}) {
     return CarouselSection(
-        height: widget.isForHome ? ScreenUtils.height(context) / 3.2 : ScreenUtils.height(context) / 2.7,
+        height: widget.isForHome ? ScreenUtils.height(context) / 3.2 : 266,
         width: MediaQuery.of(context).size.width,
         title: title,
         optionLabel: OlukoLocalizations.get(context, 'viewAll'),

@@ -161,6 +161,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     // TODO: UPDATED FOR NEUMORPHIC
     return Scaffold(
         extendBody: true,
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
