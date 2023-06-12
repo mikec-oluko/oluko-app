@@ -6,6 +6,7 @@ class OlukoNeumorphism {
   static const bool isNeumorphismDesign = true;
   static const Radius radiusValue = Radius.circular(15.0);
   static const String mvtLogo = 'assets/home/mvt.png';
+  static const EdgeInsets buttonBackPaddingFromTop = EdgeInsets.only(top: 40);
 
   static NeumorphicStyle primaryButtonStyleDisable(
       {bool useBorder = false, bool ligthShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/completion_dto.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -137,22 +138,19 @@ class CourseEnrollmentRepository {
     return completionObj;
   }
 
-  static Future<void> addWeightToWorkout({String courseEnrollmentId, List<WorkoutWeight> movementsAndWeights}) async {
+  static Future<void> addWeightToWorkout({@required CourseEnrollment currentCourseEnrollment, List<WorkoutWeight> movementsAndWeights}) async {
     final DocumentReference courseEnrollmentReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
         .collection('courseEnrollments')
-        .doc(courseEnrollmentId);
-
-    CourseEnrollment courseEnrollmentLatestVersion = await getById(courseEnrollmentId);
+        .doc(currentCourseEnrollment.id);
 
     movementsAndWeights.forEach((workoutElement) {
-      courseEnrollmentLatestVersion.classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex]
-          .movements[workoutElement.movementIndex].weight = workoutElement.weight.toDouble();
+      final EnrollmentMovement movementForUpdate = getActualMovementToUpdate(currentCourseEnrollment, workoutElement);
+      setNewWeightForEnrollmentMovement(currentCourseEnrollment, workoutElement, movementForUpdate);
     });
-
     courseEnrollmentReference.update({
-      'classes': List<dynamic>.from(courseEnrollmentLatestVersion.classes.map((c) => c.toJson())),
+      'classes': List<dynamic>.from(currentCourseEnrollment.classes.map((c) => c.toJson())),
     });
   }
 
@@ -465,5 +463,23 @@ class CourseEnrollmentRepository {
       }).toList();
     }
     return [];
+  }
+
+  static void setNewWeightForEnrollmentMovement(
+      CourseEnrollment currentCourseEnrollment, WorkoutWeight workoutElement, EnrollmentMovement movementForUpdateWeight) {
+    currentCourseEnrollment
+        .classes[workoutElement.classIndex]
+        .segments[workoutElement.segmentIndex]
+        .sections[workoutElement.sectionIndex]
+        .movements[currentCourseEnrollment
+            .classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex].movements
+            .indexOf(movementForUpdateWeight)]
+        .weight = workoutElement.weight.toDouble();
+  }
+
+  static EnrollmentMovement getActualMovementToUpdate(CourseEnrollment currentCourseEnrollment, WorkoutWeight workoutElement) {
+    return currentCourseEnrollment.classes[workoutElement.classIndex].segments[workoutElement.segmentIndex].sections[workoutElement.sectionIndex].movements
+        .where((movement) => movement.id == workoutElement.movementId)
+        .first;
   }
 }

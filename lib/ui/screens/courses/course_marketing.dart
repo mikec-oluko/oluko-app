@@ -235,7 +235,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
           SliverStack(positionedAlignment: Alignment.bottomRight, children: [
             SliverPersistentHeader(
                 pinned: true,
-                delegate: SliverAppBarDelegate(ScreenUtils.height(context) * 0.14, ScreenUtils.height(context) * 0.14,
+                delegate: SliverAppBarDelegate(ScreenUtils.height(context) * 0.18, ScreenUtils.height(context) * 0.18,
                     child: Container(
                       alignment: Alignment.bottomCenter,
                       color: OlukoNeumorphismColors.finalGradientColorDark,
@@ -278,8 +278,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverPersistentHeader(
                 pinned: true,
                 delegate: SliverAppBarDelegate(
-                  ScreenUtils.height(context) * 0.11,
-                  ScreenUtils.height(context) * 0.11,
+                  ScreenUtils.height(context) * 0.18,
+                  ScreenUtils.height(context) * 0.18,
                   child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
                 )),
           ]),
@@ -300,6 +300,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   child: ListView(
+                    padding: EdgeInsets.zero,
                     addAutomaticKeepAlives: false,
                     addRepaintBoundaries: false,
                     shrinkWrap: true,
@@ -335,7 +336,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   Widget showEnrollButton(BuildContext context) {
     if (!isCourseEnrolled) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: ScreenUtils.height(context) * 0.02, horizontal: 15),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -529,7 +530,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
     return Padding(
-      padding: EdgeInsets.only(top: 30),
+      padding: OlukoNeumorphism.buttonBackPaddingFromTop,
       child: Row(
         children: [
           Container(

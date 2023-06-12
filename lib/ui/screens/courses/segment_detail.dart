@@ -199,6 +199,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget slidingUpPanelComponent() {
     return SlidingUpPanel(
       onPanelClosed: () {
+        panelState.value = !panelState.value;
         BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
       },
       backdropEnabled: true,
@@ -318,7 +319,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getCarouselSlider() {
-    var a = ScreenUtils.height(context);
     return Column(
       children: [
         topButtons(),
@@ -594,15 +594,22 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _classTitleComponent() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, top: 10),
-      child: Text(
-        _classTitle(),
-        style: _classTitle().length > 25
-            ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-            : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-      ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: SizedBox(
+            width: ScreenUtils.width(context) - 20,
+            child: Text(
+              _classTitle(),
+              style: _classTitle().length > 25
+                  ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -814,14 +821,19 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   void _audioAction(List<Audio> audios, Challenge challenge) {
+    if (audios != null) {
+      panelState.value = !panelState.value;
+    }
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
   void _peopleAction(List<UserResponse> users, List<UserSubmodel> favorites) {
+    panelState.value = !panelState.value;
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
   void _clockAction(String segmentId) {
+    panelState.value = !panelState.value;
     BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
   }
 }

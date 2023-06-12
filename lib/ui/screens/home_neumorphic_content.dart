@@ -120,7 +120,8 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             if (_activeCourses.isNotEmpty) {
               return enrolled();
             } else {
-              return notEnrolled();
+              returnToHome(context);
+              return const SizedBox.shrink();
             }
           } else {
             return OlukoCircularProgressIndicator();
@@ -130,6 +131,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     } else {
       return notEnrolled();
     }
+  }
+
+  void returnToHome(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 20), () {
+      Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root], arguments: {
+        'tab': 0,
+      });
+    });
   }
 
   void _addFirstChunkOfCourses() {
@@ -145,14 +154,18 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget enrolled() {
     if (widget.courseEnrollments.length == _activeCourses.length) {
       return Scaffold(
+        extendBody: true,
         backgroundColor: OlukoColors.black,
         body: Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
           child: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return [
-                // if (showLogo) getLogo() else const SliverToBoxAdapter(),
-                getLogo(),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 0.0001,
+                  ),
+                ),
                 if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
               ];
             },
@@ -295,8 +308,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
-      pinned: true,
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      backgroundColor: Colors.transparent,
       title: Container(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Row(
@@ -377,6 +389,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 }
               },
               child: OlukoVideoPreview(
+                showBackButton: true,
                 image: _activeCourses[index].image,
                 video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[index].videoHls, videoUrl: _activeCourses[index].video),
                 onBackPressed: () => Navigator.pop(context),

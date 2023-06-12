@@ -13,6 +13,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/collage_utils.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:video_player/video_player.dart';
 
 class OlukoVideoPreview extends StatefulWidget {
@@ -291,7 +292,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               Visibility(
                 visible: widget.showCrossButton,
                 child: Positioned(
-                  top: 50,
+                  top: ScreenUtils.height(context) * 0.07,
                   right: 10,
                   child: GestureDetector(
                     onTap: () => widget.onPlay(),
