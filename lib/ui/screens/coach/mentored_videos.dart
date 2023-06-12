@@ -93,6 +93,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
           }
           filteredContent = contentSortedByDate();
           return Scaffold(
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(
               showTitle: true,
               showActions: true,

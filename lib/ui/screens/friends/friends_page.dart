@@ -71,6 +71,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
           _users = state.users;
         }
         return Scaffold(
+          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           appBar: _appBar(),
           body: BlocBuilder<AuthBloc, AuthState>(
             builder: (context, authState) {

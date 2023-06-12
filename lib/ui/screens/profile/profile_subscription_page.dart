@@ -105,7 +105,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
         return WillPopScope(
           onWillPop: () async => _onWillPop(subscriptionContentState),
           child: Scaffold(
-            backgroundColor: OlukoColors.white,
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(
               showTitle: !widget.fromRegister,
               showBackButton: !widget.fromRegister,

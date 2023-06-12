@@ -23,6 +23,7 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         title: ProfileViewConstants.profileOptionsHelpAndSupport,
         showTitle: true,

@@ -10,6 +10,7 @@ import 'package:oluko_app/models/enums/neumorphic_button_shape.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -113,12 +114,15 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     BlocProvider.of<MovementInfoBloc>(context).get(_movementSubmodel.id);
     return Scaffold(
       appBar: OlukoNeumorphism.isNeumorphismDesign
-          ? null
+          ? OlukoAppBar(
+              title: _movementSubmodel.name,
+              showTitle: true,
+            )
           : OlukoImageBar(actions: [], movements: [_movementSubmodel], onPressedMovement: (context, movement) => {}),
-      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       body: Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
-            ? const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
+            ? const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
             : BoxDecoration(
                 image: DecorationImage(
                   colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
@@ -248,45 +252,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 10.0),
-                                        child: Container(
-                                          height: 55,
-                                          width: 55,
-                                          child: OlukoNeumorphicSecondaryButton(
-                                            title: '',
-                                            useBorder: true,
-                                            isExpanded: false,
-                                            thinPadding: true,
-                                            onlyIcon: true,
-                                            shape: NeumorphicButtonShape.circle,
-                                            icon: Image.asset(
-                                              'assets/courses/left_back_arrow.png',
-                                              scale: 3.5,
-                                            ),
-                                            onPressed: () => Navigator.pop(context),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: ScreenUtils.width(context) * 0.77,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: MovementUtils.movementTitle(title: _movementSubmodel.name),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const OlukoNeumorphicDivider(
-                                  isFadeOut: true,
-                                ),
-                                const SizedBox(height: 25),
                                 Column(
                                   children: [
                                     Container(

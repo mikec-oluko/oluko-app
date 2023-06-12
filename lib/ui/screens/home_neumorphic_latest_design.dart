@@ -593,7 +593,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           children: [
             Image.asset(
               OlukoNeumorphism.mvtLogo,
-              scale: 4,
+              scale: 5.5,
             ),
             HandWidget(authState: authState, onTap: () {}),
           ],

@@ -50,7 +50,7 @@ class _HiFivePageState extends State<HiFivePage> {
                 hiFiveState.users.removeWhere((user) => user == null || user.id == null);
                 return Scaffold(
                   appBar: _appBar(hiFiveState),
-                  backgroundColor: OlukoColors.black,
+                  backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                   body: BlocConsumer<UserProgressListBloc, UserProgressListState>(
                       listener: (context, userProgressListState) {},
                       builder: (context, userProgressListState) {
