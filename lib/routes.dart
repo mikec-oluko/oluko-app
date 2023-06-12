@@ -213,6 +213,7 @@ import 'models/course.dart';
 import 'models/dto/story_dto.dart';
 import 'models/transformation_journey_uploads.dart';
 import 'package:oluko_app/blocs/country_bloc.dart';
+import 'blocs/coach_tab_notification.dart';
 
 enum RouteEnum {
   root,
@@ -478,6 +479,7 @@ class Routes {
   final CommunityTabFriendNotificationBloc _communityTabFriendNotificationBloc = CommunityTabFriendNotificationBloc();
   final ChatSliderBloc _chatSliderBloc = ChatSliderBloc();
   final MaxWeightsBloc _maxWeightsBloc = MaxWeightsBloc();
+  final CoachTabNotificationBloc _coachTabNotificationBloc = CoachTabNotificationBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -585,6 +587,7 @@ class Routes {
           BlocProvider<CommunityTabFriendNotificationBloc>.value(value: _communityTabFriendNotificationBloc),
           BlocProvider<ChatSliderBloc>.value(value: _chatSliderBloc),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
+          BlocProvider<CoachTabNotificationBloc>.value(value: _coachTabNotificationBloc),
         ];
         if (OlukoNeumorphism.isNeumorphismDesign) {
           providers.addAll([
