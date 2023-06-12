@@ -27,8 +27,28 @@ class ModalPeopleEnrolled extends StatefulWidget {
   List<dynamic> favorites;
   UserProgressListBloc userProgressListBloc;
   UserProgressStreamBloc userProgressStreamBloc;
+  FriendBloc blocFriends;
+  FriendRequestBloc friendRequestBloc;
+  HiFiveSendBloc blocHifiveSend;
+  HiFiveReceivedBloc blocHifiveReceived;
+  UserStatisticsBloc blocUserStatistics;
+  FavoriteFriendBloc blocFavoriteFriend;
+  Map<String, UserProgress> usersProgess;
+  PointsCardBloc blocPointsCard;
 
-  ModalPeopleEnrolled({this.userId, this.userProgressListBloc, this.userProgressStreamBloc, this.users, this.favorites});
+  ModalPeopleEnrolled(
+      {this.userId,
+      this.userProgressListBloc,
+      this.userProgressStreamBloc,
+      this.users,
+      this.favorites,
+      this.blocFriends,
+      this.friendRequestBloc,
+      this.blocHifiveSend,
+      this.blocHifiveReceived,
+      this.blocUserStatistics,
+      this.blocFavoriteFriend,
+      this.blocPointsCard});
 
   @override
   _ModalPeopleEnrolledState createState() => _ModalPeopleEnrolledState();
@@ -157,18 +177,8 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
   showFriendModal(dynamic friendUser) {
     if (friendUser is UserResponse) {
       BottomDialogUtils.showBottomDialog(
-        content: FriendModalContent(
-            friendUser,
-            widget.userId,
-            _usersProgress,
-            BlocProvider.of<FriendBloc>(context),
-            BlocProvider.of<FriendRequestBloc>(context),
-            BlocProvider.of<HiFiveSendBloc>(context),
-            BlocProvider.of<HiFiveReceivedBloc>(context),
-            BlocProvider.of<UserStatisticsBloc>(context),
-            BlocProvider.of<FavoriteFriendBloc>(context),
-            BlocProvider.of<PointsCardBloc>(context),
-            BlocProvider.of<UserProgressStreamBloc>(context)),
+        content: FriendModalContent(friendUser, widget.userId, _usersProgress, widget.blocFriends, widget.friendRequestBloc, widget.blocHifiveSend,
+            widget.blocHifiveReceived, widget.blocUserStatistics, widget.blocFavoriteFriend, widget.blocPointsCard, widget.userProgressStreamBloc),
         context: context,
       );
     }

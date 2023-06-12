@@ -12,13 +12,20 @@ import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -231,11 +238,19 @@ class _SegmentDetailState extends State<SegmentDetail> {
       } else if (state is SegmentDetailContentPeopleOpen) {
         _challengePanelController.open();
         _contentForPanel = ModalPeopleEnrolled(
-            userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
-            userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
-            userId: _user.id,
-            favorites: state.favorites,
-            users: state.users);
+          userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
+          userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+          userId: _user.id,
+          favorites: state.favorites,
+          users: state.users,
+          blocFavoriteFriend: BlocProvider.of<FavoriteFriendBloc>(context),
+          blocFriends: BlocProvider.of<FriendBloc>(context),
+          blocHifiveReceived: BlocProvider.of<HiFiveReceivedBloc>(context),
+          blocPointsCard: BlocProvider.of<PointsCardBloc>(context),
+          blocHifiveSend: BlocProvider.of<HiFiveSendBloc>(context),
+          blocUserStatistics: BlocProvider.of<UserStatisticsBloc>(context),
+          friendRequestBloc: BlocProvider.of<FriendRequestBloc>(context),
+        );
       } else if (state is SegmentDetailContentClockOpen) {
         _challengePanelController.open();
         _contentForPanel = ModalPersonalRecord(segmentId: state.segmentId, userId: _user.id);
