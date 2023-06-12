@@ -65,7 +65,8 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: ScreenUtils.width(context),
+          height: ScreenUtils.height(context),
           color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             children: [
@@ -78,13 +79,11 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
                       : showVideoPlayer(widget.videoUrl, widget.aspectRatio),
                 ),
               ),
-              if (widget.segmentSubmissionId == null) const SizedBox(height: 250),
               if (widget.segmentSubmissionId != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: showSegmentDetails(),
                 ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
