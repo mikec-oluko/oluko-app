@@ -8,6 +8,7 @@ import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/coach_request_repository.dart';
 import 'package:oluko_app/repositories/movement_repository.dart';
@@ -114,9 +115,8 @@ class SegmentSubmissionRepository {
     });
   }
 
-  static Future<void> updateWeights(SegmentSubmission segmentSubmission) async {
+  static Future<void> updateWeights(SegmentSubmission segmentSubmission, List<WeightRecord> submissionWeights) async {
     try {
-      List<WeightRecord> submissionWeights = await MovementRepository().getFriendsRecords(segmentSubmission.userId);
       DocumentReference reference = FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getString("projectId"))

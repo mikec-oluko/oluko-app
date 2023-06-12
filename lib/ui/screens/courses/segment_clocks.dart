@@ -43,6 +43,7 @@ import 'package:oluko_app/models/submodels/rounds_alerts.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
@@ -1321,9 +1322,32 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       if (isSegmentSaveMaxWeights) {
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
+      if (_segmentSubmission != null) {
+        final List<WeightRecord> segmentSubmissionWeights = submissionWeights();
+        BlocProvider.of<SegmentSubmissionBloc>(context).updateWeights(_segmentSubmission, segmentSubmissionWeights);
+      }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(currentCourseEnrollment: widget.courseEnrollment, workoutMovementsAndWeights: movementsAndWeightsToSave);
-      BlocProvider.of<SegmentSubmissionBloc>(context).updateWeights(_segmentSubmission);
     }
+  }
+
+  List<WeightRecord> submissionWeights() {
+    final List<WeightRecord> weightsToSave = [];
+
+    movementsAndWeightsToSave.forEach((element) {
+      final WeightRecord weight = WeightRecord(
+        courseEnrollmentId: widget.courseEnrollment.id,
+        sectionIndex: element.sectionIndex,
+        movementIndex: element.movementIndex,
+        movementId: element.movementId,
+        weight: element.weight.toDouble(),
+        segmentId: widget.segments[widget.segmentIndex].id,
+        classId: widget.courseEnrollment.classes[widget.classIndex].id,
+      );
+
+      weightsToSave.add(weight);
+    });
+
+    return weightsToSave;
   }
 }

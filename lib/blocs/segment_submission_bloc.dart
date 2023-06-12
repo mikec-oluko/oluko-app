@@ -6,6 +6,8 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/segment_submission_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -90,9 +92,9 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
     }
   }
 
-  void updateWeights(SegmentSubmission segmentSubmission) async {
+  void updateWeights(SegmentSubmission segmentSubmission, List<WeightRecord> submissionWeights) async {
     try {
-      await SegmentSubmissionRepository.updateWeights(segmentSubmission);
+      await SegmentSubmissionRepository.updateWeights(segmentSubmission, submissionWeights);
       emit(UpdateSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
