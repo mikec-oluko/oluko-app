@@ -43,7 +43,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   @override
   void initState() {
     super.initState();
-    if (widget.currentUser != null) {
+    if (widget.currentUser != null && widget.segmentSubmissionId != null) {
       BlocProvider.of<CoachShowVideoContentBloc>(context).getContent(widget.segmentSubmissionId, widget.currentUser.id);
       BlocProvider.of<WorkoutWeightBloc>(context).getUserWeightsForWorkout(widget.currentUser.id);
     }
@@ -66,7 +66,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
       body: SingleChildScrollView(
         child: Container(
           width: ScreenUtils.width(context),
-          height: widget.segmentSubmissionId == null ? ScreenUtils.height(context) : ScreenUtils.height(context) * 1.5,
+          height: widget.segmentSubmissionId == null ? ScreenUtils.height(context) : ScreenUtils.height(context) * 2,
           color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             children: [

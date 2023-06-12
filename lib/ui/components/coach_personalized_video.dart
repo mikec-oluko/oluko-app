@@ -120,7 +120,7 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
           Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
             'videoUrl': videoUrl,
             'aspectRatio': widget.personalizedVideo.videoContent.aspectRatio,
-            'segmentSubmissionId': widget.annotation.segmentSubmissionId,
+            'segmentSubmissionId': widget.annotation?.segmentSubmissionId,
             'currentUser': widget.currentUser,
             'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
           });
