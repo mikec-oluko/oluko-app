@@ -10,11 +10,11 @@ import 'package:oluko_app/models/weight_record.dart';
 import 'oluko_localizations.dart';
 
 class MovementUtils {
-  static Text movementTitle(String title) {
+  static Text movementTitle({String title, bool isSmallScreen = false}) {
     return Text(
       title,
       textAlign: TextAlign.center,
-      style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
+      style: isSmallScreen ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold) : OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
     );
   }
 
@@ -98,15 +98,9 @@ class MovementUtils {
   static String getWeight({MovementSubmodel currentMovement, String segmentId, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
     String result;
     if (weightRecordsList.isNotEmpty) {
-      weightRecordsList.forEach((weightRecord) {
-        if (weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId) {
-          if (useImperialSystem) {
-            result = weightRecord.weight.toString();
-          } else {
-            result = (weightRecord.weight * _toKilogramsUnit).round().toString();
-          }
-        }
-      });
+      if (getWeightOnRecords(weightRecordsList, currentMovement, segmentId).isNotEmpty) {
+        result = getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString();
+      }
     }
     return result;
   }
@@ -129,10 +123,14 @@ class MovementUtils {
   static int getMaxWeightForMovement(MovementSubmodel movement, List<MaxWeight> maxWeightRecords) {
     int maxWeightRecord = 0;
     if (maxWeightRecords != null && maxWeightRecords.isNotEmpty) {
-      if (maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
-        maxWeightRecord = maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
+      if (maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.movementId == movement.id).isNotEmpty) {
+        maxWeightRecord = maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.movementId == movement.id).weight;
       }
     }
     return maxWeightRecord;
+  }
+
+  static Iterable<WeightRecord> getWeightOnRecords(List<WeightRecord> weightRecordsList, MovementSubmodel currentMovement, String segmentId) {
+    return weightRecordsList.where((weightRecord) => weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId);
   }
 }

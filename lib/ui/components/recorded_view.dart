@@ -139,7 +139,7 @@ class _RecordedViewState extends State<RecordedView> {
       if (playedOnce) {
         await audioPlayer.resume();
       } else {
-        await audioPlayer.play(UrlSource(filePath));
+        await audioPlayer.play(DeviceFileSource(filePath));
         setState(() {
           playedOnce = true;
         });
