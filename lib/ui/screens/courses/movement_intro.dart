@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/movement_info_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/enums/neumorphic_button_shape.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/routes.dart';
@@ -16,6 +17,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -256,14 +258,18 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                         child: Container(
                                           height: 55,
                                           width: 55,
-                                          child: GestureDetector(
-                                            onTap: () => Navigator.pop(context),
-                                            child: OlukoBlurredButton(
-                                              childContent: Image.asset(
-                                                'assets/courses/left_back_arrow.png',
-                                                scale: 3.5,
-                                              ),
+                                          child: OlukoNeumorphicSecondaryButton(
+                                            title: '',
+                                            useBorder: true,
+                                            isExpanded: false,
+                                            thinPadding: true,
+                                            onlyIcon: true,
+                                            shape: NeumorphicButtonShape.circle,
+                                            icon: Image.asset(
+                                              'assets/courses/left_back_arrow.png',
+                                              scale: 3.5,
                                             ),
+                                            onPressed: () => Navigator.pop(context),
                                           ),
                                         ),
                                       ),
