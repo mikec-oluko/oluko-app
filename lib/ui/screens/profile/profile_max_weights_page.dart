@@ -109,7 +109,14 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(state.movements[index].name, style: TextStyle(fontSize: 18, color: textColor, fontWeight: FontWeight.w300)),
+                    Expanded(
+                      child: Text(
+                        state.movements[index].name, 
+                        style: TextStyle(fontSize: 18, color: textColor, fontWeight: FontWeight.w300),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 30),
                     _setWeight(state.movements[index], state.maxWeightsMap, state.movements, textColor),
                   ],
                 );
