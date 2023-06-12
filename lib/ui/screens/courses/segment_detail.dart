@@ -192,6 +192,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget slidingUpPanelComponent() {
     return SlidingUpPanel(
       onPanelClosed: () {
+        panelState.value = !panelState.value;
         BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
       },
       backdropEnabled: true,
@@ -799,14 +800,19 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   void _audioAction(List<Audio> audios, Challenge challenge) {
+    if (audios != null) {
+      panelState.value = !panelState.value;
+    }
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
   void _peopleAction(List<UserResponse> users, List<UserSubmodel> favorites) {
+    panelState.value = !panelState.value;
     BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
   void _clockAction(String segmentId) {
+    panelState.value = !panelState.value;
     BlocProvider.of<SegmentDetailContentBloc>(context).openClockPanel(segmentId);
   }
 }
