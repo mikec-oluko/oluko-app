@@ -304,7 +304,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getCarouselSlider() {
-    var a = ScreenUtils.height(context);
     return Column(
       children: [
         topButtons(),
@@ -580,15 +579,22 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _classTitleComponent() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, top: 10),
-      child: Text(
-        _classTitle(),
-        style: _classTitle().length > 25
-            ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-            : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-        overflow: OlukoNeumorphism.isNeumorphismDesign ? TextOverflow.clip : null,
-      ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: SizedBox(
+            width: ScreenUtils.width(context) - 20,
+            child: Text(
+              _classTitle(),
+              style: _classTitle().length > 25
+                  ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
