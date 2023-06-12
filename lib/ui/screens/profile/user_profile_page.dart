@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
-import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -12,9 +11,8 @@ import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/points_card_panel_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
-import 'package:oluko_app/blocs/profile/profile_avatar_bloc.dart';
-import 'package:oluko_app/blocs/profile/profile_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -38,14 +36,10 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/ui/components/modal_exception_message.dart';
-import 'package:oluko_app/ui/components/modal_upload_options.dart';
+import 'package:oluko_app/ui/components/modal_cards.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
-import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/screens/profile/challenge_courses_panel_content.dart';
@@ -54,7 +48,6 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -76,34 +69,24 @@ class _UserProfilePageState extends State<UserProfilePage> {
   UniqueChallengesSuccess _challengesCardsState;
   bool _isCurrentUser = false;
   bool _isFollow = false;
-  bool _isNewCoverImage = false;
   bool _friendsRequested = false;
-  bool _isProfileDeleteActive = false;
   bool canHidePanel = true;
   bool canDeleteProfilePic = false;
   bool canDeleteCoverPic = false;
-  double _panelMaxHeight = 100.0;
-  double _panelExtendedMaxHeight = 300.0;
   String _connectButtonTitle = '';
   List<UserResponse> friendUsers = [];
   List<ChallengeNavigation> listOfChallenges = [];
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
-  List<Challenge> _activeChallenges = [];
   List<Course> _coursesToUse = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
   Widget defaultWidgetNoContent = const SizedBox.shrink();
-  final PanelController _coursesPanelController = PanelController();
   final PanelController _panelController = PanelController();
 
   @override
   void initState() {
     setState(() {
-      if (widget.userRequested == null) {
-        _isCurrentUser = true;
-      } else {
-        _isCurrentUser = false;
-      }
+      _isCurrentUser = widget.userRequested == null;
       _userProfileToDisplay = widget.userRequested;
     });
     super.initState();
@@ -128,20 +111,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
           BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
           _friendsRequested = true;
         }
-        return SlidingUpPanel(
-            backdropEnabled: canHidePanel,
-            margin: EdgeInsets.zero,
-            header: defaultWidgetNoContent,
-            padding: EdgeInsets.zero,
-            color: OlukoColors.black,
-            minHeight: 0,
-            maxHeight: (ScreenUtils.height(context) / 4) * 3,
-            collapsed: defaultWidgetNoContent,
-            controller: _coursesPanelController,
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-            panel: ChallengeCoursesPanelContent(panelController: _coursesPanelController),
-            body: _buildUserProfileView(
-                profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser));
+        return Material(
+            type: MaterialType.transparency,
+            child: SlidingUpPanel(
+                backdropEnabled: canHidePanel,
+                margin: EdgeInsets.zero,
+                header: defaultWidgetNoContent,
+                padding: EdgeInsets.zero,
+                color: OlukoColors.black,
+                minHeight: 0,
+                maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
+                collapsed: defaultWidgetNoContent,
+                controller: _panelController,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                panel: _getPanel(),
+                body: _buildUserProfileView(
+                    profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser)));
       } else {
         return Container(
           color: OlukoColors.black,
@@ -149,6 +134,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
           width: MediaQuery.of(context).size.width,
           child: OlukoCircularProgressIndicator(),
         );
+      }
+    });
+  }
+
+  Widget _getPanel() {
+    return BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
+      if (state is PointsCardPanelOpen) {
+        _panelController.open();
+        return ModalCards();
+      } else {
+        return ChallengeCoursesPanelContent(panelController: _panelController);
       }
     });
   }
@@ -176,212 +172,42 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 },
               ),
       ),
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<ProfileCoverImageBloc, ProfileCoverImageState>(
-            listener: (context, state) {
-              _manageCoverImagePanelSize(state);
-            },
-          ),
-          BlocListener<ProfileAvatarBloc, ProfileAvatarState>(
-            listener: (context, state) {
-              _manageAvatarPanelSize(state);
-            },
-          ),
-          BlocListener<FriendBloc, FriendState>(
-            listenWhen: (FriendState previous, FriendState current) => current != previous,
-            listener: (context, FriendState state) {
-              if (state is GetFriendsSuccess) {
-                friendData = state.friendData;
-                friendUsers = state.friendUsers;
-                checkConnectionStatus(userRequested, friendData);
-                if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
-                  friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
-                }
-              }
-            },
-          ),
-          BlocListener<FriendRequestBloc, FriendRequestState>(
-            listenWhen: (FriendRequestState previous, FriendRequestState current) => current != previous,
-            listener: (context, FriendRequestState state) {
-              if (state is GetFriendsRequestSuccess) {
-                friendData = state.friendData;
-                friendUsers = state.friendUsers;
-                checkConnectionStatus(userRequested, friendData);
-                if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
-                  friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
-                }
-              }
-            },
-          ),
-        ],
-        child: SlidingUpPanel(
-          onPanelClosed: () {
-            _panelCloseBehavior();
-          },
-          backdropEnabled: canHidePanel,
-          isDraggable: false,
-          margin: EdgeInsets.zero,
-          header: defaultWidgetNoContent,
-          padding: EdgeInsets.zero,
-          color: OlukoColors.black,
-          minHeight: 0.0,
-          maxHeight: _panelMaxHeight,
-          collapsed: defaultWidgetNoContent,
-          controller: _panelController,
-          borderRadius:
-              OlukoNeumorphism.isNeumorphismDesign ? const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)) : BorderRadius.zero,
-          panel: _isNewCoverImage ? profileCoverImageBuilder(profileViewContext) : profileAvatarBuilder(profileViewContext),
-          body: buildProfileView(userRequested),
-        ),
-      ),
+      body: _scaffoldBody(profileViewContext, userRequested),
     );
   }
 
-  void _panelCloseBehavior() {
-    if (_isNewCoverImage) {
-      setState(() {
-        _isNewCoverImage = !_isNewCoverImage;
-      });
-      BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
-    } else {
-      if (_isProfileDeleteActive) {
-        setState(() {
-          _isProfileDeleteActive = !_isProfileDeleteActive;
-        });
-      } else {
-        BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
-      }
-    }
-  }
-
-  BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState> profileCoverImageBuilder(BuildContext profileViewContext) {
-    return BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(builder: (context, state) {
-      return _buildPanelContentForCoverImage(state, context);
-    });
-  }
-
-  BlocBuilder<ProfileAvatarBloc, ProfileAvatarState> profileAvatarBuilder(BuildContext profileViewContext) {
-    return BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(builder: (context, state) {
-      return _buildPanelContentForAvatar(state, context);
-    });
-  }
-
-  void _manageAvatarPanelSize(ProfileAvatarState state) {
-    if (state is ProfileAvatarDefault || state is ProfileAvatarFailure) {
-      setState(() {
-        updatePanelProperties(_panelMaxHeight, true);
-      });
-    }
-    if (state is ProfileAvatarDeleteRequested) {
-      setState(() {
-        updatePanelProperties(120, false);
-        _isProfileDeleteActive = true;
-      });
-    }
-    if (state is ProfileAvatarLoading || state is ProfileAvatarSuccess) {
-      setState(() {
-        updatePanelProperties(300, false);
-      });
-    }
-    if (state is ProfileAvatarDeleted) {
-      setState(() {
-        updatePanelProperties(_panelMaxHeight, true);
-      });
-      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
-    }
-    if (state is ProfileAvatarOpenPanel) {
-      setState(() {
-        if (canDeleteProfilePic) {
-          updatePanelProperties(160, true);
-        } else {
-          updatePanelProperties(_panelMaxHeight, true);
-        }
-      });
-    }
-  }
-
-  void _manageCoverImagePanelSize(ProfileCoverImageState state) {
-    if (state is ProfileCoverDeleteRequested) {
-      setState(() {
-        updatePanelProperties(120, false);
-      });
-    }
-    if (state is ProfileCoverImageOpen) {
-      setState(() {
-        if (canDeleteCoverPic) {
-          updatePanelProperties(160, true);
-        } else {
-          updatePanelProperties(_panelMaxHeight, true);
-        }
-      });
-    }
-    if (state is ProfileCoverImageFailure) {
-      setState(() {
-        updatePanelProperties(_panelMaxHeight, true);
-      });
-    }
-    if (state is ProfileCoverImageDeleted) {
-      setState(() {
-        updatePanelProperties(_panelMaxHeight, true);
-      });
-      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
-    }
-    if (state is ProfileCoverImageLoading || state is ProfileCoverSuccess) {
-      setState(() {
-        updatePanelProperties(300, true);
-      });
-      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
-    }
-    if (state is ProfileCoverImageDefault) {
-      setState(() {
-        updatePanelProperties(_panelMaxHeight, true);
-      });
-    }
-  }
-
-  Widget _buildPanelContentForCoverImage(ProfileCoverImageState state, BuildContext context) {
-    Widget _contentForPanel = defaultWidgetNoContent;
-    if (state is ProfileCoverImageOpen) {
-      _openOrClosePanel(PanelState.open);
-      _contentForPanel = ModalUploadOptions(
-          contentFrom: UploadFrom.profileCoverImage,
-          showDeleteOnList: canDeleteCoverPic,
-          deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDeleteRequest());
-    }
-    if (state is ProfileCoverImageDefault) {
-      _openOrClosePanel(PanelState.close);
-      _contentForPanel = defaultWidgetNoContent;
-    }
-    if (state is ProfileCoverImageLoading) {
-      _contentForPanel = const UploadingModalLoader(UploadFrom.profileCoverImage);
-    }
-    if (state is ProfileCoverImageDeleted) {
-      _contentForPanel = defaultWidgetNoContent;
-      _openOrClosePanel(PanelState.close);
-    }
-    if (state is ProfileCoverSuccess) {
-      _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
-    }
-    if (state is ProfileCoverDeleteRequested) {
-      _openOrClosePanel(PanelState.open);
-      _contentForPanel = ModalUploadOptions(
-        contentFrom: UploadFrom.profileCoverImage,
-        isDeleteRequested: true,
-        deleteAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).removeProfileCoverImage(),
-        deleteCancelAction: () => BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState(),
-      );
-    }
-    if (state is ProfileCoverImageFailure) {
-      _contentForPanel = ModalExceptionMessage(
-          exceptionType: state.exceptionType,
-          onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
-          exceptionSource: state.exceptionSource);
-    }
-    if (state is ProfileCoverRequirePermissions) {
-      _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
-    }
-    return _contentForPanel;
+  Widget _scaffoldBody(BuildContext profileViewContext, UserResponse userRequested) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<FriendBloc, FriendState>(
+          listenWhen: (FriendState previous, FriendState current) => current != previous,
+          listener: (context, FriendState state) {
+            if (state is GetFriendsSuccess) {
+              friendData = state.friendData;
+              friendUsers = state.friendUsers;
+              checkConnectionStatus(userRequested, friendData);
+              if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
+                friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
+              }
+            }
+          },
+        ),
+        BlocListener<FriendRequestBloc, FriendRequestState>(
+          listenWhen: (FriendRequestState previous, FriendRequestState current) => current != previous,
+          listener: (context, FriendRequestState state) {
+            if (state is GetFriendsRequestSuccess) {
+              friendData = state.friendData;
+              friendUsers = state.friendUsers;
+              checkConnectionStatus(userRequested, friendData);
+              if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
+                friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
+              }
+            }
+          },
+        ),
+      ],
+      child: buildProfileView(userRequested),
+    );
   }
 
   Container buildProfileView(UserResponse userRequested) {
@@ -400,11 +226,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 2,
             child: Stack(
               clipBehavior: Clip.none,
-              children: [
-                profileCoverImage(),
-                userInformationPanel(),
-                coverImageWidget(),
-              ],
+              children: [profileCoverImage(), userInformationPanel()],
             ),
           ),
           if (OlukoNeumorphism.isNeumorphismDesign)
@@ -426,63 +248,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ],
       ),
     );
-  }
-
-  Widget _buildPanelContentForAvatar(ProfileAvatarState state, BuildContext context) {
-    Widget _contentForPanel = defaultWidgetNoContent;
-    if (state is ProfileAvatarOpenPanel) {
-      _openOrClosePanel(PanelState.open);
-      _contentForPanel = ModalUploadOptions(
-        contentFrom: UploadFrom.profileImage,
-        showDeleteOnList: canDeleteProfilePic,
-        deleteAction: () => BlocProvider.of<ProfileAvatarBloc>(context).emitDeleteRequest(),
-      );
-    }
-    if (state is ProfileAvatarDeleteRequested) {
-      _contentForPanel = ModalUploadOptions(
-        contentFrom: UploadFrom.profileImage,
-        isDeleteRequested: true,
-        deleteAction: () => BlocProvider.of<ProfileAvatarBloc>(context).removeProfilePicture(),
-        deleteCancelAction: () => BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState(),
-      );
-    }
-    if (state is ProfileAvatarDefault) {
-      _openOrClosePanel(PanelState.close);
-      _contentForPanel = defaultWidgetNoContent;
-    }
-    if (state is ProfileAvatarDeleted) {
-      _contentForPanel = defaultWidgetNoContent;
-      _openOrClosePanel(PanelState.close);
-    }
-    if (state is ProfileAvatarLoading) {
-      _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
-    }
-    if (state is ProfileAvatarSuccess) {
-      _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
-    }
-    if (state is ProfileAvatarFailure) {
-      _contentForPanel = ModalExceptionMessage(
-          exceptionType: state.exceptionType,
-          onPress: () => _panelController.isPanelOpen ? _panelController.close() : null,
-          exceptionSource: state.exceptionSource);
-    }
-    if (state is ProfileAvatarRequirePermissions) {
-      _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context, permissionsRequired: [state.permissionRequired]));
-    }
-    return _contentForPanel;
-  }
-
-  void _openOrClosePanel(PanelState action) {
-    switch (action) {
-      case PanelState.open:
-        if (_panelController.isPanelClosed) _panelController.open();
-        break;
-      case PanelState.close:
-        if (_panelController.isPanelOpen) _panelController.close();
-        break;
-      default:
-        if (_panelController.isPanelOpen) _panelController.close();
-    }
   }
 
   Widget activeChallengesSlider(bool isCurrentUserRequested) {
@@ -692,28 +457,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Positioned coverImageWidget() {
-    return Positioned(
-      top: MediaQuery.of(context).size.height / 5,
-      right: 10,
-      child: Visibility(
-        visible: _isCurrentUser,
-        child: Container(
-          width: 40,
-          height: 40,
-          child: TextButton(
-              onPressed: () {
-                setState(() {
-                  _isNewCoverImage = true;
-                });
-                BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
-              },
-              child: Image.asset('assets/profile/uploadImage.png')),
-        ),
-      ),
-    );
-  }
-
   Widget profileCoverImage() {
     return ShaderMask(
       shaderCallback: (rect) {
@@ -746,7 +489,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                   child: Container(
                       color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
                       width: 52,
@@ -761,11 +506,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
           const SizedBox.shrink(),
       ]),
     );
-  }
-
-  void updatePanelProperties(double panelHeight, bool hidePanel) {
-    _panelMaxHeight = panelHeight;
-    canHidePanel = hidePanel;
   }
 
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
@@ -821,7 +561,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               userToDisplay: _userProfileToDisplay,
               isCurrentUser: _isCurrentUser,
               challengeState: state,
-              panelController: _coursesPanelController,
+              panelController: _panelController,
               defaultNavigation: true,
             );
           } else {
@@ -841,7 +581,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     List<Widget> challengeList = [];
     for (String id in state.challengeMap.keys) {
       challengeList.add(ChallengesCard(
-          panelController: _coursesPanelController,
+          panelController: _panelController,
           challengeNavigations: state.challengeMap[id],
           userRequested: !_isCurrentUser ? _userProfileToDisplay : null,
           useAudio: !_isCurrentUser,
@@ -970,5 +710,3 @@ class _UserProfilePageState extends State<UserProfilePage> {
         : ScreenUtils.height(context) / 5;
   }
 }
-
-enum PanelState { open, close }

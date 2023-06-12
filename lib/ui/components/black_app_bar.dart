@@ -36,6 +36,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final bool centerTitle;
   final Function showBottomTab;
   final String courseImage;
+  final bool rightPadding;
 
   OlukoAppBar(
       {this.title,
@@ -59,7 +60,8 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.reduceHeight = false,
       this.showBottomTab,
       this.centerTitle = false,
-      this.courseImage});
+      this.courseImage,
+      this.rightPadding = true});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -166,11 +168,13 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    right: (widget.centerTitle && widget.title.length <= _titleBreakingPointLength) ||
-                                            (widget.showBackButton && !widget.showActions)
+                                    right: ((widget.centerTitle && widget.title.length <= _titleBreakingPointLength) ||
+                                                (widget.showBackButton && !widget.showActions)) &&
+                                            widget.rightPadding
                                         ? 40
                                         : 0),
                                 child: Align(
+                                  alignment: widget.centerTitle ? Alignment.centerLeft : Alignment.center,
                                   child: TitleHeader(
                                     widget.title,
                                     isNeumorphic: true,
@@ -299,20 +303,24 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
   }
 
   Widget getCourseImage() {
+    final int maxWidth = (ScreenUtils.width(context) * 0.5).toInt();
+    final int maxHeight = (ScreenUtils.height(context) * 0.5).toInt();
     if (widget.courseImage != null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: CachedNetworkImage(
-            imageUrl: widget.courseImage,
-            width: 70,
-            height: 90,
-            maxWidthDiskCache: (ScreenUtils.width(context) * 0.5).toInt(),
-            maxHeightDiskCache: (ScreenUtils.height(context) * 0.5).toInt(),
-            memCacheWidth: (ScreenUtils.width(context) * 0.5).toInt(),
-            memCacheHeight: (ScreenUtils.height(context) * 0.5).toInt(),
-            fit: BoxFit.fill,
+      return SizedBox(
+        width: 70,
+        height: 90,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: CachedNetworkImage(
+              imageUrl: widget.courseImage,
+              maxWidthDiskCache: maxWidth,
+              maxHeightDiskCache: maxHeight,
+              memCacheWidth: maxWidth,
+              memCacheHeight: maxHeight,
+              fit: BoxFit.scaleDown,
+            ),
           ),
         ),
       );
