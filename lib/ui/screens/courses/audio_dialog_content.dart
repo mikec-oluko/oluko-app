@@ -62,7 +62,7 @@ class _State extends State<AudioDialogContent> {
                 StoriesItem(maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Image.asset('assets/courses/photo_ellipse.png', scale: 4),
+                  child: Image.asset('assets/courses/photo_ellipse.png', scale: 7.7),
                 )
               ]),
               SizedBox(height: 15),

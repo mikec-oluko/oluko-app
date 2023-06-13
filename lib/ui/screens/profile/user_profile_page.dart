@@ -123,6 +123,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 maxHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
                 collapsed: defaultWidgetNoContent,
                 controller: _panelController,
+                onPanelClosed: () {
+                  BlocProvider.of<PointsCardPanelBloc>(context).emitDefaultState();
+                },
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                 panel: _getPanel(),
                 body: _buildUserProfileView(

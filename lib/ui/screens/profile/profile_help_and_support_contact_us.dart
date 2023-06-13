@@ -29,13 +29,13 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
       if (state is AuthSuccess) {
         profileInfo = state.user;
         return Scaffold(
+          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           appBar: OlukoAppBar(title: ProfileViewConstants.profileHelpAndSupportButtonText, showTitle: true, showBackButton: true),
           body: BlocListener<MailBloc, MailState>(
             listener: (context, state) {
               if (state is MailSuccess) {
                 AppMessages.clearAndShowSnackbarTranslated(context, 'submitted');
-              }
-              else{
+              } else {
                 AppMessages.clearAndShowSnackbarTranslated(context, 'messageRequired');
               }
             },
@@ -70,27 +70,16 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                buildInput(
-                    context: context,
-                    titleForLabel: OlukoLocalizations.get(context, 'email'),
-                    contentForInput: profileInfo.email,
-                    enableInput: false),
+                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'email'), contentForInput: profileInfo.email, enableInput: false),
                 const SizedBox(
                   height: 20,
                 ),
                 buildInput(
-                    context: context,
-                    titleForLabel: OlukoLocalizations.get(context, 'phone'),
-                    controller: phoneController,
-                    inputType: TextInputType.phone),
+                    context: context, titleForLabel: OlukoLocalizations.get(context, 'phone'), controller: phoneController, inputType: TextInputType.phone),
                 const SizedBox(
                   height: 20,
                 ),
-                buildInput(
-                    context: context,
-                    titleForLabel: OlukoLocalizations.get(context, 'message'),
-                    isTextMaxLine: true,
-                    controller: messageController),
+                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'message'), isTextMaxLine: true, controller: messageController),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 60, 10, 10),
                   child: Container(
@@ -133,9 +122,8 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
     return Container(
       decoration: BoxDecoration(
           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : OlukoColors.black,
-          borderRadius: OlukoNeumorphism.isNeumorphismDesign
-              ? const BorderRadius.all(const Radius.circular(15.0))
-              : const BorderRadius.all(const Radius.circular(5.0)),
+          borderRadius:
+              OlukoNeumorphism.isNeumorphismDesign ? const BorderRadius.all(const Radius.circular(15.0)) : const BorderRadius.all(const Radius.circular(5.0)),
           border: OlukoNeumorphism.isNeumorphismDesign ? const Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.primary)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,8 +132,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
             padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
             child: Text(
               titleForLabel,
-              style: OlukoFonts.olukoMediumFont(
-                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.primary),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.primary),
             ),
           ),
           Padding(

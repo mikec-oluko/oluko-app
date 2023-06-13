@@ -31,6 +31,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         appBar: OlukoAppBar(
           title: widget.titleForAppBar,
           showTitle: true,

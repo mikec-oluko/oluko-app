@@ -52,6 +52,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         showTitle: true,
         showBackButton: true,

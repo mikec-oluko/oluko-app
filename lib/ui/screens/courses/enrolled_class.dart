@@ -67,6 +67,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
           return Form(
               key: _formKey,
               child: Scaffold(
+                  backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                   appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'class')),
                   body: Container(
                       color: OlukoColors.black,

@@ -10,7 +10,7 @@ import 'package:oluko_app/models/weight_record.dart';
 import 'oluko_localizations.dart';
 
 class MovementUtils {
-  static Text movementTitle({String title, bool isSmallScreen = false}) {
+  static Text movementTitle({String title, bool isSmallScreen = false, bool bold = true}) {
     return Text(
       title,
       textAlign: TextAlign.center,

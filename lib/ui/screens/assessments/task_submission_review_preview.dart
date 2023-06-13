@@ -90,6 +90,7 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
     return Form(
         key: _formKey,
         child: Scaffold(
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(title: "Record review"),
             bottomNavigationBar: BottomAppBar(
               color: OlukoColors.black,

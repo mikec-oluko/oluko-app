@@ -7,15 +7,14 @@ class TransformationJourneyPostPage extends StatefulWidget {
   final List<Widget> content;
   TransformationJourneyPostPage({this.content});
   @override
-  _TransformationJourneyPostPageState createState() =>
-      _TransformationJourneyPostPageState();
+  _TransformationJourneyPostPageState createState() => _TransformationJourneyPostPageState();
 }
 
-class _TransformationJourneyPostPageState
-    extends State<TransformationJourneyPostPage> {
+class _TransformationJourneyPostPageState extends State<TransformationJourneyPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         title: "Post",
         showSearchBar: false,

@@ -102,7 +102,7 @@ class _State extends State<ClassSegmentSection> {
           segmentChallenge: widget.challengeNavigation,
           navigateToSegment: true,
           audioIcon: false,
-          customValueForChallenge: widget.challengeNavigation.previousSegmentFinish ?? false),
+          customValueForChallenge: widget.challengeNavigation != null ? widget.challengeNavigation.previousSegmentFinish : false),
       const SizedBox(height: 25.0),
       getRoundTitle(),
       getNeumorphicSegmentSummary(restTime: false, roundTitle: false, movements: widget.movements),

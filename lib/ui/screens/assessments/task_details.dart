@@ -134,6 +134,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               }
             },
             child: Scaffold(
+                backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                 appBar: OlukoAppBar(
                     showTitle: true,
                     showBackButton: true,

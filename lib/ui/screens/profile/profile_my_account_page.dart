@@ -88,6 +88,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   Scaffold buildScaffoldPage(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       resizeToAvoidBottomInset: true,
       appBar: OlukoAppBar(
         title: ProfileViewConstants.profileMyAccountTitle,
