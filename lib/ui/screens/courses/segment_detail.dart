@@ -309,7 +309,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.805 : ScreenUtils.height(context) * 0.845,
+          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.802 : ScreenUtils.height(context) * 0.84,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -765,7 +765,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [OlukoNeumorphismColors.olukoNeumorphicBackgroundDark, Colors.transparent],
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height - ScreenUtils.height(context) * 0.3));
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
             },
             blendMode: BlendMode.dstIn,
             child: imageContainer(),
@@ -775,16 +775,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Stack imageContainer() {
     return Stack(
-      fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
-        if (OlukoNeumorphism.isNeumorphismDesign) // else
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 1.5,
-            child: imageAspectRatio(),
-          )
-        else
-          imageAspectRatio(),
+        imageAspectRatio(),
       ],
     );
   }
