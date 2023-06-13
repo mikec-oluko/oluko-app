@@ -151,7 +151,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form() {
     return Scaffold(
-      backgroundColor: OlukoColors.black,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
       body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
@@ -309,7 +309,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.78 : ScreenUtils.height(context) * 0.83,
+          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.805 : ScreenUtils.height(context) * 0.845,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -765,7 +765,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [OlukoNeumorphismColors.olukoNeumorphicBackgroundDark, Colors.transparent],
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height - ScreenUtils.height(context) * 0.3));
             },
             blendMode: BlendMode.dstIn,
             child: imageContainer(),
