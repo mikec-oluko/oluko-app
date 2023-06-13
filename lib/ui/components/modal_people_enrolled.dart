@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -26,8 +27,28 @@ class ModalPeopleEnrolled extends StatefulWidget {
   List<dynamic> favorites;
   UserProgressListBloc userProgressListBloc;
   UserProgressStreamBloc userProgressStreamBloc;
+  FriendBloc blocFriends;
+  FriendRequestBloc friendRequestBloc;
+  HiFiveSendBloc blocHifiveSend;
+  HiFiveReceivedBloc blocHifiveReceived;
+  UserStatisticsBloc blocUserStatistics;
+  FavoriteFriendBloc blocFavoriteFriend;
+  Map<String, UserProgress> usersProgess;
+  PointsCardBloc blocPointsCard;
 
-  ModalPeopleEnrolled({this.userId, this.userProgressListBloc, this.userProgressStreamBloc, this.users, this.favorites});
+  ModalPeopleEnrolled(
+      {this.userId,
+      this.userProgressListBloc,
+      this.userProgressStreamBloc,
+      this.users,
+      this.favorites,
+      this.blocFriends,
+      this.friendRequestBloc,
+      this.blocHifiveSend,
+      this.blocHifiveReceived,
+      this.blocUserStatistics,
+      this.blocFavoriteFriend,
+      this.blocPointsCard});
 
   @override
   _ModalPeopleEnrolledState createState() => _ModalPeopleEnrolledState();
@@ -155,7 +176,11 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
 
   showFriendModal(dynamic friendUser) {
     if (friendUser is UserResponse) {
-      BottomDialogUtils.friendsModal(friendUser, widget.userId, _usersProgress, context);
+      BottomDialogUtils.showBottomDialog(
+        content: FriendModalContent(friendUser, widget.userId, _usersProgress, widget.blocFriends, widget.friendRequestBloc, widget.blocHifiveSend,
+            widget.blocHifiveReceived, widget.blocUserStatistics, widget.blocFavoriteFriend, widget.blocPointsCard, widget.userProgressStreamBloc),
+        context: context,
+      );
     }
   }
 

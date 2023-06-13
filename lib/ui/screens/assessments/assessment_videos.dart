@@ -124,6 +124,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     return Form(
         key: _formKey,
         child: Scaffold(
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(
               showActions: widget.isFirstTime,
               onPressed: widget.isForCoachPage
@@ -272,7 +273,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   Container assessmentDoneBottomPanel(BuildContext context) {
     return Container(
-      height: 100,
+      height: widget.isForCoachPage ? 120 : 100,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),

@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/models/dto/user_progress.dart';
@@ -70,7 +71,20 @@ class _MessageBubbleState extends State<MessageBubble> {
   }
 
   friendModal(BuildContext context) {
-    BottomDialogUtils.friendsModal(widget.user, widget.authUserId, null, context);
+    BottomDialogUtils.showBottomDialog(
+      content: FriendModalContent(
+          widget.user,
+          widget.authUserId,
+          null,
+          BlocProvider.of<FriendBloc>(context),
+          BlocProvider.of<FriendRequestBloc>(context),
+          BlocProvider.of<HiFiveSendBloc>(context),
+          BlocProvider.of<HiFiveReceivedBloc>(context),
+          BlocProvider.of<UserStatisticsBloc>(context),
+          BlocProvider.of<FavoriteFriendBloc>(context),
+          BlocProvider.of<PointsCardBloc>(context)),
+      context: context,
+    );
   }
 
   Widget _buildUserAvatar() {

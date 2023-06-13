@@ -26,6 +26,7 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         showTitle: true,
         showBackButton: true,

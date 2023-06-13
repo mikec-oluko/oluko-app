@@ -68,7 +68,7 @@ class SegmentUtils {
     } else if (isAMRAP(segment)) {
       return '${segment.totalTime} ${OlukoLocalizations.get(context, 'seconds').toLowerCase()} AMRAP';
     } else {
-      return segment.rounds > 1 ? '${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')}' : '';
+      return segment.rounds > 0 ? '${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')}' : '';
     }
   }
 

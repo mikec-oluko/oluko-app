@@ -410,7 +410,9 @@ class _CoachPageState extends State<CoachPage> {
                       onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                         'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: annotation.videoHLS, videoUrl: annotation.video.url),
                         'aspectRatio': annotation.video.aspectRatio,
-                        'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
+                        'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos'),
+                        'segmentSubmissionId': annotation.segmentSubmissionId,
+                        'currentUser': _currentAuthUser
                       }),
                     ))
                 .toList(),

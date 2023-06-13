@@ -103,35 +103,4 @@ class MovementRepository {
   static Movement getByClass(Class classObj) {
     return null;
   }
-
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserWeightRecordsStream(String userId) {
-    Stream<QuerySnapshot<Map<String, dynamic>>> userWeightRecorsStream = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getString('projectId'))
-        .collection('users')
-        .doc(userId)
-        .collection('records')
-        .snapshots();
-    return userWeightRecorsStream;
-  }
-
-  Future<List<WeightRecord>> getFriendsRecords(String friendUserId) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getString('projectId'))
-        .collection('users')
-        .doc(friendUserId)
-        .collection('records')
-        .get();
-
-    List<WeightRecord> friendWeightRecords = mapQueryToMovementRecord(querySnapshot);
-    return friendWeightRecords;
-  }
-
-  static List<WeightRecord> mapQueryToMovementRecord(QuerySnapshot qs) {
-    return qs.docs.map((DocumentSnapshot ds) {
-      Map<String, dynamic> movementData = ds.data() as Map<String, dynamic>;
-      return WeightRecord.fromJson(movementData);
-    }).toList();
-  }
 }

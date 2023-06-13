@@ -67,6 +67,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   Scaffold buildSettingsView(BuildContext context) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         title: ProfileViewConstants.profileSettingsTitle,
         showSearchBar: false,
@@ -74,14 +75,15 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         showTitle: true,
       ),
       body: SingleChildScrollView(
-          child: Container(
+        child: Container(
             width: MediaQuery.of(context).size.width,
             color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-            child: Column(children: [
-              _settingsOptionsSection(context),
-            ],) 
-          ),
-        ),
+            child: Column(
+              children: [
+                _settingsOptionsSection(context),
+              ],
+            )),
+      ),
     );
   }
 
@@ -170,9 +172,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         title: Text(OlukoLocalizations.get(context, returnOption(option.title.toString())), style: OlukoFonts.olukoBigFont()),
         subtitle: Text(
-                  OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
-                  style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-                ),
+          OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
+          style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+        ),
         trailing: BlocListener<NotificationSettingsBloc, NotificationSettingsState>(
           listener: (context, state) {
             if (state is NotificationSettingsUpdate && state.notificationSettings != null) {
@@ -203,14 +205,14 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                     height: 30,
                     child: NeumorphicSwitch(
                       style: const NeumorphicSwitchStyle(
-                            inactiveThumbColor: OlukoColors.primary,
-                            activeThumbColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                            activeTrackColor: OlukoColors.primary,
-                            inactiveTrackColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                            thumbShape: NeumorphicShape.flat,
-                            thumbDepth: 1,
-                            disableDepth: true,
-                          ),
+                        inactiveThumbColor: OlukoColors.primary,
+                        activeThumbColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                        activeTrackColor: OlukoColors.primary,
+                        inactiveTrackColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                        thumbShape: NeumorphicShape.flat,
+                        thumbDepth: 1,
+                        disableDepth: true,
+                      ),
                       value: NotificationSettingsBloc.notificationSettings.getNotificationValue(option.type),
                       onChanged: (bool value) => _setValueForNotifications(option.type, value),
                     ),
@@ -231,10 +233,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     Widget widgetToReturn = Container();
     if (!option.isSwitch) {
       widgetToReturn = OlukoNeumorphism.isNeumorphismDesign
-          ? Column(
-            children:[
-              neumorphicOptionContent(option), const OlukoNeumorphicDivider()
-            ])
+          ? Column(children: [neumorphicOptionContent(option), const OlukoNeumorphicDivider()])
           : Container(
               decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
@@ -371,12 +370,13 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
           break;
       }
     });
-    final NotificationSettings notificationToUpdate = NotificationSettings(globalNotifications: _globalNotificationsValue,
-                                                                            appOpeningReminderNotifications: _appOpeningReminderValue,
-                                                                            workoutReminderNotifications: _workoutNotificationsValue,
-                                                                            coachResponseNotifications: _coachResponseNotificationsValue,
-                                                                            userId: _authUser.id,
-                                                                          );
+    final NotificationSettings notificationToUpdate = NotificationSettings(
+      globalNotifications: _globalNotificationsValue,
+      appOpeningReminderNotifications: _appOpeningReminderValue,
+      workoutReminderNotifications: _workoutNotificationsValue,
+      coachResponseNotifications: _coachResponseNotificationsValue,
+      userId: _authUser.id,
+    );
     BlocProvider.of<NotificationSettingsBloc>(context).update(notificationToUpdate);
   }
 

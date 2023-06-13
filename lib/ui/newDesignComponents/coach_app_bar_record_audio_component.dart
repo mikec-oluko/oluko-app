@@ -116,7 +116,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
                     BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                   }
                 },
-                child: Text(OlukoLocalizations.get(context, 'deny')),
+                child: Text(OlukoLocalizations.get(context, 'cancel')),
               ),
               Container(
                   width: 80,
@@ -124,7 +124,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
                   child: OlukoNeumorphicPrimaryButton(
                       thinPadding: true,
                       isExpanded: false,
-                      title: OlukoLocalizations.get(context, 'allow'),
+                      title: OlukoLocalizations.get(context, 'delete'),
                       onPressed: () {
                         if (state.isAudioPreview) {
                           setState(() {

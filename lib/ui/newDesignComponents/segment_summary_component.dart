@@ -157,7 +157,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       child: Container(
         height: 60,
         color: showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
-        width: (ScreenUtils.width(context) - 80) / 2,
+        width: (ScreenUtils.width(context)) * 0.35,
         child: Center(
           child: Text(OlukoLocalizations.get(context, 'recommended'),
               style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
@@ -175,7 +175,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       },
       child: Container(
         height: 60,
-        width: (ScreenUtils.width(context) - 80) / 2,
+        width: (ScreenUtils.width(context) - 100) / 2,
         decoration: BoxDecoration(
             color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
@@ -217,9 +217,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               segmentId: widget.segmentId,
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
-              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) != 0
-                  ? double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString())
-                  : null,
+              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) == null
+                  ? 0
+                  : double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString()),
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
@@ -237,10 +237,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController _listOfControllers, FocusNode _listOfNodes) {
+  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id);
     return WeightTileWithInput(
       movement: movement,
+      currentTextEditingController: textController,
       open: (focusNode, textEditingController) => open(movement.id, currentMovementAndWeight, textEditingController, focusNode),
       useImperialSystem: widget.useImperialSystem,
     );
@@ -357,7 +358,13 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     return movementsWithWeightRecommendation.isNotEmpty;
   }
 
-  // double weightToKg(String value) => int.parse(value) * _passToKilogramsUnit;
-
-  // double textControllerValueToKg(TextEditingController textEditingController) => double.parse(textEditingController.text) * _passToKilogramsUnit;
+  int getMaxWeightForMovement(MovementSubmodel movement) {
+    int maxWeightRecord = 0;
+    if (widget.maxWeightRecords != null && widget.maxWeightRecords.isNotEmpty) {
+      if (widget.maxWeightRecords.where((maxWeightRecord) => maxWeightRecord.id == movement.id).isNotEmpty) {
+        maxWeightRecord = widget.maxWeightRecords.firstWhere((maxWeightRecord) => maxWeightRecord.id == movement.id).weight;
+      }
+    }
+    return maxWeightRecord;
+  }
 }

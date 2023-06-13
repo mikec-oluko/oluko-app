@@ -34,6 +34,7 @@ class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVide
     return Form(
         key: _formKey,
         child: Scaffold(
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(
               showTitle: true,
               showBackButton: true,

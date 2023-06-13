@@ -205,26 +205,16 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 }
                 return Scaffold(
                   backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+                  extendBody: true,
+                  bottomNavigationBar: _isBottomTabActive
+                      ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, pointsCardPanelState) {
+                          return _bottomNavigationBar(pointsCardPanelState);
+                        })
+                      : const SizedBox(),
                   body: Stack(alignment: AlignmentDirectional.center, children: [
                     _scaffoldBody(),
                     _slidingUpPanel(),
                   ]),
-                  extendBody: true,
-                  bottomNavigationBar: _isBottomTabActive
-                      ? BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
-                          if (state is PointsCardPanelOpen) {
-                            return const SizedBox();
-                          } else {
-                            return OlukoBottomNavigationBar(
-                              loggedUser: loggedUser,
-                              selectedIndex: this.tabController.index,
-                              onPressed: (index) => this.setState(() {
-                                this.tabController.animateTo(index as int);
-                              }),
-                            );
-                          }
-                        })
-                      : const SizedBox(),
                 );
               });
             }
@@ -232,6 +222,21 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         );
       }),
     );
+  }
+
+  Widget _bottomNavigationBar(PointsCardPanelState state) {
+    if (state is PointsCardPanelOpen && state.isOwner) {
+      return const SizedBox();
+    } else {
+      return OlukoBottomNavigationBar(
+        loggedUser: loggedUser,
+        selectedIndex: this.tabController.index,
+        onPressed: (index) => this.setState(() {
+          this.tabController.animateTo(index as int);
+        }),
+      );
+    }
+    ;
   }
 
   void _showPointsCardDialog(BuildContext context, PointsCard card) {
@@ -254,7 +259,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         collapsed: const SizedBox(),
         controller: _cardsPanelController,
         panel: BlocBuilder<PointsCardPanelBloc, PointsCardPanelState>(builder: (context, state) {
-          if (state is PointsCardPanelOpen) {
+          if (state is PointsCardPanelOpen && state.isOwner) {
             _cardsPanelController.open();
           }
           return ModalCards();

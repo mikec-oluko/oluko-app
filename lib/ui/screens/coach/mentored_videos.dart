@@ -93,6 +93,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
           }
           filteredContent = contentSortedByDate();
           return Scaffold(
+            backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             appBar: OlukoAppBar(
               showTitle: true,
               showActions: true,
@@ -158,7 +159,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     List<Widget> contentForSection = [];
 
     videoContent.forEach((video) {
-      contentForSection.add(CoachPersonalizedVideoComponent(personalizedVideo: video, currentUser: _currentUser));
+      contentForSection.add(CoachPersonalizedVideoComponent(personalizedVideo: video, currentUser: _currentUser, annotation: video.annotationContent));
     });
 
     return contentForSection;

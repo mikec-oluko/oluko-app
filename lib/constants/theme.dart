@@ -6,6 +6,7 @@ class OlukoNeumorphism {
   static const bool isNeumorphismDesign = true;
   static const Radius radiusValue = Radius.circular(15.0);
   static const String mvtLogo = 'assets/home/mvt.png';
+  static const EdgeInsets buttonBackPaddingFromTop = EdgeInsets.only(top: 40);
 
   static NeumorphicStyle primaryButtonStyleDisable(
       {bool useBorder = false, bool ligthShadow = true, bool darkShadow = true, num depth = 3, NeumorphicShape buttonShape, NeumorphicBoxShape boxShape}) {
@@ -226,6 +227,19 @@ class OlukoNeumorphism {
       shape: NeumorphicShape.concave,
       lightSource: LightSource.lerp(LightSource.top, LightSource.bottomRight, 1),
       boxShape: NeumorphicBoxShape.rect(),
+      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+    );
+  }
+
+    static NeumorphicStyle getNeumorphicStyleForBottomChat() {
+    return NeumorphicStyle(
+      border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+      depth: -4,
+      intensity: 0.7,
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      shape: NeumorphicShape.concave,
+      lightSource: LightSource.lerp(LightSource.top, LightSource.top, 01),
       shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
     );

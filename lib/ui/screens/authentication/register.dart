@@ -46,6 +46,7 @@ class _RegisterState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         appBar: OlukoAppBar(
           showActions: false,
           showLogo: true,

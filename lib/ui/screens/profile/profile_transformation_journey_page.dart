@@ -72,6 +72,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
 
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(
         centerTitle: true,
         showTitle: true,

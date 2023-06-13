@@ -59,6 +59,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       panel: ChallengeCoursesPanelContent(panelController: _coursesPanelController),
       body: Scaffold(
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         appBar: OlukoAppBar(
           showBackButton: true,
           showTitle: true,
@@ -103,6 +104,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             panel: ChallengeCoursesPanelContent(panelController: _coursesPanelController),
             body: Scaffold(
+              backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
               appBar: OlukoAppBar(
                 showBackButton: true,
                 showTitle: true,
