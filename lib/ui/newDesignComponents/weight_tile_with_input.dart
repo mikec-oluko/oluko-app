@@ -50,6 +50,8 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
 
   bool canShowRecommendationSubtitle(MovementSubmodel movement) => movement.percentOfMaxWeight != null && movement.percentOfMaxWeight != 0;
 
+  bool showSuffix = false;
+
   Container _inputComponent(String movementId) {
     return Container(
         decoration: const BoxDecoration(color: OlukoNeumorphismColors.appBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -61,7 +63,12 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
           showCursor: true,
           readOnly: true,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onTap: () => widget.open(focusNode, widget.currentTextEditingController),
+          onTap: () {
+            setState(() {
+              showSuffix = true;
+            });
+            widget.open(focusNode, widget.currentTextEditingController);
+          },
           onEditingComplete: () {},
           textAlign: TextAlign.center,
           style: const TextStyle(
@@ -75,10 +82,15 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
             hintText: OlukoLocalizations.get(context, 'addWeight'),
+            hintTextDirection: TextDirection.ltr,
             hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
             hintMaxLines: 1,
             border: InputBorder.none,
-            suffixText: widget.useImperialSystem ? OlukoLocalizations.get(context, 'lbs') : OlukoLocalizations.get(context, 'kgs'),
+            suffixText: showSuffix
+                ? widget.useImperialSystem
+                    ? OlukoLocalizations.get(context, 'lbs')
+                    : OlukoLocalizations.get(context, 'kgs')
+                : null,
           ),
         ));
   }
