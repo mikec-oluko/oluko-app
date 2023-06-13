@@ -273,7 +273,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   Container assessmentDoneBottomPanel(BuildContext context) {
     return Container(
-      height: widget.isForCoachPage ? 120 : 100,
+      height: widget.isForCoachPage ? 150 : 100,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
