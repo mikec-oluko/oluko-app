@@ -82,7 +82,6 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
             focusColor: Colors.transparent,
             fillColor: Colors.transparent,
             hintText: OlukoLocalizations.get(context, 'addWeight'),
-            hintTextDirection: TextDirection.ltr,
             hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
             hintMaxLines: 1,
             border: InputBorder.none,
