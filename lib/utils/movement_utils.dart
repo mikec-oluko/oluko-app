@@ -79,7 +79,7 @@ class MovementUtils {
     MovementSubmodel movement,
     List<EnrollmentMovement> enrollmentMovements,
   ) =>
-      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.storeWeight;
+      enrollmentMovements.firstWhere((enrollmentMovement) => enrollmentMovement.id == movement.id, orElse: () => null)?.storeWeight ?? false;
 
   static List<MovementSubmodel> getMovementsWithWeights({List<SectionSubmodel> sections, List<EnrollmentMovement> enrollmentMovements}) {
     List<MovementSubmodel> movementsWithWeight = [];
