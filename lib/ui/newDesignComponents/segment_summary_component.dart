@@ -312,6 +312,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
         controller: textEditingController,
         focus: focusNode,
+        limitLength: true,
+        maxLengthValue: 4,
         onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
         onSubmit: () {
           onSubmit(movementId, currentMovementAndWeight, textEditingController);

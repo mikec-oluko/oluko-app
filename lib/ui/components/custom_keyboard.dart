@@ -13,6 +13,8 @@ class CustomKeyboard extends StatefulWidget {
   bool showInput;
   String textStartInput;
   String textEndInput;
+  bool limitLength;
+  int maxLengthValue;
   CustomKeyboard(
       {Key key,
       this.boxDecoration,
@@ -20,6 +22,8 @@ class CustomKeyboard extends StatefulWidget {
       this.focus,
       this.onSubmit,
       this.onChanged,
+      this.limitLength = false,
+      this.maxLengthValue,
       this.showInput = false,
       this.textStartInput = '',
       this.textEndInput = ''})
@@ -152,36 +156,52 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     String text = widget.controller.text;
     final textSelection = widget.controller.selection;
     String newText;
+    if (widget.limitLength && widget.maxLengthValue != null) {
+      if (text.isNotEmpty && text.length >= widget.maxLengthValue) {
+        text = text.substring(0, currentMaxLength);
+      }
+    }
     if (textSelection.start >= 0 && textSelection.end >= 0) {
-      newText = text.replaceRange(
-        textSelection.start,
-        textSelection.end,
-        myText,
-      );
-      final myTextLength = myText.length;
-      _controller.text = newText;
-      _controller.selection = textSelection.copyWith(
-        baseOffset: textSelection.start + myTextLength,
-        extentOffset: textSelection.start + myTextLength,
-      );
+      newText = isTextSelected(newText, text, textSelection, myText, _controller);
     } else {
-      newText = text.replaceRange(
-        0,
-        0,
-        myText,
-      );
-      final myTextLength = myText.length;
-      _controller.text = newText;
-      _controller.selection = textSelection.copyWith(
-        baseOffset: textSelection.start + 1 + myTextLength,
-        extentOffset: textSelection.start + 1 + myTextLength,
-      );
+      insertTextOnCursorPosition(newText, text, myText, _controller, textSelection);
     }
     widget.focus.requestFocus();
     widget.controller = _controller;
     if (widget.onChanged != null) {
       widget.onChanged();
     }
+  }
+
+  int get currentMaxLength => widget.maxLengthValue - 1;
+
+  void insertTextOnCursorPosition(String newText, String text, String myText, TextEditingController _controller, TextSelection textSelection) {
+    newText = text.replaceRange(
+      0,
+      0,
+      myText,
+    );
+    final myTextLength = myText.length;
+    _controller.text = newText;
+    _controller.selection = textSelection.copyWith(
+      baseOffset: textSelection.start + 1 + myTextLength,
+      extentOffset: textSelection.start + 1 + myTextLength,
+    );
+  }
+
+  String isTextSelected(String newText, String text, TextSelection textSelection, String myText, TextEditingController _controller) {
+    newText = text.replaceRange(
+      textSelection.start,
+      textSelection.end,
+      myText,
+    );
+    final myTextLength = myText.length;
+    _controller.text = newText;
+    _controller.selection = textSelection.copyWith(
+      baseOffset: textSelection.start + myTextLength,
+      extentOffset: textSelection.start + myTextLength,
+    );
+    return newText;
   }
 
   void _backspace() {
