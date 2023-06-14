@@ -70,15 +70,18 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   FocusNode focusNode = FocusNode();
   DateTime _backgroundTime;
   Duration _elapsedTime = Duration.zero;
+  Duration secondsBeforePaused;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
       _backgroundTime = DateTime.now();
+      secondsBeforePaused = widget.timeLeft;
     } else if (state == AppLifecycleState.resumed) {
       if (_backgroundTime != null) {
-        widget.timeLeft += DateTime.now().difference(_backgroundTime);
+        secondsBeforePaused -= DateTime.now().difference(_backgroundTime);
+        widget.timeLeft = secondsBeforePaused;
         _backgroundTime = null;
       }
     }
