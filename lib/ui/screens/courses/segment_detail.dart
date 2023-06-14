@@ -422,11 +422,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget topButtons() {
     EdgeInsetsGeometry padding;
     if (_coachRequests != null) {
-      padding = const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 50 : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+      padding = const EdgeInsets.only(
+          top: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphism.buttonBackPaddingFromTop : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 15 : 0);
     } else {
       padding = const EdgeInsets.only(
-          top: OlukoNeumorphism.isNeumorphismDesign ? 60 : 15,
-          left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
+          top: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphism.buttonBackPaddingFromTop : 15,
+          left: OlukoNeumorphism.isNeumorphismDesign ? 15 : 0,
           right: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
     }
     return Padding(
@@ -443,11 +444,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
             )
           else
             OlukoNeumorphicCircleButton(
-              customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
               onPressed: () {
                 Navigator.pop(context);
                 onPressedAction();
-                ;
               },
             ),
           const Expanded(child: SizedBox()),
