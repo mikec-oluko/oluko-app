@@ -92,7 +92,10 @@ class AuthRepository {
       );
       // Trigger the authentication flow
       final googleUser = await googleSignIn.signIn();
-      
+      if (googleUser == null) {
+        return null;
+      }
+
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser?.authentication;
 
