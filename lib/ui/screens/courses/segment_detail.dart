@@ -272,7 +272,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     if (dotsIndex.value - 1 < 2) return true;
     if (segments != null && segments.isNotEmpty) {
       return segments[dotsIndex.value - 1].isChallenge
-          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 1) - 2].completedAt != null
+          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 2)].completedAt != null
           : true;
     }
     return false;
