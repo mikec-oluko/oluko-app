@@ -194,9 +194,9 @@ class _State extends State<Clock> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.skip_next, color: OlukoColors.white),
+                    const Icon(Icons.skip_next, color: OlukoColors.primary),
                     Text('Skip rest - next movement',
-                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
+                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
                   ],
                 ),
               ),
