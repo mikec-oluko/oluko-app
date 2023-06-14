@@ -68,8 +68,8 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
             (movement) => movement != null
                 ? _imageItem(
                     context,
-                    movement.image,
-                    movement.name,
+                    movement?.image,
+                    movement?.name,
                     onPressed: (context) => widget.onPressed(context, movement),
                     referenceMovementsSection: referenceMovementsSection,
                   )
@@ -93,8 +93,8 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
             (movement) => movement != null
                 ? _imageItem(
                     context,
-                    movement.image,
-                    movement.name,
+                    movement?.image,
+                    movement?.name,
                     onPressed: (context) => widget.onPressed(context, movement),
                     bubbleName: bubbleName,
                   )
@@ -106,8 +106,8 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
       return [
         _imageItem(
           context,
-          widget.movement.image,
-          widget.movement.name,
+          widget?.movement?.image,
+          widget?.movement?.name,
           bubbleName: bubbleName,
         )
       ];
