@@ -221,13 +221,22 @@ class _State extends State<ChallengesCard> {
               Container(
                 height: 160,
                 width: 115,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                ),
+                child: ClipRRect(
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: widget.segmentChallenge.challengeSegment.image != null
-                          ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.image, maxHeight: 160, maxWidth: 115)
-                          : defaultImage),
+                  child: widget.segmentChallenge.challengeSegment.image != null
+                      ? Image(
+                          image: CachedNetworkImageProvider(
+                            widget.segmentChallenge.challengeSegment.image,
+                          ),
+                          fit: BoxFit.cover,
+                          height: 160,
+                          width: 115,
+                          filterQuality: FilterQuality.high,
+                        )
+                      : Image(image: defaultImage),
                 ),
               ),
             ],
