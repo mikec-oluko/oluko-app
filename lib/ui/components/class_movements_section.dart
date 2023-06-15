@@ -80,6 +80,6 @@ class _State extends State<ClassMovementSection> {
   Widget buildMovementBubbles() {
     return Padding(
         padding: const EdgeInsets.only(top: 25.0),
-        child: MovementItemBubbles(showAsGrid: true, onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context) / 1));
+        child: MovementItemBubbles(showAsGrid: true, onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context)));
   }
 }

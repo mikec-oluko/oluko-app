@@ -422,13 +422,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget topButtons() {
     EdgeInsetsGeometry padding;
     if (_coachRequests != null) {
-      padding = const EdgeInsets.only(
-          top: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphism.buttonBackPaddingFromTop : 15, left: OlukoNeumorphism.isNeumorphismDesign ? 15 : 0);
+      padding = const EdgeInsets.only(top: OlukoNeumorphism.buttonBackPaddingFromTop, left: 15);
     } else {
-      padding = const EdgeInsets.only(
-          top: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphism.buttonBackPaddingFromTop : 15,
-          left: OlukoNeumorphism.isNeumorphismDesign ? 15 : 0,
-          right: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0);
+      padding = const EdgeInsets.only(top: OlukoNeumorphism.buttonBackPaddingFromTop, left: 15, right: 20);
     }
     return Padding(
       padding: padding,

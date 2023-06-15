@@ -156,10 +156,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     String text = widget.controller.text;
     final textSelection = widget.controller.selection;
     String newText;
-    if (widget.limitLength && widget.maxLengthValue != null) {
-      if (text.isNotEmpty && text.length >= widget.maxLengthValue) {
-        text = text.substring(0, currentMaxLength);
-      }
+    if (useLimitedKeyboard && textExceedsLimit(text)) {
+      text = text.substring(0, currentMaxLength);
     }
     if (textSelection.start >= 0 && textSelection.end >= 0) {
       newText = isTextSelected(newText, text, textSelection, myText, _controller);
@@ -172,6 +170,10 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       widget.onChanged();
     }
   }
+
+  bool textExceedsLimit(String text) => text.isNotEmpty && text.length >= widget.maxLengthValue;
+
+  bool get useLimitedKeyboard => widget.limitLength && widget.maxLengthValue != null;
 
   int get currentMaxLength => widget.maxLengthValue - 1;
 
