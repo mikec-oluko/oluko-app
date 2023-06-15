@@ -184,7 +184,7 @@ class _InsideClassesState extends State<InsideClass> {
                 ),
                 panel: panelDetail(),
                 body: Container(
-                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : OlukoColors.black,
+                  color: OlukoNeumorphismColors.appBackgroundColor,
                   child: classInfoSection(),
                 ),
               ),
@@ -373,6 +373,7 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget classInfoSection() {
     return ListView.builder(
+      padding: EdgeInsets.zero,
       itemCount: 1,
       addAutomaticKeepAlives: false,
       addRepaintBoundaries: false,

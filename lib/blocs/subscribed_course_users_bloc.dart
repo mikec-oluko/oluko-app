@@ -52,12 +52,10 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
         if (friends != null) {
           await Future.wait(
             friends.map((friend) async {
-              if (friend.isFavorite) {
-                final int index = userListToShow.indexWhere((user) => user.id == friend.id);
-                if (index != -1) {
-                  favoriteUserList.add(userListToShow[index]);
-                  userListToShow.removeAt(index);
-                }
+              final int index = userListToShow.indexWhere((user) => user.id == friend.id);
+              if (index != -1) {
+                favoriteUserList.add(userListToShow[index]);
+                userListToShow.removeAt(index);
               }
             }),
           );
