@@ -61,13 +61,10 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
           focusNode: focusNode,
           autovalidateMode: AutovalidateMode.always,
           controller: widget.currentTextEditingController,
-          maxLength: 4,
           maxLines: 1,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
           showCursor: true,
           readOnly: true,
           inputFormatters: [
-            LengthLimitingTextInputFormatter(4),
             FilteringTextInputFormatter.digitsOnly,
           ],
           onTap: () {
