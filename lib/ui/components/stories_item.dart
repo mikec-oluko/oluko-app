@@ -300,14 +300,14 @@ class _State extends State<StoriesItem> {
       });
     } else if (userProgressStreamState is UserProgressRemove && userProgressStreamState.obj.id == widget.itemUserId) {
       setState(() {
-        _userProgress.progress = 0;
+        _userProgress?.progress = 0;
       });
     }
   }
 
   Widget greenCircle() {
     return CircularProgressIndicator(
-      value: _userProgress != null ? _userProgress.progress : 0,
+      value: _userProgress != null ? _userProgress?.progress : 0,
       strokeWidth: 7,
       valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
     );

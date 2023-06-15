@@ -66,7 +66,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                         } else if (userProgressStreamState is UserProgressAdd) {
                           _usersProgress[userProgressStreamState.obj.id] = userProgressStreamState.obj;
                         } else if (userProgressStreamState is UserProgressRemove) {
-                          _usersProgress[userProgressStreamState.obj.id].progress = 0;
+                          _usersProgress[userProgressStreamState.obj.id]?.progress = 0;
                         }
                         if (friendState is GetFriendsSuccess) {
                           _friendUsersList = friendState.friendUsers;
