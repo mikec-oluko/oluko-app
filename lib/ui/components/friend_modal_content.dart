@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/points_card_bloc.dart';
+import 'package:oluko_app/blocs/subscription_content_bloc.dart';
 import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -84,7 +85,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
 
   Widget _buildContent() {
     return Container(
-      height: ScreenUtils.height(context) * 0.47,
+      height: 335,
       width: ScreenUtils.width(context),
       decoration: const BoxDecoration(
         borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
@@ -118,7 +119,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                   friendButton = _getLeftButton(connectionRequested, friendState, userIsFriend);
                 }
                 return Padding(
-                  padding: EdgeInsets.only(bottom: ScreenUtils.smallScreen(context) ? 3 : 35, left: userIsFriend ? 0 : 25, right: userIsFriend ? 0 : 25),
+                  padding: EdgeInsets.only(bottom: 15, left: userIsFriend ? 0 : 25, right: userIsFriend ? 0 : 25),
                   child: Row(
                     mainAxisAlignment: userIsFriend ? MainAxisAlignment.spaceAround : MainAxisAlignment.start,
                     children: [
@@ -166,68 +167,84 @@ class _FriendModalContentState extends State<FriendModalContent> {
       child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
         bloc: widget.blocUserStatistics,
         builder: (userStatisticsContext, userStats) {
-          return userStats is StatisticsSuccess && widget.user.privacy == 0
-              ? Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        profileAccomplishments(
-                          achievementTitle: OlukoLocalizations.get(context, 'challengesCompleted'),
-                          achievementValue: userStats.userStats.completedChallenges.toString(),
-                        ),
-                        Container(
-                          width: 2.5,
-                          height: 2.5,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        profileAccomplishments(
-                          achievementTitle: OlukoLocalizations.get(context, 'coursesCompleted'),
-                          achievementValue: userStats.userStats.completedCourses.toString(),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        profileAccomplishments(
-                          achievementTitle: OlukoLocalizations.get(context, 'classesCompleted'),
-                          achievementValue: userStats.userStats.completedClasses.toString(),
-                        ),
-                        Container(
-                          width: 2.5,
-                          height: 2.5,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        BlocBuilder<PointsCardBloc, PointsCardState>(
-                          bloc: widget.blocPointsCard,
-                          builder: (pointsCardContext, pointsCards) {
-                            return pointsCards is PointsCardSuccess
-                                ? profileAccomplishments(
-                                    achievementTitle: OlukoLocalizations.get(context, 'mvt') + ' ' + OlukoLocalizations.get(context, 'points'),
-                                    achievementValue: pointsCards.userPoints.toString(),
-                                  )
-                                : const SizedBox();
-                          },
-                        )
-                      ],
-                    )
-                  ],
-                )
-              : const SizedBox();
+          return userStats is StatisticsSuccess && widget.user.privacy == 0 ? _getStatisticsInfoSection(userStats) : const SizedBox();
         },
       ),
+    );
+  }
+
+  Widget _getStatisticsInfoSection(StatisticsSuccess userStats) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _getChallengesForStatistics(userStats),
+            const SizedBox(height: 15),
+            _getClassesForStatistics(userStats),
+          ],
+        ),
+        Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Column(
+              children: [_getWhiteDot(), const SizedBox(height: 33), _getWhiteDot()],
+            )),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [_getCoursesForStatistics(userStats), const SizedBox(height: 15), _getMVTPointsForStatistics()],
+        )
+      ],
+    );
+  }
+
+  Widget _getMVTPointsForStatistics() {
+    return BlocBuilder<PointsCardBloc, PointsCardState>(
+      bloc: widget.blocPointsCard,
+      builder: (pointsCardContext, pointsCards) {
+        return pointsCards is PointsCardSuccess ? _getPointsForStatistics(pointsCards) : const SizedBox();
+      },
+    );
+  }
+
+  Widget _getWhiteDot() {
+    return Container(
+      width: 2.5,
+      height: 2.5,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.white,
+        ),
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+      ),
+    );
+  }
+
+  Widget _getChallengesForStatistics(StatisticsSuccess userStats) {
+    return profileAccomplishments(
+      achievementTitle: OlukoLocalizations.get(context, 'challengesCompleted'),
+      achievementValue: userStats.userStats.completedChallenges.toString(),
+    );
+  }
+
+  Widget _getClassesForStatistics(StatisticsSuccess userStats) {
+    return profileAccomplishments(
+      achievementTitle: OlukoLocalizations.get(context, 'classesCompleted'),
+      achievementValue: userStats.userStats.completedClasses.toString(),
+    );
+  }
+
+  Widget _getCoursesForStatistics(StatisticsSuccess userStats) {
+    return profileAccomplishments(
+      achievementTitle: OlukoLocalizations.get(context, 'coursesCompleted'),
+      achievementValue: userStats.userStats.completedCourses.toString(),
+    );
+  }
+
+  Widget _getPointsForStatistics(PointsCardSuccess pointsCards) {
+    return profileAccomplishments(
+      achievementTitle: OlukoLocalizations.get(context, 'mvt') + ' ' + OlukoLocalizations.get(context, 'points'),
+      achievementValue: pointsCards.userPoints.toString(),
     );
   }
 
