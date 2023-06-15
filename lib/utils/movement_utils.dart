@@ -109,7 +109,7 @@ class MovementUtils {
   }
 
   static int getMaxWeightByImperialSystemUse({double maxWeight, bool useImperialSystem}) =>
-      useImperialSystem ? maxWeight.round() : (maxWeight * _passToKilogramsUnit).round();
+      useImperialSystem ? maxWeight.round() : (maxWeight * _toKilogramsUnit).round();
 
   static double get _toKilogramsUnit => 0.453;
 
