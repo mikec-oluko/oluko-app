@@ -99,7 +99,6 @@ class MovementUtils {
     String result;
     if (weightRecordsList.isNotEmpty) {
       if (getWeightOnRecords(weightRecordsList, currentMovement, segmentId).isNotEmpty) {
-        // result = getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString();
         result = useImperialSystem
             ? getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString()
             : lbsToKilogram(getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toInt()).toString();
