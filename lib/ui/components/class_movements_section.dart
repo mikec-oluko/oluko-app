@@ -32,13 +32,13 @@ class _State extends State<ClassMovementSection> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-       if (!OlukoNeumorphism.isNeumorphismDesign)
+      if (!OlukoNeumorphism.isNeumorphismDesign)
         const Divider(
           color: OlukoColors.grayColor,
           height: 50,
         ),
       Padding(
-        padding: const EdgeInsets.only(top:15.0),
+        padding: const EdgeInsets.only(top: 15.0),
         child: Row(children: [
           Text(
             OlukoLocalizations.get(context, 'movesInThisClass'),
@@ -71,11 +71,8 @@ class _State extends State<ClassMovementSection> {
             ));
       } else {
         return Padding(
-          padding: EdgeInsets.only(top: 3, right: 6),
-          child: Container(
-          height: 15,
-          width: 15,
-          child: OlukoCircularProgressIndicator(personalized: true, width: 2)));
+            padding: EdgeInsets.only(top: 3, right: 6),
+            child: Container(height: 15, width: 15, child: OlukoCircularProgressIndicator(personalized: true, width: 2)));
       }
     });
   }
@@ -83,7 +80,6 @@ class _State extends State<ClassMovementSection> {
   Widget buildMovementBubbles() {
     return Padding(
         padding: const EdgeInsets.only(top: 25.0),
-        child: MovementItemBubbles(
-            showAsGrid: true, onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context) / 1));
+        child: MovementItemBubbles(showAsGrid: true, onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context) / 1));
   }
 }
