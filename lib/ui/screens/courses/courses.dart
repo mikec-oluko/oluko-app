@@ -280,13 +280,13 @@ class _State extends State<Courses> {
   }
 
   CourseCard _getCourseCard(Widget image,
-      {double progress, double width, double height, List<String> userRecommendationsAvatarUrls, bool friendRecommended = false}) {
+      {double progress, double width, double height, List<UserResponse> userRecommendations, bool friendRecommended = false}) {
     return CourseCard(
         width: width,
         height: height,
         imageCover: image,
         progress: progress,
-        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls,
+        userRecommendations: userRecommendations,
         friendRecommended: friendRecommended);
   }
 
@@ -444,9 +444,6 @@ class _State extends State<Courses> {
 
         if (courseList.isNotEmpty) {
           final course = courseList.first;
-
-          final List<String> userRecommendationAvatars = courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
-
           return Padding(
             padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
             child: GestureDetector(
@@ -459,7 +456,7 @@ class _State extends State<Courses> {
                 });
               },
               child: _getCourseCard(CourseUtils.generateImageCourse(course.image, context),
-                  width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendationsAvatarUrls: userRecommendationAvatars),
+                  width: ScreenUtils.width(context) / (padding + _cardsToShow()), userRecommendations: courseEntry.value),
             ),
           );
         } else {
@@ -551,7 +548,7 @@ class _State extends State<Courses> {
               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),
           child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended.image, context),
               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
-              userRecommendationsAvatarUrls: courseRecommendedMapEntry.values.first.map((user) => user.avatar).toList(),
+              userRecommendations: courseRecommendedMapEntry.values.first,
               friendRecommended: true),
         ),
       );
