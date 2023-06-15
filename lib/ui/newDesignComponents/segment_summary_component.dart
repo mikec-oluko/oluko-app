@@ -331,7 +331,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       if (widget.useImperialSystem) {
         movementsWeights[movementId] = int.parse(textEditingController.text);
       } else {
-        movementsWeights[movementId] = MovementUtils.lbsToKilogram(int.parse(textEditingController.text));
+        movementsWeights[movementId] = MovementUtils.kilogramToLbs(int.parse(textEditingController.text));
       }
     }
 
