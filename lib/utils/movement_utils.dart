@@ -99,14 +99,17 @@ class MovementUtils {
     String result;
     if (weightRecordsList.isNotEmpty) {
       if (getWeightOnRecords(weightRecordsList, currentMovement, segmentId).isNotEmpty) {
-        result = getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString();
+        // result = getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString();
+        result = useImperialSystem
+            ? getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString()
+            : lbsToKilogram(getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toInt()).toString();
       }
     }
     return result;
   }
 
   static int getMaxWeightByImperialSystemUse({double maxWeight, bool useImperialSystem}) =>
-      useImperialSystem ? maxWeight.round() : (maxWeight * _toKilogramsUnit).round();
+      useImperialSystem ? maxWeight.round() : (maxWeight * _passToKilogramsUnit).round();
 
   static double get _toKilogramsUnit => 0.453;
 
