@@ -40,6 +40,7 @@ import 'package:oluko_app/ui/components/modal_cards.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/screens/profile/challenge_courses_panel_content.dart';
@@ -488,23 +489,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
-                      width: 52,
-                      height: 52,
-                      child: Image.asset(
-                        'assets/courses/left_back_arrow.png',
-                        scale: 3.5,
-                      )),
-                )),
-          )
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: MediaQuery.of(context).size.height / 10),
+              child: OlukoNeumorphicCircleButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ))
         else
           const SizedBox.shrink(),
       ]),

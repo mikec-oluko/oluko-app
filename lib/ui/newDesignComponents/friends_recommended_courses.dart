@@ -57,7 +57,7 @@ class _FriendsRecommendedCoursesState extends State<FriendsRecommendedCourses> {
               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),
           child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended.image, context),
               width: ScreenUtils.width(context) / (padding + CourseUtils.cardsToShow(context)),
-              userRecommendationsAvatarUrls: courseRecommendedMapEntry.values.first.map((user) => user.avatar).toList(),
+              userRecommendations: courseRecommendedMapEntry.values.first,
               friendRecommended: true),
         ),
       );
@@ -65,13 +65,13 @@ class _FriendsRecommendedCoursesState extends State<FriendsRecommendedCourses> {
   }
 
   CourseCard _getCourseCard(Widget image,
-      {double progress, double width, double height, List<String> userRecommendationsAvatarUrls, bool friendRecommended = false}) {
+      {double progress, double width, double height, List<UserResponse> userRecommendations, bool friendRecommended = false}) {
     return CourseCard(
         width: width,
         height: height,
         imageCover: image,
         progress: progress,
-        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls,
+        userRecommendations: userRecommendations,
         friendRecommended: friendRecommended);
   }
 }

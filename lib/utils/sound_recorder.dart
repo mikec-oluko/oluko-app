@@ -30,7 +30,7 @@ class SoundRecorder {
   }
 
   Future dispose() async {
-    _audioRecorder.closeAudioSession();
+    _audioRecorder?.closeAudioSession();
     _audioRecorder = null;
     _isRecordedInitialized = false;
   }
