@@ -480,5 +480,7 @@
     "recommendationTooltipText": "To display recommendation, complete MVT KICK OFF course, or manually add Max Weights in profile tab.",
     "loggedWeightTooltipText": "Log weights after segment to know what you did next time around!",
     "maxWeights": "Max Weights",
-    "delete": "Delete"
+    "delete": "Delete",
+    "voiceAnnotation": "Voice Annotation"
+
 }
