@@ -13,6 +13,7 @@ class WeightTileForValue extends StatefulWidget {
   final String segmentId;
   final bool showWeightRecommendation;
   final int percentageOfMaxWeight;
+  final int sectionIndex;
   final double maxWeightValue;
   const WeightTileForValue(
       {Key key,
@@ -21,6 +22,7 @@ class WeightTileForValue extends StatefulWidget {
       this.percentageOfMaxWeight,
       this.maxWeightValue,
       this.segmentId,
+      this.sectionIndex,
       this.showWeightRecommendation = true,
       this.useImperialSystem = false})
       : super(key: key);
@@ -121,6 +123,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
               ? double.parse(MovementUtils.getWeight(
                       currentMovement: movement,
                       segmentId: widget.segmentId,
+                      sectionIndex: widget.sectionIndex,
                       weightRecordsList: widget.weightRecords,
                       useImperialSystem: widget.useImperialSystem))
                   .round()
@@ -173,7 +176,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
       }
     } else {
       if (MovementUtils.getWeight(
-              currentMovement: movement, segmentId: widget.segmentId, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) !=
+              currentMovement: movement, segmentId: widget.segmentId, sectionIndex: widget.sectionIndex, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) !=
           null) {
         return weightContainerForRecommendationOrRecent(movement);
       } else {

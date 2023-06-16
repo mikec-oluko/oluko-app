@@ -231,10 +231,10 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   }
 
   Widget microphoneIconButtonContent({Icon iconForContent}) {
-    return Neumorphic(
-      style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(useBorder: false),
-      child: GestureDetector(
-          onTap: () async {
+    return NeumorphicButton(
+      padding: EdgeInsets.zero,
+      style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+      onPressed: ()async {
             !_recorder.isInitialized ? _recorder.init() : null;
             await _recorder.toggleRecording();
 
@@ -247,34 +247,20 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
               _onRecordCompleted();
             }
           },
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (OlukoNeumorphism.isNeumorphismDesign)
-                Image.asset(
-                  'assets/neumorphic/audio_circle.png',
-                  scale: 1,
-                )
-              else
-                const SizedBox.shrink(),
-              Image.asset(
-                'assets/courses/green_circle.png',
-                scale: 1,
-              ),
-              iconForContent
-            ],
-          )),
+      child: iconForContent
     );
   }
 
   Widget sendAudioIconButtonContent() {
-    return GestureDetector(
-        onTap: () async {
+    return NeumorphicButton(
+        padding: EdgeInsets.zero,
+      style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+      onPressed:() async {
           BlocProvider.of<CoachAudioMessageBloc>(context)
               .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
           BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-        },
-        child: Stack(alignment: Alignment.center, children: [
+        } ,
+        child:  Stack(alignment: Alignment.center, children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
             Image.asset(
               'assets/neumorphic/audio_circle.png',
@@ -287,9 +273,10 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
             scale: 1,
           ),
           const Icon(Icons.send, color: Colors.white)
-        ]));
+        ])
+    );
   }
-
+  
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     if (!_recordingAudio) {

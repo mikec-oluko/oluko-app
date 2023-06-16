@@ -294,35 +294,43 @@ class _FriendModalContentState extends State<FriendModalContent> {
             ? Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        widget.blocHifiveSend.set(context, widget.currentUserId, widget.user.id);
-                        AppMessages().showHiFiveSentDialog(context);
-                      },
-                      child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                        bloc: widget.blocHifiveSend,
-                        listener: (hiFiveSendContext, hiFiveSendState) {
-                          if (hiFiveSendState is HiFiveSendSuccess) {
-                            AppMessages.clearAndShowSnackbar(
-                              context,
-                              hiFiveSendState.hiFive ? OlukoLocalizations.get(context, 'hiFiveSent') : OlukoLocalizations.get(context, 'hiFiveRemoved'),
-                            );
-                          }
-                          if (hiFiveSendState is HiFiveSendSuccess) {
-                            widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
-                          }
-                        },
-                        child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                      ),
-                    ),
-                  ),
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: NeumorphicButton(
+                        style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          child: Image.asset('assets/profile/hiFive.png'),
+                        ),
+                      )),
                 ],
               )
             : const SizedBox();
       },
     );
   }
+
+  // GestureDetector(
+  //                     onTap: () {
+  //                       widget.blocHifiveSend.set(context, widget.currentUserId, widget.user.id);
+  //                       AppMessages().showHiFiveSentDialog(context);
+  //                     },
+  //                     child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+  //                       bloc: widget.blocHifiveSend,
+  //                       listener: (hiFiveSendContext, hiFiveSendState) {
+  //                         if (hiFiveSendState is HiFiveSendSuccess) {
+  //                           AppMessages.clearAndShowSnackbar(
+  //                             context,
+  //                             hiFiveSendState.hiFive ? OlukoLocalizations.get(context, 'hiFiveSent') : OlukoLocalizations.get(context, 'hiFiveRemoved'),
+  //                           );
+  //                         }
+  //                         if (hiFiveSendState is HiFiveSendSuccess) {
+  //                           widget.blocHifiveReceived.get(context, widget.user.id, widget.currentUserId);
+  //                         }
+  //                       },
+  //                       child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+  //                     ),
+  //                   ),
 
   Widget profileAccomplishments({String achievementTitle, String achievementValue}) {
     return Row(

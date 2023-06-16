@@ -208,13 +208,14 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             _createNewWeightRecord(section, movement);
             _listOfControllers.add(TextEditingController());
             _listOfNodes.add(FocusNode());
-            contentToReturn.add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex]));
+            contentToReturn.add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex], getSectionIndex(section)));
 
             controllersIndex++;
           } else {
             contentToReturn.add(WeightTileForValue(
               movement: movement,
               segmentId: widget.segmentId,
+              sectionIndex: getSectionIndex(section),
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
               maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) == null
@@ -237,8 +238,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes) {
-    final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id);
+  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes, int sectionIndex) {
+    final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id, sectionIndex);
     return WeightTileWithInput(
       movement: movement,
       currentTextEditingController: textController,
@@ -290,7 +291,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   double get _passToKilogramsUnit => 2.20462;
 
-  WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
+  WorkoutWeight _getCurrentMovementAndWeight(String movementId, int sectionIndex) => listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId && weightRecord.sectionIndex == sectionIndex).first;
 
   int getMovementIndex(SectionSubmodel section, MovementSubmodel movement) => widget.sectionsFromSegment[getSectionIndex(section)].movements.indexOf(movement);
 
@@ -334,7 +335,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         movementsWeights[movementId] = MovementUtils.kilogramToLbs(int.parse(textEditingController.text));
       }
     }
-
+    
     currentMovementAndWeight.weight = movementsWeights[movementId];
 
     widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
