@@ -59,7 +59,7 @@ class Clock extends StatefulWidget {
   _State createState() => _State();
 }
 
-class _State extends State<Clock> {
+class _State extends State<Clock> with WidgetsBindingObserver {
   Timer countdownTimer;
   int AMRAPRound = 0;
   Duration stopwatch = Duration();
@@ -68,9 +68,32 @@ class _State extends State<Clock> {
   final SoundPlayer _soundPlayer = SoundPlayer();
   bool skipRest = true;
   FocusNode focusNode = FocusNode();
+  DateTime _backgroundTime;
+  Duration _elapsedTime = Duration.zero;
+  Duration secondsBeforePaused;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      _backgroundTime = DateTime.now();
+      secondsBeforePaused = widget.timeLeft;
+    } else if (state == AppLifecycleState.resumed) {
+      if (_backgroundTime != null) {
+        secondsBeforePaused -= DateTime.now().difference(_backgroundTime);
+        if (secondsBeforePaused > Duration.zero) {
+          widget.timeLeft = secondsBeforePaused;
+        } else {
+          widget.timeLeft = Duration.zero;
+        }
+        _backgroundTime = null;
+      }
+    }
+  }
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     _headsetPlugin.getCurrentState.then((headsetStatus) {
       setState(() {
         _headsetState = headsetStatus;
