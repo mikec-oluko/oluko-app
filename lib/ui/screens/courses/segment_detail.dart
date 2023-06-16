@@ -272,7 +272,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     if (dotsIndex.value - 1 < 2) return true;
     if (segments != null && segments.isNotEmpty) {
       return segments[dotsIndex.value - 1].isChallenge
-          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 1) - 2].completedAt != null
+          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 2)].completedAt != null
           : true;
     }
     return false;
@@ -324,7 +324,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.802 : ScreenUtils.height(context) * 0.84,
+          height: ScreenUtils.smallScreen(context)
+              ? ScreenUtils.height(context) * 0.803
+              : ScreenUtils.mediumScreen(context)
+                  ? ScreenUtils.height(context) * 0.83
+                  : ScreenUtils.height(context) * 0.859,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),

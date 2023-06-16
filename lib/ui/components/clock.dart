@@ -238,7 +238,7 @@ class _State extends State<Clock> {
 
     if (widget.timerEntries[widget.timerTaskIndex].isInitialTimer != null && widget.timerEntries[widget.timerTaskIndex].isInitialTimer) {
       return TimerUtils.initialTimer(InitialTimerType.Start, widget.timerEntries[widget.timerTaskIndex].round, widget.timerEntries[widget.timerTaskIndex].value,
-          widget.timeLeft.inSeconds, context);
+          widget.timeLeft.inSeconds, context, widget.timerEntries[widget.timerTaskIndex]);
     }
 
     final Duration actualTime = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value) - widget.timeLeft;
