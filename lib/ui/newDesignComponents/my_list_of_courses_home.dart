@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
@@ -63,13 +64,13 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
   }
 
   CourseCard _getCourseCard(Widget image,
-      {double progress, double width, double height, List<String> userRecommendationsAvatarUrls, bool friendRecommended = false}) {
+      {double progress, double width, double height, List<UserResponse> userRecommendations, bool friendRecommended = false}) {
     return CourseCard(
         width: width,
         height: height,
         imageCover: image,
         progress: progress,
-        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls,
+        userRecommendations: userRecommendations,
         friendRecommended: friendRecommended);
   }
 

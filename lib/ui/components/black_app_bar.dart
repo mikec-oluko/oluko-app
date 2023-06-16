@@ -150,8 +150,9 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
-                          child:
-                              OlukoNeumorphicCircleButton(onPressed: widget.onPressed, customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor)),
+                          child: OlukoNeumorphicCircleButton(
+                            onPressed: widget.onPressed,
+                          ),
                         ),
                         getLogo(),
                       ],
@@ -287,7 +288,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
           height: 55,
           width: 55,
           child: OlukoNeumorphicCircleButton(
-            customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
             onPressed: () => {
               if (widget.title == OlukoLocalizations.get(context, 'filters'))
                 {filterBackButtonAction()}

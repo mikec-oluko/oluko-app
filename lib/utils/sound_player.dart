@@ -24,7 +24,7 @@ class SoundPlayer {
   }
 
   Future dispose() async {
-    await _audioPlayer.closeAudioSession();
+    await _audioPlayer?.closeAudioSession();
     _audioPlayer = null;
   }
 

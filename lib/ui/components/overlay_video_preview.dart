@@ -69,7 +69,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
 
   Widget topButtons() {
     return Padding(
-        padding: const EdgeInsets.only(top: 25, left: 15, right: 15),
+        padding: const EdgeInsets.only(top: OlukoNeumorphism.buttonBackPaddingFromTop, left: 15, right: 15),
         child: Row(
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)

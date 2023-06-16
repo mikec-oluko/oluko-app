@@ -67,7 +67,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
           const SizedBox(
             height: 10,
           ),
-          Column(
+          Wrap(
             children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement)).toList(),
           )
         ],
@@ -88,10 +88,14 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  currentMovement.name,
-                  style: OlukoFonts.olukoBigFont(
-                    customColor: OlukoColors.grayColor,
+                SizedBox(
+                  width: ScreenUtils.width(context) / 2.5,
+                  child: Text(
+                    currentMovement.name,
+                    maxLines: 2,
+                    style: OlukoFonts.olukoBigFont(
+                      customColor: OlukoColors.grayColor,
+                    ),
                   ),
                 ),
                 if (widget.currentUserRecords

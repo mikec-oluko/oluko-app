@@ -59,10 +59,14 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
         height: 40,
         child: TextFormField(
           focusNode: focusNode,
+          autovalidateMode: AutovalidateMode.always,
           controller: widget.currentTextEditingController,
+          maxLines: 1,
           showCursor: true,
           readOnly: true,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+          ],
           onTap: () {
             setState(() {
               showSuffix = true;
