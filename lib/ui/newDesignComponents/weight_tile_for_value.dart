@@ -166,7 +166,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Widget getTrailingContent(MovementSubmodel movement) {
     if (widget.showWeightRecommendation) {
-      if (widget.percentageOfMaxWeight != null && widget.maxWeightValue != null) {
+      if (widget.percentageOfMaxWeight != null && (widget.maxWeightValue != null && widget.maxWeightValue != 0)) {
         return weightContainerForRecommendationOrRecent(movement);
       } else {
         return _getAlertCircleWithTooltip();

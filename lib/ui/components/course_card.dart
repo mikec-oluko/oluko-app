@@ -5,18 +5,20 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/classes_menu.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/three_dots_menu.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class CourseCard extends StatefulWidget {
   final Widget imageCover;
   final double progress;
   final double width;
   final double height;
-  final List<String> userRecommendationsAvatarUrls;
+  final List<UserResponse> userRecommendations;
   final CourseEnrollment actualCourse;
   final bool canUnenrollCourse;
   final bool friendRecommended;
@@ -33,7 +35,7 @@ class CourseCard extends StatefulWidget {
       this.progress,
       this.width,
       this.height,
-      this.userRecommendationsAvatarUrls,
+      this.userRecommendations,
       this.actualCourse,
       this.unrolledFunction,
       this.canUnenrollCourse = false,
@@ -56,7 +58,7 @@ class _State extends State<CourseCard> {
     return Container(
       width: widget.width,
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        if (widget.userRecommendationsAvatarUrls != null) Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls)) else SizedBox(),
+        if (widget.userRecommendations != null) Expanded(flex: 2, child: _userRecommendations(widget.userRecommendations)) else SizedBox(),
         Expanded(
             flex: 9,
             child: Stack(
@@ -99,8 +101,8 @@ class _State extends State<CourseCard> {
     return Container(
       width: widget.width,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        if (widget.userRecommendationsAvatarUrls != null && !widget.friendRecommended)
-          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
+        if (widget.userRecommendations != null && !widget.friendRecommended)
+          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendations))
         else
           const SizedBox.shrink(),
         Neumorphic(
@@ -124,8 +126,8 @@ class _State extends State<CourseCard> {
           )
         else
           const SizedBox.shrink(),
-        if (widget.userRecommendationsAvatarUrls != null && widget.friendRecommended)
-          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls, friendRecommended: widget.friendRecommended))
+        if (widget.userRecommendations != null && widget.friendRecommended)
+          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendations, friendRecommended: widget.friendRecommended))
         else
           const SizedBox.shrink(),
       ]),
@@ -162,25 +164,25 @@ class _State extends State<CourseCard> {
     );
   }
 
-  Widget _userRecommendations(List<String> userRecommendationImageUrls, {bool friendRecommended = false}) {
-    List<String> userImageList = [];
+  Widget _userRecommendations(List<UserResponse> userRecommendations, {bool friendRecommended = false}) {
+    List<UserResponse> userImageList = [];
     userImageList =
-        userRecommendationImageUrls.length < _imageStackMaxLength ? userRecommendationImageUrls : userRecommendationImageUrls.sublist(0, _imageStackMaxLength);
-    String _friendsText = userRecommendationImageUrls.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
+        userRecommendations.length < _imageStackMaxLength ? userRecommendations : userRecommendations.sublist(0, _imageStackMaxLength);
+    String _friendsText = userRecommendations.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
     return Stack(
         fit: StackFit.expand,
         alignment: Alignment.bottomRight,
         children: userImageList
             .asMap()
-            .map((index, userUrl) => MapEntry(
+            .map((index, user) => MapEntry(
                 friendRecommended
                     ? Positioned(
                         left: (index * (userRadius / 1.5)),
-                        child: _userAvatar(userUrl),
+                        child: _userAvatar(user),
                       )
                     : Positioned(
-                        right: (index + (userRecommendationImageUrls.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
-                        child: _userAvatar(userUrl)),
+                        right: (index + (userRecommendations.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
+                        child: _userAvatar(user)),
                 index))
             .keys
             .toList()
@@ -189,20 +191,26 @@ class _State extends State<CourseCard> {
             bottom: userRadius * 0.5,
             child: friendRecommended
                 ? Text(
-                    '${userRecommendationImageUrls.length} $_friendsText',
+                    '${userRecommendations.length} $_friendsText',
                     style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
                   )
                 : Text(
-                    userRecommendationImageUrls.length > _imageStackMaxLength ? '...' : '',
+                    userRecommendations.length > _imageStackMaxLength ? '...' : '',
                     style: TextStyle(color: Colors.white),
                   ),
           )));
   }
 
-  CircleAvatar _userAvatar(String userUrl) {
-    return CircleAvatar(
+  Widget _userAvatar(UserResponse user) {
+    return user.avatar == null ? 
+    UserUtils.avatarImageDefault(
+            maxRadius: 16,
+            name: user.firstName,
+            lastname: user.lastName,
+          ) :
+    CircleAvatar(
       minRadius: userRadius,
-      backgroundImage: CachedNetworkImageProvider(userUrl, maxHeight: 90, maxWidth: 90),
+      backgroundImage: CachedNetworkImageProvider(user.avatar, maxHeight: 90, maxWidth: 90),
     );
   }
 }
