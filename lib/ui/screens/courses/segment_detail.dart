@@ -158,7 +158,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form() {
     return Scaffold(
-      backgroundColor: OlukoColors.black,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
       body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
@@ -789,16 +789,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Stack imageContainer() {
     return Stack(
-      fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
-        if (OlukoNeumorphism.isNeumorphismDesign) // else
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 1.5,
-            child: imageAspectRatio(),
-          )
-        else
-          imageAspectRatio(),
+        imageAspectRatio(),
       ],
     );
   }
