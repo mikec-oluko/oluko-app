@@ -92,7 +92,10 @@ class AuthRepository {
       );
       // Trigger the authentication flow
       final googleUser = await googleSignIn.signIn();
-      
+      if (googleUser == null) {
+        return null;
+      }
+
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser?.authentication;
 
@@ -125,11 +128,9 @@ class AuthRepository {
         }
         return null;
       } catch (e) {
-        print('Error: ' + e.toString());
         return null;
       }
     } catch (exception) {
-      print('Error: ' + e.toString());
       return null;
     }
   }
@@ -221,11 +222,9 @@ class AuthRepository {
         }
         return null;
       } catch (e) {
-        print('Error: ' + e.toString());
         return null;
       }
     } catch (exception) {
-      print(e.toString());
       return null;
     }
   }
@@ -278,7 +277,6 @@ class AuthRepository {
     final UserDto userDto = UserDto.fromUserResponse(loginResponse);
     final String encodedJson = jsonEncode(userDto);
     final bool loginSaved = await prefs.setString('login-data', encodedJson);
-    print('Saved login info.');
     return loginSaved;
   }
 
@@ -290,7 +288,6 @@ class AuthRepository {
     }
     final dynamic decodedJson = jsonDecode(savedData);
     final UserResponse loginResponse = UserResponse.fromJson(decodedJson as Map<String, dynamic>);
-    print('Retrieved login info.');
     return loginResponse;
   }
 
@@ -300,7 +297,6 @@ class AuthRepository {
     final Future<bool> removedApiToken = prefs.remove('apiToken');
     final Future<bool> removeFutures = Future.wait([removedLoginData, removedApiToken]).then((results) => !results.any((element) => element == false));
     FirebaseAuth.instance.signOut();
-    print('Removed login info.');
     return removeFutures;
   }
 

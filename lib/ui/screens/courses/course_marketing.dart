@@ -10,9 +10,17 @@ import 'package:oluko_app/blocs/course/course_user_interaction_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart' as CourseEnrollmentBlocLoading show Loading;
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/points_card_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -32,6 +40,7 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/pinned_header.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -508,29 +517,25 @@ class _CourseMarketingState extends State<CourseMarketing> {
             userId: _user.uid,
             users: users,
             favorites: favorites,
+            userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
+            blocFavoriteFriend: BlocProvider.of<FavoriteFriendBloc>(context),
+            blocFriends: BlocProvider.of<FriendBloc>(context),
+            blocHifiveReceived: BlocProvider.of<HiFiveReceivedBloc>(context),
+            blocPointsCard: BlocProvider.of<PointsCardBloc>(context),
+            blocHifiveSend: BlocProvider.of<HiFiveSendBloc>(context),
+            blocUserStatistics: BlocProvider.of<UserStatisticsBloc>(context),
+            friendRequestBloc: BlocProvider.of<FriendRequestBloc>(context),
           ),
         ));
   }
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
     return Padding(
-      padding: OlukoNeumorphism.buttonBackPaddingFromTop,
+      padding: EdgeInsets.zero,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.only(left: 15.0),
-            height: 65,
-            width: 65,
-            child: OlukoNeumorphicSecondaryButton(
-              title: '',
-              useBorder: true,
-              isExpanded: false,
-              thinPadding: true,
-              onlyIcon: true,
-              icon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
-              onPressed: onBackPressed,
-            ),
-          ),
+          Container(padding: const EdgeInsets.only(left: 15.0), child: OlukoNeumorphicCircleButton(onPressed: onBackPressed)),
           const Expanded(child: SizedBox()),
           if (_isVideoPlaying)
             const SizedBox()

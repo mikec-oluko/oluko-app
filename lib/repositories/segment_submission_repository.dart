@@ -8,7 +8,10 @@ import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
+import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/repositories/coach_request_repository.dart';
+import 'package:oluko_app/repositories/movement_repository.dart';
 
 class SegmentSubmissionRepository {
   FirebaseFirestore firestoreInstance;
@@ -42,18 +45,20 @@ class SegmentSubmissionRepository {
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
     SegmentSubmission segmentSubmission = SegmentSubmission(
-        userId: user.uid,
-        userReference: userReference,
-        segmentId: segment.id,
-        segmentReference: segmentReference,
-        segmentName: segment.name,
-        courseEnrollmentId: courseEnrollment.id,
-        courseEnrollmentReference: courseEnrollmentReference,
-        status: SegmentSubmissionStatusEnum.created,
-        createdBy: user.uid,
-        coachId: coachId,
-        coachReference: coachReference,
-        videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
+      userId: user.uid,
+      userReference: userReference,
+      segmentId: segment.id,
+      segmentReference: segmentReference,
+      segmentName: segment.name,
+      courseEnrollmentId: courseEnrollment.id,
+      courseEnrollmentReference: courseEnrollmentReference,
+      status: SegmentSubmissionStatusEnum.created,
+      createdBy: user.uid,
+      coachId: coachId,
+      coachReference: coachReference,
+      videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath),
+      submissionWeight: [],
+    );
 
     segmentSubmission.id = docRef.id;
     return segmentSubmission;
@@ -94,7 +99,9 @@ class SegmentSubmissionRepository {
       if (coachRequest != null) {
         await CoachRequestRepository().updateSegmentSubmission(segmentSubmission.userId, coachRequest, segmentSubmission.id, reference);
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> setIsDeleted(SegmentSubmission segmentSubmission, bool deleted) async {
@@ -106,6 +113,21 @@ class SegmentSubmissionRepository {
     reference.update({
       'isDeleted': deleted,
     });
+  }
+
+  static Future<void> updateWeights(SegmentSubmission segmentSubmission, List<WeightRecord> submissionWeights) async {
+    try {
+      DocumentReference reference = FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getString("projectId"))
+          .collection('segmentSubmissions')
+          .doc(segmentSubmission.id);
+      reference.update({
+        'submission_weight': submissionWeights == null ? [] : List<dynamic>.from(submissionWeights.map((weight) => weight.toJson())),
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> updateStateToEncoded(SegmentSubmission segmentSubmission) async {
@@ -129,5 +151,12 @@ class SegmentSubmissionRepository {
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
     reference.update({'video_state.error': segmentSubmission.videoState.error});
+  }
+
+  Future<SegmentSubmission> getById(String id) async {
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getString('projectId')).collection('segmentSubmissions').doc(id);
+    DocumentSnapshot ds = await reference.get();
+    return SegmentSubmission.fromJson(ds.data() as Map<String, dynamic>);
   }
 }

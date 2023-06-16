@@ -11,6 +11,7 @@ import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/ui/components/selfies_grid.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/collage_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -110,27 +111,13 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
 
   Widget topButtons() {
     return Padding(
-        padding: const EdgeInsets.only(top: 50, left: 15, right: 15),
+        padding: const EdgeInsets.only(top: OlukoNeumorphism.buttonBackPaddingFromTop, left: 15, right: 15),
         child: Row(
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               widget.showBackButton
-                  ? Container(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      height: 55,
-                      width: 65,
-                      child: OlukoNeumorphicSecondaryButton(
-                        title: '',
-                        useBorder: true,
-                        isExpanded: false,
-                        thinPadding: true,
-                        onlyIcon: true,
-                        icon: Image.asset(
-                          'assets/courses/left_back_arrow.png',
-                          scale: 3.5,
-                        ),
-                        onPressed: widget.onBackPressed,
-                      ),
+                  ? OlukoNeumorphicCircleButton(
+                      onPressed: widget.onBackPressed,
                     )
                   : const SizedBox()
             else if (widget.showBackButton)

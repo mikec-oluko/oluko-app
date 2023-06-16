@@ -3,18 +3,15 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:headset_connection_event/headset_event.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/amrap_round_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/clocks_timer_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
@@ -43,6 +40,7 @@ import 'package:oluko_app/models/submodels/rounds_alerts.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
+import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/clock.dart';
@@ -62,7 +60,6 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/sound_player.dart';
-import 'package:oluko_app/utils/sound_utils.dart';
 import 'package:oluko_app/utils/story_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
@@ -1270,14 +1267,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   _addTime() {
-    final int addSeconds = 1;
-    final int seconds = stopwatchDuration.inSeconds + addSeconds;
+    const int addSeconds = 1;
+    final int seconds = stopwatchDuration?.inSeconds ?? 0 + addSeconds;
     stopwatchDuration = Duration(seconds: seconds);
-    BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
+    BlocProvider.of<StopwatchBloc>(context)?.updateStopwatch(stopwatchDuration);
   }
 
   void _stopAndResetStopwatch() {
-    stopwatchTimer.cancel();
+    stopwatchTimer?.cancel();
     stopwatchDuration = Duration();
     BlocProvider.of<StopwatchBloc>(context).updateStopwatch(stopwatchDuration);
   }
@@ -1321,8 +1318,34 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       if (isSegmentSaveMaxWeights) {
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
+      if (_segmentSubmission != null && existMovementsWithWeight()) {
+        final List<WeightRecord> segmentSubmissionWeights = setWeightsForSubmission();
+        BlocProvider.of<SegmentSubmissionBloc>(context).updateSubmissionWeights(_segmentSubmission, segmentSubmissionWeights);
+      }
       BlocProvider.of<WorkoutWeightBloc>(context)
           .saveWeightToWorkout(currentCourseEnrollment: widget.courseEnrollment, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }
   }
+
+  List<WeightRecord> setWeightsForSubmission() {
+    final List<WeightRecord> weightsToSave = [];
+
+    movementsAndWeightsToSave.forEach((element) {
+      final WeightRecord weight = WeightRecord(
+        courseEnrollmentId: widget.courseEnrollment.id,
+        sectionIndex: element.sectionIndex,
+        movementIndex: element.movementIndex,
+        movementId: element.movementId,
+        weight: element.weight.toDouble(),
+        segmentId: widget.segments[widget.segmentIndex].id,
+        classId: widget.courseEnrollment.classes[widget.classIndex].id,
+      );
+
+      weightsToSave.add(weight);
+    });
+
+    return weightsToSave;
+  }
+
+  bool existMovementsWithWeight() => movementsAndWeightsToSave.where((record) => record.weight != null).toList().isNotEmpty;
 }

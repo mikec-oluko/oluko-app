@@ -159,7 +159,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     List<Widget> contentForSection = [];
 
     videoContent.forEach((video) {
-      contentForSection.add(CoachPersonalizedVideoComponent(personalizedVideo: video, currentUser: _currentUser));
+      contentForSection.add(CoachPersonalizedVideoComponent(personalizedVideo: video, currentUser: _currentUser, annotation: video.annotationContent));
     });
 
     return contentForSection;

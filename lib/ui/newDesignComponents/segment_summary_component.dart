@@ -217,9 +217,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               segmentId: widget.segmentId,
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
-              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) != 0
-                  ? double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString())
-                  : null,
+              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) == null
+                  ? 0
+                  : double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString()),
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
@@ -312,6 +312,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         boxDecoration: OlukoNeumorphism.boxDecorationForKeyboard(),
         controller: textEditingController,
         focus: focusNode,
+        limitLength: true,
+        maxLengthValue: 4,
         onChanged: () => onSubmit(movementId, currentMovementAndWeight, textEditingController),
         onSubmit: () {
           onSubmit(movementId, currentMovementAndWeight, textEditingController);
@@ -329,7 +331,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       if (widget.useImperialSystem) {
         movementsWeights[movementId] = int.parse(textEditingController.text);
       } else {
-        movementsWeights[movementId] = MovementUtils.lbsToKilogram(int.parse(textEditingController.text));
+        movementsWeights[movementId] = MovementUtils.kilogramToLbs(int.parse(textEditingController.text));
       }
     }
 

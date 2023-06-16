@@ -124,6 +124,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           child: Stack(
                             children: [
                               ListView(
+                                padding: EdgeInsets.zero,
                                 addAutomaticKeepAlives: false,
                                 addRepaintBoundaries: false,
                                 children: [
