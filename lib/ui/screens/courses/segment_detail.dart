@@ -324,7 +324,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.78 : ScreenUtils.height(context) * 0.83,
+          height: ScreenUtils.smallScreen(context)
+              ? ScreenUtils.height(context) * 0.803
+              : ScreenUtils.mediumScreen(context)
+                  ? ScreenUtils.height(context) * 0.83
+                  : ScreenUtils.height(context) * 0.859,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
