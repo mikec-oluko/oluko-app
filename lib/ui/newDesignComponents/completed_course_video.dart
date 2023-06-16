@@ -4,6 +4,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/repositories/introduction_media_repository.dart';
 import 'package:oluko_app/routes.dart';
@@ -75,7 +76,7 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
                 controller: snapshot.data,
               ),
               Positioned(
-                top: 25,
+                top: OlukoNeumorphism.buttonBackPaddingFromTop,
                 right: 10,
                 child: GestureDetector(
                   onTap: () async {
