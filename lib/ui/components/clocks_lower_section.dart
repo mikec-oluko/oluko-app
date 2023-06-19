@@ -153,7 +153,7 @@ class _State extends State<ClocksLowerSection> {
     );
   }
 
-  bool get _showShareCard => widget.originalWorkoutType != WorkoutType.segment || !shareDone;
+  bool get _showShareCard => widget.originalWorkoutType != WorkoutType.segment && !shareDone;
 
   EnrollmentSegment getCourseEnrollmentSegment() {
     final EnrollmentSegment currentEnrollmentSegment =
