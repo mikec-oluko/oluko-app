@@ -77,7 +77,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   }
 
   Widget buildBubbleGrid() {
-    return GridView.count(mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
+    return GridView.count(padding: EdgeInsets.zero, shrinkWrap: true, mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {

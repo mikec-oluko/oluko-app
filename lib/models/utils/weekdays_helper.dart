@@ -68,12 +68,11 @@ class WeekDaysHelper {
     return datesList;
   }
 
-  static List<DateTime> getCurrentWeekDates(){
-    final DateTime endOfWeek = getNextEndOfWeek();
-    final int daysAmountDifference = daysBetween(DateTime.now(), endOfWeek);
+  static List<DateTime> getOneWeekDatesFromNow(){
+    const int weekDaysAmount = 7;
     final rrule = RecurrenceRule(
       frequency: Frequency.daily,
-      count: daysAmountDifference,
+      count: weekDaysAmount,
     );
     final DateTime currentDate = DateTime.now().copyWith(isUtc: true);
     final List<DateTime> datesList = rrule.getInstances(start: currentDate).toList();
@@ -85,16 +84,4 @@ class WeekDaysHelper {
      final DateTime toDate = DateTime(to.year, to.month, to.day);
    return (toDate.difference(fromDate).inHours / 24).round() + 1;
   }
-
-  static DateTime getNextEndOfWeek(){
-    const int sunday = DateTime.sunday;
-    DateTime now = DateTime.now();
-
-    while(now.weekday != sunday)
-    {
-        now = now.add(const Duration(days: 1));
-    }
-    return now;
-  }
-
 }
