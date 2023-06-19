@@ -406,7 +406,7 @@ class _CoachPageState extends State<CoachPage> {
                       contentImage: annotation.video.thumbUrl,
                       titleForContent: annotation.id == _defaultIntroductionVideoId
                           ? OlukoLocalizations.get(context, 'introductionVideo')
-                          : annotation.segmentName ?? annotation.segmentSubmissionId,
+                          : annotation.segmentName ?? OlukoLocalizations.get(context, 'voiceAnnotation'),
                       onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                         'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: annotation.videoHLS, videoUrl: annotation.video.url),
                         'aspectRatio': annotation.video.aspectRatio,

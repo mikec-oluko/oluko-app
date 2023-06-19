@@ -57,7 +57,7 @@ class _State extends State<SegmentStepSection> {
       if (selected) {
         return const Icon(
           Icons.radio_button_checked,
-          color: OlukoColors.white,
+          color: OlukoColors.primary,
           size: 15,
         );
       } else {
@@ -65,7 +65,7 @@ class _State extends State<SegmentStepSection> {
           padding: EdgeInsets.only(top: 1),
           child: Icon(
             Icons.circle,
-            color: OlukoColors.white,
+            color: OlukoColors.grayColor,
             size: 10,
           ),
         );
