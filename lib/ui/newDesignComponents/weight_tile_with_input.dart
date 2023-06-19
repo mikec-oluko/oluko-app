@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class WeightTileWithInput extends StatefulWidget {
@@ -35,7 +36,11 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+              SizedBox(
+                width: ScreenUtils.width(context) / 2,
+                child: Text(SegmentUtils.getLabel(movement),
+                    maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+              ),
               if (canShowRecommendationSubtitle(movement))
                 SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
               else
