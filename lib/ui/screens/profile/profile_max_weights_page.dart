@@ -49,6 +49,8 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
           showInput: true,
           textStartInput: 'Enter weight:',
           textEndInput: unity,
+          maxLengthValue: 4,
+          limitLength: true,
           onSubmit: () {
             Navigator.pop(context);
             focusNode.unfocus();
@@ -111,7 +113,7 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        state.movements[index].name, 
+                        state.movements[index].name,
                         style: TextStyle(fontSize: 18, color: textColor, fontWeight: FontWeight.w300),
                         overflow: TextOverflow.ellipsis,
                       ),

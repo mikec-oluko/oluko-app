@@ -21,6 +21,7 @@ class _SelfiesGridState extends State<SelfiesGrid> {
 
   Widget gridSection() {
     return GridView.count(
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 1,
       crossAxisCount: 6,

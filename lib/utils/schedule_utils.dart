@@ -21,7 +21,7 @@ class ScheduleUtils {
   }
 
   static List<WorkoutSchedule> getThisWeekScheduledWorkouts(BuildContext context, List<CourseEnrollment> courseEnrollmentList){
-    final List<DateTime> thisWeekDates = WeekDaysHelper.getCurrentWeekDates();
+    final List<DateTime> thisWeekDates = WeekDaysHelper.getOneWeekDatesFromNow();
     final List<WorkoutSchedule> workoutSchedules = [];
     for (final courseEnrollment in courseEnrollmentList) {
       if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {

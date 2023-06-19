@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/animation_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/enums/parameter_enum.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progressbar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
@@ -34,7 +37,7 @@ class TimerUtils {
   static const double _segmentClockNoProgressValue = 0;
 
 //CLOCKS
-  static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
+  static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context, TimerEntry entry) {
     return Stack(alignment: Alignment.center, children: [
       SizedBox(
         width: getProgressCircleSize(context),
@@ -54,11 +57,12 @@ class TimerUtils {
               //fontStyle: FontStyle.italic,
               color: getGreenOrCoral,
             )),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(OlukoLocalizations.get(context, 'round') + "  ",
-              textAlign: TextAlign.center, style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold)),
-          Text((round + 1).toString(), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold))
-        ]),
+        if (!isTransitionEntry(entry))
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(OlukoLocalizations.get(context, 'round') + "  ",
+                textAlign: TextAlign.center, style: OlukoFonts.olukoSmallFont(customFontWeight: FontWeight.bold)),
+            Text((round + 1).toString(), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold))
+          ]),
         SizedBox(height: 2),
         Padding(
             padding: const EdgeInsets.only(bottom: 5),
@@ -469,5 +473,9 @@ class TimerUtils {
 
   static double getProgressCircleSize(BuildContext context) {
     return ScreenUtils.smallScreen(context) ? 210 : 220;
+  }
+
+  static bool isTransitionEntry(TimerEntry entry) {
+    return entry.labels[0] == '' && entry.isInitialTimer && entry.parameter == ParameterEnum.duration;
   }
 }

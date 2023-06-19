@@ -15,44 +15,32 @@ class OlukoNeumorphicCircleButton extends StatefulWidget {
 class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButton> {
   @override
   Widget build(BuildContext context) {
-    return Neumorphic(
-      style: const NeumorphicStyle(
-          depth: 5,
-          intensity: 0.6,
-          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          shape: NeumorphicShape.flat,
-          lightSource: LightSource.topLeft,
-          boxShape: NeumorphicBoxShape.circle(),
-          shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-          shadowLightColorEmboss: OlukoColors.black,
-          surfaceIntensity: 1,
-          shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-          shadowDarkColor: OlukoColors.black),
-      child: widget.defaultAspect
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: GestureDetector(
-                onTap: () {
-                  if (widget.onPressed == null) {
-                    Navigator.pop(context);
-                  } else {
-                    widget.onPressed();
-                  }
-                },
-                child: Container(
-                    width: 40,
-                    height: 40,
-                    child: Image.asset(
-                      'assets/courses/left_back_arrow.png',
-                      scale: 3.5,
-                    )),
-              ))
-          : IconButton(
-              padding: widget.customIcon != null ? EdgeInsets.zero : const EdgeInsets.only(left: 10),
-              icon: widget.customIcon ?? const Icon(Icons.arrow_back_ios, size: 24, color: OlukoColors.grayColor),
-              onPressed: () => {
-                    if (widget.onPressed == null) {Navigator.pop(context)} else {widget.onPressed()}
-                  }),
-    );
+    return NeumorphicButton(
+        style: const NeumorphicStyle(
+            depth: 5,
+            intensity: 0.6,
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+            boxShape: NeumorphicBoxShape.circle(),
+            shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            shadowLightColorEmboss: OlukoColors.black,
+            surfaceIntensity: 1,
+            shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            shadowDarkColor: OlukoColors.black),
+        child: Container(
+          width: 35,
+          height: 35,
+          child: widget.customIcon ??
+              Image.asset(
+                'assets/courses/left_back_arrow.png',
+                scale: 3.5,
+              ),
+        ),
+        onPressed: () {
+          if (widget.onPressed == null) {
+            Navigator.pop(context);
+          } else {
+            widget.onPressed();
+          }
+        });
   }
 }

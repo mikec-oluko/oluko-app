@@ -254,6 +254,11 @@ class AuthBloc extends Cubit<AuthState> {
       } else {
         Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
       }
+    } catch (e) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      emit(AuthGuest());
+      return;
     }
   }
 

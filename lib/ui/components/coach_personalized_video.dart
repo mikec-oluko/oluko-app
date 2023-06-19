@@ -19,11 +19,14 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class CoachPersonalizedVideoComponent extends StatefulWidget {
   final CoachPersonalizedVideo personalizedVideo;
   final UserResponse currentUser;
-  const CoachPersonalizedVideoComponent({@required this.personalizedVideo, @required this.currentUser}) : super();
+  final Annotation annotation;
+  const CoachPersonalizedVideoComponent({@required this.personalizedVideo, @required this.currentUser, this.annotation}) : super();
 
   @override
   State<CoachPersonalizedVideoComponent> createState() => _CoachPersonalizedVideoComponentState();
 }
+
+const String _defaultIntroductionVideoId = 'introVideo';
 
 class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideoComponent> {
   @override
@@ -90,9 +93,11 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                   child: Padding(
                     padding: const EdgeInsets.only(left: 5),
                     child: Text(
-                      widget.personalizedVideo.annotationContent != null
-                          ? widget.personalizedVideo.annotationContent.segmentName ?? ''
-                          : widget.personalizedVideo.videoMessageContent.video.name,
+                      widget.personalizedVideo.annotationContent.id == _defaultIntroductionVideoId
+                          ? OlukoLocalizations.get(context, 'introductionVideo')
+                          : widget.personalizedVideo.annotationContent != null
+                              ? widget.personalizedVideo.annotationContent.segmentName ?? OlukoLocalizations.get(context, 'voiceAnnotation')
+                              : widget.personalizedVideo.videoMessageContent.video.name,
                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -119,6 +124,8 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
           Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
             'videoUrl': videoUrl,
             'aspectRatio': widget.personalizedVideo.videoContent.aspectRatio,
+            'segmentSubmissionId': widget.annotation?.segmentSubmissionId,
+            'currentUser': widget.currentUser,
             'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
           });
         },

@@ -79,7 +79,7 @@ class MovementUtils {
     MovementSubmodel movement,
     List<EnrollmentMovement> enrollmentMovements,
   ) =>
-      enrollmentMovements.where((enrollmentMovement) => enrollmentMovement.id == movement.id).first.storeWeight;
+      enrollmentMovements.firstWhere((enrollmentMovement) => enrollmentMovement.id == movement.id, orElse: () => null)?.storeWeight ?? false;
 
   static List<MovementSubmodel> getMovementsWithWeights({List<SectionSubmodel> sections, List<EnrollmentMovement> enrollmentMovements}) {
     List<MovementSubmodel> movementsWithWeight = [];
@@ -99,7 +99,9 @@ class MovementUtils {
     String result;
     if (weightRecordsList.isNotEmpty) {
       if (getWeightOnRecords(weightRecordsList, currentMovement, segmentId).isNotEmpty) {
-        result = getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString();
+        result = useImperialSystem
+            ? getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toString()
+            : lbsToKilogram(getWeightOnRecords(weightRecordsList, currentMovement, segmentId).first.weight.toInt()).toString();
       }
     }
     return result;

@@ -40,6 +40,7 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/pinned_header.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
@@ -530,23 +531,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
     return Padding(
-      padding: OlukoNeumorphism.buttonBackPaddingFromTop,
+      padding: EdgeInsets.zero,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.only(left: 15.0),
-            height: 65,
-            width: 65,
-            child: OlukoNeumorphicSecondaryButton(
-              title: '',
-              useBorder: true,
-              isExpanded: false,
-              thinPadding: true,
-              onlyIcon: true,
-              icon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor),
-              onPressed: onBackPressed,
-            ),
-          ),
+          Container(padding: const EdgeInsets.only(left: 15.0), child: OlukoNeumorphicCircleButton(onPressed: onBackPressed)),
           const Expanded(child: SizedBox()),
           if (_isVideoPlaying)
             const SizedBox()

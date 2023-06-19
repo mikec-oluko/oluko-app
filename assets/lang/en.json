@@ -30,7 +30,7 @@
     "referenceCourses": "Reference Courses",
     "segmentAndRecordingStartsIn": "Segment and recording starts in",
     "segmentStartsIn": "Segment starts in",
-    "rounds": "rounds",
+    "rounds": "Rounds",
     "friends": "Friends",
     "friend": "Friend",
     "logout": "Log out",
@@ -479,5 +479,8 @@
     "loggedWeight": "Logged Weight",
     "recommendationTooltipText": "To display recommendation, complete MVT KICK OFF course, or manually add Max Weights in profile tab.",
     "loggedWeightTooltipText": "Log weights after segment to know what you did next time around!",
-    "maxWeights": "Max Weights"
+    "maxWeights": "Max Weights",
+    "delete": "Delete",
+    "voiceAnnotation": "Voice Annotation"
+
 }

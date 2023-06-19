@@ -113,7 +113,7 @@ class PushNotificationService {
 
   static void notifyNewPushNotification(RemoteMessage message, BuildContext contextPush) {
     if (message != null && message.notification != null) {
-      final int tabNumber = message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder] ? 2 : 1;
+      final int tabNumber = message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder] ? 0 : 1;
       BlocProvider.of<PushNotificationBloc>(contextPush).notifyNewPushNotification(tabNumber);
     }
   }

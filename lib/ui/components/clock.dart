@@ -194,9 +194,9 @@ class _State extends State<Clock> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.skip_next, color: OlukoColors.white),
+                    const Icon(Icons.skip_next, color: OlukoColors.primary),
                     Text('Skip rest - next movement',
-                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.white)),
+                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.w300, customColor: OlukoColors.primary)),
                   ],
                 ),
               ),
@@ -238,7 +238,7 @@ class _State extends State<Clock> {
 
     if (widget.timerEntries[widget.timerTaskIndex].isInitialTimer != null && widget.timerEntries[widget.timerTaskIndex].isInitialTimer) {
       return TimerUtils.initialTimer(InitialTimerType.Start, widget.timerEntries[widget.timerTaskIndex].round, widget.timerEntries[widget.timerTaskIndex].value,
-          widget.timeLeft.inSeconds, context);
+          widget.timeLeft.inSeconds, context, widget.timerEntries[widget.timerTaskIndex]);
     }
 
     final Duration actualTime = Duration(seconds: widget.timerEntries[widget.timerTaskIndex].value) - widget.timeLeft;
