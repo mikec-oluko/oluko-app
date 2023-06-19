@@ -26,7 +26,7 @@ class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CoachAppBarState extends State<CoachAppBar> {
   String defaultCoachPic = '';
   num numberOfReviewPendingItems = 0;
-  bool showCoachProfle = true;
+  bool showCoachProfile = true;
 
   @override
   void initState() {
@@ -58,21 +58,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
         automaticallyImplyLeading: false,
-        leading: Visibility(
-          visible: false,
-          child: Container(
-            child: Row(
-              children: [
-                OlukoNeumorphicCircleButton(
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        flexibleSpace: showCoachProfle
+        flexibleSpace: showCoachProfile
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(kToolbarHeight),
                 child: Column(
@@ -148,8 +134,8 @@ class _CoachAppBarState extends State<CoachAppBar> {
     return CachedNetworkImage(
       height: _imageRadius * 2,
       width: _imageRadius * 2,
-      maxWidthDiskCache: (_imageRadius * 2).toInt(),
-      maxHeightDiskCache: (_imageRadius * 2).toInt(),
+      maxWidthDiskCache: (_imageRadius * 5).toInt(),
+      maxHeightDiskCache: (_imageRadius * 5).toInt(),
       fit: BoxFit.cover,
       imageBuilder: (context, imageProvider) => CircleAvatar(
         backgroundImage: imageProvider,

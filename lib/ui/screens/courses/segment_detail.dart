@@ -158,7 +158,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form() {
     return Scaffold(
-      backgroundColor: OlukoColors.black,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
       body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
@@ -272,7 +272,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     if (dotsIndex.value - 1 < 2) return true;
     if (segments != null && segments.isNotEmpty) {
       return segments[dotsIndex.value - 1].isChallenge
-          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 1) - 2].completedAt != null
+          ? widget.courseEnrollment.classes[widget.classIndex].segments[(dotsIndex.value - 2)].completedAt != null
           : true;
     }
     return false;
@@ -319,12 +319,13 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getCarouselSlider() {
+    var a = ScreenUtils.height(context);
     return Column(
       children: [
         topButtons(),
         _classTitleComponent(),
         Container(
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) * 0.78 : ScreenUtils.height(context) * 0.83,
+          height: ScreenUtils.height(context) - 138,
           child: SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -785,16 +786,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Stack imageContainer() {
     return Stack(
-      fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
-        if (OlukoNeumorphism.isNeumorphismDesign) // else
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 1.5,
-            child: imageAspectRatio(),
-          )
-        else
-          imageAspectRatio(),
+        imageAspectRatio(),
       ],
     );
   }
