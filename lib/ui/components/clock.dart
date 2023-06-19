@@ -69,13 +69,14 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   bool skipRest = true;
   FocusNode focusNode = FocusNode();
   DateTime _backgroundTime;
-  Duration _elapsedTime = Duration.zero;
   Duration secondsBeforePaused;
+  bool canReproduce = true;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
+      canReproduce = false;
       _backgroundTime = DateTime.now();
       secondsBeforePaused = widget.timeLeft;
     } else if (state == AppLifecycleState.resumed) {
@@ -87,6 +88,9 @@ class _State extends State<Clock> with WidgetsBindingObserver {
           widget.timeLeft = Duration.zero;
         }
         _backgroundTime = null;
+        Future.delayed(const Duration(milliseconds: 3000), () {
+          canReproduce = true;
+        });
       }
     }
   }
@@ -634,8 +638,12 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   void _playCountdown(Function() goToNextStep, Function() setPaused, {HeadsetState headsetState}) {
     if (countdownTimer == null || !countdownTimer.isActive) {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-        await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
-            headsetState: headsetState, isForWatch: true);
+        print(canReproduce);
+        if (canReproduce) {
+          await SoundUtils.playSound(
+              widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
+              headsetState: headsetState, isForWatch: true);
+        }
         if (widget.timeLeft.inSeconds == 0) {
           _pauseCountdown(setPaused);
           goToNextStep();
