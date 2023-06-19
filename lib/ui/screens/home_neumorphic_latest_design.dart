@@ -437,7 +437,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           _usersProgress = userProgressListState.usersProgress;
         }
         return Padding(
-          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 45, 20, 50),
+          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 45, 20, 20),
           child: _courseAndPeopleContent(context),
         );
       },
