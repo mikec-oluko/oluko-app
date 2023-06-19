@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
@@ -7,7 +8,9 @@ import 'package:oluko_app/blocs/coach/coach_audio_panel_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_audio_message.dart';
 import 'package:oluko_app/ui/components/audio_sent_component.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/sound_recorder.dart';
@@ -74,7 +77,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
             ),
           );
         }
-        if (state is GenericAudioPanelConfirmDelete  && state.audioMessage?.id == null) {
+        if (state is GenericAudioPanelConfirmDelete && state.audioMessage?.id == null) {
           recordAudioContent = _confirmDeleteComponent(context, state);
         }
 
@@ -83,62 +86,57 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
     );
   }
 
-  Widget _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
-    return Padding(
-      padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 20 : 50),
-      child: Container(
-        width: ScreenUtils.width(context) / 1.2,
-        height: 100,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-              child: Wrap(children: [
-                Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))
-              ]),
-            ),
-            SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    if (state.isAudioPreview) {
-                      setState(() {
-                        BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
-                          audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
-                        );
-                      });
-                    } else {
-                      BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-                    }
-                  },
-                  child: Text(OlukoLocalizations.get(context, 'cancel')),
-                ),
-                Container(
-                    width: 80,
-                    height: 40,
-                    child: OlukoNeumorphicPrimaryButton(
-                        thinPadding: true,
-                        isExpanded: false,
-                        title: OlukoLocalizations.get(context, 'delete'),
-                        onPressed: () {
-                          if (state.isAudioPreview) {
-                            setState(() {
-                              _audioRecordedElement = null;
-                            });
-                            BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
-                          } else {
-                            BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
-                            BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-                          }
-                        }))
-              ],
-            )
-          ],
-        ),
+  Container _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
+    return Container(
+      width: ScreenUtils.width(context) / 1.2,
+      height: 80,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+            child: Wrap(children: [
+              Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))
+            ]),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: () {
+                  if (state.isAudioPreview) {
+                    setState(() {
+                      BlocProvider.of<GenericAudioPanelBloc>(context).emitRecordedState(
+                        audioWidget: audioSentComponent(context: context, audioPath: _recorder.audioUrl, isPreview: true),
+                      );
+                    });
+                  } else {
+                    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+                  }
+                },
+                child: Text(OlukoLocalizations.get(context, 'cancel')),
+              ),
+              Container(
+                  width: 80,
+                  height: 40,
+                  child: OlukoNeumorphicPrimaryButton(
+                      thinPadding: true,
+                      isExpanded: false,
+                      title: OlukoLocalizations.get(context, 'delete'),
+                      onPressed: () {
+                        if (state.isAudioPreview) {
+                          setState(() {
+                            _audioRecordedElement = null;
+                          });
+                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDeleteState();
+                        } else {
+                          BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
+                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+                        }
+                      }))
+            ],
+          )
+        ],
       ),
     );
   }
@@ -232,35 +230,34 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
 
   Widget microphoneIconButtonContent({Icon iconForContent}) {
     return NeumorphicButton(
-      padding: EdgeInsets.zero,
-      style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
-      onPressed: ()async {
-            !_recorder.isInitialized ? _recorder.init() : null;
-            await _recorder.toggleRecording();
+        padding: EdgeInsets.zero,
+        style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+        onPressed: () async {
+          !_recorder.isInitialized ? _recorder.init() : null;
+          await _recorder.toggleRecording();
 
-            setState(() {
-              _recordingAudio = !_recordingAudio;
-              startTimer();
-            });
+          setState(() {
+            _recordingAudio = !_recordingAudio;
+            startTimer();
+          });
 
-            if (_recorder.isStopped) {
-              _onRecordCompleted();
-            }
-          },
-      child: iconForContent
-    );
+          if (_recorder.isStopped) {
+            _onRecordCompleted();
+          }
+        },
+        child: iconForContent);
   }
 
   Widget sendAudioIconButtonContent() {
     return NeumorphicButton(
         padding: EdgeInsets.zero,
-      style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
-      onPressed:() async {
+        style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+        onPressed: () async {
           BlocProvider.of<CoachAudioMessageBloc>(context)
               .saveAudioForCoach(audioRecorded: File(_recorder.audioUrl), coachId: widget.coachId, userId: widget.userId, audioDuration: _durationToSave);
           BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
-        } ,
-        child:  Stack(alignment: Alignment.center, children: [
+        },
+        child: Stack(alignment: Alignment.center, children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
             Image.asset(
               'assets/neumorphic/audio_circle.png',
@@ -273,10 +270,9 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
             scale: 1,
           ),
           const Icon(Icons.send, color: Colors.white)
-        ])
-    );
+        ]));
   }
-  
+
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     if (!_recordingAudio) {
