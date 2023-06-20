@@ -74,7 +74,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
             ),
           );
         }
-        if (state is GenericAudioPanelConfirmDelete) {
+        if (state is GenericAudioPanelConfirmDelete  && state.audioMessage?.id == null) {
           recordAudioContent = _confirmDeleteComponent(context, state);
         }
 
