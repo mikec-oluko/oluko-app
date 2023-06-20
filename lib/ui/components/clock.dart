@@ -59,7 +59,7 @@ class Clock extends StatefulWidget {
   _State createState() => _State();
 }
 
-class _State extends State<Clock> {
+class _State extends State<Clock> with WidgetsBindingObserver {
   Timer countdownTimer;
   int AMRAPRound = 0;
   Duration stopwatch = Duration();
@@ -68,9 +68,36 @@ class _State extends State<Clock> {
   final SoundPlayer _soundPlayer = SoundPlayer();
   bool skipRest = true;
   FocusNode focusNode = FocusNode();
+  DateTime _backgroundTime;
+  Duration secondsBeforePaused;
+  bool canReproduce = true;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      canReproduce = false;
+      _backgroundTime = DateTime.now();
+      secondsBeforePaused = widget.timeLeft;
+    } else if (state == AppLifecycleState.resumed) {
+      if (_backgroundTime != null) {
+        secondsBeforePaused -= DateTime.now().difference(_backgroundTime);
+        if (secondsBeforePaused > Duration.zero) {
+          widget.timeLeft = secondsBeforePaused;
+        } else {
+          widget.timeLeft = Duration.zero;
+        }
+        _backgroundTime = null;
+        Future.delayed(const Duration(milliseconds: 3000), () {
+          canReproduce = true;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     _headsetPlugin.getCurrentState.then((headsetStatus) {
       setState(() {
         _headsetState = headsetStatus;
@@ -611,8 +638,12 @@ class _State extends State<Clock> {
   void _playCountdown(Function() goToNextStep, Function() setPaused, {HeadsetState headsetState}) {
     if (countdownTimer == null || !countdownTimer.isActive) {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-        await SoundUtils.playSound(widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
-            headsetState: headsetState, isForWatch: true);
+        print(canReproduce);
+        if (canReproduce) {
+          await SoundUtils.playSound(
+              widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
+              headsetState: headsetState, isForWatch: true);
+        }
         if (widget.timeLeft.inSeconds == 0) {
           _pauseCountdown(setPaused);
           goToNextStep();

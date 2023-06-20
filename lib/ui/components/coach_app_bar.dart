@@ -134,8 +134,8 @@ class _CoachAppBarState extends State<CoachAppBar> {
     return CachedNetworkImage(
       height: _imageRadius * 2,
       width: _imageRadius * 2,
-      maxWidthDiskCache: (_imageRadius * 2).toInt(),
-      maxHeightDiskCache: (_imageRadius * 2).toInt(),
+      maxWidthDiskCache: (_imageRadius * 5).toInt(),
+      maxHeightDiskCache: (_imageRadius * 5).toInt(),
       fit: BoxFit.cover,
       imageBuilder: (context, imageProvider) => CircleAvatar(
         backgroundImage: imageProvider,

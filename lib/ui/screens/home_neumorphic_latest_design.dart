@@ -96,6 +96,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   UserResponse currentUserLatestVersion;
   bool videoSeen = false;
   bool hasScheduledCourses = false;
+  bool isPanelOpen = false;
 
   @override
   void initState() {
@@ -266,6 +267,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([workoutSchedule.courseEnrollment]);
     final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment.course.reference.get();
     final Course actualCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
+    isPanelOpen = false;
     Navigator.pushNamed(
       context,
       routeLabels[RouteEnum.courseHomePage],
@@ -321,7 +323,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                       const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
-                          _goToEditSchedule(context, scheduledWorkout);
+                          if (!isPanelOpen) {
+                            isPanelOpen = true;
+                            _goToEditSchedule(context, scheduledWorkout);
+                          }
                         },
                         child: Text(
                           OlukoLocalizations.get(context, 'editSchedule'),
@@ -437,7 +442,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           _usersProgress = userProgressListState.usersProgress;
         }
         return Padding(
-          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 45, 20, 50),
+          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 45, 20, 20),
           child: _courseAndPeopleContent(context),
         );
       },

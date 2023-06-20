@@ -13,7 +13,6 @@ import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
-import 'package:oluko_app/models/submodels/assessment_task.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -24,7 +23,6 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_custom_video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
@@ -53,7 +51,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   int assessmentsTasksQty;
   bool isLastTask = false;
   bool _showDonePanel = false;
-  Widget contentToShow = SizedBox.shrink();
 
   @override
   void initState() {
@@ -72,7 +69,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     return WillPopScope(
         onWillPop: () async {
           if (widget.isFirstTime) {
-            //TODO: check wanted flow BlocProvider.of<AuthBloc>(context).logout(context);
             return false;
           }
           if (Navigator.canPop(context)) {
@@ -106,7 +102,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   _assessment = assessmentState.assessment;
                   assessmentsTasksQty = UserUtils.getUserAssesmentsQty(_assessment, _user.currentPlan) ?? 0;
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
-
                   BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
                   return form();
                 } else {
@@ -141,12 +136,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         _controller.pause();
                       }
                       Navigator.pop(context);
-                      //TODO: fix for case in which there is no more screen in navigation stack
-                      /*if (!Navigator.canPop(context)) {
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
-                          'tab': 1,
-                        });
-                      }*/
                     },
               showTitle: true,
               showBackButton: widget.isFirstTime != true && widget.isForCoachPage != true,
@@ -154,7 +143,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
               actions: [skipButton()],
             ),
             body: Container(
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                 child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, shrinkWrap: true, padding: EdgeInsets.zero, children: [
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -173,7 +162,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             },
                           ),
                         ),
-                        // OlukoLocalizations.get(context, 'coachPageAssessmentsText')
                         Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
@@ -196,12 +184,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
                           if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
                             _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                            if (assessmentAssignmentState.assessmentAssignment.completedAt != null) {
-                              if (!widget.assessmentsDone) {
-                                contentToShow = assessmentDoneBottomPanel(context);
-                              }
-                            }
-
                             return Column(
                               children: [
                                 BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
@@ -233,77 +215,55 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                                   }
                                 }),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
-                                  Row(children: [
-                                    if (!OlukoNeumorphism.isNeumorphismDesign)
-                                      OlukoPrimaryButton(
-                                        title: OlukoLocalizations.get(context, 'done'),
-                                        onPressed: () async {
-                                          if (widget.isFirstTime) {
-                                            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
-                                          }
-                                          if (await popUp(context)) Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-                                          return false;
-                                        },
-                                      )
-                                  ])
-                                else
-                                  const SizedBox.shrink()
                               ],
                             );
                           }
                           return const SizedBox();
                         }),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        if (OlukoNeumorphism.isNeumorphismDesign)
-                          const SizedBox.shrink()
-                        else
-                          const SizedBox(
-                            height: 50,
-                          ),
                       ])),
-                  Visibility(visible: OlukoNeumorphism.isNeumorphismDesign ? _showDonePanel : false, child: assessmentDoneBottomPanel(context)),
+                  SizedBox(height: widget.isForCoachPage ? 0 : 20),
+                  Visibility(visible: _showDonePanel, child: assessmentDoneBottomPanel(context)),
                 ]))));
   }
 
-  Container assessmentDoneBottomPanel(BuildContext context) {
-    return Container(
-      height: widget.isForCoachPage ? 150 : 100,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20, bottom: 20),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Container(
-            width: 100,
-            child: OlukoNeumorphicPrimaryButton(
-              title: OlukoLocalizations.get(context, 'done'),
-              onPressed: () {
-                if (_controller != null) {
-                  _controller.pause();
-                }
-                if (widget.isFirstTime) {
-                  BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
-                }
-                Navigator.pushNamed(
-                  context,
-                  routeLabels[RouteEnum.assessmentNeumorphicDone],
-                );
-              },
-              isExpanded: false,
-              customHeight: 60,
-            ),
+  Widget assessmentDoneBottomPanel(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(
+            bottom: widget.isForCoachPage
+                ? ScreenUtils.smallScreen(context)
+                    ? 0
+                    : 48
+                : 0),
+        child: Container(
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           ),
-        ),
+          child: Row(children: [const Expanded(child: SizedBox()), Padding(padding: EdgeInsets.only(right: 20), child: _doneButton())]),
+        ));
+  }
+
+  Widget _doneButton() {
+    return SizedBox(
+      width: 100,
+      child: OlukoNeumorphicPrimaryButton(
+        title: OlukoLocalizations.get(context, 'done'),
+        onPressed: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+          if (widget.isFirstTime) {
+            BlocProvider.of<AssessmentVisibilityBloc>(context).setAsSeen(_user.id);
+          }
+          Navigator.pushNamed(
+            context,
+            routeLabels[RouteEnum.assessmentNeumorphicDone],
+          );
+        },
+        isExpanded: false,
+        customHeight: 60,
       ),
     );
   }
