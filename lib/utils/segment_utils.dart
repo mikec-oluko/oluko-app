@@ -68,8 +68,18 @@ class SegmentUtils {
     } else if (isAMRAP(segment)) {
       return '${TimeConverter.secondsToMinutes(segment.totalTime.toDouble())} AMRAP';
     } else {
-      return segment.rounds > 0 ? '${segment.rounds} ${OlukoLocalizations.get(context, 'rounds')}' : '';
+      return _getRoundsText(segment.rounds, context);
     }
+  }
+
+  static String _getRoundsText(int segmentRounds, BuildContext context) {
+    String roundTitle = '';
+    if (segmentRounds == 1) {
+      roundTitle = '${segmentRounds} ${OlukoLocalizations.get(context, 'round')}';
+    } else if (segmentRounds > 1) {
+      roundTitle = '${segmentRounds} ${OlukoLocalizations.get(context, 'rounds')}';
+    }
+    return roundTitle;
   }
 
   static bool hasTitle(Segment segment) {

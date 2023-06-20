@@ -22,7 +22,7 @@ class _TransformationJourneyContentDetailState extends State<TransformationJourn
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-      appBar: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: getAppBar()),
+      appBar: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight * 1.5), child: getAppBar()),
       body: widget.contentToShow != null
           ? showImageDetailsView(context: context, imageUrl: widget.contentToShow.file, contentCreatedAt: widget.contentToShow.createdAt)
           : showImageDetailsView(context: context, imageUrl: widget.coachMedia.imageUrl, contentCreatedAt: widget.coachMedia.createdAt),

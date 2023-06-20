@@ -26,15 +26,20 @@ class _State extends State<PointsCardComponent> {
   }
 
   Widget _closedCard() {
-    return Stack(children: [
-      Container(
-          decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        image: DecorationImage(
-            fit: BoxFit.cover, image: widget.collectedCard.card.image != null ? CachedNetworkImageProvider(widget.collectedCard.card.image) : defaultImage),
-      )),
-      Padding(padding: const EdgeInsets.symmetric(vertical: 7), child: Column(children: [_infoIcon(), const Expanded(child: SizedBox()), _bottomSection()]))
-    ]);
+    return CachedNetworkImage(
+        imageUrl: widget.collectedCard.card.image,
+        imageBuilder: (context, imageProvider) => Stack(children: [
+              Container(
+                  decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
+              )),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 7), child: Column(children: [_infoIcon(), const Expanded(child: SizedBox()), _bottomSection()]))
+            ]));
   }
 
   Widget _openCard() {
