@@ -231,6 +231,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
     return Container(
       color: OlukoNeumorphismColors.finalGradientColorDark,
       child: CustomScrollView(
+        physics: ClampingScrollPhysics(),
         controller: _scrollController,
         slivers: [
           SliverStack(positionedAlignment: Alignment.bottomRight, children: [

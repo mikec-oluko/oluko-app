@@ -521,6 +521,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       : Container(
                           alignment: Alignment.centerLeft,
                           child: SingleChildScrollView(
+                            physics: OlukoNeumorphism.listViewPhysicsEffect,
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: _movementInfoSuccess.relatedCourses

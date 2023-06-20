@@ -63,6 +63,7 @@ class _State extends State<MovementVideosSection> {
           SizedBox(height: 6),
           Container(
               child: SingleChildScrollView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                   scrollDirection: Axis.horizontal,
                   child: MovementItemBubbles(onPressed: widget.onPressedMovement, movements: segmentMovements, width: ScreenUtils.width(context) / 1))),
           OlukoNeumorphism.isNeumorphismDesign

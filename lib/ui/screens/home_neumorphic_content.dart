@@ -159,6 +159,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         body: Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
           child: NestedScrollView(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 const SliverToBoxAdapter(
@@ -187,6 +188,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       }
                     },
                     options: CarouselOptions(
+                      scrollPhysics: OlukoNeumorphism.listViewPhysicsEffect,
                       disableCenter: true,
                       enableInfiniteScroll: false,
                       height: ScreenUtils.height(context),
@@ -505,6 +507,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           child: Container(
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             child: SingleChildScrollView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               controller: horizontalScrollController,
               scrollDirection: Axis.horizontal,
               child: Row(

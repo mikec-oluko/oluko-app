@@ -143,7 +143,7 @@ class _CourseShareViewState extends State<CourseShareView> {
             padding: const EdgeInsets.only(top: 10),
             childAspectRatio: 0.6,
             crossAxisCount: 4,
-            physics: const BouncingScrollPhysics(),
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             shrinkWrap: true,
             children: _getFriendList(favoriteUsers: favorite, friends: _friends, friendUsersList: _friendUsersList)
                 .map(

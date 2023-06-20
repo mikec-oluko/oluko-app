@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -32,6 +33,7 @@ class _State extends State<SearchResultsGrid> {
   @override
   Widget build(BuildContext context) {
     return GridView.count(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         childAspectRatio: widget.childAspectRatio,
         shrinkWrap: true,
         crossAxisCount: widget.crossAxisCount,

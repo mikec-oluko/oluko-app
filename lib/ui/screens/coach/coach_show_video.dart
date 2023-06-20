@@ -65,6 +65,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
         },
       ),
       body: SingleChildScrollView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         child: Container(
           width: ScreenUtils.width(context),
           height: widget.segmentSubmissionId == null ? ScreenUtils.height(context) : ScreenUtils.height(context) * 2,
