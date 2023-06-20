@@ -13,7 +13,7 @@ class MovementUtils {
   static Text movementTitle({String title, bool isSmallScreen = false, bool bold = true}) {
     return Text(
       title,
-      textAlign: TextAlign.center,
+      textAlign: TextAlign.start,
       style: isSmallScreen ? OlukoFonts.olukoBigFont(customFontWeight: FontWeight.bold) : OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
     );
   }
@@ -95,7 +95,8 @@ class MovementUtils {
     return movementsWithWeight;
   }
 
-  static String getWeight({MovementSubmodel currentMovement, String segmentId, int sectionIndex ,List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
+  static String getWeight(
+      {MovementSubmodel currentMovement, String segmentId, int sectionIndex, List<WeightRecord> weightRecordsList, bool useImperialSystem = false}) {
     String result;
     if (weightRecordsList.isNotEmpty) {
       if (getWeightOnRecords(weightRecordsList, currentMovement, segmentId, sectionIndex).isNotEmpty) {
@@ -133,6 +134,7 @@ class MovementUtils {
   }
 
   static Iterable<WeightRecord> getWeightOnRecords(List<WeightRecord> weightRecordsList, MovementSubmodel currentMovement, String segmentId, int sectionIndex) {
-    return weightRecordsList.where((weightRecord) => (weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId) && weightRecord.sectionIndex == sectionIndex);
+    return weightRecordsList.where(
+        (weightRecord) => (weightRecord.movementId == currentMovement.id && weightRecord.segmentId == segmentId) && weightRecord.sectionIndex == sectionIndex);
   }
 }
