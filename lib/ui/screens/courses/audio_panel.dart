@@ -76,7 +76,12 @@ class _State extends State<AudioPanel> {
           ),
           Container(
               height: 360,
-              child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, key: ValueKey(_audios.length), children: getAudioWidgets(_audios)))
+              child: ListView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  key: ValueKey(_audios.length),
+                  children: getAudioWidgets(_audios)))
         ]));
   }
 

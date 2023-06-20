@@ -23,7 +23,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
         child: ListView(
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
-          physics: const BouncingScrollPhysics(),
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
           scrollDirection: Axis.horizontal,
           children: [
             Padding(
@@ -43,6 +43,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
           width: MediaQuery.of(context).size.width,
           height: 200,
           child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               padding: EdgeInsets.zero,
@@ -59,6 +60,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
           width: MediaQuery.of(context).size.width,
           height: 120,
           child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               padding: EdgeInsets.zero,

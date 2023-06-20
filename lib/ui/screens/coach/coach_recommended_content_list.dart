@@ -44,6 +44,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               shrinkWrap: true,

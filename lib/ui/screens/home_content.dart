@@ -56,6 +56,7 @@ class _HomeContentState extends State<HomeContent> {
         showTitle: false,
       ),
       body: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         children: [

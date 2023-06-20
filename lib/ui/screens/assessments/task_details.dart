@@ -171,6 +171,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     return Container(
       color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       child: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -476,23 +477,28 @@ class _TaskDetailsState extends State<TaskDetails> {
             alignment: Alignment.centerLeft,
             child: Container(
               height: 150,
-              child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, scrollDirection: Axis.horizontal, children: [
-                GestureDetector(
-                    onTap: () {
-                      if (_controller != null) {
-                        _controller.pause();
-                      }
-                      if (taskSubmission.video != null && taskSubmission.video.url != null) {
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                            arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-                      }
-                    },
-                    child: taskResponse(
-                        TimeConverter.durationToString(
-                            Duration(milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
-                        taskSubmission?.video?.thumbUrl,
-                        taskSubmission)),
-              ]),
+              child: ListView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          if (_controller != null) {
+                            _controller.pause();
+                          }
+                          if (taskSubmission.video != null && taskSubmission.video.url != null) {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
+                                arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+                          }
+                        },
+                        child: taskResponse(
+                            TimeConverter.durationToString(
+                                Duration(milliseconds: taskSubmission == null || taskSubmission.video == null ? 0 : taskSubmission?.video?.duration)),
+                            taskSubmission?.video?.thumbUrl,
+                            taskSubmission)),
+                  ]),
             ),
           ),
         ]);

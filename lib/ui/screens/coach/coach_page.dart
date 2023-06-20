@@ -261,6 +261,7 @@ class _CoachPageState extends State<CoachPage> {
             child: Theme(
               data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent)),
               child: ListView.builder(
+                physics: OlukoNeumorphism.listViewPhysicsEffect,
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
                 itemCount: 1,

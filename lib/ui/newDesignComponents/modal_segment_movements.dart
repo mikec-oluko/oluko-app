@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class MovementsModal {
   static modalContent({BuildContext context, List<Widget> content}) {
@@ -13,6 +14,7 @@ class MovementsModal {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: ListView(
+                    physics: OlukoNeumorphism.listViewPhysicsEffect,
                     addAutomaticKeepAlives: false,
                     addRepaintBoundaries: false,
                     shrinkWrap: true,

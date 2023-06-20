@@ -45,7 +45,7 @@ class _CourseShareViewState extends State<CourseShareView> {
     return Material(
       child: Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
-          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
+          child: ListView(physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
             topAppBarBackButton(context),
             BlocConsumer<UserProgressListBloc, UserProgressListState>(
               listener: (context, userProgressListState) {

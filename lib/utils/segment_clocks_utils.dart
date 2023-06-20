@@ -244,6 +244,7 @@ class SegmentClocksUtils {
           width: ScreenUtils.width(context),
           height: ScreenUtils.height(context) * 0.4,
           child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               padding: EdgeInsets.zero,

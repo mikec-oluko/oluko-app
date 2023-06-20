@@ -124,6 +124,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           child: Stack(
                             children: [
                               ListView(
+                                physics: OlukoNeumorphism.listViewPhysicsEffect,
                                 padding: EdgeInsets.zero,
                                 addAutomaticKeepAlives: false,
                                 addRepaintBoundaries: false,
@@ -181,6 +182,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                           child: Stack(
                             children: [
                               ListView(
+                                physics: OlukoNeumorphism.listViewPhysicsEffect,
                                 addAutomaticKeepAlives: false,
                                 addRepaintBoundaries: false,
                                 children: [

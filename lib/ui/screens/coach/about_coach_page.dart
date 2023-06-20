@@ -56,6 +56,7 @@ class _AboutCoachPageState extends State<AboutCoachPage> {
             coachUploadedContent = state.coachMediaContent;
           }
           return ListView(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             addAutomaticKeepAlives: false,
             addRepaintBoundaries: false,
             padding: EdgeInsets.zero,

@@ -35,6 +35,7 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
             return Container(
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: ListView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   children: [
@@ -53,6 +54,7 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
                           height: MediaQuery.of(context).size.height / 5,
                           color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                           child: ListView(
+                            physics: OlukoNeumorphism.listViewPhysicsEffect,
                             addAutomaticKeepAlives: false,
                             addRepaintBoundaries: false,
                             clipBehavior: Clip.none,

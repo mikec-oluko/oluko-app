@@ -219,6 +219,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       color: OlukoNeumorphismColors.appBackgroundColor,
       constraints: const BoxConstraints.expand(),
       child: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         clipBehavior: Clip.none,

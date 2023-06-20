@@ -109,6 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: MediaQuery.of(context).size.width,
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: ListView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   padding: EdgeInsets.zero,

@@ -158,6 +158,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 constraints: const BoxConstraints.expand(),
                 child: ListView.builder(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   clipBehavior: Clip.none,

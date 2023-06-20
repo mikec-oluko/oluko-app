@@ -33,16 +33,27 @@ class ScheduleModalContent extends StatefulWidget {
   final VoidCallback onUpdateScheduleAction;
   final bool disableAction;
 
-  const ScheduleModalContent({this.course, this.scheduleRecommendations, this.user, this.totalClasses,
-                        this.lastCompletedClassIndex, this.firstAppInteractionAt, this.isCoachRecommendation,
-                        this.disableAction, this.blocAuth, this.blocCourseEnrollment, this.blocRecommendation, this.onEnrollAction,
-                        this.courseEnrollment, this.onUpdateScheduleAction,});
+  const ScheduleModalContent({
+    this.course,
+    this.scheduleRecommendations,
+    this.user,
+    this.totalClasses,
+    this.lastCompletedClassIndex,
+    this.firstAppInteractionAt,
+    this.isCoachRecommendation,
+    this.disableAction,
+    this.blocAuth,
+    this.blocCourseEnrollment,
+    this.blocRecommendation,
+    this.onEnrollAction,
+    this.courseEnrollment,
+    this.onUpdateScheduleAction,
+  });
   @override
   _ScheduleModalContentState createState() => _ScheduleModalContentState();
 }
 
 class _ScheduleModalContentState extends State<ScheduleModalContent> {
-
   final SoundPlayer _soundPlayer = SoundPlayer();
   List<DateTime> scheduledDates = [];
   List<String> weekDays = [];
@@ -51,14 +62,12 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   void initState() {
     super.initState();
     WeekDaysHelper.reinitializeSelectedWeekDays();
-    if (widget.courseEnrollment != null &&
-        widget.courseEnrollment.weekDays != null &&
-        widget.courseEnrollment.weekDays.isNotEmpty){
-        weekDays = widget.courseEnrollment.weekDays;
-        WeekDaysHelper.setSelectedWeekdays(weekDays);
-        scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, widget.totalClasses);
+    if (widget.courseEnrollment != null && widget.courseEnrollment.weekDays != null && widget.courseEnrollment.weekDays.isNotEmpty) {
+      weekDays = widget.courseEnrollment.weekDays;
+      WeekDaysHelper.setSelectedWeekdays(weekDays);
+      scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, widget.totalClasses);
     }
-    if (widget.course != null){
+    if (widget.course != null) {
       _soundPlayer.init(SessionCategory.playback);
     }
   }
@@ -79,157 +88,160 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
     super.dispose();
   }
 
-  Widget _showScheduleDialog(BuildContext context){
+  Widget _showScheduleDialog(BuildContext context) {
     return Container(
-            height: widget.scheduleRecommendations?.isEmpty ?? true ? 430 : 485,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
-              color:OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      height: widget.scheduleRecommendations?.isEmpty ?? true ? 430 : 485,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _scheduleTitle(),
+            const SizedBox(height: 10),
+            _scheduleNotes(),
+            _weekDaysCheckboxContainer(),
+            const OlukoNeumorphicDivider(
+              isFadeOut: true,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _scheduleTitle(),
-                  const SizedBox(height: 10),
-                  _scheduleNotes(),
-                  _weekDaysCheckboxContainer(),
-                  const OlukoNeumorphicDivider(isFadeOut: true,),
-                  _scheduleActions(),
-                ],
-              ),
-            ),
-          );
+            _scheduleActions(),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _scheduleTitle(){
+  Widget _scheduleTitle() {
     return Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              OlukoLocalizations.get(context, 'setYourSchedule'),
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
-            ),
-          );
+      alignment: Alignment.centerLeft,
+      child: Text(
+        OlukoLocalizations.get(context, 'setYourSchedule'),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+      ),
+    );
   }
 
   Widget _scheduleNotes() {
-    if (widget.scheduleRecommendations?.isEmpty ?? true){
+    if (widget.scheduleRecommendations?.isEmpty ?? true) {
       return const SizedBox.shrink();
     }
     return Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-                color:OlukoColors.grayColorFadeTop,
-              ),
-              child: Text(
-                widget.scheduleRecommendations,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: OlukoColors.white),
-              ),
-            ),
-          );
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          color: OlukoColors.grayColorFadeTop,
+        ),
+        child: Text(
+          widget.scheduleRecommendations,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: OlukoColors.white),
+        ),
+      ),
+    );
   }
 
-  Widget _weekDaysCheckboxContainer(){
+  Widget _weekDaysCheckboxContainer() {
     return Expanded(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: ListView.builder(
-              itemCount: WeekDaysHelper.weekdaysList.length,
-              itemBuilder: (context, index) {
-                return _weekdaysCheckboxList(context, index);
-              },
-            ),
-          ),
-        );
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: ListView.builder(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
+          itemCount: WeekDaysHelper.weekdaysList.length,
+          itemBuilder: (context, index) {
+            return _weekdaysCheckboxList(context, index);
+          },
+        ),
+      ),
+    );
   }
 
-  Widget _weekdaysCheckboxList(BuildContext context, int index){
+  Widget _weekdaysCheckboxList(BuildContext context, int index) {
     return SizedBox(
-            height: 35,
-            child: Theme(
-              data: ThemeData(
-                unselectedWidgetColor: OlukoColors.grayColor,
+      height: 35,
+      child: Theme(
+        data: ThemeData(
+          unselectedWidgetColor: OlukoColors.grayColor,
+        ),
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return CheckboxListTile(
+              checkColor: OlukoColors.black,
+              activeColor: OlukoColors.primary,
+              contentPadding: EdgeInsets.zero,
+              title: Transform.translate(
+                offset: const Offset(-10, 0),
+                child: Text(
+                  OlukoLocalizations.get(context, WeekDaysHelper.weekdaysList[index]['name'].toString()),
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
-              child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return CheckboxListTile(
-                    checkColor: OlukoColors.black,
-                    activeColor: OlukoColors.primary,
-                    contentPadding: EdgeInsets.zero,
-                    title: Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Text(
-                        OlukoLocalizations.get(context, WeekDaysHelper.weekdaysList[index]['name'].toString()),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: WeekDaysHelper.selectedWeekdays[index]['selected'] as bool,
-                    onChanged: (value) {
-                      setScheduledDates(index, value);
-                    },
-                    side: const BorderSide(
-                        color: OlukoColors.grayColor,
-                    ),
-                    checkboxShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  );
+              controlAffinity: ListTileControlAffinity.leading,
+              value: WeekDaysHelper.selectedWeekdays[index]['selected'] as bool,
+              onChanged: (value) {
+                setScheduledDates(index, value);
+              },
+              side: const BorderSide(
+                color: OlukoColors.grayColor,
+              ),
+              checkboxShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(3),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _scheduleActions() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SizedBox(
+              width: 80,
+              child: GestureDetector(
+                onTap: () {
+                  skipSchedule(context);
+                },
+                child: Text(
+                  OlukoLocalizations.get(context, widget.courseEnrollment == null ? 'skip' : 'cancel'),
+                  style: OlukoFonts.olukoBigFont(
+                    customFontWeight: FontWeight.w600,
+                    customColor: OlukoColors.grayColor,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 150,
+              child: OlukoNeumorphicPrimaryButton(
+                isExpanded: false,
+                thinPadding: true,
+                title: OlukoLocalizations.get(context, 'save'),
+                onPressed: () {
+                  scheduleCourse(context);
                 },
               ),
             ),
-          );
-  }
-
-  Widget _scheduleActions(){
-    return Padding(
-            padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: 80,
-                    child: GestureDetector(
-                      onTap: () {
-                        skipSchedule(context);
-                      },
-                      child: Text(
-                        OlukoLocalizations.get(context, widget.courseEnrollment == null ? 'skip' : 'cancel'),
-                        style: OlukoFonts.olukoBigFont(
-                          customFontWeight: FontWeight.w600,
-                          customColor: OlukoColors.grayColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child: OlukoNeumorphicPrimaryButton(
-                      isExpanded: false,
-                      thinPadding: true,
-                      title: OlukoLocalizations.get(context, 'save'),
-                      onPressed: () {
-                        scheduleCourse(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> scheduleCourse(BuildContext context) async {
-    if (widget.courseEnrollment == null){
+    if (widget.courseEnrollment == null) {
       enrollCourse(context);
-    }else{
+    } else {
       updateSchedule(context);
     }
     Navigator.pop(context);
@@ -250,7 +262,7 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   }
 
   Future<void> skipSchedule(BuildContext context) async {
-    if (widget.courseEnrollment == null){
+    if (widget.courseEnrollment == null) {
       widget.course.scheduledDates = [];
       widget.course.weekDays = [];
       enrollCourse(context);
@@ -265,23 +277,17 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
     widget.onUpdateScheduleAction();
   }
 
-  void setScheduledDates(int index, bool value){
+  void setScheduledDates(int index, bool value) {
     setState(() {
       WeekDaysHelper.selectedWeekdays[index]['selected'] = value;
-      if (widget.courseEnrollment != null){
-        weekDays = WeekDaysHelper.selectedWeekdays
-                            .where((item) => item['selected'] as bool == true)
-                            .map((item) => item['day'].toString())
-                            .toList();
+      if (widget.courseEnrollment != null) {
+        weekDays = WeekDaysHelper.selectedWeekdays.where((item) => item['selected'] as bool == true).map((item) => item['day'].toString()).toList();
         scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, widget.totalClasses);
-      }else{
-        widget.course.weekDays = WeekDaysHelper.selectedWeekdays
-                            .where((item) => item['selected'] as bool == true)
-                            .map((item) => item['day'].toString())
-                            .toList();
+      } else {
+        widget.course.weekDays =
+            WeekDaysHelper.selectedWeekdays.where((item) => item['selected'] as bool == true).map((item) => item['day'].toString()).toList();
         widget.course.scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, widget.totalClasses);
       }
     });
   }
-
 }
