@@ -59,6 +59,8 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
         scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, widget.totalClasses);
     }
     if (widget.course != null){
+      widget.course.weekDays = [];
+      widget.course.scheduledDates = [];
       _soundPlayer.init(SessionCategory.playback);
     }
   }
