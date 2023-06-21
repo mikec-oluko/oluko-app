@@ -210,25 +210,35 @@ class SegmentClocksUtils {
             BlocProvider.of<NotificationSettingsBloc>(context)
                 .update(NotificationSettings(segmentClocksSounds: !NotificationSettingsBloc.notificationSettings.segmentClocksSounds));
           },
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Image.asset(
-                  OlukoNeumorphism.isNeumorphismDesign ? 'assets/courses/audio_icon_neumorphic.png' : 'assets/courses/audio_icon.png',
-                  scale: 4,
-                ),
-              ),
-              if (audioOff)
-                SizedBox(
-                  width: 19,
-                  height: 19,
-                  child: Image.asset(
-                    'assets/utils/diagonal.png',
-                    color: Colors.white,
+          child: Container(
+            width: 50,
+            height: 50,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    child: Image.asset(
+                      OlukoNeumorphism.isNeumorphismDesign ? 'assets/courses/audio_icon_neumorphic.png' : 'assets/courses/audio_icon.png',
+                      scale: 4,
+                    ),
                   ),
-                ),
-            ],
+                  if (audioOff)
+                    SizedBox(
+                      width: 19,
+                      height: 19,
+                      child: Image.asset(
+                        'assets/utils/diagonal.png',
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         );
       },
