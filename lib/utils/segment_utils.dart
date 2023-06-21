@@ -191,10 +191,13 @@ class SegmentUtils {
             bool hasMultipleMovements = segment.sections[sectionIndex].movements.length > 1;
             if (hasMultipleMovements) {
               MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
+
+              int sectionValue = _getEntryValue(segment, sectionIndex);
+
               entries.add(TimerEntry(
                   movement: movementSubmodel,
                   parameter: movementSubmodel.parameter == null ? ParameterEnum.reps : movementSubmodel.parameter,
-                  value: movementSubmodel.value == null ? 5 : movementSubmodel.value,
+                  value: sectionValue,
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
@@ -221,6 +224,23 @@ class SegmentUtils {
     }
     _addTransitionForRepsToDuration(entries);
     return entries;
+  }
+
+  static int _getEntryValue(Segment segment, int sectionIndex) {
+    var value = 0;
+    final MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
+
+    if (movementSubmodel.value == null) {
+      value = 5;
+    } else if (movementSubmodel.parameter == ParameterEnum.duration) {
+      for (var m = 0; m < segment.sections[sectionIndex].movements.length; m++) {
+        value += segment.sections[sectionIndex].movements[m].value;
+      }
+    } else {
+      value = movementSubmodel.value;
+    }
+
+    return value;
   }
 
   static void _addTransitionForRepsToDuration(List<TimerEntry> entries) {
