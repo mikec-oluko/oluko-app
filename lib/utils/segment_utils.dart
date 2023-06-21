@@ -66,7 +66,7 @@ class SegmentUtils {
     if (isEMOM(segment)) {
       return getEMOMTitle(segment, context);
     } else if (isAMRAP(segment)) {
-      return '${TimeConverter.secondsToMinutes(segment.totalTime.toDouble())} ${OlukoLocalizations.get(context, 'minutes').toLowerCase()} AMRAP';
+      return '${TimeConverter.secondsToMinutes(segment.totalTime.toDouble())} AMRAP';
     } else {
       return _getRoundsText(segment.rounds, context);
     }

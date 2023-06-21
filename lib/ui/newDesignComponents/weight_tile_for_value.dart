@@ -4,6 +4,7 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/weight_record.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class WeightTileForValue extends StatefulWidget {
@@ -13,6 +14,7 @@ class WeightTileForValue extends StatefulWidget {
   final String segmentId;
   final bool showWeightRecommendation;
   final int percentageOfMaxWeight;
+  final int sectionIndex;
   final double maxWeightValue;
   const WeightTileForValue(
       {Key key,
@@ -21,6 +23,7 @@ class WeightTileForValue extends StatefulWidget {
       this.percentageOfMaxWeight,
       this.maxWeightValue,
       this.segmentId,
+      this.sectionIndex,
       this.showWeightRecommendation = true,
       this.useImperialSystem = false})
       : super(key: key);
@@ -38,7 +41,11 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
     return ListTile(
       trailing: getTrailingContent(movement),
-      title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+      title: SizedBox(
+        width: ScreenUtils.width(context) / 2,
+        child: Text(SegmentUtils.getLabel(movement),
+            maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+      ),
       subtitle: canShowRecommendationSubtitle(movement)
           ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
           : const SizedBox.shrink(),
@@ -47,19 +54,27 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   bool canShowRecommendationSubtitle(MovementSubmodel movement) => movement.percentOfMaxWeight != null && movement.percentOfMaxWeight != 0;
 
-  Container weightContainerForRecommendationOrRecent(MovementSubmodel movement) {
+  Widget weightContainerForRecommendationOrRecent(MovementSubmodel movement) {
+    if (widget.showWeightRecommendation) {
+      if ((widget.percentageOfMaxWeight != null && widget.percentageOfMaxWeight != 0) && widget.maxWeightValue != null) {
+        return recordContainer(_percentageOfMaxWeightForMovement(
+            userMaxWeight: MovementUtils.getMaxWeightByImperialSystemUse(maxWeight: widget.maxWeightValue, useImperialSystem: widget.useImperialSystem),
+            percentageOfMaxWeight: widget.percentageOfMaxWeight));
+      } else {
+        return const SizedBox.shrink();
+      }
+    } else {
+      return recordContainer(_userWeightRecord(movement));
+    }
+  }
+
+  Container recordContainer(Widget childContent) {
     return Container(
       height: 40,
       decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: widget.showWeightRecommendation
-            ? widget.percentageOfMaxWeight != null && widget.maxWeightValue != null
-                ? _percentageOfMaxWeightForMovement(
-                    userMaxWeight: MovementUtils.getMaxWeightByImperialSystemUse(maxWeight: widget.maxWeightValue, useImperialSystem: widget.useImperialSystem),
-                    percentageOfMaxWeight: widget.percentageOfMaxWeight)
-                : const SizedBox.shrink()
-            : _userWeightRecord(movement),
+        child: childContent,
       ),
     );
   }
@@ -67,6 +82,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   Widget _getAlertCircleWithTooltip() {
     const buttonIcon = '!';
     return Tooltip(
+      showDuration: const Duration(seconds: 20),
       triggerMode: TooltipTriggerMode.tap,
       richMessage: WidgetSpan(
           alignment: PlaceholderAlignment.baseline,
@@ -121,6 +137,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
               ? double.parse(MovementUtils.getWeight(
                       currentMovement: movement,
                       segmentId: widget.segmentId,
+                      sectionIndex: widget.sectionIndex,
                       weightRecordsList: widget.weightRecords,
                       useImperialSystem: widget.useImperialSystem))
                   .round()
@@ -173,7 +190,11 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
       }
     } else {
       if (MovementUtils.getWeight(
-              currentMovement: movement, segmentId: widget.segmentId, weightRecordsList: widget.weightRecords, useImperialSystem: widget.useImperialSystem) !=
+              currentMovement: movement,
+              segmentId: widget.segmentId,
+              sectionIndex: widget.sectionIndex,
+              weightRecordsList: widget.weightRecords,
+              useImperialSystem: widget.useImperialSystem) !=
           null) {
         return weightContainerForRecommendationOrRecent(movement);
       } else {
