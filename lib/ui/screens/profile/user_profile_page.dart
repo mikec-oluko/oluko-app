@@ -160,22 +160,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
       extendBody: true,
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: !OlukoNeumorphism.isNeumorphismDesign,
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        leading: OlukoNeumorphism.isNeumorphismDesign
-            ? const SizedBox.shrink()
-            : IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-      ),
       body: _scaffoldBody(profileViewContext, userRequested),
     );
   }
@@ -488,8 +472,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: MediaQuery.of(context).size.height / 10),
+          Positioned(
+              top: MediaQuery.of(context).size.height / 10,
+              left: 15,
               child: OlukoNeumorphicCircleButton(
                 onPressed: () {
                   Navigator.pop(context);
