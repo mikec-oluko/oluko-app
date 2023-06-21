@@ -82,6 +82,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   Widget _getAlertCircleWithTooltip() {
     const buttonIcon = '!';
     return Tooltip(
+      showDuration: const Duration(seconds: 20),
       triggerMode: TooltipTriggerMode.tap,
       richMessage: WidgetSpan(
           alignment: PlaceholderAlignment.baseline,
