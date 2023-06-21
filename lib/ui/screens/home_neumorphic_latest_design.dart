@@ -218,7 +218,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
     hasScheduledCourses = true;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 80, 20, 5),
+      padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
       child: Column(
         children: [
           Align(

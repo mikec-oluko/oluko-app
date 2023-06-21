@@ -229,6 +229,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   CustomScrollView _getCourseContentView(int index, BuildContext context) {
     return CustomScrollView(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
       slivers: <Widget>[
         SliverStack(
@@ -371,43 +372,36 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     BlocProvider.of<VideoBloc>(context).getAspectRatio(_activeCourses[index].video);
     return SliverList(
       delegate: SliverChildListDelegate([
-        GestureDetector(
-          onLongPress: () => Navigator.pushNamed(
-            context,
-            routeLabels[RouteEnum.homeLongPress],
-            arguments: {'courseEnrollments': widget.courseEnrollments, 'index': index, 'currentUser': widget.authState.user},
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: VisibilityDetector(
-              key: Key('video$index'),
-              onVisibilityChanged: (VisibilityInfo info) {
-                if (info.visibleFraction < 0.1 && mounted && courseIndex == index && !_isVideoPlaying && courseIndex <= _activeCourses.length) {
-                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
-                } else {
-                  if (mounted) {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
-                  }
+        Padding(
+          padding: const EdgeInsets.only(bottom: 3),
+          child: VisibilityDetector(
+            key: Key('video$index'),
+            onVisibilityChanged: (VisibilityInfo info) {
+              if (info.visibleFraction < 0.1 && mounted && courseIndex == index && !_isVideoPlaying && courseIndex <= _activeCourses.length) {
+                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+              } else {
+                if (mounted) {
+                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
                 }
-              },
-              child: OlukoVideoPreview(
-                showBackButton: true,
-                image: _activeCourses[index].image,
-                video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[index].videoHls, videoUrl: _activeCourses[index].video),
-                onBackPressed: () => Navigator.pop(context),
-                onPlay: () => isVideoPlaying(),
-                videoVisibilty: _isVideoPlaying,
-                fromHomeContent: widget.isFromHome,
-                bottomWidgets: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      _activeCourses[index].name,
-                      style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
-                    ),
+              }
+            },
+            child: OlukoVideoPreview(
+              showBackButton: true,
+              image: _activeCourses[index].image,
+              video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[index].videoHls, videoUrl: _activeCourses[index].video),
+              onBackPressed: () => Navigator.pop(context),
+              onPlay: () => isVideoPlaying(),
+              videoVisibilty: _isVideoPlaying,
+              fromHomeContent: widget.isFromHome,
+              bottomWidgets: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Text(
+                    _activeCourses[index].name,
+                    style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
