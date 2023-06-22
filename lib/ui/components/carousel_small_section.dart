@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_user.dart';
@@ -38,7 +40,7 @@ class _State extends State<CarouselSmallSection> {
               ),
               const Spacer(),
               Padding(
-                padding: const EdgeInsets.only(top: 3.0, bottom: 10),
+                padding: EdgeInsets.only(top: 3.0, bottom: Platform.isAndroid ? 10 : 0),
                 child: GestureDetector(
                   onTap: () {
                     goToRoute(widget.routeToGo);
