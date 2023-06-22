@@ -21,32 +21,52 @@ class ScheduleUtils {
   }
 
   static List<WorkoutSchedule> getThisWeekScheduledWorkouts(BuildContext context, List<CourseEnrollment> courseEnrollmentList){
-    final List<DateTime> thisWeekDates = WeekDaysHelper.getOneWeekDatesFromNow();
     final List<WorkoutSchedule> workoutSchedules = [];
-    for (final courseEnrollment in courseEnrollmentList) {
-      if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
-        workoutSchedules.addAll(courseEnrollment.classes.where((classItem) =>
-          classItem.completedAt == null &&
-          thisWeekDates.any((weekDay) =>
-            classItem.scheduledDate?.toDate()?.year == weekDay.year &&
-            classItem.scheduledDate?.toDate()?.month == weekDay.month &&
-            classItem.scheduledDate?.toDate()?.day == weekDay.day
-          )
-        ).map((workoutClassDay) {
-          final DateTime scheduledDate = workoutClassDay.scheduledDate.toDate();
-          final int classIndex = courseEnrollment.classes.indexOf(workoutClassDay);
-          return WorkoutSchedule(
-            courseEnrollment: courseEnrollment,
-            className: "${courseEnrollment.course.name} ${OlukoLocalizations.get(context, 'class')} ${classIndex + 1}",
-            classIndex: classIndex,
-            scheduledDate: scheduledDate,
-            enrolledDate: courseEnrollment.createdAt?.toDate() ?? DateTime.now(),
-            day: OlukoLocalizations.get(context, DateFormat('EEEE').format(scheduledDate).toLowerCase())
-          );
-        }).toList());
+    final DateTime nextScheduledDate = getNextScheduledDate(courseEnrollmentList);
+    if (nextScheduledDate != null){
+      final List<DateTime> nextUpcomingWeekDates = WeekDaysHelper.getOneWeekDatesFromNextScheduledDate(nextScheduledDate);
+      for (final courseEnrollment in courseEnrollmentList) {
+        if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
+          workoutSchedules.addAll(courseEnrollment.classes.where((classItem) =>
+            classItem.completedAt == null &&
+            nextUpcomingWeekDates.any((weekDay) =>
+              classItem.scheduledDate?.toDate()?.year == weekDay.year &&
+              classItem.scheduledDate?.toDate()?.month == weekDay.month &&
+              classItem.scheduledDate?.toDate()?.day == weekDay.day
+            )
+          ).map((workoutClassDay) {
+            final DateTime scheduledDate = workoutClassDay.scheduledDate.toDate();
+            final int classIndex = courseEnrollment.classes.indexOf(workoutClassDay);
+            return WorkoutSchedule(
+              courseEnrollment: courseEnrollment,
+              className: "${courseEnrollment.course.name} ${OlukoLocalizations.get(context, 'class')} ${classIndex + 1}",
+              classIndex: classIndex,
+              scheduledDate: scheduledDate,
+              enrolledDate: courseEnrollment.createdAt?.toDate() ?? DateTime.now(),
+              day: OlukoLocalizations.get(context, DateFormat('EEEE').format(scheduledDate).toLowerCase())
+            );
+          }).toList());
+        }
       }
     }
     return workoutSchedules;
+  }
+
+  static DateTime getNextScheduledDate(List<CourseEnrollment> courseEnrollmentList){
+    DateTime earliestScheduledDate;
+    for (final courseEnrollment in courseEnrollmentList) {
+      if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
+        for (final classItem in courseEnrollment.classes) {
+          if (classItem.scheduledDate != null){
+            final DateTime scheduledDate = classItem.scheduledDate.toDate();
+            if (earliestScheduledDate == null || scheduledDate.isBefore(earliestScheduledDate)) {
+              earliestScheduledDate = scheduledDate;
+            }
+          }
+        }
+      }
+    }
+    return earliestScheduledDate;
   }
 
   static List<WorkoutDay> getScheduledClassesGroupedByDay(List<WorkoutSchedule> workoutSchedules){
@@ -102,7 +122,8 @@ class ScheduleUtils {
     final int remainingClassesAmount = classes.where((classItem) => classes.indexOf(classItem) > classIndex &&
                                                                     classItem.completedAt == null).length;
     if (remainingClassesAmount > 0){
-      final List<DateTime> scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, remainingClassesAmount, weekDays: weekDays);
+      final DateTime scheduledDatesFrom = DateTime.now().add(const Duration(days: 1));
+      final List<DateTime> scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, remainingClassesAmount, weekDays: weekDays, startingDate: scheduledDatesFrom);
       int scheduledDatesIndex = 0;
       for (int i = 0; i < classes.length; i++) {
         if (weekDays.isNotEmpty){
