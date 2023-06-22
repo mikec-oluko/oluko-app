@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,7 +57,7 @@ class _State extends State<ChallengesCard> {
 
   Column _unlockedCardByPreviousSegment(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _cardSpacer,
+      if (Platform.isAndroid) const SizedBox(height: 5) else _cardSpacer,
       if (widget.segmentChallenge.previousSegmentFinish) _unlockedCard(context) else _lockedCard(context),
       if (needAudioComponent) _audioElementForChallengeCard(context)
     ]);

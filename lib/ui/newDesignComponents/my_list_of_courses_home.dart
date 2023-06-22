@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -32,19 +34,20 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
 
   Widget _myListOfCourses() {
     return CarouselSection(
-        optionLabel: OlukoLocalizations.get(context, 'viewAll'),
-        onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
-            arguments: {'courses': widget.myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
-        title: OlukoLocalizations.get(context, 'myList'),
-        height: 230,
-        children: widget.myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(widget.myListOfCourses) : []);
+      optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+      onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+          arguments: {'courses': widget.myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
+      title: OlukoLocalizations.get(context, 'myList'),
+      height: Platform.isAndroid ? 195 : 220,
+      children: widget.myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(widget.myListOfCourses) : [],
+    );
   }
 
   List<Widget> _getLikedCoursesList(Map<CourseCategory, List<Course>> myListOfCourses) {
     if (myListOfCourses.values.toList().isNotEmpty) {
       return myListOfCourses.values.toList().first.map((courseElement) {
         return Padding(
-          padding: const EdgeInsets.only(right: 8.0),
+          padding: const EdgeInsets.only(right: 8.0, left: 5),
           child: GestureDetector(
             onTap: () async {
               if (widget.beforeNavigation != null) widget.beforeNavigation(courseElement.id);
@@ -66,12 +69,7 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
   CourseCard _getCourseCard(Widget image,
       {double progress, double width, double height, List<UserResponse> userRecommendations, bool friendRecommended = false}) {
     return CourseCard(
-        width: width,
-        height: height,
-        imageCover: image,
-        progress: progress,
-        userRecommendations: userRecommendations,
-        friendRecommended: friendRecommended);
+        width: width, height: height, imageCover: image, progress: progress, userRecommendations: userRecommendations, friendRecommended: friendRecommended);
   }
 
   int _cardsToShow() {

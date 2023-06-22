@@ -28,7 +28,7 @@ class _State extends State<CarouselSmallSection> {
       width: MediaQuery.of(context).size.width,
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
+          padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 12 : 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -36,11 +36,11 @@ class _State extends State<CarouselSmallSection> {
                 padding: const EdgeInsets.only(left: 10),
                 child: TitleBody(widget.title),
               ),
-              Spacer(),
+              const Spacer(),
               Padding(
-                padding: const EdgeInsets.only(top: 3.0),
-                child: TextButton(
-                  onPressed: () {
+                padding: const EdgeInsets.only(top: 3.0, bottom: 10),
+                child: GestureDetector(
+                  onTap: () {
                     goToRoute(widget.routeToGo);
                   },
                   child: Text(
