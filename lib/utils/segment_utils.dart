@@ -233,7 +233,7 @@ class SegmentUtils {
     if (movementSubmodel.value == null) {
       value = 5;
     } else if (movementSubmodel.parameter == ParameterEnum.duration) {
-      for (var m = 0; m < segment.sections[sectionIndex].movements.length; m++) {
+      for (var m = 0; m < segment.sections[sectionIndex].movements?.length; m++) {
         value += segment.sections[sectionIndex].movements[m].value;
       }
     } else {
