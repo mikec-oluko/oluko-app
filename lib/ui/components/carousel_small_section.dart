@@ -63,7 +63,7 @@ class _State extends State<CarouselSmallSection> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
+          padding: const EdgeInsets.only(top: 5, bottom: 10, left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0, right: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
           child: Container(
               height: 120,
               child: Align(

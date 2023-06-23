@@ -43,11 +43,11 @@ class ChallengesCard extends StatefulWidget {
 class _State extends State<ChallengesCard> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   Widget challengeCardWidget = const SizedBox.shrink();
-  final Widget _cardSpacer = const SizedBox(height: 10);
+  final Widget _cardSpacer = const SizedBox(height: 5);
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: 5, top: 5),
       child: _challengeCard(context),
     );
     ;

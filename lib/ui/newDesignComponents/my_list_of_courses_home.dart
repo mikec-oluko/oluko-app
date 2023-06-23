@@ -29,16 +29,17 @@ class _MyListOfCoursesState extends State<MyListOfCourses> {
 
   @override
   Widget build(BuildContext context) {
-    return _myListOfCourses();
+    final double carouselSectionHeight = CourseUtils.getCarouselSectionHeight(context);
+    return _myListOfCourses(carouselSectionHeight);
   }
 
-  Widget _myListOfCourses() {
+  Widget _myListOfCourses(double carouselSectionHeight) {
     return CarouselSection(
       optionLabel: OlukoLocalizations.get(context, 'viewAll'),
       onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
           arguments: {'courses': widget.myListOfCourses.values.toList().first, 'title': OlukoLocalizations.get(context, 'myList')}),
       title: OlukoLocalizations.get(context, 'myList'),
-      height: Platform.isAndroid ? 195 : 220,
+      height: Platform.isAndroid ? carouselSectionHeight -20 : 220,
       children: widget.myListOfCourses.values.isNotEmpty ? _getLikedCoursesList(widget.myListOfCourses) : [],
     );
   }
