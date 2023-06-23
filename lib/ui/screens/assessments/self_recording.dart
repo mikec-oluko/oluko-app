@@ -139,6 +139,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: ListView(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
           shrinkWrap: true,

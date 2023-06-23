@@ -89,6 +89,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         ? Scrollbar(
             isAlwaysShown: true,
             child: ListView.builder(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _segmentSectionAndMovementDetails(showRecommendation).isNotEmpty ? _segmentSectionAndMovementDetails(showRecommendation).length : 1,
@@ -208,13 +209,15 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
             _createNewWeightRecord(section, movement);
             _listOfControllers.add(TextEditingController());
             _listOfNodes.add(FocusNode());
-            contentToReturn.add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex]));
+            contentToReturn
+                .add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex], getSectionIndex(section)));
 
             controllersIndex++;
           } else {
             contentToReturn.add(WeightTileForValue(
               movement: movement,
               segmentId: widget.segmentId,
+              sectionIndex: getSectionIndex(section),
               showWeightRecommendation: showWeightRecommendation,
               percentageOfMaxWeight: movement.percentOfMaxWeight,
               maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) == null
@@ -231,14 +234,21 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     });
   }
 
-  ListTile _defaultMovementTile(MovementSubmodel movement) {
-    return ListTile(
-      title: SegmentUtils.getTextWidget(SegmentUtils.getLabel(movement), OlukoColors.grayColor),
+  Widget _defaultMovementTile(MovementSubmodel movement) {
+    return Container(
+      height: 40,
+      child: ListTile(
+        title: SizedBox(
+          width: ScreenUtils.width(context) / 2,
+          child: Text(SegmentUtils.getLabel(movement),
+              maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+        ),
+      ),
     );
   }
 
-  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes) {
-    final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id);
+  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes, int sectionIndex) {
+    final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id, sectionIndex);
     return WeightTileWithInput(
       movement: movement,
       currentTextEditingController: textController,
@@ -290,7 +300,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   double get _passToKilogramsUnit => 2.20462;
 
-  WorkoutWeight _getCurrentMovementAndWeight(String movementId) => listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId).first;
+  WorkoutWeight _getCurrentMovementAndWeight(String movementId, int sectionIndex) =>
+      listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId && weightRecord.sectionIndex == sectionIndex).first;
 
   int getMovementIndex(SectionSubmodel section, MovementSubmodel movement) => widget.sectionsFromSegment[getSectionIndex(section)].movements.indexOf(movement);
 
@@ -334,7 +345,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         movementsWeights[movementId] = MovementUtils.kilogramToLbs(int.parse(textEditingController.text));
       }
     }
-
     currentMovementAndWeight.weight = movementsWeights[movementId];
 
     widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);

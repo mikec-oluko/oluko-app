@@ -29,6 +29,7 @@ Widget _dialogContent(BuildContext context, List<Widget> content) {
           BlocProvider.value(value: BlocProvider.of<TransformationJourneyBloc>(context))
         ],
         child: ListView(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
           shrinkWrap: true,

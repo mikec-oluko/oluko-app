@@ -58,7 +58,11 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
       return Container(
           height: ScreenUtils.height(context) / 1.8,
           width: ScreenUtils.width(context),
-          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: getPRWidgets(personalRecords)));
+          child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              children: getPRWidgets(personalRecords)));
     } else {
       return Padding(
         padding: const EdgeInsets.only(bottom: 20, top: 10),

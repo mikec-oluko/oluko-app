@@ -49,7 +49,9 @@ class _State extends State<PointsCardComponent> {
           Align(alignment: AlignmentDirectional.topEnd, child: Padding(padding: const EdgeInsets.only(top: 8, right: 6), child: _closeButton())),
           Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 10, right: 25),
-              child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_getTitle(), _getDescription()]))),
+              child: SingleChildScrollView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_getTitle(), _getDescription()]))),
         ]));
   }
 

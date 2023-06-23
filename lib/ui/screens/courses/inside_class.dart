@@ -373,6 +373,7 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget classInfoSection() {
     return ListView.builder(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       padding: EdgeInsets.zero,
       itemCount: 1,
       addAutomaticKeepAlives: false,

@@ -145,7 +145,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                 return Container(
                   width: MediaQuery.of(context).size.width,
                   color: OlukoNeumorphismColors.appBackgroundColor,
-                  child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: segmentCard(videoContent: filteredContent)),
+                  child: ListView(
+                      physics: OlukoNeumorphism.listViewPhysicsEffect,
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
+                      children: segmentCard(videoContent: filteredContent)),
                 );
               },
             ),

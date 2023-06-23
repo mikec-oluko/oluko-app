@@ -93,6 +93,7 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
           children: [

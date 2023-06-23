@@ -75,6 +75,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         showTitle: true,
       ),
       body: SingleChildScrollView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         child: Container(
             width: MediaQuery.of(context).size.width,
             color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,

@@ -216,6 +216,7 @@ class _State extends State<ClocksLowerSection> {
     return SizedBox(
         height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 6.4 : ScreenUtils.height(context) / 5.2,
         child: ListView(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             addAutomaticKeepAlives: false,
             addRepaintBoundaries: false,
             padding: EdgeInsets.zero,

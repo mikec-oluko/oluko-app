@@ -82,7 +82,7 @@ class _CompletedClassState extends State<CompletedClass> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
+              child: ListView(physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
                 getClassCard(),
                 SizedBox(height: 20),
                 getCompletedSegments(),

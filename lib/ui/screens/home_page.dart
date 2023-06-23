@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               onWillPop: () => AppNavigator.onWillPop(context),
                               child: OrientationBuilder(builder: (context, orientation) {
                                 return ListView(
+                                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                                   addAutomaticKeepAlives: false,
                                   addRepaintBoundaries: false,
                                   shrinkWrap: true,
@@ -132,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Padding(
       padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         children: [
           ListView.builder(
               addAutomaticKeepAlives: false,

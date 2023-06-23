@@ -54,7 +54,10 @@ class _ModalCardsState extends State<ModalCards> {
                             color: Colors.white,
                             scale: 5,
                           )),
-                      SizedBox(height: MediaQuery.of(context).size.height / 2.05, width: MediaQuery.of(context).size.width - 50, child: _cardsGrid(pointsCardState.pointsCards))
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height / 2.05,
+                          width: MediaQuery.of(context).size.width - 50,
+                          child: _cardsGrid(pointsCardState.pointsCards))
                     ],
                   );
                 } else {
@@ -78,6 +81,7 @@ class _ModalCardsState extends State<ModalCards> {
 
   Widget _cardsGrid(List<CollectedCard> cardsList) {
     return GridView.count(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         padding: const EdgeInsets.only(top: 20),
         mainAxisSpacing: 20,
         crossAxisCount: 2,

@@ -52,7 +52,13 @@ class _State extends State<ChallengeCoursesPanelContent> {
     return Container(
         height: (ScreenUtils.height(context) / 4) * 2.36,
         width: ScreenUtils.width(context),
-        child: GridView.count(childAspectRatio: 3.3 / 5, mainAxisSpacing: 15, crossAxisSpacing: 15, crossAxisCount: 3, children: courseCards));
+        child: GridView.count(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
+            childAspectRatio: 3.3 / 5,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            crossAxisCount: 3,
+            children: courseCards));
   }
 
   Widget getCourseCard(List<ChallengeNavigation> challengeNavigations) {

@@ -35,9 +35,7 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
       width: widget.width,
       child: !widget.showAsGrid
           ? scrollableBubbles(
-              bubbleName: widget.bubbleName,
-              viewDetailsScreen: widget.viewDetailsScreen,
-              referenceMovementsSection: widget.referenceMovementsSection)
+              bubbleName: widget.bubbleName, viewDetailsScreen: widget.viewDetailsScreen, referenceMovementsSection: widget.referenceMovementsSection)
           : buildBubbleGrid(bubbleName: widget.bubbleName),
     );
   }
@@ -54,10 +52,8 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
       child: !viewDetailsScreen
           ? SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: buildBubbles(
-                  bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection))
-          : buildBubbles(
-              bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection),
+              child: buildBubbles(bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection))
+          : buildBubbles(bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection),
     );
   }
 
@@ -117,12 +113,11 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
   Widget buildBubbles({bool bubbleName = true, bool viewDetailsScreen, bool referenceMovementsSection = false}) {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: buildMovementItems(
-            bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection));
+        children: buildMovementItems(bubbleName: bubbleName, viewDetailsScreen: viewDetailsScreen, referenceMovementsSection: referenceMovementsSection));
   }
 
   Widget buildBubbleGrid({bool bubbleName}) {
-    return GridView.count(mainAxisSpacing: 15, crossAxisCount: 4, children: buildMovementItems());
+    return GridView.count(physics: OlukoNeumorphism.listViewPhysicsEffect, mainAxisSpacing: 15, crossAxisCount: 4, children: buildMovementItems());
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String name,

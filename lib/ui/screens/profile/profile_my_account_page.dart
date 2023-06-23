@@ -108,6 +108,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         },
         child: Stack(children: [
           SingleChildScrollView(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             child: Container(
               width: MediaQuery.of(context).size.width,
               color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,

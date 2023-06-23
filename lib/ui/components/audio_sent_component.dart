@@ -94,18 +94,20 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        GestureDetector(
-                          onTap: () => _onPlay(filePath: widget.record),
-                          child: Neumorphic(
-                            style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
-                            child: Image.asset(
-                              !_isPlaying ? 'assets/assessment/play_triangle.png' : 'assets/assessment/pause.png',
-                              width: 40,
-                              height: 40,
-                              scale: 1,
-                              color: OlukoColors.white,
-                            ),
-                          ),
+                        Container(
+                          width: 40,
+                          height: 40,
+                          child: NeumorphicButton(
+                              style: OlukoNeumorphism.getNeumorphicStyleForCirclePrimaryColor(),
+                              onPressed: () => _onPlay(filePath: widget.record),
+                              child: Transform.scale(
+                                scale: 2,
+                                child: Image.asset(
+                                  !_isPlaying ? 'assets/assessment/play_triangle.png' : 'assets/assessment/pause.png',
+                                  scale: 1,
+                                  color: OlukoColors.white,
+                                ),
+                              )),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),

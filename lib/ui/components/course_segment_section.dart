@@ -48,12 +48,10 @@ class _State extends State<CourseSegmentSection> {
                     ),
                     SegmentSubmodelUtils.getRoundTitle(widget.segment, context, OlukoColors.white),
                     SingleChildScrollView(
+                        physics: OlukoNeumorphism.listViewPhysicsEffect,
                         scrollDirection: Axis.horizontal,
                         child: Row(children: [
-                          if (widget.segment.isChallenge)
-                            LockedChallenge(challengeImage: widget.segment.image, context: context)
-                          else
-                            const SizedBox(),
+                          if (widget.segment.isChallenge) LockedChallenge(challengeImage: widget.segment.image, context: context) else const SizedBox(),
                           MovementItemBubbles(
                             onPressed: widget.onPressedMovement,
                             movements: widget.movements,
@@ -89,11 +87,11 @@ class _State extends State<CourseSegmentSection> {
                       ),
                     ),
                     SingleChildScrollView(
+                        physics: OlukoNeumorphism.listViewPhysicsEffect,
                         scrollDirection: Axis.horizontal,
                         child: Row(children: [
                           widget.segment.isChallenge ? challengeCard() : SizedBox(),
-                          MovementItemBubbles(
-                              onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context) / 1)
+                          MovementItemBubbles(onPressed: widget.onPressedMovement, movements: widget.movements, width: ScreenUtils.width(context) / 1)
                         ])),
                   ],
                 ),

@@ -25,6 +25,7 @@ class _ExpansionPanelListState extends State<ExpansionPanelListWidget> {
     return Container(
       color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       child: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         children: [

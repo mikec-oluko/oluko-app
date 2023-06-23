@@ -60,6 +60,7 @@ class _HiFivePageState extends State<HiFivePage> {
                         return Container(
                           color: OlukoNeumorphismColors.appBackgroundColor,
                           child: ListView(
+                            physics: OlukoNeumorphism.listViewPhysicsEffect,
                             addAutomaticKeepAlives: false,
                             addRepaintBoundaries: false,
                             children: hiFiveState.users

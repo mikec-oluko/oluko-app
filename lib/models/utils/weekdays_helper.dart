@@ -40,7 +40,7 @@ class WeekDaysHelper {
     }
   }
 
-  static List<DateTime> getRecurringDates(Frequency frequency, int count, { List<String> weekDays = const [] }){
+  static List<DateTime> getRecurringDates(Frequency frequency, int count, { List<String> weekDays = const [], DateTime startingDate }){
     final List<Map<String, Object>> selectedDays = weekDays.isEmpty ? selectedWeekdays
                                               .where((item) => item['selected'] as bool == true)
                                               .map((item) => {
@@ -63,19 +63,23 @@ class WeekDaysHelper {
       count: count,
       byWeekDays: selectedWeekDays,
     );
-    final DateTime currentDate = DateTime.now().copyWith(isUtc: true);
-    final List<DateTime> datesList = rrule.getInstances(start: currentDate).toList();
+    final DateTime currentDate = startingDate != null ? startingDate.copyWith(isUtc: true) : DateTime.now().copyWith(isUtc: true);
+    final List<DateTime> datesList = rrule.getInstances(start: currentDate)
+                                          .map((currentDate) => currentDate.copyWith(isUtc: false))
+                                          .toList();
     return datesList;
   }
 
-  static List<DateTime> getOneWeekDatesFromNow(){
+  static List<DateTime> getOneWeekDatesFromNextScheduledDate(DateTime nextScheduledDate){
     const int weekDaysAmount = 7;
     final rrule = RecurrenceRule(
       frequency: Frequency.daily,
       count: weekDaysAmount,
     );
-    final DateTime currentDate = DateTime.now().copyWith(isUtc: true);
-    final List<DateTime> datesList = rrule.getInstances(start: currentDate).toList();
+    final DateTime utcDate = nextScheduledDate.copyWith(isUtc: true);
+    final List<DateTime> datesList = rrule.getInstances(start: utcDate)
+                                          .map((currentDate) => currentDate.copyWith(isUtc: false))
+                                          .toList();
     return datesList;
   }
 

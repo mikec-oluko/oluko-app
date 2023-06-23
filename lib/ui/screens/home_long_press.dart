@@ -46,6 +46,7 @@ class _HomeLongPressState extends State<HomeLongPress> {
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(showLogo: true, showBackButton: true, showDivider: false, showTitle: false),
       body: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         children: [

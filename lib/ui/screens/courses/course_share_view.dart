@@ -45,7 +45,7 @@ class _CourseShareViewState extends State<CourseShareView> {
     return Material(
       child: Container(
           color: OlukoNeumorphismColors.appBackgroundColor,
-          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
+          child: ListView(physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
             topAppBarBackButton(context),
             BlocConsumer<UserProgressListBloc, UserProgressListState>(
               listener: (context, userProgressListState) {
@@ -143,7 +143,7 @@ class _CourseShareViewState extends State<CourseShareView> {
             padding: const EdgeInsets.only(top: 10),
             childAspectRatio: 0.6,
             crossAxisCount: 4,
-            physics: const BouncingScrollPhysics(),
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             shrinkWrap: true,
             children: _getFriendList(favoriteUsers: favorite, friends: _friends, friendUsersList: _friendUsersList)
                 .map(

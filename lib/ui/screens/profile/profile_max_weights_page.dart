@@ -94,6 +94,7 @@ class _ProfileMaxWeightsPageState extends State<ProfileMaxWeightsPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),
       child: ListView.builder(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         shrinkWrap: true,
         itemCount: state.movements.length,
         itemBuilder: (context, index) {
