@@ -54,6 +54,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
 
   SingleChildScrollView buildFormContactUs(BuildContext context) {
     return SingleChildScrollView(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       child: Container(
         color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
         child: Padding(

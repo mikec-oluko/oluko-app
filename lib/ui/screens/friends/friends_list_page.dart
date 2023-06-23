@@ -150,7 +150,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget _scrollView() {
     return SingleChildScrollView(
       controller: _viewScrollController,
-      physics: const BouncingScrollPhysics(),
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       padding: EdgeInsets.zero,
       child: SizedBox(
           height: ScreenUtils.height(context),

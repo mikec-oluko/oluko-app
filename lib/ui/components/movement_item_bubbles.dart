@@ -40,7 +40,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
               ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
             },
             blendMode: BlendMode.dstIn,
-            child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: buildBubbles()),
+            child: SingleChildScrollView(physics: OlukoNeumorphism.listViewPhysicsEffect, scrollDirection: Axis.horizontal, child: buildBubbles()),
           )
         : SingleChildScrollView(
             physics: widget.movements.length <= _minMovementsQty ? const NeverScrollableScrollPhysics() : const ScrollPhysics(),

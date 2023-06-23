@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class PanelWidget extends StatefulWidget {
@@ -15,6 +16,7 @@ class _PanelWidgetState extends State<PanelWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       addAutomaticKeepAlives: false,
       addRepaintBoundaries: false,
       shrinkWrap: true,

@@ -61,6 +61,7 @@ class _State extends State<ChallengeSection> {
               : SizedBox(),
           SizedBox(height: widget.addTitle || widget.addName ? 20 : 0),
           SingleChildScrollView(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             scrollDirection: Axis.horizontal,
             child: Row(children: widget.challengesCard ?? getChallengesCards()),
           )

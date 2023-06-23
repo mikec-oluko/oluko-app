@@ -18,6 +18,7 @@ class _State extends State<SearchSuggestions> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         shrinkWrap: true,

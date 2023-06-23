@@ -17,7 +17,7 @@ class _TabContentListState extends State<TabContentList> {
       child: ListView(
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
-          physics: const BouncingScrollPhysics(),
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
           padding: EdgeInsets.zero,
           children: buildContentToShow()),
     );

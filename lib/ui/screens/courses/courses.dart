@@ -227,6 +227,7 @@ class _State extends State<Courses> {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         padding: EdgeInsets.only(bottom: ScreenUtils.height(context) * 0.10),
@@ -282,12 +283,7 @@ class _State extends State<Courses> {
   CourseCard _getCourseCard(Widget image,
       {double progress, double width, double height, List<UserResponse> userRecommendations, bool friendRecommended = false}) {
     return CourseCard(
-        width: width,
-        height: height,
-        imageCover: image,
-        progress: progress,
-        userRecommendations: userRecommendations,
-        friendRecommended: friendRecommended);
+        width: width, height: height, imageCover: image, progress: progress, userRecommendations: userRecommendations, friendRecommended: friendRecommended);
   }
 
   Widget _filterWidget() {

@@ -89,7 +89,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         ? Scrollbar(
             isAlwaysShown: true,
             child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _segmentSectionAndMovementDetails(showRecommendation).isNotEmpty ? _segmentSectionAndMovementDetails(showRecommendation).length : 1,

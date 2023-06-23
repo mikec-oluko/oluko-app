@@ -171,7 +171,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         color: OlukoColors.black,
         child: Stack(
           children: [
-            ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
+            ListView(physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 3),
                 child: OverlayVideoPreview(
@@ -231,6 +231,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
     return Container(
       color: OlukoNeumorphismColors.finalGradientColorDark,
       child: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
         controller: _scrollController,
         slivers: [
           SliverStack(positionedAlignment: Alignment.bottomRight, children: [
@@ -301,6 +302,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   child: ListView(
+                    physics: OlukoNeumorphism.listViewPhysicsEffect,
                     padding: EdgeInsets.zero,
                     addAutomaticKeepAlives: false,
                     addRepaintBoundaries: false,

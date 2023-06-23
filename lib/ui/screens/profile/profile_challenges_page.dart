@@ -77,6 +77,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                 horizontal: 10,
               ),
               child: GridView.builder(
+                physics: OlukoNeumorphism.listViewPhysicsEffect,
                 padding: EdgeInsets.zero,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: widget.isCurrentUser ? 0.58 : 0.5),
                 itemCount: getChallengeByType().length,
@@ -133,6 +134,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                               width: MediaQuery.of(context).size.width,
                               height: widget.isCurrentUser ? MediaQuery.of(context).size.height / 4 : MediaQuery.of(context).size.height / 3.8,
                               child: ListView(
+                                physics: OlukoNeumorphism.listViewPhysicsEffect,
                                 addAutomaticKeepAlives: false,
                                 addRepaintBoundaries: false,
                                 padding: const EdgeInsets.all(0),
@@ -165,6 +167,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                                       challengesCards = state.challenges;
                                     }
                                     return GridView.builder(
+                                      physics: OlukoNeumorphism.listViewPhysicsEffect,
                                       padding: EdgeInsets.zero,
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: widget.isCurrentUser ? 0.58 : 0.5),

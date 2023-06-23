@@ -71,6 +71,7 @@ class _State extends State<CoachTabHorizontalCarousel> {
   Flexible horizontalScrollComponent() {
     return Flexible(
         child: ListView.builder(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       controller: _listController,
       padding: EdgeInsets.zero,
       addAutomaticKeepAlives: false,

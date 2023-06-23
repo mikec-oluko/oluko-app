@@ -20,8 +20,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final String itemName = 'Airsquats';
   final Function(BuildContext, MovementSubmodel) onPressedMovement;
 
-  OlukoImageBar(
-      {this.title, this.onPressed, this.actions, this.movements, this.toolbarHeight = kToolbarHeight * 1.75, this.onPressedMovement});
+  OlukoImageBar({this.title, this.onPressed, this.actions, this.movements, this.toolbarHeight = kToolbarHeight * 1.75, this.onPressedMovement});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -66,9 +65,9 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                       child: Stack(
                         children: [
                           SingleChildScrollView(
+                              physics: OlukoNeumorphism.listViewPhysicsEffect,
                               scrollDirection: Axis.horizontal,
-                              child: MovementItemBubbles(
-                                  onPressed: onPressedMovement, movements: movements, width: ScreenUtils.width(context) / 1)),
+                              child: MovementItemBubbles(onPressed: onPressedMovement, movements: movements, width: ScreenUtils.width(context) / 1)),
                         ],
                       ),
                     ),
@@ -82,7 +81,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                     child: IconButton(
                         icon: Icon(
                           Icons.more_vert,
-                          color:OlukoColors.black,
+                          color: OlukoColors.black,
                           size: 25,
                         ),
                         onPressed: () => {/* TODO Implement 'More' action functionality */}),

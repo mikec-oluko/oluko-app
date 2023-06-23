@@ -144,6 +144,7 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   Widget _getFilterSelectorContent() {
     return ListView(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       addAutomaticKeepAlives: false,
       addRepaintBoundaries: false,
       children: widget.itemList.entries

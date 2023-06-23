@@ -54,6 +54,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         body: Container(
           color: OlukoColors.black,
           child: ListView(
+            physics: OlukoNeumorphism.listViewPhysicsEffect,
             addAutomaticKeepAlives: false,
             addRepaintBoundaries: false,
             children: [

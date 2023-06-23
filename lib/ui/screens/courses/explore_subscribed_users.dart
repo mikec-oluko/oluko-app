@@ -59,7 +59,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
         body: SizedBox(
           height: ScreenUtils.height(context),
           width: ScreenUtils.width(context),
-          child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
+          child: ListView(physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
             Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: BlocConsumer<UserProgressListBloc, UserProgressListState>(listener: (context, userProgressListState) {

@@ -37,6 +37,7 @@ class _TransformationJourneyPostPageState extends State<TransformationJourneyPos
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
               child: GridView.count(
+                physics: OlukoNeumorphism.listViewPhysicsEffect,
                 crossAxisCount: 2,
                 children: widget.content,
               ),

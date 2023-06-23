@@ -65,6 +65,7 @@ class _RegisterState extends State<RegisterPage> {
             alignment: Alignment.center,
             color: OlukoColors.white,
             child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               shrinkWrap: true,

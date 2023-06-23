@@ -47,6 +47,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,

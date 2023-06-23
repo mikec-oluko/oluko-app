@@ -88,7 +88,8 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
       },
       blendMode: BlendMode.dstIn,
-      child: SingleChildScrollView(scrollDirection: Axis.horizontal, controller: _listController, child: buildBubbles()),
+      child: SingleChildScrollView(
+          physics: OlukoNeumorphism.listViewPhysicsEffect, scrollDirection: Axis.horizontal, controller: _listController, child: buildBubbles()),
     );
   }
 

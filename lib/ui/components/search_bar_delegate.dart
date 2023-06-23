@@ -73,6 +73,7 @@ class SearchbarDelegate extends SearchDelegate<String> {
   }
 
   Widget buildSuggestionsSuccess(List<String> suggestions) => ListView.builder(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: false,
         itemCount: suggestions.length,

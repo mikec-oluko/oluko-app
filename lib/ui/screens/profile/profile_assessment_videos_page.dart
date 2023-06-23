@@ -69,6 +69,7 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
                     padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
                     child: _contentGallery.length != 0
                         ? GridView.count(
+                            physics: OlukoNeumorphism.listViewPhysicsEffect,
                             crossAxisCount: 3,
                             children: _contentGallery,
                           )
