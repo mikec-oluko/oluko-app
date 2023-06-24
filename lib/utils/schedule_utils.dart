@@ -54,12 +54,17 @@ class ScheduleUtils {
 
   static DateTime getNextScheduledDate(List<CourseEnrollment> courseEnrollmentList){
     DateTime earliestScheduledDate;
+    final DateTime currentDate = DateTime.now();
     for (final courseEnrollment in courseEnrollmentList) {
       if (courseEnrollment.classes.isNotEmpty && courseEnrollment.classes.any((element) => element.scheduledDate != null)) {
         for (final classItem in courseEnrollment.classes) {
           if (classItem.scheduledDate != null){
             final DateTime scheduledDate = classItem.scheduledDate.toDate();
-            if (earliestScheduledDate == null || scheduledDate.isBefore(earliestScheduledDate)) {
+            if ((earliestScheduledDate == null || scheduledDate.isBefore(earliestScheduledDate)) &&
+                (scheduledDate.year >= currentDate.year &&
+                scheduledDate.month >= currentDate.month &&
+                scheduledDate.day >= currentDate.day)
+                ) {
               earliestScheduledDate = scheduledDate;
             }
           }
