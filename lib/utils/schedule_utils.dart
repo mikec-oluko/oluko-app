@@ -111,7 +111,8 @@ class ScheduleUtils {
       classes[classIndex].scheduledDate = null;
       return;
     }
-    scheduleUncompletedClasses(classes, classIndex, weekDays: weekDays);
+    final DateTime scheduledDatesFromNextDay = DateTime.now().add(const Duration(days: 1));
+    scheduleUncompletedClasses(classes, classIndex, weekDays: weekDays, scheduleDatesFrom: scheduledDatesFromNextDay);
   }
 
   static void unScheduleOldClasses(List<EnrollmentClass> classes, int classIndex){
@@ -123,12 +124,11 @@ class ScheduleUtils {
     }
   }
 
-  static void scheduleUncompletedClasses(List<EnrollmentClass> classes, int classIndex, { List<String> weekDays = const []}){
+  static void scheduleUncompletedClasses(List<EnrollmentClass> classes, int classIndex, { List<String> weekDays = const [], DateTime scheduleDatesFrom}){
     final int remainingClassesAmount = classes.where((classItem) => classes.indexOf(classItem) > classIndex &&
                                                                     classItem.completedAt == null).length;
     if (remainingClassesAmount > 0){
-      final DateTime scheduledDatesFrom = DateTime.now().add(const Duration(days: 1));
-      final List<DateTime> scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, remainingClassesAmount, weekDays: weekDays, startingDate: scheduledDatesFrom);
+      final List<DateTime> scheduledDates = WeekDaysHelper.getRecurringDates(Frequency.daily, remainingClassesAmount, weekDays: weekDays, startingDate: scheduleDatesFrom);
       int scheduledDatesIndex = 0;
       for (int i = 0; i < classes.length; i++) {
         if (weekDays.isNotEmpty){
