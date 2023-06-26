@@ -42,7 +42,7 @@ class _FriendsRecommendedCoursesState extends State<FriendsRecommendedCourses> {
                   'title': OlukoLocalizations.get(context, 'friendsRecommended')
                 }),
             title: OlukoLocalizations.get(context, 'friendsRecommended'),
-            height: carouselSectionHeight + 25,
+            height: carouselSectionHeight + 32,
             children: _getFriendsRecommendedCoursesList(widget.listOfCoursesRecommended))
         : const SizedBox.shrink();
   }
@@ -67,11 +67,6 @@ class _FriendsRecommendedCoursesState extends State<FriendsRecommendedCourses> {
   CourseCard _getCourseCard(Widget image,
       {double progress, double width, double height, List<UserResponse> userRecommendations, bool friendRecommended = false}) {
     return CourseCard(
-        width: width,
-        height: height,
-        imageCover: image,
-        progress: progress,
-        userRecommendations: userRecommendations,
-        friendRecommended: friendRecommended);
+        width: width, height: height, imageCover: image, progress: progress, userRecommendations: userRecommendations, friendRecommended: friendRecommended);
   }
 }
