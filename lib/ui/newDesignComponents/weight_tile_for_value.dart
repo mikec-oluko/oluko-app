@@ -38,17 +38,26 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     return _movementTileWithWeightValue(widget.movement);
   }
 
-  ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
-    return ListTile(
-      trailing: getTrailingContent(movement),
-      title: SizedBox(
-        width: ScreenUtils.width(context) / 2,
-        child: Text(SegmentUtils.getLabel(movement),
-            maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+  Widget _movementTileWithWeightValue(MovementSubmodel movement) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15, left: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                child: Text(SegmentUtils.getLabel(movement),
+                    maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+              ),
+              if (canShowRecommendationSubtitle(movement))
+                SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
+            ],
+          ),
+          getTrailingContent(movement)
+        ],
       ),
-      subtitle: canShowRecommendationSubtitle(movement)
-          ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
-          : const SizedBox.shrink(),
     );
   }
 
@@ -70,7 +79,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Container recordContainer(Widget childContent) {
     return Container(
-      height: 40,
+      height: 30,
       decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -88,7 +97,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
           alignment: PlaceholderAlignment.baseline,
           baseline: TextBaseline.ideographic,
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 180, minWidth: 150),
+            constraints: const BoxConstraints(maxWidth: 180, minWidth: 50),
             child: Center(
               child: Text(
                   widget.showWeightRecommendation
@@ -99,8 +108,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
           )),
       textAlign: TextAlign.center,
       preferBelow: true,
-      padding: const EdgeInsets.all(20),
-      height: 100,
+      height: 50,
       decoration: const BoxDecoration(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
         borderRadius: BorderRadius.all(
@@ -108,8 +116,8 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
         ),
       ),
       child: Container(
-        width: 30,
-        height: 30,
+        width: 20,
+        height: 20,
         decoration: BoxDecoration(
           color: _getContainerColor(),
           borderRadius: const BorderRadius.all(
