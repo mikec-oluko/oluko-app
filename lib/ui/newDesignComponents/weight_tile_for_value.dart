@@ -38,17 +38,20 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     return _movementTileWithWeightValue(widget.movement);
   }
 
-  ListTile _movementTileWithWeightValue(MovementSubmodel movement) {
-    return ListTile(
-      trailing: getTrailingContent(movement),
-      title: SizedBox(
-        width: ScreenUtils.width(context) / 2,
-        child: Text(SegmentUtils.getLabel(movement),
-            maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+  Widget _movementTileWithWeightValue(MovementSubmodel movement) {
+    return SizedBox(
+      height: 50,
+      child: ListTile(
+        trailing: getTrailingContent(movement),
+        title: SizedBox(
+          width: ScreenUtils.width(context) / 2,
+          child: Text(SegmentUtils.getLabel(movement),
+              maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+        ),
+        subtitle: canShowRecommendationSubtitle(movement)
+            ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
+            : const SizedBox.shrink(),
       ),
-      subtitle: canShowRecommendationSubtitle(movement)
-          ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
-          : const SizedBox.shrink(),
     );
   }
 
