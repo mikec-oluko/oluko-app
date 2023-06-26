@@ -20,9 +20,9 @@ class TimeConverter {
     String finalSeconds = splittedSeconds[0];
     String minutesStr;
     if (seconds < 10) {
-      minutesStr = '${minutes}:0${finalSeconds}';
+      minutesStr = minutes <= 0 ? '0$minutes:0$finalSeconds' : '$minutes:0$finalSeconds';
     } else {
-      minutesStr = '${minutes}:${finalSeconds}';
+      minutesStr = minutes <= 0 ? '0$minutes:$finalSeconds' : '$minutes:$finalSeconds';
     }
     return minutesStr;
   }
@@ -46,13 +46,11 @@ class TimeConverter {
   String formatTimeWithCentiSeconds(Duration duration) {
     String minutes = (duration.inMinutes).toString().padLeft(2, '0');
     String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    String centisecond = ((duration.inMilliseconds / 10) -
-            (duration.inSeconds % 60 * 100) -
-            (duration.inMinutes * 60 * 100) -
-            (duration.inHours * 60 * 60 * 100))
-        .round()
-        .toString()
-        .padLeft(2, '0');
+    String centisecond =
+        ((duration.inMilliseconds / 10) - (duration.inSeconds % 60 * 100) - (duration.inMinutes * 60 * 100) - (duration.inHours * 60 * 60 * 100))
+            .round()
+            .toString()
+            .padLeft(2, '0');
     return '$minutes:$seconds:$centisecond';
   }
 
@@ -75,7 +73,7 @@ class TimeConverter {
     return dateSplitted.join(' ');
   }
 
-  static String returnTimeStringFormat(DateTime date,BuildContext context) {
+  static String returnTimeStringFormat(DateTime date, BuildContext context) {
     if (MediaQuery.of(context).alwaysUse24HourFormat) {
       return DateFormat.Hm().format(date);
     } else {
@@ -100,10 +98,9 @@ class TimeConverter {
     dateSplitted[0] = '${dateSplitted[0]},';
     List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     String ret;
-    if(dateSplitted.length>2){
+    if (dateSplitted.length > 2) {
       ret = dateSplitted[1] + " " + dateSplitted[2];
-    }
-    else{
+    } else {
       ret = dateSplitted[1];
     }
     String day = dateToFormat.toDate().day.toString();
