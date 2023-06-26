@@ -35,7 +35,7 @@ class OlukoVideoPreview extends StatefulWidget {
   final List<Widget> bottomWidgets;
   final bool videoVisibilty;
   final Widget audioWidget;
-  final bool bigPlayButton;
+  final bool isGreenButton;
 
   OlukoVideoPreview(
       {this.video,
@@ -54,7 +54,7 @@ class OlukoVideoPreview extends StatefulWidget {
       this.showVideoOptions = false,
       this.fromHomeContent = false,
       this.showCrossButton = true,
-      this.bigPlayButton = false})
+      this.isGreenButton = false})
       : super(key: key);
 
   @override
@@ -221,13 +221,14 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                         AspectRatio(aspectRatio: aspectRatio, child: showVideoPlayer(widget.video))
                       else
                         SizedBox(
-                          height: widget.bigPlayButton ? 82 : 52,
-                          width: widget.bigPlayButton ? 82 : 52,
+                          height: widget.isGreenButton ? 72 : 52,
+                          width: widget.isGreenButton ? 72 : 52,
                           child: OlukoBlurredButton(
                             childContent: Image.asset(
                               'assets/courses/white_play.png',
-                              scale: widget.bigPlayButton ? 2 : 3.5,
+                              scale: widget.isGreenButton ? 2.7 : 3.5,
                             ),
+                             color: widget.isGreenButton ? OlukoColors.primaryLight.withOpacity(0.9) : null
                           ),
                         ),
                     ])),

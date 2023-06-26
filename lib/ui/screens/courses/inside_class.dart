@@ -566,7 +566,7 @@ class _InsideClassesState extends State<InsideClass> {
         onBackPressed: () => _goBackToCourseDetails(context), // Navigator.pop(context),
         onPlay: () => isVideoPlaying(),
         videoVisibilty: _isVideoPlaying,
-        bigPlayButton: true
+        isGreenButton: true
       ),
     );
   }
