@@ -173,6 +173,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 content: Expanded(child: _appUsersWidget),
                 listLength: _appUsersList.length,
               ),
+              SizedBox(height: ScreenUtils.smallScreen(context) ? 80 : 120)
             ],
           )),
     );
