@@ -40,7 +40,7 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
   double userRadius = 25.0;
   @override
   Widget build(BuildContext context) {
-    return widget.friendsUsers.isNotEmpty
+    return widget.friendsUsers.isNotEmpty && widget.friendsUsers != null
         ? BlocBuilder<FriendsWeightRecordsBloc, FriendWeightRecordState>(
             builder: (context, state) {
               if (state is FriendsWeightRecordsSuccess) {
