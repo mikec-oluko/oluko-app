@@ -41,7 +41,7 @@ class SegmentSubmodelUtils {
   static Widget getRoundTitle(SegmentSubmodel segmentSubmodel, BuildContext context, Color color) {
     if (isEMOMforSubmodel(segmentSubmodel)) {
       return Text(
-        "EMOM: ${segmentSubmodel.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${segmentSubmodel.totalTime} ${OlukoLocalizations.get(context, 'seconds')}",
+        "EMOM: ${segmentSubmodel.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${TimeConverter.secondsToMinutes(segmentSubmodel.totalTime.toDouble())}}",
         style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
       );
     } else if (isAMRAPforSubmodel(segmentSubmodel)) {

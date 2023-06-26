@@ -20,9 +20,9 @@ class TimeConverter {
     String finalSeconds = splittedSeconds[0];
     String minutesStr;
     if (seconds < 10) {
-      minutesStr = minutes <= 0 ? '0$minutes:0$finalSeconds' : '$minutes:0$finalSeconds';
+      minutesStr = minutes < 10 ? '0$minutes:0$finalSeconds' : '$minutes:0$finalSeconds';
     } else {
-      minutesStr = minutes <= 0 ? '0$minutes:$finalSeconds' : '$minutes:$finalSeconds';
+      minutesStr = minutes < 10 ? '0$minutes:$finalSeconds' : '$minutes:$finalSeconds';
     }
     return minutesStr;
   }
