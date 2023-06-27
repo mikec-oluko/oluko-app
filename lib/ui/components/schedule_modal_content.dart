@@ -16,6 +16,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/routes.dart';
 
 class ScheduleModalContent extends StatefulWidget {
   final Course course;

@@ -70,6 +70,9 @@ class CourseUtils {
   }
 
   static Course getCourseById(String courseId, List<Course> courses) {
+    if(courses.isEmpty){
+      return null;
+    }
     return courses?.where((course) => course.id == courseId)?.first;
   }
 

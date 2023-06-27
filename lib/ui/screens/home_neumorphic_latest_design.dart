@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
+import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_friend_recommended_bloc.dart';
 import 'package:oluko_app/blocs/course/course_liked_courses_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscription_bloc.dart';
@@ -73,8 +74,9 @@ class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
   final List<CourseEnrollment> courseEnrollments;
   final AuthSuccess authState;
+  final bool scrollToUpcomingWorkouts;
 
-  const HomeNeumorphicLatestDesign({this.currentUser, this.courseEnrollments, this.authState}) : super();
+  HomeNeumorphicLatestDesign({this.currentUser, this.courseEnrollments, this.authState, this.scrollToUpcomingWorkouts = false}) : super();
 
   @override
   State<HomeNeumorphicLatestDesign> createState() => _HomeNeumorphicLatestDesignState();
@@ -97,9 +99,15 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   bool videoSeen = false;
   bool hasScheduledCourses = false;
   bool isPanelOpen = false;
+  final GlobalKey<State<StatefulWidget>> upcomingWorkoutsKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> logoKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> storiesKey = GlobalKey();
+  SliverAppBar topBar;
+  ScrollController _scrollController;
 
   @override
   void initState() {
+    BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
     // BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
     // BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
     setState(() {
@@ -107,6 +115,18 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       currentUserLatestVersion = widget.currentUser;
     });
     super.initState();
+    if (widget.scrollToUpcomingWorkouts){
+      _scrollController = ScrollController();
+      WidgetsBinding.instance.addPostFrameCallback((_) => scrollToUpcomingWorkouts());
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_scrollController != null){
+      _scrollController.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -128,6 +148,19 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         }
       },
     );
+  }
+
+  Future scrollToUpcomingWorkouts() async {
+    final upcomingWorkoutElement = upcomingWorkoutsKey.currentContext.findRenderObject() as RenderBox;
+    final topBarElement = logoKey.currentContext.findRenderObject() as RenderBox;
+    final storiesElement = storiesKey.currentContext.findRenderObject() as RenderBox;
+    final double topBarHeight = topBarElement.size.height + storiesElement.size.height;
+
+    final Offset position = upcomingWorkoutElement.localToGlobal(Offset.zero);
+
+    if (_scrollController.hasClients){
+      await _scrollController.animateTo(position.dy - topBarHeight - 70, duration: const Duration(seconds: 1), curve: Curves.easeIn);
+    }
   }
 
   StatefulWidget getHomeContent(BuildContext context) {
@@ -158,6 +191,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                 color: OlukoNeumorphismColors.appBackgroundColor,
                 constraints: const BoxConstraints.expand(),
                 child: ListView.builder(
+                  controller: _scrollController,
                   physics: OlukoNeumorphism.listViewPhysicsEffect,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
@@ -219,9 +253,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     hasScheduledCourses = true;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-      child: Column(
+      child:  Column(
         children: [
           Align(
+            key: upcomingWorkoutsKey,
             alignment: Alignment.centerLeft,
             child: Text(
               OlukoLocalizations.get(context, 'upcomingWorkouts'),
@@ -587,12 +622,13 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   // TODO: MOVE AS WIDGET
   SliverAppBar getLogo(AuthSuccess authState) {
-    return SliverAppBar(
+     return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
       pinned: true,
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       title: Container(
+        key: logoKey,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -622,6 +658,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   Widget enrolledContent(bool showStories) {
     return SliverToBoxAdapter(
       child: Container(
+        key: storiesKey,
         alignment: Alignment.centerLeft,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: showStories

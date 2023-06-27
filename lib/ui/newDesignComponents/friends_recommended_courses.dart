@@ -55,7 +55,7 @@ class _FriendsRecommendedCoursesState extends State<FriendsRecommendedCourses> {
         child: GestureDetector(
           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),
-          child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended.image, context),
+          child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended?.image, context),
               width: ScreenUtils.width(context) / (padding + CourseUtils.cardsToShow(context)),
               userRecommendations: courseRecommendedMapEntry.values.first,
               friendRecommended: true),

@@ -306,11 +306,11 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                         ))
                     : const SizedBox(),
               ),
-              if (_task.stepsDescription != null)
+              if (_task.description != null)
                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      _task.stepsDescription.replaceAll('\\n', '\n'),
+                      _task.description.replaceAll('\\n', '\n'),
                       style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.normal),
                     ))
               else

@@ -605,6 +605,7 @@ class Routes {
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
           classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int,
           tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
+          scrollToUpcomingWorkouts: argumentsToAdd == null || argumentsToAdd['scrollToUpcomingWorkouts'] == null ? null : argumentsToAdd['scrollToUpcomingWorkouts'] as bool,
         );
 
         break;
@@ -1517,6 +1518,7 @@ class Routes {
           currentUser: argumentsToAdd['currentUser'] as UserResponse,
           courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
           authState: argumentsToAdd['authState'] as AuthSuccess,
+          scrollToUpcomingWorkouts: argumentsToAdd['scrollToUpcomingWorkouts'] as bool ?? false,
         );
         break;
       case RouteEnum.courseHomePage:
