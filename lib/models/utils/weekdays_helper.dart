@@ -63,9 +63,11 @@ class WeekDaysHelper {
       count: count,
       byWeekDays: selectedWeekDays,
     );
-    final DateTime currentDate = startingDate != null ? startingDate.copyWith(isUtc: true) : DateTime.now().copyWith(isUtc: true);
-    final List<DateTime> datesList = rrule.getInstances(start: currentDate)
-                                          .map((currentDate) => currentDate.copyWith(isUtc: false))
+    final DateTime currentDate = DateTime.now();
+    final DateTime startingFrom = startingDate != null ? DateTime(startingDate.year, startingDate.month, startingDate.day, 12) :
+                                  DateTime(currentDate.year, currentDate.month, currentDate.day, 12);
+    final List<DateTime> datesList = rrule.getInstances(start: startingFrom.copyWith(isUtc: true))
+                                          .map((currentDateItem) => currentDateItem.copyWith(isUtc: true))
                                           .toList();
     return datesList;
   }

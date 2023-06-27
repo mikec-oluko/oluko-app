@@ -10,6 +10,7 @@ import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 import 'oluko_localizations.dart';
 
@@ -40,27 +41,18 @@ class SegmentSubmodelUtils {
   static Widget getRoundTitle(SegmentSubmodel segmentSubmodel, BuildContext context, Color color) {
     if (isEMOMforSubmodel(segmentSubmodel)) {
       return Text(
-        "EMOM: " +
-            segmentSubmodel.rounds.toString() +
-            " " +
-            OlukoLocalizations.get(context, 'rounds') +
-            " " +
-            OlukoLocalizations.get(context, 'in') +
-            " " +
-            (segmentSubmodel.totalTime).toString() +
-            " " +
-            OlukoLocalizations.get(context, 'seconds'),
+        "EMOM: ${segmentSubmodel.rounds} ${OlukoLocalizations.get(context, 'rounds')} ${OlukoLocalizations.get(context, 'in')} ${TimeConverter.secondsToMinutes(segmentSubmodel.totalTime.toDouble())}",
         style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
       );
     } else if (isAMRAPforSubmodel(segmentSubmodel)) {
       return Text(
-        segmentSubmodel.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
+        '${TimeConverter.secondsToMinutes(segmentSubmodel.totalTime.toDouble())} AMRAP',
         style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
       );
     } else {
       return (segmentSubmodel.rounds != null && segmentSubmodel.rounds > 1)
           ? Text(
-              segmentSubmodel.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
+              "${segmentSubmodel.rounds} ${OlukoLocalizations.get(context, 'rounds')}",
               style: OlukoFonts.olukoBigFont(customColor: color, customFontWeight: FontWeight.bold),
             )
           : SizedBox();
