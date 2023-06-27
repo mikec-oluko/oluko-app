@@ -134,11 +134,8 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(OlukoLocalizations.get(context, 'loggedWeight'),
-                    style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white)),
-              )
+              Text(OlukoLocalizations.get(context, 'loggedWeight'),
+                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white))
             ],
           ),
         ),
