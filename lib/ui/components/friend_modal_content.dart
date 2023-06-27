@@ -145,6 +145,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
       child: OlukoNeumorphicSecondaryButton(
         title: '',
         isExpanded: false,
+        lighterButton: true,
         onPressed: () {
           if (userIsFriend && friendModel != null) {
             widget.blocFavoriteFriend.favoriteFriend(context, friend, friendModel);
@@ -534,6 +535,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
       _buttonTextContent = OlukoLocalizations.of(context).find('remove');
       return SizedBox(
         child: OlukoNeumorphicSecondaryButton(
+          lighterButton: true,
           isExpanded: false,
           textColor: Colors.grey,
           title: _buttonTextContent,
