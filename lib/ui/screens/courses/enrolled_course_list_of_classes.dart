@@ -108,6 +108,9 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
         onUpdateScheduleAction: () {
           setState(() {
             _classItemList = _updateClassScheduledDates();
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              Navigator.pop(context);
+            });
           });
         },
       ),
