@@ -79,7 +79,8 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
 
   Future<void> scheduleCourse(CourseEnrollment enrolledCourse, List<DateTime> scheduledDates, int lastCompletedClassIndex) async {
     try {
-      ScheduleUtils.scheduleUncompletedClasses(enrolledCourse.classes, lastCompletedClassIndex, weekDays: enrolledCourse.weekDays);
+      final DateTime scheduleDatesFromNow = DateTime.now();
+      ScheduleUtils.scheduleUncompletedClasses(enrolledCourse.classes, lastCompletedClassIndex, weekDays: enrolledCourse.weekDays, scheduleDatesFrom: scheduleDatesFromNow);
       final CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.scheduleCourse(enrolledCourse);
       emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {

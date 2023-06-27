@@ -26,7 +26,7 @@ class _OlukoWatchAppBarState extends State<OlukoWatchAppBar> {
           elevation: 0.0,
           automaticallyImplyLeading: false,
           flexibleSpace: Padding(
-            padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 30 : OlukoNeumorphism.buttonBackPaddingFromTop),
+            padding: EdgeInsets.only(top: ScreenUtils.smallScreen(context) ? 15 : OlukoNeumorphism.buttonBackPaddingFromTop * 0.7),
             child: Container(
               width: ScreenUtils.width(context),
               height: 80,

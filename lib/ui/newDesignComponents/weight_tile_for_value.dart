@@ -74,7 +74,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Container recordContainer(Widget childContent) {
     return Container(
-      height: 40,
+      height: 30,
       decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -92,7 +92,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
           alignment: PlaceholderAlignment.baseline,
           baseline: TextBaseline.ideographic,
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 180, minWidth: 150),
+            constraints: const BoxConstraints(maxWidth: 180, minWidth: 50),
             child: Center(
               child: Text(
                   widget.showWeightRecommendation
@@ -103,8 +103,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
           )),
       textAlign: TextAlign.center,
       preferBelow: true,
-      padding: const EdgeInsets.all(20),
-      height: 100,
+      height: 50,
       decoration: const BoxDecoration(
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
         borderRadius: BorderRadius.all(
@@ -112,8 +111,8 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
         ),
       ),
       child: Container(
-        width: 30,
-        height: 30,
+        width: 20,
+        height: 20,
         decoration: BoxDecoration(
           color: _getContainerColor(),
           borderRadius: const BorderRadius.all(

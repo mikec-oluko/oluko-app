@@ -169,36 +169,39 @@ class _State extends State<CourseCard> {
     userImageList =
         userRecommendations.length < _imageStackMaxLength ? userRecommendations : userRecommendations.sublist(0, _imageStackMaxLength);
     String _friendsText = userRecommendations.length > 1 ? OlukoLocalizations.get(context, 'friends') : OlukoLocalizations.get(context, 'friend');
-    return Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.bottomRight,
-        children: userImageList
-            .asMap()
-            .map((index, user) => MapEntry(
-                friendRecommended
-                    ? Positioned(
-                        left: (index * (userRadius / 1.5)),
-                        child: _userAvatar(user),
-                      )
-                    : Positioned(
-                        right: (index + (userRecommendations.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
-                        child: _userAvatar(user)),
-                index))
-            .keys
-            .toList()
-          ..add(Positioned(
-            right: 0,
-            bottom: userRadius * 0.5,
-            child: friendRecommended
-                ? Text(
-                    '${userRecommendations.length} $_friendsText',
-                    style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-                  )
-                : Text(
-                    userRecommendations.length > _imageStackMaxLength ? '...' : '',
-                    style: TextStyle(color: Colors.white),
-                  ),
-          )));
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.topCenter,
+          children: userImageList
+              .asMap()
+              .map((index, user) => MapEntry(
+                  friendRecommended
+                      ? Positioned(
+                          left: (index * (userRadius / 1.5)),
+                          child: _userAvatar(user),
+                        )
+                      : Positioned(
+                          right: (index + (userRecommendations.length <= _imageStackMaxLength ? 0 : 1)) * (userRadius / 1.5),
+                          child: _userAvatar(user)),
+                  index))
+              .keys
+              .toList()
+            ..add(Positioned(
+              right: 0,
+              top: userRadius * 0.5,
+              child: friendRecommended
+                  ? Text(
+                      '${userRecommendations.length} $_friendsText',
+                      style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                    )
+                  : Text(
+                      userRecommendations.length > _imageStackMaxLength ? '...' : '',
+                      style: TextStyle(color: Colors.white),
+                    ),
+            ))),
+    );
   }
 
   Widget _userAvatar(UserResponse user) {
