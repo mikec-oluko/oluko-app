@@ -144,86 +144,93 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             ),
             body: Container(
                 color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                child: ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, shrinkWrap: true, padding: EdgeInsets.zero, children: [
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: OrientationBuilder(
-                            builder: (context, orientation) {
-                              return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                                      child: showVideoPlayer(
-                                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video)),
-                                    )
-                                  : showVideoPlayer(VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video));
-                            },
-                          ),
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
-                                ? Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                                      child: Text(
-                                        OlukoLocalizations.get(context, 'coachPageAssessmentsText'),
+                child: ListView(
+                    physics: OlukoNeumorphism.listViewPhysicsEffect,
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: OrientationBuilder(
+                                builder: (context, orientation) {
+                                  return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          child: showVideoPlayer(
+                                              VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video)),
+                                        )
+                                      : showVideoPlayer(
+                                          VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _assessment.videoHls, videoUrl: _assessment.video));
+                                },
+                              ),
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                    ? Padding(
+                                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          child: Text(
+                                            OlukoLocalizations.get(context, 'coachPageAssessmentsText'),
+                                            textAlign: TextAlign.left,
+                                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+                                          ),
+                                        ),
+                                      )
+                                    : Text(
+                                        _assessment.description,
                                         textAlign: TextAlign.left,
                                         style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    _assessment.description,
-                                    textAlign: TextAlign.left,
-                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                                  )),
-                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
-                          if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
-                            _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                            return Column(
-                              children: [
-                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
-                                  if (taskSubmissionListState is GetTaskSubmissionSuccess) {
-                                    taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
-                                    final completedTask = taskSubmissionListState.taskSubmissions.length;
-                                    var enabledTask = 0;
-                                    for (var i = 0; i < assessmentsTasksQty; i++) {
-                                      if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
-                                        enabledTask++;
+                                      )),
+                            BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
+                              if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+                                _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                                return Column(
+                                  children: [
+                                    BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
+                                      if (taskSubmissionListState is GetTaskSubmissionSuccess) {
+                                        taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
+                                        final completedTask = taskSubmissionListState.taskSubmissions.length;
+                                        var enabledTask = 0;
+                                        for (var i = 0; i < assessmentsTasksQty; i++) {
+                                          if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
+                                            enabledTask++;
+                                          }
+                                        }
+                                        if (completedTask == enabledTask && _assessmentAssignment.completedAt == null) {
+                                          BlocProvider.of<TaskSubmissionBloc>(context).setCompleted(_assessmentAssignment.id).then((value) => {
+                                                _assessmentAssignment.completedAt = value,
+                                                BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)
+                                              });
+                                        } else if (completedTask != enabledTask && _assessmentAssignment.completedAt != null) {
+                                          BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
+                                          _assessmentAssignment.completedAt = null;
+                                        }
+                                        return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                            ? Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                child: taskCardsSection(taskSubmissionListState.taskSubmissions),
+                                              )
+                                            : taskCardsSection(taskSubmissionListState.taskSubmissions);
+                                      } else {
+                                        return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                                       }
-                                    }
-                                    if (completedTask == enabledTask && _assessmentAssignment.completedAt == null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context).setCompleted(_assessmentAssignment.id).then((value) => {
-                                            _assessmentAssignment.completedAt = value,
-                                            BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)
-                                          });
-                                    } else if (completedTask != enabledTask && _assessmentAssignment.completedAt != null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
-                                      _assessmentAssignment.completedAt = null;
-                                    }
-                                    return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
-                                        ? Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                                            child: taskCardsSection(taskSubmissionListState.taskSubmissions),
-                                          )
-                                        : taskCardsSection(taskSubmissionListState.taskSubmissions);
-                                  } else {
-                                    return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
-                                  }
-                                }),
-                              ],
-                            );
-                          }
-                          return const SizedBox();
-                        }),
-                      ])),
-                  SizedBox(height: widget.isForCoachPage ? 0 : 20),
-                  Visibility(visible: _showDonePanel, child: assessmentDoneBottomPanel(context)),
-                ]))));
+                                    }),
+                                  ],
+                                );
+                              }
+                              return const SizedBox();
+                            }),
+                          ])),
+                      SizedBox(height: widget.isForCoachPage ? 0 : 20),
+                      Visibility(visible: _showDonePanel, child: assessmentDoneBottomPanel(context)),
+                    ]))));
   }
 
   Widget assessmentDoneBottomPanel(BuildContext context) {

@@ -21,8 +21,9 @@ class UserListComponent extends StatefulWidget {
   final Map<String, UserProgress> usersProgress;
   final bool isForSearch;
 
-
-  const UserListComponent({@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgress, this.onTopScroll, this.isForSearch = false}) : super();
+  const UserListComponent(
+      {@required this.authUser, @required this.users, @required this.onTapUser, this.usersProgress, this.onTopScroll, this.isForSearch = false})
+      : super();
 
   @override
   State<UserListComponent> createState() => _UserListComponentState();
@@ -37,7 +38,7 @@ class _UserListComponentState extends State<UserListComponent> {
   void dispose() {
     _listController.dispose();
     super.dispose();
-  } 
+  }
 
   @override
   void initState() {
@@ -92,7 +93,7 @@ class _UserListComponentState extends State<UserListComponent> {
       padding: const EdgeInsets.only(top: 10),
       childAspectRatio: 0.7,
       crossAxisCount: 4,
-      physics: const BouncingScrollPhysics(),
+      physics: OlukoNeumorphism.listViewPhysicsEffect,
       shrinkWrap: true,
       children: _growingUserList
           .map(
@@ -103,7 +104,7 @@ class _UserListComponentState extends State<UserListComponent> {
                 children: [
                   StoriesItem(
                     showUserProgress: true,
-                    userProgress: widget.usersProgress?.isNotEmpty ? widget.usersProgress[friendElement.id]: null,
+                    userProgress: widget.usersProgress?.isNotEmpty ? widget.usersProgress[friendElement.id] : null,
                     progressValue: 0.5,
                     maxRadius: 30,
                     imageUrl: friendElement.getAvatarThumbnail(),

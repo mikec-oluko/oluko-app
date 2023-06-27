@@ -70,6 +70,7 @@ class _State extends State<CarouselSmallSection> {
                 alignment: Alignment.centerLeft,
                 child: OlukoNeumorphism.isNeumorphismDesign
                     ? ListView.builder(
+                        physics: OlukoNeumorphism.listViewPhysicsEffect,
                         addAutomaticKeepAlives: false,
                         addRepaintBoundaries: false,
                         scrollDirection: Axis.horizontal,
@@ -79,6 +80,7 @@ class _State extends State<CarouselSmallSection> {
                           return Row(children: widget.children);
                         })
                     : ListView(
+                        physics: OlukoNeumorphism.listViewPhysicsEffect,
                         shrinkWrap: true,
                         addAutomaticKeepAlives: false,
                         addRepaintBoundaries: false,

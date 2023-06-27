@@ -62,6 +62,7 @@ class _State extends State<CarouselSection> {
               child: Align(
             alignment: Alignment.centerLeft,
             child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               shrinkWrap: true,

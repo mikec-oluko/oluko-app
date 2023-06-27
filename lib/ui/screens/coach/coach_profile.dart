@@ -101,6 +101,7 @@ class _CoachProfileState extends State<CoachProfile> {
                     color: OlukoNeumorphismColors.appBackgroundColor,
                     constraints: const BoxConstraints.expand(),
                     child: ListView(
+                      physics: OlukoNeumorphism.listViewPhysicsEffect,
                       addAutomaticKeepAlives: false,
                       addRepaintBoundaries: false,
                       clipBehavior: Clip.none,
@@ -342,26 +343,26 @@ class _CoachProfileState extends State<CoachProfile> {
   Widget audioSentComponent({BuildContext context, String audioPath, bool isPreview, CoachAudioMessage audioMessageItem}) {
     return BlocBuilder<GenericAudioPanelBloc, GenericAudioPanelState>(
       builder: (context, state) {
-     if (state is GenericAudioPanelConfirmDelete && state.audioMessage.id == audioMessageItem.id) {
+        if (state is GenericAudioPanelConfirmDelete && state.audioMessage.id == audioMessageItem.id) {
           return _confirmDeleteComponent(context, state);
-     }
-      return AudioSentComponent(
-        key: UniqueKey(),
-        record: audioPath,
-        audioMessageItem: audioMessageItem,
-        isPreviewContent: isPreview,
-        isForList: true,
-        onAudioPlaying: (bool playing) => _onPlayAudio(playing),
-        onStartPlaying: () => _canStartPlaying(),
-        durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
-        onDelete: () => BlocProvider.of<GenericAudioPanelBloc>(context)
-            .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
-      );
+        }
+        return AudioSentComponent(
+          key: UniqueKey(),
+          record: audioPath,
+          audioMessageItem: audioMessageItem,
+          isPreviewContent: isPreview,
+          isForList: true,
+          onAudioPlaying: (bool playing) => _onPlayAudio(playing),
+          onStartPlaying: () => _canStartPlaying(),
+          durationFromRecord: isPreview ? _durationToSave : Duration(milliseconds: audioMessageItem?.audioMessage?.duration),
+          onDelete: () => BlocProvider.of<GenericAudioPanelBloc>(context)
+              .emitConfirmDeleteState(isPreviewContent: isPreview, audioMessageItem: !isPreview ? audioMessageItem : null),
+        );
       },
     );
   }
 
-    Widget _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
+  Widget _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
     return Container(
       width: ScreenUtils.width(context) / 1.2,
       height: 80,
@@ -380,7 +381,7 @@ class _CoachProfileState extends State<CoachProfile> {
             children: [
               TextButton(
                 onPressed: () {
-                    BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+                  BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                 },
                 child: Text(OlukoLocalizations.get(context, 'cancel')),
               ),
@@ -392,8 +393,8 @@ class _CoachProfileState extends State<CoachProfile> {
                       isExpanded: false,
                       title: OlukoLocalizations.get(context, 'delete'),
                       onPressed: () {
-                          BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
-                          BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
+                        BlocProvider.of<CoachAudioMessageBloc>(context).markCoachAudioAsDeleted(state.audioMessage);
+                        BlocProvider.of<GenericAudioPanelBloc>(context).emitDefaultState();
                       }))
             ],
           )

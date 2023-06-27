@@ -337,6 +337,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: state.plans != null
               ? ListView(
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: false,
                   shrinkWrap: true,

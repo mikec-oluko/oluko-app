@@ -153,6 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
         return false;
       },
       child: ListView.custom(
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         cacheExtent: 10000,
         controller: _scrollController,
         reverse: true,

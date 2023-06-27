@@ -82,6 +82,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
               ),
             ),
             child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               children: [
@@ -362,12 +363,15 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
 
   Widget getExternalLoginButtons() {
     final Widget googleButton = BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if(state is GoogleLoading){
-                return Center(child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),),);
-              }
+      builder: (context, state) {
+        if (state is GoogleLoading) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),
+            ),
+          );
+        }
         return SizedBox(
           width: double.infinity,
           height: 50,
@@ -411,10 +415,13 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
           ),
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
-              if(state is AppleLoading){
-                return Center(child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),),);
+              if (state is AppleLoading) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SizedBox(height: 25, width: 25, child: OlukoCircularProgressIndicator(personalized: true, width: 2)),
+                  ),
+                );
               }
               return SizedBox(
                 width: double.infinity,

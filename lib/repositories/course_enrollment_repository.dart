@@ -126,7 +126,7 @@ class CourseEnrollmentRepository {
         }
       }
       classes[classIndex].completedAt = Timestamp.now();
-      ScheduleUtils.unScheduleOldClasses(classes, classIndex);
+      ScheduleUtils.reScheduleClasses(classes, courseEnrollment.weekDays, classIndex);
     }
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),

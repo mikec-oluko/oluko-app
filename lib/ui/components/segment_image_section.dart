@@ -166,7 +166,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 addRepaintBoundaries: false,
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: OlukoNeumorphism.listViewPhysicsEffect,
                 children: [
                   if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(isForChallenge: true),
                   _challengeVideoComponent(),
@@ -221,6 +221,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               height: ScreenUtils.height(context) * 0.6,
               width: ScreenUtils.width(context),
               child: ListView(
+                physics: OlukoNeumorphism.listViewPhysicsEffect,
                 addAutomaticKeepAlives: false,
                 addRepaintBoundaries: false,
                 padding: EdgeInsets.zero,

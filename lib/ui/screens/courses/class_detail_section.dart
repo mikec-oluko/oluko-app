@@ -96,7 +96,8 @@ class _State extends State<ClassDetailSection> {
               child: BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
                 if (movementState is GetAllSuccess) {
                   _movements = movementState.movements;
-                  return ListView(addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: getClassWidgets());
+                  return ListView(
+                      physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: getClassWidgets());
                 } else {
                   return SizedBox();
                 }

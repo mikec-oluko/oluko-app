@@ -216,42 +216,47 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
 
   Widget classInfoSection() {
     return Stack(children: [
-      ListView(padding: EdgeInsets.zero, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
-        Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: Column(children: [
-              OverlayVideoPreview(image: _segment.image, video: _segment.challengeVideo, showBackButton: true, bottomWidgets: [
-                BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
-                  if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
-                    final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
-                    final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
-                    final int qty = favorites + normalUsers;
-                    return CourseInfoSection(
-                      isUserChallengeSection: true,
-                      peopleQty: qty,
-                      image: _courseEnrollment.course.image,
-                      clockAction: () => _clockAction(widget.challenge.segmentId),
-                      onPeoplePressed: () => _peopleAction(
-                        doneChallengeUsersState.users,
-                        doneChallengeUsersState.favoriteUsers,
-                      ),
-                    );
-                  } else {
-                    return CourseInfoSection(
-                      peopleQty: 0,
-                      image: _courseEnrollment.course.image,
-                      clockAction: () {},
-                    );
-                  }
-                })
-              ]),
-              ChallengeDetailSection(segment: _segment),
-              Container(
-                color: OlukoNeumorphismColors.appBackgroundColor,
-                height: ScreenUtils.height(context) * 0.16,
-              )
-            ])),
-      ]),
+      ListView(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
+          padding: EdgeInsets.zero,
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
+          children: [
+            Padding(
+                padding: const EdgeInsets.only(bottom: 3),
+                child: Column(children: [
+                  OverlayVideoPreview(image: _segment.image, video: _segment.challengeVideo, showBackButton: true, bottomWidgets: [
+                    BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
+                      if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
+                        final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
+                        final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
+                        final int qty = favorites + normalUsers;
+                        return CourseInfoSection(
+                          isUserChallengeSection: true,
+                          peopleQty: qty,
+                          image: _courseEnrollment.course.image,
+                          clockAction: () => _clockAction(widget.challenge.segmentId),
+                          onPeoplePressed: () => _peopleAction(
+                            doneChallengeUsersState.users,
+                            doneChallengeUsersState.favoriteUsers,
+                          ),
+                        );
+                      } else {
+                        return CourseInfoSection(
+                          peopleQty: 0,
+                          image: _courseEnrollment.course.image,
+                          clockAction: () {},
+                        );
+                      }
+                    })
+                  ]),
+                  ChallengeDetailSection(segment: _segment),
+                  Container(
+                    color: OlukoNeumorphismColors.appBackgroundColor,
+                    height: ScreenUtils.height(context) * 0.16,
+                  )
+                ])),
+          ]),
       Positioned(bottom: 0, child: showChallengeAudioModal())
     ]);
   }

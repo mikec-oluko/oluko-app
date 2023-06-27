@@ -359,7 +359,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   ),
                 )
               : GridView.builder(
-                  physics: ClampingScrollPhysics(),
+                  physics: OlukoNeumorphism.listViewPhysicsEffect,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                   ),

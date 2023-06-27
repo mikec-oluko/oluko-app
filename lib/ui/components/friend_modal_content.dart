@@ -443,6 +443,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
           ),
         ),
         child: ListView(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: false,
           children: [

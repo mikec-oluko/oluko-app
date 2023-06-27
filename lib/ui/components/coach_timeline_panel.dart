@@ -99,6 +99,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             height: 80,
             child: _friendUsersList.isNotEmpty
                 ? ListView(
+                    physics: OlukoNeumorphism.listViewPhysicsEffect,
                     addAutomaticKeepAlives: false,
                     addRepaintBoundaries: false,
                     scrollDirection: Axis.horizontal,

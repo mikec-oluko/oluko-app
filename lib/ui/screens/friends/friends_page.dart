@@ -65,27 +65,27 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserListBloc, UserListState>(
-      builder: (context, state) {
-        if (state is UserListSuccess) {
-          _users = state.users;
-        }
-        return Scaffold(
-          backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          appBar: _appBar(),
-          body: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, authState) {
-              if (authState is AuthSuccess && _authStateData == null) {
-                _authStateData = authState;
-                //TODO: CHECK IF NEED IT INSIDE TABS
-                BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
+    return Scaffold(
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      appBar: _appBar(),
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, authState) {
+          if (authState is AuthSuccess && _authStateData == null) {
+            _authStateData = authState;
+            //TODO: CHECK IF NEED IT INSIDE TABS
+            BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
+          }
+          return BlocBuilder<UserListBloc, UserListState>(
+            builder: (context, state) {
+              if (state is UserListSuccess) {
+                _users = state.users;
                 _users.removeWhere((element) => element.id == _authStateData.user.id);
               }
               return _usersWidget(context);
             },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

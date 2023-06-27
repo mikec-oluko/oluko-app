@@ -153,6 +153,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
           }
           return Container(
             child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               children: [
@@ -236,6 +237,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
           }
           return Container(
             child: ListView(
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               children: [
@@ -519,6 +521,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       : Container(
                           alignment: Alignment.centerLeft,
                           child: SingleChildScrollView(
+                            physics: OlukoNeumorphism.listViewPhysicsEffect,
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: _movementInfoSuccess.relatedCourses

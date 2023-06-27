@@ -68,9 +68,10 @@ Padding _noCoursesMessage(BuildContext context) {
   );
 }
 
-Widget _courseList(
-    List<CourseEnrollment> courses, Map<String, int> coursesNotificationQuantity, BuildContext context, UserResponse currentUser, List<CourseEnrollment> enrollments) {
+Widget _courseList(List<CourseEnrollment> courses, Map<String, int> coursesNotificationQuantity, BuildContext context, UserResponse currentUser,
+    List<CourseEnrollment> enrollments) {
   return ListView(
+    physics: OlukoNeumorphism.listViewPhysicsEffect,
     scrollDirection: Axis.horizontal,
     children: courses
         .asMap()
