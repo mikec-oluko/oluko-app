@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/friends_weight_records_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/weight_record.dart';
@@ -62,6 +63,10 @@ class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
                             context: context,
                             userId: widget.userId)
                       ],
+                      removeHorizontalPadding: true,
+                      showBackgroundColor: false,
+                      closeIconColor: OlukoColors.primary,
+                      addPaddingToCloseButton: true,
                       useAppBackground: true);
                 },
                 child: Container(
