@@ -58,7 +58,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
     });
     super.initState();
     if (widget.openEditScheduleOnInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _openEditSchedule(context));
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openEditSchedule(context, redirect: true));
     }
   }
 
@@ -92,7 +92,7 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
     );
   }
 
-  void _openEditSchedule(BuildContext context) {
+  void _openEditSchedule(BuildContext context, {bool redirect = false}) {
     final int lastCompletedClassIndex = widget.courseEnrollment.classes.lastIndexWhere((classItem) => classItem.completedAt != null);
     final int totalClasses = widget.courseEnrollment.classes.where((classItem) =>
                                                                 widget.courseEnrollment.classes.indexOf(classItem) > lastCompletedClassIndex &&
@@ -108,9 +108,11 @@ class _CourseClassCardsListState extends State<CourseClassCardsList> {
         onUpdateScheduleAction: () {
           setState(() {
             _classItemList = _updateClassScheduledDates();
-            Future.delayed(const Duration(milliseconds: 1000), () {
-              Navigator.pop(context);
-            });
+            if (redirect){
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                Navigator.pop(context);
+              });
+            }
           });
         },
       ),
