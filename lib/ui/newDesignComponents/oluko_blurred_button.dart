@@ -14,7 +14,7 @@ class OlukoBlurredButton extends StatefulWidget {
 class _OlukoBlurredButtonState extends State<OlukoBlurredButton> {
   @override
   Widget build(BuildContext context) {
-    final Color color = widget.color ?? Color.fromARGB(0, 0, 0, 0).withOpacity(0.3);
+    final Color color = widget.color ?? OlukoColors.black.withOpacity(0.3);
     final Widget childContent = widget.color != null ? widget.childContent : BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20), child: widget.childContent);
     return ClipRRect(
       borderRadius: BorderRadius.circular(50),
