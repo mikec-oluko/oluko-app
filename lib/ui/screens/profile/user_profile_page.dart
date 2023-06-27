@@ -228,7 +228,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             children: [
               if (!_isCurrentUser) otherUserInteraction(userRequested) else defaultWidgetNoContent,
               const SizedBox(
-                height: 20,
+                height: 30,
               ),
               assessmentVideosSlider(),
               transformationJourneySlider(),
