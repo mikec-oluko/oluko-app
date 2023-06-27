@@ -20,7 +20,7 @@ class SoundPlayer {
 
   Future init(SessionCategory categoryToSet) async {
     _audioPlayer = FlutterSoundPlayer();
-    await _audioPlayer.openAudioSession(category: categoryToSet, focus: AudioFocus.abandonFocus, mode: SessionMode.modeSpokenAudio);
+    await _audioPlayer.openAudioSession(category: categoryToSet, focus: AudioFocus.doNotRequestFocus, mode: SessionMode.modeDefault);
   }
 
   Future dispose() async {
