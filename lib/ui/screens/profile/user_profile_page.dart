@@ -227,6 +227,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
           Column(
             children: [
               if (!_isCurrentUser) otherUserInteraction(userRequested) else defaultWidgetNoContent,
+              const SizedBox(
+                height: 20,
+              ),
               assessmentVideosSlider(),
               transformationJourneySlider(),
               activeCoursesSlider(_isCurrentUser),
@@ -379,24 +382,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
           else
             defaultWidgetNoContent,
           Container(
-            child: !OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoOutlinedButton(
-                    onPressed: () {
-                      AppMessages().showDialogActionMessage(context, '', 2);
-                      checkUserConnectStatus(userRequested);
-                      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
-                    },
-                    title: _connectButtonTitle)
-                : OlukoNeumorphicPrimaryButton(
-                    title: _connectButtonTitle,
-                    onPressed: () {
-                      if (connectStatus != UserConnectStatus.connected) {
-                        AppMessages().showDialogActionMessage(context, '', 2);
-                      }
-                      checkUserConnectStatus(userRequested);
-                      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
-                    },
-                  ),
+            child: friendModel == null
+                ? const Expanded(
+                    child: Align(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : !OlukoNeumorphism.isNeumorphismDesign
+                    ? OlukoOutlinedButton(
+                        onPressed: () {
+                          AppMessages().showDialogActionMessage(context, '', 2);
+                          checkUserConnectStatus(userRequested);
+                          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                        },
+                        title: _connectButtonTitle)
+                    : OlukoNeumorphicPrimaryButton(
+                        title: _connectButtonTitle,
+                        onPressed: () {
+                          if (connectStatus != UserConnectStatus.connected) {
+                            AppMessages().showDialogActionMessage(context, '', 2);
+                          }
+                          checkUserConnectStatus(userRequested);
+                          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                        },
+                      ),
           ),
         ],
       ),
