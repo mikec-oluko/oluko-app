@@ -50,6 +50,7 @@ class DialogUtils {
     return Padding(
         padding: EdgeInsets.only(top: addPaddingToCloseButton ? 15 : 0),
         child: IconButton(
+          splashRadius: 5.0,
           onPressed: () {
             Navigator.pop(context);
           },
