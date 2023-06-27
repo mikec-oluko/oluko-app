@@ -73,7 +73,7 @@ class HomeNeumorphicLatestDesign extends StatefulWidget {
   final UserResponse currentUser;
   final List<CourseEnrollment> courseEnrollments;
   final AuthSuccess authState;
-  bool scrollToUpcomingWorkouts;
+  final bool scrollToUpcomingWorkouts;
 
   HomeNeumorphicLatestDesign({this.currentUser, this.courseEnrollments, this.authState, this.scrollToUpcomingWorkouts = false}) : super();
 
@@ -159,7 +159,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     if (_scrollController.hasClients){
       await _scrollController.animateTo(position.dy - topBarHeight - 70, duration: const Duration(seconds: 1), curve: Curves.easeIn);
     }
-    widget.scrollToUpcomingWorkouts = false;
   }
 
   StatefulWidget getHomeContent(BuildContext context) {

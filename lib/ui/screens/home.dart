@@ -32,7 +32,7 @@ class Home extends StatefulWidget {
   Home({this.classIndex, this.index, Key key, this.scrollToUpcomingWorkouts = false}) : super(key: key);
   final int index;
   final int classIndex;
-  final bool scrollToUpcomingWorkouts;
+  bool scrollToUpcomingWorkouts;
 
   @override
   _HomeState createState() => _HomeState();
@@ -78,6 +78,10 @@ class _HomeState extends State<Home> {
             BlocProvider.of<CourseSubscriptionBloc>(context).getStream();
             BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(_user.id);
             BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_user.id);
+
+            final bool shouldScrollToUpcomingWorkouts = widget.scrollToUpcomingWorkouts ?? false;
+            widget.scrollToUpcomingWorkouts = false;
+
             return OlukoNeumorphism.isNeumorphismDesign
                 // ? HomeNeumorphicContent(_courseEnrollments, _authState, _courses, _user, index: widget.index)
                 ?
@@ -88,7 +92,7 @@ class _HomeState extends State<Home> {
                     currentUser: authState.user,
                     authState: authState,
                     courseEnrollments: _courseEnrollments,
-                    scrollToUpcomingWorkouts: widget.scrollToUpcomingWorkouts ?? false
+                    scrollToUpcomingWorkouts: shouldScrollToUpcomingWorkouts
                   )
                 : HomeContent(widget.classIndex, widget.index, _courseEnrollments, _authState, _courses, _user);
           } else {

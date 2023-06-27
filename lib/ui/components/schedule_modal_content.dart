@@ -244,19 +244,10 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   Future<void> scheduleCourse(BuildContext context) async {
     if (widget.courseEnrollment == null) {
       enrollCourse(context);
-      Navigator.pop(context);
     } else {
       updateSchedule(context);
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        routeLabels[RouteEnum.root],
-        (route) => false,
-        arguments: {
-          'tab': 0,
-          'scrollToUpcomingWorkouts': true
-        },
-      );
     }
+    Navigator.pop(context);
   }
 
   Future<void> enrollCourse(BuildContext context) async {
