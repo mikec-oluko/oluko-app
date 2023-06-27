@@ -35,6 +35,9 @@ class _State extends State<OlukoBottomNavigationBar> {
     BlocProvider.of<ChatSliderMessagesBloc>(context).listenToMessages(widget.loggedUser.uid);
     BlocProvider.of<CommunityTabFriendNotificationBloc>(context).listenFriendRequestByUserId(userId: widget.loggedUser.uid);
     BlocProvider.of<CoachTabNotificationBloc>(context).listenAnnotationsByUserId(userId: widget.loggedUser.uid);
+    BlocProvider.of<CoachTabNotificationBloc>(context).listenRecommendationsByUserId(userId: widget.loggedUser.uid);
+
+
 
   }
 
@@ -93,7 +96,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                 builder: (context, state) {
                   bool chatNotification = state is MessagesNotificationUpdated && state.quantity > 0;
                   bool hasFriendNotification = friendNotification || chatNotification;
-                  bool hasCoachNotification = stateCoachNotification is CoachTabNotification && stateCoachNotification.annotationsNotViewed.isNotEmpty;
+                  bool hasCoachNotification = stateCoachNotification is CoachTabNotification && (stateCoachNotification.annotationsNotViewed.isNotEmpty || stateCoachNotification.recommendationsNotViewed.isNotEmpty);
 
                   return Stack(
                     clipBehavior: Clip.none,
