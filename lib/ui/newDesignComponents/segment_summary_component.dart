@@ -236,7 +236,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   Widget _defaultMovementTile(MovementSubmodel movement) {
     return Container(
-      height: 40,
+      height: 30,
       child: ListTile(
         title: SizedBox(
           width: ScreenUtils.width(context) / 2,
