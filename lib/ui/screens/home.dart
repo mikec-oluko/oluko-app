@@ -29,9 +29,10 @@ import 'package:oluko_app/ui/screens/home_neumorphic_latest_design.dart';
 import 'package:oluko_app/ui/screens/welcome_video_first_time_login.dart';
 
 class Home extends StatefulWidget {
-  Home({this.classIndex, this.index, Key key}) : super(key: key);
+  Home({this.classIndex, this.index, Key key, this.scrollToUpcomingWorkouts = false}) : super(key: key);
   final int index;
   final int classIndex;
+  final bool scrollToUpcomingWorkouts;
 
   @override
   _HomeState createState() => _HomeState();
@@ -87,6 +88,7 @@ class _HomeState extends State<Home> {
                     currentUser: authState.user,
                     authState: authState,
                     courseEnrollments: _courseEnrollments,
+                    scrollToUpcomingWorkouts: widget.scrollToUpcomingWorkouts ?? false
                   )
                 : HomeContent(widget.classIndex, widget.index, _courseEnrollments, _authState, _courses, _user);
           } else {

@@ -16,6 +16,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/routes.dart';
 
 class ScheduleModalContent extends StatefulWidget {
   final Course course;
@@ -243,10 +244,19 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
   Future<void> scheduleCourse(BuildContext context) async {
     if (widget.courseEnrollment == null) {
       enrollCourse(context);
+      Navigator.pop(context);
     } else {
       updateSchedule(context);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        routeLabels[RouteEnum.root],
+        (route) => false,
+        arguments: {
+          'tab': 0,
+          'scrollToUpcomingWorkouts': true
+        },
+      );
     }
-    Navigator.pop(context);
   }
 
   Future<void> enrollCourse(BuildContext context) async {

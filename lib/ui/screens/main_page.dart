@@ -43,10 +43,11 @@ import 'package:oluko_app/models/points_card.dart';
 import 'package:oluko_app/ui/screens/coach/coach_main_page.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({this.classIndex, this.index, this.tab, Key key}) : super(key: key);
+  MainPage({this.classIndex, this.index, this.tab, Key key, this.scrollToUpcomingWorkouts = false}) : super(key: key);
   final int index;
   final int classIndex;
   int tab;
+  final bool scrollToUpcomingWorkouts;
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -89,7 +90,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     } else if (widget.index != null) {
       return Home(index: widget.index);
     } else {
-      return Home();
+      return Home(scrollToUpcomingWorkouts: widget.scrollToUpcomingWorkouts ?? false);
     }
   }
 
@@ -144,13 +145,24 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           listener: (context, state) {
             if (state is NewPushNotification) {
               if (ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root] || widget.tab != 1) {
-                Navigator.pushNamed(
-                  context,
-                  routeLabels[RouteEnum.root],
-                  arguments: {
-                    'tab': state.type,
-                  },
-                );
+                if (state.type == 0){
+                  Navigator.pushNamed(
+                    context,
+                    routeLabels[RouteEnum.root],
+                    arguments: {
+                      'tab': state.type,
+                      'scrollToUpcomingWorkouts': true
+                    },
+                  );
+                }else{
+                  Navigator.pushNamed(
+                    context,
+                    routeLabels[RouteEnum.root],
+                    arguments: {
+                      'tab': state.type,
+                    },
+                  );
+                }
               }
             }
           },
