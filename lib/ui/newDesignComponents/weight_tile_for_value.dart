@@ -39,24 +39,19 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
   }
 
   Widget _movementTileWithWeightValue(MovementSubmodel movement) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15, left: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                child: Text(SegmentUtils.getLabel(movement),
-                    maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
-              ),
-              if (canShowRecommendationSubtitle(movement))
-                SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
-            ],
-          ),
-          getTrailingContent(movement)
-        ],
+    return SizedBox(
+      height: 50,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        trailing: getTrailingContent(movement),
+        title: SizedBox(
+          width: ScreenUtils.width(context) / 2,
+          child: Text(SegmentUtils.getLabel(movement),
+              maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),
+        ),
+        subtitle: canShowRecommendationSubtitle(movement)
+            ? SegmentUtils.getTextWidget('(${movement.percentOfMaxWeight}${OlukoLocalizations.get(context, 'percentageOfMaxWeight')})', OlukoColors.grayColor)
+            : const SizedBox.shrink(),
       ),
     );
   }
@@ -79,7 +74,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Container recordContainer(Widget childContent) {
     return Container(
-      height: 30,
+      height: 35,
       decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),

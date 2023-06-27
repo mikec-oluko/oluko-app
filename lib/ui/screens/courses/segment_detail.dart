@@ -132,6 +132,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.user;
+        BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_user.id);
         BlocProvider.of<WorkoutWeightBloc>(context).getUserWeightsForWorkout(_user.id);
         BlocProvider.of<MaxWeightsBloc>(context).getUserMaxWeightRecords(_user.id);
         BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_user.id);
@@ -658,7 +659,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       coach: _coach,
                       currentUser: _user,
                       fromChallenge: widget.fromChallenge,
-                      favoriteUsers: widget.favoriteUsers ?? [],
                     ),
                   );
                 },

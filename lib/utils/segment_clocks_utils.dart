@@ -51,7 +51,9 @@ class SegmentClocksUtils {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(totalText, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary)),
+          SizedBox(
+              width: ScreenUtils.width(context) - 40,
+              child: Text(totalText, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.w600, customColor: OlukoColors.primary))),
         ],
       ),
     );

@@ -467,7 +467,6 @@ class _InsideClassesState extends State<InsideClass> {
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
                   favoriteUsers = subscribedCourseUsersState.favoriteUsers;
-                  BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(friends: favoriteUsers);
                   return GestureDetector(
                     onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                     child: Text(

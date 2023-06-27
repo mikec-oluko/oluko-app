@@ -438,12 +438,16 @@ class _State extends State<Clock> with WidgetsBindingObserver {
                       border: InputBorder.none,
                     ),
                   ))),
-              Text(
-                OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                    ? OlukoLocalizations.get(context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex - 1].counter))
-                    : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w300),
-                overflow: TextOverflow.ellipsis,
+              SizedBox(
+                width: 100,
+                child: Text(
+                  OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                      ? OlukoLocalizations.get(context, SegmentUtils.getCounterInputLabel(widget.timerEntries[widget.timerTaskIndex - 1].counter))
+                      : widget.timerEntries[widget.timerTaskIndex - 1].movement.name,
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w300),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

@@ -110,7 +110,7 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
               height: 10,
             ),
             Container(
-              height: 100,
+              height: 90,
               width: ScreenUtils.width(context),
               child: ListView(
                 physics: OlukoNeumorphism.listViewPhysicsEffect,
