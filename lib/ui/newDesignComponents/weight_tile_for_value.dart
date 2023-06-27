@@ -42,6 +42,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
     return SizedBox(
       height: 50,
       child: ListTile(
+        contentPadding: EdgeInsets.zero,
         trailing: getTrailingContent(movement),
         title: SizedBox(
           width: ScreenUtils.width(context) / 2,
