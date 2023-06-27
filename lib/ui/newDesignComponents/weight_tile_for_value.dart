@@ -74,7 +74,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
 
   Container recordContainer(Widget childContent) {
     return Container(
-      height: 30,
+      height: 35,
       decoration: BoxDecoration(color: _getContainerColor(), borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
