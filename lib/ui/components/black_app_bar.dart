@@ -308,7 +308,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
     if (widget.courseImage != null) {
       return SizedBox(
         width: 70,
-        height: 90,
+        height: 75,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: ClipRRect(

@@ -8,6 +8,8 @@ import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_completed_before_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_stream_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends_weight_records_bloc.dart';
 import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
@@ -73,7 +75,6 @@ class SegmentImageSection extends StatefulWidget {
   final UserResponse currentUser;
   final Challenge challenge;
   final bool fromChallenge;
-  final List<UserResponse> favoriteUsers;
 
   SegmentImageSection({
     this.onPressed = null,
@@ -94,7 +95,6 @@ class SegmentImageSection extends StatefulWidget {
     this.coach,
     this.currentUser,
     this.fromChallenge,
-    this.favoriteUsers,
     Key key,
   }) : super(key: key);
 
@@ -115,6 +115,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   List<EnrollmentMovement> enrollmentMovements = [];
   List<MovementSubmodel> movementsToDisplayWeight = [];
   List<MaxWeight> maxWeightRecords = [];
+  List<UserResponse> favoriteUsers = [];
 
   @override
   void initState() {
@@ -293,6 +294,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       builder: (context, state) {
         if (state is WeightRecordsSuccess) {
           weightRecords = state.records;
+          movementsToDisplayWeight = MovementUtils.getMovementsWithWeights(sections: widget.segment.sections, enrollmentMovements: enrollmentMovements);
           getMovementsWithWeightRequired();
         }
         if (state is WeightRecordsDispose) {
@@ -314,18 +316,25 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _segmentSteps(),
-                    if (movementsToDisplayWeight.isEmpty)
-                      const SizedBox.shrink()
-                    else
-                      FriendsRecordsStack(
-                          friendsUsers: widget.favoriteUsers,
-                          movementsForWeight: movementsToDisplayWeight,
-                          segmentStep: _segmentSteps(),
-                          segmentTitleWidget: _segmentCardTitle(),
-                          useImperial: widget.currentUser.useImperialSystem,
-                          currentUserRecords: weightRecords,
-                          currentSegmentId: widget.segment.id,
-                          userId: widget.currentUser.id)
+                    BlocBuilder<FriendBloc, FriendState>(
+                      builder: (context, state) {
+                        if (state is GetFriendsSuccess) {
+                          favoriteUsers = state.friendUsers;
+                          BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(friends: favoriteUsers);
+                        }
+                        return favoriteUsers != null && favoriteUsers.isNotEmpty
+                            ? FriendsRecordsStack(
+                                friendsUsers: favoriteUsers,
+                                movementsForWeight: movementsToDisplayWeight,
+                                segmentStep: _segmentSteps(),
+                                segmentTitleWidget: _segmentCardTitle(),
+                                useImperial: widget.currentUser.useImperialSystem,
+                                currentUserRecords: weightRecords,
+                                currentSegmentId: widget.segment.id,
+                                userId: widget.currentUser.id)
+                            : const SizedBox.shrink();
+                      },
+                    )
                   ],
                 ),
                 const SizedBox(height: 10),

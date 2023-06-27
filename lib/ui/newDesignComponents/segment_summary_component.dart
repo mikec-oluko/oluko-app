@@ -127,7 +127,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         showRecommendation = false;
       });
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 5),
         child: Container(
           height: 20,
           width: ScreenUtils.width(context) - 40,
@@ -236,9 +236,11 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   Widget _defaultMovementTile(MovementSubmodel movement) {
     return Container(
+      padding: EdgeInsets.zero,
       height: 40,
       child: ListTile(
-        title: SizedBox(
+        contentPadding: EdgeInsets.zero,
+        leading: SizedBox(
           width: ScreenUtils.width(context) / 2,
           child: Text(SegmentUtils.getLabel(movement),
               maxLines: 2, style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor)),

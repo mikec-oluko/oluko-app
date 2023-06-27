@@ -1268,7 +1268,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   _addTime() {
     const int addSeconds = 1;
-    final int seconds = stopwatchDuration?.inSeconds ?? 0 + addSeconds;
+    final int seconds = (stopwatchDuration?.inSeconds ?? 0) + addSeconds;
     stopwatchDuration = Duration(seconds: seconds);
     BlocProvider.of<StopwatchBloc>(context)?.updateStopwatch(stopwatchDuration);
   }
