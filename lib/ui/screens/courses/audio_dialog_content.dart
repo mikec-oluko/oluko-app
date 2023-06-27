@@ -160,7 +160,8 @@ class _State extends State<AudioDialogContent> {
         });
       });
 
-      widget.audioPlayer.onPositionChanged.listen((duration) {
+      widget.audioPlayer.onPositionChanged.listen((duration) async {
+        _totalDuration ??= (await widget.audioPlayer.getDuration()).inMicroseconds;
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
