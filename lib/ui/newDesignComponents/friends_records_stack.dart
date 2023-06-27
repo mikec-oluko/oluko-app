@@ -35,7 +35,7 @@ class FriendsRecordsStack extends StatefulWidget {
 }
 
 class _FriendsRecordsStackState extends State<FriendsRecordsStack> {
-  Map<UserResponse, List<WeightRecord>> myFriendsrecords;
+  Map<UserResponse, List<WeightRecord>> myFriendsrecords = {};
 
   double userRadius = 25.0;
   @override

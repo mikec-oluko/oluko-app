@@ -322,15 +322,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                           favoriteUsers = state.friendUsers;
                           BlocProvider.of<FriendsWeightRecordsBloc>(context).getFriendsWeight(friends: favoriteUsers);
                         }
-                        return FriendsRecordsStack(
-                            friendsUsers: favoriteUsers,
-                            movementsForWeight: movementsToDisplayWeight,
-                            segmentStep: _segmentSteps(),
-                            segmentTitleWidget: _segmentCardTitle(),
-                            useImperial: widget.currentUser.useImperialSystem,
-                            currentUserRecords: weightRecords,
-                            currentSegmentId: widget.segment.id,
-                            userId: widget.currentUser.id);
+                        return favoriteUsers != null && favoriteUsers.isNotEmpty
+                            ? FriendsRecordsStack(
+                                friendsUsers: favoriteUsers,
+                                movementsForWeight: movementsToDisplayWeight,
+                                segmentStep: _segmentSteps(),
+                                segmentTitleWidget: _segmentCardTitle(),
+                                useImperial: widget.currentUser.useImperialSystem,
+                                currentUserRecords: weightRecords,
+                                currentSegmentId: widget.segment.id,
+                                userId: widget.currentUser.id)
+                            : const SizedBox.shrink();
                       },
                     )
                   ],
