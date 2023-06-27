@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,11 +43,11 @@ class ChallengesCard extends StatefulWidget {
 class _State extends State<ChallengesCard> {
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   Widget challengeCardWidget = const SizedBox.shrink();
-  final Widget _cardSpacer = const SizedBox(height: 10);
+  final Widget _cardSpacer = const SizedBox(height: 5);
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: 5, top: 5),
       child: _challengeCard(context),
     );
     ;
@@ -55,7 +57,7 @@ class _State extends State<ChallengesCard> {
 
   Column _unlockedCardByPreviousSegment(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _cardSpacer,
+      if (Platform.isAndroid) const SizedBox(height: 5) else _cardSpacer,
       if (widget.segmentChallenge.previousSegmentFinish) _unlockedCard(context) else _lockedCard(context),
       if (needAudioComponent) _audioElementForChallengeCard(context)
     ]);
