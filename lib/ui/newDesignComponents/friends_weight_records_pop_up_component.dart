@@ -1,20 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_bloc.dart';
-import 'package:oluko_app/blocs/friends/friend_request_bloc.dart';
-import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
-import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
-import 'package:oluko_app/blocs/user_progress_stream_bloc.dart';
-import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/weight_record.dart';
-import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -51,28 +42,33 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: ScreenUtils.width(context) - 40,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          widget.segmentStep,
-          const SizedBox(
-            height: 10,
-          ),
-          widget.segmentTitleWidget,
-          const SizedBox(
-            height: 10,
-          ),
-          Wrap(
-            children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement)).toList(),
-          )
-        ],
-      ),
-    );
+        width: 330,
+        height: 500,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: OlukoNeumorphismColors.appBackgroundColor),
+        child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    widget.segmentStep,
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    widget.segmentTitleWidget,
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Wrap(
+                      children: widget.movementsForWeight.map((movement) => getWorkoutRecordsComponent(currentMovement: movement)).toList(),
+                    )
+                  ],
+                )
+              ],
+            )));
   }
 
   Widget getWorkoutRecordsComponent({MovementSubmodel currentMovement}) {
@@ -107,10 +103,10 @@ class _FriendsWeightRecordsPopUpComponentState extends State<FriendsWeightRecord
               ],
             ),
             SizedBox(
-              height: 10,
+              height: 15,
             ),
             Container(
-              height: 100,
+              height: 80,
               width: ScreenUtils.width(context),
               child: ListView(
                 physics: OlukoNeumorphism.listViewPhysicsEffect,
