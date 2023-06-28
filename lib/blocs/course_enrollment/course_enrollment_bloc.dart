@@ -81,8 +81,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     try {
       final DateTime scheduleDatesFromNow = DateTime.now();
       ScheduleUtils.scheduleUncompletedClasses(enrolledCourse.classes, lastCompletedClassIndex, weekDays: enrolledCourse.weekDays, scheduleDatesFrom: scheduleDatesFromNow);
-      final CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.scheduleCourse(enrolledCourse);
-      emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
+      await CourseEnrollmentRepository.scheduleCourse(enrolledCourse);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
