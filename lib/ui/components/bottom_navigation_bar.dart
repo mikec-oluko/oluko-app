@@ -36,9 +36,8 @@ class _State extends State<OlukoBottomNavigationBar> {
     BlocProvider.of<CommunityTabFriendNotificationBloc>(context).listenFriendRequestByUserId(userId: widget.loggedUser.uid);
     BlocProvider.of<CoachTabNotificationBloc>(context).listenAnnotationsByUserId(userId: widget.loggedUser.uid);
     BlocProvider.of<CoachTabNotificationBloc>(context).listenRecommendationsByUserId(userId: widget.loggedUser.uid);
-
-
-
+    BlocProvider.of<CoachTabNotificationBloc>(context).listenWelcomeVideoByUserId(userId: widget.loggedUser.uid);
+    BlocProvider.of<CoachTabNotificationBloc>(context).listenVideoMessagesVideoByUserId(userId: widget.loggedUser.uid);
   }
 
   UserInformationBottomBar userInformation;
@@ -96,7 +95,11 @@ class _State extends State<OlukoBottomNavigationBar> {
                 builder: (context, state) {
                   bool chatNotification = state is MessagesNotificationUpdated && state.quantity > 0;
                   bool hasFriendNotification = friendNotification || chatNotification;
-                  bool hasCoachNotification = stateCoachNotification is CoachTabNotification && (stateCoachNotification.annotationsNotViewed.isNotEmpty || stateCoachNotification.recommendationsNotViewed.isNotEmpty);
+                  bool hasCoachNotification = stateCoachNotification is CoachTabNotification && 
+                  (stateCoachNotification.annotationsNotViewed.isNotEmpty || 
+                  stateCoachNotification.recommendationsNotViewed.isNotEmpty ||
+                  stateCoachNotification.welcomeVideoNotSeen ||
+                  stateCoachNotification.coachVideoMessagesNotViewed.isNotEmpty);
 
                   return Stack(
                     clipBehavior: Clip.none,
