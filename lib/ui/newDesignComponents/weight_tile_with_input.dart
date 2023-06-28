@@ -62,44 +62,48 @@ class _WeightTileWithInputState extends State<WeightTileWithInput> {
         decoration: const BoxDecoration(color: OlukoNeumorphismColors.appBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(10))),
         width: 120,
         height: 40,
-        child: TextFormField(
-          focusNode: focusNode,
-          autovalidateMode: AutovalidateMode.always,
-          controller: widget.currentTextEditingController,
-          maxLines: 1,
-          showCursor: true,
-          readOnly: true,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onTap: () {
-            setState(() {
-              showSuffix = true;
-            });
-            widget.open(focusNode, widget.currentTextEditingController);
-          },
-          onEditingComplete: () {},
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 20,
-            color: OlukoColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            focusColor: Colors.transparent,
-            fillColor: Colors.transparent,
-            hintText: OlukoLocalizations.get(context, 'addWeight'),
-            hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
-            hintMaxLines: 1,
-            border: InputBorder.none,
-            suffixText: showSuffix
-                ? widget.useImperialSystem
-                    ? OlukoLocalizations.get(context, 'lbs')
-                    : OlukoLocalizations.get(context, 'kgs')
-                : null,
-          ),
-        ));
+        child: Padding(padding: EdgeInsets.only(top: 3, left: 0), child: _textField()));
+  }
+
+  TextFormField _textField() {
+    return TextFormField(
+      focusNode: focusNode,
+      autovalidateMode: AutovalidateMode.always,
+      controller: widget.currentTextEditingController,
+      maxLines: 1,
+      showCursor: true,
+      readOnly: true,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+      ],
+      onTap: () {
+        setState(() {
+          showSuffix = true;
+        });
+        widget.open(focusNode, widget.currentTextEditingController);
+      },
+      onEditingComplete: () {},
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 20,
+        color: OlukoColors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        focusColor: Colors.transparent,
+        fillColor: Colors.transparent,
+        hintText: OlukoLocalizations.get(context, 'addWeight'),
+        hintStyle: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+        hintMaxLines: 1,
+        border: InputBorder.none,
+        suffixText: showSuffix
+            ? widget.useImperialSystem
+                ? OlukoLocalizations.get(context, 'lbs')
+                : OlukoLocalizations.get(context, 'kgs')
+            : null,
+      ),
+    );
   }
 }
