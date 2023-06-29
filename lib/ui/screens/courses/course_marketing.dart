@@ -95,7 +95,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
     _scrollCotrollerInit();
     _videoPlayerActions();
     _courseLiked = false;
-    _soundPlayer.init(SessionCategory.playback);
   }
 
   @override
@@ -374,6 +373,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   void showScheduleDialog(BuildContext context) {
     BottomDialogUtils.showBottomDialog(
+      onDismissAction: () => _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll),
       content: ScheduleModalContent(
         course: widget.course,
         scheduleRecommendations: widget.course.scheduleRecommendations,
@@ -405,7 +405,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (!widget.isCoachRecommendation) {
         BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
       }
-      await _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }
     _setDisableUnrollAction();
   }
