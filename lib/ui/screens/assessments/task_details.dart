@@ -311,10 +311,12 @@ class _TaskDetailsState extends State<TaskDetails> {
       'taskId': _task.id,
       'taskIndex': widget.taskIndex,
       'isPublic': _makePublic ?? false,
-      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+      'isLastTask': widget.isLastTask ?? lastTask(),
       'fromCompletedClass': false
     });
   }
+
+  bool lastTask() => (_tasks.length - widget.taskIndex) == 1;
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
     return Padding(
@@ -400,11 +402,8 @@ class _TaskDetailsState extends State<TaskDetails> {
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
-        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-          'taskIndex': widget.taskIndex + 1,
-          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
-          'taskCompleted': false
-        });
+        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+            arguments: {'taskIndex': widget.taskIndex + 1, 'isLastTask': widget.isLastTask ?? lastTask(), 'taskCompleted': false});
       } else {
         goToAssessmentVideos();
       }
@@ -450,7 +449,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       'taskId': _task.id,
       'taskIndex': widget.taskIndex,
       'isPublic': _makePublic,
-      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+      'isLastTask': widget.isLastTask ?? lastTask(),
       'fromCompletedClass': false
     });
   }
