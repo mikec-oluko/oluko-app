@@ -47,7 +47,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Assessment _assessment;
   UserResponse _user;
   AssessmentAssignment _assessmentAssignment;
-  List<TaskSubmission> taskSubmissionsCompleted;
+  List<TaskSubmission> taskSubmissionsCompleted = [];
   int assessmentsTasksQty;
   bool isLastTask = false;
   bool _showDonePanel = false;
@@ -335,7 +335,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
       AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
     } else {
-      if (assessmentsTasksQty - taskSubmissionsCompleted.length == 1) {
+      if ((assessmentsTasksQty - taskSubmissionsCompleted.length) == 1) {
         setState(() {
           isLastTask = true;
         });

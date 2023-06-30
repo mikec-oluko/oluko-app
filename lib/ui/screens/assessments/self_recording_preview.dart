@@ -51,6 +51,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   Task _task;
   List<Task> _tasks;
+  List<TaskSubmission> taskSubmissionsCompleted = [];
   AssessmentAssignment _assessmentAssignment;
   TaskSubmission _taskSubmission;
   Assessment _assessment;
@@ -70,31 +71,42 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
           return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
             builder: (context, assessmentAssignmentState) {
+              if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+                BlocProvider.of<TaskSubmissionListBloc>(context).get(assessmentAssignmentState.assessmentAssignment);
+              }
               return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
-                return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
-                  if (assessmentState is AssessmentSuccess &&
-                      assessmentAssignmentState is AssessmentAssignmentSuccess &&
-                      taskState is TaskSuccess &&
-                      (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
-                    _assessment = assessmentState.assessment;
-                    _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                    _tasks = taskState.values;
-                    _task = _tasks[widget.taskIndex];
-                    _checkLastAssessmentDone(currentPlan);
-                    if (taskSubmissionState is GetSuccess &&
-                        taskSubmissionState.taskSubmission != null &&
-                        taskSubmissionState.taskSubmission.task.id == widget.taskId) {
-                      _taskSubmission = taskSubmissionState.taskSubmission;
+                return BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(
+                  builder: (context, taskSubmissionListState) {
+                    if (taskSubmissionListState is GetTaskSubmissionSuccess) {
+                      taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
                     }
-                    if (taskSubmissionState is CreateSuccess) {
-                      _taskSubmission = taskSubmissionState.taskSubmission;
-                      createVideo(_taskSubmission, _assessmentAssignment, _assessment, currentTaskIsLast ?? widget.isLastTask);
-                    }
-                    return form();
-                  } else {
-                    return const SizedBox();
-                  }
-                });
+                    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
+                      if (assessmentState is AssessmentSuccess &&
+                          assessmentAssignmentState is AssessmentAssignmentSuccess &&
+                          taskState is TaskSuccess &&
+                          (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
+                        _assessment = assessmentState.assessment;
+                        _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+
+                        _tasks = taskState.values;
+                        _task = _tasks[widget.taskIndex];
+                        _checkLastAssessmentDone(currentPlan);
+                        if (taskSubmissionState is GetSuccess &&
+                            taskSubmissionState.taskSubmission != null &&
+                            taskSubmissionState.taskSubmission.task.id == widget.taskId) {
+                          _taskSubmission = taskSubmissionState.taskSubmission;
+                        }
+                        if (taskSubmissionState is CreateSuccess) {
+                          _taskSubmission = taskSubmissionState.taskSubmission;
+                          createVideo(_taskSubmission, _assessmentAssignment, _assessment, checkIfTaskIsLastUpload);
+                        }
+                        return form();
+                      } else {
+                        return const SizedBox();
+                      }
+                    });
+                  },
+                );
               });
             },
           );
@@ -104,6 +116,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       }
     });
   }
+
+  bool get checkIfTaskIsLastUpload => _tasks.length - taskSubmissionsCompleted.length == 1;
 
   void _checkLastAssessmentDone(double currentPlan) {
     currentTaskIsLast = UserUtils.getUserAssesmentsQty(_assessment, currentPlan) - widget.taskIndex == 1;

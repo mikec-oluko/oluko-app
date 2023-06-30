@@ -447,7 +447,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                           'taskIndex': widget.taskIndex,
                           'filePath': path,
                           'isPublic': widget.isPublic,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                          'isLastTask': widget.isLastTask ?? lastTask
                         },
                       );
                     } else {
@@ -474,7 +474,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                           'taskIndex': widget.taskIndex,
                           'filePath': state.pickedFile.path,
                           'isPublic': widget.isPublic,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                          'isLastTask': widget.isLastTask ?? lastTask
                         },
                       );
                     } else if (state is PermissionsRequired) {
@@ -495,6 +495,8 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
       ),
     );
   }
+
+  bool get lastTask => _tasks.length - widget.taskIndex == 1;
 
   Widget recordingIcon() {
     return Stack(alignment: Alignment.center, children: [
