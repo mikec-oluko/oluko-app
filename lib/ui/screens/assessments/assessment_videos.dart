@@ -59,7 +59,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     _assessmentAssignment = null;
     super.dispose();
   }

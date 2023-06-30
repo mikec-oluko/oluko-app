@@ -193,7 +193,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         _headsetState = _val;
       });
     });
-    _soundPlayer.init(SessionCategory.playback);
     super.initState();
   }
 

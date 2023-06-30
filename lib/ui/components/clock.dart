@@ -114,7 +114,6 @@ class _State extends State<Clock> with WidgetsBindingObserver {
       widget.timeLeft = Duration(seconds: widget.timeLeft.inSeconds);
       _playCountdown(() => widget.goToNextStep(), () => widget.setPaused(), headsetState: _headsetState);
     }
-    _soundPlayer.init(SessionCategory.playback);
   }
 
   @override
@@ -643,7 +642,6 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   void _playCountdown(Function() goToNextStep, Function() setPaused, {HeadsetState headsetState}) {
     if (countdownTimer == null || !countdownTimer.isActive) {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-        print(canReproduce);
         if (canReproduce) {
           await SoundUtils.playSound(
               widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
