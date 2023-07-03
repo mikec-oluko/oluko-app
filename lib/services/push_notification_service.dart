@@ -8,6 +8,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_butt
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PushNotificationService {
   static FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -15,7 +16,7 @@ class PushNotificationService {
   static bool bottomDialogDisplayed = false;
 
   static Future<void> initializePushNotifications(BuildContext context, String userId) async {
-    await messaging.requestPermission();
+    var returneas = await Permission.notification.request();
     final String token = await messaging.getToken();
     BlocProvider.of<UserBloc>(context).saveToken(userId, token);
   }
@@ -88,8 +89,12 @@ class PushNotificationService {
                               Navigator.pop(contextPush);
                               notifyNewPushNotification(message, contextPush);
                             },
-                            title: OlukoLocalizations.get(contextPush, message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder] ?
-                                                                        'goToCourses' : 'goToCoach',),
+                            title: OlukoLocalizations.get(
+                              contextPush,
+                              message.data['type']?.toString() == notificationOptions[SettingsNotificationsOptions.workoutReminder]
+                                  ? 'goToCourses'
+                                  : 'goToCoach',
+                            ),
                           ),
                         ),
                       ],
@@ -100,8 +105,8 @@ class PushNotificationService {
             ),
           ),
           context: contextPush,
-          onDismissAction: (){
-              bottomDialogDisplayed = false;
+          onDismissAction: () {
+            bottomDialogDisplayed = false;
           },
         );
       }
