@@ -71,7 +71,6 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
     if (widget.course != null) {
       widget.course.weekDays = [];
       widget.course.scheduledDates = [];
-      _soundPlayer.init(SessionCategory.playback);
     }
   }
 

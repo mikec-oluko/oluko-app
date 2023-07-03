@@ -110,12 +110,12 @@ class CoachTabNotificationBloc extends Cubit<CoachTabNotificationState> {
             return;
           }
           final CoachAssignment coachAssignment = CoachAssignment.fromJson(snapshot?.docs?.first?.data());
-          if(coachAssignment == null || coachAssignment?.coachId == null){
+          if(coachAssignment == null || coachAssignment?.coachId == null || coachAssignment?.coachAssignmentStatus != 1){
             return;
           }
           welcomeVideoNotSeen = !coachAssignment?.welcomeVideoSeen;
           if(!welcomeVideoNotSeen && coachAssignment?.introductionCompleted != null){
-            welcomeVideoNotSeen = !coachAssignment?.introductionCompleted;
+            welcomeVideoNotSeen = !coachAssignment?.introductionCompleted && coachAssignment?.videoHLS != null;
           }
           emit(CoachTabNotification(
             annotationsNotViewed: userAnnotations, 
