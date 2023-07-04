@@ -79,10 +79,13 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed || state == AppLifecycleState.paused || state == AppLifecycleState.inactive) return;
+    if (state == AppLifecycleState.resumed) return;
     final isClosed = state == AppLifecycleState.detached;
     if (isClosed) {
       Navigator.pop(context);
+    }
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      saveAndRedirect();
     }
   }
 
@@ -436,20 +439,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
                     );
                   } else if (!_buttonBlocked) {
                     if (_recording) {
-                      final XFile videopath = await cameraController.stopVideoRecording();
-                      final String path = videopath.path;
-                      Navigator.pop(context);
-                      Navigator.pushNamed(
-                        context,
-                        routeLabels[RouteEnum.selfRecordingPreview],
-                        arguments: {
-                          'taskId': widget.taskId,
-                          'taskIndex': widget.taskIndex,
-                          'filePath': path,
-                          'isPublic': widget.isPublic,
-                          'isLastTask': widget.isLastTask ?? lastTask
-                        },
-                      );
+                      saveAndRedirect();
                     } else {
                       await cameraController.startVideoRecording();
                     }
@@ -538,5 +528,22 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
         flashActivated = true;
       }
     });
+  }
+
+  Future<void> saveAndRedirect() async {
+    final XFile videopath = await cameraController.stopVideoRecording();
+    final String path = videopath.path;
+    Navigator.pop(context);
+    Navigator.pushNamed(
+      context,
+      routeLabels[RouteEnum.selfRecordingPreview],
+      arguments: {
+        'taskId': widget.taskId,
+        'taskIndex': widget.taskIndex,
+        'filePath': path,
+        'isPublic': widget.isPublic,
+        'isLastTask': widget.isLastTask ?? lastTask
+      },
+    );
   }
 }

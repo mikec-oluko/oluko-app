@@ -30,7 +30,7 @@ class UploadFailure extends GalleryVideoState {
   final dynamic exception;
   final bool badFormat;
 
-  UploadFailure({this.exception, this.badFormat});
+  UploadFailure({this.exception, this.badFormat = false});
 }
 
 class GalleryVideoBloc extends Cubit<GalleryVideoState> {
@@ -50,7 +50,9 @@ class GalleryVideoBloc extends Cubit<GalleryVideoState> {
       }
       emit(Success(pickedFile: video));
     } catch (e) {
-      emit(UploadFailure(exception: e));
+      emit(UploadFailure(
+        exception: e,
+      ));
     }
   }
 
