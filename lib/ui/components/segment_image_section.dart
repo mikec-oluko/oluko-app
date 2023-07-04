@@ -205,7 +205,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
         ),
-        child: showVideoPlayer(widget.segment.video),
+        child: showVideoPlayer(widget.segment.videoHLS),
       ),
     );
   }
