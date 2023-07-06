@@ -27,6 +27,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/challenge_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
@@ -171,7 +172,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool storyShared = false;
   List<WorkoutWeight> movementsAndWeightsToSave = [];
   UserResponse currentUser;
-  bool isSegmentSaveMaxWeights = false;
+  GlobalKey<TooltipState> personalRecordTooltipKey = GlobalKey<TooltipState>();
+  bool existPersonalRecordMovement = false;
 
   @override
   void initState() {
@@ -390,11 +392,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         segmentId: widget.segments[widget.segmentIndex].id,
         currentUser: currentUser,
         storyShared: timerTaskState is SetShareDone ? timerTaskState.shareDone : false,
-        movementAndWeightsForWorkout: (movementsAndWeights, segmentSaveMaxWeights) {
+        tooltipRemoteKey: personalRecordTooltipKey,
+        movementAndWeightsForWorkout: (movementsAndWeights) {
           setState(() {
             movementsAndWeightsToSave = movementsAndWeights;
-            isSegmentSaveMaxWeights = segmentSaveMaxWeights;
           });
+        },
+        segmentHasPersonalRecordMovement: (usePersonalRecord) {
+          existPersonalRecordMovement = usePersonalRecord ?? false;
         },
       ),
     );
@@ -638,7 +643,16 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   Future<void> nextSegmentAction() async {
     BlocProvider.of<AnimationBloc>(context).playPauseAnimation();
     saveWorkoutMovementAndWeights();
+    if (existPersonalRecordMovement) {
+      if (getPersonalRecordMovement().isNotEmpty && getPersonalRecordMovement().first.weight != null) {
+        await nextSegmentNavigation();
+      }
+    } else {
+      await nextSegmentNavigation();
+    }
+  }
 
+  Future<void> nextSegmentNavigation() async {
     if (widget.segmentIndex < widget.segments.length - 1) {
       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
       Navigator.popAndPushNamed(
@@ -669,6 +683,16 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void goToClassAction() {
     saveWorkoutMovementAndWeights();
+    if (existPersonalRecordMovement) {
+      if (getPersonalRecordMovement().isNotEmpty && getPersonalRecordMovement().first.weight != null) {
+        goToClassNavigation();
+      }
+    } else {
+      goToClassNavigation();
+    }
+  }
+
+  void goToClassNavigation() {
     _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
     Navigator.pushReplacementNamed(
       context,
@@ -997,13 +1021,17 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     print('Workout finished');
     BlocProvider.of<PointsCardBloc>(context).updateCourseCompletionAndCheckNewCardCollected(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
 
-    if (widget.segments[widget.segmentIndex].isChallenge) {
-      await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);
-      BlocProvider.of<PersonalRecordBloc>(context).create(widget.segments[widget.segmentIndex], widget.courseEnrollment, getPersonalRecordValue(),
-          SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]), widget.fromChallenge);
+    if (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].typeOfChallenge != ChallengeTypeEnum.Weight) {
+      await personalRecordActions();
     }
 
     Wakelock.disable();
+  }
+
+  Future<void> personalRecordActions() async {
+    await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);
+    BlocProvider.of<PersonalRecordBloc>(context).create(widget.segments[widget.segmentIndex], widget.courseEnrollment, getPersonalRecordValue(),
+        SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]), widget.fromChallenge);
   }
 
   Widget setTopBarIcon() {
@@ -1029,6 +1057,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       value = AMRAPRound;
     } else if (counter != CounterEnum.none) {
       value = totalScore;
+    } else if (SegmentUtils.isWeightChallenge(widget.segments[widget.segmentIndex])) {
+      value = movementsAndWeightsToSave.firstWhere((weightRecord) => weightRecord.isPersonalRecord).weight;
     } else {
       value = durationPR;
     }
@@ -1313,8 +1343,15 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void saveWorkoutMovementAndWeights() {
+    if (existPersonalRecordMovement && (getPersonalRecordMovement().isEmpty || getPersonalRecordMovement().first.weight == null)) {
+      showTooltipForPR();
+    } else {
+      if (existPersonalRecordMovement && getPersonalRecordMovement().isNotEmpty) {
+        personalRecordActions();
+      }
+    }
     if (movementsAndWeightsToSave.isNotEmpty) {
-      if (isSegmentSaveMaxWeights) {
+      if (movementSetMaxWeight()) {
         BlocProvider.of<MaxWeightsBloc>(context).setMaxWeightForSegmentMovements(currentUser.id, movementsAndWeightsToSave);
       }
       if (_segmentSubmission != null && existMovementsWithWeight()) {
@@ -1325,6 +1362,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           .saveWeightToWorkout(currentCourseEnrollment: widget.courseEnrollment, workoutMovementsAndWeights: movementsAndWeightsToSave);
     }
   }
+
+  void showTooltipForPR() {
+    personalRecordTooltipKey.currentState?.ensureTooltipVisible();
+  }
+
+  List<WorkoutWeight> getPersonalRecordMovement() => movementsAndWeightsToSave.where((weightRecord) => weightRecord.isPersonalRecord).toList();
+
+  bool movementSetMaxWeight() => movementsAndWeightsToSave.where((weightRecord) => weightRecord.setMaxWeight).isNotEmpty;
 
   List<WeightRecord> setWeightsForSubmission() {
     final List<WeightRecord> weightsToSave = [];
