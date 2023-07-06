@@ -206,7 +206,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     int controllersIndex = 0;
     for (var sectionIndex = 0; sectionIndex < widget.sectionsFromEnrollment.length; sectionIndex++) {
       final SectionSubmodel currentSection = getCurrentSection(sectionIndex);
-      for (var movementIndex = 0; movementIndex < widget.sectionsFromEnrollment[movementIndex].movements.length; movementIndex++) {
+      for (var movementIndex = 0; movementIndex < widget.sectionsFromEnrollment[sectionIndex].movements.length; movementIndex++) {
         final MovementSubmodel currentMovement = getCurrentMovement(sectionIndex, movementIndex);
         final EnrollmentMovement currentEnrollmentMovement = getCurrentEnrollmentMovement(sectionIndex, movementIndex, currentMovement.id);
         if (MovementUtils.checkIfMovementRequireWeight(currentMovement, widget.enrollmentMovements)) {
