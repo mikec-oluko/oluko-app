@@ -66,6 +66,7 @@ class SegmentImageSection extends StatefulWidget {
   final Function(List<Audio> audios, Challenge challenge) audioAction;
   final Function(List<UserResponse> users, List<UserSubmodel> favorites) peopleAction;
   final Function(String segmentId) clockAction;
+  VoidCallback changeVideoState;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int classIndex;
@@ -129,6 +130,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     setState(() {
       movementsToDisplayWeight = MovementUtils.getMovementsWithWeights(sections: widget.segment.sections, enrollmentMovements: enrollmentMovements);
     });
+    widget.changeVideoState = () {
+      if (_controller != null) {
+        _controller.pause();
+        setState(() {
+          _isVideoPlaying = !_isVideoPlaying;
+        });
+      }
+    };
     super.initState();
   }
 
@@ -205,7 +214,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
         ),
-        child: showVideoPlayer(widget.segment.videoHLS),
+        child: showVideoPlayer(widget.segment.videoHLS ?? widget.segment.video),
       ),
     );
   }
@@ -564,7 +573,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         image: widget.segment.image,
         video: widget.segment.video,
         onBackPressed: () => Navigator.pop(context),
-        onPlay: () => changeVideoState(),
+        onPlay: () => widget.changeVideoState(),
         videoVisibilty: _isVideoPlaying,
       ),
     );
@@ -576,12 +585,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         _isVideoPlaying = !_isVideoPlaying;
       });
     }
-  }
-
-  void changeVideoState() {
-    setState(() {
-      _isVideoPlaying = !_isVideoPlaying;
-    });
   }
 
   Widget challengeButtons({bool isForChallenge = false}) {
@@ -683,7 +686,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   _onStartPressed() {
-    changeVideoState();
+    widget.changeVideoState();
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
       showCoachDialog();
