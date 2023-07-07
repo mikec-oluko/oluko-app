@@ -481,6 +481,6 @@
     "maxWeights": "Peso Maximo",
     "delete": "Eliminar",
     "voiceAnnotation": "Nota de voz",
-    "personalRecordRequired": "El campo PR es obligatorio"
+    "personalRecordRequired": "Por favor ingrese su PR"
 
 }
