@@ -5,11 +5,13 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/timer_task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/challenge_type_enum.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
+import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
@@ -47,7 +49,9 @@ class ClocksLowerSection extends StatefulWidget {
   final bool areDiferentMovsWithRepCouter;
   final bool storyShared;
   final UserResponse currentUser;
-  final Function(List<WorkoutWeight> listOfWeigthsToUpdate, bool isSegmentSaveMaxWeights) movementAndWeightsForWorkout;
+  final Function(List<WorkoutWeight> listOfWeigthsToUpdate) movementAndWeightsForWorkout;
+  final Function(bool usePersonalRecord) segmentHasPersonalRecordMovement;
+  final GlobalKey<TooltipState> tooltipRemoteKey;
 
   ClocksLowerSection(
       {this.workState,
@@ -71,7 +75,9 @@ class ClocksLowerSection extends StatefulWidget {
       this.segmentId,
       this.storyShared,
       this.currentUser,
-      this.movementAndWeightsForWorkout});
+      this.movementAndWeightsForWorkout,
+      this.segmentHasPersonalRecordMovement,
+      this.tooltipRemoteKey});
 
   @override
   _State createState() => _State();
@@ -121,10 +127,7 @@ class _State extends State<ClocksLowerSection> {
             else
               getTitle(),
             const SizedBox(height: 5),
-            if (widget.counter || (widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds))
-              getScores()
-            else
-              getWorkouts(),
+            if (challengeUseScores()) getScores() else getWorkouts(),
           ],
         ),
         Positioned(
@@ -153,6 +156,11 @@ class _State extends State<ClocksLowerSection> {
     );
   }
 
+  bool challengeUseScores() =>
+      widget.counter ||
+      ((widget.segments[widget.segmentIndex].isChallenge && widget.segments[widget.segmentIndex].typeOfChallenge == ChallengeTypeEnum.DurationDistanceReps) &&
+          widget.segments[widget.segmentIndex].type == SegmentTypeEnum.Rounds);
+
   bool get _showShareCard => widget.originalWorkoutType != WorkoutType.segment && !shareDone;
 
   EnrollmentSegment getCourseEnrollmentSegment() {
@@ -175,27 +183,29 @@ class _State extends State<ClocksLowerSection> {
             decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
             child: SegmentSummaryComponent(
               segmentIndex: widget.segmentIndex,
-              segmentSaveMaxWeights: isSegmentSetsMaxWeights(),
               segmentId: getCurrentSegmentId(),
               classIndex: widget.classIndex,
               isResults: true,
               useImperialSystem: widget.currentUser.useImperialSystem,
               sectionsFromSegment: getSegmentSections(),
+              sectionsFromEnrollment: getEnrollmentSectionsForSegment(),
               enrollmentMovements: enrollmentMovements,
               addWeightEnable: true,
-              movementWeights: (movementsAndWeights, segmentSaveMaxWeights) {
-                widget.movementAndWeightsForWorkout(movementsAndWeights, segmentSaveMaxWeights);
+              tooltipKey: widget.tooltipRemoteKey,
+              movementWeights: (movementsAndWeights) {
+                widget.movementAndWeightsForWorkout(movementsAndWeights);
               },
               workoutHasWeights: (useWeights) {
                 isWorkoutUsingWeights = useWeights;
+              },
+              segmentHasPersonalRecordMovement: (usePersonalRecord) {
+                widget.segmentHasPersonalRecordMovement(usePersonalRecord ?? false);
               },
             ))
         : Column(
             children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex]).map((e) => SegmentUtils.getTextWidget(e, OlukoColors.grayColor))?.toList(),
           );
   }
-
-  bool isSegmentSetsMaxWeights() => widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].setsMaxWeight;
 
   String getCurrentSegmentId() => widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id;
 
@@ -210,6 +220,10 @@ class _State extends State<ClocksLowerSection> {
         )
         .first
         .sections;
+  }
+
+  List<EnrollmentSection> getEnrollmentSectionsForSegment() {
+    return widget.courseEnrollment.classes[widget.classIndex].segments.firstWhere((EnrollmentSegment segment) => segment.id == widget.segmentId).sections;
   }
 
   Widget getScores() {

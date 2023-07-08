@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/challenge_type_enum.dart';
 import 'package:oluko_app/models/enums/personal_record_param.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
@@ -60,6 +61,10 @@ class SegmentUtils {
 
   static bool isAMRAP(Segment segment) {
     return segment.type == SegmentTypeEnum.Duration;
+  }
+
+  static bool isWeightChallenge(Segment segment) {
+    return segment.typeOfChallenge == ChallengeTypeEnum.Weight;
   }
 
   static String getRoundTitle(Segment segment, BuildContext context) {
@@ -370,6 +375,9 @@ class SegmentUtils {
     PersonalRecordParam parameter;
     if (isAMRAP(segment)) {
       parameter = PersonalRecordParam.rounds;
+    }
+    if (isWeightChallenge(segment)) {
+      parameter = PersonalRecordParam.weight;
     } else {
       switch (counter) {
         case CounterEnum.distance:

@@ -12,7 +12,9 @@ class MovementSubmodel {
   int percentOfMaxWeight;
   CounterEnum counter;
   bool storeWeight;
+  bool setMaxWeight;
   bool isRestTime;
+  bool personalRecord;
   bool isBothSide;
 
   MovementSubmodel(
@@ -26,7 +28,9 @@ class MovementSubmodel {
       this.value,
       this.percentOfMaxWeight,
       this.isRestTime,
-      this.storeWeight});
+      this.personalRecord,
+      this.storeWeight,
+      this.setMaxWeight});
 
   factory MovementSubmodel.fromJson(Map<String, dynamic> json) {
     return MovementSubmodel(
@@ -47,6 +51,8 @@ class MovementSubmodel {
       counter: json['counter'] == null ? null : CounterEnum.values[json['counter'] as int],
       parameter: json['parameter'] == null ? null : ParameterEnum.values[json['parameter'] as int],
       storeWeight: json['store_weight'] == null ? false : json['store_weight'] as bool,
+      setMaxWeight: json['set_max_weight'] == null ? false : json['set_max_weight'] as bool,
+      personalRecord: json['personal_record'] == null ? false : json['personal_record'] as bool,
     );
   }
 
@@ -61,7 +67,9 @@ class MovementSubmodel {
         'parameter': parameter == null ? null : parameter.index,
         'is_rest_time': isRestTime,
         'is_both_side': isBothSide,
-        'store_weight': storeWeight
+        'store_weight': storeWeight,
+        'set_max_weight': setMaxWeight,
+        'personal_record': personalRecord
       };
 
   String getLabel() {
