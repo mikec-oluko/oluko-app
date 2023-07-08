@@ -212,7 +212,6 @@ class CourseEnrollmentRepository {
         name: segment.name,
         reference: segment.reference,
         isChallenge: segment.isChallenge,
-        setsMaxWeight: segmentInfo.setMaxWeights,
         image: segment.image,
         sections: sections,
       );
@@ -236,13 +235,17 @@ class CourseEnrollmentRepository {
   static Future<List<EnrollmentMovement>> getEnrollmentMovements(SectionSubmodel section) async {
     final List<EnrollmentMovement> movements = [];
     bool storeWeight = false;
-    int percentOfMaxWeight;
-    final promises = section.movements.map((movementFromEnrollmentSegment) async {
+    bool setMaxWeight = false;
+    bool personalRecord = false;
+    int percentOfMaxWeight = 0;
+    final promises = section.movements.map((MovementSubmodel movementFromEnrollmentSegment) async {
       if (movementFromEnrollmentSegment.reference != null) {
         final DocumentSnapshot qs = await movementFromEnrollmentSegment.reference.get();
         final Movement movement = Movement.fromJson(qs.data() as Map<String, dynamic>);
         storeWeight = movement.storeWeight;
         percentOfMaxWeight = movementFromEnrollmentSegment.percentOfMaxWeight;
+        setMaxWeight = movementFromEnrollmentSegment.setMaxWeight;
+        personalRecord = movementFromEnrollmentSegment.personalRecord;
       }
       movements.add(EnrollmentMovement(
           id: movementFromEnrollmentSegment.id,
@@ -250,7 +253,9 @@ class CourseEnrollmentRepository {
           name: movementFromEnrollmentSegment.name,
           weight: null,
           storeWeight: storeWeight,
-          percentOfMaxWeight: percentOfMaxWeight));
+          percentOfMaxWeight: percentOfMaxWeight,
+          setMaxWeight: setMaxWeight,
+          personalRecord: personalRecord));
     });
     await Future.wait(promises);
     return movements;

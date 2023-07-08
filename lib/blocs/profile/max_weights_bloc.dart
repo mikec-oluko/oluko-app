@@ -94,7 +94,9 @@ class MaxWeightsBloc extends Cubit<MaxWeightsState> {
   bool setMaxWeightForSegmentMovements(String userId, List<WorkoutWeight> movementsAndWeightsToSave) {
     try {
       Future.wait(movementsAndWeightsToSave.map((movementMaxWeight) async {
-        setMaxWeightByUserIdAndMovementId(userId, movementMaxWeight.movementId, movementMaxWeight.weight);
+        if (movementMaxWeight.setMaxWeight) {
+          setMaxWeightByUserIdAndMovementId(userId, movementMaxWeight.movementId, movementMaxWeight.weight);
+        }
       }));
       return true;
     } catch (e) {
