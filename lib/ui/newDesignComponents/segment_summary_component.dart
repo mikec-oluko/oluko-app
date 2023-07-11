@@ -114,7 +114,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   Widget weightTabsComponent(BuildContext context) {
     if (segmentHasRecommendations && segmentHasWeights) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Neumorphic(
           style: OlukoNeumorphism.getNeumorphicStyleForStadiumShapeElement(),
           child: Container(
