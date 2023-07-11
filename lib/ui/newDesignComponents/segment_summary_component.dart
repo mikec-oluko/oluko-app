@@ -233,7 +233,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   Widget _defaultMovementTile(MovementSubmodel movement) {
     return Container(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       height: 40,
       child: ListTile(
         contentPadding: EdgeInsets.zero,
