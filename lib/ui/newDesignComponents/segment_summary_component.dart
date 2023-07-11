@@ -27,24 +27,26 @@ class SegmentSummaryComponent extends StatefulWidget {
   final List<WeightRecord> weightRecords;
   final bool isResults;
   final bool useImperialSystem;
+  final EdgeInsets paddingForInput;
   final Function(bool) workoutHasWeights;
   final Function(List<WorkoutWeight> listOfWeightsToUpdate, bool segmentSaveMaxWeights) movementWeights;
 
-  const SegmentSummaryComponent(
-      {this.classIndex,
-      this.segmentIndex,
-      this.segmentId,
-      this.segmentSaveMaxWeights,
-      this.enrollmentMovements,
-      this.sectionsFromSegment,
-      this.maxWeightRecords,
-      this.addWeightEnable = false,
-      this.isResults = false,
-      this.useImperialSystem = true,
-      this.weightRecords,
-      this.workoutHasWeights,
-      this.movementWeights})
-      : super();
+  const SegmentSummaryComponent({
+    this.classIndex,
+    this.segmentIndex,
+    this.segmentId,
+    this.segmentSaveMaxWeights,
+    this.enrollmentMovements,
+    this.sectionsFromSegment,
+    this.maxWeightRecords,
+    this.addWeightEnable = false,
+    this.isResults = false,
+    this.useImperialSystem = true,
+    this.weightRecords,
+    this.workoutHasWeights,
+    this.movementWeights,
+    this.paddingForInput = EdgeInsets.zero,
+  }) : super();
 
   @override
   State<SegmentSummaryComponent> createState() => _SegmentSummaryComponentState();
@@ -233,7 +235,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   Widget _defaultMovementTile(MovementSubmodel movement) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      padding: widget.paddingForInput,
       height: 40,
       child: ListTile(
         contentPadding: EdgeInsets.zero,
