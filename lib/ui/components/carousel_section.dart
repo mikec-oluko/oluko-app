@@ -57,7 +57,7 @@ class _State extends State<CarouselSection> {
       Flexible(
         flex: 9,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: OlukoNeumorphism.isNeumorphismDesign ? 5 : 10),
+          padding: EdgeInsets.zero,
           child: Container(
               child: Align(
             alignment: Alignment.centerLeft,
