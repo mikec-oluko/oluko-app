@@ -480,5 +480,7 @@
     "loggedWeightTooltipText": "Registre los pesos después del segmento para saber qué hizo la próxima vez!",
     "maxWeights": "Peso Maximo",
     "delete": "Eliminar",
-    "voiceAnnotation": "Nota de voz"
+    "voiceAnnotation": "Nota de voz",
+    "personalRecordRequired": "Por favor ingrese su PR"
+
 }

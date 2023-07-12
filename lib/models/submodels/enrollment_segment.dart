@@ -6,15 +6,12 @@ class EnrollmentSegment {
   DocumentReference reference;
   String name;
   bool isChallenge;
-  bool setsMaxWeight;
   String image;
   Timestamp completedAt;
   List<EnrollmentSection> sections;
   int likes;
   int dislikes;
-
-  EnrollmentSegment(
-      {this.id, this.reference, this.name, this.completedAt, this.sections, this.image, this.isChallenge, this.setsMaxWeight, this.likes, this.dislikes});
+  EnrollmentSegment({this.id, this.reference, this.name, this.completedAt, this.sections, this.image, this.isChallenge, this.likes, this.dislikes});
 
   factory EnrollmentSegment.fromJson(Map<String, dynamic> json) {
     return EnrollmentSegment(
@@ -25,11 +22,6 @@ class EnrollmentSegment {
           ? false
           : json['is_challenge'] is bool
               ? json['is_challenge'] as bool
-              : false,
-      setsMaxWeight: json['sets_max_weights'] == null
-          ? false
-          : json['sets_max_weights'] is bool
-              ? json['sets_max_weights'] as bool
               : false,
       image: json['image'] == null ? null : json['image']?.toString(),
       completedAt: json['completed_at'] is! Timestamp ? null : json['completed_at'] as Timestamp,
@@ -47,7 +39,6 @@ class EnrollmentSegment {
         'name': name,
         'completed_at': completedAt,
         'is_challenge': isChallenge,
-        'sets_max_weights': setsMaxWeight,
         'image': image,
         'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
         'likes': likes ?? 0,

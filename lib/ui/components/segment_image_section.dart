@@ -22,6 +22,7 @@ import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
+import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
@@ -365,6 +366,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                         return SegmentSummaryComponent(
                           segmentId: widget.segment.id,
                           enrollmentMovements: enrollmentMovements,
+                          sectionsFromEnrollment: getEnrollmentSections(),
                           sectionsFromSegment: widget.segment.sections,
                           useImperialSystem: widget.currentUser.useImperialSystem,
                           weightRecords: weightRecords ?? [],
@@ -389,6 +391,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   void getMovementsWithWeightRequired() {
     enrollmentMovements = MovementUtils.getMovementsFromEnrollmentSegment(courseEnrollmentSections: getCourseEnrollmentSegment().sections);
+  }
+
+  List<EnrollmentSection> getEnrollmentSections() {
+    return widget.courseEnrollment.classes[widget.classIndex].segments.firstWhere((segment) => segment.id == widget.segment.id).sections;
   }
 
   SizedBox _segmentCardTitle() {
