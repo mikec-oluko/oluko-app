@@ -300,7 +300,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.sentVideosForNavigation.first.video?.url,
+                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                        videoHlsUrl: content.sentVideosForNavigation.first.videoHls, videoUrl: content.sentVideosForNavigation.first.video?.url),
                     'titleForContent': OlukoLocalizations.of(context).find('sentVideo')
                   });
                 },
@@ -372,7 +373,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.sentVideosForNavigation.first.video?.url,
+                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                        videoHlsUrl: content.sentVideosForNavigation.first.videoHls, videoUrl: content.sentVideosForNavigation.first.video?.url),
                     'titleForContent': OlukoLocalizations.of(context).find('sentVideo')
                   });
                 },
