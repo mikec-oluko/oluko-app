@@ -182,6 +182,7 @@ class _State extends State<ClocksLowerSection> {
             width: ScreenUtils.width(context),
             decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
             child: SegmentSummaryComponent(
+              paddingForInput: const EdgeInsets.symmetric(horizontal: 5),
               segmentIndex: widget.segmentIndex,
               segmentId: getCurrentSegmentId(),
               classIndex: widget.classIndex,

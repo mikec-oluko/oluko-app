@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
@@ -113,7 +114,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   ValueNotifier<bool> panelState;
   bool _isVideoPlaying = false;
   bool showLowerWidgets = true;
-
+  ChewieController chewieController;
+  List<SegmentImageSection> carouselWidgets = [];
   GlobalService _globalService = GlobalService();
   @override
   void initState() {
@@ -320,7 +322,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget getCarouselSlider() {
-    var a = ScreenUtils.height(context);
+    int previousCarouselIndex = widget.segmentIndex;
     return Column(
       children: [
         topButtons(),
@@ -341,10 +343,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   items: getSegmentList(),
                   options: CarouselOptions(
                     onPageChanged: (index, reason) {
+                      final SegmentImageSection imageSection = carouselWidgets.firstWhere((element) => element.currentSegmentStep == dotsIndex.value);
                       dotsIndex.value = index + 1;
+                      imageSection.changeVideoState();
                       if (widget.classSegments[index].isChallenge) {
                         _canStartSegment = canStartSegment(_segments);
-
                         BlocProvider.of<ChallengeCompletedBeforeBloc>(context)
                             .completedChallengeBefore(segmentId: widget.classSegments[index].id, userId: _user.id);
                       }
@@ -636,30 +639,32 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 (coachRequestStreamState is CoachRequestStreamSuccess || coachRequestStreamState is GetCoachRequestStreamUpdate)) {
               coachLogic(coachUserState, coachRequestStreamState);
               Challenge challenge = getSegmentChallenge(_segments[i].id);
+              final SegmentImageSection segmentImageSection = SegmentImageSection(
+                onPressed: () => onPressedAction(),
+                segment: _segments[i],
+                challenge: challenge,
+                currentSegmentStep: i + 1,
+                totalSegmentStep: totalSegmentStep,
+                userId: _user.id,
+                audioAction: _audioAction,
+                peopleAction: _peopleAction,
+                clockAction: _clockAction,
+                courseEnrollment: widget.courseEnrollment,
+                courseIndex: widget.courseIndex,
+                segments: _segments,
+                classIndex: widget.classIndex,
+                coachRequests: _coachRequests,
+                coach: _coach,
+                currentUser: _user,
+                fromChallenge: widget.fromChallenge,
+              );
+              carouselWidgets.add(segmentImageSection);
               return ValueListenableBuilder(
                 valueListenable: dotsIndex,
                 builder: (context, index, child) {
                   return Opacity(
                     opacity: (index as int) == i + 1 ? 1 : 0.5,
-                    child: SegmentImageSection(
-                      onPressed: () => onPressedAction(),
-                      segment: _segments[i],
-                      challenge: challenge,
-                      currentSegmentStep: i + 1,
-                      totalSegmentStep: totalSegmentStep,
-                      userId: _user.id,
-                      audioAction: _audioAction,
-                      peopleAction: _peopleAction,
-                      clockAction: _clockAction,
-                      courseEnrollment: widget.courseEnrollment,
-                      courseIndex: widget.courseIndex,
-                      segments: _segments,
-                      classIndex: widget.classIndex,
-                      coachRequests: _coachRequests,
-                      coach: _coach,
-                      currentUser: _user,
-                      fromChallenge: widget.fromChallenge,
-                    ),
+                    child: segmentImageSection,
                   );
                 },
               );
@@ -725,11 +730,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
         valueListenable: dotsIndex,
         builder: (context, index, child) {
           return MovementVideosSection(
-            action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
-            segment: _segments[(index as int) - 1],
-            onPressedMovement: (BuildContext context, MovementSubmodel movementSubmodel) =>
-                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movementSubmodel}),
-          );
+              action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
+              segment: _segments[(index as int) - 1],
+              onPressedMovement: (BuildContext context, MovementSubmodel movementSubmodel) {
+                carouselWidgets[dotsIndex.value].changeVideoState();
+                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movementSubmodel});
+              });
         },
       );
     }
