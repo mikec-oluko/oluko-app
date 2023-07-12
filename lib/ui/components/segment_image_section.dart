@@ -354,7 +354,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 const SizedBox(height: 10),
                 _roundTitle(widget.segment),
                 Padding(
-                    padding: EdgeInsets.only(top: SegmentUtils.hasTitle(widget.segment) ? 20 : 0, bottom: 20),
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: BlocBuilder<MaxWeightsBloc, MaxWeightsState>(
                       builder: (context, state) {
                         if (state is UserMaxWeights) {
