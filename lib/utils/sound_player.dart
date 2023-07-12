@@ -45,7 +45,6 @@ class SoundPlayer {
     try {
       await player?.stop();
       await player?.dispose();
-      // await session.setActive(false);
     } catch (e) {
       print(e);
     }
