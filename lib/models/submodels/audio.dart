@@ -12,7 +12,7 @@ class Audio {
   bool deleted;
   bool seen;
 
-  Audio({this.deleted, this.url, this.userName, this.state, this.userId, this.userReference, this.id, this.userAvatarThumbnail,this.seen});
+  Audio({this.deleted, this.url, this.userName, this.state, this.userId, this.userReference, this.id, this.userAvatarThumbnail, this.seen});
 
   factory Audio.fromJson(Map<String, dynamic> json) {
     return Audio(
@@ -24,7 +24,7 @@ class Audio {
       userId: json['user_id']?.toString(),
       id: json['id']?.toString(),
       userReference: json['user_reference'] != null ? json['user_reference'] as DocumentReference : null,
-      seen:json['seen'] == null ? false : json['seen'] as bool,
+      seen: json['seen'] == null ? false : json['seen'] as bool,
     );
   }
 
@@ -33,7 +33,7 @@ class Audio {
         'deleted': deleted ?? false,
         'user_name': userName,
         'user_avatar_thumbnail': userAvatarThumbnail,
-        'state': state.index,
+        'state': state?.index,
         'user_id': userId,
         'id': id,
         'user_reference': userReference,

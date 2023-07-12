@@ -2,6 +2,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/max_weight.dart';
 import 'package:oluko_app/models/submodels/enrollment_movement.dart';
+import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/utils/weight_helper.dart';
@@ -19,32 +20,38 @@ class SegmentSummaryComponent extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
   final String segmentId;
-  final bool segmentSaveMaxWeights;
   final List<SectionSubmodel> sectionsFromSegment;
   final bool addWeightEnable;
   final List<EnrollmentMovement> enrollmentMovements;
+  final List<EnrollmentSection> sectionsFromEnrollment;
   final List<MaxWeight> maxWeightRecords;
   final List<WeightRecord> weightRecords;
   final bool isResults;
   final bool useImperialSystem;
+  final EdgeInsets paddingForInput;
   final Function(bool) workoutHasWeights;
-  final Function(List<WorkoutWeight> listOfWeightsToUpdate, bool segmentSaveMaxWeights) movementWeights;
+  final Function(List<WorkoutWeight> listOfWeightsToUpdate) movementWeights;
+  final Function(bool usePersonalRecord) segmentHasPersonalRecordMovement;
+  final GlobalKey<TooltipState> tooltipKey;
 
-  const SegmentSummaryComponent(
-      {this.classIndex,
-      this.segmentIndex,
-      this.segmentId,
-      this.segmentSaveMaxWeights,
-      this.enrollmentMovements,
-      this.sectionsFromSegment,
-      this.maxWeightRecords,
-      this.addWeightEnable = false,
-      this.isResults = false,
-      this.useImperialSystem = true,
-      this.weightRecords,
-      this.workoutHasWeights,
-      this.movementWeights})
-      : super();
+  const SegmentSummaryComponent({
+    this.classIndex,
+    this.segmentIndex,
+    this.segmentId,
+    this.enrollmentMovements,
+    this.sectionsFromEnrollment,
+    this.sectionsFromSegment,
+    this.maxWeightRecords,
+    this.addWeightEnable = false,
+    this.isResults = false,
+    this.useImperialSystem = true,
+    this.weightRecords,
+    this.workoutHasWeights,
+    this.movementWeights,
+    this.segmentHasPersonalRecordMovement,
+    this.tooltipKey,
+    this.paddingForInput = EdgeInsets.zero,
+  }) : super();
 
   @override
   State<SegmentSummaryComponent> createState() => _SegmentSummaryComponentState();
@@ -199,41 +206,53 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   void populateMovements(List<Widget> contentToReturn, bool showWeightRecommendation) {
     int controllersIndex = 0;
-    widget.sectionsFromSegment.forEach((section) {
-      section.movements.forEach((movement) {
-        if (MovementUtils.checkIfMovementRequireWeight(movement, widget.enrollmentMovements)) {
+    for (var sectionIndex = 0; sectionIndex < widget.sectionsFromEnrollment.length; sectionIndex++) {
+      final SectionSubmodel currentSection = getCurrentSection(sectionIndex);
+      for (var movementIndex = 0; movementIndex < widget.sectionsFromEnrollment[sectionIndex].movements.length; movementIndex++) {
+        final MovementSubmodel currentMovement = getCurrentMovement(sectionIndex, movementIndex);
+        final EnrollmentMovement currentEnrollmentMovement = getCurrentEnrollmentMovement(sectionIndex, movementIndex, currentMovement.id);
+        if (MovementUtils.checkIfMovementRequireWeight(currentMovement, widget.enrollmentMovements)) {
           if (widget.addWeightEnable) {
-            _createNewWeightRecord(section, movement);
+            if (currentEnrollmentMovement.personalRecord) {
+              widget.segmentHasPersonalRecordMovement(true);
+            }
+            _createNewWeightRecord(currentSection, currentMovement, currentEnrollmentMovement);
             _listOfControllers.add(TextEditingController());
             _listOfNodes.add(FocusNode());
-            contentToReturn
-                .add(_movementTileWithInput(movement, _listOfControllers[controllersIndex], _listOfNodes[controllersIndex], getSectionIndex(section)));
-
+            contentToReturn.add(_movementTileWithInput(currentMovement, currentEnrollmentMovement, _listOfControllers[controllersIndex],
+                _listOfNodes[controllersIndex], getSectionIndex(currentSection)));
             controllersIndex++;
           } else {
             contentToReturn.add(WeightTileForValue(
-              movement: movement,
+              movement: currentMovement,
               segmentId: widget.segmentId,
-              sectionIndex: getSectionIndex(section),
+              sectionIndex: getSectionIndex(currentSection),
               showWeightRecommendation: showWeightRecommendation,
-              percentageOfMaxWeight: movement.percentOfMaxWeight,
-              maxWeightValue: MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords) == null
+              percentageOfMaxWeight: currentMovement.percentOfMaxWeight,
+              maxWeightValue: MovementUtils.getMaxWeightForMovement(currentMovement, widget.maxWeightRecords) == null
                   ? 0
-                  : double.parse(MovementUtils.getMaxWeightForMovement(movement, widget.maxWeightRecords).toString()),
+                  : double.parse(MovementUtils.getMaxWeightForMovement(currentMovement, widget.maxWeightRecords).toString()),
               weightRecords: widget.weightRecords,
               useImperialSystem: widget.useImperialSystem,
             ));
           }
         } else {
-          contentToReturn.add(_defaultMovementTile(movement));
+          contentToReturn.add(_defaultMovementTile(currentMovement));
         }
-      });
-    });
+      }
+    }
   }
+
+  EnrollmentMovement getCurrentEnrollmentMovement(int sectionIndex, int movementIndex, String movementId) =>
+      widget.sectionsFromEnrollment[sectionIndex].movements.firstWhere((enrolledMovement) => enrolledMovement.id == movementId);
+
+  MovementSubmodel getCurrentMovement(int sectionIndex, int movementIndex) => widget.sectionsFromSegment[sectionIndex].movements[movementIndex];
+
+  SectionSubmodel getCurrentSection(int sectionIndex) => widget.sectionsFromSegment[sectionIndex];
 
   Widget _defaultMovementTile(MovementSubmodel movement) {
     return Container(
-      padding: EdgeInsets.zero,
+      padding: widget.paddingForInput,
       height: 40,
       child: ListTile(
         contentPadding: EdgeInsets.zero,
@@ -246,13 +265,16 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  Widget _movementTileWithInput(MovementSubmodel movement, TextEditingController textController, FocusNode _listOfNodes, int sectionIndex) {
+  Widget _movementTileWithInput(
+      MovementSubmodel movement, EnrollmentMovement enrollmentMovement, TextEditingController textController, FocusNode _listOfNodes, int sectionIndex) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id, sectionIndex);
     return WeightTileWithInput(
       movement: movement,
+      enrollmentMovement: enrollmentMovement,
       currentTextEditingController: textController,
       open: (focusNode, textEditingController) => open(movement.id, currentMovementAndWeight, textEditingController, focusNode),
       useImperialSystem: widget.useImperialSystem,
+      tooltipKey: widget.tooltipKey,
     );
   }
 
@@ -267,7 +289,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
+    widget.movementWeights(listOfWeightsToUpdate);
   }
 
   void _onSubmitWeightValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
@@ -281,17 +303,19 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       }
     }
     currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
+    widget.movementWeights(listOfWeightsToUpdate);
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  void _createNewWeightRecord(SectionSubmodel section, MovementSubmodel movement) {
+  void _createNewWeightRecord(SectionSubmodel section, MovementSubmodel movement, EnrollmentMovement enrolledMovement) {
     final WorkoutWeight newWeightHelper = WorkoutWeight(
         classIndex: widget.classIndex,
         segmentIndex: widget.segmentIndex,
         movementId: movement.id,
         sectionIndex: getSectionIndex(section),
-        movementIndex: getMovementIndex(section, movement));
+        movementIndex: getMovementIndex(section, movement),
+        setMaxWeight: enrolledMovement.setMaxWeight,
+        isPersonalRecord: enrolledMovement.personalRecord);
     if (!listOfWeightsToUpdate.contains(newWeightHelper)) {
       listOfWeightsToUpdate.add(newWeightHelper);
     }
@@ -346,7 +370,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     }
     currentMovementAndWeight.weight = movementsWeights[movementId];
 
-    widget.movementWeights(listOfWeightsToUpdate, widget.segmentSaveMaxWeights);
+    widget.movementWeights(listOfWeightsToUpdate);
   }
 
   bool segmentUseWeights() {

@@ -85,10 +85,7 @@ class AuthRepository {
     await firebaseAuthInstance.signOut();
     try {
       final googleSignIn = GoogleSignIn(
-        scopes: [
-          'email',
-          'https://www.googleapis.com/auth/contacts.readonly',
-        ],
+        scopes: ['email'],
       );
       // Trigger the authentication flow
       final googleUser = await googleSignIn.signIn();

@@ -1,0 +1,1 @@
+enum ChallengeTypeEnum { DurationDistanceReps, Weight }
