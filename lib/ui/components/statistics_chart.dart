@@ -38,7 +38,10 @@ class _State extends State<StatisticChart> {
                     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Row(
                         children: [
-                          Text((widget.courseStatistics != null ? widget.courseStatistics.doing.toString() : '0'),
+                          Text(
+                              (widget.courseStatistics != null && widget.courseStatistics.activeUsers.isNotEmpty
+                                  ? widget.courseStatistics.activeUsers.length.toString()
+                                  : '0'),
                               style: OlukoFonts.olukoSuperBigFont(
                                   customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.statisticsChartColor : OlukoColors.white,
                                   customFontWeight: FontWeight.bold)),
@@ -59,8 +62,8 @@ class _State extends State<StatisticChart> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.exploreSubscribedUsers],
-                                  arguments: {'courseId': widget.course.id}),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.exploreSubscribedUsers], arguments: {'courseId': widget.course.id}),
                               child: Text(
                                 OlukoLocalizations.of(context).find('explore'),
                                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, decoration: TextDecoration.underline),

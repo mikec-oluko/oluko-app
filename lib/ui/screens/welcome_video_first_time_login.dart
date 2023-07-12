@@ -147,7 +147,7 @@ class _WelcomeVideoFirstTimeLoginState extends State<WelcomeVideoFirstTimeLogin>
         SizedBox(height: showStories ? ScreenUtils.height(context) * 0.1 : ScreenUtils.height(context) * 0.15),
         GestureDetector(
           onTap: () async {
-            final videoUrl = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.homeVideo);
+            final videoUrl = await BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.homeVideo, useStreamVideo: true);
             if (videoUrl != null) {
               setState(() {
                 mediaURL = videoUrl;
