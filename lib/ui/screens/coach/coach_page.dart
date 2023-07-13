@@ -387,7 +387,7 @@ class _CoachPageState extends State<CoachPage> {
                       contentImage: sentVideo.video.thumbUrl,
                       titleForContent: sentVideo.segmentName ?? sentVideo.segmentId,
                       onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                        'videoUrl': sentVideo.video.url,
+                        'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: sentVideo.videoHls, videoUrl: sentVideo.video.url),
                         'aspectRatio': sentVideo.video.aspectRatio,
                         'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
                       }),

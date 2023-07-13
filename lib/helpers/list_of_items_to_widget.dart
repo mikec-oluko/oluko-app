@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
@@ -95,7 +96,7 @@ class TransformListOfItemsToWidget {
         child: ImageAndVideoContainer(
           backgroundImage: taskSubmissionContent.video.thumbUrl != null ? taskSubmissionContent.video.thumbUrl : '',
           isContentVideo: taskSubmissionContent.video != null,
-          videoUrl: taskSubmissionContent.video.url != null ? taskSubmissionContent.video.url : '',
+          videoUrl: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: taskSubmissionContent.videoHls, videoUrl: taskSubmissionContent.video.url),
           originalContent: taskSubmissionContent,
           displayOnViewNamed: routeForContent,
         ),

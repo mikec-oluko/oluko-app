@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/movement_weight_bloc.dart';
 import 'package:oluko_app/blocs/profile/max_weights_bloc.dart';
 import 'package:oluko_app/blocs/segments/current_time_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -577,7 +578,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       child: OlukoVideoPreview(
         showCrossButton: false,
         image: widget.segment.image,
-        video: widget.segment.video,
+        video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.segment.videoHLS, videoUrl: widget.segment.video),
         onBackPressed: () => Navigator.pop(context),
         onPlay: () => widget.changeVideoState(),
         videoVisibilty: _isVideoPlaying,
