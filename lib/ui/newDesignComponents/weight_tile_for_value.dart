@@ -44,6 +44,7 @@ class _WeightTileForValueState extends State<WeightTileForValue> {
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         trailing: getTrailingContent(movement),
+        isThreeLine: true,
         title: SizedBox(
           width: ScreenUtils.width(context) / 2,
           child: Text(SegmentUtils.getLabel(movement),

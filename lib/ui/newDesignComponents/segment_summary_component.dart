@@ -116,7 +116,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   Widget weightTabsComponent(BuildContext context) {
     if (segmentHasRecommendations && segmentHasWeights) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Neumorphic(
           style: OlukoNeumorphism.getNeumorphicStyleForStadiumShapeElement(),
           child: Container(
@@ -133,18 +133,15 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
       setState(() {
         showRecommendation = false;
       });
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Container(
-          height: 20,
-          width: ScreenUtils.width(context) - 40,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(OlukoLocalizations.get(context, 'loggedWeight'),
-                  style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white))
-            ],
-          ),
+      return Container(
+        height: 20,
+        width: ScreenUtils.width(context) - 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(OlukoLocalizations.get(context, 'loggedWeight'),
+                style: OlukoFonts.olukoMediumFont(customFontWeight: FontWeight.w500, customColor: OlukoColors.white))
+          ],
         ),
       );
     } else {
