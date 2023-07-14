@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/upcoming_challenge_bloc.dart';
@@ -370,7 +371,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
       child: Row(
         children: [
           if (friendModel != null)
-            TextButton(
+            NeumorphicButton(
+              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
               onPressed: () {
                 BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
                 setState(() {
