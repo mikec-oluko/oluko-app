@@ -105,8 +105,7 @@ class _ExpansionPanelListState extends State<CustomExpansionPanelList> {
       // expansionCallback (if any) to false, because it's closing.
       for (int childIndex = 0; childIndex < widget.children.length; childIndex += 1) {
         final ExpansionPanelRadio child = widget.children[childIndex] as ExpansionPanelRadio;
-        if (widget.expansionCallback != null && childIndex != index && child.value == _currentOpenPanel?.value)
-          widget.expansionCallback(childIndex, false);
+        if (widget.expansionCallback != null && childIndex != index && child.value == _currentOpenPanel?.value) widget.expansionCallback(childIndex, false);
       }
 
       setState(() {
@@ -200,7 +199,7 @@ class _ExpansionPanelListState extends State<CustomExpansionPanelList> {
                 secondChild: child.body,
                 firstCurve: const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
                 secondCurve: const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
-                sizeCurve: Curves.fastOutSlowIn,
+                sizeCurve: Curves.easeInOut,
                 crossFadeState: _isChildExpanded(index) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 duration: widget.animationDuration,
               ),
