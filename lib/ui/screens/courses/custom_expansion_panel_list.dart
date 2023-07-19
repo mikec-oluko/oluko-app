@@ -13,7 +13,8 @@ class CustomExpansionPanelList extends StatefulWidget {
       this.initialOpenPanelValue,
       this.expandedHeaderPadding,
       this.dividerColor,
-      this.elevation})
+      this.elevation,
+      this.onPanelTap})
       : assert(children != null),
         assert(animationDuration != null),
         _allowOnlyOnePanelOpen = false,
@@ -23,6 +24,7 @@ class CustomExpansionPanelList extends StatefulWidget {
     Key key,
     this.children = const <ExpansionPanelRadio>[],
     this.expansionCallback,
+    this.onPanelTap,
     this.animationDuration = kThemeAnimationDuration,
     this.initialOpenPanelValue,
     this.expandedHeaderPadding = _kPanelHeaderExpandedDefaultPadding,
@@ -35,6 +37,7 @@ class CustomExpansionPanelList extends StatefulWidget {
 
   final List<ExpansionPanel> children;
   final ExpansionPanelCallback expansionCallback;
+  final Function(TapDownDetails details) onPanelTap;
   final Duration animationDuration;
   final Object initialOpenPanelValue;
   final EdgeInsets expandedHeaderPadding;
@@ -180,8 +183,11 @@ class _ExpansionPanelListState extends State<CustomExpansionPanelList> {
       );
       if (child.canTapOnHeader) {
         header = MergeSemantics(
-          child: InkWell(
-            onTap: () => _handlePressed(_isChildExpanded(index), index),
+          child: GestureDetector(
+            onTapDown: (details) {
+              _handlePressed(_isChildExpanded(index), index);
+              widget.onPanelTap(details);
+            },
             child: header,
           ),
         );

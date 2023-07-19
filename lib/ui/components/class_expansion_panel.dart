@@ -22,10 +22,12 @@ const SCROLL_DURATION = 600;
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
   final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final ScrollController screenController;
   final int totalClasses;
   const ClassExpansionPanels({
     this.classes,
     this.onPressedMovement,
+    this.screenController,
     this.totalClasses,
   });
 
@@ -91,13 +93,20 @@ class _State extends State<ClassExpansionPanels> {
   }
 
   Widget expansionPanelNeumorphic() {
+    bool isPanelExpanded = false;
     if (_classItems.isNotEmpty) {
       return CustomExpansionPanelList.radio(
         animationDuration: Duration(milliseconds: 500),
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
+            isPanelExpanded = !_classItems[index].expanded;
             _classItems[index].expanded = !_classItems[index].expanded;
           });
+        },
+        onPanelTap: (details) {
+          if (isPanelExpanded) {
+            widget.screenController?.jumpTo(details.globalPosition.dy + (widget.screenController.position.pixels * 0.75));
+          }
         },
         children: _classItems.map<ExpansionPanelRadio>((ClassItem item) {
           return ExpansionPanelRadio(

@@ -498,6 +498,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
+      screenController: _scrollController,
       totalClasses: _allCourseClasses.length,
       classes: _growingClassList,
       onPressedMovement: (BuildContext context, MovementSubmodel movement) {
