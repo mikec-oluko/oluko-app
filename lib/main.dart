@@ -22,7 +22,6 @@ import 'package:oluko_app/config/project_settings.dart';
 import 'package:oluko_app/services/route_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration().loadFromMap(projectSettings);
@@ -32,7 +31,7 @@ Future<void> main() async {
   final FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
   final User alreadyLoggedUser = await AuthBloc.checkCurrentUserStatic();
   final UserResponse alreadyLoggedUserResponse = await AuthRepository().retrieveLoginData();
-  if(alreadyLoggedUserResponse != null){
+  if (alreadyLoggedUserResponse != null) {
     UserRepository().updateLastTimeOpeningApp(alreadyLoggedUserResponse);
   }
   final bool firstTime = await UserUtils.isFirstTime();
@@ -107,16 +106,19 @@ class _MyAppState extends State<MyApp> {
         home: LayoutBuilder(
           builder: (context, constraints) {
             WidgetsBinding.instance.addPostFrameCallback((_) => _insertOverlay(context));
-            return WillPopScope(
-              onWillPop: () async {
-                if (_navigatorKey.currentState.canPop()) {
-                  !await _navigatorKey.currentState.maybePop();
-                }
-                return false;
-              },
-              child: Navigator(
-                key: _navigatorKey,
-                onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: WillPopScope(
+                onWillPop: () async {
+                  if (_navigatorKey.currentState.canPop()) {
+                    !await _navigatorKey.currentState.maybePop();
+                  }
+                  return false;
+                },
+                child: Navigator(
+                  key: _navigatorKey,
+                  onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
+                ),
               ),
             );
           },
