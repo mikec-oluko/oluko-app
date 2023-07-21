@@ -43,6 +43,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/user_challenges_component.dart';
 import 'package:oluko_app/ui/screens/profile/challenge_courses_panel_content.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -371,43 +372,53 @@ class _UserProfilePageState extends State<UserProfilePage> {
       child: Row(
         children: [
           if (friendModel != null)
-            NeumorphicButton(
-              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              onPressed: () {
-                BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
-                setState(() {
-                  _isFollow = !_isFollow;
-                });
-              },
-              child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: OlukoNeumorphicSecondaryButton(
+                  title: '',
+                  isExpanded: false,
+                  lighterButton: true,
+                  onPressed: () {
+                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
+                    setState(() {
+                      _isFollow = !_isFollow;
+                    });
+                  },
+                  icon: SizedBox(
+                    height: 25,
+                    width: 25,
+                    child: Image.asset(
+                      _isFollow ? 'assets/icon/heart_filled.png' : 'assets/icon/heart.png',
+                    ),
+                  ),
+                  onlyIcon: true,
+                ),
+              ),
             )
           else
             defaultWidgetNoContent,
           Container(
-            child: friendModel == null
-                ? const Expanded(
-                    child: Align(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : !OlukoNeumorphism.isNeumorphismDesign
-                    ? OlukoOutlinedButton(
-                        onPressed: () {
-                          AppMessages().showDialogActionMessage(context, '', 2);
-                          checkUserConnectStatus(userRequested);
-                          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
-                        },
-                        title: _connectButtonTitle)
-                    : OlukoNeumorphicPrimaryButton(
-                        title: _connectButtonTitle,
-                        onPressed: () {
-                          if (connectStatus != UserConnectStatus.connected) {
-                            AppMessages().showDialogActionMessage(context, '', 2);
-                          }
-                          checkUserConnectStatus(userRequested);
-                          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
-                        },
-                      ),
+            child: !OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoOutlinedButton(
+                    onPressed: () {
+                      AppMessages().showDialogActionMessage(context, '', 2);
+                      checkUserConnectStatus(userRequested);
+                      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                    },
+                    title: _connectButtonTitle)
+                : OlukoNeumorphicPrimaryButton(
+                    title: _connectButtonTitle,
+                    onPressed: () {
+                      if (connectStatus != UserConnectStatus.connected) {
+                        AppMessages().showDialogActionMessage(context, '', 2);
+                      }
+                      checkUserConnectStatus(userRequested);
+                      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                    },
+                  ),
           ),
         ],
       ),
