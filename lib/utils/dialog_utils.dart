@@ -13,23 +13,26 @@ class DialogUtils {
       bool addPaddingToCloseButton = false}) {
     return showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: removeHorizontalPadding ? 0 : 40.0, vertical: 24.0),
-            backgroundColor: showBackgroundColor
-                ? useAppBackground
-                    ? OlukoNeumorphismColors.appBackgroundColor
-                    : OlukoColors.black
-                : Colors.transparent,
-            content: Padding(
-                padding: EdgeInsets.only(top: addTopPadding ? 120 : 0),
-                child: showExitButtonOutside
-                    ? Column(
-                        children: [
-                          Row(children: [const Expanded(child: SizedBox()), _closeButton(context, color: OlukoColors.primary)]),
-                          _dialogContent(context, content, showExitButton, closeIconColor)
-                        ],
-                      )
-                    : _dialogContent(context, content, showExitButton, closeIconColor, addPaddingToCloseButton: addPaddingToCloseButton))));
+        builder: (context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: AlertDialog(
+                  insetPadding: EdgeInsets.symmetric(horizontal: removeHorizontalPadding ? 0 : 40.0, vertical: 24.0),
+                  backgroundColor: showBackgroundColor
+                      ? useAppBackground
+                          ? OlukoNeumorphismColors.appBackgroundColor
+                          : OlukoColors.black
+                      : Colors.transparent,
+                  content: Padding(
+                      padding: EdgeInsets.only(top: addTopPadding ? 120 : 0),
+                      child: showExitButtonOutside
+                          ? Column(
+                              children: [
+                                Row(children: [const Expanded(child: SizedBox()), _closeButton(context, color: OlukoColors.primary)]),
+                                _dialogContent(context, content, showExitButton, closeIconColor)
+                              ],
+                            )
+                          : _dialogContent(context, content, showExitButton, closeIconColor, addPaddingToCloseButton: addPaddingToCloseButton))),
+            ));
   }
 
   static Widget _dialogContent(BuildContext context, List<Widget> content, bool showExitButton, Color closeIconColor, {bool addPaddingToCloseButton = false}) {
