@@ -76,29 +76,24 @@ class _State extends State<AudioPanel> {
           ),
           Container(
               height: 360,
-              child: ListView(
-                  physics: OlukoNeumorphism.listViewPhysicsEffect,
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
-                  key: ValueKey(_audios.length),
-                  children: getAudioWidgets(_audios)))
+              child: _audios.isNotEmpty
+                  ? ListView(
+                      physics: OlukoNeumorphism.listViewPhysicsEffect,
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
+                      key: ValueKey(_audios.length),
+                      children: _audios
+                          .map((audio) => AudioSection(
+                                showTopDivider: false,
+                                coach: widget.coaches == null ? null : widget.coaches[getAudioIndex(audio)],
+                                audio: audio,
+                                onAudioPressed: () => widget.onAudioPressed(getAudioIndex(audio)),
+                              ))
+                          .toList(),
+                    )
+                  : const SizedBox.shrink())
         ]));
   }
 
-  List<Widget> getAudioWidgets(List<Audio> audios) {
-    List<Widget> widgets = [];
-    if (audios == null) {
-      return widgets;
-    }
-    for (int i = 0; i < audios.length; i++) {
-      widgets.add(AudioSection(
-          showTopDivider: !OlukoNeumorphism.isNeumorphismDesign ? i != 0 : false,
-          coach: widget.coaches == null ? null : widget.coaches[i],
-          audio: audios[i],
-          audioPlayer: widget.audioPlayer,
-          onAudioPressed: () => widget.onAudioPressed(i)));
-    }
-    widgets.add(SizedBox(height: 20));
-    return widgets;
-  }
+  int getAudioIndex(Audio audio) => _audios.indexOf(audio);
 }
