@@ -5,6 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -149,7 +150,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                         routeLabels[RouteEnum.coachShowVideo],
                         arguments: {
                           'aspectRatio': segmentSubmitted.video.aspectRatio,
-                          'videoUrl': segmentSubmitted.video.url,
+                          'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: segmentSubmitted.videoHls, videoUrl: segmentSubmitted.video.url),
                           'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
                         },
                       );

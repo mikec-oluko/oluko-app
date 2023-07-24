@@ -16,9 +16,8 @@ class AudioSection extends StatefulWidget {
   final Audio audio;
   final bool showTopDivider;
   final Function() onAudioPressed;
-  AudioPlayer audioPlayer;
 
-  AudioSection({this.coach, this.audio, this.showTopDivider = true, this.onAudioPressed, this.audioPlayer});
+  AudioSection({this.coach, this.audio, this.showTopDivider = true, this.onAudioPressed});
 
   @override
   _State createState() => _State();
@@ -29,7 +28,7 @@ class _State extends State<AudioSection> {
   int _currentDuration;
   double _completedPercentage = 0.0;
   bool _isPlaying = false;
-  //AudioPlayer audioPlayer = AudioPlayer();
+  AudioPlayer audioPlayer = AudioPlayer();
   bool playedOnce = false;
 
   Widget audioSlider() {
@@ -38,13 +37,13 @@ class _State extends State<AudioSection> {
 
   @override
   void initState() {
-    widget.audioPlayer = AudioPlayer();
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.audioPlayer.stop();
+    audioPlayer?.stop();
+    audioPlayer?.dispose();
     super.dispose();
   }
 
@@ -102,9 +101,9 @@ class _State extends State<AudioSection> {
   Future<void> _onPlay({String url}) async {
     if (!_isPlaying) {
       if (playedOnce) {
-        await widget.audioPlayer.resume();
+        await audioPlayer.resume();
       } else {
-        await widget.audioPlayer.play(UrlSource(url));
+        audioPlayer.play(UrlSource(url));
         setState(() {
           playedOnce = true;
         });
@@ -115,27 +114,27 @@ class _State extends State<AudioSection> {
         _isPlaying = true;
       });
 
-      widget.audioPlayer.onPlayerComplete.listen((_) {
+      audioPlayer.onPlayerComplete.listen((_) {
         setState(() {
           _isPlaying = false;
           _completedPercentage = 0.0;
           playedOnce = false;
         });
       });
-      widget.audioPlayer.onDurationChanged.listen((duration) {
+      audioPlayer.onDurationChanged.listen((duration) {
         setState(() {
           _totalDuration = duration.inMicroseconds;
         });
       });
 
-      widget.audioPlayer.onPositionChanged.listen((duration) {
+      audioPlayer.onPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
           _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
         });
       });
     } else {
-      await widget.audioPlayer.pause();
+      await audioPlayer.pause();
       setState(() {
         _isPlaying = false;
       });

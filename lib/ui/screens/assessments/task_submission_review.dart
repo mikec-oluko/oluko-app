@@ -52,7 +52,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
 
   void initializeVideo() {
     _videoController = VideoPlayerHelper.videoPlayerControllerFromNetwork(
-      widget.taskSubmission.video.url,
+      widget.taskSubmission.videoHls ?? widget.taskSubmission.video.url,
     );
     _initializeVideoPlayerFuture = _videoController.initialize();
     _videoController.setLooping(true);

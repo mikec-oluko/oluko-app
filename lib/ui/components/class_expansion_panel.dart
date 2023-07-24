@@ -22,10 +22,12 @@ const SCROLL_DURATION = 600;
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
   final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final ScrollController screenController;
   final int totalClasses;
   const ClassExpansionPanels({
     this.classes,
-    this.onPressedMovement, 
+    this.onPressedMovement,
+    this.screenController,
     this.totalClasses,
   });
 
@@ -39,14 +41,13 @@ class _State extends State<ClassExpansionPanels> {
 
   @override
   void initState() {
+    _classItems = generateClassItems();
+    _subClassItems = generateSubClassItems();
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
-    _classItems = generateClassItems();
-    _subClassItems = generateSubClassItems();
     if (OlukoNeumorphism.isNeumorphismDesign) {
       return expansionPanelNeumorphic();
     } else {
@@ -55,7 +56,6 @@ class _State extends State<ClassExpansionPanels> {
   }
 
   Widget expansionPanel() {
-    
     return _classItems.isNotEmpty
         ? ExpansionPanelList(
             expansionCallback: (int index, bool isExpanded) {
@@ -93,18 +93,25 @@ class _State extends State<ClassExpansionPanels> {
   }
 
   Widget expansionPanelNeumorphic() {
+    bool isPanelExpanded = false;
     if (_classItems.isNotEmpty) {
       return CustomExpansionPanelList.radio(
+        animationDuration: Duration(milliseconds: 500),
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
-            _classItems[index].expanded = !_classItems[index].expanded;         
+            isPanelExpanded = !_classItems[index].expanded;
+            _classItems[index].expanded = !_classItems[index].expanded;
           });
+        },
+        onPanelTap: (details) {
+          if (isPanelExpanded) {
+            widget.screenController?.jumpTo(details.globalPosition.dy + (widget.screenController.position.pixels * 0.75));
+          }
         },
         children: _classItems.map<ExpansionPanelRadio>((ClassItem item) {
           return ExpansionPanelRadio(
             canTapOnHeader: true,
-            backgroundColor:
-                OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
+            backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return Padding(
                 key: item.globalKey,
@@ -131,7 +138,6 @@ class _State extends State<ClassExpansionPanels> {
       );
     }
   }
-
 
   List<Widget> generateSubClassItems() {
     List<Widget> subClassItems = [];

@@ -71,6 +71,7 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   DateTime _backgroundTime;
   Duration secondsBeforePaused;
   bool canReproduce = true;
+  bool isKeyboardRequested = false;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -204,7 +205,7 @@ class _State extends State<Clock> with WidgetsBindingObserver {
           ),
         ),
         if (isWorkStateFinished()) const SizedBox() else Positioned(top: ScreenUtils.height(context) * 0.48, child: _tasksSection()),
-        if ((widget.workState == WorkState.resting && skipRest) && canUseSkipRest())
+        if ((widget.workState == WorkState.resting && skipRest) && (canUseSkipRest() && !isKeyboardRequested))
           Positioned(
             bottom: 100,
             child: Container(
@@ -360,7 +361,12 @@ class _State extends State<Clock> with WidgetsBindingObserver {
                   child: Scrollbar(
                       child: TextField(
                     controller: widget.textController,
-                    onTap: () => open(),
+                    onTap: () {
+                      setState(() {
+                        isKeyboardRequested = !isKeyboardRequested;
+                      });
+                      open();
+                    },
                     style: const TextStyle(
                       fontSize: 20,
                       color: OlukoColors.white,
@@ -395,6 +401,9 @@ class _State extends State<Clock> with WidgetsBindingObserver {
           onSubmit: () {
             Navigator.pop(context);
             focusNode.unfocus();
+            setState(() {
+              isKeyboardRequested = !isKeyboardRequested;
+            });
           },
         ),
       ),
@@ -417,7 +426,12 @@ class _State extends State<Clock> with WidgetsBindingObserver {
                       child: TextField(
                     textAlign: TextAlign.center,
                     controller: widget.textController,
-                    onTap: () => open(),
+                    onTap: () {
+                      setState(() {
+                        isKeyboardRequested = !isKeyboardRequested;
+                      });
+                      open();
+                    },
                     style: const TextStyle(
                       fontSize: 20,
                       color: OlukoColors.white,

@@ -17,6 +17,8 @@ class SegmentSubmission extends Base {
   DocumentReference coachReference;
   Timestamp seenAt;
   Video video;
+  String videoHls;
+
   VideoState videoState;
   SegmentSubmissionStatusEnum status;
   bool favorite;
@@ -33,6 +35,7 @@ class SegmentSubmission extends Base {
       this.courseEnrollmentId,
       this.courseEnrollmentReference,
       this.video,
+      this.videoHls,
       this.videoState,
       this.seenAt,
       this.status,
@@ -62,6 +65,7 @@ class SegmentSubmission extends Base {
       seenAt: json['seen_at'] as Timestamp,
       favorite: json['favorite'] == null ? false : json['favorite'] as bool,
       video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+      videoHls: json['video_hls']?.toString(),
       videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
       submissionWeight: json['submission_weight'] != null
           ? List<WeightRecord>.from((json['submission_weight'] as Iterable).map((item) => WeightRecord.fromJson(item as Map<String, dynamic>)))
@@ -88,6 +92,7 @@ class SegmentSubmission extends Base {
         'status': status.index,
         'favorite': favorite ?? false,
         'video': video == null ? null : video.toJson(),
+        'video_hls': videoHls,
         'video_state': videoState == null ? null : videoState.toJson(),
         'submission_weight': submissionWeight == null ? [] : List<dynamic>.from(submissionWeight.map((weight) => weight.toJson())),
       };

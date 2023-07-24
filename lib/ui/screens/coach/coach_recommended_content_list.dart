@@ -6,6 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -192,7 +193,7 @@ class _CoachRecommendedContentListState extends State<CoachRecommendedContentLis
                       child: GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                        'videoUrl': videoRecommended.videoHls ?? videoRecommended.video.url,
+                        'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: videoRecommended.videoHls, videoUrl: videoRecommended.video.url),
                         'aspectRatio': videoRecommended.video.aspectRatio,
                         'titleForContent': OlukoLocalizations.of(context).find('recommendedVideos')
                       });

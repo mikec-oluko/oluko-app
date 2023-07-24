@@ -489,7 +489,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                           }
                           if (taskSubmission.video != null && taskSubmission.video.url != null) {
                             Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                                arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+                                arguments: {'task': _task, 'videoUrl': taskSubmission.videoHls ?? taskSubmission.video.url});
                           }
                         },
                         child: taskResponse(

@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_helper_functions.dart';
 import 'package:oluko_app/helpers/coach_personalized_video.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -190,14 +191,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
             Align(
                 child: TextButton(
                     onPressed: () {
-                      var videoUrl = null;
-                      if (coachAnnotation.videoHLS != null) {
-                        videoUrl = coachAnnotation.videoHLS;
-                      } else {
-                        videoUrl = coachAnnotation.video.url;
-                      }
                       Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                        'videoUrl': videoUrl,
+                        'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: coachAnnotation.videoHLS, videoUrl: coachAnnotation.video.url),
                         'aspectRatio': coachAnnotation.video.aspectRatio,
                         'titleForContent': OlukoLocalizations.get(context, 'annotatedVideos')
                       });
