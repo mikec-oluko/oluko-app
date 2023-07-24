@@ -115,7 +115,8 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
           },
           onOpenCard: () {
             Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-              'videoUrl': content.coachMediaMessage.video.url,
+              'videoUrl':
+                  VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: content.coachMediaMessage.videoHls, videoUrl: content.coachMediaMessage.video.url),
               'aspectRatio': content.coachMediaMessage.video.aspectRatio,
               'titleForContent': OlukoLocalizations.of(context).find('coachMessageVideo')
             });

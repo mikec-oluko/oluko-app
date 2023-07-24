@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_personalized_video.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -115,14 +116,9 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
   TextButton _playButtonComponent(BuildContext context) {
     return TextButton(
         onPressed: () {
-          var videoUrl = null;
-          if (widget.personalizedVideo.videoHls != null) {
-            videoUrl = widget.personalizedVideo.videoHls;
-          } else {
-            videoUrl = widget.personalizedVideo.videoContent.url;
-          }
           Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-            'videoUrl': videoUrl,
+            'videoUrl':
+                VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.personalizedVideo.videoHls, videoUrl: widget.personalizedVideo.videoContent.url),
             'aspectRatio': widget.personalizedVideo.videoContent.aspectRatio,
             'segmentSubmissionId': widget.annotation?.segmentSubmissionId,
             'currentUser': widget.currentUser,

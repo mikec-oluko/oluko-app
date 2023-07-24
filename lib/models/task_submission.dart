@@ -7,6 +7,7 @@ import 'package:oluko_app/models/submodels/video_state.dart';
 
 class TaskSubmission extends Base with EquatableMixin {
   Video video;
+  String videoHls;
   DocumentReference reviewReference;
   ObjectSubmodel task;
   bool isPublic;
@@ -16,6 +17,7 @@ class TaskSubmission extends Base with EquatableMixin {
 
   TaskSubmission(
       {this.video,
+      this.videoHls,
       this.reviewReference,
       this.task,
       this.isPublic,
@@ -29,18 +31,12 @@ class TaskSubmission extends Base with EquatableMixin {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory TaskSubmission.fromJson(Map<String, dynamic> json) {
     TaskSubmission taskSubmission = TaskSubmission(
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+        videoHls: json['video_hls']?.toString(),
         reviewReference: json['review_reference'] as DocumentReference,
         task: json['task'] == null ? null : ObjectSubmodel.fromJson(json['task'] as Map<String, dynamic>),
         isPublic: json['is_public'] == null ? false : json['is_public'] as bool,
@@ -54,6 +50,7 @@ class TaskSubmission extends Base with EquatableMixin {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> taskSubmissionJson = {
       'video': video == null ? null : video.toJson(),
+      'video_hls': videoHls,
       'review_reference': reviewReference,
       'task': task == null ? null : task.toJson(),
       'is_public': isPublic == null ? false : isPublic,
@@ -66,20 +63,6 @@ class TaskSubmission extends Base with EquatableMixin {
   }
 
   @override
-  List<Object> get props => [
-        video,
-        reviewReference,
-        task,
-        isPublic,
-        videoState,
-        coachId,
-        coachReference,
-        id,
-        createdBy,
-        createdAt,
-        updatedAt,
-        updatedBy,
-        isDeleted,
-        isHidden
-      ];
+  List<Object> get props =>
+      [video, reviewReference, task, isPublic, videoState, coachId, coachReference, id, createdBy, createdAt, updatedAt, updatedBy, isDeleted, isHidden];
 }
