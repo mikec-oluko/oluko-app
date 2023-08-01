@@ -58,7 +58,10 @@ class _State extends State<ChallengesCard> {
   Column _unlockedCardByPreviousSegment(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       if (Platform.isAndroid) const SizedBox(height: 5) else _cardSpacer,
-      if (widget.segmentChallenge.previousSegmentFinish) _unlockedCard(context) else _lockedCard(context),
+      if (widget.segmentChallenge?.previousSegmentFinish != null && widget.segmentChallenge?.previousSegmentFinish == true)
+        _unlockedCard(context)
+      else
+        _lockedCard(context),
       if (needAudioComponent) _audioElementForChallengeCard(context)
     ]);
   }

@@ -350,7 +350,14 @@ class _InsideClassesState extends State<InsideClass> {
         if (segmentState is GetSegmentsSuccess) {
           _classSegments = segmentState.segments;
           setCompletedBefore();
-          return ClassDetailSection(challengeNavigations: _challengeNavigations, classObj: _class, segments: segmentState.segments);
+          return ClassDetailSection(
+            challengeNavigations: _challengeNavigations,
+            classObj: _class,
+            segments: segmentState.segments,
+            onPressedMovement: (context, movement) {
+              print(movement);
+            },
+          );
         } else {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -556,17 +563,16 @@ class _InsideClassesState extends State<InsideClass> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 3),
       child: OlukoVideoPreview(
-        randomImages: widget.actualCourse?.userSelfies ?? [],
-        video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _class.videoHls, videoUrl: _class.video),
-        // video: _class.video,
-        showBackButton: true,
-        audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
-        bottomWidgets: [_getCourseInfoSection(_classImage)],
-        onBackPressed: () => _goBackToCourseDetails(context), // Navigator.pop(context),
-        onPlay: () => isVideoPlaying(),
-        videoVisibilty: _isVideoPlaying,
-        isGreenButton: true
-      ),
+          randomImages: widget.actualCourse?.userSelfies ?? [],
+          video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _class.videoHls, videoUrl: _class.video),
+          // video: _class.video,
+          showBackButton: true,
+          audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+          bottomWidgets: [_getCourseInfoSection(_classImage)],
+          onBackPressed: () => _goBackToCourseDetails(context), // Navigator.pop(context),
+          onPlay: () => isVideoPlaying(),
+          videoVisibilty: _isVideoPlaying,
+          isGreenButton: true),
     );
   }
 

@@ -66,7 +66,7 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
                     context,
                     movement?.image,
                     movement?.name,
-                    onPressed: (context) => widget.onPressed(context, movement),
+                    onPressed: (context) => widget.onPressed(context, movement) ?? () {},
                     referenceMovementsSection: referenceMovementsSection,
                   )
                 : const SizedBox(),
@@ -91,7 +91,7 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
                     context,
                     movement?.image,
                     movement?.name,
-                    onPressed: (context) => widget.onPressed(context, movement),
+                    onPressed: (context) => widget.onPressed(context, movement) ?? () {},
                     bubbleName: bubbleName,
                   )
                 : const SizedBox(),
@@ -123,23 +123,24 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
   Widget _imageItem(BuildContext context, String imageUrl, String name,
       {Function(BuildContext) onPressed, bool bubbleName = true, bool referenceMovementsSection = false}) {
     return GestureDetector(
-      onTap: () => onPressed(context),
+      onTap: () => onPressed(context) ?? () {},
       child: SizedBox(
         width: 85,
         height: 100,
         child: Column(
           children: [
-            referenceMovementsSection
-                ? Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: MovementItem(maxRadius: 35, imageUrl: imageUrl, referenceMovementsSection: referenceMovementsSection),
-                  )
-                : bubbleName ?? true
-                    ? StoriesItem(maxRadius: 23, imageUrl: imageUrl)
-                    : Padding(
-                        padding: const EdgeInsets.only(left: 5, right: 5),
-                        child: MovementItem(maxRadius: 40, imageUrl: imageUrl),
-                      ),
+            if (referenceMovementsSection)
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: MovementItem(maxRadius: 35, imageUrl: imageUrl, referenceMovementsSection: referenceMovementsSection),
+              )
+            else
+              bubbleName ?? true
+                  ? StoriesItem(maxRadius: 23, imageUrl: imageUrl)
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: MovementItem(maxRadius: 40, imageUrl: imageUrl),
+                    ),
             Visibility(
               visible: bubbleName ?? true,
               child: Padding(

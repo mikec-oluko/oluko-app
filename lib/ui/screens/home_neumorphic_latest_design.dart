@@ -115,7 +115,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       currentUserLatestVersion = widget.currentUser;
     });
     super.initState();
-    if (widget.scrollToUpcomingWorkouts){
+    if (widget.scrollToUpcomingWorkouts) {
       _scrollController = ScrollController();
       WidgetsBinding.instance.addPostFrameCallback((_) => scrollToUpcomingWorkouts());
     }
@@ -123,7 +123,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   @override
   void dispose() {
-    if (_scrollController != null){
+    if (_scrollController != null) {
       _scrollController.dispose();
     }
     super.dispose();
@@ -158,7 +158,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
     final Offset position = upcomingWorkoutElement.localToGlobal(Offset.zero);
 
-    if (_scrollController.hasClients){
+    if (_scrollController.hasClients) {
       await _scrollController.animateTo(position.dy - topBarHeight - 70, duration: const Duration(seconds: 1), curve: Curves.easeIn);
     }
   }
@@ -253,7 +253,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     hasScheduledCourses = true;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-      child:  Column(
+      child: Column(
         children: [
           Align(
             key: upcomingWorkoutsKey,
@@ -548,7 +548,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       builder: (context, state) {
         List<Map<String, List<UserResponse>>> _coursesRecommendedMap = [];
         if (state is CourseRecommendedByFriendSuccess) {
-          _coursesRecommendedMap = state.recommendedCourses;
+          _coursesRecommendedMap = state.recommendedCourses ?? [];
           return FriendsRecommendedCourses(listOfCoursesRecommended: _coursesRecommendedMap, courses: _courses);
         } else {
           return const SizedBox();
@@ -622,7 +622,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   // TODO: MOVE AS WIDGET
   SliverAppBar getLogo(AuthSuccess authState) {
-     return SliverAppBar(
+    return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
       pinned: true,

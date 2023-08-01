@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class StatisticsSubscriptionState {}
 
@@ -32,14 +33,22 @@ class StatisticsSubscriptionBloc extends Cubit<StatisticsSubscriptionState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    subscription ??= CourseRepository.getStatisticsSubscription().listen((snapshot) async {
-      List<CourseStatistics> statistics = [];
-      snapshot.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
-        statistics.add(CourseStatistics.fromJson(content));
-      });
-      emit(StatisticsSubscriptionSuccess(courseStatistics: statistics));
+    return subscription ??= CourseRepository.getStatisticsSubscription().listen((snapshot) async {
+      try {
+        List<CourseStatistics> statistics = [];
+        snapshot.docs.forEach((doc) {
+          final Map<String, dynamic> content = doc.data();
+          statistics.add(CourseStatistics.fromJson(content));
+        });
+        emit(StatisticsSubscriptionSuccess(courseStatistics: statistics));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(StatisticsFailure(exception: exception));
+        rethrow;
+      }
     });
-    return subscription;
   }
 }

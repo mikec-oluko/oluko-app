@@ -70,7 +70,10 @@ class _State extends State<ClassSegmentSection> {
             SingleChildScrollView(
                 physics: OlukoNeumorphism.listViewPhysicsEffect,
                 scrollDirection: Axis.horizontal,
-                child: MovementItemBubbles(onPressed: widget.onPressedMovement, movements: widget.movementSubmodels, width: ScreenUtils.width(context) / 1)),
+                child: MovementItemBubbles(
+                    onPressed: (context, movement) => widget.onPressedMovement(context, movement),
+                    movements: widget.movementSubmodels,
+                    width: ScreenUtils.width(context) / 1)),
           ],
         ),
         (widget.segment != null && !widget.segment.isChallenge)

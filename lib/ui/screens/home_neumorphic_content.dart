@@ -195,10 +195,10 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                       initialPage: widget.index ?? 0,
                       viewportFraction: 1,
                       onPageChanged: (index, reason) {
-                        if (index <= _activeCourses.length - 1) {
-                          courseIndex = index;
+                        if (existsIndex(index)) {
+                          courseIndex = index ?? 0;
                           if (mounted) {
-                            BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                            BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: courseIndex);
                           }
                           if (!showLogo) {
                             setState(() {
@@ -213,7 +213,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                         }
                         if (horizontalScrollController.hasClients) {
                           horizontalScrollController.jumpTo(
-                            index * ScreenUtils.width(context) * 0.42,
+                            courseIndex * ScreenUtils.width(context) * 0.42,
                           );
                         }
                       },
@@ -227,15 +227,18 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     }
   }
 
+  bool existsIndex(int index) => index != null && index <= (_activeCourses.length - 1);
+
   CustomScrollView _getCourseContentView(int index, BuildContext context) {
+    int currentIndex = index ?? 0;
     return CustomScrollView(
       physics: OlukoNeumorphism.listViewPhysicsEffect,
-      cacheExtent: 105.0 * _growListOfCourses[index].classes.length,
+      cacheExtent: 105.0 * _growListOfCourses[currentIndex].classes.length,
       slivers: <Widget>[
         SliverStack(
           children: [
-            getClassView(index, context),
-            if (_horizontalScrollingAvailable) getTabBar(context, index),
+            getClassView(currentIndex, context),
+            if (_horizontalScrollingAvailable) getTabBar(context, currentIndex),
           ],
         ),
       ],
@@ -288,8 +291,9 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   void _populateGrowListOfCourses(int index) {
+    int currentIndex = index ?? 0;
     List<Course> newBatchOfCourses = [];
-    if (_growListOfCourses.length - 1 == index) {
+    if (_growListOfCourses.length - 1 == currentIndex) {
       if (_growListNewLength < _activeCourses.length) {
         if ((_activeCourses.length - _growListNewLength) >= _courseChunkMaxValue) {
           newBatchOfCourses = _activeCourses.getRange(_growListOfCourses.length, _growListNewLength).toList();
@@ -369,26 +373,27 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   SliverList getClassView(int index, BuildContext context) {
-    BlocProvider.of<VideoBloc>(context).getAspectRatio(_activeCourses[index].video);
+    int currentUser = index ?? 0;
+    BlocProvider.of<VideoBloc>(context).getAspectRatio(_activeCourses[currentUser].video);
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
           padding: const EdgeInsets.only(bottom: 3),
           child: VisibilityDetector(
-            key: Key('video$index'),
+            key: Key('video$currentUser'),
             onVisibilityChanged: (VisibilityInfo info) {
-              if (info.visibleFraction < 0.1 && mounted && courseIndex == index && !_isVideoPlaying && courseIndex <= _activeCourses.length) {
-                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+              if (info.visibleFraction < 0.1 && mounted && courseIndex == currentUser && !_isVideoPlaying && courseIndex <= _activeCourses.length) {
+                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: currentUser);
               } else {
                 if (mounted) {
-                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: index);
+                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: currentUser);
                 }
               }
             },
             child: OlukoVideoPreview(
               showBackButton: true,
-              image: _activeCourses[index].image,
-              video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[index].videoHls, videoUrl: _activeCourses[index].video),
+              image: _activeCourses[currentUser].image,
+              video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[currentUser].videoHls, videoUrl: _activeCourses[currentUser].video),
               onBackPressed: () => Navigator.pop(context),
               onPlay: () => isVideoPlaying(),
               videoVisibilty: _isVideoPlaying,
@@ -397,7 +402,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Text(
-                    _activeCourses[index].name,
+                    _activeCourses[currentUser].name,
                     style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
                   ),
                 ),
@@ -408,7 +413,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         Padding(
           padding: const EdgeInsets.only(top: 10.0, right: 15, left: 15),
           child: Text(
-            _activeCourses[index].description ?? '',
+            _activeCourses[currentUser].description ?? '',
             style: OlukoFonts.olukoBigFont(
               customFontWeight: FontWeight.normal,
               customColor: OlukoColors.grayColor,
@@ -423,13 +428,14 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                 child: CourseClassCardsList(
                   isFromHome: true,
                   openEditScheduleOnInit: widget.openEditScheduleOnInit ?? false,
-                  course: _activeCourses[index],
-                  courseEnrollment: widget.courseEnrollments[index],
+                  course: _activeCourses[currentUser],
+                  courseEnrollment: widget.courseEnrollments[currentUser],
                   classes: classState.classes,
-                  courseIndex: index,
+                  courseIndex: currentUser,
                   closeVideo: closeVideo,
+                  //TODO: HERE
                   onPressed: () => Future.delayed(const Duration(milliseconds: 500), () {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: index);
+                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: currentUser);
                   }),
                 ),
               );
@@ -660,11 +666,11 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
         useOverlay: true,
         isOlukoControls: true,
         closeVideoPlayer: () => setState(() {
-          _controller = null;
+          _controller.dispose();
           isVideoVisible = !isVideoVisible;
         }),
         onVideoFinished: () => setState(() {
-          _controller = null;
+          _controller.dispose();
           isVideoVisible = !isVideoVisible;
         }),
         whenInitialized: (ChewieController chewieController) => setState(() {

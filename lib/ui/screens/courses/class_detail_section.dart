@@ -72,7 +72,7 @@ class _State extends State<ClassDetailSection> {
               segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
               movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
               movementSubmodels: ClassService.getClassSegmentMovementSubmodels(widget.classObj.segments[i].sections),
-              onPressedMovement: widget.onPressedMovement)); //TODO:check null value
+              onPressedMovement: (context, movement) => widget.onPressedMovement(context, movement))); //TODO:check null value
         }
       }
       return widgets;

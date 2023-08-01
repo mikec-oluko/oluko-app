@@ -54,7 +54,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
           (movement) => movement != null
               ? Padding(
                   padding: const EdgeInsets.only(top: 0),
-                  child: _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) => widget.onPressed(context, movement)),
+                  child: _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) => widget.onPressed(context, movement) ?? () {}),
                 )
               : const SizedBox(),
         )
