@@ -337,9 +337,8 @@ class _InsideClassesState extends State<InsideClass> {
       panelController: panelController,
       movements: _classMovements,
       classObj: _class,
-      onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+      onPressedMovement: () {
         closeVideo();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
   }
@@ -354,8 +353,8 @@ class _InsideClassesState extends State<InsideClass> {
             challengeNavigations: _challengeNavigations,
             classObj: _class,
             segments: segmentState.segments,
-            onPressedMovement: (context, movement) {
-              print(movement);
+            onPressedMovement: () {
+              closeVideo();
             },
           );
         } else {

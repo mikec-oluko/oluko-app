@@ -375,9 +375,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
       classes: CourseService.getCourseClasses(_classes, course: widget.course),
-      onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+      onPressedMovement: () {
         widget.playPauseVideo();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
   }

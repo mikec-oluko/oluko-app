@@ -10,7 +10,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementVideosSection extends StatefulWidget {
   final Segment segment;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
   final Widget action;
 
   MovementVideosSection({this.segment, this.onPressedMovement, this.action});

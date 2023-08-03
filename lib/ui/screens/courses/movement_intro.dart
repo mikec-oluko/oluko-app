@@ -118,7 +118,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               title: _movementSubmodel.name,
               showTitle: true,
             )
-          : OlukoImageBar(actions: [], movements: [_movementSubmodel], onPressedMovement: (context, movement) => {}),
+          : OlukoImageBar(actions: [], movements: [_movementSubmodel], onPressedMovement: () => {}),
       backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
       body: Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
@@ -488,12 +488,14 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   child: Row(
                     children: [
                       MovementItemBubblesNeumorphic(
+                        movement: movement,
+                        movementSubmodel: _movementSubmodel,
                         referenceMovementsSection: true,
-                        onPressed: (context, movement) {
+                        replaceView: true,
+                        onPressed: () {
                           if (_videoControllers[tabController.index] != null) {
                             _videoControllers[tabController.index].pause();
                           }
-                          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                         },
                         content: _movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2,

@@ -3,13 +3,14 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 
 class MovementItemBubbles extends StatefulWidget {
   final List<MovementSubmodel> movements;
   final double width;
   final bool showAsGrid;
-  final Function(BuildContext, MovementSubmodel) onPressed;
+  final Function() onPressed;
   final bool isSegmentSection;
   MovementItemBubbles({this.movements, this.width, this.onPressed, this.showAsGrid = false, this.isSegmentSection = false});
   @override
@@ -54,7 +55,9 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
           (movement) => movement != null
               ? Padding(
                   padding: const EdgeInsets.only(top: 0),
-                  child: _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) => widget.onPressed(context, movement) ?? () {}),
+                  child: _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) {
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
+                  }),
                 )
               : const SizedBox(),
         )

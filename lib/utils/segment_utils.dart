@@ -118,42 +118,54 @@ class SegmentUtils {
 
   static List<Widget> getWorkoutsforNeumorphic(Segment segment, Color color,
       {bool restTime = true, List<Movement> movements = const [], BuildContext context, bool viewDetailsScreen = false}) {
-    List<Widget> workouts = [];
+    List<Widget> ListOfWorkouts = [];
     if (segment.sections != null) {
       for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
         for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
-          MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
-          Movement movementWithImage;
-          if (movements.isNotEmpty)
+          final MovementSubmodel movementSubmodelElement = getMovementSubmodel(segment, sectionIndex, movementIndex);
+          Movement movementElement;
+          if (movements.isNotEmpty) {
             for (var movementsIndex = 0; movementsIndex < movements.length; movementsIndex++) {
-              if (movement.id == movements[movementsIndex].id) movementWithImage = movements[movementsIndex];
+              if (isSameMovement(movementSubmodelElement, movements, movementsIndex)) {
+                movementElement = movements[movementsIndex];
+              }
             }
-          if (restTime)
-            workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != 'Rest time' && movement.name != 'Rest') {
-            workouts.add(Row(
-              children: [
-                MovementItemBubblesNeumorphic(
-                  content: movements,
-                  viewDetailsScreen: true,
-                  movement: movementWithImage, //movementWithImage=null? overflow error
-                  width: ScreenUtils.width(context) / 4,
-                  bubbleName: false,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: SizedBox(width: ScreenUtils.width(context) * 0.57, child: getTextWidget(getLabel(movement), color)),
-                ),
-              ],
-            ));
           }
-          ;
+          if (restTime) {
+            ListOfWorkouts.add(getTextWidget(getLabel(movementSubmodelElement), color));
+          } else if (movementIsRest(movementSubmodelElement)) {
+            ListOfWorkouts.add(movementContent(movements, movementElement, context, movementSubmodelElement, color));
+          }
         }
       }
     }
-
-    return workouts;
+    return ListOfWorkouts;
   }
+
+  static Row movementContent(List<Movement> movements, Movement movementElement, BuildContext context, MovementSubmodel movementSubmodelElement, Color color) {
+    return Row(
+      children: [
+        MovementItemBubblesNeumorphic(
+            content: movements,
+            viewDetailsScreen: true,
+            movement: movementElement,
+            width: ScreenUtils.width(context) / 4,
+            bubbleName: false,
+            movementSubmodel: movementSubmodelElement),
+        Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: SizedBox(width: ScreenUtils.width(context) * 0.57, child: getTextWidget(getLabel(movementSubmodelElement), color)),
+        ),
+      ],
+    );
+  }
+
+  static bool movementIsRest(MovementSubmodel movementSubmodelElement) => movementSubmodelElement.name != 'Rest time' && movementSubmodelElement.name != 'Rest';
+
+  static bool isSameMovement(MovementSubmodel movementSubmodelElement, List<Movement> movements, int movementsIndex) =>
+      movementSubmodelElement.id == movements[movementsIndex].id;
+
+  static MovementSubmodel getMovementSubmodel(Segment segment, int sectionIndex, int movementIndex) => segment.sections[sectionIndex].movements[movementIndex];
 
   static Widget getTextWidget(String text, Color color) {
     return Padding(

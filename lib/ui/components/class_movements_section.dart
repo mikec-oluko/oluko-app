@@ -14,7 +14,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 class ClassMovementSection extends StatefulWidget {
   final Class classObj;
   final List<MovementSubmodel> movements;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
   final PanelController panelController;
 
   ClassMovementSection({this.classObj, this.onPressedMovement, this.movements, this.panelController});

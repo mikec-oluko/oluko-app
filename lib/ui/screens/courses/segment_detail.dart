@@ -732,9 +732,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
           return MovementVideosSection(
               action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
               segment: _segments[(index as int) - 1],
-              onPressedMovement: (BuildContext context, MovementSubmodel movementSubmodel) {
+              onPressedMovement: () {
                 carouselWidgets[dotsIndex.value].changeVideoState();
-                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movementSubmodel});
               });
         },
       );

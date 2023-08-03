@@ -21,7 +21,7 @@ const SCROLL_DURATION = 600;
 
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
   final ScrollController screenController;
   final int totalClasses;
   const ClassExpansionPanels({

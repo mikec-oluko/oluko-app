@@ -501,11 +501,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
       screenController: _scrollController,
       totalClasses: _allCourseClasses.length,
       classes: _growingClassList,
-      onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+      onPressedMovement: () {
         if (widget.closeVideo != null) {
           widget.closeVideo();
         }
-        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
   }

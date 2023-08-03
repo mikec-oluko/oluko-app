@@ -491,11 +491,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             panel: MovementVideosSection(
                 action: getPlayPauseAction(),
                 segment: widget.segments[widget.segmentIndex],
-                onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+                onPressedMovement: () {
                   if (workState != WorkState.paused) {
                     changeSegmentState();
                   }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
                 }),
             body: _body(),
           )

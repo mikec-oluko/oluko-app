@@ -18,7 +18,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final String imageItemUrl =
       "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
   final String itemName = 'Airsquats';
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
 
   OlukoImageBar({this.title, this.onPressed, this.actions, this.movements, this.toolbarHeight = kToolbarHeight * 1.75, this.onPressedMovement});
   @override
