@@ -89,15 +89,18 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
   Container _confirmDeleteComponent(BuildContext context, GenericAudioPanelConfirmDelete state) {
     return Container(
       width: ScreenUtils.width(context) / 1.2,
-      height: 80,
+      height: 100,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+            padding: const EdgeInsets.fromLTRB(20, 10, 10, 0),
             child: Wrap(children: [
               Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'), style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))
             ]),
+          ),
+          SizedBox(
+            height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

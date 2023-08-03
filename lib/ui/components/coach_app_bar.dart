@@ -66,6 +66,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
                   children: [
                     getSpacerWidget(),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         if (widget.coachUser != null)
                           CoachAppBarRecordAudioComponent(
@@ -89,12 +90,11 @@ class _CoachAppBarState extends State<CoachAppBar> {
 
   Widget _coachProfilePicWithNavigation(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 25),
+      padding: const EdgeInsets.only(top: 20),
       child: SizedBox(
-        height: 100,
+        height: 90,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             getSpacerWidget(),
             GestureDetector(
