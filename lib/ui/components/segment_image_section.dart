@@ -132,14 +132,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     setState(() {
       movementsToDisplayWeight = MovementUtils.getMovementsWithWeights(sections: widget.segment.sections, enrollmentMovements: enrollmentMovements);
     });
-    widget.changeVideoState = () {
-      if (_controller != null) {
-        _controller.pause();
-        setState(() {
-          _isVideoPlaying = !_isVideoPlaying;
-        });
-      }
-    };
+    setState(() {
+      widget.changeVideoState = () {
+        if (_controller != null) {
+          _controller.pause();
+          setState(() {
+            _isVideoPlaying = !_isVideoPlaying;
+          });
+        }
+      };
+    });
+    widget.changeVideoState();
     super.initState();
   }
 
