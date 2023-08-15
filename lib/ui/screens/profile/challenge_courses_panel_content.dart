@@ -31,7 +31,7 @@ class _State extends State<ChallengeCoursesPanelContent> {
         child: Container(
             decoration: OlukoNeumorphism.isNeumorphismDesign
                 ? BoxDecoration(
-                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(19), topRight: Radius.circular(19)))
                 : decorationImage(),
             child: Column(children: [

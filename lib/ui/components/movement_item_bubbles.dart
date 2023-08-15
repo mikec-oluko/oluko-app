@@ -12,7 +12,7 @@ class MovementItemBubbles extends StatefulWidget {
   final bool showAsGrid;
   final Function() onPressed;
   final bool isSegmentSection;
-  MovementItemBubbles({this.movements, this.width, this.onPressed, this.showAsGrid = false, this.isSegmentSection = false});
+  const MovementItemBubbles({this.movements, this.width, this.onPressed, this.showAsGrid = false, this.isSegmentSection = false});
   @override
   _MovementItemBubblesState createState() => _MovementItemBubblesState();
 }
@@ -53,12 +53,9 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
     List<Widget> movements = widget.movements
         .map(
           (movement) => movement != null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 0),
-                  child: _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) {
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
-                  }),
-                )
+              ? _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) {
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
+                })
               : const SizedBox(),
         )
         .toList();
@@ -72,16 +69,13 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
     return movements;
   }
 
-  Widget buildBubbles() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: buildMovementItems(),
-    );
-  }
+  Widget buildBubbles() => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: buildMovementItems(),
+      );
 
-  Widget buildBubbleGrid() {
-    return GridView.count(padding: EdgeInsets.zero, shrinkWrap: true, mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
-  }
+  Widget buildBubbleGrid() =>
+      GridView.count(padding: EdgeInsets.zero, shrinkWrap: true, mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
 
   Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {
     return GestureDetector(

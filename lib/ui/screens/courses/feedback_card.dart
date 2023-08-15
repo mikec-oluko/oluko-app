@@ -125,7 +125,7 @@ class _State extends State<FeedbackCard> {
 
   Container neumorphicFeedBackCard(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(

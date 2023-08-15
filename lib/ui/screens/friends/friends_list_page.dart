@@ -71,7 +71,6 @@ class _FriendsListPageState extends State<FriendsListPage> {
     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(widget.currentUser.id);
     BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(widget.currentUser.id);
     BlocProvider.of<ChatSliderBloc>(context).getCoursesWithChatByUserId(widget.currentUser.id);
-
     super.initState();
   }
 
@@ -103,39 +102,10 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     if (chatSliderState is ChatSliderMessagesLoading) {
                       _chatSliderWidget = getLoaderWidget();
                     }
-                    if (friendState is GetFriendsSuccess) {
-                      _friendState = friendState;
-                      _friendUsersList = friendState.friendUsers;
-                      _friends = friendState.friendData != null ? friendState.friendData.friends : [];
-                      _friendUsersWidget = UserListComponent(
-                        usersProgress: _usersProgress,
-                        authUser: widget.currentUser,
-                        users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
-                        onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                        onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
-                      );
-                    }
-                    if (userListState is UserListSuccess) {
-                      _appUsersList = userListState.users;
-                      _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
-                      _appUsersWidget = UserListComponent(
-                        usersProgress: _usersProgress,
-                        authUser: widget.currentUser,
-                        users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
-                        onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
-                        onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
-                      );
-                    }
-                    if (friendState is FriendLoading || userListState is UserListLoading) {
-                      _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
-                      _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
-                    }
-                    if (friendState is FriendFailure || userListState is UserListFailure) {
-                      _friendUsersWidget =
-                          friendState is FriendFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends') : _friendUsersWidget;
-                      _appUsersWidget =
-                          userListState is UserListFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users') : _appUsersWidget;
-                    }
+                    _getFriendSuccessAction(friendState);
+                    _userListSuccessAction(userListState);
+                    _loadingStatusAction(friendState, userListState);
+                    _failureStatusAction(friendState, userListState, context);
                     return _scrollView();
                   },
                 );
@@ -145,6 +115,49 @@ class _FriendsListPageState extends State<FriendsListPage> {
         );
       });
     });
+  }
+
+  void _getFriendSuccessAction(FriendState friendState) {
+    if (friendState is GetFriendsSuccess) {
+      _friendState = friendState;
+      _friendUsersList = friendState.friendUsers;
+      _friends = friendState.friendData != null ? friendState.friendData.friends : [];
+      _friendUsersWidget = UserListComponent(
+        usersProgress: _usersProgress,
+        authUser: widget.currentUser,
+        users: _filterFriendUsers(isForFriends: true, friends: _friends, friendUsersList: _friendUsersList),
+        onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+        onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+      );
+    }
+  }
+
+  void _userListSuccessAction(UserListState userListState) {
+    if (userListState is UserListSuccess) {
+      _appUsersList = userListState.users;
+      _appUsersList.sort((a, b) => a.username.toString().toLowerCase().compareTo(b.username.toString().toLowerCase()));
+      _appUsersWidget = UserListComponent(
+        usersProgress: _usersProgress,
+        authUser: widget.currentUser,
+        users: _filterFriendUsers(isForFriends: false, users: _appUsersList, friendUsersList: _friendUsersList),
+        onTapUser: (UserResponse friendUser) => modalOnUserTap(friendUser),
+        onTopScroll: () => _viewScrollController.animateTo(0.0, duration: Duration(milliseconds: 500), curve: Curves.bounceOut),
+      );
+    }
+  }
+
+  void _loadingStatusAction(FriendState friendState, UserListState userListState) {
+    if (friendState is FriendLoading || userListState is UserListLoading) {
+      _appUsersWidget = userListState is UserListLoading ? getLoaderWidget() : _appUsersWidget;
+      _friendUsersWidget = friendState is FriendLoading ? getLoaderWidget() : _friendUsersWidget;
+    }
+  }
+
+  void _failureStatusAction(FriendState friendState, UserListState userListState, BuildContext context) {
+    if (friendState is FriendFailure || userListState is UserListFailure) {
+      _friendUsersWidget = friendState is FriendFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} your Friends') : _friendUsersWidget;
+      _appUsersWidget = userListState is UserListFailure ? TitleBody('${OlukoLocalizations.get(context, 'noFriends')} the users') : _appUsersWidget;
+    }
   }
 
   Widget _scrollView() {

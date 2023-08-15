@@ -79,7 +79,7 @@ class UserUtils {
   static bool userDeviceIsIOS() => Platform.isIOS;
   static bool userDeviceIsAndrioid() => Platform.isAndroid;
 
-  static int getUserAssesmentsQty(Assessment assessment, double userCurrentPlan) => userCurrentPlan != -1
+  static int getUserAssessmentsQty(Assessment assessment, double userCurrentPlan) => userCurrentPlan != -1
       ? userCurrentPlan == 0
           ? assessment.tasks.getRange(0, 2).toList().length
           : assessment.tasks.length

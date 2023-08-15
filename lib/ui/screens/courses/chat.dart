@@ -328,7 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                   decoration: const BoxDecoration(
-                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       topRight: Radius.circular(15.0),

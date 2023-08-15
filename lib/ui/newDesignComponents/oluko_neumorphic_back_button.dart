@@ -21,10 +21,10 @@ class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButto
             intensity: 0.6,
             color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
             boxShape: NeumorphicBoxShape.circle(),
-            shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
             shadowLightColorEmboss: OlukoColors.black,
             surfaceIntensity: 1,
-            shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
             shadowDarkColor: OlukoColors.black),
         child: Container(
           width: 35,

@@ -51,22 +51,12 @@ class SegmentDetailsComponent extends StatefulWidget {
 }
 
 class _SegmentDetailsComponentState extends State<SegmentDetailsComponent> {
-  bool keyboardVisibilty = false;
-  Map<String, int> movementsWeights = {};
   List<WorkoutWeight> listOfWeightsToUpdate = [];
-  bool showRecommendation = false;
-  bool segmentHasRecommendations = false;
-  bool segmentHasWeights = false;
   final List<TextEditingController> _listOfControllers = [];
   final List<FocusNode> _listOfNodes = [];
 
   @override
   void initState() {
-    setState(() {
-      if (!widget.addWeightEnable) {
-        showRecommendation = segmentHasRecommendations;
-      }
-    });
     super.initState();
   }
 
@@ -93,7 +83,6 @@ class _SegmentDetailsComponentState extends State<SegmentDetailsComponent> {
   }
 
   List<Widget> _segmentSectionAndMovementDetails(bool showWeightRecommendation) {
-    // ignore: prefer_final_locals
     List<Widget> contentToReturn = [];
     if (widget.enrollmentMovements.isNotEmpty) {
       populateMovements(contentToReturn, showWeightRecommendation);

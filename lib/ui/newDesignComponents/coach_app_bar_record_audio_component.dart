@@ -182,7 +182,7 @@ class _CoachAppBarRecordAudioComponentState extends State<CoachAppBarRecordAudio
       width: ScreenUtils.width(context) / 1.6,
       height: 50,
       decoration: BoxDecoration(
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         borderRadius: const BorderRadius.all(Radius.circular(25)),
       ),
       child: Row(

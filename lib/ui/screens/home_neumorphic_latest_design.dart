@@ -76,18 +76,18 @@ class HomeNeumorphicLatestDesign extends StatefulWidget {
   final AuthSuccess authState;
   final bool scrollToUpcomingWorkouts;
 
-  HomeNeumorphicLatestDesign({this.currentUser, this.courseEnrollments, this.authState, this.scrollToUpcomingWorkouts = false}) : super();
+  const HomeNeumorphicLatestDesign({this.currentUser, this.courseEnrollments, this.authState, this.scrollToUpcomingWorkouts = false}) : super();
 
   @override
   State<HomeNeumorphicLatestDesign> createState() => _HomeNeumorphicLatestDesignState();
 }
 
 class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign> {
-  final bool showLogo = true;
-  bool showStories = false;
-  UserStatistics userStats;
+  final bool _showLogo = true;
+  bool _showStories = false;
+  UserStatistics _userStats;
   Map<String, UserProgress> _usersProgress = {};
-  int courseIndex = 0;
+  int _courseIndex = 0;
   List<Course> _courses = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
   List<ChallengeNavigation> _listOfChallenges = [];
@@ -95,24 +95,22 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   Success successState;
-  UserResponse currentUserLatestVersion;
-  bool videoSeen = false;
-  bool hasScheduledCourses = false;
-  bool isPanelOpen = false;
-  final GlobalKey<State<StatefulWidget>> upcomingWorkoutsKey = GlobalKey();
-  final GlobalKey<State<StatefulWidget>> logoKey = GlobalKey();
-  final GlobalKey<State<StatefulWidget>> storiesKey = GlobalKey();
-  SliverAppBar topBar;
+  UserResponse _currentUserLatestVersion;
+  bool _videoSeen = false;
+  bool _hasScheduledCourses = false;
+  bool _isPanelOpen = false;
+  final GlobalKey<State<StatefulWidget>> _upcomingWorkoutsKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _logoKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _storiesKey = GlobalKey();
+  SliverAppBar _topBar;
   ScrollController _scrollController;
 
   @override
   void initState() {
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-    // BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(widget.currentUser.id);
-    // BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(widget.currentUser.id);
     setState(() {
       _courseEnrollmentList = widget.courseEnrollments;
-      currentUserLatestVersion = widget.currentUser;
+      _currentUserLatestVersion = widget.currentUser;
     });
     super.initState();
     if (widget.scrollToUpcomingWorkouts) {
@@ -134,7 +132,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccess) {
-          currentUserLatestVersion = state.user;
+          _currentUserLatestVersion = state.user;
           return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
             builder: (context, state) {
               if (state is CourseEnrollmentsByUserStreamSuccess) {
@@ -151,20 +149,18 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   Future scrollToUpcomingWorkouts() async {
-    final upcomingWorkoutElement = upcomingWorkoutsKey.currentContext.findRenderObject() as RenderBox;
-    final topBarElement = logoKey.currentContext.findRenderObject() as RenderBox;
-    final storiesElement = storiesKey.currentContext.findRenderObject() as RenderBox;
+    final upcomingWorkoutElement = _upcomingWorkoutsKey.currentContext.findRenderObject() as RenderBox;
+    final topBarElement = _logoKey.currentContext.findRenderObject() as RenderBox;
+    final storiesElement = _storiesKey.currentContext.findRenderObject() as RenderBox;
     final double topBarHeight = topBarElement.size.height + storiesElement.size.height;
-
     final Offset position = upcomingWorkoutElement.localToGlobal(Offset.zero);
-
     if (_scrollController.hasClients) {
       await _scrollController.animateTo(position.dy - topBarHeight - 70, duration: const Duration(seconds: 1), curve: Curves.easeIn);
     }
   }
 
   StatefulWidget getHomeContent(BuildContext context) {
-    if (currentUserLatestVersion.firstAppInteractionAt == null && _courseEnrollmentList.isEmpty) {
+    if (_currentUserLatestVersion.firstAppInteractionAt == null && _courseEnrollmentList.isEmpty) {
       return WelcomeVideoFirstTimeLogin(
         videoSeen: (value) {
           setState(() {
@@ -179,7 +175,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
             _courseEnrollmentList = state.courseEnrollments;
             if (_courseEnrollmentList.isNotEmpty) {
               BlocProvider.of<SubscribedCourseUsersBloc>(context)
-                  .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
+                  .getCourseStatisticsUsers(_courseEnrollmentList[_courseIndex].course.id, _courseEnrollmentList[_courseIndex].createdBy);
             }
           }
           return Scaffold(
@@ -209,10 +205,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                         _challengesSection(),
                         _transformationPhotos(),
                         _assessmentVideos(),
-                        SizedBox(
-                          height: Platform.isIOS ? MediaQuery.of(context).size.height * 0.12 : MediaQuery.of(context).size.height * 0.05,
-                          width: MediaQuery.of(context).size.width,
-                        )
+                        _bottomSpaceContainer()
                       ],
                     );
                   },
@@ -225,43 +218,48 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     }
   }
 
+  SizedBox _bottomSpaceContainer() {
+    return SizedBox(
+      height: Platform.isIOS ? MediaQuery.of(context).size.height * 0.12 : MediaQuery.of(context).size.height * 0.05,
+      width: MediaQuery.of(context).size.width,
+    );
+  }
+
   void _markWelcomeVideoAsSeen(bool value, BuildContext context) {
-    videoSeen = value;
-    if (currentUserLatestVersion.firstAppInteractionAt == null) {
-      BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+    _videoSeen = value;
+    if (_currentUserLatestVersion.firstAppInteractionAt == null) {
+      BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
     }
   }
 
   List<Widget> _stories(AuthSuccess authState) {
     return [
-      if (showLogo) getLogo(authState) else const SliverToBoxAdapter(),
+      if (_showLogo) getLogo(authState) else const SliverToBoxAdapter(),
       if (GlobalConfiguration().getString('showStories') == 'true') getStoriesBar(context),
     ];
   }
 
-  List<WorkoutDay> getThisWeekScheduledWorkouts() {
-    return ScheduleUtils.getThisWeekClasses(context, _courseEnrollmentList);
-  }
+  List<WorkoutDay> getThisWeekScheduledWorkouts() => ScheduleUtils.getThisWeekClasses(context, _courseEnrollmentList);
 
   Widget _userCoursesSchedule() {
     final List<WorkoutDay> thisWeekWorkouts = getThisWeekScheduledWorkouts();
     if (thisWeekWorkouts.isEmpty) {
-      hasScheduledCourses = false;
+      _hasScheduledCourses = false;
       return const SizedBox.shrink();
     }
 
-    hasScheduledCourses = true;
+    _hasScheduledCourses = true;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
       child: Column(
         children: [
           Align(
-            key: upcomingWorkoutsKey,
+            key: _upcomingWorkoutsKey,
             alignment: Alignment.centerLeft,
-            child: Text(
-              OlukoLocalizations.get(context, 'upcomingWorkouts'),
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
-            ),
+            child: Text(OlukoLocalizations.get(context, 'upcomingWorkouts'),
+                style: OlukoFonts.olukoSuperBigFont(
+                  customFontWeight: FontWeight.w500,
+                )),
           ),
           const SizedBox(height: 10),
           Align(
@@ -303,7 +301,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     BlocProvider.of<CourseHomeBloc>(context).getByCourseEnrollments([workoutSchedule.courseEnrollment]);
     final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment.course.reference.get();
     final Course actualCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
-    isPanelOpen = false;
+    _isPanelOpen = false;
     Navigator.pushNamed(
       context,
       routeLabels[RouteEnum.courseHomePage],
@@ -311,7 +309,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         'courseEnrollments': [workoutSchedule.courseEnrollment],
         'authState': widget.authState,
         'courses': [actualCourse],
-        'user': currentUserLatestVersion,
+        'user': _currentUserLatestVersion,
         'isFromHome': true,
         'openEditScheduleOnInit': true,
       },
@@ -359,8 +357,8 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                       const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
-                          if (!isPanelOpen) {
-                            isPanelOpen = true;
+                          if (!_isPanelOpen) {
+                            _isPanelOpen = true;
                             _goToEditSchedule(context, scheduledWorkout);
                           }
                         },
@@ -377,7 +375,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                 );
               }).toList(),
             ),
-            // Add more widgets here to display other information
           ],
         ),
       );
@@ -392,7 +389,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         }
         return Container(
           width: MediaQuery.of(context).size.width,
-          height: ScreenUtils.smallScreen(context) ? ScreenUtils.height(context) / 1.8 : ScreenUtils.height(context) / 1.8,
+          height: _getCoverAndProfileHeight(context),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -406,6 +403,8 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     );
   }
 
+  double _getCoverAndProfileHeight(BuildContext context) => ScreenUtils.height(context) / 1.8;
+
   BlocConsumer<ProfileCoverImageBloc, ProfileCoverImageState> _coverImageReactiveComponent() {
     return BlocConsumer<ProfileCoverImageBloc, ProfileCoverImageState>(
       listener: (context, state) {
@@ -417,17 +416,17 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       },
       builder: (context, state) {
         if (state is ProfileCoverImageLoading) {
-          return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion, isLoadingState: true);
+          return _getUserCoverImageComponent(userToDisplay: _currentUserLatestVersion, isLoadingState: true);
         }
         if (state is ProfileCoverImageDeleted) {
-          currentUserLatestVersion = state.removedCoverImageUser;
-          return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
+          _currentUserLatestVersion = state.removedCoverImageUser;
+          return _getUserCoverImageComponent(userToDisplay: _currentUserLatestVersion);
         }
         if (state is ProfileCoverSuccess) {
-          currentUserLatestVersion = state.userUpdated;
-          return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
+          _currentUserLatestVersion = state.userUpdated;
+          return _getUserCoverImageComponent(userToDisplay: _currentUserLatestVersion);
         } else {
-          return _getUserCoverImageComponent(userToDisplay: currentUserLatestVersion);
+          return _getUserCoverImageComponent(userToDisplay: _currentUserLatestVersion);
         }
       },
     );
@@ -438,12 +437,12 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       buildWhen: (previous, current) => current != previous,
       builder: (context, state) {
         if (state is ProfileCoverImageDeleted) {
-          currentUserLatestVersion = state.removedCoverImageUser;
+          _currentUserLatestVersion = state.removedCoverImageUser;
         }
         if (state is ProfileCoverSuccess) {
-          currentUserLatestVersion = state.userUpdated;
+          _currentUserLatestVersion = state.userUpdated;
         }
-        return coverImageWidget(currentUser: currentUserLatestVersion);
+        return coverImageWidget(currentUser: _currentUserLatestVersion);
       },
     );
   }
@@ -478,7 +477,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           _usersProgress = userProgressListState.usersProgress;
         }
         return Padding(
-          padding: EdgeInsets.fromLTRB(20, hasScheduledCourses ? 10 : 45, 20, 20),
+          padding: EdgeInsets.fromLTRB(20, _hasScheduledCourses ? 10 : 45, 20, 20),
           child: _courseAndPeopleContent(context),
         );
       },
@@ -491,22 +490,22 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     return HomeCoursesAndPeople(
       courseEnrollments: _courseEnrollmentList,
       usersProgress: _usersProgress,
-      courseIndex: courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : courseIndex,
+      courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
       onCourseDeleted: (index) {
         setState(() {
-          courseIndex = 0;
+          _courseIndex = 0;
         });
       },
       onCourseChange: (index) {
         setState(() {
-          courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
+          _courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
         });
         BlocProvider.of<SubscribedCourseUsersBloc>(context)
-            .getCourseStatisticsUsers(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].createdBy);
+            .getCourseStatisticsUsers(_courseEnrollmentList[_courseIndex].course.id, _courseEnrollmentList[_courseIndex].createdBy);
       },
       onCourseTap: (index) {
         setState(() {
-          courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
+          _courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
         });
         _navigateToCourseFirstClassToComplete(context);
       },
@@ -518,17 +517,17 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   void _navigateToCourseFirstClassToComplete(BuildContext context) {
-    Course courseSelected = _courses.where((course) => course.id == _courseEnrollmentList[courseIndex].course.id).first;
-    EnrollmentClass firstIncompletedClass = getClassToGo(_courseEnrollmentList[courseIndex].classes);
-    ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompletedClass.id).first;
-    final courseIndexs = _courses.indexOf(courseSelected);
-    final classIndex = _courses[courseIndexs].classes.indexOf(classToGo);
+    final Course courseSelected = _courses.where((course) => course.id == _courseEnrollmentList[_courseIndex].course.id).first;
+    final EnrollmentClass firstIncompleteClass = getClassToGo(_courseEnrollmentList[_courseIndex].classes);
+    final ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompleteClass.id).first;
+    final courseIndex = _courses.indexOf(courseSelected);
+    final classIndex = _courses[courseIndex].classes.indexOf(classToGo);
 
     Navigator.pushNamed(
       context,
       routeLabels[RouteEnum.insideClass],
       arguments: {
-        'courseEnrollment': _courseEnrollmentList[courseIndex],
+        'courseEnrollment': _courseEnrollmentList[_courseIndex],
         'classIndex': classIndex,
         'courseIndex': _courses.indexOf(courseSelected),
         'actualCourse': courseSelected
@@ -537,10 +536,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 
   void callProvidersForInsideClassView(BuildContext context, int classIndex) {
-    BlocProvider.of<ClassBloc>(context).get(_courseEnrollmentList[courseIndex].classes[classIndex].id);
-    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(_courseEnrollmentList[courseIndex].classes[classIndex]);
-    BlocProvider.of<EnrollmentAudioBloc>(context).get(_courseEnrollmentList[courseIndex].id, _courseEnrollmentList[courseIndex].classes[classIndex].id);
-    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(_courseEnrollmentList[courseIndex].course.id, _courseEnrollmentList[courseIndex].userId);
+    BlocProvider.of<ClassBloc>(context).get(_courseEnrollmentList[_courseIndex].classes[classIndex].id);
+    BlocProvider.of<SegmentBloc>(context).getSegmentsInClass(_courseEnrollmentList[_courseIndex].classes[classIndex]);
+    BlocProvider.of<EnrollmentAudioBloc>(context).get(_courseEnrollmentList[_courseIndex].id, _courseEnrollmentList[_courseIndex].classes[classIndex].id);
+    BlocProvider.of<SubscribedCourseUsersBloc>(context).get(_courseEnrollmentList[_courseIndex].course.id, _courseEnrollmentList[_courseIndex].userId);
   }
 
   Widget _friendsRecommended() {
@@ -620,7 +619,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     });
   }
 
-  // TODO: MOVE AS WIDGET
   SliverAppBar getLogo(AuthSuccess authState) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
@@ -628,7 +626,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       pinned: true,
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       title: Container(
-        key: logoKey,
+        key: _logoKey,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -644,21 +642,19 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     );
   }
 
-// TODO: MOVE AS WIDGET
   Widget getStoriesBar(BuildContext context) {
     return BlocBuilder<StoryBloc, StoryState>(
       builder: (context, hasStories) {
-        showStories = hasStories is HasStoriesSuccess && hasStories.hasStories && showLogo;
-        return enrolledContent(showStories);
+        _showStories = hasStories is HasStoriesSuccess && hasStories.hasStories && _showLogo;
+        return enrolledContent(showStories: _showStories);
       },
     );
   }
 
-// TODO: MOVE AS WIDGET
-  Widget enrolledContent(bool showStories) {
+  Widget enrolledContent({bool showStories = false}) {
     return SliverToBoxAdapter(
       child: Container(
-        key: storiesKey,
+        key: _storiesKey,
         alignment: Alignment.centerLeft,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         child: showStories
@@ -678,13 +674,13 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
       child: SizedBox(
           width: ScreenUtils.width(context),
-          height: ScreenUtils.getAdaptativeHeight(context),
+          height: ScreenUtils.getAdaptiveHeight(context),
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
                 builder: (context, state) {
                   if (state is StatisticsSuccess) {
-                    userStats = state.userStats;
+                    _userStats = state.userStats;
                   }
                   return BlocBuilder<GalleryVideoBloc, GalleryVideoState>(
                     builder: (context, state) {
@@ -703,17 +699,17 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
                         },
                         builder: (context, state) {
                           if (state is ProfileAvatarLoading) {
-                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion, isLoadingState: true);
+                            return _getUserInformationComponent(userToDisplay: _currentUserLatestVersion, isLoadingState: true);
                           }
                           if (state is ProfileAvatarDeleted) {
-                            currentUserLatestVersion = state.removedAvatarUser;
-                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+                            _currentUserLatestVersion = state.removedAvatarUser;
+                            return _getUserInformationComponent(userToDisplay: _currentUserLatestVersion);
                           }
                           if (state is ProfileAvatarSuccess) {
-                            currentUserLatestVersion = state.updatedUser;
-                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+                            _currentUserLatestVersion = state.updatedUser;
+                            return _getUserInformationComponent(userToDisplay: _currentUserLatestVersion);
                           } else {
-                            return _getUserInformationComponent(userToDisplay: currentUserLatestVersion);
+                            return _getUserInformationComponent(userToDisplay: _currentUserLatestVersion);
                           }
                         },
                       );
@@ -729,7 +725,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       userToDisplayInformation: userToDisplay,
       actualRoute: ActualProfileRoute.homePage,
       currentUser: userToDisplay,
-      userStats: userStats,
+      userStats: _userStats,
       galleryState: successState,
       isLoadingState: isLoadingState,
     );
@@ -770,7 +766,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           return MyListOfCourses(
             myListOfCourses: myListOfCourses,
             beforeNavigation: (String courseId) =>
-                BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: courseId, userId: currentUserLatestVersion.id),
+                BlocProvider.of<CourseUserInteractionBloc>(context).isCourseLiked(courseId: courseId, userId: _currentUserLatestVersion.id),
           );
         } else {
           return const SizedBox();

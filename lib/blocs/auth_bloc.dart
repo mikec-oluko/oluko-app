@@ -164,7 +164,7 @@ class AuthBloc extends Cubit<AuthState> {
           AppMessages.clearAndShowSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
           if (user.firstLoginAt == null) {
             setNotificationSettings(user.id);
-            await storeFirstsUserInteraction(userIteraction: UserInteractionEnum.login);
+            await storeFirstsUserInteraction(userInteraction: UserInteractionEnum.login);
           }
           emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
           navigateToNextScreen(context, firebaseUser.uid);
@@ -393,11 +393,11 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> storeFirstsUserInteraction({UserInteractionEnum userIteraction}) async {
+  Future<void> storeFirstsUserInteraction({UserInteractionEnum userInteraction}) async {
     final UserResponse currentUser = await _authRepository.retrieveLoginData();
     final loggedUser = AuthRepository.getLoggedUser();
     Timestamp userInteractionDate = Timestamp.now();
-    final UserResponse userStoredFirstLogin = await _userRepository.saveUserFirstIteractions(currentUser, userInteractionDate, userIteraction);
+    final UserResponse userStoredFirstLogin = await _userRepository.saveUserFirstIteractions(currentUser, userInteractionDate, userInteraction);
     _authRepository.storeLoginData(userStoredFirstLogin);
     emit(AuthSuccess(user: userStoredFirstLogin, firebaseUser: loggedUser));
   }

@@ -201,16 +201,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   @override
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    //TODO: for screen rotation
-    /*if (widget.workoutType == WorkoutType.segmentWithRecording) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    }*/
-
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
@@ -351,7 +341,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   Widget bottomSection() {
     return Container(
         decoration: BoxDecoration(
-          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
         ),
         height: lowerSectionScreenProportion(true),
@@ -437,31 +427,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         resizeToAvoidBottomInset: false,
         appBar: SegmentClocksUtils.getAppBar(context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: OlukoColors.black,
-        body:
-            //TODO: for screen rotation
-            /*NativeDeviceOrientationReader(builder: (context) {
-          NativeDeviceOrientation orientation = NativeDeviceOrientationReader.orientation(context);
-
-          int turns;
-          switch (orientation) {
-            case NativeDeviceOrientation.landscapeLeft:
-              print("ORIENTATION: landscapeLeft");
-              turns = -1;
-              break;
-            case NativeDeviceOrientation.landscapeRight:
-              print("ORIENTATION: landscapeRight");
-              turns = 1;
-              break;
-            case NativeDeviceOrientation.portraitDown:
-              print("ORIENTATION: portraitDown");
-              turns = 2;
-              break;
-            default:
-              //turns = 0;
-              break;
-          }
-          return*/
-            scaffoldBody());
+        body: scaffoldBody());
   }
 
   Widget scaffoldBody() {
@@ -548,7 +514,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
         } else {
           if (alertTimerPlaying) {
-            _playAlert(); //TODO: CHECK THIS
+            _playAlert();
           }
         }
         _startStopwatch();
@@ -606,7 +572,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           Positioned(
             bottom: 0,
             child: Container(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                 height: ScreenUtils.height(context) * 0.14,
                 width: ScreenUtils.width(context),
                 child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context, shareDoneAction,

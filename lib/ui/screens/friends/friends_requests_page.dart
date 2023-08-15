@@ -34,16 +34,6 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
 
   List<UserResponse> friends = [];
   bool disabledActions = false;
-
-  final List<String> userImages = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlCzsqcGBluOOUtgQahXtISLTM3Wb2tkpsoeMqwurI2LEP6pCS0ZgCFLQGiv8BtfJ9p2A&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEMWzdlSputkYso9dJb4VY5VEWQunXGBJMgGys7BLC4MzPQp6yfLURe-9nEdGrcK6Jasc&usqp=CAU',
-    'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20%2820%29.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHNX4Bb1o5JWY91Db6I4jf_wmw24ajOdaOPgRCqFlnEnxcAlQ42pyWJxM9klp3E8JoT0k&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF-rBV5pmJhYA8QbjpPcx6s9SywnXGbvsaxWyFi47oDf9JuL4GruKBY5zl2tM4tdgYdQ0&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU'
-  ];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -51,7 +41,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
       child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
             listener: (context, ignoreFriendState) {
               if (ignoreFriendState is IgnoreFriendRequestSuccess) {
@@ -75,15 +65,8 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
               child: Column(
                 children: [
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Column(
-                      //     children: friends
-                      //         .map((friend) => FriendRequestCard(
-                      //               userData: friend,
-                      //             ))
-                      //         .toList()),
                       BlocBuilder<FriendRequestBloc, FriendRequestState>(builder: (context, friendsRequestState) {
                         return Column(
                           children: generateFriendRequestsList(friendsRequestState),
@@ -91,15 +74,6 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                       })
                     ],
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(top: 20),
-                  //   child: FriendSuggestionSection(
-                  //     name: "Richard",
-                  //     lastName: "McGregor",
-                  //     userName: "Notorius",
-                  //     imageUser: userImages[6],
-                  //   ),
-                  // )
                 ],
               ),
             ),
@@ -126,7 +100,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
 
   List<Widget> generateFriendRequestsList(FriendRequestState friendsRequestState) {
     if (friendsRequestState is GetFriendRequestsSuccess) {
-      return friendsRequestState.friendRequestList.length == 0
+      return friendsRequestState.friendRequestList.isEmpty
           ? [
               Padding(
                 padding: const EdgeInsets.all(32.0),

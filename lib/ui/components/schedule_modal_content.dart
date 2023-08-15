@@ -253,11 +253,11 @@ class _ScheduleModalContentState extends State<ScheduleModalContent> {
     if (widget.disableAction == false) {
       widget.onEnrollAction();
       if (widget.firstAppInteractionAt == null) {
-        widget.blocAuth.storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+        widget.blocAuth.storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
       }
       widget.blocCourseEnrollment.create(widget.user, widget.course);
       if (!widget.isCoachRecommendation) {
-        widget.blocRecommendation.removeRecomendedCourse(widget.user.uid, widget.course.id);
+        widget.blocRecommendation.removeRecommendedCourse(widget.user.uid, widget.course.id);
       }
       await _soundPlayer.playAsset(soundEnum: SoundsEnum.enroll);
     }

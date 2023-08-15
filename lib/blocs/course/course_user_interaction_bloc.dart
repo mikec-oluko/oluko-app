@@ -26,8 +26,8 @@ class CourseInteractionFailure extends CourseUserInteractionState {
   CourseInteractionFailure({this.exception});
 }
 
-class CourseUserIteractionBloc extends Cubit<CourseUserInteractionState> {
-  CourseUserIteractionBloc() : super(CourseInteractionLoading());
+class CourseUserInteractionBloc extends Cubit<CourseUserInteractionState> {
+  CourseUserInteractionBloc() : super(CourseInteractionLoading());
 
   final CourseUserInteractionRepository _courseUserInteractionRepository = CourseUserInteractionRepository();
 

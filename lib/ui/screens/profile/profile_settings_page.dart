@@ -196,10 +196,10 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                       shape: NeumorphicShape.flat,
                       lightSource: LightSource.bottom,
                       boxShape: NeumorphicBoxShape.stadium(),
-                      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                       shadowLightColorEmboss: OlukoColors.black,
                       surfaceIntensity: 1,
-                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                       shadowDarkColor: OlukoColors.black),
                   child: Container(
                     width: 50,

@@ -19,14 +19,7 @@ class TaskCard extends StatefulWidget {
   final bool useStartButton;
   final int index;
 
-  TaskCard(
-      {this.task,
-      this.onPressed,
-      this.isCompleted = false,
-      this.isPublic = false,
-      this.isDisabled = false,
-      this.useStartButton = false,
-      this.index});
+  TaskCard({this.task, this.onPressed, this.isCompleted = false, this.isPublic = false, this.isDisabled = false, this.useStartButton = false, this.index});
 
   @override
   _State createState() => _State();
@@ -70,8 +63,7 @@ class _State extends State<TaskCard> {
                                       width: 200,
                                       child: Text(
                                         widget.task.name,
-                                        style:
-                                            OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
+                                        style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, customFontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     Expanded(child: SizedBox()),
@@ -140,8 +132,7 @@ class _State extends State<TaskCard> {
       child: Text(
         public ? OlukoLocalizations.get(context, 'public').toUpperCase() : OlukoLocalizations.get(context, 'private').toUpperCase(),
         style: OlukoFonts.olukoSmallFont(
-            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.grayColorFadeTop,
-            customFontWeight: FontWeight.bold),
+            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.grayColorFadeTop, customFontWeight: FontWeight.bold),
       ),
     );
   }
@@ -155,9 +146,9 @@ class _State extends State<TaskCard> {
               color: !widget.isDisabled
                   ? !widget.isCompleted
                       ? OlukoColors.white
-                      : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth
+                      : OlukoNeumorphismColors.olukoNeumorphicBackgroundLight
                   : widget.isCompleted
-                      ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth
+                      ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight
                       : OlukoColors.taskCardBackgroundDisabled),
           width: MediaQuery.of(context).size.width,
           child: Padding(
@@ -183,9 +174,7 @@ class _State extends State<TaskCard> {
                                     Text(
                                       widget.task.name,
                                       style: OlukoFonts.olukoSuperBigFont(
-                                          customColor: widget.isCompleted
-                                              ? OlukoColors.white
-                                              : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                                          customColor: widget.isCompleted ? OlukoColors.white : OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                                           customFontWeight: FontWeight.bold),
                                     ),
                                     Expanded(child: SizedBox()),
@@ -196,9 +185,7 @@ class _State extends State<TaskCard> {
                                     child: Text(
                                       widget.task.shortDescription,
                                       style: OlukoFonts.olukoBigFont(
-                                          customColor: widget.isCompleted
-                                              ? OlukoColors.grayColor
-                                              : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                                          customColor: widget.isCompleted ? OlukoColors.grayColor : OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                                           customFontWeight: FontWeight.w300),
                                     ),
                                   ),

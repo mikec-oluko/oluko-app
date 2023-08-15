@@ -393,7 +393,7 @@ class _State extends State<SelfRecording> with WidgetsBindingObserver {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       child: BottomAppBar(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight : OlukoColors.black,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(

@@ -459,7 +459,7 @@ class Routes {
   final ChallengeCompletedBeforeBloc _challengeCompletedBeforeBloc = ChallengeCompletedBeforeBloc();
   final UserProgressListBloc _userProgressListBloc = UserProgressListBloc();
   final FAQBloc _fAQBloc = FAQBloc();
-  final CourseUserIteractionBloc _courseInteractionBloc = CourseUserIteractionBloc();
+  final CourseUserInteractionBloc _courseInteractionBloc = CourseUserInteractionBloc();
   final CourseRecommendedByFriendBloc _courseRecommendedByFriendBloc = CourseRecommendedByFriendBloc();
   final LikedCoursesBloc _courseLikedBloc = LikedCoursesBloc();
   final MailBloc _mailBloc = MailBloc();
@@ -570,7 +570,7 @@ class Routes {
           BlocProvider<CarouselBloc>.value(value: _carouselBloc),
           BlocProvider<InternetConnectionBloc>.value(value: _internetConnectionBloc),
           BlocProvider<ChallengeCompletedBeforeBloc>.value(value: _challengeCompletedBeforeBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseUserInteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
           BlocProvider<CoachVideoMessageBloc>.value(value: _coachVideoMessageBloc),
@@ -605,7 +605,8 @@ class Routes {
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
           classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int,
           tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
-          scrollToUpcomingWorkouts: argumentsToAdd == null || argumentsToAdd['scrollToUpcomingWorkouts'] == null ? null : argumentsToAdd['scrollToUpcomingWorkouts'] as bool,
+          scrollToUpcomingWorkouts:
+              argumentsToAdd == null || argumentsToAdd['scrollToUpcomingWorkouts'] == null ? null : argumentsToAdd['scrollToUpcomingWorkouts'] as bool,
         );
 
         break;
@@ -1014,7 +1015,7 @@ class Routes {
           BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc),
           BlocProvider<HiFiveReceivedBloc>.value(value: _hiFiveReceivedBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseUserInteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
           BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
@@ -1038,7 +1039,7 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseUserInteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
           BlocProvider<FriendsWeightRecordsBloc>.value(value: _friendsWeightRecordsBloc),
           BlocProvider<MaxWeightsBloc>.value(value: _maxWeightsBloc),
@@ -1249,7 +1250,7 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseUserInteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<CourseRecommendedByFriendBloc>.value(value: _courseRecommendedByFriendBloc),
           BlocProvider<LikedCoursesBloc>.value(value: _courseLikedBloc),
         ];
@@ -1464,7 +1465,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseUserInteractionBloc>.value(value: _courseInteractionBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseShareView(
@@ -1510,7 +1511,7 @@ class Routes {
           BlocProvider<UserProgressStreamBloc>.value(value: _userProgressStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ChallengeStreamBloc>.value(value: _challengeBloc),
-          BlocProvider<CourseUserIteractionBloc>.value(value: _courseInteractionBloc),
+          BlocProvider<CourseUserInteractionBloc>.value(value: _courseInteractionBloc),
           BlocProvider<WorkoutWeightBloc>.value(value: _workoutWeightBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

@@ -203,7 +203,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with Si
             await chewieController.optionsBuilder(context, options);
           } else {
             await showModalBottomSheet<OptionItem>(
-              backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
               context: context,
               isScrollControlled: true,
               useRootNavigator: true,

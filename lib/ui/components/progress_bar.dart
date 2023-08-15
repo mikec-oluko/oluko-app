@@ -15,7 +15,7 @@ class _State extends State<ProgressBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.black,
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight : OlukoColors.black,
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Container(
           margin: EdgeInsets.only(bottom: 25.0),
