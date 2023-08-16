@@ -518,10 +518,10 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   void _navigateToCourseFirstClassToComplete(BuildContext context) {
     final Course courseSelected = _courses.where((course) => course.id == _courseEnrollmentList[_courseIndex].course.id).first;
-    final EnrollmentClass firstIncompleteClass = getClassToGo(_courseEnrollmentList[_courseIndex].classes);
-    final ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompleteClass.id).first;
+    final EnrollmentClass _enrollmentClassToGo = getClassToGo(_courseEnrollmentList[_courseIndex].classes, getFirstComplete: true);
+    final ObjectSubmodel _classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == _enrollmentClassToGo.id).first;
     final courseIndex = _courses.indexOf(courseSelected);
-    final classIndex = _courses[courseIndex].classes.indexOf(classToGo);
+    final classIndex = _courses[courseIndex].classes.indexOf(_classToGo);
 
     Navigator.pushNamed(
       context,
@@ -776,6 +776,14 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   }
 }
 
-EnrollmentClass getClassToGo(List<EnrollmentClass> classes) {
-  return classes.firstWhere((element) => element.completedAt == null);
+EnrollmentClass getClassToGo(List<EnrollmentClass> classes, {bool getFirstComplete = false}) {
+  EnrollmentClass classToReturn = classes.lastWhere((element) => element.completedAt != null, orElse: () => null);
+  if (classToReturn == null || !getFirstComplete) {
+    classToReturn = classes.firstWhere((element) => element.completedAt == null);
+  } else {
+    if (classes.length != classes.indexOf(classToReturn)) {
+      classToReturn = classes.elementAt(classes.indexOf(classToReturn) + 1);
+    }
+  }
+  return classToReturn;
 }
