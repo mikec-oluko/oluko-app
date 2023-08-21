@@ -40,14 +40,28 @@ class CourseHelper {
   }
 
   static EnrollmentClass getClassToGo(List<EnrollmentClass> classes, {bool getFirstComplete = false}) {
-    EnrollmentClass classToReturn = classes.lastWhere((element) => element.completedAt != null, orElse: () => null);
+    EnrollmentClass classToReturn = classes.lastWhere((classElement) => classElement.completedAt != null, orElse: () => null);
     if (classToReturn == null || !getFirstComplete) {
-      classToReturn = classes.firstWhere((element) => element.completedAt == null);
+      if (getFirstClassWithSegmentStarted(classes) != null) {
+        classToReturn = getFirstClassWithSegmentStarted(classes);
+      } else {
+        classToReturn = classes.firstWhere((classElement) => classElement.completedAt == null);
+      }
     } else {
       if (classes.length != classes.indexOf(classToReturn)) {
         classToReturn = classes.elementAt(classes.indexOf(classToReturn) + 1);
       }
     }
     return classToReturn;
+  }
+
+  static EnrollmentClass getFirstClassWithSegmentStarted(List<EnrollmentClass> classes) {
+    List<EnrollmentClass> startedClasses = [];
+    classes.forEach((startedClass) {
+      if (startedClass.segments.where((segmentElement) => segmentElement.completedAt != null).isNotEmpty) {
+        startedClasses.add(startedClass);
+      }
+    });
+    return startedClasses.first;
   }
 }
