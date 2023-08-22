@@ -59,20 +59,13 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           username: _profileInfo.username,
           firstName: _profileInfo.firstName,
           lastName: _profileInfo.lastName,
-          state: _profileInfo.state,
           email: _profileInfo.email,
-          country: _profileInfo.country,
-          city: _profileInfo.city,
         );
-        BlocProvider.of<CountryBloc>(context).getCountriesWithStates(newFields != null && newFields.country != null ? newFields.country : _profileInfo.country);
         newFields = UserInformation(
           username: newFields.username ?? _profileInfo.username,
           firstName: newFields.firstName ?? _profileInfo.firstName,
           lastName: newFields.lastName ?? _profileInfo.lastName,
-          state: newFields.state ?? _profileInfo.state,
           email: newFields.email ?? _profileInfo.email,
-          country: newFields.country ?? _profileInfo.country,
-          city: newFields.city ?? _profileInfo.city,
         );
         isGoogleAuth = state.firebaseUser.providerData[0].providerId == 'google.com';
         return buildScaffoldPage(context);
@@ -145,9 +138,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           userInformationFields(OlukoLocalizations.get(context, 'firstName'), _profileInfo.firstName, 'firstName'),
           userInformationFields(OlukoLocalizations.get(context, 'lastName'), _profileInfo.lastName, 'lastName'),
           userInformationFields(OlukoLocalizations.get(context, 'email'), _profileInfo.email, 'email'),
-          userInformationFields(OlukoLocalizations.get(context, 'country'), _profileInfo.country != null ? _profileInfo.country : "", 'country'),
-          userInformationFields(OlukoLocalizations.get(context, 'state'), _profileInfo.state != null ? _profileInfo.state : "", 'state'),
-          userInformationFields(OlukoLocalizations.get(context, 'city'), _profileInfo.city != null ? _profileInfo.city : "", 'city'),
         ],
       ),
     );
@@ -232,9 +222,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                 emailHasChanged = true;
               }
               newFields.email = value;
-              break;
-            case 'city':
-              newFields.city = value;
               break;
           }
           BlocProvider.of<MyAccountBloc>(context).changeFormState(_defaultUser, newFields);

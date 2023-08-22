@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class UserInformation  extends Equatable{
+class UserInformation extends Equatable {
   UserInformation({
     this.firstName,
     this.lastName,
@@ -27,5 +27,5 @@ class UserInformation  extends Equatable{
   }
 
   @override
-  List<Object> get props => [firstName,lastName,email,username,city,state,country];
+  List<Object> get props => [firstName, lastName, email, username, city, state, country];
 }
