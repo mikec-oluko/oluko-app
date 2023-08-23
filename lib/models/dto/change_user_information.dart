@@ -19,9 +19,9 @@ class UserInformation extends Equatable {
       'lastName': lastName,
       'email': email,
       'username': username,
-      'city': city,
-      'state': state,
-      'country': country,
+      'city': city ?? '',
+      'state': state ?? '',
+      'country': country ?? '',
     };
     return changeUserInformationJson;
   }
