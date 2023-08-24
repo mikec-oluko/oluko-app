@@ -38,6 +38,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   bool isGoogleAuth = false;
   bool formHasChanged = false;
   final formKey = GlobalKey<FormState>();
+  final String _defaultValueForLocationData = '';
 
   @override
   void initState() {
@@ -60,12 +61,18 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           firstName: _profileInfo.firstName,
           lastName: _profileInfo.lastName,
           email: _profileInfo.email,
+          city: _profileInfo.city,
+          state: _profileInfo.state,
+          country: _profileInfo.country,
         );
         newFields = UserInformation(
           username: newFields.username ?? _profileInfo.username,
           firstName: newFields.firstName ?? _profileInfo.firstName,
           lastName: newFields.lastName ?? _profileInfo.lastName,
           email: newFields.email ?? _profileInfo.email,
+          city: _profileInfo.city ?? _defaultValueForLocationData,
+          state: _profileInfo.state ?? _defaultValueForLocationData,
+          country: _profileInfo.country ?? _defaultValueForLocationData,
         );
         isGoogleAuth = state.firebaseUser.providerData[0].providerId == 'google.com';
         return buildScaffoldPage(context);
