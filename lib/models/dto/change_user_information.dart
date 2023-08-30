@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class UserInformation  extends Equatable{
+class UserInformation extends Equatable {
   UserInformation({
     this.firstName,
     this.lastName,
@@ -19,13 +19,13 @@ class UserInformation  extends Equatable{
       'lastName': lastName,
       'email': email,
       'username': username,
-      'city': city,
-      'state': state,
-      'country': country,
+      'city': city ?? '',
+      'state': state ?? '',
+      'country': country ?? '',
     };
     return changeUserInformationJson;
   }
 
   @override
-  List<Object> get props => [firstName,lastName,email,username,city,state,country];
+  List<Object> get props => [firstName, lastName, email, username, city, state, country];
 }
