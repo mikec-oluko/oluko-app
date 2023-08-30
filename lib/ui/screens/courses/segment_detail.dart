@@ -445,8 +445,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
       padding: padding,
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
+          OlukoNeumorphicCircleButton(
             onPressed: () {
               Navigator.pop(context);
               onPressedAction();
