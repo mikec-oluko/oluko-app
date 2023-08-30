@@ -120,6 +120,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   GlobalService _globalService = GlobalService();
   @override
   void initState() {
+    widget.fromChallenge ? BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id) : null;
+    BlocProvider.of<ChallengeSegmentBloc>(context).getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
     _coachRequests = [];
     segmentIndexToUse = widget.segmentIndex;
     currentSegmentStep = widget.segmentIndex + 1;
@@ -139,8 +141,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
         BlocProvider.of<WorkoutWeightBloc>(context).getUserWeightsForWorkout(_user.id);
         BlocProvider.of<MaxWeightsBloc>(context).getUserMaxWeightRecords(_user.id);
         BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_user.id);
-        widget.fromChallenge ? BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id) : null;
-        BlocProvider.of<ChallengeSegmentBloc>(context).getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
         return _segmentDetailView();
       } else {
         return OlukoCircularProgressIndicator();

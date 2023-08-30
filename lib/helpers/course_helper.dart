@@ -45,7 +45,7 @@ class CourseHelper {
       if (getFirstClassWithSegmentStarted(classes) != null) {
         classToReturn = getFirstClassWithSegmentStarted(classes);
       } else {
-        classToReturn = classes.firstWhere((classElement) => classElement.completedAt == null);
+        classToReturn = classes.firstWhere((classElement) => classElement.completedAt == null, orElse: () => null);
       }
     } else {
       if (classes.length != classes.indexOf(classToReturn)) {
@@ -62,6 +62,6 @@ class CourseHelper {
         startedClasses.add(startedClass);
       }
     });
-    return startedClasses.first;
+    return startedClasses.isNotEmpty ? startedClasses.first : null;
   }
 }
