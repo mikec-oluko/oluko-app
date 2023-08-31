@@ -30,6 +30,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/challenge_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
+import 'package:oluko_app/models/enums/personal_record_param.dart';
 import 'package:oluko_app/models/enums/request_status_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -1029,9 +1030,15 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Future<void> personalRecordActions() async {
-    await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex]);
+    await StoryUtils.createNewPRChallengeStory(context, getPersonalRecordValue(), _user.uid, widget.segments[widget.segmentIndex],
+        isDurationRecord: isDurationRecord());
     BlocProvider.of<PersonalRecordBloc>(context).create(widget.segments[widget.segmentIndex], widget.courseEnrollment, getPersonalRecordValue(),
         SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]), widget.fromChallenge);
+  }
+
+  bool isDurationRecord() {
+    return SegmentUtils.getPersonalRecordParam(timerEntries[timerEntries.length - 1].counter, widget.segments[widget.segmentIndex]) ==
+        PersonalRecordParam.duration;
   }
 
   Widget setTopBarIcon() {

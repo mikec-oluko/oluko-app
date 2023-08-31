@@ -11,6 +11,7 @@ import 'package:oluko_app/models/enums/story_content_enum.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:video_player/video_player.dart';
 import '../../../helpers/video_player_helper.dart';
@@ -295,7 +296,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         children: [
           if (widget.stories[_currentIndex].result != null)
             Text(
-              widget.stories[_currentIndex].result,
+              widget.stories[_currentIndex].isDurationRecord ? getDurationRecordString() : widget.stories[_currentIndex].result,
               style: const TextStyle(
                 color: OlukoColors.white,
                 fontSize: 18.0,
@@ -352,6 +353,12 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
       ),
     );
   }
+
+  String getDurationRecordString() {
+    return '${_splitResultString().first}:  ${TimeConverter.durationToString(Duration(seconds: int.parse(_splitResultString().last.trim())))}';
+  }
+
+  List<String> _splitResultString() => widget.stories[_currentIndex].result.split(':');
 }
 
 class AnimatedBar extends StatelessWidget {
