@@ -40,10 +40,6 @@ class UserInformationBloc extends Cubit<UserInformationState> {
       AppMessages.clearAndShowSnackbarTranslated(context, 'usernameRequired');
       return false;
     }
-    if (userInformation.state == null || userInformation.state.isEmpty) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'stateRequired');
-      return false;
-    }
     if (userInformation.lastName == null || userInformation.lastName.isEmpty) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'lastnameRequired');
       return false;
@@ -57,15 +53,6 @@ class UserInformationBloc extends Cubit<UserInformationState> {
       return false;
     } else if (!FormHelper.isEmail(userInformation.email)) {
       AppMessages.clearAndShowSnackbarTranslated(context, 'wrongEmailFormat');
-      return false;
-    }
-
-    if (userInformation.country == null || userInformation.country.isEmpty) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'countryRequired');
-      return false;
-    }
-    if (userInformation.city == null || userInformation.city.isEmpty) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'cityRequired');
       return false;
     }
     final Response response = await _userRepository.updateUserInformation(userInformation, userId);
@@ -85,13 +72,7 @@ class UserInformationBloc extends Cubit<UserInformationState> {
   }
 
   bool _checkAllNullsAndEmptys(UserInformation userInformation) {
-    return userInformation.username.isEmpty &&
-        userInformation.firstName.isEmpty &&
-        userInformation.lastName.isEmpty &&
-        userInformation.email.isEmpty &&
-        userInformation.country.isEmpty &&
-        userInformation.city.isEmpty &&
-        userInformation.state.isEmpty;
+    return userInformation.username.isEmpty && userInformation.firstName.isEmpty && userInformation.lastName.isEmpty && userInformation.email.isEmpty;
   }
 
   Future<bool> sendDeleteConfirmation(String userId) async {

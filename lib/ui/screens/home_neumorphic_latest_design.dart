@@ -29,6 +29,7 @@ import 'package:oluko_app/blocs/user_progress_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
+import 'package:oluko_app/helpers/course_helper.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/oluko_exception_message.dart';
 import 'package:oluko_app/helpers/profile_helper_functions.dart';
@@ -115,7 +116,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       currentUserLatestVersion = widget.currentUser;
     });
     super.initState();
-    if (widget.scrollToUpcomingWorkouts){
+    if (widget.scrollToUpcomingWorkouts) {
       _scrollController = ScrollController();
       WidgetsBinding.instance.addPostFrameCallback((_) => scrollToUpcomingWorkouts());
     }
@@ -123,7 +124,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   @override
   void dispose() {
-    if (_scrollController != null){
+    if (_scrollController != null) {
       _scrollController.dispose();
     }
     super.dispose();
@@ -158,7 +159,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
     final Offset position = upcomingWorkoutElement.localToGlobal(Offset.zero);
 
-    if (_scrollController.hasClients){
+    if (_scrollController.hasClients) {
       await _scrollController.animateTo(position.dy - topBarHeight - 70, duration: const Duration(seconds: 1), curve: Curves.easeIn);
     }
   }
@@ -253,7 +254,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
     hasScheduledCourses = true;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-      child:  Column(
+      child: Column(
         children: [
           Align(
             key: upcomingWorkoutsKey,
@@ -508,32 +509,14 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
         setState(() {
           courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
         });
-        _navigateToCourseFirstClassToComplete(context);
+        CourseHelper.navigateToCourseFirstClassToComplete(
+            context: context, courses: _courses, listOfCourseEnrollments: _courseEnrollmentList, currentCourseIndex: courseIndex);
       },
     );
   }
 
   int getIndexForLastCourse() {
     return _courseEnrollmentList.length == 1 ? 0 : _courseEnrollmentList.length;
-  }
-
-  void _navigateToCourseFirstClassToComplete(BuildContext context) {
-    Course courseSelected = _courses.where((course) => course.id == _courseEnrollmentList[courseIndex].course.id).first;
-    EnrollmentClass firstIncompletedClass = getClassToGo(_courseEnrollmentList[courseIndex].classes);
-    ObjectSubmodel classToGo = _courses[_courses.indexOf(courseSelected)].classes.where((element) => element.id == firstIncompletedClass.id).first;
-    final courseIndexs = _courses.indexOf(courseSelected);
-    final classIndex = _courses[courseIndexs].classes.indexOf(classToGo);
-
-    Navigator.pushNamed(
-      context,
-      routeLabels[RouteEnum.insideClass],
-      arguments: {
-        'courseEnrollment': _courseEnrollmentList[courseIndex],
-        'classIndex': classIndex,
-        'courseIndex': _courses.indexOf(courseSelected),
-        'actualCourse': courseSelected
-      },
-    );
   }
 
   void callProvidersForInsideClassView(BuildContext context, int classIndex) {
@@ -622,7 +605,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
 
   // TODO: MOVE AS WIDGET
   SliverAppBar getLogo(AuthSuccess authState) {
-     return SliverAppBar(
+    return SliverAppBar(
       automaticallyImplyLeading: false,
       stretch: true,
       pinned: true,
@@ -778,8 +761,4 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       }),
     );
   }
-}
-
-EnrollmentClass getClassToGo(List<EnrollmentClass> classes) {
-  return classes.firstWhere((element) => element.completedAt == null);
 }

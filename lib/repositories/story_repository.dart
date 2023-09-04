@@ -31,7 +31,8 @@ class StoryRepository {
     return story;
   }
 
-  static Future<Story> createStoryForChallenge(Segment segment, String userId, String segmentTitle, String result, String description) async {
+  static Future<Story> createStoryForChallenge(Segment segment, String userId, String segmentTitle, String result, String description,
+      {bool isDurationRecord = false}) async {
     final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
@@ -45,7 +46,8 @@ class StoryRepository {
         description: description,
         createdBy: userId,
         segmentTitle: segmentTitle,
-        result: result);
+        result: result,
+        isDurationRecord: isDurationRecord);
     story.id = docRef.id;
     docRef.set(story.toJson());
     return story;
