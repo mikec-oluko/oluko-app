@@ -31,10 +31,9 @@ class Failure extends StoryState {
 class StoryBloc extends Cubit<StoryState> {
   StoryBloc() : super(null);
 
-  Future<void> createStoryWithVideo(
-      SegmentSubmission segmentSubmission, String segmentTitle, String result, Segment segment, BuildContext context) async {
+  Future<void> createStoryWithVideo(SegmentSubmission segmentSubmission, String segmentTitle, String result, Segment segment, BuildContext context) async {
     try {
-      final String description = getSegmetDescription(segment, context);
+      final String description = getSegmentDescription(segment, context);
       final String newPRResult = gerNewPRResult(context, result);
 
       final Story newStory = await StoryRepository.createStoryWithVideo(segmentSubmission, segmentTitle, newPRResult, description);
@@ -49,12 +48,14 @@ class StoryBloc extends Cubit<StoryState> {
     }
   }
 
-  Future<void> createChallengeStory(Segment segment, String userId, String segmentTitle, String result, BuildContext context) async {
+  Future<void> createChallengeStory(Segment segment, String userId, String segmentTitle, int result, BuildContext context,
+      {bool isDurationRecord = false}) async {
     try {
-      final String description = getSegmetDescription(segment, context);
-      final String newPRResult = gerNewPRResult(context, result);
+      final String description = getSegmentDescription(segment, context);
+      final String newPRResult = gerNewPRResult(context, result.toString());
 
-      final Story newStory = await StoryRepository.createStoryForChallenge(segment, userId, segmentTitle, newPRResult, description);
+      final Story newStory =
+          await StoryRepository.createStoryForChallenge(segment, userId, segmentTitle, newPRResult, description, isDurationRecord: isDurationRecord);
       emit(CreateSuccess(story: newStory));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -68,7 +69,7 @@ class StoryBloc extends Cubit<StoryState> {
 
   String gerNewPRResult(BuildContext context, String result) => '${OlukoLocalizations.get(context, 'newPR')} $result';
 
-  String getSegmetDescription(Segment segment, BuildContext context) {
+  String getSegmentDescription(Segment segment, BuildContext context) {
     String description = '${SegmentUtils.getRoundTitle(segment, context)}: ';
     final List<String> workouts = SegmentUtils.getWorkouts(segment);
     for (var i = 0; i < workouts.length; i++) {
@@ -94,10 +95,10 @@ class StoryBloc extends Cubit<StoryState> {
     }
   }
 
-  void hasStories(String userId, {bool showStories=true}) async {
+  Future<void> hasStories(String userId, {bool showStories = true}) async {
     try {
       final bool hasStories = await StoryRepository().hasStories(userId);
-      emit(HasStoriesSuccess(hasStories: hasStories,showStories: showStories));
+      emit(HasStoriesSuccess(hasStories: hasStories, showStories: showStories));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

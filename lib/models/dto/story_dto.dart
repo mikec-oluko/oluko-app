@@ -9,6 +9,7 @@ class Story extends Base {
   String segmentTitle;
   String description;
   bool seen;
+  bool isDurationRecord;
   int duration;
   String timeFromCreation;
 
@@ -19,6 +20,7 @@ class Story extends Base {
       this.segmentTitle,
       this.description,
       this.seen,
+      this.isDurationRecord,
       this.duration,
       this.timeFromCreation,
       String id,
@@ -28,14 +30,7 @@ class Story extends Base {
       String updatedBy,
       bool isHidden,
       bool isDeleted})
-      : super(
-            id: id,
-            createdBy: createdBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            updatedBy: updatedBy,
-            isDeleted: isDeleted,
-            isHidden: isHidden);
+      : super(id: id, createdBy: createdBy, createdAt: createdAt, updatedAt: updatedAt, updatedBy: updatedBy, isDeleted: isDeleted, isHidden: isHidden);
 
   factory Story.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -48,6 +43,7 @@ class Story extends Base {
         segmentTitle: json['segmentTitle']?.toString(),
         description: json['description']?.toString(),
         seen: json['seen'] != null ? json['seen'] as bool : false,
+        isDurationRecord: json['is_duration_record'] != null ? json['is_duration_record'] as bool : false,
         duration: (json['duration'] is int) ? (json['duration'] as int) : 5);
     story.setBase(json);
 
@@ -76,6 +72,7 @@ class Story extends Base {
       'segmentTitle': segmentTitle,
       'description': description,
       'seen': seen,
+      'is_duration_record': isDurationRecord,
       'duration': duration
     };
     storyJson.addEntries(super.toJson().entries);

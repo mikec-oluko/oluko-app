@@ -12,29 +12,21 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class StoryUtils {
-
-  static Future<void> createNewPRChallengeStory(BuildContext context, int totalScore, String userId, Segment segment) async {
-      final int result = totalScore ?? 0;
-      final List<PersonalRecord> pRList=await PersonalRecordRepository.getByUserAndChallengeId(userId,segment.id);
-      bool isNewPersonalRecord=true;
-      if(pRList.isNotEmpty){
-        if(segment.type==SegmentTypeEnum.Rounds){
-          isNewPersonalRecord=pRList[0].value<result;
-        }
-        else{
-          isNewPersonalRecord=pRList[0].value>result;
-        }
-      }  
-      if (isNewPersonalRecord) {
-        final String segmentTitle = '${segment.name} ${OlukoLocalizations.get(context, 'challenge')}';
-        BlocProvider.of<storyBloc.StoryBloc>(context).createChallengeStory(
-          segment,
-          userId,
-          segmentTitle,
-          result.toString(),
-          context,
-        );
+  static Future<void> createNewPRChallengeStory(BuildContext context, int totalScore, String userId, Segment segment, {bool isDurationRecord = false}) async {
+    final int result = totalScore ?? 0;
+    final List<PersonalRecord> pRList = await PersonalRecordRepository.getByUserAndChallengeId(userId, segment.id);
+    bool isNewPersonalRecord = true;
+    if (pRList.isNotEmpty) {
+      if (segment.type == SegmentTypeEnum.Rounds) {
+        isNewPersonalRecord = pRList[0].value < result;
+      } else {
+        isNewPersonalRecord = pRList[0].value > result;
       }
+    }
+    if (isNewPersonalRecord) {
+      final String segmentTitle = '${segment.name} ${OlukoLocalizations.get(context, 'challenge')}';
+      BlocProvider.of<storyBloc.StoryBloc>(context).createChallengeStory(segment, userId, segmentTitle, result, context, isDurationRecord: isDurationRecord);
+    }
   }
 
   static Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission, int totalScore, Segment segment) async {
