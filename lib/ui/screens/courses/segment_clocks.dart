@@ -736,6 +736,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return timerTaskIndex == timerEntries.length - 1;
   }
 
+  bool isLastRestBeforeRecording() {
+    final TimerEntry lastRestBeforeRecording = timerEntries.lastWhere((timeEntryElement) => timeEntryElement.movement.isRestTime, orElse: () => null);
+    return lastRestBeforeRecording != null ? timerTaskIndex == timerEntries.indexOf(lastRestBeforeRecording) : false;
+  }
+
   bool nextIsFirstRound() {
     return timerEntries[timerTaskIndex + 1].round == 1;
   }
@@ -857,6 +862,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         BlocProvider.of<UserProgressBloc>(context)
             .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
       }
+    }
+    if (isLastRestBeforeRecording()) {
+      print('++++++++++++ LAST REST ++++++++++++++++++');
     }
     if (widget.coachRequest != null && isLastOne()) {
       askForRecordSegment();
