@@ -48,9 +48,9 @@ class SignUpRequest {
         'lastName': lastName,
         'projectId': projectId,
         'username': username,
-        'country': country,
-        'state': state,
-        'city': city,
+        'country': country ?? '',
+        'state': state ?? '',
+        'city': city ?? '',
         'zipCode': zipCode,
         'newsletter': newsletter
       };

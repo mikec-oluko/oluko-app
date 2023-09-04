@@ -34,9 +34,6 @@ class _RegisterState extends State<RegisterPage> {
   void initState() {
     BlocProvider.of<CountryBloc>(context).getAllCountries();
     _newUserFromRegister.projectId = GlobalConfiguration().getString('projectId');
-    _newUserFromRegister.country = '';
-    _newUserFromRegister.state = '';
-    _newUserFromRegister.city = '';
     _newUserFromRegister.newsletter = _newsletterSettings;
 
     super.initState();
@@ -313,42 +310,6 @@ class _RegisterState extends State<RegisterPage> {
               }),
           OlukoRegisterTextfield(
               key: formKey,
-              title: OlukoLocalizations.get(context, 'country'),
-              fieldType: RegisterFieldEnum.COUNTRY,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.country = _getValue(value);
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
-              title: OlukoLocalizations.get(context, 'state'),
-              fieldType: RegisterFieldEnum.STATE,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.state = _getValue(value);
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
-              title: OlukoLocalizations.get(context, 'city'),
-              fieldType: RegisterFieldEnum.CITY,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.city = _getValue(value);
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
-              title: OlukoLocalizations.get(context, 'zipCode'),
-              fieldType: RegisterFieldEnum.ZIPCODE,
-              onInputUpdated: (value) {
-                setState(() {
-                  _newUserFromRegister.zipCode = int.parse(_getValue(value));
-                });
-              }),
-          OlukoRegisterTextfield(
-              key: formKey,
               title: OlukoLocalizations.get(context, 'email'),
               fieldType: RegisterFieldEnum.EMAIL,
               onInputUpdated: (value) {
@@ -378,6 +339,49 @@ class _RegisterState extends State<RegisterPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Column getLocationFields() {
+    return Column(
+      children: [
+        OlukoRegisterTextfield(
+            key: formKey,
+            title: OlukoLocalizations.get(context, 'country'),
+            fieldType: RegisterFieldEnum.COUNTRY,
+            onInputUpdated: (value) {
+              setState(() {
+                _newUserFromRegister.country = _getValue(value);
+              });
+            }),
+        OlukoRegisterTextfield(
+            key: formKey,
+            title: OlukoLocalizations.get(context, 'state'),
+            fieldType: RegisterFieldEnum.STATE,
+            onInputUpdated: (value) {
+              setState(() {
+                _newUserFromRegister.state = _getValue(value);
+              });
+            }),
+        OlukoRegisterTextfield(
+            key: formKey,
+            title: OlukoLocalizations.get(context, 'city'),
+            fieldType: RegisterFieldEnum.CITY,
+            onInputUpdated: (value) {
+              setState(() {
+                _newUserFromRegister.city = _getValue(value);
+              });
+            }),
+        OlukoRegisterTextfield(
+            key: formKey,
+            title: OlukoLocalizations.get(context, 'zipCode'),
+            fieldType: RegisterFieldEnum.ZIPCODE,
+            onInputUpdated: (value) {
+              setState(() {
+                _newUserFromRegister.zipCode = int.parse(_getValue(value));
+              });
+            }),
+      ],
     );
   }
 

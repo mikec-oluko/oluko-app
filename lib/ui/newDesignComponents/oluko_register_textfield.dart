@@ -32,6 +32,7 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   bool _peekPassword = false;
   Map<StringValidation, bool> stringValidator = {};
   FocusNode _inputFocusNode;
+  final bool useLocationInformation = false;
 
   @override
   void initState() {
@@ -60,10 +61,10 @@ class _OlukoRegisterTextfieldState extends State<OlukoRegisterTextfield> {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(bottom: 10),
-        child: (widget.fieldType == RegisterFieldEnum.COUNTRY || widget.fieldType == RegisterFieldEnum.STATE)
-            ? _getDropDown(widget.fieldType)
-            : _getTextFormField(context));
+        child: useLocationDropdowns() && useLocationInformation ? _getDropDown(widget.fieldType) : _getTextFormField(context));
   }
+
+  bool useLocationDropdowns() => widget.fieldType == RegisterFieldEnum.COUNTRY || widget.fieldType == RegisterFieldEnum.STATE;
 
   Widget _getDropDown(RegisterFieldEnum fieldType) {
     Widget _dropDownSelected;
