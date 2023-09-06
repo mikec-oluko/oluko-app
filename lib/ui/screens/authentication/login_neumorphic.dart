@@ -397,7 +397,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
                 ),
                 Text(
                   OlukoLocalizations.get(context, 'continueWithGoogle'),
-                  style: const TextStyle(color: OlukoColors.grayColor),
+                  style: const TextStyle(color: OlukoColors.black),
                 )
               ],
             ),
