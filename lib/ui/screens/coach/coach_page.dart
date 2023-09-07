@@ -203,7 +203,7 @@ class _CoachPageState extends State<CoachPage> {
             },
           );
         } else {
-          return const LoadinScreen();
+          return const LoadingScreen();
         }
       },
     );

@@ -247,7 +247,7 @@ class CoachRepository {
   }
 
   Future<List<CoachTimelineItem>> getTimelineItemsReferenceContent(List<CoachTimelineItem> timelineItemList) async {
-    for (CoachTimelineItem timelineItem in timelineItemList) {
+    final promise = timelineItemList.map((timelineItem) async {
       final DocumentSnapshot ds = await timelineItem.contentReference.get();
 
       switch (timelineItem.contentType) {
@@ -291,8 +291,59 @@ class CoachRepository {
           break;
         default:
       }
-    }
+
+      return timelineItemList;
+    });
+
+    await Future.wait(promise);
     return timelineItemList;
+
+    // for (CoachTimelineItem timelineItem in timelineItemList) {
+    //   final DocumentSnapshot ds = await timelineItem.contentReference.get();
+
+    //   switch (timelineItem.contentType) {
+    //     case TimelineInteractionType.course:
+    //       Course courseForItem = Course.fromJson(ds.data() as Map<String, dynamic>);
+    //       timelineItem.contentName = courseForItem.name;
+    //       timelineItem.courseForNavigation = courseForItem;
+    //       timelineItem.contentThumbnail = courseForItem.images.length >= 2 ? courseForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
+
+    //       break;
+    //     case TimelineInteractionType.classes:
+    //       break;
+    //     case TimelineInteractionType.segment:
+    //       SegmentSubmission taskSubmitted = SegmentSubmission.fromJson(ds.data() as Map<String, dynamic>);
+    //       timelineItem.contentThumbnail = taskSubmitted.video?.thumbUrl;
+    //       timelineItem.sentVideosForNavigation = [taskSubmitted];
+    //       break;
+    //     case TimelineInteractionType.movement:
+    //       Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);
+    //       timelineItem.movementForNavigation = movementForItem;
+    //       timelineItem.contentName = movementForItem.name;
+    //       timelineItem.contentThumbnail = movementForItem.images.length >= 2 ? movementForItem.images.elementAt(2) as String : timelineItem.contentThumbnail;
+    //       break;
+    //     case TimelineInteractionType.mentoredVideo:
+    //       Annotation uploadedAnnotation = Annotation.fromJson(ds.data() as Map<String, dynamic>);
+    //       final DocumentSnapshot segmentSubmitted = await uploadedAnnotation.segmentSubmissionReference.get();
+    //       TaskSubmission taskSubmittedData = TaskSubmission.fromJson(segmentSubmitted.data() as Map<String, dynamic>);
+    //       timelineItem.contentName = taskSubmittedData.video.name;
+    //       timelineItem.mentoredVideosForNavigation = [uploadedAnnotation];
+    //       break;
+    //     case TimelineInteractionType.sentVideo:
+    //       SegmentSubmission uploadedSegment = SegmentSubmission.fromJson(ds.data() as Map<String, dynamic>);
+    //       timelineItem.sentVideosForNavigation = [uploadedSegment];
+    //       break;
+    //     case TimelineInteractionType.recommendedVideo:
+    //       break;
+    //     case TimelineInteractionType.messageVideo:
+    //       CoachMediaMessage coachMediaMessage = CoachMediaMessage.fromJson(ds.data() as Map<String, dynamic>);
+    //       timelineItem.coachMediaMessage = coachMediaMessage;
+    //       timelineItem.contentName = coachMediaMessage.video.name;
+    //       break;
+    //     default:
+    //   }
+    // }
+    // return timelineItemList;
   }
 
   Future<List<Recommendation>> getCoachRecommendationsForUser(String userId, String coachId) async {

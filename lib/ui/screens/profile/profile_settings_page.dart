@@ -151,26 +151,17 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   }
 
   Widget notificationSwitch(BuildContext context, NotificationSettings option) {
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? Container(
-            width: MediaQuery.of(context).size.width,
-            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-            child: Column(children: [olukoSwitch(option), OlukoNeumorphicDivider()]),
-          )
-        : Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              border: Border(top: BorderSide(width: 1.0, color: OlukoColors.grayColor), bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-            ),
-            child: olukoSwitch(option),
-          );
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+      child: Column(children: [olukoSwitch(option), const OlukoNeumorphicDivider()]),
+    );
   }
 
   MergeSemantics olukoSwitch(NotificationSettings option) {
     return MergeSemantics(
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         title: Text(OlukoLocalizations.get(context, returnOption(option.title.toString())), style: OlukoFonts.olukoBigFont()),
         subtitle: Text(
           OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),

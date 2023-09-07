@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
@@ -17,8 +18,7 @@ const String defaultIntroVideoId = 'introVideo';
 const String defaultIntroVideoTitle = 'Introduction Video';
 
 class CoachTimelineFunctions {
-  static List<CoachTimelineGroup> buildContentForTimelinePanel(
-      {List<CoachTimelineItem> timelineItemsContent, List<String> enrolledCourseIdList}) {
+  static List<CoachTimelineGroup> buildContentForTimelinePanel({List<CoachTimelineItem> timelineItemsContent, List<String> enrolledCourseIdList}) {
     List<String> listOfCourseId = [];
     List<CoachTimelineGroup> timelineTabsAndContent = [];
     List<CoachTimelineItem> contentForItem = [];
@@ -45,9 +45,7 @@ class CoachTimelineFunctions {
           newTimelineTabItem = CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
         } else {
           newTimelineTabItem = CoachTimelineGroup(
-              courseId: repeatedItemsQuery.first.course.id,
-              courseName: repeatedItemsQuery.first.course.name,
-              timelineElements: [repeatedItemsQuery.first]);
+              courseId: repeatedItemsQuery.first.course.id, courseName: repeatedItemsQuery.first.course.name, timelineElements: [repeatedItemsQuery.first]);
         }
         timelineTabsAndContent.add(newTimelineTabItem);
       });
@@ -70,12 +68,10 @@ class CoachTimelineFunctions {
     return CoachTimelineItem(
         coachId: welcomeVideo.coachId,
         coachReference: welcomeVideo.coachReference,
-        contentDescription:
-            welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
+        contentDescription: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
         contentName: welcomeVideo.id == defaultIntroVideoId ? defaultIntroVideoTitle : welcomeVideo.segmentSubmissionId,
         contentThumbnail: welcomeVideo.video.thumbUrl,
-        contentType:
-            welcomeVideo.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
+        contentType: welcomeVideo.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
         mentoredVideosForNavigation: [welcomeVideo],
         course: CourseTimelineSubmodel(
           name: OlukoLocalizations.get(context, 'all'),
@@ -96,12 +92,10 @@ class CoachTimelineFunctions {
         CoachTimelineItem newItem = CoachTimelineItem(
             coachId: element.coachId,
             coachReference: element.coachReference,
-            contentDescription:
-                element.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
+            contentDescription: element.id == defaultIntroVideoId ? defaultIntroVideoTitle : OlukoLocalizations.get(context, 'personalizedVideo'),
             contentName: element.id == defaultIntroVideoId ? defaultIntroVideoTitle : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
-            contentType:
-                element.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
+            contentType: element.id == defaultIntroVideoId ? TimelineInteractionType.introductionVideo : TimelineInteractionType.mentoredVideo,
             mentoredVideosForNavigation: annotationContent,
             course: CourseTimelineSubmodel(
               name: OlukoLocalizations.get(context, 'all'),
@@ -127,9 +121,7 @@ class CoachTimelineFunctions {
             course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
                 ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
                 : CourseTimelineSubmodel(name: OlukoLocalizations.get(context, 'all')),
-            id: courseEnrollmentList.contains(element.courseEnrollmentId)
-                ? getCourseId(courseEnrollmentList, element)
-                : defaultIdForAllContentTimeline,
+            id: courseEnrollmentList.contains(element.courseEnrollmentId) ? getCourseId(courseEnrollmentList, element) : defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
         if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
           sentVideos.add(newItem);
@@ -177,9 +169,7 @@ class CoachTimelineFunctions {
               contentDescription: '',
               contentImage: annotation.video.thumbUrl,
               videoUrl: annotation.videoHLS ?? annotation.video.url,
-              contentType: annotation.id != _defaultIntroductionVideoId
-                  ? TimelineInteractionType.mentoredVideo
-                  : TimelineInteractionType.introductionVideo,
+              contentType: annotation.id != _defaultIntroductionVideoId ? TimelineInteractionType.mentoredVideo : TimelineInteractionType.introductionVideo,
               createdAt: annotation.createdAt,
               mentoredContent: annotation);
 
@@ -239,8 +229,7 @@ class CoachTimelineFunctions {
     return requiredSegmentAsNotification;
   }
 
-  static List<CoachNotificationContent> coachRecommendationsForInteraction(
-      {List<CoachRecommendationDefault> coachRecommendations, BuildContext context}) {
+  static List<CoachNotificationContent> coachRecommendationsForInteraction({List<CoachRecommendationDefault> coachRecommendations, BuildContext context}) {
     List<CoachNotificationContent> recommendationsAsNotification = [];
 
     if (coachRecommendations != null) {
@@ -264,8 +253,7 @@ class CoachTimelineFunctions {
           );
 
           if (recommendationsAsNotification
-              .where((element) =>
-                  element.contentTitle == newItem.contentTitle && element.coachRecommendation.id == newItem.coachRecommendation.id)
+              .where((element) => element.contentTitle == newItem.contentTitle && element.coachRecommendation.id == newItem.coachRecommendation.id)
               .isEmpty) {
             recommendationsAsNotification.add(newItem);
           }
@@ -275,8 +263,7 @@ class CoachTimelineFunctions {
     return recommendationsAsNotification;
   }
 
-  static List<CoachTimelineGroup> timelinePanelUpdateTabsAndContent(
-      CoachTimelineGroup allTabContent, List<CoachTimelineGroup> timelinePanelContent,
+  static List<CoachTimelineGroup> timelinePanelUpdateTabsAndContent(CoachTimelineGroup allTabContent, List<CoachTimelineGroup> timelinePanelContent,
       {bool isForFriend = false}) {
     if (timelinePanelContent != null && timelinePanelContent.isNotEmpty) {
       final indexForAllTab = timelinePanelContent.indexWhere((panelItem) => panelItem.courseId == allTabContent.courseId);
@@ -304,13 +291,11 @@ class CoachTimelineFunctions {
   }
 
   static void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {
-    final existingContent =
-        timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).toList();
+    final existingContent = timelineGroup.timelineElements.where((timelineElement) => timelineElement.contentName == newContent.contentName).toList();
     if (existingContent.isEmpty) {
       timelineGroup.timelineElements.add(newContent);
       timelineGroup.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-    } else if (newContent.contentType == TimelineInteractionType.mentoredVideo ||
-        newContent.contentType == TimelineInteractionType.messageVideo) {
+    } else if (newContent.contentType == TimelineInteractionType.mentoredVideo || newContent.contentType == TimelineInteractionType.messageVideo) {
       existingContent.forEach((content) {
         if ((content.createdAt.toDate() != newContent.createdAt.toDate()) && content.contentType == newContent.contentType) {
           if (!timelineGroup.timelineElements.contains(newContent)) {
@@ -341,9 +326,29 @@ class CoachTimelineFunctions {
         }
       });
     });
-    CoachTimelineGroup allTabContent = CoachTimelineGroup(
-        courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: allContent);
+    CoachTimelineGroup allTabContent =
+        CoachTimelineGroup(courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: allContent);
     allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
     return isForFriend ? [allTabContent] : timelinePanelUpdateTabsAndContent(allTabContent, _updatedContent, isForFriend: isForFriend);
+  }
+
+  static List<CoachTimelineItem> coachRecommendationsTimelineItems(List<CoachRecommendationDefault> coachRecommendationList) {
+    List<CoachTimelineItem> _coachRecommendationTimelineContent = [];
+    if (coachRecommendationList.isNotEmpty) {
+      coachRecommendationList.forEach((coachRecommendation) {
+        final newRecommendationForTimeline = createAnCoachTimelineItem(recommendationItem: coachRecommendation);
+        if (!_coachRecommendationTimelineContent.contains(newRecommendationForTimeline)) {
+          _coachRecommendationTimelineContent.add(newRecommendationForTimeline);
+        }
+      });
+    }
+    return _coachRecommendationTimelineContent;
+    // _coachRecommendationTimelineContent.isNotEmpty
+    //     ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
+    //         if (_allContent.where((contentElement) => contentElement.contentName == recomendationTimelineItem.contentName).isEmpty) {
+    //           _allContent.add(recomendationTimelineItem);
+    //         }
+    //       })
+    //     : null;
   }
 }

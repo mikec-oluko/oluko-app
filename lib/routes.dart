@@ -215,6 +215,7 @@ import 'models/dto/story_dto.dart';
 import 'models/transformation_journey_uploads.dart';
 import 'package:oluko_app/blocs/country_bloc.dart';
 import 'blocs/coach_tab_notification.dart';
+import 'ui/screens/coach/coach_page_builders.dart';
 
 enum RouteEnum {
   root,
@@ -1358,7 +1359,8 @@ class Routes {
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
-        newRouteView = CoachPage();
+        newRouteView = CoachPageBuilders();
+        // newRouteView = CoachPage();
         break;
       case RouteEnum.sentVideos:
         providers = [
