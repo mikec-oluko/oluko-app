@@ -16,7 +16,7 @@ class PushNotificationService {
   static bool bottomDialogDisplayed = false;
 
   static Future<void> initializePushNotifications(BuildContext context, String userId) async {
-    var returneas = await Permission.notification.request();
+    await Permission.notification.request();
     final String token = await messaging.getToken();
     BlocProvider.of<UserBloc>(context).saveToken(userId, token);
   }
