@@ -10,10 +10,12 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 class CoachRequestContent extends StatefulWidget {
   final Function() onRecordingAction;
   final Function() onNotRecordingAction;
+  final Function() onNotificationDismiss;
   final String image;
   final String name;
+  final bool isNotification;
 
-  const CoachRequestContent({this.onRecordingAction, this.onNotRecordingAction, this.image, this.name});
+  const CoachRequestContent({this.onRecordingAction, this.onNotRecordingAction, this.image, this.name, this.isNotification, this.onNotificationDismiss});
 
   @override
   _CoachRequestContentState createState() => _CoachRequestContentState();
@@ -24,9 +26,7 @@ class _CoachRequestContentState extends State<CoachRequestContent> {
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
-                topRight: Radius.circular(OlukoNeumorphism.isNeumorphismDesign ? 20 : 0)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             image: DecorationImage(
               image: AssetImage('assets/courses/dialog_background.png'),
               fit: BoxFit.cover,
@@ -34,62 +34,72 @@ class _CoachRequestContentState extends State<CoachRequestContent> {
         child: Stack(children: [
           Column(children: [
             const SizedBox(height: 25),
-            Stack(alignment: Alignment.center, children: [
-              StoriesItem(maxRadius: 65, imageUrl: widget.image),
-              OlukoNeumorphism.isNeumorphismDesign ? Image.asset('assets/neumorphic/black_ellipse.png', scale: 2.5) : SizedBox()
-            ]),
+            Stack(
+                alignment: Alignment.center,
+                children: [StoriesItem(maxRadius: 65, imageUrl: widget.image), Image.asset('assets/neumorphic/black_ellipse.png', scale: 2.5)]),
             const SizedBox(height: 15),
-            Text(OlukoLocalizations.get(context, 'coach') + " " + widget.name,
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold)),
+            coachName(context),
             const SizedBox(height: 15),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text(
-                    OlukoLocalizations.get(context, 'coach') + " " + widget.name + " " + OlukoLocalizations.get(context, 'coachRequest'),
-                    textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400))),
+            coachRequestText(context),
             const SizedBox(height: 35),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? OlukoNeumorphicSecondaryButton(
-                          lighterButton: true,
-                            title: OlukoLocalizations.get(context, 'ignore'),
-                            onPressed: () {
-                              widget.onNotRecordingAction();
-                            })
-                        : OlukoOutlinedButton(
-                            title: OlukoLocalizations.get(context, 'ignore'),
-                            onPressed: () {
-                              widget.onNotRecordingAction();
-                            },
-                          ),
-                    const SizedBox(width: 20),
-                    OlukoNeumorphism.isNeumorphismDesign
-                        ? OlukoNeumorphicPrimaryButton(
-                            title: OlukoLocalizations.get(context, 'ok'),
-                            onPressed: () {
-                              widget.onRecordingAction();
-                            })
-                        : OlukoPrimaryButton(
-                            title: OlukoLocalizations.get(context, 'ok'),
-                            onPressed: () {
-                              widget.onRecordingAction();
-                            },
-                          )
-                  ],
-                )),
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: getButtonsForPanel())),
           ]),
-          Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                  padding: EdgeInsets.only(top: 15, right: 15),
-                  child: IconButton(
-                      icon: const Icon(Icons.close, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white),
-                      onPressed: () => Navigator.pop(context))))
+          closeButton(context)
         ]));
+  }
+
+  Align closeButton(BuildContext context) {
+    return Align(
+        alignment: Alignment.topRight,
+        child: Padding(
+            padding: EdgeInsets.only(top: 15, right: 15),
+            child: IconButton(icon: const Icon(Icons.close, color: OlukoColors.primary), onPressed: () => Navigator.pop(context))));
+  }
+
+  OlukoNeumorphicPrimaryButton acceptButton(BuildContext context) {
+    return OlukoNeumorphicPrimaryButton(
+        title: OlukoLocalizations.get(context, 'ok'),
+        onPressed: () {
+          widget.isNotification ? widget.onNotificationDismiss() : widget.onRecordingAction();
+        });
+  }
+
+  OlukoNeumorphicSecondaryButton ignoreButton(BuildContext context) {
+    return OlukoNeumorphicSecondaryButton(
+        lighterButton: true,
+        title: OlukoLocalizations.get(context, 'ignore'),
+        onPressed: () {
+          widget.onNotRecordingAction();
+        });
+  }
+
+  Padding coachRequestText(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: Text(coachRecordingRequestMessage(context),
+            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, customFontWeight: FontWeight.w400)));
+  }
+
+  String coachRecordingRequestMessage(BuildContext context) => widget.isNotification
+      ? "${OlukoLocalizations.get(context, 'segmentNotificationTimerEnd')} ${widget.name} ${OlukoLocalizations.get(context, 'segmentNotificationRequestRecordMessage')}"
+      : "${OlukoLocalizations.get(context, 'coach')} ${widget.name} ${OlukoLocalizations.get(context, 'coachRequest')}";
+
+  Text coachName(BuildContext context) {
+    return Text('${OlukoLocalizations.get(context, 'coach')} ${widget.name}',
+        textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(customFontWeight: FontWeight.bold));
+  }
+
+  List<Widget> getButtonsForPanel() {
+    return widget.isNotification
+        ? [
+            acceptButton(context),
+          ]
+        : [
+            ignoreButton(context),
+            const SizedBox(width: 20),
+            acceptButton(context),
+          ];
   }
 }
