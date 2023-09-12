@@ -661,7 +661,7 @@ class _State extends State<Clock> with WidgetsBindingObserver {
               widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
               headsetState: headsetState, isForWatch: true);
         }
-        if (widget.timeLeft.inSeconds == 0) {
+        if (widget.timeLeft.inSeconds == 0 || showPanelRecordingNotification()) {
           _pauseCountdown(setPaused);
           goToNextStep();
           return;
@@ -674,6 +674,12 @@ class _State extends State<Clock> with WidgetsBindingObserver {
         }
       });
     }
+  }
+
+  bool showPanelRecordingNotification() => (widget.segments[widget.segmentIndex].rounds == 1 && nextIsLastOne());
+
+  bool nextIsLastOne() {
+    return widget.timerTaskIndex + 1 == widget.timerEntries.length - 1;
   }
 
   void _pauseCountdown(Function() setPaused) {
