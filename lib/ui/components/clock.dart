@@ -648,10 +648,11 @@ class _State extends State<Clock> with WidgetsBindingObserver {
         (widget.workState == WorkState.resting);
   }
 
-  bool useInput() => (isCurrentMovementRest() &&
+  bool useInput() =>
+      isCurrentMovementRest() &&
       (widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.reps ||
           widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.distance ||
-          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight));
+          widget.timerEntries[widget.timerTaskIndex - 1].counter == CounterEnum.weight);
 
   void _playCountdown(Function() goToNextStep, Function() setPaused, {HeadsetState headsetState}) {
     if (countdownTimer == null || !countdownTimer.isActive) {
@@ -661,7 +662,7 @@ class _State extends State<Clock> with WidgetsBindingObserver {
               widget.timeLeft.inSeconds - 1, widget.timerEntries[widget.timerTaskIndex].value, workStateForSounds(widget.workState.index),
               headsetState: headsetState, isForWatch: true);
         }
-        if (widget.timeLeft.inSeconds == 0 || showPanelRecordingNotification()) {
+        if (widget.timeLeft.inSeconds == 0) {
           _pauseCountdown(setPaused);
           goToNextStep();
           return;
@@ -675,8 +676,6 @@ class _State extends State<Clock> with WidgetsBindingObserver {
       });
     }
   }
-
-  bool showPanelRecordingNotification() => (widget.segments[widget.segmentIndex].rounds == 1 && nextIsLastOne());
 
   bool nextIsLastOne() {
     return widget.timerTaskIndex + 1 == widget.timerEntries.length - 1;

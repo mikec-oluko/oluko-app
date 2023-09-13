@@ -494,8 +494,31 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
-    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+    if ((nextIsLastOne() && widget.segments[widget.currentSegmentStep - 1].rounds == 1) &&
+        getSegmentCoachRequest(widget.segments[widget.currentSegmentStep - 1].id) != null) {
+      BottomDialogUtils.showBottomDialog(
+        context: context,
+        content: CoachRequestContent(
+          name: widget.coach?.firstName ?? '',
+          image: widget.coach?.avatar,
+          onNotificationDismiss: () {
+            Navigator.pop(context);
+            TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
+            BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+          },
+          isNotification: true,
+        ),
+      );
+    } else {
+      TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
+      BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+    }
+  }
+
+  bool nextIsLastOne() {
+    SegmentUtils.getExercisesList(widget.segments[widget.currentSegmentStep - 1]);
+    return widget.segments[widget.currentSegmentStep - 1].sections.length ==
+        SegmentUtils.getExercisesList(widget.segments[widget.currentSegmentStep - 1]).length - 1;
   }
 
   Object getArguments() {

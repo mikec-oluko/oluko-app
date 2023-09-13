@@ -487,7 +487,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget bodyWithPlayPausePanel() {
-    //  || widget.showNotificationPanel
     return (isSegmentWithoutRecording() && (workState != WorkState.finished))
         ? SlidingUpPanel(
             controller: panelController,
@@ -887,72 +886,67 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void _goToNextStep() {
-    //TODO: BUG PUEDE VERSE AL FINAL
-    if ((segmentIsOneRound && (nextIsLastOne() || isLastOne())) && !recordingNotificationIsShow) {
-      recordingNotification();
-    } else {
-      if (alertTimer != null) {
-        alertTimer.cancel();
+    if (alertTimer != null) {
+      alertTimer.cancel();
+    }
+    alertTimerPlaying = false;
+
+    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
+      if ((isLastOne() || nextIsFirstRound()) ||
+          ((nextIsLastOne() && nextIsRestTime()) || (thereAreTwoMorePos() && nextIsRestTime() && twoPosLaterIsFirstRound()))) {
+        _saveSegmentRound();
       }
-      alertTimerPlaying = false;
+    }
 
-      if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-        if ((isLastOne() || nextIsFirstRound()) ||
-            ((nextIsLastOne() && nextIsRestTime()) || (thereAreTwoMorePos() && nextIsRestTime() && twoPosLaterIsFirstRound()))) {
-          _saveSegmentRound();
-        }
-      }
+    _saveCounter();
 
-      _saveCounter();
+    _saveStopwatch();
 
-      _saveStopwatch();
-
-      if (timerTaskIndex == timerEntries.length - 1 && realTaskIndex <= timerEntries.length - 1) {
-        _finishWorkout();
-        realTaskIndex++;
-        setState(() {});
-        return;
-      }
-      if (timerTaskIndex < timerEntries.length - 1) {
-        timerTaskIndex++;
-      }
-
+    if (timerTaskIndex == timerEntries.length - 1 && realTaskIndex <= timerEntries.length - 1) {
+      _finishWorkout();
       realTaskIndex++;
+      setState(() {});
+      return;
+    }
+    if (timerTaskIndex < timerEntries.length - 1) {
+      timerTaskIndex++;
+    }
 
-      if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
-        setAlert();
-        if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
-          BlocProvider.of<UserProgressBloc>(context)
-              .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
-        }
-      }
-      if (isLastRestBeforeRecording() && !recordingNotificationIsShow) {
-        recordingNotification();
-      } else if (widget.coachRequest != null && isLastOne()) {
-        askForRecordSegment();
-      } else {
-        _playTask();
-      }
-      BlocProvider.of<TimerTaskBloc>(context).setTimerTaskIndex(timerTaskIndex);
+    realTaskIndex++;
 
-      if (timerEntries[timerTaskIndex].stopwatch) {
-        _startStopwatch();
+    if (((timerTaskIndex - 1) == 0) || currentRoundDifferentToNextRound()) {
+      setAlert();
+      if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && !SegmentUtils.isEMOM(widget.segments[widget.segmentIndex])) {
+        BlocProvider.of<UserProgressBloc>(context)
+            .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
       }
-      BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
+    }
+    if ((isLastRestBeforeRecording() && !recordingNotificationIsShow) && _coachRequest != null) {
+      recordingNotification();
+    } else if (widget.coachRequest != null && isLastOne()) {
+      askForRecordSegment();
+    } else {
+      _playTask();
+    }
+    BlocProvider.of<TimerTaskBloc>(context).setTimerTaskIndex(timerTaskIndex);
 
-      if (isSegmentWithRecording() && timerTaskIndex == 1) {
-        _setupCameras();
-      }
+    if (timerEntries[timerTaskIndex].stopwatch) {
+      _startStopwatch();
+    }
+    BlocProvider.of<CurrentTimeBloc>(context).setCurrentTimeNull();
 
-      if (recordingPanelController.isAttached && timerTaskIndex == 1) {
-        recordingPanelController.close();
-      }
+    if (isSegmentWithRecording() && timerTaskIndex == 1) {
+      _setupCameras();
+    }
 
-      if (timerEntries[timerTaskIndex].round != null && timerEntries[timerTaskIndex].round > 0) {
-        Future.delayed(const Duration(milliseconds: 2000), () {
-          cameraController?.dispose();
-        });
-      }
+    if (recordingPanelController.isAttached && timerTaskIndex == 1) {
+      recordingPanelController.close();
+    }
+
+    if (timerEntries[timerTaskIndex].round != null && timerEntries[timerTaskIndex].round > 0) {
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        cameraController?.dispose();
+      });
     }
   }
 
