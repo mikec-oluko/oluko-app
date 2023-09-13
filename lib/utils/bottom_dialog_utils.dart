@@ -21,6 +21,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class BottomDialogUtils {
   static showBottomDialog({BuildContext context, Widget content, bool isScrollControlled = false, bool barrierColor = true, Function() onDismissAction}) {
     showModalBottomSheet(
+            isDismissible: false,
             barrierColor: barrierColor ? null : Colors.transparent,
             context: context,
             builder: (BuildContext _) {
