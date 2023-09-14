@@ -497,6 +497,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     if ((nextIsLastOne() && widget.segments[widget.currentSegmentStep - 1].rounds == 1) &&
         getSegmentCoachRequest(widget.segments[widget.currentSegmentStep - 1].id) != null) {
       BottomDialogUtils.showBottomDialog(
+        backgroundTapEnable: false,
+        onDismissAction: () => Navigator.pop(context),
         context: context,
         content: CoachRequestContent(
           name: widget.coach?.firstName ?? '',

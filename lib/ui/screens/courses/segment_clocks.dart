@@ -854,6 +854,11 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           showExitButton: true);
     } else {
       BottomDialogUtils.showBottomDialog(
+        backgroundTapEnable: false,
+        onDismissAction: () {
+          Navigator.pop(context);
+          _playTask();
+        },
         context: context,
         content: CoachRequestContent(
           name: widget.coach?.firstName ?? '',
@@ -957,6 +962,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     });
     BottomDialogUtils.showBottomDialog(
       context: context,
+      backgroundTapEnable: false,
+      onDismissAction: () => Navigator.pop(context),
       content: CoachRequestContent(
         name: widget.coach?.firstName ?? '',
         image: widget.coach?.avatar,
