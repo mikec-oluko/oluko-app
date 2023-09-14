@@ -855,10 +855,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     } else {
       BottomDialogUtils.showBottomDialog(
         backgroundTapEnable: false,
-        onDismissAction: () {
-          Navigator.pop(context);
-          _playTask();
-        },
+        onDismissAction: () => _resume(),
         context: context,
         content: CoachRequestContent(
           name: widget.coach?.firstName ?? '',
@@ -926,7 +923,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
       }
     }
-    if ((isLastRestBeforeRecording() && !recordingNotificationIsShow) && _coachRequest != null) {
+    if ((isLastRestBeforeRecording() && !recordingNotificationIsShow) && widget.coachRequest != null) {
       recordingNotification();
     } else if (widget.coachRequest != null && isLastOne()) {
       askForRecordSegment();
@@ -956,14 +953,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void recordingNotification() {
+    setPaused();
     setState(() {
-      setPaused();
       recordingNotificationIsShow = true;
     });
     BottomDialogUtils.showBottomDialog(
       context: context,
       backgroundTapEnable: false,
-      onDismissAction: () => Navigator.pop(context),
+      onDismissAction: () => _resume(),
       content: CoachRequestContent(
         name: widget.coach?.firstName ?? '',
         image: widget.coach?.avatar,

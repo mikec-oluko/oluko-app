@@ -571,7 +571,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
         getSegmentCoachRequest(widget.classSegments[currentSegmentStep - 1].id) != null) {
       BottomDialogUtils.showBottomDialog(
         backgroundTapEnable: false,
-        onDismissAction: () => Navigator.pop(context),
         context: context,
         content: CoachRequestContent(
           name: _coach?.firstName ?? '',
