@@ -62,6 +62,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -566,7 +567,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     }
   }
 
-  navigateToSegmentWithoutRecording() {
+  navigateToSegmentWithoutRecording() async {
     if ((nextIsLastOne() && widget.classSegments[segmentIndexToUse].rounds == 1) &&
         getSegmentCoachRequest(widget.classSegments[currentSegmentStep - 1].id) != null) {
       BottomDialogUtils.showBottomDialog(
@@ -583,6 +584,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           isNotification: true,
         ),
       );
+      await SoundPlayer().playAsset(asset: 'sounds/recording_notification.wav', isForWatch: true);
     } else {
       TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexToUse].initialTimer);
       BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);

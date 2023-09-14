@@ -887,7 +887,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
-  void _goToNextStep() {
+  Future<void> _goToNextStep() async {
     if (alertTimer != null) {
       alertTimer.cancel();
     }
@@ -924,7 +924,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
       }
     }
     if ((isLastRestBeforeRecording() && !recordingNotificationIsShow) && widget.coachRequest != null) {
-      recordingNotification();
+      await recordingNotification();
     } else if (widget.coachRequest != null && isLastOne()) {
       askForRecordSegment();
     } else {
@@ -952,11 +952,12 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     }
   }
 
-  void recordingNotification() {
+  Future<void> recordingNotification() async {
     setPaused();
     setState(() {
       recordingNotificationIsShow = true;
     });
+
     BottomDialogUtils.showBottomDialog(
       context: context,
       backgroundTapEnable: false,
@@ -974,6 +975,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         isNotification: true,
       ),
     );
+    await _soundPlayer.playAsset(asset: 'sounds/recording_notification.wav', headsetState: _headsetState, isForWatch: true);
   }
 
   bool currentRoundDifferentToNextRound() {
