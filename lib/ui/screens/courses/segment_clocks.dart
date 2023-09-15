@@ -470,7 +470,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget scaffoldBody() {
-    //  || widget.showNotificationPanel
     return (isSegmentWithRecording() && widget.showPanel)
         ? SlidingUpPanel(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(21), topRight: Radius.circular(21)),
