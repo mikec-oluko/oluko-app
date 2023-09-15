@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -16,7 +17,8 @@ class Permissions {
         return false;
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
-      if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (Platform.isAndroid && androidInfo.version.sdkInt <= 32) {
         await Permission.storage.request();
         if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
           return false;
