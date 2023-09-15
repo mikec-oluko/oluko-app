@@ -53,6 +53,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:readmore/readmore.dart';
@@ -119,6 +120,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   List<MovementSubmodel> movementsToDisplayWeight = [];
   List<MaxWeight> maxWeightRecords = [];
   List<UserResponse> favoriteUsers = [];
+  final String _recordingNotificationSound = 'sounds/recording_notification.wav';
 
   @override
   void initState() {
@@ -493,7 +495,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     }
   }
 
-  navigateToSegmentWithoutRecording() {
+  navigateToSegmentWithoutRecording() async {
     if ((nextIsLastOne() && widget.segments[widget.currentSegmentStep - 1].rounds == 1) &&
         getSegmentCoachRequest(widget.segments[widget.currentSegmentStep - 1].id) != null) {
       BottomDialogUtils.showBottomDialog(
@@ -511,6 +513,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           isNotification: true,
         ),
       );
+      await SoundPlayer().playAsset(asset: _recordingNotificationSound, isForWatch: true);
     } else {
       TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
       BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);

@@ -119,6 +119,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   ChewieController chewieController;
   List<SegmentImageSection> carouselWidgets = [];
   GlobalService _globalService = GlobalService();
+  final String _recordingNotificationSound = 'sounds/recording_notification.wav';
+
   @override
   void initState() {
     _coachRequests = [];
@@ -584,7 +586,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           isNotification: true,
         ),
       );
-      await SoundPlayer().playAsset(asset: 'sounds/recording_notification.wav', isForWatch: true);
+      await SoundPlayer().playAsset(asset: _recordingNotificationSound, isForWatch: true);
     } else {
       TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexToUse].initialTimer);
       BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);

@@ -177,6 +177,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   bool existPersonalRecordMovement = false;
   bool recordingNotificationIsShow = false;
   bool segmentIsOneRound = true;
+  final String _recordingNotificationSound = 'sounds/recording_notification.wav';
 
   @override
   void initState() {
@@ -478,7 +479,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             maxHeight: 310,
             collapsed: Container(color: OlukoColors.black),
             panel: InitialTimerPanel(
-              //TODO: EL PANEL DE ALERTA DE GRABAR
               panelController: recordingPanelController,
               onShowAgainPressed: widget.onShowAgainPressed,
             ),
@@ -556,7 +556,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
         } else {
           if (alertTimerPlaying) {
-            _playAlert(); //TODO: CHECK THIS
+            _playAlert();
           }
         }
         _startStopwatch();
@@ -745,7 +745,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         child: SegmentClocksUtils.pauseButton());
   }
 
-  _goToSegmentDetail() {
+  void _goToSegmentDetail() {
     Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
   }
 
@@ -802,19 +802,14 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     int indexOfLastRest;
     TimerEntry lastRestEntry = timerEntries.lastWhere((timeEntry) => timeEntry.movement.isRestTime, orElse: () => null);
     if (lastRestEntry != null) {
-      //ENCUENTRA REST
       indexOfLastRest = timerEntries.indexOf(lastRestEntry);
       if (indexOfLastRest == timerEntries.length) {
-        // SI EL REST ES EL FINAL
-        //BUSCA UNO ANTES
         lastRestEntry = timerEntries.getRange(0, indexOfLastRest - 1).lastWhere((timeEntry) => timeEntry.movement.isRestTime, orElse: () => null);
         if (lastRestEntry != null) {
-          //SI ENCUENTRA UNO ANTES
           indexOfLastRest = timerEntries.indexOf(lastRestEntry);
         }
       }
     }
-    //RETORNA EL ULTIMO REST (SIN SER EL FINAL)
     return indexOfLastRest != null ? timerTaskIndex == indexOfLastRest : false;
   }
 
@@ -844,7 +839,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           context,
           [
             Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   OlukoLocalizations.get(context, 'videoIsStillProcessing'),
                   textAlign: TextAlign.center,
@@ -975,7 +970,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         isNotification: true,
       ),
     );
-    await _soundPlayer.playAsset(asset: 'sounds/recording_notification.wav', headsetState: _headsetState, isForWatch: true);
+    await _soundPlayer.playAsset(asset: _recordingNotificationSound, headsetState: _headsetState, isForWatch: true);
   }
 
   bool currentRoundDifferentToNextRound() {
