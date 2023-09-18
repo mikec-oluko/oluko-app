@@ -53,6 +53,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_clocks_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 import 'package:readmore/readmore.dart';
@@ -119,6 +120,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   List<MovementSubmodel> movementsToDisplayWeight = [];
   List<MaxWeight> maxWeightRecords = [];
   List<UserResponse> favoriteUsers = [];
+  final String _recordingNotificationSound = 'sounds/recording_notification.wav';
 
   @override
   void initState() {
@@ -465,9 +467,35 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     }
   }
 
-  void navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
-    BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+  navigateToSegmentWithoutRecording() async {
+    if ((nextIsLastOne() && widget.segments[widget.currentSegmentStep - 1].rounds == 1) &&
+        getSegmentCoachRequest(widget.segments[widget.currentSegmentStep - 1].id) != null) {
+      BottomDialogUtils.showBottomDialog(
+        backgroundTapEnable: false,
+        onDismissAction: () => Navigator.pop(context),
+        context: context,
+        content: CoachRequestContent(
+          name: widget.coach?.firstName ?? '',
+          image: widget.coach?.avatar,
+          onNotificationDismiss: () {
+            Navigator.pop(context);
+            TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
+            BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+          },
+          isNotification: true,
+        ),
+      );
+      await SoundPlayer().playAsset(asset: _recordingNotificationSound, isForWatch: true);
+    } else {
+      TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer);
+      BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
+    }
+  }
+
+  bool nextIsLastOne() {
+    SegmentUtils.getExercisesList(widget.segments[widget.currentSegmentStep - 1]);
+    return widget.segments[widget.currentSegmentStep - 1].sections.length ==
+        SegmentUtils.getExercisesList(widget.segments[widget.currentSegmentStep - 1]).length - 1;
   }
 
   Object getArguments() {

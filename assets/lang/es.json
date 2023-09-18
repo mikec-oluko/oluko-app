@@ -481,6 +481,8 @@
     "maxWeights": "Peso Maximo",
     "delete": "Eliminar",
     "voiceAnnotation": "Nota de voz",
-    "personalRecordRequired": "Por favor ingrese su PR"
+    "personalRecordRequired": "Por favor ingrese su PR",
+    "segmentNotificationTimerEnd": "Al final del contador,",
+    "segmentNotificationRequestRecordMessage": "le solicitará que grabe este segmento"
 
 }

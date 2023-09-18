@@ -175,21 +175,25 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   UserResponse currentUser;
   GlobalKey<TooltipState> personalRecordTooltipKey = GlobalKey<TooltipState>();
   bool existPersonalRecordMovement = false;
+  bool recordingNotificationIsShow = false;
+  bool segmentIsOneRound = true;
+  final String _recordingNotificationSound = 'sounds/recording_notification.wav';
 
   @override
   void initState() {
     Wakelock.enable();
     WidgetsBinding.instance.addObserver(this);
     workoutType = widget.workoutType;
+    setState(() {
+      _isFromChallenge = widget.fromChallenge ?? false;
+      segmentIsOneRound = widget.segments[widget.segmentIndex].rounds == 1;
+    });
     _startMovement();
     topBarIcon = const SizedBox();
     if (widget.segments[widget.segmentIndex].rounds != null) {
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
       scoresInt = List<int>.filled(widget.segments[widget.segmentIndex].rounds, 0);
     }
-    setState(() {
-      _isFromChallenge = widget.fromChallenge ?? false;
-    });
 
     _headsetPlugin.getCurrentState.then((_val) {
       setState(() {
@@ -432,7 +436,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget scaffoldBody() {
-    return isSegmentWithRecording() && widget.showPanel
+    return (isSegmentWithRecording() && widget.showPanel)
         ? SlidingUpPanel(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(21), topRight: Radius.circular(21)),
             controller: recordingPanelController,
@@ -448,7 +452,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   Widget bodyWithPlayPausePanel() {
-    return isSegmentWithoutRecording() && (workState != WorkState.finished)
+    return (isSegmentWithoutRecording() && (workState != WorkState.finished))
         ? SlidingUpPanel(
             controller: panelController,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -512,6 +516,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         }
         workState = lastWorkStateBeforePause;
         if (isCurrentTaskTimed) {
+          setPaused();
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
         } else {
           if (alertTimerPlaying) {
@@ -704,7 +709,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         child: SegmentClocksUtils.pauseButton());
   }
 
-  _goToSegmentDetail() {
+  void _goToSegmentDetail() {
     Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
   }
 
@@ -737,11 +742,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     return timerTaskIndex == timerEntries.length - 1;
   }
 
-  bool isLastRestBeforeRecording() {
-    final TimerEntry lastRestBeforeRecording = timerEntries.lastWhere((timeEntryElement) => timeEntryElement.movement.isRestTime, orElse: () => null);
-    return lastRestBeforeRecording != null ? timerTaskIndex == timerEntries.indexOf(lastRestBeforeRecording) : false;
-  }
-
   bool nextIsFirstRound() {
     return timerEntries[timerTaskIndex + 1].round == 1;
   }
@@ -760,6 +760,21 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   bool twoPosLaterIsFirstRound() {
     return timerEntries[timerTaskIndex + 2].round == 1;
+  }
+
+  bool isLastRestBeforeRecording() {
+    int indexOfLastRest;
+    TimerEntry lastRestEntry = timerEntries.lastWhere((timeEntry) => timeEntry.movement.isRestTime, orElse: () => null);
+    if (lastRestEntry != null) {
+      indexOfLastRest = timerEntries.indexOf(lastRestEntry);
+      if (indexOfLastRest == timerEntries.length) {
+        lastRestEntry = timerEntries.getRange(0, indexOfLastRest - 1).lastWhere((timeEntry) => timeEntry.movement.isRestTime, orElse: () => null);
+        if (lastRestEntry != null) {
+          indexOfLastRest = timerEntries.indexOf(lastRestEntry);
+        }
+      }
+    }
+    return indexOfLastRest != null ? timerTaskIndex == indexOfLastRest : false;
   }
 
   navigateToSegmentWithoutRecording() {
@@ -788,7 +803,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           context,
           [
             Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   OlukoLocalizations.get(context, 'videoIsStillProcessing'),
                   textAlign: TextAlign.center,
@@ -798,6 +813,8 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           showExitButton: true);
     } else {
       BottomDialogUtils.showBottomDialog(
+        backgroundTapEnable: false,
+        onDismissAction: () => _resume(),
         context: context,
         content: CoachRequestContent(
           name: widget.coach?.firstName ?? '',
@@ -807,6 +824,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             _playTask();
           },
           onRecordingAction: navigateToSegmentWithRecording,
+          isNotification: false,
         ),
       );
     }
@@ -828,7 +846,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
-  void _goToNextStep() {
+  Future<void> _goToNextStep() async {
     if (alertTimer != null) {
       alertTimer.cancel();
     }
@@ -864,10 +882,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             .update(_user.uid, timerEntries[timerTaskIndex].round / widget.segments[widget.segmentIndex].rounds, _friends);
       }
     }
-    if (isLastRestBeforeRecording()) {
-      print('++++++++++++ LAST REST ++++++++++++++++++');
-    }
-    if (widget.coachRequest != null && isLastOne()) {
+    if ((isLastRestBeforeRecording() && !recordingNotificationIsShow) && widget.coachRequest != null) {
+      await recordingNotification();
+    } else if (widget.coachRequest != null && isLastOne()) {
       askForRecordSegment();
     } else {
       _playTask();
@@ -892,6 +909,32 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         cameraController?.dispose();
       });
     }
+  }
+
+  Future<void> recordingNotification() async {
+    setPaused();
+    setState(() {
+      recordingNotificationIsShow = true;
+    });
+
+    BottomDialogUtils.showBottomDialog(
+      context: context,
+      backgroundTapEnable: false,
+      onDismissAction: () => _resume(),
+      content: CoachRequestContent(
+        name: widget.coach?.firstName ?? '',
+        image: widget.coach?.avatar,
+        onNotificationDismiss: () {
+          setState(() {
+            recordingNotificationIsShow = true;
+          });
+          Navigator.pop(context);
+          _resume();
+        },
+        isNotification: true,
+      ),
+    );
+    await _soundPlayer.playAsset(asset: _recordingNotificationSound, headsetState: _headsetState, isForWatch: true);
   }
 
   bool currentRoundDifferentToNextRound() {
@@ -1177,8 +1220,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   void setPaused() {
-    lastWorkStateBeforePause = workState;
-    workState = WorkState.paused;
+    setState(() {
+      lastWorkStateBeforePause = workState;
+      workState = WorkState.paused;
+    });
   }
 
   @override

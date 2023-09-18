@@ -482,6 +482,9 @@
     "maxWeights": "Max Weights",
     "delete": "Delete",
     "voiceAnnotation": "Voice Annotation",
-    "personalRecordRequired": "Please enter your PR"
+    "personalRecordRequired": "Please enter your PR",
+    "segmentNotificationTimerEnd": "At the end of the timer,",
+    "segmentNotificationRequestRecordMessage": "will request that you record this segment"
+    
 
 }

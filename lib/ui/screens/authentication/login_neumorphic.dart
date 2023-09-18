@@ -397,7 +397,7 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
                 ),
                 Text(
                   OlukoLocalizations.get(context, 'continueWithGoogle'),
-                  style: const TextStyle(color: OlukoColors.grayColor),
+                  style: const TextStyle(color: OlukoColors.black),
                 )
               ],
             ),
@@ -433,22 +433,22 @@ class _LoginPageState extends State<LoginNeumorphicPage> {
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.black),
+                    backgroundColor: MaterialStateProperty.all<Color>(OlukoColors.white),
                   ),
                   onPressed: () => BlocProvider.of<AuthBloc>(context).continueWithApple(context),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/login/apple-logo.png',
-                        width: 18,
+                      const Icon(
+                        IconData(0xf04be, fontFamily: 'MaterialIcons'),
+                        size: 24,
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
                         OlukoLocalizations.get(context, 'continueWithApple'),
-                        style: const TextStyle(color: OlukoColors.white),
+                        style: const TextStyle(color: OlukoColors.black),
                       )
                     ],
                   ),
