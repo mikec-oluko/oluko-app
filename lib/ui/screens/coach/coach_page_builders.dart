@@ -13,12 +13,14 @@ import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_video_message_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_helper_functions.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/coach_user.dart';
@@ -48,6 +50,7 @@ List<CoachTimelineItem> _timelineItemsContent = [];
 List<CoachRecommendationDefault> _coachRecommendationList = [];
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<CoachTimelineGroup> _timelinePanelContent = [];
+Assessment _assessment;
 
 class _CoachPageBuildersState extends State<CoachPageBuilders> {
   @override
@@ -111,9 +114,18 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
                       coachRecommendationBuild(coachRecommendationState);
                       _timelineContentBuilding(context);
                       BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
-                      return CoachPageView(
-                        currentAuthUser: _currentAuthUser,
-                        coachUser: _coachUser,
+                      return BlocListener<AssessmentBloc, AssessmentState>(
+                        listener: (context, assessmentState) {
+                          if (assessmentState is AssessmentSuccess) {
+                            _assessment = assessmentState.assessment;
+                            BlocProvider.of<TaskBloc>(context).get(_assessment);
+                          }
+                        },
+                        child: CoachPageView(
+                          currentAuthUser: _currentAuthUser,
+                          coachUser: _coachUser,
+                          coachRecommendationList: _coachRecommendationList,
+                        ),
                       );
                     },
                   );
