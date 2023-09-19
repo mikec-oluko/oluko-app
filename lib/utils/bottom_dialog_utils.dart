@@ -19,8 +19,15 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class BottomDialogUtils {
-  static showBottomDialog({BuildContext context, Widget content, bool isScrollControlled = false, bool barrierColor = true, Function() onDismissAction}) {
+  static showBottomDialog(
+      {BuildContext context,
+      Widget content,
+      bool isScrollControlled = false,
+      bool barrierColor = true,
+      Function() onDismissAction,
+      bool backgroundTapEnable = true}) {
     showModalBottomSheet(
+            isDismissible: backgroundTapEnable ?? true,
             barrierColor: barrierColor ? null : Colors.transparent,
             context: context,
             builder: (BuildContext _) {
