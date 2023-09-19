@@ -14,7 +14,7 @@
 # update_fastlane
 
 default_platform(:android)
-ENV['SUPPLY_UPLOAD_MAX_RETRIES']='5'
+ENV['SUPPLY_UPLOAD_MAX_RETRIES']='10'
 
 platform :android do
   desc "Runs all the tests"
