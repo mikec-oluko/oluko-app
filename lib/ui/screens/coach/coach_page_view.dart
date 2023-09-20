@@ -17,12 +17,15 @@ import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
+import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/newDesignComponents/coach_carousel_content.dart';
 import 'package:oluko_app/ui/newDesignComponents/coach_horizontal_carousel.dart';
@@ -33,9 +36,21 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class CoachPageView extends StatefulWidget {
   UserResponse currentAuthUser;
   CoachUser coachUser;
+  CoachAssignment coachAssignment;
+  Annotation introductionVideo;
+  Assessment assessment;
   List<CoachTimelineGroup> coachTimelineContent;
   List<CoachRecommendationDefault> coachRecommendationList;
-  CoachPageView({Key key, this.currentAuthUser, this.coachUser, this.coachTimelineContent, this.coachRecommendationList}) : super(key: key);
+  CoachPageView(
+      {Key key,
+      this.currentAuthUser,
+      this.coachUser,
+      this.coachAssignment,
+      this.introductionVideo,
+      this.assessment,
+      this.coachTimelineContent,
+      this.coachRecommendationList})
+      : super(key: key);
 
   @override
   State<CoachPageView> createState() => _CoachPageViewState();
@@ -69,7 +84,7 @@ class _CoachPageViewState extends State<CoachPageView> {
       builder: (context, annotationsState) {
         if (annotationsState is CoachMentoredVideosSuccess) {
           _annotationVideosList = annotationsState.mentoredVideos.where((mentoredVideo) => mentoredVideo.video != null).toList();
-          // _addCoachAssignmentVideo();
+          _addCoachAssignmentVideo();
         }
         if (annotationsState is CoachMentoredVideosUpdate) {
           _annotationVideosList = CoachHelperFunctions.checkAnnotationUpdate(annotationsState.mentoredVideos, _annotationVideosList);
@@ -125,13 +140,13 @@ class _CoachPageViewState extends State<CoachPageView> {
             return Column(
               children: [
                 _reviewsPendingSection(),
-                // _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
+                _notificationCarouselSection(context),
                 _getMentoredVideosSection(),
                 _getSentVideosSection(),
                 _getMessageVideosSection(),
                 _getRecommendedVideosSection(),
                 _getRecommendedMovementsSection(),
-                _getRecommendedCourseSection(), // _getRecommendedCourses(context),
+                _getRecommendedCourseSection(),
                 _defaultBottomSafeSpace()
               ],
             );
@@ -141,24 +156,11 @@ class _CoachPageViewState extends State<CoachPageView> {
     );
   }
 
-  Widget _getMentoredVideosSection() => CoachHelperFunctions.getMentoredVideos(context, _annotationVideosList, widget.currentAuthUser);
-
-  Widget _getMessageVideosSection() => CoachHelperFunctions.getMessageVideos(context, _coachVideoMessageList);
-
-  Widget _getRecommendedVideosSection() => CoachHelperFunctions.getRecommendedVideos(context, widget.coachRecommendationList);
-
-  Widget _getRecommendedMovementsSection() => CoachHelperFunctions.getRecommendedMovements(context, widget.coachRecommendationList);
-
-  Widget _getRecommendedCourseSection() => CoachHelperFunctions.getRecommendedCourses(context, widget.coachRecommendationList);
-
-  Widget _getSentVideosSection() => CoachHelperFunctions.getSendVideos(
-        context,
-        _sentVideosList,
-      );
-
-  CoachAppBar _getCoachAppBar(BuildContext context) => CoachAppBar(coachUser: widget.coachUser, currentUser: widget.currentAuthUser, onNavigationAction: () {}
-      // onNavigationAction: () =>
-      // !coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
+  CoachAppBar _getCoachAppBar(BuildContext context) => CoachAppBar(
+        coachUser: widget.coachUser,
+        currentUser: widget.currentAuthUser,
+        onNavigationAction: () =>
+            !widget.coachAssignment.introductionCompleted ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation() : () {},
       );
 
   Widget _reviewsPendingSection() {
@@ -194,6 +196,32 @@ class _CoachPageViewState extends State<CoachPageView> {
     );
   }
 
+  Widget _notificationCarouselSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: CoachCarouselSliderSection(
+        contentForCarousel: _carouselNotificationWidget(context).isNotEmpty ? _carouselNotificationWidget(context) : [],
+        introductionCompleted: widget.coachAssignment.introductionCompleted,
+        introductionVideo: widget.assessment.video,
+      ),
+    );
+  }
+
+  Widget _getMentoredVideosSection() => CoachHelperFunctions.getMentoredVideos(context, _annotationVideosList, widget.currentAuthUser);
+
+  Widget _getSentVideosSection() => CoachHelperFunctions.getSendVideos(
+        context,
+        _sentVideosList,
+      );
+
+  Widget _getMessageVideosSection() => CoachHelperFunctions.getMessageVideos(context, _coachVideoMessageList);
+
+  Widget _getRecommendedVideosSection() => CoachHelperFunctions.getRecommendedVideos(context, widget.coachRecommendationList);
+
+  Widget _getRecommendedMovementsSection() => CoachHelperFunctions.getRecommendedMovements(context, widget.coachRecommendationList);
+
+  Widget _getRecommendedCourseSection() => CoachHelperFunctions.getRecommendedCourses(context, widget.coachRecommendationList);
+
   void _pendingReviewProcess() => _sentVideosList.forEach((sentVideo) {
         segmentsWithReview = CoachHelperFunctions.checkPendingReviewsForSentVideos(
             sentVideo: sentVideo, annotationVideosContent: _annotationVideosList, segmentsWithReview: segmentsWithReview);
@@ -201,8 +229,16 @@ class _CoachPageViewState extends State<CoachPageView> {
   void _updateReviewPendingOnCoachAppBar(BuildContext context) => BlocProvider.of<CoachReviewPendingBloc>(context).updateReviewPendingMessage(
         _sentVideosList != null && segmentsWithReview != null ? _sentVideosList.length - segmentsWithReview.length : 0,
       );
-  //  void _addCoachAssignmentVideo() => _annotationVideosList = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosList, _introductionVideo);
+  void _addCoachAssignmentVideo() => _annotationVideosList = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosList, widget.introductionVideo);
   SizedBox _defaultBottomSafeSpace() => const SizedBox(
         height: hideAssessmentsTab ? 220 : 200,
       );
+  List<Widget> _carouselNotificationWidget(BuildContext context) => CoachHelperFunctions.notificationPanel(
+      context: context,
+      assessment: widget.assessment,
+      coachAssignment: widget.coachAssignment,
+      annotationVideos: _annotationVideosList,
+      coachRecommendations: widget.coachRecommendationList,
+      coachVideoMessages: _coachVideoMessageList,
+      welcomeVideoUrl: _welcomeVideoUrl);
 }

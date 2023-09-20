@@ -125,6 +125,9 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
                           currentAuthUser: _currentAuthUser,
                           coachUser: _coachUser,
                           coachRecommendationList: _coachRecommendationList,
+                          assessment: _assessment,
+                          introductionVideo: _introductionVideo,
+                          coachAssignment: coachAssignment,
                         ),
                       );
                     },

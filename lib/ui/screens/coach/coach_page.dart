@@ -510,19 +510,13 @@ class _CoachPageState extends State<CoachPage> {
 
   List<Widget> _carouselNotificationWidget(BuildContext context) {
     return CoachHelperFunctions.notificationPanel(
-      context: context,
-      assessment: _assessment,
-      coachAssignment: coachAssignment,
-      annotationVideos: _annotationVideosList,
-      coachRecommendations: _coachRecommendationList,
-      coachVideoMessages: _coachVideoMessageList,
-      onCloseCard: () => BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment),
-      onOpenCard: () {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
-            arguments: {'videoUrl': _welcomeVideoUrl, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
-        BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment);
-      },
-    );
+        context: context,
+        assessment: _assessment,
+        coachAssignment: coachAssignment,
+        annotationVideos: _annotationVideosList,
+        coachRecommendations: _coachRecommendationList,
+        coachVideoMessages: _coachVideoMessageList,
+        welcomeVideoUrl: _welcomeVideoUrl);
   }
 
   void _addCoachAssignmentVideo() => _annotationVideosList = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosList, _introductionVideo);

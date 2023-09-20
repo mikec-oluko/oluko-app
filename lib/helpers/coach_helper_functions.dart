@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
@@ -243,14 +244,21 @@ class CoachHelperFunctions {
       @required List<CoachRecommendationDefault> coachRecommendations,
       @required List<Annotation> annotationVideos,
       @required List<CoachMediaMessage> coachVideoMessages,
-      @required Function() onOpenCard,
-      @required Function() onCloseCard}) {
+      @required String welcomeVideoUrl}) {
     List<Widget> carouselContent = [];
     List<CoachNotificationContent> contentForNotificationPanel = [];
 
     if (!coachAssignment.welcomeVideoSeen) {
       carouselContent.add(CoachNotificationVideoCard(
-          cardImage: assessment.videoThumbnail, fileType: CoachFileTypeEnum.welcomeVideo, onCloseCard: onCloseCard, onOpenCard: onOpenCard));
+        cardImage: assessment.videoThumbnail,
+        fileType: CoachFileTypeEnum.welcomeVideo,
+        onCloseCard: () => BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment),
+        onOpenCard: () {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo],
+              arguments: {'videoUrl': welcomeVideoUrl, 'titleForContent': OlukoLocalizations.of(context).find('welcomeVideo')});
+          BlocProvider.of<CoachAssignmentBloc>(context).welcomeVideoAsSeen(coachAssignment);
+        },
+      ));
     }
 
     if (coachRecommendations.isNotEmpty) {
