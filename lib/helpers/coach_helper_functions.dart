@@ -32,7 +32,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'coach_recommendation_default.dart';
 
 class CoachHelperFunctions {
-  static double heightForVideoContent = 160;
+  static const double heightForVideoContent = 160;
+  static const double heightForCardContent = 240;
   static Annotation createWelcomeVideoFromCoachAssignment({CoachAssignment coachAssignment, String userId, String defaultIntroVideoId}) {
     if (coachAssignment.videoHLS != null ? true : (coachAssignment.video?.url != null ? true : coachAssignment.introductionVideo != null)) {
       return coachAssignment.userId == userId
@@ -347,6 +348,28 @@ class CoachHelperFunctions {
                 .toList(),
             titleForCarousel: OlukoLocalizations.of(context).find('recommendedMovements'),
             heightForCarousel: heightForVideoContent)
+        : const SizedBox.shrink();
+  }
+
+  static Widget getRecommendedCourses(BuildContext context, List<CoachRecommendationDefault> coachRecommendations) {
+    final List<CoachRecommendationDefault> recommededCourses =
+        CoachHelperFunctions.getRecommendedContentByType(coachRecommendations, TimelineInteractionType.course, [], onlyContent: true);
+    return recommededCourses.isNotEmpty
+        ? coachTabCarouselComponent(context, viewAllTapAction: () {
+            BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+            Navigator.pushNamed(context, routeLabels[RouteEnum.coachRecommendedContentGallery],
+                arguments: {'recommendedContent': recommededCourses, 'titleForAppBar': OlukoLocalizations.of(context).find('recommendedCourses')});
+          },
+            contentForCarousel: recommededCourses
+                .map((recommendedCourse) => CoachCarouselContent(
+                      contentImage: recommendedCourse.contentImage,
+                      isForPosterContent: true,
+                      onTapContent: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                          arguments: {'course': recommendedCourse.courseContent, 'fromCoach': true, 'isCoachRecommendation': true}),
+                    ))
+                .toList(),
+            titleForCarousel: OlukoLocalizations.of(context).find('recommendedCourses'),
+            heightForCarousel: heightForCardContent)
         : const SizedBox.shrink();
   }
 

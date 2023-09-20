@@ -47,20 +47,19 @@ List<Annotation> _annotationVideosList = [];
 List<SegmentSubmission> _sentVideosList = [];
 List<SegmentSubmission> segmentsWithReview = [];
 List<CoachMediaMessage> _coachVideoMessageList = [];
+const bool hideAssessmentsTab = true;
 
 class _CoachPageViewState extends State<CoachPageView> {
   @override
   Widget build(BuildContext context) {
-    return CoachSlidingUpPanel(
-      content: Scaffold(
-        appBar: _getCoachAppBar(context),
-        body: CoachSlidingUpPanel(
-          content: coachTabBodyComponent(),
-          timelineItemsContent: widget.coachTimelineContent,
-          isIntroductionVideoComplete: true,
-          currentUser: widget.currentAuthUser,
-          onCurrentUserSelected: () => BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: widget.coachTimelineContent),
-        ),
+    return Scaffold(
+      appBar: _getCoachAppBar(context),
+      body: CoachSlidingUpPanel(
+        content: coachTabBodyComponent(),
+        timelineItemsContent: widget.coachTimelineContent,
+        isIntroductionVideoComplete: true,
+        currentUser: widget.currentAuthUser,
+        onCurrentUserSelected: () => BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: widget.coachTimelineContent),
       ),
     );
   }
@@ -100,32 +99,7 @@ class _CoachPageViewState extends State<CoachPageView> {
                           AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'audioMessageFailed'));
                         }
                       },
-                      child: Container(
-                        color: OlukoNeumorphismColors.appBackgroundColor,
-                        child: Theme(
-                          data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent)),
-                          child: ListView.builder(
-                            physics: OlukoNeumorphism.listViewPhysicsEffect,
-                            addAutomaticKeepAlives: false,
-                            addRepaintBoundaries: false,
-                            itemCount: 1,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Column(
-                                children: [
-                                  _reviewsPendingSection(),
-                                  // _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
-                                  _getMentoredVideosSection(),
-                                  _getSentVideosSection(),
-                                  _getMessageVideosSection(),
-                                  _getRecommendedVideosSection(),
-                                  _getRecommendedMovementsSection(), // _getRecommendedCourses(context),
-                                  // _defaultBottomSafeSpace()
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                      child: coachTabBodyContent(context),
                     );
                   },
                 );
@@ -137,6 +111,36 @@ class _CoachPageViewState extends State<CoachPageView> {
     );
   }
 
+  Container coachTabBodyContent(BuildContext context) {
+    return Container(
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      child: Theme(
+        data: Theme.of(context).copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent)),
+        child: ListView.builder(
+          physics: OlukoNeumorphism.listViewPhysicsEffect,
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
+          itemCount: 1,
+          itemBuilder: (BuildContext context, int index) {
+            return Column(
+              children: [
+                _reviewsPendingSection(),
+                // _notificationPanelSection(carouselNotificationWidgetList, coachCarouselSliderSection),
+                _getMentoredVideosSection(),
+                _getSentVideosSection(),
+                _getMessageVideosSection(),
+                _getRecommendedVideosSection(),
+                _getRecommendedMovementsSection(),
+                _getRecommendedCourseSection(), // _getRecommendedCourses(context),
+                _defaultBottomSafeSpace()
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _getMentoredVideosSection() => CoachHelperFunctions.getMentoredVideos(context, _annotationVideosList, widget.currentAuthUser);
 
   Widget _getMessageVideosSection() => CoachHelperFunctions.getMessageVideos(context, _coachVideoMessageList);
@@ -144,6 +148,8 @@ class _CoachPageViewState extends State<CoachPageView> {
   Widget _getRecommendedVideosSection() => CoachHelperFunctions.getRecommendedVideos(context, widget.coachRecommendationList);
 
   Widget _getRecommendedMovementsSection() => CoachHelperFunctions.getRecommendedMovements(context, widget.coachRecommendationList);
+
+  Widget _getRecommendedCourseSection() => CoachHelperFunctions.getRecommendedCourses(context, widget.coachRecommendationList);
 
   Widget _getSentVideosSection() => CoachHelperFunctions.getSendVideos(
         context,
@@ -196,4 +202,7 @@ class _CoachPageViewState extends State<CoachPageView> {
         _sentVideosList != null && segmentsWithReview != null ? _sentVideosList.length - segmentsWithReview.length : 0,
       );
   //  void _addCoachAssignmentVideo() => _annotationVideosList = CoachHelperFunctions.addIntroVideoOnAnnotations(_annotationVideosList, _introductionVideo);
+  SizedBox _defaultBottomSafeSpace() => const SizedBox(
+        height: hideAssessmentsTab ? 220 : 200,
+      );
 }
