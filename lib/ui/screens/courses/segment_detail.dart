@@ -96,6 +96,7 @@ class SegmentDetail extends StatefulWidget {
 class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
   int currentSegmentStep;
+  int segmentIndexSelected;
   int totalSegmentStep;
   int totalSegments;
   bool hasCourseStructureDiscrepancies = false;
@@ -129,6 +130,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     _coachRequests = [];
     segmentIndexToUse = widget.segmentIndex;
     currentSegmentStep = widget.segmentIndex + 1;
+    segmentIndexSelected = segmentIndexToUse;
     dotsIndex = ValueNotifier(currentSegmentStep);
     panelState = ValueNotifier(showLowerWidgets);
     totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
@@ -358,6 +360,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     onPageChanged: (index, reason) {
                       final SegmentImageSection imageSection = carouselWidgets.firstWhere((element) => element.currentSegmentStep == dotsIndex.value);
                       dotsIndex.value = index + 1;
+                      segmentIndexSelected = dotsIndex.value - 1;
                       imageSection.changeVideoState();
                       if (widget.classSegments[index].isChallenge) {
                         _canStartSegment = canStartSegment(_segments);
@@ -553,8 +556,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   navigateToSegmentWithoutRecording() async {
-    if ((nextIsLastOne() && widget.classSegments[segmentIndexToUse].rounds == 1) &&
-        getSegmentCoachRequest(widget.classSegments[currentSegmentStep - 1].id) != null) {
+    if ((nextIsLastOne() && widget.classSegments[segmentIndexSelected].rounds == 1) &&
+        getSegmentCoachRequest(widget.classSegments[segmentIndexSelected].id) != null) {
       BottomDialogUtils.showBottomDialog(
         backgroundTapEnable: false,
         context: context,
@@ -563,7 +566,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           image: _coach?.avatar,
           onNotificationDismiss: () {
             Navigator.pop(context);
-            TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexToUse].initialTimer);
+            TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexSelected].initialTimer);
             BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
           },
           isNotification: true,
@@ -571,14 +574,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
       );
       await SoundPlayer().playAsset(asset: _recordingNotificationSound, isForWatch: true);
     } else {
-      TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexToUse].initialTimer);
+      TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.classSegments[segmentIndexSelected].initialTimer);
       BlocProvider.of<CoachRequestStreamBloc>(context).resolve(_coachRequest, widget.courseEnrollment.userId, RequestStatusEnum.ignored);
     }
   }
 
   bool nextIsLastOne() {
-    SegmentUtils.getExercisesList(widget.classSegments[dotsIndex.value - 1]);
-    return widget.classSegments[segmentIndexToUse].sections.length == SegmentUtils.getExercisesList(widget.classSegments[dotsIndex.value - 1]).length - 1;
+    SegmentUtils.getExercisesList(widget.classSegments[segmentIndexSelected]);
+    return widget.classSegments[segmentIndexSelected].sections.length == SegmentUtils.getExercisesList(widget.classSegments[segmentIndexSelected]).length - 1;
   }
 
   Object getArguments() {
