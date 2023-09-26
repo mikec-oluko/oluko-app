@@ -14,6 +14,7 @@
 # update_fastlane
 
 default_platform(:android)
+ENV['SUPPLY_UPLOAD_MAX_RETRIES']='5'
 
 platform :android do
   desc "Runs all the tests"
@@ -27,7 +28,7 @@ platform :android do
     # gradle(task: "clean")
     sh "cd .. && cd .. && bash ./scripts.sh appbundle"
     # crashlytics
-    upload_to_play_store(track:"internal",
+    upload_to_play_store(track:"internal", 
     aab: "../build/app/outputs/bundle/release/app-release.aab", 
     rollout: "1")
     upload_to_play_store(track:"internal",track_promote_to:"alpha", skip_upload_aab:true, skip_upload_apk:true,
