@@ -17,11 +17,13 @@ class Permissions {
         return false;
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (Platform.isAndroid && androidInfo.version.sdkInt <= 32) {
-        await Permission.storage.request();
-        if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
-          return false;
+      if (Platform.isAndroid) {
+        final androidInfo = await DeviceInfoPlugin().androidInfo;
+        if (androidInfo.version.sdkInt <= 32) {
+          await Permission.storage.request();
+          if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
+            return false;
+          }
         }
       } else {
         await Permission.photos.request();
@@ -33,8 +35,7 @@ class Permissions {
     return true;
   }
 
-  static Future<void> askForPermissions(
-      {bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true}) async {
+  static Future<void> askForPermissions({bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true}) async {
     if (checkCamera) {
       await Permission.camera.request();
     }
