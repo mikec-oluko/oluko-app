@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_messages_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
@@ -15,7 +12,6 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_helper_functions.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
-import 'package:oluko_app/helpers/video_player_helper.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
@@ -23,12 +19,9 @@ import 'package:oluko_app/models/coach_media_message.dart';
 import 'package:oluko_app/models/coach_user.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
-import 'package:oluko_app/ui/newDesignComponents/coach_carousel_content.dart';
-import 'package:oluko_app/ui/newDesignComponents/coach_horizontal_carousel.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -89,12 +82,19 @@ class _CoachPageViewState extends State<CoachPageView> {
         if (annotationsState is CoachMentoredVideosUpdate) {
           _annotationVideosList = CoachHelperFunctions.checkAnnotationUpdate(annotationsState.mentoredVideos, _annotationVideosList);
         }
+        if (annotationsState is CoachMentoredVideosDispose) {
+          _annotationVideosList = annotationsState.mentoredVideosDisposeValue;
+          segmentsWithReview.clear();
+        }
         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
           builder: (context, sentVideosState) {
             if (sentVideosState is CoachSentVideosSuccess) {
               _sentVideosList = sentVideosState.sentVideos.where((sentVideo) => sentVideo.video != null && sentVideo.coachId == widget.coachUser.id).toList();
               _pendingReviewProcess();
               _updateReviewPendingOnCoachAppBar(context);
+            }
+            if (sentVideosState is CoachSentVideosDispose) {
+              _sentVideosList = sentVideosState.sentVideosDisposeValue;
             }
             return BlocBuilder<CoachVideoMessageBloc, CoachVideoMessageState>(
               builder: (context, coachVideoMessageState) {
@@ -202,7 +202,7 @@ class _CoachPageViewState extends State<CoachPageView> {
       child: CoachCarouselSliderSection(
         contentForCarousel: _carouselNotificationWidget(context).isNotEmpty ? _carouselNotificationWidget(context) : [],
         introductionCompleted: widget.coachAssignment.introductionCompleted,
-        introductionVideo: widget.assessment.video,
+        introductionVideo: widget.assessment?.video,
       ),
     );
   }

@@ -84,12 +84,11 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
   }
 
   void _requestCurrentUserData(BuildContext context, {String userId, String coachId}) {
-    // BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(userId);
+    BlocProvider.of<AssessmentBloc>(context).getById(_globalService.getAssessmentId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(userId, coachId);
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachId ?? widget.coachAssignment.coachId);
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(userId, coachId);
     BlocProvider.of<CoachVideoMessageBloc>(context).getStream(userId: userId, coachId: coachId);
-    BlocProvider.of<AssessmentBloc>(context).getById(_globalService.getAssessmentId);
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userId);
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(userId);
   }
@@ -169,7 +168,11 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
       _timelineItemsContent = CoachHelperFunctions.checkTimelineItemsUpdate(state.timelineItems, _timelineItemsContent);
     }
     if (state is CoachTimelineItemsDispose) {
-      // _disposeView(state);
+      _timelineItemsContent = state.timelineItemsDisposeValue;
+      _timelinePanelContent.clear();
+      _coachRecommendationList.clear();
+      _timelinePanelContent.clear();
+      _introductionVideo ??= CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(coachAssignment: coachAssignment, userId: widget.userId);
     }
   }
 
