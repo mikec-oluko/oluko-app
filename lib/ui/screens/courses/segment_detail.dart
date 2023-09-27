@@ -612,7 +612,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Object getArguments() {
     return {
-      'segmentIndex': dotsIndex.value - 1,
+      'segmentIndex': segmentIndexSelected,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
       'courseIndex': widget.courseIndex,
@@ -724,7 +724,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 coachRequest.courseEnrollmentId == widget.courseEnrollment.id &&
                 coachRequest.classId == widget.courseEnrollment.classes[widget.classIndex].id))
         .toList();
-    _coachRequest = getSegmentCoachRequest(widget.classSegments[currentSegmentStep - 1].id);
+    _coachRequest = getSegmentCoachRequest(widget.classSegments[segmentIndexSelected].id);
   }
 
   void onPressedAction() {
