@@ -8,7 +8,6 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_butt
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PushNotificationService {
   static FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -16,7 +15,7 @@ class PushNotificationService {
   static bool bottomDialogDisplayed = false;
 
   static Future<void> initializePushNotifications(BuildContext context, String userId) async {
-    await Permission.notification.request();
+    await messaging.requestPermission();
     final String token = await messaging.getToken();
     BlocProvider.of<UserBloc>(context).saveToken(userId, token);
   }
