@@ -1256,7 +1256,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void setPaused() {
     setState(() {
-      lastWorkStateBeforePause = workState;
+      if (workState != WorkState.paused) {
+        lastWorkStateBeforePause = workState;
+      }
       workState = WorkState.paused;
     });
   }
@@ -1370,7 +1372,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _resume() {
     setState(() {
-      workState = lastWorkStateBeforePause;
+      workState = isCurrentMovementRest() ? WorkState.resting : lastWorkStateBeforePause;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });
