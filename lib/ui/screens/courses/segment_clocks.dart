@@ -798,36 +798,21 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   askForRecordSegment() {
-    if (_globalService.videoProcessing) {
-      DialogUtils.getDialog(
-          context,
-          [
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                  textAlign: TextAlign.center,
-                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                ))
-          ],
-          showExitButton: true);
-    } else {
-      BottomDialogUtils.showBottomDialog(
-        backgroundTapEnable: false,
-        onDismissAction: () => _resume(),
-        context: context,
-        content: CoachRequestContent(
-          name: widget.coach?.firstName ?? '',
-          image: widget.coach?.avatar,
-          onNotRecordingAction: () {
-            Navigator.pop(context);
-            _playTask();
-          },
-          onRecordingAction: navigateToSegmentWithRecording,
-          isNotification: false,
-        ),
-      );
-    }
+    BottomDialogUtils.showBottomDialog(
+      backgroundTapEnable: false,
+      onDismissAction: () => _resume(),
+      context: context,
+      content: CoachRequestContent(
+        name: widget.coach?.firstName ?? '',
+        image: widget.coach?.avatar,
+        onNotRecordingAction: () {
+          Navigator.pop(context);
+          _playTask();
+        },
+        onRecordingAction: navigateToSegmentWithRecording,
+        isNotification: false,
+      ),
+    );
   }
 
   navigateToSegmentWithRecording() {
@@ -1221,7 +1206,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void setPaused() {
     setState(() {
-      lastWorkStateBeforePause = workState;
+      if (workState != WorkState.paused) {
+        lastWorkStateBeforePause = workState;
+      }
       workState = WorkState.paused;
     });
   }
@@ -1335,7 +1322,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _resume() {
     setState(() {
-      workState = lastWorkStateBeforePause;
+      workState = isCurrentMovementRest() ? WorkState.resting : lastWorkStateBeforePause;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });

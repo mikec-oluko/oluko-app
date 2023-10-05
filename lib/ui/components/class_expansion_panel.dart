@@ -41,18 +41,14 @@ class _State extends State<ClassExpansionPanels> {
 
   @override
   void initState() {
-    _classItems = generateClassItems();
-    _subClassItems = generateSubClassItems();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (OlukoNeumorphism.isNeumorphismDesign) {
-      return expansionPanelNeumorphic();
-    } else {
-      return expansionPanel();
-    }
+    _classItems = generateClassItems();
+    _subClassItems = generateSubClassItems();
+    return expansionPanelNeumorphic();
   }
 
   Widget expansionPanel() {
