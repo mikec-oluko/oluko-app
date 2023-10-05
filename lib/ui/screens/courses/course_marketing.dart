@@ -154,7 +154,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         if (classState is ClassSubscriptionSuccess) {
           _classes = classState.classes;
           _allCourseClasses = CourseService.getCourseClasses(_classes, course: widget.course);
-          _getMoreClasses();
+          getFirstChunk();
           return Form(
               key: _formKey,
               child: Scaffold(body: OlukoNeumorphism.isNeumorphismDesign ? neumorphicMarketingView(enrollmentState) : defaultMarketingView(context)));
@@ -230,7 +230,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
     return Container(
       color: OlukoNeumorphismColors.finalGradientColorDark,
       child: CustomScrollView(
-        physics: const ClampingScrollPhysics(),
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         controller: _scrollController,
         slivers: [
           SliverStack(positionedAlignment: Alignment.bottomRight, children: [
@@ -616,23 +616,40 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   void _scrollCotrollerInit() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels > _pixelsToReload * 0.85) {
+      if (_scrollController.position.atEdge) {
         if (_growingClassList.length != _allCourseClasses.length) {
-          _getMoreClasses();
-          _pixelsToReload += _scrollController.position.extentInside;
-          setState(() {});
+          setState(() {
+            _getMoreClasses();
+            _pixelsToReload += _scrollController.position.extentInside;
+          });
         }
       }
     });
   }
 
-  void _getMoreClasses() => _growingClassList = _allCourseClasses.isNotEmpty
-      ? [
-          ..._allCourseClasses.getRange(
-              0,
-              _allCourseClasses.length > _growingClassList.length + _batchClassMaxRange
-                  ? _growingClassList.length + _batchClassMaxRange
-                  : _allCourseClasses.length)
-        ]
-      : [];
+  void _getMoreClasses() {
+    if (_allCourseClasses.length > _growingClassList.length) {
+      if (_allCourseClasses.length >= (_growingClassList.length + _batchClassMaxRange)) {
+        setState(() {
+          _growingClassList.addAll(_allCourseClasses.getRange(_growingClassList.length, _growingClassList.length + _batchClassMaxRange));
+        });
+      } else {
+        setState(() {
+          _growingClassList.addAll(_allCourseClasses.getRange(_growingClassList.length, _allCourseClasses.length));
+        });
+      }
+    } else {
+      setState(() {
+        _growingClassList = _allCourseClasses;
+      });
+    }
+  }
+
+  void getFirstChunk() {
+    if (_allCourseClasses.isNotEmpty) {
+      if (_growingClassList.isEmpty && (_batchClassMaxRange <= _allCourseClasses.length)) {
+        _growingClassList = _allCourseClasses.getRange(0, _batchClassMaxRange).toList();
+      }
+    }
+  }
 }

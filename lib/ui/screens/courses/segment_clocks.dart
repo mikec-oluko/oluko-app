@@ -833,36 +833,21 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   askForRecordSegment() {
-    if (_globalService.videoProcessing) {
-      DialogUtils.getDialog(
-          context,
-          [
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                  textAlign: TextAlign.center,
-                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                ))
-          ],
-          showExitButton: true);
-    } else {
-      BottomDialogUtils.showBottomDialog(
-        backgroundTapEnable: false,
-        onDismissAction: () => _resume(),
-        context: context,
-        content: CoachRequestContent(
-          name: widget.coach?.firstName ?? '',
-          image: widget.coach?.avatar,
-          onNotRecordingAction: () {
-            Navigator.pop(context);
-            _playTask();
-          },
-          onRecordingAction: navigateToSegmentWithRecording,
-          isNotification: false,
-        ),
-      );
-    }
+    BottomDialogUtils.showBottomDialog(
+      backgroundTapEnable: false,
+      onDismissAction: () => _resume(),
+      context: context,
+      content: CoachRequestContent(
+        name: widget.coach?.firstName ?? '',
+        image: widget.coach?.avatar,
+        onNotRecordingAction: () {
+          Navigator.pop(context);
+          _playTask();
+        },
+        onRecordingAction: navigateToSegmentWithRecording,
+        isNotification: false,
+      ),
+    );
   }
 
   navigateToSegmentWithRecording() {
