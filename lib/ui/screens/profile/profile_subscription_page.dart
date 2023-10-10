@@ -290,7 +290,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
               style: TextStyle(color: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black),
             ),
             Text(
-              '/month',
+              '/${OlukoLocalizations.get(context, 'month')}',
               style: TextStyle(color: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black),
             ),
           ],
