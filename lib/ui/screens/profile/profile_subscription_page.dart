@@ -289,6 +289,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> with 
               '${_getCurrency(tabContent)} ${_getPrice(tabContent.applePrice.toString())}',
               style: TextStyle(color: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black),
             ),
+            Text(
+              '/${OlukoLocalizations.get(context, 'month')}',
+              style: TextStyle(color: _isCurrentPlan(state, tabContent) ? OlukoColors.white : OlukoColors.black),
+            ),
           ],
         ),
       ),
