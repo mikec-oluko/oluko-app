@@ -31,7 +31,7 @@ class VideoPlayerHelper {
 
   static VideoPlayerController videoPlayerControllerFromNetwork(String url) {
     assert(url != null);
-    return VideoPlayerController.network(url, videoPlayerOptions: VideoPlayerHelper.videoPlayerOptions);
+    return VideoPlayerController.networkUrl(Uri.parse(url), videoPlayerOptions: VideoPlayerHelper.videoPlayerOptions);
   }
 
   static String getVideoFromSourceActive({@required String videoHlsUrl, @required String videoUrl}) {

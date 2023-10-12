@@ -149,9 +149,11 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   void dispose() {
     Wakelock.disable();
     if (_controller != null) {
+      _controller.removeListener(() {});
       _controller.dispose();
     }
     if (chewieController != null) {
+      chewieController.removeListener(() {});
       chewieController.dispose();
     }
     super.dispose();
