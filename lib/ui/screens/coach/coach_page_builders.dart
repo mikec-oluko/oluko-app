@@ -103,7 +103,6 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
               if (coachAssignmentState is CoachAssignmentResponse) {
                 coachAssignment = coachAssignmentState.coachAssignmentResponse;
                 _setWelcomeVideo();
-                _insertWelcomeVideoOnTimeline(context);
               }
               return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
                 builder: (context, timelineItemsState) {
@@ -111,6 +110,7 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
                   return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
                     builder: (context, coachRecommendationState) {
                       coachRecommendationBuild(coachRecommendationState);
+                      _insertWelcomeVideoOnTimeline(context);
                       _timelineContentBuilding(context);
                       BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
                       return BlocListener<AssessmentBloc, AssessmentState>(
@@ -190,11 +190,13 @@ class _CoachPageBuildersState extends State<CoachPageBuilders> {
     );
   }
 
-  void _insertWelcomeVideoOnTimeline(BuildContext context) => _introductionVideo != null && _introductionVideo.video.url != null
-      ? _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
-          context: context,
-          timelineItems: _timelineItemsContent,
-          welcomeVideo: _introductionVideo,
-        )
-      : null;
+  void _insertWelcomeVideoOnTimeline(BuildContext context) {
+    if (_introductionVideo != null && _introductionVideo.video.url != null) {
+      _timelineItemsContent = CoachTimelineFunctions.addWelcomeVideoToTimeline(
+        context: context,
+        timelineItems: _timelineItemsContent,
+        welcomeVideo: _introductionVideo,
+      );
+    }
+  }
 }

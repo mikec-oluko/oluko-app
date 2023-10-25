@@ -409,11 +409,11 @@ class SegmentUtils {
     return parameter;
   }
 
-  static String getParamLabel(PersonalRecordParam parameter) {
+  static String getParamLabel(PersonalRecordParam parameter, {bool isMinutes = false}) {
     String label = "";
     switch (parameter) {
       case PersonalRecordParam.duration:
-        label = 's';
+        label = isMinutes ? 'm' : 's';
         break;
       case PersonalRecordParam.reps:
         label = 'reps';

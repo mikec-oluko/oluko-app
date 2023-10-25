@@ -83,7 +83,10 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 _timelineHeaderSafeSpace,
                 if (_friendUsersList.isNotEmpty && _showTimelineFriends) _timelineFriendsListSection(context) else const SizedBox.shrink(),
                 _timelineTabsSection(context),
-                _timelineListContentSection()
+                _timelineListContentSection(),
+                Container(
+                  height: 50,
+                )
               ],
             );
           },
@@ -445,7 +448,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.mentoredVideosForNavigation,
+                    'videoUrl': content.mentoredVideosForNavigation.first.videoHLS ?? content.mentoredVideosForNavigation.first.video?.url,
                     'titleForContent': OlukoLocalizations.of(context).find('introductionVideo')
                   });
                 },
