@@ -484,7 +484,9 @@
     "voiceAnnotation": "Voice Annotation",
     "personalRecordRequired": "Please enter your PR",
     "segmentNotificationTimerEnd": "At the end of the timer,",
-    "segmentNotificationRequestRecordMessage": "will request that you record this segment"
+    "segmentNotificationRequestRecordMessage": "will request that you record this segment",
+    "month": "month"
+    
     
 
 }
