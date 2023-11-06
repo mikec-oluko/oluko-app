@@ -17,8 +17,10 @@ class SubscribedCourseUsersLoading extends SubscribedCourseUsersState {}
 
 class SubscribedCourseUsersSuccess extends SubscribedCourseUsersState {
   final List<UserResponse> users;
-  final List<UserResponse> favoriteUsers;
-  SubscribedCourseUsersSuccess({this.users, this.favoriteUsers});
+  // final List<UserResponse> favoriteUsers;
+  // final List<UserResponse> favoriteUsers;
+  // SubscribedCourseUsersSuccess({this.users, this.favoriteUsers});
+  SubscribedCourseUsersSuccess({this.users});
 }
 
 class SubscribedCourseUsersFailure extends SubscribedCourseUsersState {
@@ -37,31 +39,34 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       final List<UserResponse> uniqueUserList = [];
       final List<UserResponse> favoriteUserList = [];
       List<UserResponse> userListToShow = [];
+
       if (usersByCourse != null && usersByCourse.isNotEmpty) {
         for (final userSubscribed in usersByCourse) {
           if (!uniqueUserList.any((user) => user.id == userSubscribed.id)) {
             uniqueUserList.add(userSubscribed);
           }
         }
-        usersByCourse = [];
-        final Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-        final List<FriendModel> friends = friendData?.friends;
+        // usersByCourse = [];
+        usersByCourse.clear();
+        // final Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
+        // final List<FriendModel> friends = friendData?.friends;
 
         userListToShow = List.from(uniqueUserList);
 
-        if (friends != null) {
-          await Future.wait(
-            friends.map((friend) async {
-              final int index = userListToShow.indexWhere((user) => user.id == friend.id);
-              if (index != -1) {
-                favoriteUserList.add(userListToShow[index]);
-                userListToShow.removeAt(index);
-              }
-            }),
-          );
-        }
+        // if (friends != null) {
+        //   await Future.wait(
+        //     friends.map((friend) async {
+        //       final int index = userListToShow.indexWhere((user) => user.id == friend.id);
+        //       if (index != -1) {
+        //         favoriteUserList.add(userListToShow[index]);
+        //         userListToShow.removeAt(index);
+        //       }
+        //     }),
+        //   );
+        // }
       }
-      emit(SubscribedCourseUsersSuccess(users: userListToShow, favoriteUsers: favoriteUserList));
+      // emit(SubscribedCourseUsersSuccess(users: userListToShow, favoriteUsers: favoriteUserList));
+      emit(SubscribedCourseUsersSuccess(users: userListToShow));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

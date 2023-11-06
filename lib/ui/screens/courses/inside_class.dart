@@ -403,12 +403,13 @@ class _InsideClassesState extends State<InsideClass> {
         BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
           builder: (context, subscribedCourseUsersState) {
             if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
-              final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+              // final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
               final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
-              final int qty = favorites + normalUsers;
-              favoriteUsers = subscribedCourseUsersState.favoriteUsers;
+              // final int qty = favorites + normalUsers;
+              final int qty = normalUsers;
+              // favoriteUsers = subscribedCourseUsersState.favoriteUsers;
               return GestureDetector(
-                onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
+                onTap: () => _peopleAction(subscribedCourseUsersState.users, []),
                 child: OlukoTextComponent(
                   textContent: '$qty+',
                   textAlignment: TextAlign.center,
@@ -499,7 +500,7 @@ class _InsideClassesState extends State<InsideClass> {
               _contentForPanel = ModalPeopleEnrolled(
                 userId: widget.courseEnrollment.createdBy,
                 users: subscribedUsersState.users,
-                favorites: subscribedUsersState.favoriteUsers,
+                // favorites: subscribedUsersState.favoriteUsers,
                 userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                 userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
                 blocFavoriteFriend: BlocProvider.of<FavoriteFriendBloc>(context),
@@ -570,14 +571,15 @@ class _InsideClassesState extends State<InsideClass> {
     return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
       builder: (context, subscribedCourseUsersState) {
         if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
-          final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+          // final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
           final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
-          final int qty = favorites + normalUsers;
-          favoriteUsers = subscribedCourseUsersState.favoriteUsers;
+          final int qty = normalUsers;
+          // final int qty = favorites + normalUsers;
+          // favoriteUsers = subscribedCourseUsersState.favoriteUsers;
           return CourseInfoSection(
             onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
             peopleQty: qty,
-            onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
+            onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, []),
             audioMessageQty: _audioQty,
             image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
           );

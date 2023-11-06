@@ -53,6 +53,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/points_card_component.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
+import 'package:oluko_app/ui/newDesignComponents/active_people_component.dart';
 import 'package:oluko_app/ui/newDesignComponents/courses_and_people_section_for_home.dart';
 import 'package:oluko_app/ui/newDesignComponents/friends_recommended_courses.dart';
 import 'package:oluko_app/ui/newDesignComponents/my_list_of_courses_home.dart';
@@ -440,7 +441,16 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           }
           return Padding(
             padding: EdgeInsets.fromLTRB(20, _hasScheduledCourses ? 10 : 45, 20, 20),
-            child: _courseAndPeopleContent(context),
+            child: Column(
+              children: [
+                _courseAndPeopleContent(context),
+                ActiveNowUsers(
+                  courseEnrollments: _courseEnrollmentList,
+                  usersProgress: _usersProgress,
+                  courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
+                )
+              ],
+            ),
           );
         },
       );
@@ -450,7 +460,6 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   ) {
     return HomeCoursesAndPeople(
       courseEnrollments: _courseEnrollmentList,
-      usersProgress: _usersProgress,
       courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
       onCourseDeleted: (index) {
         setState(() {
