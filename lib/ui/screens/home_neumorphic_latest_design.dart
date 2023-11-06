@@ -135,14 +135,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentUserLatestVersion = state.user;
-          return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
-            builder: (context, state) {
-              if (state is CourseEnrollmentsByUserStreamSuccess) {
-                _courseEnrollmentList = state.courseEnrollments;
-              }
-              return getHomeContent(context);
-            },
-          );
+          return getHomeContent(context);
         } else {
           return OlukoCircularProgressIndicator();
         }

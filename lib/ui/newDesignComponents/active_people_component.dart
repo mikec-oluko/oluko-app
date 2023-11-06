@@ -54,7 +54,11 @@ class _ActiveNowUsersState extends State<ActiveNowUsers> {
             ],
           );
         } else {
-          return Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont());
+          return Row(
+            children: [
+              Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont()),
+            ],
+          );
         }
       },
     );

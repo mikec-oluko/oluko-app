@@ -7,58 +7,43 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileHelperFunctions {
   static List<ChallengeNavigation> getChallenges(List<CourseEnrollment> courseEnrollment) {
-    List<ChallengeNavigation> challengesForUser = [];
-    ChallengeNavigation newChallenge;
-    int classIndex;
-    int segmentIndex;
-    int courseIndex;
+    return courseEnrollment
+        .expand((courseEnrolled) => courseEnrolled.classes
+            .expand((enrolledClass) => enrolledClass.segments.where((enrolledSegment) => enrolledSegment.isChallenge).map((enrolledSegment) {
+                  int courseIndex = courseEnrollment.indexOf(courseEnrolled);
+                  int classIndex = courseEnrolled.classes.indexOf(enrolledClass);
+                  int segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
 
-    courseEnrollment.forEach((courseEnrolled) {
-      courseIndex = courseEnrollment.indexOf(courseEnrolled);
-      courseEnrolled.classes.forEach((enrolledClass) {
-        classIndex = courseEnrolled.classes.indexOf(enrolledClass);
-        enrolledClass.segments.forEach((enrolledSegment) {
-          segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
-          if (enrolledSegment.isChallenge == true) {
-            newChallenge = ChallengeNavigation(
-              enrolledCourse: courseEnrolled,
-              challengeSegment: enrolledSegment,
-              segmentIndex: segmentIndex,
-              segmentId: enrolledSegment.id,
-              classIndex: classIndex,
-              classId: enrolledClass.id,
-              courseIndex: courseIndex,
-              previousSegmentFinish:
-                  segmentIndex == 0 ? true : courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null,
-            );
-
-            if (challengesForUser.isEmpty) {
-              if (newChallenge != null) {
-                challengesForUser.add(newChallenge);
-              }
-            } else {
-              if (newChallenge != null) {
-                if (!challengesForUser.contains(newChallenge)) {
-                  challengesForUser.add(newChallenge);
-                }
-              }
-            }
-          }
-        });
-      });
-    });
-    return challengesForUser;
+                  return ChallengeNavigation(
+                    enrolledCourse: courseEnrolled,
+                    challengeSegment: enrolledSegment,
+                    segmentIndex: segmentIndex,
+                    segmentId: enrolledSegment.id,
+                    classIndex: classIndex,
+                    classId: enrolledClass.id,
+                    courseIndex: courseIndex,
+                    previousSegmentFinish: segmentIndex == 0 ? true : enrolledClass.segments[segmentIndex - 1].completedAt != null,
+                  );
+                }))
+            .toSet()
+            .toList())
+        .toList();
   }
 
   static List<ChallengeNavigation> getActiveChallenges(List<Challenge> challenges, List<ChallengeNavigation> segmentChallenges) {
-    segmentChallenges.forEach((segmentChallenge) {
-      challenges.forEach((activeChallenge) {
-        if (segmentChallenge.classId == activeChallenge.classId && segmentChallenge.segmentId == activeChallenge.segmentId) {
-          segmentChallenge.challengeForAudio = activeChallenge;
-          segmentChallenge.challengeSegment.image ??= activeChallenge.image;
-        }
-      });
-    });
+    Map<String, Challenge> challengeMap = {};
+    for (var activeChallenge in challenges) {
+      String key = '${activeChallenge.classId}_${activeChallenge.segmentId}';
+      challengeMap[key] = activeChallenge;
+    }
+    for (var segmentChallenge in segmentChallenges) {
+      String key = '${segmentChallenge.classId}_${segmentChallenge.segmentId}';
+      Challenge activeChallenge = challengeMap[key];
+      if (activeChallenge != null) {
+        segmentChallenge.challengeForAudio = activeChallenge;
+        segmentChallenge.challengeSegment.image ??= activeChallenge.image;
+      }
+    }
     return segmentChallenges;
   }
 

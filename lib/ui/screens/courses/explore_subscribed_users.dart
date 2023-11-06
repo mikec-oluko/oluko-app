@@ -82,22 +82,22 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       child: BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, subscribedCourseUsersState) {
         return Column(
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.only(bottom: 16.0),
-            //   child: Row(
-            //     children: [
-            //       TitleBody(OlukoLocalizations.get(context, "favorites")),
-            //     ],
-            //   ),
-            // ),
-            // if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
-            //   BlocListener<UserProgressStreamBloc, UserProgressStreamState>(
-            //       listener: (context, userProgressStreamState) {
-            //         blocConsumerCondition(userProgressStreamState);
-            //       },
-            //       child: usersGrid(subscribedCourseUsersState.favoriteUsers, true))
-            // else
-            //   const SizedBox(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Row(
+                children: [
+                  TitleBody(OlukoLocalizations.get(context, 'favorites')),
+                ],
+              ),
+            ),
+            if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
+              BlocListener<UserProgressStreamBloc, UserProgressStreamState>(
+                  listener: (context, userProgressStreamState) {
+                    blocConsumerCondition(userProgressStreamState);
+                  },
+                  child: usersGrid(subscribedCourseUsersState.favoriteUsers, true))
+            else
+              const SizedBox(),
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
