@@ -5,25 +5,25 @@ import 'package:oluko_app/ui/components/course_carousel_galery.dart';
 import 'package:oluko_app/ui/newDesignComponents/not_enrolled_component.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
-class HomeCoursesAndPeople extends StatefulWidget {
+class HomeCoursePosterSlider extends StatefulWidget {
   final List<CourseEnrollment> courseEnrollments;
   final int courseIndex;
   final Function(int) onCourseChange;
   final Function(int) onCourseTap;
   final Function(int) onCourseDeleted;
-  const HomeCoursesAndPeople({this.courseEnrollments, this.courseIndex, this.onCourseChange, this.onCourseTap, this.onCourseDeleted}) : super();
+  const HomeCoursePosterSlider({this.courseEnrollments, this.courseIndex, this.onCourseChange, this.onCourseTap, this.onCourseDeleted}) : super();
 
   @override
-  State<HomeCoursesAndPeople> createState() => _HomeCoursesAndPeopleState();
+  State<HomeCoursePosterSlider> createState() => _HomeCoursePosterSliderState();
 }
 
-class _HomeCoursesAndPeopleState extends State<HomeCoursesAndPeople> {
+class _HomeCoursePosterSliderState extends State<HomeCoursePosterSlider> {
   @override
   Widget build(BuildContext context) {
-    return widget.courseEnrollments.isEmpty ? const NotEnrolledComponent() : _courseAndPeopleContent(context);
+    return widget.courseEnrollments.isEmpty ? const NotEnrolledComponent() : _coursePosterSlider(context);
   }
 
-  Column _courseAndPeopleContent(
+  Column _coursePosterSlider(
     BuildContext context,
   ) {
     return Column(

@@ -145,16 +145,13 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           listener: (context, state) {
             if (state is NewPushNotification) {
               if (ModalRoute.of(context).settings.name != routeLabels[RouteEnum.root] || widget.tab != 1) {
-                if (state.type == 0){
+                if (state.type == 0) {
                   Navigator.pushNamed(
                     context,
                     routeLabels[RouteEnum.root],
-                    arguments: {
-                      'tab': state.type,
-                      'scrollToUpcomingWorkouts': true
-                    },
+                    arguments: {'tab': state.type, 'scrollToUpcomingWorkouts': true},
                   );
-                }else{
+                } else {
                   Navigator.pushNamed(
                     context,
                     routeLabels[RouteEnum.root],
@@ -185,11 +182,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       ],
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
-          BlocProvider.of<PointsCardBloc>(context).getUserCards(authState.user.id);
-          BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
-          BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
-          BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
           BlocProvider.of<UserPlanSubscriptionBloc>(context).getPlanSubscriptionStream(authState.user.id);
+          BlocProvider.of<CourseEnrollmentBloc>(context).getStream(authState.user.id);
+          BlocProvider.of<UserProgressStreamBloc>(context).getStream(authState.user.id);
+          BlocProvider.of<PointsCardBloc>(context).getUserCards(authState.user.id);
+          BlocProvider.of<NotificationBloc>(context).getStream(authState.user.id);
         }
         return BlocBuilder<AssessmentVisibilityBloc, AssessmentVisibilityState>(
           builder: (context, state) {
@@ -357,7 +354,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       _segmentSubmission = state.segmentSubmission;
       _segmentSubmission.video = state.video;
     });
-    // BlocProvider.of<SegmentSubmissionBloc>(context).updateVideo(_segmentSubmission);
     BlocProvider.of<SegmentSubmissionBloc>(context).saveSegmentSubmissionWithVideo(_segmentSubmission, state.coachRequest);
   }
 

@@ -437,11 +437,12 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
             child: Column(
               children: [
                 _courseAndPeopleContent(context),
-                ActiveNowUsers(
-                  courseEnrollments: _courseEnrollmentList,
-                  usersProgress: _usersProgress,
-                  courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
-                )
+                if (_courseEnrollmentList.isNotEmpty)
+                  ActiveNowUsers(
+                    courseEnrollments: _courseEnrollmentList,
+                    usersProgress: _usersProgress,
+                    courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
+                  )
               ],
             ),
           );
@@ -451,7 +452,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   Widget _courseAndPeopleContent(
     BuildContext context,
   ) {
-    return HomeCoursesAndPeople(
+    return HomeCoursePosterSlider(
       courseEnrollments: _courseEnrollmentList,
       courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
       onCourseDeleted: (index) {
