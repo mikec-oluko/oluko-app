@@ -434,17 +434,7 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
           }
           return Padding(
             padding: EdgeInsets.fromLTRB(20, _hasScheduledCourses ? 10 : 45, 20, 20),
-            child: Column(
-              children: [
-                _courseAndPeopleContent(context),
-                if (_courseEnrollmentList.isNotEmpty)
-                  ActiveNowUsers(
-                    courseEnrollments: _courseEnrollmentList,
-                    usersProgress: _usersProgress,
-                    courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
-                  )
-              ],
-            ),
+            child: _courseAndPeopleContent(context),
           );
         },
       );
@@ -452,28 +442,38 @@ class _HomeNeumorphicLatestDesignState extends State<HomeNeumorphicLatestDesign>
   Widget _courseAndPeopleContent(
     BuildContext context,
   ) {
-    return HomeCoursePosterSlider(
-      courseEnrollments: _courseEnrollmentList,
-      courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
-      onCourseDeleted: (index) {
-        setState(() {
-          _courseIndex = 0;
-        });
-      },
-      onCourseChange: (index) {
-        setState(() {
-          _courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
-        });
-        BlocProvider.of<SubscribedCourseUsersBloc>(context)
-            .getCourseStatisticsUsers(_courseEnrollmentList[_courseIndex].course.id, _courseEnrollmentList[_courseIndex].createdBy);
-      },
-      onCourseTap: (index) {
-        setState(() {
-          _courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
-        });
-        CourseHelper.navigateToCourseFirstClassToComplete(
-            context: context, courses: _courses, listOfCourseEnrollments: _courseEnrollmentList, currentCourseIndex: _courseIndex);
-      },
+    return Column(
+      children: [
+        HomeCoursePosterSlider(
+          courseEnrollments: _courseEnrollmentList,
+          courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
+          onCourseDeleted: (index) {
+            setState(() {
+              _courseIndex = 0;
+            });
+          },
+          onCourseChange: (index) {
+            setState(() {
+              _courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
+            });
+            BlocProvider.of<SubscribedCourseUsersBloc>(context)
+                .getCourseStatisticsUsers(_courseEnrollmentList[_courseIndex].course.id, _courseEnrollmentList[_courseIndex].createdBy);
+          },
+          onCourseTap: (index) {
+            setState(() {
+              _courseIndex = index > _courseEnrollmentList.length ? getIndexForLastCourse() : index;
+            });
+            CourseHelper.navigateToCourseFirstClassToComplete(
+                context: context, courses: _courses, listOfCourseEnrollments: _courseEnrollmentList, currentCourseIndex: _courseIndex);
+          },
+        ),
+        if (_courseEnrollmentList.isNotEmpty)
+          ActiveNowUsers(
+            courseEnrollments: _courseEnrollmentList,
+            usersProgress: _usersProgress,
+            courseIndex: _courseIndex > _courseEnrollmentList.length ? getIndexForLastCourse() : _courseIndex,
+          )
+      ],
     );
   }
 
