@@ -464,7 +464,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
                 segment: widget.segments[widget.segmentIndex],
                 onPressedMovement: () {
                   if (workState != WorkState.paused) {
-                    changeSegmentState();
+                    changeSegmentState(navigateToMovement: true);
                   }
                 }),
             body: _body(),
@@ -492,7 +492,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
-  void changeSegmentState() {
+  void changeSegmentState({bool navigateToMovement = false}) {
     final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
     setState(() {
       if (isPlaying) {
@@ -516,7 +516,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         }
         workState = lastWorkStateBeforePause;
         if (isCurrentTaskTimed) {
-          setPaused();
+          if (navigateToMovement) {
+            setPaused();
+          }
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
         } else {
           if (alertTimerPlaying) {

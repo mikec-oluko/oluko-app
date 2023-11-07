@@ -54,6 +54,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         .map(
           (movement) => movement != null
               ? _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) {
+                  widget.onPressed();
                   Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
                 })
               : const SizedBox(),
