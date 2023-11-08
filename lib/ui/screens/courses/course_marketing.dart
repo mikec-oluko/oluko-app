@@ -204,22 +204,25 @@ class _CourseMarketingState extends State<CourseMarketing> {
           padding: const EdgeInsets.only(right: 15, left: 15),
           child: Container(
             width: MediaQuery.of(context).size.width,
-            child: ListView(
+            child: ListView.builder(
+              itemCount: 1,
               physics: OlukoNeumorphism.listViewPhysicsEffect,
               padding: EdgeInsets.zero,
               addAutomaticKeepAlives: false,
               addRepaintBoundaries: false,
               shrinkWrap: true,
               primary: false,
-              children: [
-                buildStatistics(),
-                _courseDescriptionSection(),
-                const Padding(
-                  padding: EdgeInsets.only(top: 20.0, bottom: 15),
-                  child: OlukoNeumorphicDivider(),
-                ),
-                buildClassExpansionPanels()
-              ],
+              itemBuilder: (BuildContext context, int index) {
+                return Column(children: [
+                  buildStatistics(),
+                  _courseDescriptionSection(),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 15),
+                    child: OlukoNeumorphicDivider(),
+                  ),
+                  buildClassExpansionPanels()
+                ]);
+              },
             ),
           ),
         ),
@@ -564,19 +567,15 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   void _getMoreClasses() {
-    if (_allCourseClasses.length > _growingClassList.length) {
-      if (_allCourseClasses.length >= (_growingClassList.length + _batchClassMaxRange)) {
-        setState(() {
-          _growingClassList.addAll(_allCourseClasses.getRange(_growingClassList.length, _growingClassList.length + _batchClassMaxRange));
-        });
-      } else {
-        setState(() {
-          _growingClassList.addAll(_allCourseClasses.getRange(_growingClassList.length, _allCourseClasses.length));
-        });
-      }
-    } else {
+    int remainingClasses = _allCourseClasses.length - _growingClassList.length;
+
+    if (remainingClasses > 0) {
+      int batchSize = remainingClasses >= _batchClassMaxRange ? _batchClassMaxRange : remainingClasses;
+
+      List<Class> newClasses = _allCourseClasses.getRange(_growingClassList.length, _growingClassList.length + batchSize).toList();
+
       setState(() {
-        _growingClassList = _allCourseClasses;
+        _growingClassList.addAll(newClasses);
       });
     }
   }
