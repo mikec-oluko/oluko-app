@@ -68,7 +68,6 @@ class _CoachMainPageState extends State<CoachMainPage> {
                           BlocProvider.of<IntroductionMediaBloc>(context)
                               .getVideo(IntroductionMediaTypeEnum.coachTabWelcomeVideo, useStreamVideo: GlobalService().appUseVideoHls);
                           return CoachPageBuilders(userId: _currentUser.id, coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
-                          // return CoachPage(userId: _currentUser.id, coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
                         } else {
                           return CoachAssignedCountDown(
                             currentUser: _currentUser,

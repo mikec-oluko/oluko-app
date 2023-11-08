@@ -1359,8 +1359,7 @@ class Routes {
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
-        newRouteView = CoachPageBuilders();
-        // newRouteView = CoachPage();
+        newRouteView = const CoachPageBuilders();
         break;
       case RouteEnum.sentVideos:
         providers = [
