@@ -747,7 +747,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
               action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
               segment: _segments[(index as int) - 1],
               onPressedMovement: () {
-                carouselWidgets[dotsIndex.value].changeVideoState();
+                if (carouselWidgets[segmentIndexSelected].changeVideoState != null) {
+                  carouselWidgets[segmentIndexSelected].changeVideoState();
+                }
               });
         },
       );

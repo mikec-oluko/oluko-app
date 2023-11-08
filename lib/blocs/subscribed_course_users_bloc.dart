@@ -17,10 +17,8 @@ class SubscribedCourseUsersLoading extends SubscribedCourseUsersState {}
 
 class SubscribedCourseUsersSuccess extends SubscribedCourseUsersState {
   final List<UserResponse> users;
-  // final List<UserResponse> favoriteUsers;
   final List<UserResponse> favoriteUsers;
   SubscribedCourseUsersSuccess({this.users, this.favoriteUsers});
-  // SubscribedCourseUsersSuccess({this.users});
 }
 
 class SubscribedCourseUsersFailure extends SubscribedCourseUsersState {

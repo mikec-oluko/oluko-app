@@ -448,7 +448,7 @@ class _InsideClassesState extends State<InsideClass> {
           showBackButton: true,
           audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
           bottomWidgets: [_getCourseInfoSection(_classImage)],
-          onBackPressed: () => _goBackToCourseDetails(context), // Navigator.pop(context),
+          onBackPressed: () => _goBackToCourseDetails(context),
           onPlay: () => isVideoPlaying(),
           videoVisibilty: _isVideoPlaying,
           isGreenButton: true),
@@ -499,7 +499,7 @@ class _InsideClassesState extends State<InsideClass> {
               _contentForPanel = ModalPeopleEnrolled(
                 userId: widget.courseEnrollment.createdBy,
                 users: subscribedUsersState.users,
-                // favorites: subscribedUsersState.favoriteUsers,
+                favorites: subscribedUsersState.favoriteUsers,
                 userProgressStreamBloc: BlocProvider.of<UserProgressStreamBloc>(context),
                 userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
                 blocFavoriteFriend: BlocProvider.of<FavoriteFriendBloc>(context),

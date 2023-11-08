@@ -52,12 +52,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   List<Widget> buildMovementItems() {
     List<Widget> movements = widget.movements
         .map(
-          (movement) => movement != null
-              ? _imageItem(context, movement.image ?? image, movement.name, onPressed: (context) {
-                  widget.onPressed();
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
-                })
-              : const SizedBox(),
+          (movement) => movement != null ? _imageItem(context, movement.image ?? image, movement.name, movement) : const SizedBox(),
         )
         .toList();
     if (movements != null && movements.isNotEmpty) {
@@ -78,9 +73,14 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   Widget buildBubbleGrid() =>
       GridView.count(padding: EdgeInsets.zero, shrinkWrap: true, mainAxisSpacing: 10, crossAxisCount: 4, children: buildMovementItems());
 
-  Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {
+  Widget _imageItem(BuildContext context, String imageUrl, String name, MovementSubmodel movement) {
     return GestureDetector(
-      onTap: () => onPressed(context),
+      onTap: () {
+        if (widget.onPressed == null) {
+          widget.onPressed();
+        }
+        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
+      },
       child: SizedBox(
         width: 85,
         height: 100,
