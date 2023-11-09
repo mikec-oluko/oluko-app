@@ -99,7 +99,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               showTitle: true,
               showActions: true,
               centerTitle: true,
-              title: (_updatedMessageVideos.isNotEmpty || widget.coachVideoMessage.isNotEmpty)
+              title: (_videoListsNotNull && _videoListsNotEmpty)
                   ? OlukoLocalizations.get(context, 'coachMessageVideo')
                   : OlukoLocalizations.get(context, 'annotatedVideos'),
               actions: [
@@ -161,6 +161,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       );
     });
   }
+
+  bool get _videoListsNotEmpty => (_updatedMessageVideos.isNotEmpty || widget.coachVideoMessage.isNotEmpty);
+  bool get _videoListsNotNull => _updatedMessageVideos != null || widget.coachVideoMessage != null;
 
   List<Widget> segmentCard({List<CoachPersonalizedVideo> videoContent}) {
     List<Widget> contentForSection = [];

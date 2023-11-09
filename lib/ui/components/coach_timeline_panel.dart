@@ -448,7 +448,8 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               ? () {}
               : () {
                   Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                    'videoUrl': content.mentoredVideosForNavigation.first.videoHLS ?? content.mentoredVideosForNavigation.first.video?.url,
+                    'videoUrl': VideoPlayerHelper.getVideoFromSourceActive(
+                        videoUrl: content.mentoredVideosForNavigation?.first?.video?.url, videoHlsUrl: content.mentoredVideosForNavigation?.first?.videoHLS),
                     'titleForContent': OlukoLocalizations.of(context).find('introductionVideo')
                   });
                 },

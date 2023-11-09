@@ -25,7 +25,7 @@ class RecommendationRepository {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getRecommendationSubscriptionByDestinationUser(userId, coachId) {
-   Stream<QuerySnapshot<Map<String, dynamic>>> annotationStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot<Map<String, dynamic>>> annotationStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
         .collection('recommendations')
@@ -33,10 +33,10 @@ class RecommendationRepository {
         .where('origin_user_id', isEqualTo: coachId)
         .where('is_deleted', isEqualTo: false)
         .snapshots();
-        return annotationStream;
+    return annotationStream;
   }
 
-    Future<List<Recommendation>> getByDestinationUser(userId) async {
+  Future<List<Recommendation>> getByDestinationUser(userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))
@@ -51,7 +51,7 @@ class RecommendationRepository {
     return response;
   }
 
-  void removeRecomendedCourse(String userId, String courseId) {
+  void removeRecommendedCourse(String userId, String courseId) {
     FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getString('projectId'))

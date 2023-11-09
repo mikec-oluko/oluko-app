@@ -74,10 +74,12 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
   List<List<Widget>> buildChallengeCards() {
     final List<Widget> lockedChallenges = [];
     final List<Widget> unlockedChallenges = [];
-    for (final entry in widget.challengeState.lockedChallenges.entries) {
-      final String challengeId = entry.key;
-      final bool isUnlocked = entry.value;
-      (isUnlocked ? unlockedChallenges : lockedChallenges).add(_buildChallengeCard(challengeId));
+    if (widget.challengeState != null) {
+      for (final entry in widget.challengeState?.lockedChallenges?.entries) {
+        final String challengeId = entry.key;
+        final bool isUnlocked = entry.value;
+        (isUnlocked ? unlockedChallenges : lockedChallenges).add(_buildChallengeCard(challengeId));
+      }
     }
     return [lockedChallenges, unlockedChallenges];
   }

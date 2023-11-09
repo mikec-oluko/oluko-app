@@ -99,7 +99,7 @@ class _HomeLongPressState extends State<HomeLongPress> {
                           Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont()),
                           Padding(
                             padding: const EdgeInsets.only(top: 15),
-                            child: Center(child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'), style: OlukoFonts.olukoMediumFont())),
+                            child: Center(child: Text(OlukoLocalizations.get(context, 'loadingWithDots'), style: OlukoFonts.olukoMediumFont())),
                           ),
                         ],
                       );
